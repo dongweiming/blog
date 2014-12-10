@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: pexpect | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/pexpect/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[多台服务器进程查看脚本(pexpect+yaml)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/duo-tai-fu-wu-qi-jin-cheng-cha-kan-jiao-ben-pexpect-plus-yaml/"/>
+    <updated>2013-04-19T16:18:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/duo-tai-fu-wu-qi-jin-cheng-cha-kan-jiao-ben-pexpect-plus-yaml</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>最近做自己开发用相关服务的一个checklist，就写了这个脚本，用来在跳板机去检查各个服务器上面的相关服务是否正常</p>
+
+<h4 id="section-1">思路</h4>
+
+<p>使用expect登录每个机器(因为安全问题，不能直接使用ssh信任),然后根据yaml文件的配置读取服务名字以及启动的进程数量
+去检查每个服务是否正常
+PS：难点是没有用端口转发也只有普通用户权限</p>
+
+<h4 id="checklistpy">checklist.py</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#coding=utf-8
+import sys
+#因为我这个脚本要让很多人能运行，但是不能给他们看见我的密码算法,所以是pyc
+#我这个脚本要给很多其他普通用户去用，是用我的ssh登录操作，不能放在我的home目录，所以放在tmp
+sys.path.append('/tmp/local/lib/python2.6/site-packages/PyYAML-3.10-py2.6-linux-x86_64.egg') #依赖yaml
+sys.path.append('/tmp/local/lib/python2.6/site-packages/pexpect-2.4-py2.6.egg') #依赖pexpect
+import yaml
+import pexpect
+dataDict = yaml.load(open('/tmp/config.yaml')) #将我的yaml配置load进来
+
+def myprint(color,mes): #以前写的一个终端彩色打印的函数
+    '''使用ANSI控制码终端显示彩色'''
+    d = dict(r=31, g=32, gb=36, y=33, b=34, p=35, o=37)
+    color = "\x1B[%d;%dm" % (1, d[color])
+    print "%s%s\x1B[0m" % (color, mes)
+
+def main():
+    list = ['g', 'b', 'y', 'gb', 'p']
+    light = 0
+    for k in dataDict:
+        if k.startswith('bj-'):
+        color = list[light%5] #根据服务器对颜色轮循
+            SERVER = dataDict[k]
+        #我这是使用了-F 是因为我没有root权限不能修改hosts文件，但是我在config.yaml使用了别名，
+        而这个定义就是自定义了sshconfig，默认是~/.ssh/config
+        child = pexpect.spawn('ssh -F /tmp/sshconfig dongwm@{0}'.format(SERVER['host']))
+        #因为有其他用户，可能他还没有链接过某服务器，最开始会让你确认服务器标识，需要点yes
+        f = child.expect(['Password: ', 'password: ', 'continue connecting (yes/no)?'])
+        if f == 2:
+            #当这个flag为2  表示那个用户没有登录过某服务器
+            child.sendline('yes')
+            child.expect('password:')
+            child.sendline('{0}'.format(mypasswd(SERVER['host']))) #mypasswd是加密我服务器权限的函数，每个服务器密码不同
+        if f == 1:
+            child.sendline('{0}'.format(mypasswd(SERVER['host'])))
+        child.expect('~')
+        for service in SERVER['service']:
+        flag = 0
+        #我在配置里面会加服务,一般会指定服务的进程数来对比是否正常
+        if isinstance(service, dict):
+            data =service.items()[0]
+            service = data[0]
+            num = data[1]
+        else:
+        #假如我在配置只指定服务，不指定进程数，那么只要确定跑了进程 不在乎进程数
+            num = 0
+            flag = 1
+            child.expect('~')
+            child.sendline('ps -ef|grep {0}|grep -v grep|wc -l'.format(
+            service))
+            child.readline()
+            #进程数
+            pro_num = child.readline().split('\r\n')[0]
+        if int(pro_num) == num or flag:
+            #进程数符合配置标注的数值
+            myprint(color, '[{0}]  [{1}]  [{2}]  [{3}]'.format(k.center(12), 
+            SERVER['ip'].center(14), service.center(20), 'ok'.center(4)))
+        else:
+            myprint('r', '[{0}]  [{1}]  [{2}]  [{3}]  [{4}!={5}]'.format(k.center(12), 
+            SERVER['ip'].center(14), service.center(20), 'fail', 
+            pro_num, num))
+        light += 1
+            child.sendline('exit')
+
+if __name__ == '__main__':
+    main()
+</pre></figure></notextile></div>
+
+<h4 id="configyaml-">config.yaml 我这里只截取了其中一段</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+bj-2:
+  host: s233 #这个s233在sshconfig指定
+  ip: XXX.XXX.XXX.233 #只是为了显示出ip 好确认
+  service: #服务load后是一个列表
+  #给XX用
+  - nginx: 5
+  - uwsgi: 25
+  - supervisord: 1
+  #给本机XX提供mysql服务
+  - mysql: 3 #django
+  #给本机XX提供XX
+  - celery: 12 
+  #给本机XX提供XX
+  - rabbitmq: 9
+  - redis: 1
+  - mongod: 2
+</pre></figure></notextile></div>
+
+]]></content>
+  </entry>
+  
+</feed>

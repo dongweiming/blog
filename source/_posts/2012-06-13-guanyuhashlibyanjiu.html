@@ -1,0 +1,32 @@
+---
+layout: post
+title: 关于hashlib研究
+categories:
+- python模块研究
+tags:
+- hashlib
+- hexdigest
+published: true
+comments: true
+indexer: true
+---
+<p>前言：hashlib是一个加密hash和消息摘要的模块，而且建议单独使用sha和md5，支持：md5，sha1，sha224，sha256，sha384，sha512等</p>
+
+<p><pre class="sh_python">
+import hashlib
+test='Traditional Linux systems use SysV init for starting the system: running init scripts to start and stop services as well as manage system runlevels and'</p>
+
+<p>h = hashlib.md5()  #使用md5
+h.update(test)  #更新消息，这个update整个文件(这里是test,但是把test一部分一部分的update，最后计算的结果是一样的)
+print h.hexdigest()  #计算消息摘要</p>
+
+<p>h = hashlib.sha256()  #使用sha256
+h.update(test) #更新消息
+print h.hexdigest() </p>
+
+<p>h = hashlib.new('sha256')  #使用new方式，可以灵活的指定算法 和上面的效果一样
+h.update(test)  
+print h.hexdigest()
+</pre></p>
+
+<p>&nbsp;</p>

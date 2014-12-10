@@ -1,0 +1,201 @@
+---
+layout: post
+title: 关于urllib研究
+categories:
+- python模块研究
+tags:
+- urllib
+published: true
+comments: true
+indexer: true
+---
+<p>前言;urllib模块提供了一个访问网络资源的简单接口支持（ftp协议)，访问不需要认证的远程资源</p>
+
+<p>因为urllib模块是一个客户端模块，需要一个httpserver，借用以前的BaseHTTPServer的模块的程序：</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import urlparse </p>
+
+<p>class GetHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_GET(self):   #这个是get方法的处理
+        parsed_path = urlparse.urlparse(self.path)
+        message_parts = [
+                'CLIENT VALUES:',
+                'client_address=%s (%s)' % (self.client_address,
+                                            self.address_string()),
+                'command=%s' % self.command,
+                'path=%s' % self.path,
+                'real path=%s' % parsed_path.path,
+                'query=%s' % parsed_path.query,
+                'request_version=%s' % self.request_version,
+                '',
+                'SERVER VALUES:',
+                'server_version=%s' % self.server_version,
+                'sys_version=%s' % self.sys_version,
+                'protocol_version=%s' % self.protocol_version,
+                '',
+                'HEADERS RECEIVED:',
+                ]
+        for name, value in sorted(self.headers.items()):
+            message_parts.append('%s=%s' % (name, value.rstrip()))
+        message_parts.append('')
+        message = '\r\n'.join(message_parts)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(message)
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), GetHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import cgi</p>
+
+<p>class PostHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_POST(self):  ##这个是post方法的处理
+        # Parse the form data posted
+        form = cgi.FieldStorage(
+            fp=self.rfile, 
+            headers=self.headers,
+            environ={'REQUEST_METHOD':'POST',
+                     'CONTENT_TYPE':self.headers['Content-Type'],
+                     })</p>
+
+<p>        # Begin the response
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write('Client: %s\n' % str(self.client_address))
+        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
+        self.wfile.write('Path: %s\n' % self.path)
+        self.wfile.write('Form data:\n')</p>
+
+<p>        # Echo back information about what was posted in the form
+        for field in form.keys():
+            field_item = form[field]
+            if field_item.filename:
+                # The field contains an uploaded file
+                file_data = field_item.file.read()
+                file_len = len(file_data)
+                del file_data
+                self.wfile.write('\tUploaded %s as "%s" (%d bytes)\n' % \
+                        (field, field_item.filename, file_len))
+            else:
+                # Regular form value
+                self.wfile.write('\t%s=%s\n' % (field, form[field].value))
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), PostHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib</p>
+
+<p>response = urllib.urlopen('http://localhost:8080/')  #指定要打开的网页
+print 'RESPONSE:', response   #这个类文件对象也是可以迭代
+print 'URL :', response.geturl() #返回这个网页的url地址</p>
+
+<p>headers = response.info()
+print 'DATE :', headers['date']  #执行请求的时间
+print 'HEADERS :'
+print '---------'
+print headers  #返回server的信息和date信息</p>
+
+<p>data = response.read() #取到数据
+print 'LENGTH :', len(data) #数据长度
+print 'DATA :'
+print '---------'
+print data  #返回客户端，服务器端的一些信息，header信息
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+RESPONSE: &lt;addinfourl at 3074658828L whose fp = &lt;socket._fileobject object at 0xb7418b2c&gt;&gt;
+URL : http://localhost:8080/
+DATE : Tue, 19 Jun 2012 07:55:13 GMT
+HEADERS :
+---------
+Server: BaseHTTP/0.3 Python/2.7
+Date: Tue, 19 Jun 2012 07:55:13 GMT</p>
+
+<p>LENGTH : 304
+DATA :
+---------
+CLIENT VALUES:
+client_address=('127.0.0.1', 57709) (localhost)
+command=GET
+path=/
+real path=/
+query=
+request_version=HTTP/1.0</p>
+
+<p>SERVER VALUES:
+server_version=BaseHTTP/0.3
+sys_version=Python/2.7
+protocol_version=HTTP/1.0</p>
+
+<p>HEADERS RECEIVED:
+host=localhost:8080
+user-agent=Python-urllib/1.17</p>
+
+<p><pre class="sh_python">
+import urllib
+query_args = { 'q':'query string', 'foo':'bar' }
+encoded_args = urllib.urlencode(query_args) #将dict或者包含两个元素的元组列表转换成url参数，如果参数doseq=True ，表示使用单独的变量来传递值序列时
+print 'Encoded:', encoded_args</p>
+
+<p>url = 'http://localhost:8080/?' + encoded_args
+print urllib.urlopen(url).read()  #返回打开的这个get页面的数据
+print 'quote() :', urllib.quote(url) #对字符串进行编码。参数safe指定了不需要编码的字符 同样的还原就是unquote
+print 'quote_plus():', urllib.quote_plus(url) #与urllib.quote类似，但这个方法用'+'来替换' '，而quote用'%20'来代替 同样的还原就是unquote_plus
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib
+query_args = { 'q':'query string', 'foo':'bar' }
+encoded_args = urllib.urlencode(query_args)
+url = 'http://localhost:8080/'
+print urllib.urlopen(url, encoded_args).read()  #通过POST代替GET方式传递数据给远程服务器, 仅仅是把已编码的查询参数当作数据传递给urlopen().
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib
+import os</p>
+
+<p>def reporthook(blocks_read, block_size, total_size):
+    if not blocks_read:
+        print 'Connection opened'
+        return
+    if total_size &lt; 0:
+        # Unknown size 未知大小
+        print 'Read %d blocks' % blocks_read
+    else:
+        amount_read = blocks_read * block_size
+        print 'Read %d blocks, or %d/%d' % (blocks_read, amount_read, total_size)
+        return</p>
+
+<p>try:
+    filename, msg = urllib.urlretrieve('http://www.dongwm.com/', reporthook=reporthook) # urlretrieve方法直接将远程数据下载到本地。
+                                                #参数filename指定了保存到本地的路径（如果未指定该参数，urllib会生成一个临时文件来保存数据） ,reporthook是一个回调函数
+                                                #当连接上服务器、以及相应的数据块传输完毕的时候会触发该回调。我们可以利用这个回调函 数来显示当前的下载进度
+    print
+    print 'File:', filename
+    print 'Headers:'
+    print msg
+    print 'File exists before cleanup:', os.path.exists(filename)
+finally:
+    urllib.urlcleanup()   #除这些临时的复本
+    print 'File still exists:', os.path.exists(filename)
+</pre></p>

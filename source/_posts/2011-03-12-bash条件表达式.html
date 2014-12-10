@@ -1,0 +1,37 @@
+---
+layout: post
+title: Bash条件表达式
+categories:
+- Bash Shell
+tags:
+- 条件表达式
+published: true
+comments: true
+indexer: true
+---
+<p>Bash条件表达式：</p>
+
+<p><strong>文件比较运算符</strong>
+<div class="bct fc05 fc11 nbw-blog ztag js-fs2">
+[ -e filename ]  如果filename存在,则为真
+[ -d filename ]  如果filename为目录,则为真
+[ -f filename ]   如果filename为常规文件,则为真    <!--more-->
+[ -L filename ]  如果filename为符号链接,则为真
+[ -r filename ]   如果filename可读,则为真
+[ -w filename ]  如果filename可写,则为真
+[ -x filename ]  如果filename可执行,则为真
+[ filename1 -nt filename2 ] 如果filename1比filename2新,则为真
+[ filename1 -ot filename2 ] 如果filename1比filename2旧,则为真
+<strong>字符串比较运算符</strong>
+[ -z string ] 如果string长度为零,则为真  [ -z "$myvar" ]
+[ -n string ] 如果string长度非零,则为真  [ -n "$myvar" ]
+[ string1  = string2 ] 如果string1与string2相同,则为真  [ "$myvar" = "one two three" ]
+[ string1 != string2 ] 如果string1与string2不同,则为真  [ "$myvar" != "one two three" ]
+<strong>算术比较运算符</strong>
+[ num1 -eq num2 ]  等于
+[ num1 -ne num2 ]  不等于
+[ num1 -lt num2 ]  小于
+[ num1 -le num2 ]  小于或等于
+[ num1 -gt num2 ]  大于
+[ num1 -ge num2 ]  大于或等于</div>
+&nbsp;</p>

@@ -1,0 +1,87 @@
+---
+layout: post
+title: 使用sphinx和apache搭建wiki文档网站
+categories:
+- python
+tags:
+- sphinx
+published: true
+comments: true
+indexer: true
+---
+<p>前言：sphix是一个允许开发人员以纯文本格式使用reStructuredText 标记语法编写文档，自定义显示效果的文档工具。比较有代表性的网站有<a href="http://docs.python.org" target="_blank">python的docs官网</a>，<a href="http://book.42qu.com" target="_blank">张沈鹏的42区</a>等等，没事我在内网弄个记录一些工作文档。</p>
+
+<p>注：我这里使用了gentoo系统</p>
+
+<p><strong>1  安装sphinx和apache2</strong></p>
+
+<p>因为还有个同名的大名鼎鼎的sphinx搜索引擎，需要指定到类型：</p>
+
+<p>sudo emerge dev-python/sphinx apache2
+<strong>2 配置一个wiki站点</strong></p>
+
+<p>dongwm@localhost ~ $sphinx-quickstart  # 使用这个命令快速创建</p>
+
+<p>&gt; Root path for the documentation [.]:    test #过程中会有一些提示选项，根据你的需要定制，我对所有的疑问都是yes，注意这步，是问你这个配置的站点的root目录，我这里是一个新的test子目录目录，在家目录下
+完成后会出现test目录，包含这样的内容：</p>
+
+<p>dongwm@localhost ~/test $ ls -l
+total 24
+drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 build  #最后生成的html文件目录
+-rw-r--r-- 1 dongwm dongwm 5113 Sep 14 13:37 make.bat #我想是windows下的make
+-rw-r--r-- 1 dongwm dongwm 5589 Sep 14 13:37 Makefile #这个大家都熟悉
+drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 source  #源文件就是我们要编辑的wiki显示的代码的源文件目录</p>
+
+<p><strong>3 修改要显示的源文件</strong>
+原理：修改source下面的XXX.rst(或者你定义的其他后缀文件)，最后会生成同名的html文件，比如编辑index.rst会生成index.html，这个也就是默认的主显文件，通过他链接到其他文档处</p>
+
+<p><strong>4 生成html文件目录</strong>
+dongwm@localhost ~/test $  make html</p>
+
+<p>这样就会在build/html目录下生成html文件，当然你也自定义</p>
+
+<p><strong>5 设置apache以及htaccess</strong></p>
+
+<p>修改/etc/apache2/vhosts.d/default_vhost.include</p>
+
+<p>DocumentRoot "/home/dongwm/test/build/html"  12行 其中/home/dongwm/test/build/html就是生成html的目录，我就使用了默认的</p>
+
+<p>&lt;Directory "/home/dongwm/test/build/html"&gt;  15行</p>
+
+<p>在/home/dongwm/test/build/html目录，也就是网站根目录添加新文件.htaccess</p>
+
+<p>dongwm@localhost ~/test/build/html $ cat !$
+cat .htaccess
+&lt;Files ~ "^.(htaccess|htpasswd)$"&gt;
+deny from all
+&lt;/Files&gt;
+Options -Indexes
+&lt;FilesMatch ".(gif|jpg|jpeg|png|ico)$"&gt;
+Header set Cache-Control "max-age=86400"  #静态图片缓存24小时
+&lt;/FilesMatch&gt;
+AuthUserFile /home/dongwm/.htpasswd  #密码验证文件使用htpasswd生成
+AuthGroupFile /dev/null
+AuthName "Please enter your ID and password"
+AuthType Basic
+require valid-user
+order deny,allow
+allow from 10.28.101.1/24  #只容许这个段的人访问
+deny from all</p>
+
+<p>dongwm@localhost ~/test $ sudo /etc/init.d/apache2 restart  #重启apache2</p>
+
+<p><strong>6 显示中文</strong></p>
+
+<p>修改source/conf.py其中的language="zh_CN" 重新make html即可</p>
+
+<p><strong>7 技巧</strong></p>
+
+<p>1 快速开发</p>
+
+<p>每次我们修改了rst的源文件还需要make html去生成html文件，操作很麻烦，我在使用sublime_text2编辑器，写一个自定义编译程序的build，然后在Tools-&gt;Build System里面选择这个程序，</p>
+
+<p>比如：dongwm@localhost ~ $ cat ~/.config/sublime-text-2/Packages/User/makehtml.sublime-build  #一定要保存在这个目录，这个命令就是makehtml（去掉文件的.sublime-build后缀）
+{
+"cmd": ["make", "html"], #我要执行make html  每个参数都要用引号隔开
+"working_dir": "${project_path:${folder}}"  #他的语法大家可以去看官方文档，这里表示执行这个命令实在我当前的工作目录
+}</p>

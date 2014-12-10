@@ -1,0 +1,88 @@
+---
+layout: post
+title: Icinga专题（一）Icinga安装
+categories:
+- icinga
+tags:
+- icinga
+published: true
+comments: true
+indexer: true
+---
+<p><strong>Icinga是一些nagios项目社区的成员发起的，兼容nagios，并实现了中文化和安卓系统版本。I like ^.^</strong></p>
+
+<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png"><img class="alignnone size-full wp-image-461" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png" alt="" width="890" height="342" /></a>
+</strong></p>
+
+<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png"><img class="alignnone size-full wp-image-459" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png" alt="" width="800" height="453" /></a>
+</strong></p>
+
+<p><strong>1 准备</strong></p>
+
+<p><pre class="sh_bash">#yum  install freetype libjpeg libpng fontconfig libdbi libdbi-drivers gcc glibc glibc-common gd gd-devel libjpeg libjpeg-devel libpng libpng-devel net-snmp net-snmp-devel</pre></p>
+
+<p><strong>2 下载安装icinga</strong></p>
+
+<p><pre class="sh_bash">#wget http://sourceforge.net/projects/icinga/files/icinga/1.3.1/icinga-1.3.1.tar.gz/download</p>
+
+<p># tar zxvf icinga-1.3.1.tar.gz</p>
+
+<p>#cd icinga-1.3.1/</p>
+
+<p>#./configure --with-rdbm --with-rdbm-incdir=/usr/include/rdbm/ --with-rdbm-libdir=/usr/lib64/ --disable-docs  --with-icinga-user=dongwm   --with-icinga-group=dongwm --with-command-user=dongwm  --with-command-group=dongwm &amp;&amp; make all &amp;&amp; make install</p>
+
+<p>#make install-init   //# 安装主程序，CGI和HTML
+#make install-commandmode //在/etc/rc.d/init.d安装启动脚本
+#make install-config  // 安装配置实例配置文件
+#make install-webconf  //安装apache相关的配置文件
+# chkconfig --add icinga
+# chkconfig icinga on</p>
+
+<p># /etc/init.d/icinga start</pre></p>
+
+<p><strong>3 设置web页面登陆用户</strong><strong>及密码(必须）</strong></p>
+
+<p><pre class="sh_bash">默认用户名 icingaadmin 默认密码admin</p>
+
+<p>用户可自行修改,如htpasswd -c /usr/local/icinga/etc/htpasswd.users dongwm</pre></p>
+
+<p><strong>4  安装nagios-plugins</strong></p>
+
+<p><pre class="sh_bash"># wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/1.4.15/nagios-plugins-1.4.15.tar.gz/download</p>
+
+<p># tar zxvf nagios-plugins-1.4.15.tar.gz</p>
+
+<p># cd nagios-plugins-1.4.15/</p>
+
+<p>#./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-htmurl=/icinga --with-nagios-user=dongwm --with-nagios-group=dongwm</p>
+
+<p># make &amp;&amp; make install</pre></p>
+
+<p><strong>5  安装nrpe</strong></p>
+
+<p><pre class="sh_bash">#wget "<a href="https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz&quot;">https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz"</a> -O nrpe.tgz
+#tar zxvf nrpe.tgz</p>
+
+<p># cd icinga-nrpe  &amp;&amp;  ./configure --with-nrpe-user=dongwm --with-nrpe-group=dongwm --with-icinga-user=dongwm --with-icinga-group=dongwm &amp;&amp;make all &amp;&amp;make install-plugin</p>
+
+<p>拷贝nrpe文件：</p>
+
+<p>#cp src/nrpe  /usr/local/icinga/bin</p>
+
+<p>#cp sample-config/nrpe.cfg /usr/local/icinga/etc</p>
+
+<p>启动nrpe并检查：</p>
+
+<p># /usr/local/icinga/bin/nrpe -n -c /usr/local/icinga/etc/nrpe.cfg -d</p>
+
+<p># /usr/local/icinga/libexec/check_nrpe  -H 127.0.0.1 –n</p>
+
+<p>NRPE v2.12</p>
+
+<p>stop nrpe：</p>
+
+<p>#kill `ps -ef | grep "sample-config/nrpe.cfg" | grep -v grep | awk '{print $2}'`</pre></p>
+
+<p><strong>6 配置文件</strong></p>
+
+<p><strong>其实icinga的配置文件可以把nagios的配置文件直接拷贝过来使用，把关键字‘nagios’改成‘icinga’就完全可以了</strong></p>

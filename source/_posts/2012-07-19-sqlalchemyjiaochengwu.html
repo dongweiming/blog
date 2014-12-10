@@ -1,0 +1,96 @@
+---
+layout: post
+title: SQLAlchemy教程(五)
+categories:
+- linux基础
+- SQLAlchemy
+tags:
+- SQLAlchemy
+published: true
+comments: true
+indexer: true
+---
+<p><strong> 本文主要说删除</strong></p>
+
+<p>metadata.drop_all(engine) #删除某引擎的全部表</p>
+
+<p>metadata.remove(test_table)  #删除某一个table</p>
+
+<p>clear_mappers() #取消所有的映射</p>
+
+<p>在relation中有一个参数cascade,它是基于session的操作,包括把对象放入session,从session删除对象等,如果指定cascade="all"表示做的任何session操作给映射类都能很好的工作,默认包含save-update, merge
+mapper(ParentClass, parent, properties=dict(
+children=relation(ChildClass, backref='parent',
+cascade='all,delete-orphan') )) #delete-orphan表示如果曾经是子类(childclass)实例但是却没有和父类连接的情况下,假如要删除这个子类,而不想挂空父类引用了的实例,
+额看个例子就懂了:
+photo = Table(
+... 'photo', metadata,
+... Column('id', Integer, primary_key=True))
+tag = Table(
+... 'tag', metadata,
+... Column('id', Integer, primary_key=True),
+... Column('photo_id', None, ForeignKey('photo.id')),
+... Column('tag', String(80)))
+class Photo(object):
+... pass
+...
+class Tag(object):
+... def __init__(self, tag):
+... self.tag = tag
+...
+mapper(Photo, photo, properties=dict(
+... tags=relation(Tag, backref='photo', cascade="all")))
+&lt;Mapper at 0x851504c; Photo&gt;
+&gt;&gt;&gt; mapper(Tag, tag)
+&lt;Mapper at 0x8515dac; Tag&gt;
+&gt;&gt;&gt; p1 = Photo()
+&gt;&gt;&gt; p2 = Photo()
+&gt;&gt;&gt; p1.tags = [Tag(tag='foo'),Tag(tag='bar'),Tag(tag='baz')]
+&gt;&gt;&gt; p2.tags = [Tag(tag='foo'),Tag(tag='bar'),Tag(tag='baz')]
+&gt;&gt;&gt; session.add(p1)
+&gt;&gt;&gt; session.add(p2)
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+... print t.id,t.photo_id, t.tag
+...
+1 1 foo #出现以下关联数据
+2 1 bar
+3 1 baz
+4 2 foo
+5 2 bar
+6 2 baz
+&gt;&gt;&gt; session.delete(session.query(Photo).get(1)) #删除一个tag的数据
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+... print t.id, t.photo_id, t.tag
+...
+4 2 foo #他会删除关联所有t.photo_id为1的数据,在这里relation(ChildClass, backref='parent', cascade='all,delete-orphan')<span class="fullpost">指定delete-orphan</span>没什么,关键看下面
+5 2 bar
+6 2 baz
+&gt;&gt;&gt; p3 = session.query(Photo).get(2)
+&gt;&gt;&gt; del p3.tags[0] #如果我只是删除关联点...
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+... print t.id, t.photo_id, t.tag
+...
+4 None foo #关联点photo_id成了none,但是条目存在 --他不会影响其它关联表
+5 2 bar
+6 2 baz</p>
+
+<p>&gt;&gt;&gt; p3 = session.query(Photo).get(2) #假如没有设置delete-orphan
+&gt;&gt;&gt; del p3.tags[0]
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+... print t.id, t.photo_id, t.tag
+5 2 bar #自动删除了关联的其它表的项
+6 2 baz
+<strong>注:可用的cascade参数包含:</strong>
+<ul>
+	<li><tt>save-update</tt> -我的理解是调用session.add()会自动将项目添加到相应级联关系上,也适用于已经从关系中删除的项目嗨没有来得及刷新的情况</li>
+	<li><tt>merge</tt> - 它是session.merge的实现,复制状态到具有相同标识符的持久化实例的实例,如果没有持久的实例和当前session相关联，返回的持久化实例。如果给定的实例未保存，他会保存一个副本，并返回这个副本作为一个新的持久化实例</li>
+	<li><tt>expunge</tt> - 从session中删除实例</li>
+	<li><tt>delete</tt> - 标记一个实例被删除,执行flush()会执行删除操作</li>
+	<li><tt>delete-orphan</tt>-如果子类从母类删除,标记之,但是不影响母类</li>
+	<li><tt>refresh-expire</tt> - 定期刷新在给定的实例的属性,查询并刷新数据库</li>
+	<li><tt>all</tt> - 以上全部属性的集合:“save-update,merge, refresh-expire, expunge, delete</li>
+</ul></p>

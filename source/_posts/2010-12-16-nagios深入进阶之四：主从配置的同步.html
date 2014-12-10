@@ -1,0 +1,29 @@
+---
+layout: post
+title: Nagios深入进阶之四：主从配置的同步
+categories:
+- nagios
+tags:
+- 主从
+published: true
+comments: true
+indexer: true
+---
+<p>继实现冗余nagios服务器后，我们要保证nagios配置文件的相同，不能每次都在改动“主”nagios后都也去更改“从”nagios。<!--more-->因为重载/etc/init.d/nagios脚本才能是配置生效，所以我将同步的命令写在了这个脚本里，在reload和restart里引用这个 function（只有能使用这2个参数时候说明配置是正确的，才需要同步信息）
+[ccine_perl height="100%" width="99%"]function sync_conf()
+{
+sed -i 's/master/slave/g' /opt/nagios/etc/objects/commands.cfg
+sed -i 's/M/S/g'  /opt/nagios/bin/ssms.sh
+rsync -azvh  --progress  --exclude-from=/opt/nagios/etc/exclude --delete /opt/nagios/etc/objects/ sys00:/ opt /nagios/etc/objects 2&gt;&amp;1 &gt;/dev/null
+if [ "$?" == "0" ];then
+action "sync conf to slave..."  /bin/true
+fi
+sed -i 's/slave/master/g' /opt/nagios/etc/objects/commands.cfg
+sed -i 's/S/M/g'  /opt/nagios/bin/ssms.sh
+}[/ccine_perl]</p>
+
+<p>注：其中的ssms.sh是我们的短信网关的脚本；</p>
+
+<p>其中master/slave和M/S的sed替换，是因为短信内容变量的设置，同步时需要修改相关内容分辨发送短信的服务器名称；</p>
+
+<p>其中的--exclude-from=/opt/nagios/etc/exclude，是主从nagios配置不同的地方，需要排除防止删除，这个配置文件里面的内容作用是主从nagios服务器对对方状态的报警。</p>

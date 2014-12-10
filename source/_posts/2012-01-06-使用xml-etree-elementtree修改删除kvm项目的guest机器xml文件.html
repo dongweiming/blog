@@ -1,0 +1,99 @@
+---
+layout: post
+title: 使用xml.etree.ElementTree修改/删除kvm项目的guest机器xml文件
+categories:
+- kvm
+- python
+tags:
+- kvm
+- kvm guest
+- libvirt
+- python 修改xml
+- xml.etree.ElementTree
+published: true
+comments: true
+indexer: true
+---
+<p>前言：修改xml文件也可以用xml.dom. minidom,但是相对没有etree的简洁方便，以下是一个例子：</p>
+
+<p><pre class="sh_python">
+import libvirt
+from subprocess import *
+import os,string
+import xml.etree.ElementTree as ET   
+class modify:
+    def __init__(self):
+        try:
+            self.conn=libvirt.open(None)
+	except libvirt.libvirtError:
+	    return -1
+    def dump(self,name):
+        call('virsh dumpxml %(name)s &gt; /tmp/%(name)s.xml' % {'name':name},shell = True)   #将xml文件导出
+        self.tree = ET.parse("/tmp/%s.xml" % name)   #解析xml文件
+        self.root = self.tree.getroot()  #得到root树
+    def deldisk(self,dict):
+        x = dict['num']
+        name = dict['name'] 
+        self.dump(name)
+        hd = 'hd%s' % string.lowercase.replace('c','')[x-1]  
+        for i in self.root.find('devices').findall('disk'):
+            if i.find('target').get('dev') == hd:       #找到要删除的那个硬盘那标识
+                del self.root.find('devices')[self.root.find('devices').getchildren().index(i)]
+        self.done(name) 
+    def moddisk(self,dict): 
+        name = dict["name"]
+        self.dump(name)
+        for key in dict.keys():
+            if key == 'mem':
+                num =  int(1024)*int(dict['mem'])               #修改内存
+                self.root.find('memory').text = '%s' % num 
+            if key == 'cpu':
+                self.root.find('vcpu').text = '%s' % dict['cpu']    #修改cpu个数
+        self.done(name)
+     def adddisk(self,dict):
+        name = dict['name']
+        img_path = dict['img_path']
+        size = dict['size']
+        cmd="qemu-img create -f raw %s %dG" %(img_path,size)  #创建guest的img文件
+        try:
+           os.system(cmd)
+        except IOError,e:
+           return -1
+        self.dump(name)
+        dev = self.root.find('devices')
+        x = 0
+        for i in dev:
+            if i.tag == "disk":
+                x +=1
+        hd = 'hd%s' % string.lowercase.replace('c','')[x-1]  #这里主要是为了判断已经有几个disk，然后根据顺序选择hdX 除去‘c’是因为cdrom占用了
+        disk = ET.Element('disk')
+        disk.set('type', 'file')
+        disk.set('device', 'disk')
+        source = ET.SubElement(disk,'source')
+        source.set('file',img_path)
+        target = ET.SubElement(disk,'target')
+        target.set('dev',hd)
+        target.set('bus','ide')
+        dev.insert(x,disk)   #添加一个disk树 
+        self.done(name)
+     def done(self,name):
+        self.tree.write('/tmp/%s.xml' % name)     #将最新修改写到xml文件
+        dom=self.conn.lookupByName(name)   
+        try: 
+            dom.destroy()      #关机guest
+        except:
+            pass
+        dom.undefine()   
+        fxml=open('/tmp/%s.xml' % name, 'r')
+        flist=fxml.readlines()
+        if (len(flist) ):
+            xmldesc="".join(flist)
+        else:
+            return -1
+        fxml.close()  
+        try:
+            dom=self.conn.defineXML(xmldesc)  #重新定义这个guest 加载最新配置
+        except:
+            traceback.print_exc()      
+        call('virsh start %s' % name,shell = True)  #启动guest
+</pre></p>

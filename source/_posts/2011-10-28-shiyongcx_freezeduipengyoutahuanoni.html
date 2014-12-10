@@ -1,0 +1,43 @@
+---
+layout: post
+title: 使用cx_Freeze对python程序打包生成多个exe文件
+categories:
+- linux基础
+tags:
+- cx_Freeze
+- python打包
+published: true
+comments: true
+indexer: true
+---
+<p>前言：使用python程序需要打包成exe忽略python环境的可执行文件，但是网上没有出现一个相对比较好的文档，我这里有一个setup.py:</p>
+
+<p><pre class="sh_python">
+from distutils.core import setup
+from cx_Freeze import setup, Executable </p>
+
+<p>GUI2Exe = Executable(
+      script = "update.py",  ＃对主程序相关文件升级程序
+      base = 'Win32GUI',
+       )
+GUI2Exe2 = Executable(
+      script = "main.py",  #主程序
+      base = 'Win32GUI',
+      icon = r"C:\app.ico",  #自动exe文件的图标
+      shortcutName = u"GY终端",  
+       )
+includeFiles = [
+     ( r"C:\dervcer\etc", "../etc"),
+     (r"C:\dervcer\log", "../log"),
+      (r"C:\dervcer\image", "../image"),
+      (r"C:\dervcer\imageformats", "./imageformats")
+    ]   #这个地方主要是为了在打包中添加一些源文件，生成至打包目录，其中imageformats是pyqt4里面的插件动态链接库文件目录，要不然无法在winodws下显示系统图标</p>
+
+<p>setup(
+        name = "test",
+        version = "0.1",
+        description = "dongwm",   ＃生成的exe文件的描述
+        options = {"build_exe": {"include_files": includeFiles,}}, </p>
+
+<p>        executables = [GUI2Exe,GUI2Exe2])   ＃因为要生成多个exe文件 所以指定了2个执行的“块”
+</pre></p>

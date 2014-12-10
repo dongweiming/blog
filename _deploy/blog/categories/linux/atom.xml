@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: linux | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[grep, ack, ag的搜索效率对比]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ack/"/>
+    <updated>2015-03-14T22:19:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ack</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>我经常看到很多程序员, 运维在代码搜索上使用ack, 甚至ag(the_silver_searcher
+), 而我工作中95%都是用grep,剩下的是ag. 我觉得很有必要聊一聊这个话题.
+我以前也是一个运维, 我当时也希望找到最好的最快的工具用在工作的方方面面. 但是我很好奇为什么ag和ack没有作为linux发行版的内置部分.
+内置的一直是grep. 我当初的理解是受各种开源协议的限制, 或者发行版的boss个人喜好. 后来我就做了实验, 研究了下他们到底谁快. 当时的做法也无非跑几个真实地线上log看看用时. 然后我也有了我的一个认识: 大部分时候用grep也无妨, 日志很大的时候用ag.</p>
+
+<p>ack原来的域名是betterthangrep.com, 现在是beyondgrep.com. 好吧. 其实我理解使用ack的同学, 也理解ack产生的原因. 这里就有个故事.</p>
+
+<p>最开始我做运维使用shell, 经常做一些分析日志的工作. 那时候经常写比较复杂的shell代码实现一些特定的需求. 后来来了一位会perl的同学. 原来我写shell做一个事情, 写了20多行shell代码, 跑一次大概5分钟, 这位同学来了用perl改写, 4行, 一分钟就能跑完. 亮瞎我们的眼, 从那时候开始, 我就觉得需要学perl,以至于后来的python.</p>
+
+<p>perl是天生用来文本解析的语言, ack的效率确实很高. 我想着可能是大家认为ack要更快更合适的理由吧. 其实这件事要看场景. 我为什么还用比较’土’的grep呢? 看一下这篇文章, 希望给大家点启示</p>
+
+<h4 id="section-1">实验条件</h4>
+
+<p>PS: 严重声明, 本实验经个人实践, 我尽量做到合理. 大家看完觉得有异议可以试着其他的角度来做. 并和我讨论.</p>
+
+<ul>
+  <li>
+    <p>我使用了公司的一台开发机(gentoo)</p>
+  </li>
+  <li>
+    <p>我测试了纯英文和汉语2种， 汉语使用了<a href="https://github.com/fxsjy/jieba">结巴分词</a>的字典, 英语使用了<code>miscfiles</code>中提供的词典</p>
+  </li>
+</ul>
+
+<p><code>python
+# 假如你是ubuntu: sudo apt-get install miscfiles
+wget https://raw.githubusercontent.com/fxsjy/jieba/master/extra_dict/dict.txt.big
+</code></p>
+
+<h4 id="section-2">实验前的准备</h4>
+
+<p>我会分成英语和汉语2种文件, 文件大小为1MB, 10MB, 100MB, 500MB, 1GB, 5GB. 没有更多是我觉得在实际业务里面不会单个日志文件过大的. 也就没有必要测试了(就算有, 可以看下面结果的趋势)</p>
+
+<p>```python
+cat make_words.py
+# coding=utf-8</p>
+
+<p>import os
+import random
+from cStringIO import StringIO</p>
+
+<p>EN_WORD_FILE = ‘/usr/share/dict/words’
+CN_WORD_FILE = ‘dict.txt.big’
+with open(EN_WORD_FILE) as f:
+    EN_DATA = f.readlines()
+with open(CN_WORD_FILE) as f:
+    CN_DATA = f.readlines()
+MB = pow(1024, 2)
+SIZE_LIST = [1, 10, 100, 500, 1024, 1024 * 5]
+EN_RESULT_FORMAT = ‘text<em>{0}_en_MB.txt’
+CN_RESULT_FORMAT = ‘text</em>{0}_cn_MB.txt’</p>
+
+<p>def write_data(f, size, data, cn=False):
+    total_size = 0
+    while 1:
+        s = StringIO()
+        for x in range(10000):
+            cho = random.choice(data)
+            cho = cho.split()[0] if cn else cho.strip()
+            s.write(cho)
+        s.seek(0, os.SEEK_END)
+        total_size += s.tell()
+        contents = s.getvalue()
+        f.write(contents + ‘\n’)
+        if total_size &gt; size:
+            break
+    f.close()</p>
+
+<p>for index, size in enumerate([
+        MB,
+        MB * 10,
+        MB * 100,
+        MB * 500,
+        MB * 1024,
+        MB * 1024 * 5]):
+    size_name = SIZE_LIST[index]
+    en_f = open(EN_RESULT_FORMAT.format(size_name), ‘a+’)
+    cn_f = open(CN_RESULT_FORMAT.format(size_name), ‘a+’)
+    write_data(en_f, size, EN_DATA)
+    write_data(cn_f, size, CN_DATA, True)
+```</p>
+
+<p>好吧, 效率比较低是吧? 我自己没有vps, 公司服务器我不能没事把全部内核的cpu都占满(不是运维好几年了). 假如你不介意htop的多核cpu飘红, 可以这样，耗时就是各文件生成的时间短板:</p>
+
+<p>```python
+ # coding=utf-8</p>
+
+<p>import os
+import random
+import multiprocessing
+from cStringIO import StringIO</p>
+
+<p>EN_WORD_FILE = ‘/usr/share/dict/words’
+CN_WORD_FILE = ‘dict.txt.big’
+with open(EN_WORD_FILE) as f:
+    EN_DATA = f.readlines()
+with open(CN_WORD_FILE) as f:
+    CN_DATA = f.readlines()
+MB = pow(1024, 2)
+SIZE_LIST = [1, 10, 100, 500, 1024, 1024 * 5]
+EN_RESULT_FORMAT = ‘text<em>{0}_en_MB.txt’
+CN_RESULT_FORMAT = ‘text</em>{0}_cn_MB.txt’</p>
+
+<p>inputs = []</p>
+
+<p>def map_func(args):
+    def write_data(f, size, data, cn=False):
+        f = open(f, ‘a+’)
+        total_size = 0
+        while 1:
+            s = StringIO()
+            for x in range(10000):
+                cho = random.choice(data)
+                cho = cho.split()[0] if cn else cho.strip()
+                s.write(cho)
+            s.seek(0, os.SEEK_END)
+            total_size += s.tell()
+            contents = s.getvalue()
+            f.write(contents + ‘\n’)
+            if total_size &gt; size:
+                break
+        f.close()</p>
+
+<pre><code>_f, size, data, cn = args
+write_data(_f, size, data, cn)
+</code></pre>
+
+<p>for index, size in enumerate([
+        MB,
+        MB * 10,
+        MB * 100,
+        MB * 500,
+        MB * 1024,
+        MB * 1024 * 5]):
+    size_name = SIZE_LIST[index]
+    inputs.append((EN_RESULT_FORMAT.format(size_name), size, EN_DATA, False))
+    inputs.append((CN_RESULT_FORMAT.format(size_name), size, CN_DATA, True))</p>
+
+<p>pool = multiprocessing.Pool()
+pool.map(map_func, inputs, chunksize=1)
+```</p>
+
+<p>等待一段时间后,目录下是这样的:</p>
+
+<p><code>python
+$ls -lh
+total 14G
+-rw-rw-r-- 1 vagrant vagrant 2.2K Mar 14 05:25 benchmarks.ipynb
+-rw-rw-r-- 1 vagrant vagrant 8.2M Mar 12 15:43 dict.txt.big
+-rw-rw-r-- 1 vagrant vagrant 1.2K Mar 12 15:46 make_words.py
+-rw-rw-r-- 1 vagrant vagrant 101M Mar 12 15:47 text_100_cn_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 101M Mar 12 15:47 text_100_en_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 1.1G Mar 12 15:54 text_1024_cn_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 1.1G Mar 12 15:51 text_1024_en_MB.txt
+-rw-rw-r-- 1 vagrant vagrant  11M Mar 12 15:47 text_10_cn_MB.txt
+-rw-rw-r-- 1 vagrant vagrant  11M Mar 12 15:47 text_10_en_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 1.1M Mar 12 15:47 text_1_cn_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 1.1M Mar 12 15:47 text_1_en_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 501M Mar 12 15:49 text_500_cn_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 501M Mar 12 15:48 text_500_en_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 5.1G Mar 12 16:16 text_5120_cn_MB.txt
+-rw-rw-r-- 1 vagrant vagrant 5.1G Mar 12 16:04 text_5120_en_MB.txt
+</code></p>
+
+<h4 id="section-3">确认版本</h4>
+
+<p>```
+➜  test  ack –version # ack在ubuntu下叫<code>ack-grep</code>
+ack 2.12
+Running under Perl 5.16.3 at /usr/bin/perl</p>
+
+<p>Copyright 2005-2013 Andy Lester.</p>
+
+<p>This program is free software.  You may modify or distribute it
+under the terms of the Artistic License v2.0.
+➜  test  ag –version
+ag version 0.21.0
+➜  test  grep –version
+grep (GNU grep) 2.14
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.</p>
+
+<p>Written by Mike Haertel and others, see <a href="http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS">http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS</a>.
+```</p>
+
+<h4 id="section-4">实验设计</h4>
+
+<p>为了不产生并行执行的相互响应, 我还是选择了效率很差的同步执行, 我使用了ipython提供的%timeit. 上代码</p>
+
+<p>```python
+import re
+import glob
+import subprocess
+import cPickle as pickle
+from collections import defaultdict</p>
+
+<p>IMAP = {
+    ‘cn’: (‘豆瓣’, ‘小明明’),
+    ‘en’: (‘four’, ‘python’)
+}
+OPTIONS = (‘’, ‘-i’, ‘-v’)
+FILES = glob.glob(‘text<em>*_MB.txt’)
+EN_RES = defaultdict(dict)
+CN_RES = defaultdict(dict)
+RES = {
+        ‘en’: EN_RES,
+        ‘cn’: CN_RES
+}
+REGEX = re.compile(r’text</em>(\d+)_(\w+)_MB.txt’)
+CALL_STR = ‘{command} {option} {word} {filename} &gt; /dev/null 2&gt;&amp;1’</p>
+
+<p>for filename in FILES:
+    size, xn = REGEX.search(filename).groups()
+    for word in IMAP[xn]:
+        _r = defaultdict(dict)
+        for command in [‘grep’, ‘ack’, ‘ag’]:
+            for option in OPTIONS:
+                rs = %timeit -o -n10 subprocess.call(CALL_STR.format(command=command, option=option, word=word, filename=filename), shell=True)
+                best = rs.best
+                _r[command][option] = best
+        RES[xn][word][size] = _r</p>
+
+<h1 id="section-5">存起来</h1>
+
+<p>data = pickle.dumps(RES)</p>
+
+<p>with open(‘result.db’, ‘w’) as f:
+    f.write(data)
+```</p>
+
+<p>温馨提示, 这是一个灰常耗时的测试. 开始执行后 要喝很久的茶…</p>
+
+<p>我来秦皇岛办事完毕(耗时超过1一天), 继续我们的实验.</p>
+
+<h4 id="section-6">我想要的效果</h4>
+
+<p>我想工作的时候一般都是用到不带参数/带-i(忽略大小写)/-v(查找不匹配项)这三种. 所以这里测试了:</p>
+
+<ol>
+  <li>英文搜索/中文搜索</li>
+  <li>选择了2个搜索词(效率太低, 否则可能选择多个)</li>
+  <li>分别测试’’/’-i’/’-v’三种参数的执行</li>
+  <li>使用%timeit, 每种条件执行10遍, 选择效率最好的一次的结果</li>
+  <li><strong>每个图代码一个搜索词, 3搜索命令, 一个选项在搜索不同大小文件时的效率对比</strong></li>
+</ol>
+
+<h4 id="section-7">多图预警, 我先说结论</h4>
+
+<ol>
+  <li><strong>在搜索的总数据量较小的情况下, 使用grep, ack甚至ag在感官上区别不大</strong></li>
+  <li><strong>搜索的总数据量较大时, grep效率下滑的很多, 完全不要选</strong></li>
+  <li><strong>ack在某些场景下没有grep效果高(比如使用-v索索中文的时候)</strong></li>
+  <li><strong>在不使用ag没有实现的选项功能的前提下, ag完全可以替代ack/grep</strong></li>
+</ol>
+
+<p>渲染图片的gist可以看这里<a href="http://nbviewer.ipython.org/gist/dongweiming/6732731444b1e2687c47/benchmarks.ipynb">benchmarks.ipynb</a>. 他的数据来自上面跑的结果在序列化之后存入的文件</p>
+
+<h4 id="section-8">附图(共12张)</h4>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/6660016/8326d7b0-cbcb-11e4-8f2a-cfa5fe27c810.png" alt="chart" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660017/832c12ac-cbcb-11e4-9295-cfdd6d421423.png" alt="chart-1" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660018/832c3034-cbcb-11e4-9a2c-5604bf2bb0c6.png" alt="chart-2" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660019/832df4a0-cbcb-11e4-8d75-538ad527cb4f.png" alt="chart-3" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660020/833372d6-cbcb-11e4-8b96-54ae9ae68f57.png" alt="chart-4" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660021/8335c04a-cbcb-11e4-8401-0c54aa4eb783.png" alt="chart-5" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660022/8362bf96-cbcb-11e4-9ec5-94686e603e3a.png" alt="chart-6" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6690232/488e9af4-ccfa-11e4-8a1f-1fa3667dd74f.png" alt="chart-7" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660024/836b307c-cbcb-11e4-942d-8a395a28984f.png" alt="chart-8" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660025/836f4f5e-cbcb-11e4-8807-d6f561018254.png" alt="chart-9" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660043/fbd42cee-cbcb-11e4-9c1d-b2237194db90.png" alt="chart-10" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660044/fc5424f8-cbcb-11e4-9bf0-1666cd467239.png" alt="chart-11" /></p>
+]]></content>
+  </entry>
+  
+</feed>

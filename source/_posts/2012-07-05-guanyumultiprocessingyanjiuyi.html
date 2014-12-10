@@ -1,0 +1,235 @@
+---
+layout: post
+title: 关于multiprocessing研究(一)
+categories:
+- python模块研究
+tags:
+- multiprocessing
+published: true
+comments: true
+indexer: true
+---
+<p>前言：multiprocessing是一个使用方法类似threading模块的进程模块，允许程序员做并行开发，从python2.6开始内置</p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import logging,sys
+def worker():
+    print 'Worker'
+    sys.stdout.flush() 
+    return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        multiprocessing.log_to_stderr(logging.DEBUG)  #记录日志,也可以使用一下注释的三句
+        #multiprocessing.log_to_stderr() 
+        #logger = multiprocessing.get_logger() 
+        #logger.setLevel(logging.INFO)
+        p = multiprocessing.Process(target=worker)  #实例化Process
+        jobs.append(p)
+        p.start() #调用start()开始，类似于threading.Thread
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>def worker(num): #带参数的函数
+    print 'Worker:', num
+    return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = multiprocessing.Process(target=worker, args=(i,)) #带参数的目标
+        jobs.append(p)
+        p.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def worker():
+    name = multiprocessing.current_process().name  #当前进程名字
+    print name, 'Starting'
+    time.sleep(2)
+    print name, 'Exiting'</p>
+
+<p>def my_service():
+    name = multiprocessing.current_process().name
+    print name, 'Starting'
+    time.sleep(3)
+    print name, 'Exiting'</p>
+
+<p>if __name__ == '__main__':
+    service = multiprocessing.Process(name='my_service', target=my_service) #使用自定义的函数名
+    worker_1 = multiprocessing.Process(name='worker 1', target=worker)
+    worker_2 = multiprocessing.Process(target=worker) # use default name  #使用默认的函数名，即Process-3</p>
+
+<p>    worker_1.start()
+    worker_2.start()
+    service.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time
+import sys</p>
+
+<p>def daemon():
+    p = multiprocessing.current_process()
+    print 'Starting:', p.name, p.pid
+    sys.stdout.flush()
+    time.sleep(2)
+    print 'Exiting :', p.name, p.pid
+    sys.stdout.flush()</p>
+
+<p>def non_daemon():  #默认情况下，主程序将不会退出，直到所有的孩子都已经退出
+    p = multiprocessing.current_process()
+    print 'Starting:', p.name, p.pid
+    sys.stdout.flush()
+    print 'Exiting :', p.name, p.pid
+    sys.stdout.flush()</p>
+
+<p>if __name__ == '__main__':
+    d = multiprocessing.Process(name='daemon', target=daemon)
+    d.daemon = True</p>
+
+<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
+    n.daemon = False   #默认是不是守护进程，以便通过真正轮流守护模式</p>
+
+<p>    d.start()
+    time.sleep(1)
+    n.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time
+import sys</p>
+
+<p>def daemon():
+    print 'Starting:', multiprocessing.current_process().name
+    time.sleep(2)
+    print 'Exiting :', multiprocessing.current_process().name</p>
+
+<p>def non_daemon():
+    print 'Starting:', multiprocessing.current_process().name
+    print 'Exiting :', multiprocessing.current_process().name</p>
+
+<p>if __name__ == '__main__':
+    d = multiprocessing.Process(name='daemon', target=daemon)
+    d.daemon = True</p>
+
+<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
+    n.daemon = False</p>
+
+<p>    d.start()
+    time.sleep(1)
+    n.start()</p>
+
+<p>    d.join() #会使主调线程堵塞，直到被调用线程运行结束或超时,join函数可以设置超时， 如果进程在超时期限内没有完成就返回 比如join(1)，可以通过d.is_alive()查看进程是否存活
+    n.join()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def slow_worker():
+    print 'Starting worker'
+    time.sleep(0.1)
+    print 'Finished worker'</p>
+
+<p>if __name__ == '__main__':
+    p = multiprocessing.Process(target=slow_worker)
+    print 'BEFORE:', p, p.is_alive()</p>
+
+<p>    p.start()
+    print 'DURING:', p, p.is_alive()</p>
+
+<p>    p.terminate()  #发送结束进程信号
+    print 'TERMINATED:', p, p.is_alive()</p>
+
+<p>    p.join()  #更新状态以反应终止后的状态
+    print 'JOINED:', p, p.is_alive()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import sys
+import time</p>
+
+<p>def exit_error():
+    sys.exit(1)</p>
+
+<p>def exit_ok():
+    return</p>
+
+<p>def return_value():
+    return 1</p>
+
+<p>def raises():
+    raise RuntimeError('There was an error!')</p>
+
+<p>def terminated():
+    time.sleep(3)</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for f in [exit_error, exit_ok, return_value, raises, terminated]:
+        print 'Starting process for', f.func_name
+        j = multiprocessing.Process(target=f, name=f.func_name)
+        jobs.append(j)
+        j.start()</p>
+
+<p>    jobs[-1].terminate()</p>
+
+<p>    for j in jobs:
+        j.join()
+        print '%s.exitcode = %s' % (j.name, j.exitcode)  #exitcode返回退出的代码，0表示没有错误，&gt;0表示程序有错误，&lt;0表示被code为-1的信号杀死了
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Starting process for exit_error
+Starting process for exit_ok
+Starting process for return_value
+Starting process for raises
+Starting process for terminated
+Process raises:
+Traceback (most recent call last):
+exit_error.exitcode = 1
+exit_ok.exitcode = 0
+return_value.exitcode = 0
+File "/usr/lib/python2.7/multiprocessing/process.py", line 232, in _bootstrap
+self.run()
+File "/usr/lib/python2.7/multiprocessing/process.py", line 88, in run
+self._target(*self._args, **self._kwargs)
+File "test.py", line 15, in raises
+raise RuntimeError('There was an error!')
+RuntimeError: There was an error!
+raises.exitcode = 1
+terminated.exitcode = -15
+<pre class="sh_python">
+import multiprocessing</p>
+
+<p>class Worker(multiprocessing.Process):   #最开始的例子也可以使用继承类的方式</p>
+
+<p>    def run(self):
+        print 'In %s' % self.name
+        return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = Worker()
+        jobs.append(p)
+        p.start()
+    for j in jobs:
+        j.join()
+</pre></p>
+
+<p>&nbsp;</p>

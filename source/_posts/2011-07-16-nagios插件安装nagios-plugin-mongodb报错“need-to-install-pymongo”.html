@@ -1,0 +1,12 @@
+---
+layout: post
+title: nagios插件安装nagios-plugin-mongodb报错“need to install pymongo”
+categories:
+- nagios
+tags:
+- nagios-plugin-mongodb，need to install pymongo
+published: true
+comments: true
+indexer: true
+---
+<p>最近做mongodb的cacti和nagios监控，下载了github.com/mzupan/nagios-plugin-mongodb.git，但是执行脚本需要pymongo，否则报错：”need to install pymongo“，但是重新启动nagios后发现依然出现这样的报错，而我在本地执行是没有问题的，后来尝试了nrpe方式发现不可行，我的安装nagios服务器上面有2个python，后来我又给centos默认的2.4.3版本的python安装了pymongo，最后使用了yum安装的办法，都不能解决。通过几小时的研究发现，问题处在python环境上：我把check_mongodb.py的首行修改成指定的地址：#!/usr/local/bin/python，而放弃了默认的“env python”方式，OK，问题得解！</p>

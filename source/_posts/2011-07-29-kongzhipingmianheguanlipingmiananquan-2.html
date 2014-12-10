@@ -1,0 +1,259 @@
+---
+layout: post
+title: 控制平面和管理平面安全
+categories:
+- 安全
+- 思科
+tags:
+- Control plane ，management plane
+published: true
+comments: true
+indexer: true
+---
+<p><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R3 </strong></span></span><span style="font-size: medium;"><strong>上的</strong></span><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>VLAN</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN3 Fa0/0, Fa0/3</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN14 Fa0/1, Fa0/4</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="color: #c00000;"><span style="font-family: Times New Roman,serif;"><span style="font-size: medium;"><strong>R1</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#int e1/0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#no sh</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#ip add 192.168.1.1</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#int e1/1</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#no sh</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#ip add 192.168.2.1 255.255.255.0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#line vty 0 4</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-line)#login local</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-line)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#username cisco123 privilege 15 secret cisco123</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#ip access-list extended CoPP-acl</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#deny tcp host 192.168.2.2 any eq telnet</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#deny tcp host 192.168.2.2 any eq www
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#permit tcp any any eq telnet</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#permit tcp any any eq www //建立ACL，允许到管理平面的telnet和http访问<!--more-->
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#class-map match-any CoPP-class</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#match access-group name CoPP-acl  //定义CoPP分类</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#policy-map CoPP-policy</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#police rate 3 pps conform-action transmit exceed-action drop  //定义CoPP策略，除了192.168.2.2之外，所以IP到该路由器的telnet和http访问速率均限制在3pps之内
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c-police)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#control-plane host</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#service-policy input CoPP-policy  //应用CoPP策略
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#management-interface e1/0 allow telnet http</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#management-interface e1/1 allow telnet http   //只能通过这两个接口访问路由器
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#class-map type port-filter match-all PF-class</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#match closed-ports </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#policy-map type port-filter PF-policy
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#class PF-class</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#drop </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#log</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#control-plane host</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#service-policy type port-filter input PF-policy    //端口过滤，禁止访问未使用的端口
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#class-map type queue-threshold match-all QT-class
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#match protocol igmp</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#policy-map type queue-threshold QT-policy
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#queue-limit 100</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#control-plane host</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#service-policy type queue-threshold input QT-policy  //队列门限
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1#show policy-map control-plane all</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Control Plane Host </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Service-policy input: CoPP-policy</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: CoPP-class (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">82 packets, 4734 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: access-group name CoPP-acl</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">82 packets, 4734 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">police:</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">rate 3 pps, burst 1 packets</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">conformed 32 packets; actions:</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">transmit </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">exceeded 50 packets; actions:</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">drop </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">conformed 0 pps, exceed 0 pps</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: class-default (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">120 packets, 13650 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: any</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1#show policy-map type port-filter control-plane all</span></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Control Plane Host </span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Service-policy port-filter input: PF-policy</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: PF-class (match-all)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">52 packets, 9027 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: closed-ports</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">drop</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">log</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: class-default (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">69 packets, 3940 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: any</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1#show policy-map type queue-threshold control-plane all</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">queue-limit 100</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">queue-count 0 packets allowed/dropped 0/0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Control Plane Host </span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Service-policy queue-threshold input: QT-policy</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: QT-class (match-all)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">0 packets, 0 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: protocol igmp</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: class-default (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">69 packets, 3940 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: any</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="color: #c00000;"><span style="font-size: medium;"><strong>测试</strong></span></span></p>
+
+<p>通过<span style="font-family: Times New Roman,serif;">PC</span>使用<span style="font-family: Times New Roman,serif;">telnet</span>连接路由器的<span style="font-family: Times New Roman,serif;">e1/0</span>接口，感觉很卡；而通过虚拟机<span style="font-family: Times New Roman,serif;">telnet</span>路由器的<span style="font-family: Times New Roman,serif;">e1/0</span>接口，则命令反映正常，<span style="font-family: Times New Roman,serif;">CoPP</span>成功！</p>

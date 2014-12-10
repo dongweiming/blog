@@ -1,0 +1,847 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/28">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Exargs%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">关于xargs命令的研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-17T00:00:00+08:00" pubdate data-updated="true">Mar 17<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>前言：假如使用find将寻找到的匹配的文件传递给exec或者ok执行，可能几分钟后会报类似的错误：”/bin/rm Argument list too log -linux“，这时候可以使用xargs命令来避免，
+1 查找当前目录下所有用户具有读写执行权限的文件，并收回其他用户的写权限：</strong>
+<pre class="sh_bash">[root@client test]# ls -l
+总计 12
+-rwxrwxrwx 1 root root  8 03-16 09:11 1.txt
+-rwxrwxrwx 1 root root  8 03-16 09:11 2.txt
+-rw-r--r-- 1 root root 32 03-16 09:28 3.txt
+[root@client test]# find . -perm -7 -print |xargs chmod o-w
+[root@client test]# ls -l
+总计 12
+-rwxrwxr-x 1 root root  8 03-16 09:11 1.txt
+-rwxrwxr-x 1 root root  8 03-16 09:11 2.txt
+-rw-r--r-- 1 root root 32 03-16 09:28 3.txt</pre></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Exargs%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/">Bash Shell 位置参数和内部参数</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-17T00:00:00+08:00" pubdate data-updated="true">Mar 17<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_bash">$0表示当前执行的进程名,script 本身的名字,或者在正则表达式中表示整行输出</p>
+
+<p>$# ----传递给程序的总的参数数目</p>
+
+<p>$? ----上一个代码或者shell程序在shell中退出的情况，如果正常退出则返回0，反之为非0值。</p>
+
+<p>$* ----传递给程序的所有参数组成的字符串。</p>
+
+<p>$n ----表示第几个参数，$1 表示第一个参数，$2 表示第二个参数 ...</p>
+
+<p>$0 ----当前程序的名称</p>
+
+<p>$@----以"参数1" "参数2" ... 形式保存所有参数</p>
+
+<p>$$ ----本程序的(进程ID号)PID</p>
+
+<p>$! ----上一个命令的PID</p>
+
+<p>$_ ----保存之前执行的命令的最后一个参数</pre></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ersync/">关于rsync</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-16T00:00:00+08:00" pubdate data-updated="true">Mar 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>什么是rsync：
+它是一个linux系统下的文件同步传输工具，备份位置可以在本地也可以在远程服务器上
+rsync的优点：
+效率：除第一次是对目标目录全部内容复制外，下一次只传输变化的的文件到目标位置。
+安全：可以在SSH的加密传输数据中使用。
+用户体验：对安装执行没特殊要求。</strong></p>
+
+<p><strong>rsync的语法格式：</strong>
+rsync options source destination</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Ersync/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ewatch%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">关于watch命令的研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-12T00:00:00+08:00" pubdate data-updated="true">Mar 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>当想重复一个命令或者shell脚本（只间隔几秒），可以使用watch：</strong>
+<strong>1 方便查看日志文件以及其他增长型文件的速度</strong></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Ewatch%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Epaste%E5%91%BD%E4%BB%A4/">关于paste命令</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-12T00:00:00+08:00" pubdate data-updated="true">Mar 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>工作中经常出现文件合并的问题，原来linux有强大的粘贴命令：paste</p>
+
+<p>paste格式为：
+<pre class="sh_bash">$ paste f1 f2 f3
+f1-line1&lt;tab&gt;f2-line1&lt;tab&gt;f3-line1
+f1-line2&lt;tab&gt;f2-line2&lt;tab&gt;f3-line2
+f1-line3&lt;tab&gt;f2-line3&lt;tab&gt;f3-line3
+...</pre></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Epaste%E5%91%BD%E4%BB%A4/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/bash%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F/">Bash条件表达式</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-12T00:00:00+08:00" pubdate data-updated="true">Mar 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Bash条件表达式：</p>
+
+<p><strong>文件比较运算符</strong>
+<div class="bct fc05 fc11 nbw-blog ztag js-fs2">
+[ -e filename ]  如果filename存在,则为真
+[ -d filename ]  如果filename为目录,则为真
+[ -f filename ]   如果filename为常规文件,则为真    </div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/bash%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/colordiff-%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA-diff-%E8%BE%93%E5%87%BA/">ColorDiff&#8211;高亮显示 Diff 输出</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-10T00:00:00+08:00" pubdate data-updated="true">Mar 10<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>linux下有diff命令对文件进行对比。但是差异对比不够强烈，在此介绍ColorDiff，它是一个perl脚本：</strong></p>
+
+<p><strong>1  下载安装：</strong>
+<pre class="sh_bash"># wget http://colordiff.sourceforge.net/colordiff-1.0.9.tar.gz
+# tar zxvf colordiff-1.0.9.tar.gz
+# cd colordiff-1.0.9
+# make install</pre></p>
+
+<p><strong>2  使用格式：</strong></p>
+
+<p><pre class="sh_bash">colordiff file1 file2
+diff -u file1 file2 | colordiff</pre>
+<pre class="sh_bash">[root@client ~]# cat line-1.txt
+1
+2
+3
+[root@client ~]# cat line-2.txt
+1
+2
+4</p>
+
+<p>[root@client ~]# colordiff line-1.txt line-2.txt
+3c3,4
+&lt; 3
+---
+&gt; 4
+&gt; </pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E8%A7%A3%E5%86%B3usrbinld-cannot-find-lxxx%E9%94%99%E8%AF%AF/">解决/usr/bin/ld: Cannot Find -lxxx错误</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>编译安装时候可能会出现类似于以下的这样报错，简单地说是可能是在安装系统中选择的包的问题：
+<pre class="bbcodeblock" style="margin: 0px -99999px 0px 0px; padding: 3px; border: 1px inset; width: 98%; height: 50px; text-align: left; overflow: auto;" dir="ltr">/usr/bin/ld: cannot find -lltdl
+collect2: ld returned 1 exit status
+解决办法是：
+<pre class="sh_bash">[root@9-104 php-5.2.8]# updatedb
+[root@9-104 php-5.2.8]# locate libltdl  //提示/usr/bin/ld: cannot find -lxxx ，查找时候前面加lib：libxxx  住一 第一个l去掉
+/usr/lib64/libltdl.so.3
+/usr/lib64/libltdl.so.3.1.4
+/usr/share/libtool/libltdl
+/usr/share/libtool/libltdl/COPYING.LIB
+/usr/share/libtool/libltdl/Makefile.am
+/usr/share/libtool/libltdl/Makefile.in
+/usr/share/libtool/libltdl/README
+/usr/share/libtool/libltdl/acinclude.m4
+/usr/share/libtool/libltdl/aclocal.m4
+/usr/share/libtool/libltdl/config-h.in
+/usr/share/libtool/libltdl/config.guess
+...
+注意拉：
+[root@9-104 php-5.2.8]# ln -s /usr/lib64/libltdl.so.3 /usr/lib64/libltdl.so
+原理：给查找到的libxxx文件做软链接
+ln -s /usr/lib64/libxxx.so.X（X代表数字） /usr/lib64/lxxx.so</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/linux%E7%B3%BB%E7%BB%9F%E4%B8%8B%E6%9B%B4%E6%94%B9%E6%97%B6%E5%8C%BA%EF%BC%88timezone%EF%BC%89/">linux系统下更改时区（TimeZone）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>假如安装过程没有设置正确的时区，可以修改/etc/localtime文件，改成软链接方式：
+<pre class="sh_bash">[root@9-100 ~]# date
+Mon Mar  7 13:45:57 CST 2011
+[root@9-100 ~]# rm /etc/localtime
+[root@9-100 ~]# ll /usr/share/zoneinfo/US/
+total 48
+-rw-r--r-- 2 root root 2358 Sep  7 15:39 Alaska
+-rw-r--r-- 3 root root 2353 Sep  7 15:39 Aleutian
+-rw-r--r-- 2 root root  327 Sep  7 15:39 Arizona
+-rw-r--r-- 2 root root 3543 Sep  7 15:39 Central
+-rw-r--r-- 3 root root 3519 Sep  7 15:39 Eastern
+-rw-r--r-- 4 root root 1649 Sep  7 15:39 East-Indiana
+-rw-r--r-- 2 root root  312 Sep  7 15:39 Hawaii
+-rw-r--r-- 3 root root 2395 Sep  7 15:39 Indiana-Starke
+-rw-r--r-- 2 root root 2202 Sep  7 15:39 Michigan
+-rw-r--r-- 4 root root 2427 Sep  7 15:39 Mountain
+-rw-r--r-- 2 root root 2819 Sep  7 15:39 Pacific
+-rw-r--r-- 3 root root  290 Sep  7 15:39 Samoa
+[root@9-100 ~]# cd /etc
+[root@9-100 etc]# ln -s /usr/share/zoneinfo/US/Pacific localtime
+[root@9-100 etc]# date
+Sun Mar  6 21:47:38 PST 2011</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/15%E4%B8%AAbash-shell%E5%86%85%E5%BB%BA%E5%91%BD%E4%BB%A4/">15个Bash Shell内建命令</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><span style="font-family: serif;"><strong></strong></span><strong>Bash Shell内置的命令会快于外部命令，此文用于拓展知识</strong>
+<strong>1  export</strong>
+export用于导出一个变量或者 function到环境变量
+<pre class="sh_bash">
+export varname=value
+export -f functionname # exports function</pre>
+<pre class="sh_bash">[test@9-104 ~]$ export dongwm=www.dongwm
+[test@9-104 ~]$ env
+MAIL=/var/spool/mail/test
+PATH=/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin:/home/test/bin
+dongwm=www.dongwm
+G_BROKEN_FILENAMES=1
+_=/bin/env</pre></p>
+
+<p><strong>2 eval</strong>
+eval我的理解是对一个命令行，执行两次命令行处理
+<pre class="sh_bash">[root@9-104 ~]# pipe="|"
+[root@9-104 ~]# eval ls $pipe wc -l
+29</pre>
+shell第1次扫描命令行时，它替换出pipe的值｜，接着eval使它再次扫描命令行，这时shell把｜作为管道符号了。
+如果变量中包含任何需要shell直接在命令行中看到的字符（不是替换的结果），就可以使用eval。命令行结束符（； ｜ &amp;），I／o重定向符（&lt; &gt;）和引号就属于对shell具有特殊意义的符号，必须直接出现在命令行中。</p>
+
+<p><strong>3 pwd</strong>
+<span>pwd是一个shell内置命令打印当前工作目录。</span> <span><span class="google-src-text" style="direction: ltr; text-align: left;"> </span>它返回值为内置变量$ </span><span><span class="google-src-text" style="direction: ltr; text-align: left;">{PWD}
+</span></span><pre class="sh_bash"><span><span class="google-src-text" style="direction: ltr; text-align: left;">[root@9-104 local]# pwd
+/usr/local
+[root@9-104 local]# echo $PWD
+/usr/local</span></span></pre></p>
+
+<p><span><span class="google-src-text" style="direction: ltr; text-align: left;">其他内置命令：
+hash</span></span>
+readonly
+shift
+test
+getopts
+logout
+umask
+set
+unset
+let
+shopt
+printf</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/29/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/27/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

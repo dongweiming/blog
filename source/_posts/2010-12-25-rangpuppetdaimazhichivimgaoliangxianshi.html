@@ -1,0 +1,130 @@
+---
+layout: post
+title: 让puppet代码支持vim高亮显示
+categories:
+- puppet
+tags:
+- Syntax Highlight
+published: true
+comments: true
+indexer: true
+---
+<p>puppet的<span>语言<em> </em></span>还没有被vim支持，编辑时候黑底白字，不容易排错，看起来也不好分辨，请一定要看我一下这篇高亮显示的文章^.^<!--more--></p>
+
+<p>原理就是在你用户根目录下的.vim里面加2个文件，具体如下：</p>
+
+<p>1 切换到个人vim目录：</p>
+
+<p>#cd ~/.vim</p>
+
+<p>#vi syntax/puppet.vim</p>
+
+<p>添加以下内容：</p>
+
+<p>[ccine_perl height="100%" width="99%"]</p>
+
+<p>" puppet syntax file
+" Filename:     puppet.vim
+" Language:     puppet configuration file
+" Maintainer:   Dongwm&lt;ciici1234@hotmail.com&gt;
+" URL:
+" Last Change:
+" Version:
+"</p>
+
+<p>" Copied from the cfengine, ruby, and perl syntax files
+" For version 5.x: Clear all syntax items
+" For version 6.x: Quit when a syntax file was already loaded
+if version &lt; 600
+syntax clear
+elseif exists("b:current_syntax")
+finish
+endif</p>
+
+<p>syn region  puppetDefine         start="^\s*\(class\|define\|site\|node\)" end="{"  contains=puppetDefType,puppetDefName,puppetDefArguments
+syn keyword puppetDefType       class define site node inherits contained
+syn keyword puppetInherits      inherits contained
+syn region  puppetDefArguments  start="(" end=")" contains=puppetArgument
+syn match   puppetArgument      "\w\+" contained
+syn match   puppetArgument      "\$\w\+" contained
+syn match   puppetArgument      "'[^']+'" contained
+syn match   puppetArgument      '"[^"]+"' contained
+syn match   puppetDefName     "\w\+" contained</p>
+
+<p>syn match   puppetInstance           "\w\+\s*{" contains=puppetTypeBrace,puppetTypeName,puppetTypeDefault
+syn match   puppetTypeBrace       "{" contained
+syn match   puppetTypeName       "[a-z]\w*" contained
+syn match   puppetTypeDefault    "[A-Z]\w*" contained</p>
+
+<p>syn match   puppetParam           "\w\+\s*=&gt;" contains=puppetTypeRArrow,puppetParamName
+syn match   puppetParamRArrow       "=&gt;" contained
+syn match   puppetParamName       "\w\+" contained
+syn match   puppetVariable           "$\w\+"
+syn match   puppetVariable           "${\w\+}"
+syn match   puppetParen           "("
+syn match   puppetParen           ")"
+syn match   puppetBrace           "{"
+syn match   puppetBrace           "}"</p>
+
+<p>syn region  puppetString start=+"+ skip=+\\\\\|\\"+ end=+"+ contains=puppetVariable</p>
+
+<p>syn keyword puppetBoolean    true false
+syn keyword puppetKeyword    import inherits include
+syn keyword puppetControl    case default</p>
+
+<p>" comments last overriding everything else
+syn match   puppetComment            "\s*#.*$" contains=puppetTodo
+syn keyword puppetTodo               TODO NOTE FIXME XXX contained</p>
+
+<p>" Define the default highlighting.
+" For version 5.7 and earlier: only when not done already
+" For version 5.8 and later: only when an item doesn't have highlighting yet
+if version &gt;= 508 || !exists("did_puppet_syn_inits")
+if version &lt; 508
+let did_puppet_syn_inits = 1
+command -nargs=+ HiLink hi link &lt;args&gt;
+else
+command -nargs=+ HiLink hi def link &lt;args&gt;
+endif</p>
+
+<p>HiLink puppetVariable             Identifier
+HiLink puppetBoolean              Boolean
+HiLink puppetType                 Identifier
+HiLink puppetDefault              Identifier
+HiLink puppetKeyword              Define
+HiLink puppetTypeDefs             Define
+HiLink puppetComment              Comment
+HiLink puppetString               String
+HiLink puppetTodo                 Todo
+"  HiLink puppetBrace                Delimiter
+"  HiLink puppetTypeBrace            Delimiter
+"  HiLink puppetParen                Delimiter
+HiLink puppetDelimiter            Delimiter
+HiLink puppetControl              Statement
+HiLink puppetDefType              Define
+HiLink puppetDefName              Type
+HiLink puppetTypeName             Statement
+HiLink puppetTypeDefault          Type
+HiLink puppetParamName            Identifier
+HiLink puppetArgument             Identifier</p>
+
+<p>delcommand HiLink
+endif</p>
+
+<p>let b:current_syntax = "puppet"</p>
+
+<p>[/ccine_perl]</p>
+
+<p>然后创建目录ftdetect</p>
+
+<p>#mkdir ftdetect</p>
+
+<p>编辑第二个文件：</p>
+
+<p>#vi ftdetect/puppet.vim</p>
+
+<p>[ccine_perl height="100%" width="99%"]au BufRead,BufNewFile *.pp setfiletype puppet[/ccine_perl]</p>
+
+<p>OK!</p>
+
+<p>效果自己体验吧</p>

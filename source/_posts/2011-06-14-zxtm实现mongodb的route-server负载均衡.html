@@ -1,0 +1,12 @@
+---
+layout: post
+title: zxtm实现mongodb的Route Server负载均衡
+categories:
+- zxtm
+- 负载均衡
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>Route Server是一个mongos 实例，客户端由此接入，可以让整个集群看上去像单一数据库，简单的理解就是一个前端的路由。在实际配置中Route Server的冗余那也是很必须的，伟大的ZXTM也支持了它！关键步骤是1&nbsp; 创建pool时每个node都填入其ip和route sever的端口2&nbsp; 在创建virtual server时选择协议“Generic&nbsp; client first”这样就可以通过负载均衡来访问：[root@test ~]# mongo 192.168.8.20:30000MongoDB shell version: 1.8.1connecting to: 192.168.8.200:30000/test&gt; </p>

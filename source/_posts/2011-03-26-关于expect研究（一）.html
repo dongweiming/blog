@@ -1,0 +1,48 @@
+---
+layout: post
+title: 关于expect研究（一）
+categories:
+- expect
+- linux基础
+tags:
+- expect
+published: true
+comments: true
+indexer: true
+---
+<p><p><strong>expect是一个编程工具语言，他的作者描述其为：Expect [is a] software suite for automating interactive tools。类似于自动应答，它能实现自动和交互式的执行。
+1 因为Expect需要Tcl编程语言的支持，首先安装tcl</strong>
+<pre class="sh_bash">[root@server ~]# yum install -y tcl tclx tcl-devel –y</pre>
+<strong>2 安装最新版expect：</strong>
+http://sourceforge.net/projects/expect/
+目前最新版expect5.45
+<pre class="sh_bash">[root@server expect5.45]# ./configure --with-tcl=/usr/lib --with-tclinclude=/usr/include/tcl-private/generic &#038;&#038; make &#038;&#038; make install</pre>
+<strong>3 基础知识：</strong>
+1 基础命令：send，expect，spwan
+send表示接受一个字符串作为参数发送给指定进程，expect 命令则等待一个响应
+<!--more--></p>
+<p><pre class="sh_bash">[root@server test]# cat test1.exp
+#!expect -f
+expect test //等待 我输入 test
+send test for send //表示当我输入test后 会发送test for send 否则一直等待</pre>
+[root@server test]# expect test1.exp
+hi //我输入了其他字符 没反应
+test
+test for send //输入设定字符 条件满足</pre>
+也可以使用-c选项在命令行执行：
+[root@server test]# expect -c 'expect test {send test for send}'
+hi
+test
+test for send</pre>
+spawn后面需要加上要执行的shell命令，只有spawn执行的命令结果才能被expect理解和收集
+这里有一个小例子：
+<pre class="sh_bash">[root@server test]# cat test3.exp
+#!/usr/bin/expect
+set timeout 30  //表示超市时间30秒
+spawn ssh 192.168.9.102 -p 9922  //表示执行ssh到对端主机的命令
+expect password: //表示等待出现“password”（无括号）时
+send qwe123\!\@\#\n //输入这里设定的密码，\N表示让他自动回车
+interact //表示到远端终端后 可以执行交互命令，如同手动执行“ssh 192.168.9.102 -p 9922”后效果一样
+expect *$ //着2句在没有interact 时候有最用，因为spawn后一直是在执行SSH进程，当超时后 会输出一些东西，也就符合了这个等待。而当包含interact后 除非手动exit 否则不会符合这里的等待
+send mkdir test\n //当符合上句 在对端根目录创建一个test目录</pre></p>
+</p>

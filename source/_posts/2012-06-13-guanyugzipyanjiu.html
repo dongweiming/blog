@@ -1,0 +1,68 @@
+---
+layout: post
+title: 关于gzip研究
+categories:
+- python模块研究
+tags:
+- gzip
+published: true
+comments: true
+indexer: true
+---
+<p>前言：gzip是一个读，写GNU zip文件的模块，使用<tt>zlib的</tt>数据压缩和解压</p>
+
+<p><pre class="sh_python">
+import gzip
+import os</p>
+
+<p>outfilename = 'example.txt.gz'  #输出的gz文件
+output = gzip.open(outfilename, 'wb')    #可以有个compresslevel=i i越大压缩率越高，但是越慢
+try:
+    output.write('Contents of the example file go here.\n')  #这个其实是写在example.txt文件中
+finally:
+    output.close()</p>
+
+<p>print outfilename, 'contains', os.stat(outfilename).st_size, 'bytes of compressed data'
+os.system('file -b --mime %s' % outfilename)
+</pre></p>
+
+<p><pre class="sh_python">
+import gzip
+from cStringIO import StringIO
+import binascii</p>
+
+<p>uncompressed_data = 'The same line, over and over.\n' * 10
+print 'UNCOMPRESSED:', len(uncompressed_data)</p>
+
+<p>buf = StringIO()  #基于流
+f = gzip.GzipFile(mode='wb', fileobj=buf)
+try:
+    f.write(uncompressed_data)
+finally:
+    f.close()</p>
+
+<p>compressed_data = buf.getvalue()
+print 'COMPRESSED:', len(compressed_data)  #压缩后的大小
+print binascii.hexlify(compressed_data)</p>
+
+<p>inbuffer = StringIO(compressed_data)
+f = gzip.GzipFile(mode='rb', fileobj=inbuffer)
+try:
+    reread_data = f.read(len(uncompressed_data))
+finally:
+    f.close()</p>
+
+<p>print
+print 'RE-READ:', len(reread_data)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+UNCOMPRESSED: 300
+COMPRESSED: 51
+1f8b08007112d84f02ff0bc94855284ecc4d55c8c9cc4bd551c82f4b2d5248cc4b0133f4b8424665916401d3e717802c010000</p>
+
+<p>RE-READ: 300</p>
+
+<p>&nbsp;</p>

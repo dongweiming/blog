@@ -1,0 +1,25 @@
+---
+layout: post
+title: ! 'UnicodeEncodeError: ''latin-1'' codec can''t encode characters in position
+  报错解决'
+categories:
+- python
+- 数据库
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>前言：使用mysqldb查询数据库有一个报错：</p>
+
+<p>Traceback (most recent call last):
+File "/home/dongwm/RevSocket.py", line 52, in &lt;module&gt;
+main.run()
+File "/home/dongwm/RevSocket.py", line 47, in run
+print base.decode(buf,'sde#*df'')
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 96-119: ordinal not in range(256)</p>
+
+<p>后来群里面也有人遇见这样的问题，我正好仔细研究了一下 是本地locale变量的问题：</p>
+
+<p>export LANG=en_US.UTF-8
+执行上述语句即可</p>

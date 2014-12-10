@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: 安全 | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/an-quan/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[思科网络安全专题（二）:关于路由器安全]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/sikewangluoanquanzhuantierguanyuluyouqianquan/"/>
+    <updated>2011-08-01T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/sikewangluoanquanzhuantierguanyuluyouqianquan</id>
+    <content type="html"><![CDATA[<p>怎么说我也是ccsp出生，呵呵也看过很多IE级别的关于安全的书 ，所以最近准备做一个基于配置的关于安全的专题。</p>
+
+<p>1  vty访问</p>
+
+<p>虚拟终端访问当然需要一些安全</p>
+
+<p>3640_M(config)#aaa new-model
+3640_M(config)#aaa authentication login for-ssh local</p>
+
+<p>3640_M(config)#username dongwm password dongwmtest</p>
+
+<p>3640_M(config)#line vty 0 4
+3640_M(config-line)#transport input ssh
+3640_M(config-line)#exec-timeout 3 30  //超时时间为3分30秒
+3640_M(config-line)#login authentication for-ssh</p>
+
+<p>2 记录路由器事件</p>
+
+<p>3640_M(config)#service timestamps debug datetime msec localtime show-timezone
+3640_M(config)#service timestamps log datetime msec localtime show-timezone   //用Log信息和Debug信息的时间戳，格式为Datetime：，并且支持毫秒显示
+3640_M(config)#no logging console  //<span>禁止在控制台上打印日志报文</span>
+3640_M(config)#logging buffered 16384  //将日志信息记录到内存缓冲区的大小<!--more-->
+3640_M(config)#logging trap debugging   // //配置要发送到日志服务器的日志优先级，默认发送到日志服务器的优先级为Info
+3640_M(config)#logging facility local7  //配置日志存储的facility ，默认是local7
+3640_M(config)#logging 58.83.22.22
+3640_M(config)#logging source-interface loopback0  //日志发出用的源ip地址用回环</p>
+
+<p>3  snmp控制</p>
+
+<p>3640_M(config)# snmp-server community 5sffee RO 98  // 配置本路由器的只读字串为5sffee  符合acl98
+3640_M(config)#snmp-server trap-source loopback0 //将<span style="font-family: Times New Roman,serif;">loopback</span>接口的<span style="font-family: Times New Roman,serif;">IP</span>地址作为<span style="font-family: Times New Roman,serif;">SNMP Trap</span>的发送源地址
+3640_M(config)#snmp-server trap-authentication  //<span>如果共用字符串的验证失败，发送一个trap</span>
+3640_M(config)#snmp-server enable traps config  // 允许路由器将config类型<span style="font-family: Times New Roman,serif;">SNMP Trap</span>发送出去
+3640_M(config)#snmp-server host 192.168.8.23 5sffee  // 指定路由器<span style="font-family: Times New Roman,serif;">SNMP Trap</span>的接收者为 192.168.8.23，发送<span style="font-family: Times New Roman,serif;">Trap</span>时采用5sffee作为字串
+3640_M(config)#access-list 98 permit host 192.168.8.11</p>
+
+<p>4  控制http</p>
+
+<p>3640_M(config)# ip http port 20000  //将默认http端口改成20000
+3640_M(config)#ip http authentication aaa
+3640_M(config)#ip http access-class 12
+3640_M(config)#access-list 12 permit host 192.168.8.13</p>
+
+<p>4  开启ip cef</p>
+
+<p>syn泛洪和ddos会使用大量随机或者假冒的IP地址作为最终目标，这回对路由器的CPU强度增加很大负担，CEF特性会让新IP需要路由时候不需要每次都更新cache</p>
+
+<p>5  调度表</p>
+
+<p>上述攻击时会因为大量分组变得忙于响应，从而不能执行给他配置的其他任何需要执行的功能</p>
+
+<p>3640_M(config)#scheduler allocate 30000 2000/修改cpu花费在进程任务的时间为30000快速交换中的时间为2000</p>
+
+<p>6 登录标识</p>
+
+<p>3640_M(config)#banner motd #
+Enter TEXT message.  End with the character '#'.
+Please leave immediately, otherwise it will be held liable
+#</p>
+
+<p>3640_M(config)#aaa authentication banner  "this is dongwm.com"
+3640_M(config)#aaa authentication fail-message  "logging failed"</p>
+
+<p>7 在负载高时候启用nagle提高telnet访问性能</p>
+
+<p>当收到攻击telnet往往会很慢，并且telnet进一步影响路由器性能，nagle服务可以提高telnet性能</p>
+
+<p>3640_M(config)#service nagle</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[路由器上面启用安全Shell（ssh）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/luyouqishangmianqiyonganquanshellssh/"/>
+    <updated>2011-07-31T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/luyouqishangmianqiyonganquanshellssh</id>
+    <content type="html"><![CDATA[<p>R1(config)#ip domain-name dongwm.com</p>
+
+<p>R1(config)#crypto key zeroize rsa
+% No Signature RSA Keys found in configuration.  //想把配置中的rsa清除 但是发现配置中没有配置 呵呵</p>
+
+<p>R1(config)#crypto key generate rsa general-keys modulus 1024  //产生SSH所用安全密钥 长度为1024 类型为rsa</p>
+
+<p>% You already have RSA keys defined named R1.dongwm.com.
+% They will be replaced.</p>
+
+<p>% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable...
+*Mar  1 00:06:14.043: %SSH-5-DISABLED: SSH 1.99 has been disabled[OK]
+*Mar  1 00:06:20.631: %SSH-5-ENABLED: SSH 1.99 has been enabled</p>
+
+<p>R1(config)#ip ssh time-out 90  //设置ssh超市时间为90s</p>
+
+<p>R1(config)#ip ssh authentication-retries 4  //重置ssh验证的错误尝试次数</p>
+
+<p>R1(config)#line vty 0 15</p>
+
+<p>R1(config-line)#transport input ssh //容许vty线路使用ssh</p>
+
+<p>R1#sh crypto key mypubkey rsa
+% Key pair was generated at: 00:06:20 UTC Mar 1 2002
+Key name: R1.dongwm.com
+Usage: General Purpose Key
+Key is not exportable.
+Key Data:
+30819F30 0D06092A 864886F7 0D010101 05000381 8D003081 89028181 00C04D5B
+EA7876B0 DAD6D615 6F2B7DC6 8A6DB09A FA3C1EA0 36173B5C ACCC56C2 796D814B
+9F27CECF C48FD5D9 F9547F96 4623BDD2 D53CA81D D95B426F 64DB1D2B 01CD2BD0
+6C7223BB 3DDA577A 7E1D9AA8 7D48080E A9EB69E5 93A3E851 41F22715 27961027
+E254956F 7E6C23F3 4D314CF9 75E99F1B 1A0F287D 1AC4D83A 2AA7BD8F 55020301 0001
+% Key pair was generated at: 00:06:21 UTC Mar 1 2002
+Key name: R1.dongwm.com.server
+Usage: Encryption Key
+Key is not exportable.
+Key Data:
+307C300D 06092A86 4886F70D 01010105 00036B00 30680261 00D36FB0 D8F4A184
+7C8CAEAB C5F0155F B7FA5BEB 65096F81 18359560 53D5F9C9 CF2C0470 F04EE42B
+773E4E4F 7B181E2E BC83D77B 2C9A6C54 247D4ECA 77E53770 D440F979 A7A327CE
+5B35A59C 61EE0AD9 9A4D0C09 EE108B57 F906A97E FF24BE90 CF020301 0001</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[思科网络安全专题（一）:关于交换机安全]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyujiaohuanjianquan/"/>
+    <updated>2011-07-31T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyujiaohuanjianquan</id>
+    <content type="html"><![CDATA[<p>生产环境交换机比较多，以前的同事没有对其进行什么安全策略，就是简单配置一个登录密码而已。我接手后进行了一些改造！</p>
+
+<p>1 禁用DTP，中继</p>
+
+<p>因为一些交换机默认的中继为auto模式。可能在收到dtp协议帧后自动成为中继。</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#switchport mode access</p>
+
+<p>2 stp安全</p>
+
+<p>如果攻击者获得2个不同交换的2个端口，可将一个交换机引入网络，配置更高的桥优先级，使之比根桥的桥接优先级更低，这样stp重新收敛后就会被这个冒充交换机截取流量</p>
+
+<p>1 根保护： 收到bpdu后进入根保护不一致的状态，端口不再转发流量，bpdu停止后恢复</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#spanning-tree  guard root<!--more--></p>
+
+<p>2  BPDU保护：如果收到bpdu后次端口会被禁用</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#spanning-tree portfast bpduguard</p>
+
+<p>3 arp安全</p>
+
+<p>交换机可信端口容许arp回复，不可信端口的arp的回复内容会和绑定表对比验证正确性</p>
+
+<p>R1(config)#ip arp inspection vlan 13  //在lan启动此特性，arp回复内容不一致端口会被禁用</p>
+
+<p>或者：</p>
+
+<p>SW1(config)# int range fastEthernet 0/1  - 15</p>
+
+<p>SW1(config-if-range)#ip arp inspection  trust  //端口启用此特性</p>
+
+<p>4 vlan访问控制列表</p>
+
+<p>SW1(config)#access-list 17 permit tcp any host 192.168.8.127 eq telnet</p>
+
+<p>SW1(config)#vlan access-map ALLOWTELNET 10 //定义一个vlan access map，取名为ALLOWTELNET
+SW1(config-access-map)# match ip address 100 // 设置匹配规则为acl 1010
+SW1(config-access-map)# action forward // 匹配后，设置数据流转发（forward）</p>
+
+<p>SW1(config-access-map)#exit</p>
+
+<p>SW1(config)#vlan filter ALLOWTELNET vlan-list 1-45</p>
+
+<p>5 端口安全</p>
+
+<p>SW1(config)#int f0/12</p>
+
+<p>SW1(config-if)#switchport mode access</p>
+
+<p>SW1(config-if)#switchport port-security   //启用端口安全
+SW1(config-if)#switchport port-security violation protect  //针对非法接入计算机，端口处理模式丢弃数据包
+SW1(config-if)#switchport port-security mac-address sticky  //使已经学到的MAC地址动态的进入交换机配置</p>
+
+<p>SW1(config-if)#switchport port-security mac-address  XXXX.XXXX.XXXX  //为端口输入特定的允许通过的mac地址</p>
+
+<p>SW1(config-if)#switchport port-security maximum 5   //可以最大学习5个MAC地址
+6 其他</p>
+
+<p>no service finger
+no service pad
+no service udp-small-servers
+no service tcp-small-servers
+service password-encryption
+service tcp-keepalives-in
+service tcp-keepalives-out
+no cdp run
+no ip bootp server
+no ip http server
+no ip finger
+no ip source-route
+no ip gratuitous-arps
+no ip identd
+banner motd ^C
+Please leave immediately, otherwise it will be held liable
+^C
+security passwords min-length 6</p>
+
+<p>login block-for 15  attempts 3 within 60</p>
+
+<p>aaa new-model
+aaa authentication login local_auth local
+line con 0
+login authentication local_auth
+exec-timeout 5 0
+transport output telnet
+line aux 0
+login authentication local_auth
+exec-timeout 10 0
+transport output telnet
+line vty 0 15
+login authentication local_auth
+transport input ssh telnet</p>
+
+<p>ip tcp intercept list autosec_tcp_intercept_list
+ip tcp intercept drop-mode random
+ip tcp intercept watch-timeout 15
+ip tcp intercept connection-timeout 3600
+ip tcp intercept max-incomplete low 450
+ip tcp intercept max-incomplete high 550</p>
+
+<p>interface Vlan1
+no ip redirects
+no ip proxy-arp
+no ip unreachables
+no ip directed-broadcast
+no ip mask-reply
+no mop enabled</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[控制平面和管理平面安全]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/kongzhipingmianheguanlipingmiananquan-2/"/>
+    <updated>2011-07-29T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/kongzhipingmianheguanlipingmiananquan-2</id>
+    <content type="html"><![CDATA[<p><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R3 </strong></span></span><span style="font-size: medium;"><strong>上的</strong></span><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>VLAN</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN3 Fa0/0, Fa0/3</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN14 Fa0/1, Fa0/4</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="color: #c00000;"><span style="font-family: Times New Roman,serif;"><span style="font-size: medium;"><strong>R1</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#int e1/0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#no sh</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#ip add 192.168.1.1</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#int e1/1</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#no sh</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#ip add 192.168.2.1 255.255.255.0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#line vty 0 4</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-line)#login local</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-line)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#username cisco123 privilege 15 secret cisco123</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#ip access-list extended CoPP-acl</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#deny tcp host 192.168.2.2 any eq telnet</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#deny tcp host 192.168.2.2 any eq www
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#permit tcp any any eq telnet</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#permit tcp any any eq www //建立ACL，允许到管理平面的telnet和http访问<!--more-->
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#class-map match-any CoPP-class</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#match access-group name CoPP-acl  //定义CoPP分类</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#policy-map CoPP-policy</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#police rate 3 pps conform-action transmit exceed-action drop  //定义CoPP策略，除了192.168.2.2之外，所以IP到该路由器的telnet和http访问速率均限制在3pps之内
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c-police)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#control-plane host</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#service-policy input CoPP-policy  //应用CoPP策略
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#management-interface e1/0 allow telnet http</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#management-interface e1/1 allow telnet http   //只能通过这两个接口访问路由器
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#class-map type port-filter match-all PF-class</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#match closed-ports </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#policy-map type port-filter PF-policy
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#class PF-class</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#drop </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#log</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#control-plane host</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#service-policy type port-filter input PF-policy    //端口过滤，禁止访问未使用的端口
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#class-map type queue-threshold match-all QT-class
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#match protocol igmp</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#policy-map type queue-threshold QT-policy
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#queue-limit 100</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap-c)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-pmap)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#control-plane host</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#service-policy type queue-threshold input QT-policy  //队列门限
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-cp-host)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1#show policy-map control-plane all</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Control Plane Host </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Service-policy input: CoPP-policy</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: CoPP-class (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">82 packets, 4734 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: access-group name CoPP-acl</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">82 packets, 4734 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">police:</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">rate 3 pps, burst 1 packets</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">conformed 32 packets; actions:</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">transmit </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">exceeded 50 packets; actions:</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">drop </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">conformed 0 pps, exceed 0 pps</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: class-default (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">120 packets, 13650 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: any</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1#show policy-map type port-filter control-plane all</span></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Control Plane Host </span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Service-policy port-filter input: PF-policy</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: PF-class (match-all)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">52 packets, 9027 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: closed-ports</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">drop</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">log</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: class-default (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">69 packets, 3940 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: any</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1#show policy-map type queue-threshold control-plane all</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">queue-limit 100</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">queue-count 0 packets allowed/dropped 0/0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Control Plane Host </span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Service-policy queue-threshold input: QT-policy</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: QT-class (match-all)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">0 packets, 0 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: protocol igmp</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Class-map: class-default (match-any)</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">69 packets, 3940 bytes</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">5 minute offered rate 0 bps, drop rate 0 bps</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Match: any</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="color: #c00000;"><span style="font-size: medium;"><strong>测试</strong></span></span></p>
+
+<p>通过<span style="font-family: Times New Roman,serif;">PC</span>使用<span style="font-family: Times New Roman,serif;">telnet</span>连接路由器的<span style="font-family: Times New Roman,serif;">e1/0</span>接口，感觉很卡；而通过虚拟机<span style="font-family: Times New Roman,serif;">telnet</span>路由器的<span style="font-family: Times New Roman,serif;">e1/0</span>接口，则命令反映正常，<span style="font-family: Times New Roman,serif;">CoPP</span>成功！</p>
+]]></content>
+  </entry>
+  
+</feed>

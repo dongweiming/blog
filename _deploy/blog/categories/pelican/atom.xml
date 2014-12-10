@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: pelican | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/pelican/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用pelican心得]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shi-yong-pelicanxin-de/"/>
+    <updated>2013-06-06T23:32:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shi-yong-pelicanxin-de</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>最近在用<a href="http://getpelican.com/">pelican</a>借用<a href="http://pages.github.com">GitHub Pages</a>搭建我的<a href="http://dongweiming.github.io">小明明s Github</a>, 总结了些心得</p>
+
+<h4 id="makefile">写好Makefile</h4>
+
+<p>ruby有rake，但是python的好像没什么好用的，还是用Makefile，简单粗暴.先看用的</p>
+
+<p>```
+help:                                     <br />
+    @echo ‘Makefile for a pelican Web site                                        ‘
+    @echo ‘                                                                       ‘
+    @echo ‘Usage:                                                                 ‘
+    @echo ‘   make html                        (re)generate the web site          ‘
+    @echo ‘   make clean                       remove the generated files         ‘</p>
+
+<p>local:                                                         <br />
+    ./regen -q                                                <br />
+github:-                                                     <br />
+    ./regen                                                 <br />
+    ghp-import -b master $(OUTPUTDIR)                      <br />
+    git push origin gh-pages:gh-pages-                    <br />
+    git push origin master:master                          </p>
+
+<p>.PHONY: help github local </p>
+
+<p>```</p>
+
+<p>其中的regen是封装的脚本, 主要是为了加参数让我在本地生成html(其中的文件连接都指到我本地),然后我用python -m SimpleHTTPServer启动:</p>
+
+<p>```
+#!/usr/bin/env bash</p>
+
+<p>set -e</p>
+
+<p>quiet=””
+output=”output”
+if [ “$1” = “-q” ] ; then
+    shift
+    quiet=”1”
+    output=”output-local”
+    export OVERRIDE_SITEURL=http://localhost:8000
+fi</p>
+
+<p>echo -n “regenerating…”
+pelican content/ -o $output -s pelicanconf.py “$@”
+echo done.</p>
+
+<p>```</p>
+
+<h4 id="github">我提交到github的方式</h4>
+
+<p>上面的脚本已经很明显了，我直接执行make github</p>
+
+<p>其中的<a href="http://github.com/davisp/ghp-import">ghp-import</a>的介绍很明显了:Easily import docs to your gh-pages branch</p>
+
+<p>但是有个大坑: githubpages是要从你的项目的master分支去获取html页面，而不是gh-pages分支,所以Makefile我修改了下用法</p>
+
+<h4 id="push">自动push不需要帐号密码</h4>
+
+<p>其实就是添加~./netrc</p>
+
+<p>machine github.com
+login XXX@gmail.com
+password XXX</p>
+
+<h4 id="section-1">可配置的创建文章</h4>
+
+<p>想想octopress的Rakefile，里面定义了一个new_post的方法，额pelican什么都没有，好吧，我用shell做了个</p>
+
+<p>```
+#!/bin/bash
+category=’设计模式’
+title_resource=’python设计模式之’
+tags=’Design Patterns’</p>
+
+<p>while getopts “:c:r:g:s:t:” opt; do
+  case $opt in
+    c)
+    category=$OPTARG
+      ;;
+    r)
+    title_resource=$OPTARG
+        ;;
+    g)
+    tags=$OPTARG
+        ;;
+    t)
+    title=$OPTARG
+        ;;
+    s)
+    slug=$PTARG
+        ;;
+    ?)
+      echo “How to use: $0 [-c category] [-r title_resource] [-g tags] [-t title] [-s slug]” &gt;&amp;2
+      exit 1
+      ;;
+    :)
+      echo “Option -$OPTARG requires an argument.” &gt;&amp;2
+      exit 1
+      ;;
+  esac
+done
+test “x$title” = “x” &amp;&amp; read -r -p “Post title [前缀是 ${title_resource}]&gt; “ &amp;&amp; title=${REPLY}
+test “x$slug” = “x” &amp;&amp; read -r -p “Post slug [比如abstract-factory]&gt; “ &amp;&amp; slug=${REPLY}
+title=<code>echo $title | tr "[:upper:]" "[:lower:]"]</code>
+title=<code>echo $title | tr -d "[:blank:]"</code>
+slug=<code>echo $slug | tr " " "-"</code>
+fileslug=<code>echo $slug | tr "-" '_'</code>
+cur_date=<code>date "+%Y-%m-%d"</code>
+filename=”${category}/${fileslug}.md”
+author=<code>git config --get user.name</code>
+echo “Creating preview”
+echo “<strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong><em>”
+echo “filename: content/$filename”
+echo “title: ${title_resource}${title}”
+echo “slug: python-${slug}”
+echo “date: ${cur_date}”
+echo “category: ${category}”
+echo “tags: ${tags}”
+echo “</em></strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong>”
+echo “”
+read -r -p “Are you ready to create(Y or N) &gt;”
+reply=${REPLY}
+reply=<code>echo $reply | tr "[:upper:]" "[:lower:]"]</code>
+test “x$reply” != “xy” &amp;&amp; exit 1
+cat &gt; “content/”$filename «EOF
+title: ${title_resource}${title}
+slug: python-${slug}
+date: ${cur_date}
+category: ${category}
+tags: ${tags}</p>
+
+<p>EOF</p>
+
+<p>$EDITOR “content/”$filename</p>
+
+<p>```</p>
+
+<h4 id="psdongweiminggithubiohttpsgithubcomdongweimingdongweiminggithubiogh-pages">PS：以上脚本都可以到我的项目<a href="https://github.com/dongweiming/dongweiming.github.io">dongweiming.github.io</a>的gh-pages分支去拿</h4>
+]]></content>
+  </entry>
+  
+</feed>

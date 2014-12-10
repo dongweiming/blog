@@ -1,0 +1,1880 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/13">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyu-3/">关于shutil研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：shutil是一个高层次的文件操作，比如复制，移动和修改权限等</p>
+
+<p><pre class="sh_python">
+import os
+import time 
+from shutil import *
+from commands import *
+print 'BEFORE:', os.listdir(os.getcwd())
+copyfile('text', 'test_to_copy')   #将源文件内容完全复制给目标文件. 如果没有写入目标文件的权限, 会引起IOError. 
+                            #由于该函数是为了读取文件内容而打开此输入文件, 而不管它的类型是什么, 特殊类型的文件使用copyfile()是不能拷贝的, 比如管道文件
+print 'AFTER:', os.listdir(os.getcwd())
+print
+os.mkdir('example')
+print 'BEFORE:', os.listdir('example')
+copy('test.py', 'example') #类似于Unix命令cp. 如果目标参数是一个目录而不是一个文件, 那么在这个目录中复制一个源文件副本(它与源文件同名). 文件的权限也随之复制
+print 'AFTER:', os.listdir('example')
+print
+def show_file_info(filename):
+    stat_info = os.stat(filename)
+    print '\tMode    :', stat_info.st_mode
+    print '\tCreated :', time.ctime(stat_info.st_ctime)
+    print '\tAccessed:', time.ctime(stat_info.st_atime)
+    print '\tModified:', time.ctime(stat_info.st_mtime)
+rmtree('example') #可以删除整个目录树. 里面若产生错误会作为异常抛出. 但是如果它的第二个参数是目录树, 那么错误会被忽略, 第三个参数可以指定为一个特殊出错处理函数句柄.
+os.mkdir('example')
+print 'SOURCE:'
+show_file_info('test.py')
+copy2('test', 'example') #copy2()函数类似于copy(), 但是它将一些元信息, 如文件最后一次被读取时间和修改时间等, 也复制至新文件中.
+print 'DEST:'
+show_file_info('test.py')
+print
+print 'BEFORE:', getstatus('test1.py')
+copymode('test.py', 'test1.py')
+print 'AFTER :', getstatus('test1.py')
+print
+print 'BEFORE:'
+show_file_info('test1.py')
+copystat('test.py', 'test1.py') #复制文件的其他元信息(权限, 最后读取时间, 最后修改时间)
+print 'AFTER :'
+show_file_info('test1.py')
+print
+print 'BEFORE:'
+print getoutput('ls -rlast /tmp/example')
+copytree('example', '/tmp/example')
+print 'AFTER:'
+print getoutput('ls -rlast /tmp/example')
+print
+print 'BEFORE: example : ', os.listdir('example')
+move('example', 'example2')
+print 'AFTER : example2: ', os.listdir('example2')
+</pre></p>
+
+<p>执行结果</p>
+
+<p>dongwm@linux-dongwm:~/test&gt; python test.py</p>
+
+<p>BEFORE: [&#8216;text&#8217;, &#8216;test.py&#8217;]
+AFTER: [&#8216;text&#8217;, &#8216;test.py&#8217;, &#8216;test_to_copy&#8217;]
+BEFORE: []
+AFTER: [&#8216;test.py&#8217;]</p>
+
+<p>SOURCE:
+Mode    : 33188
+Created : Fri Jun 15 11:08:12 2012
+Accessed: Fri Jun 15 11:08:12 2012
+Modified: Fri Jun 15 11:08:11 2012
+DEST:
+Mode    : 33188
+Created : Fri Jun 15 11:08:12 2012
+Accessed: Fri Jun 15 11:08:12 2012
+Modified: Fri Jun 15 11:08:11 2012</p>
+
+<p>BEFORE: -rwxr-xr-x 1 dongwm users 965  6月 14 17:45 test1.py
+AFTER : -rw-r&#8211;r&#8211; 1 dongwm users 965  6月 14 17:45 test1.py</p>
+
+<p>BEFORE:
+Mode    : 33188
+Created : Fri Jun 15 11:11:39 2012
+Accessed: Thu Jun 14 17:45:57 2012
+Modified: Thu Jun 14 17:45:54 2012
+AFTER :
+Mode    : 33188
+Created : Fri Jun 15 11:14:23 2012
+Accessed: Fri Jun 15 11:14:23 2012
+Modified: Fri Jun 15 11:14:20 2012</p>
+
+<p>BEFORE:
+ls: 无法访问/tmp/example: 没有那个文件或目录
+AFTER:
+总用量 28
+4 -rw-r&#8211;r&#8211;   1 dongwm users   468  6月 15 11:08 test.py
+4 drwxr-xr-x   2 dongwm users  4096  6月 15 11:08 .
+20 drwxrwxrwt 355 root   root  20480  6月 15 11:16 ..</p>
+
+<p>BEFORE: example :  [&#8216;test.py&#8217;]
+AFTER : example2:  [&#8216;test.py&#8217;]</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuschedyanjiu/">关于sched研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：我们经常需要定时的执行某个任务，在Linux下我们有强大的crontab，但是在Python这个粒度（定时执行函数），如何处理呢？sched是一个调度（延时处理机制），每次想要定时执行某任务都必须写入一个调度</p>
+
+<p><pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>def print_event(name):
+    print 'EVENT:', time.time(), name</p>
+
+<p>print 'START:', time.time()
+scheduler.enter(2, 1, print_event, ('first',)) #第一个参数代表延迟多久，第二个表示优先级，第三个是需要被调用的函数，地四个是函数的参数（元组类型）
+scheduler.enter(3, 1, print_event, ('second',))</p>
+
+<p>scheduler.run()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+START: 1339660487.96
+EVENT: 1339660489.96 first
+EVENT: 1339660490.96 second
+<pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>def long_event(name):
+    print 'BEGIN EVENT :', time.time(), name
+    time.sleep(2)
+    print 'FINISH EVENT:', time.time(), name</p>
+
+<p>print 'START:', time.time()
+scheduler.enter(2, 1, long_event, ('first',))
+scheduler.enter(3, 1, long_event, ('second',))</p>
+
+<p>scheduler.run()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+START: 1339660898.83
+BEGIN EVENT : 1339660900.84 first
+FINISH EVENT: 1339660902.84 first
+BEGIN EVENT : 1339660902.84 second
+FINISH EVENT: 1339660904.84 second
+注：run()一直被阻塞, 直到所有事件被全部执行完. 每个事件在同一线程中运行, 所以如果一个事件的执行时间大于其他事件的延迟时间,</p>
+
+<p>那么, 就会产生重叠. 重叠的解决方法是推迟后来事件的执行时间. 这样保证没有丢失任何事件, 但这些事件的调用时刻会比原先设定的迟</p>
+
+<p>上面的例子第二个事件在第一个事件运行结束后立即运行, 因为第一个事件的执行时间足够长, 已经超过第二个事件的预期开始时刻.（本来应该1339660903秒运行）</p>
+
+<p><pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)
+now = time.time()
+def print_event(name):
+    print 'EVENT:', time.time(), name
+print 'START:', now
+scheduler.enterabs(now+2, 2, print_event, ('first',)) #enterabs保证事件准确的在同一时刻执行,,第一个参数是运行事件的确切时间, 而不是延迟时间量
+scheduler.enterabs(now+2, 1, print_event, ('second',))
+scheduler.run()
+</pre></p>
+
+<p><pre class="sh_python">
+import sched
+import threading
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>counter = 0 #一个全局变量的计数器</p>
+
+<p>def increment_counter(name):</p>
+
+<p>    global counter
+    print 'EVENT:', time.time(), name
+    counter += 1
+    print 'NOW:', counter</p>
+
+<p>print 'START:', time.time()
+e1 = scheduler.enter(2, 1, increment_counter, ('E1',))
+e2 = scheduler.enter(3, 1, increment_counter, ('E2',))</p>
+
+<p>t = threading.Thread(target=scheduler.run) #enter()和enterabs()返回一事件的引用, 该引用可被用于事件的取消. 由于run()阻塞, 
+             #所以事件的取消操作需要在另外一个线程中进行. 如下例子, 在一个子线程开始执行调度, 而主处理线程用于取消某个事件
+t.start()
+scheduler.cancel(e1)  #取消了e1的那个调度
+t.join()  #等调度完成再开始下一个
+print 'FINAL:', counter
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyureadlineyanjiu/">关于readline研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：readline是一个GNU readline库的API</p>
+
+<p><pre class="sh_python">
+import readline</p>
+
+<p>readline.parse_and_bind('tab: complete')  #按tab自动补全
+readline.parse_and_bind('set editing-mode vi')  #设置对某行数据假如按‘ESC’，进入vi模式  这2行也可以写道一个文件里面int.rc ,导入配置：readline.read_init_file('int.rc')</p>
+
+<p>while True:
+    line = raw_input('Prompt ("stop" to quit): ')
+    if line == 'stop':
+        break
+    print 'ENTERED: "%s"' % line
+</pre></p>
+
+<p><pre class="sh_python">
+import readline
+import logging</p>
+
+<p>LOG_FILENAME = '/tmp/completer.log'
+logging.basicConfig(filename=LOG_FILENAME,
+                    level=logging.DEBUG,
+                    )   #记录日志</p>
+
+<p>class SimpleCompleter(object):</p>
+
+<p>    def __init__(self, options):
+        self.options = sorted(options)
+        return</p>
+
+<p>    def complete(self, text, state):
+        response = None
+        if state == 0:
+            if text:
+                self.matches = [s 
+                                for s in self.options
+                                if s and s.startswith(text)]
+                logging.debug('%s matches: %s', repr(text), self.matches)
+            else:
+                self.matches = self.options[:]
+                logging.debug('(empty input) matches: %s', self.matches)
+        try:
+            response = self.matches[state]
+        except IndexError:
+            response = None
+        logging.debug('complete(%s, %s) =&gt; %s', 
+                      repr(text), state, repr(response))
+        return response</p>
+
+<p>def input_loop():
+    line = ''
+    while line != 'stop':
+        line = raw_input('Prompt ("stop" to quit): ')
+        print 'Dispatch %s' % line</p>
+
+<p>readline.set_completer(SimpleCompleter(['start', 'stop', 'list', 'print']).complete)  #注册列表里面几个命令
+readline.parse_and_bind('tab: complete')  #绑定tab自动补全
+input_loop()
+</pre></p>
+
+<p><pre class="sh_python">
+import readline
+import logging</p>
+
+<p>LOG_FILENAME = 'completer.log'
+logging.basicConfig(filename=LOG_FILENAME,
+                    level=logging.DEBUG,
+                    )</p>
+
+<p>class BufferAwareCompleter(object):</p>
+
+<p>    def __init__(self, options):
+        self.options = options  #可选的黎明和2级命令
+        self.current_candidates = [] 
+        return</p>
+
+<p>    def complete(self, text, state):
+        response = None
+        if state == 0:    
+            origline = readline.get_line_buffer() #返回行缓冲区的当前内容
+            begin = readline.get_begidx() #返回行自动补全的范围的开始
+            end = readline.get_endidx() #返回行自动补全的范围的结束
+            being_completed = origline[begin:end]  #返回行数据
+            words = origline.split() #因为有2级命令  分割出那级命令</p>
+
+<p>            logging.debug('origline=%s', repr(origline))
+            logging.debug('begin=%s', begin)
+            logging.debug('end=%s', end)
+            logging.debug('being_completed=%s', being_completed)
+            logging.debug('words=%s', words)</p>
+
+<p>            if not words: #弱国使用tab是空 ，返回所有一级命令
+                self.current_candidates = sorted(self.options.keys()) 
+            else:
+                try:
+                    if begin == 0: #如果是第一个命令
+                        candidates = self.options.keys()
+                    else:
+                        first = words[0] #2级命令 
+                        candidates = self.options[first] 取第一级命令作为键  取子键</p>
+
+<p>                    if being_completed: #如果有字母
+                        self.current_candidates = [ w for w in candidates
+                                                    if w.startswith(being_completed) ]  #对比是不是注册的命令是不是以这个或这些字母开头
+                    else:
+                        self.current_candidates = candidates  #返回所有</p>
+
+<p>                    logging.debug('candidates=%s', self.current_candidates)</p>
+
+<p>                except (KeyError, IndexError), err:
+                    logging.error('completion error: %s', err)
+                    self.current_candidates = []</p>
+
+<p>        try:
+            response = self.current_candidates[state]
+        except IndexError:
+            response = None
+        logging.debug('complete(%s, %s) =&gt; %s', repr(text), state, response)
+        return response</p>
+
+<p>def input_loop():
+    line = ''
+    while line != 'stop':
+        line = raw_input('Prompt ("stop" to quit): ')
+        print 'Dispatch %s' % line</p>
+
+<p>readline.set_completer(BufferAwareCompleter(
+    {'list':['files', 'directories'],
+     'print':['byname', 'bysize'],
+     'stop':[],
+    }).complete)</p>
+
+<p>readline.parse_and_bind('tab: complete')</p>
+
+<p># Prompt the user for text
+input_loop()
+</pre></p>
+
+<p><pre class="sh_python">
+import readline
+import logging
+import os</p>
+
+<p>LOG_FILENAME = 'completer.log'
+HISTORY_FILENAME = 'completer.hist'</p>
+
+<p>logging.basicConfig(filename=LOG_FILENAME,
+                    level=logging.DEBUG,
+                    )
+def get_history_items():
+    return [ readline.get_history_item(i) #返回历史记录中的这条
+             for i in xrange(1, readline.get_current_history_length() + 1)
+             ]</p>
+
+<p>class HistoryCompleter(object):</p>
+
+<p>    def __init__(self):
+        self.matches = []
+        return
+    def complete(self, text, state):
+        response = None
+        if state == 0:
+            history_values = get_history_items()
+            logging.debug('history: %s', history_values)
+            if text:
+                self.matches = sorted(h 
+                                      for h in history_values 
+                                      if h and h.startswith(text))
+            else:
+                self.matches = []
+            logging.debug('matches: %s', self.matches)
+        try:
+            response = self.matches[state]
+        except IndexError:
+            response = None
+        logging.debug('complete(%s, %s) =&gt; %s', 
+                      repr(text), state, repr(response))
+        return response</p>
+
+<p>def input_loop():
+    if os.path.exists(HISTORY_FILENAME):
+        readline.read_history_file(HISTORY_FILENAME)
+    print 'Max history file length:', readline.get_history_length()
+    print 'Startup history:', get_history_items()
+    try:
+        while True:
+            line = raw_input('Prompt ("stop" to quit): ')
+            if line == 'stop':
+                break
+            if line:
+                print 'Adding "%s" to the history' % line
+    finally:
+        print 'Final history:', get_history_items()
+        readline.write_history_file(HISTORY_FILENAME)   #记录历史记录到文件</p>
+
+<p>readline.set_completer(HistoryCompleter().complete)</p>
+
+<p>readline.parse_and_bind('tab: complete')</p>
+
+<p>input_loop()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyupwdyanjiu/">关于pwd 研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：pwd是UNIX口令数据库模块，一般分析的是/etc/passwd的用户信息，
+<table border="1">
+<thead valign="bottom">
+<tr>
+<th>索引</th>
+<th>属性</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+<td>0</td>
+<td>pw_name</td>
+<td>用户登录名</td>
+</tr>
+<tr>
+<td>1</td>
+<td>pw_passwd</td>
+<td>（可选）加密的密码</td>
+</tr>
+<tr>
+<td>2</td>
+<td>pw_uid</td>
+<td>User id</td>
+</tr>
+<tr>
+<td>3</td>
+<td>pw_gid</td>
+<td>Group id</td>
+</tr>
+<tr>
+<td>4</td>
+<td>pw_gecos</td>
+<td>用户的描述信息</td>
+</tr>
+<tr>
+<td>5</td>
+<td>pw_dir</td>
+<td>家目录</td>
+</tr>
+<tr>
+<td>6</td>
+<td>pw_shell</td>
+<td>登录的shell，默认/bin/bash</td>
+</tr>
+</tbody>
+</table>
+<pre class="sh_python">
+import pwd  #类似于组数据模块grp
+import operator</p>
+
+<p>all_user_data = pwd.getpwall()  #获取所有用户信息
+interesting_users = sorted((u 
+                            for u in all_user_data 
+                            if not u.pw_name.startswith('_')), 
+                            key=operator.attrgetter('pw_name')) #这个排序根据用户名的数据 比如 dongwm在daliu的后面，dongwm在dongwn的前面</p>
+
+<p># Find the longest lengths for a few fields
+username_length = max(len(u.pw_name) for u in interesting_users) + 1
+home_length = max(len(u.pw_dir) for u in interesting_users) + 1 #算某个字段的长度</p>
+
+<p># Print report headers
+fmt = '%-*s %4s %-*s %s'
+print fmt % (username_length, 'User', 
+             'UID', 
+             home_length, 'Home Dir', 
+             'Description')
+print '-' * username_length, '----', '-' * home_length, '-' * 30  #根据字段最大长度 格式化</p>
+
+<p>for u in interesting_users:
+    print fmt % (username_length, u.pw_name, 
+                 u.pw_uid, 
+                 home_length, u.pw_dir, 
+                 u.pw_gecos)
+</pre></p>
+
+<p><pre class="sh_python">
+import pwd
+import sys</p>
+
+<p>username = sys.argv[1]
+user_info = pwd.getpwnam(username)  #查询用户数据信息</p>
+
+<p>print 'Username:', user_info.pw_name
+print 'Password:', user_info.pw_passwd
+print 'Comment :', user_info.pw_gecos
+print 'UID/GID :', user_info.pw_uid, '/', user_info.pw_gid
+print 'Home    :', user_info.pw_dir
+print 'Shell   :', user_info.pw_shell
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py dongwm
+Username: dongwm
+Password: x
+Comment : dongwm
+UID/GID : 1000 / 100
+Home    : /home/dongwm
+Shell   : /bin/bash
+<pre class="sh_python">
+import pwd
+import os
+import sys</p>
+
+<p>filename = os.path.basename(__file__)
+stat_info = os.stat(filename)
+owner = pwd.getpwuid(stat_info.st_uid).pw_name</p>
+
+<p>print '%s is owned by %s (%s)' % (filename, owner, stat_info.st_uid)</p>
+
+<p>uid = os.getuid()
+user_info = pwd.getpwuid(uid)
+print 'Currently running with UID=%s username=%s' % (uid, user_info.pw_name)</p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python test.py 
+test.py is owned by dongwm (1000)
+Currently running with UID=1000 username=dongwm</p>
+
+<p> ~
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuoperatoryanjiu/">关于operator研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：operator是一系列内置的运算接口</p>
+
+<p><pre class="sh_python">
+from operator import *</p>
+
+<p>a = -1
+b = 5.0
+c = 2
+d = 6
+print 'a =', a
+print 'b =', b
+print 'c =', c
+print 'd =', d
+print '-'*30</p>
+
+<p>print 'not_(a)     :', not_(a) #逻辑判断是不是一个数据
+print 'truth(a)    :', truth(a) 逻辑判断数据是不是为真
+print 'is_(a, b)   :', is_(a,b) #逻辑判断a是b的bool结果
+print 'is_not(a, b):', is_not(a,b) #逻辑判断a不是b的bool结果
+for func in (lt, le, eq, ne, ge, gt):  
+    print '%s(a, b):' % func.__name__, func(a, b)  #判断大小和相等
+print '\nPositive/Negative:' 
+print 'abs(a):', abs(a) #a绝对值
+print 'neg(a):', neg(a) #a的补数</p>
+
+<p>print '\nArithmetic:'
+print 'add(a, b)     :', add(a, b)  #求和
+print 'div(a, b)     :', div(a, b) #a/b结果
+print 'div(d, c)     :', div(d, c) 
+print 'floordiv(a, b):', floordiv(a, b) #地板除
+print 'floordiv(d, c):', floordiv(d, c)
+print 'mod(a, b)     :', mod(a, b) #
+print 'mul(a, b)     :', mul(a, b)
+print 'pow(c, d)     :', pow(c, d)
+print 'sub(b, a)     :', sub(b, a)
+print 'truediv(a, b) :', truediv(a, b)
+print 'truediv(d, c) :', truediv(d, c)</p>
+
+<p>print '\nBitwise:'
+print 'and_(c, d)  :', and_(c, d) 
+print 'invert(c)   :', invert(c)
+print 'lshift(c, d):', lshift(c, d)
+print 'or_(c, d)   :', or_(c, d)
+print 'rshift(d, c):', rshift(d, c)
+print 'xor(c, d)   :', xor(c, d)</p>
+
+<p>a = [ 1, 2, 3 ]
+b = [ 'a', 'b', 'c' ]
+print 'a =', a
+print 'b =', b</p>
+
+<p>print '\nConstructive:'
+print '  concat(a, b):', concat(a, b)  #序列叠加
+print '  repeat(a, 3):', repeat(a, 3)  #序列重复3次</p>
+
+<p>print '\nSearching:'
+print '  contains(a, 1)  :', contains(a, 1)  #寻找是否a中包含1，返回bool
+print '  contains(b, "d"):', contains(b, "d") #寻找是否b中包字母‘d’，返回bool
+print '  countOf(a, 1)   :', countOf(a, 1) #返回符合值的数量
+print '  countOf(b, "d") :', countOf(b, "d")
+print '  indexOf(a, 5)   :', indexOf(a, 1) #返回符合的索引值</p>
+
+<p>print '\nAccess Items:'
+print '  getitem(b, 1)            :', getitem(b, 1) #返回b的第2項
+print '  getslice(a, 1, 3)        :', getslice(a, 1, 3)#返回序列a的第2－3项
+print '  setitem(b, 1, "d")       :', setitem(b, 1, "d"), ', after b =', b #设置b的第二项是‘d’，替换原来的
+print '  setslice(a, 1, 3, [4, 5]):', setslice(a, 1, 3, [4, 5]), ', after a =', a </p>
+
+<p>print '\nDestructive:'
+print '  delitem(b, 1)    :', delitem(b, 1), ', after b =', b #去掉序列b的第2项
+print '  delslice(a, 1, 3):', delslice(a, 1, 3), ', after a =', a #去掉序列a的第2－3项</p>
+
+<p>a = -1
+b = 5.0
+c = [ 1, 2, 3 ]
+d = [ 'a', 'b', 'c']
+print 'a =', a
+print 'b =', b
+print 'c =', c
+print 'd =', d
+print</p>
+
+<p>a = iadd(a, b)
+print 'a = iadd(a, b) =&gt;', a  #类似于a+=b a变化了
+print</p>
+
+<p>c = iconcat(c, d)
+print 'c = iconcat(c, d) =&gt;', c #类似于c+=d c变化了
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+a = -1
+b = 5.0
+c = 2
+d = 6
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+not_(a)     : False
+truth(a)    : True
+is_(a, b)   : False
+is_not(a, b): True
+lt(a, b): True
+le(a, b): True
+eq(a, b): False
+ne(a, b): True
+ge(a, b): False
+gt(a, b): False</p>
+
+<p>Positive/Negative:
+abs(a): 1
+neg(a): 1
+neg(b): -5.0
+pos(a): -1
+pos(b): 5.0</p>
+
+<p>Arithmetic:
+add(a, b)     : 4.0
+div(a, b)     : -0.2
+div(d, c)     : 3
+floordiv(a, b): -1.0
+floordiv(d, c): 3
+mod(a, b)     : 4.0
+mul(a, b)     : -5.0
+pow(c, d)     : 64
+sub(b, a)     : 6.0
+truediv(a, b) : -0.2
+truediv(d, c) : 3.0</p>
+
+<p>Bitwise:
+and_(c, d)  : 2
+invert(c)   : -3
+lshift(c, d): 128
+or_(c, d)   : 6
+rshift(d, c): 1
+xor(c, d)   : 4
+a = [1, 2, 3]
+b = [&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]</p>
+
+<p>Constructive:
+concat(a, b): [1, 2, 3, &#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]
+repeat(a, 3): [1, 2, 3, 1, 2, 3, 1, 2, 3]</p>
+
+<p>Searching:
+contains(a, 1)  : True
+contains(b, &#8220;d&#8221;): False
+countOf(a, 1)   : 1
+countOf(b, &#8220;d&#8221;) : 0
+indexOf(a, 5)   : 0</p>
+
+<p>Access Items:
+getitem(b, 1)            : b
+getslice(a, 1, 3)        : [2, 3]
+setitem(b, 1, &#8220;d&#8221;)       : None , after b = [&#8216;a&#8217;, &#8216;d&#8217;, &#8216;c&#8217;]
+setslice(a, 1, 3, [4, 5]): None , after a = [1, 4, 5]</p>
+
+<p>Destructive:
+delitem(b, 1)    : None , after b = [&#8216;a&#8217;, &#8216;c&#8217;]
+delslice(a, 1, 3): None , after a = [1]
+a = -1
+b = 5.0
+c = [1, 2, 3]
+d = [&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]</p>
+
+<p>a = iadd(a, b) =&gt; 4.0</p>
+
+<p>c = iconcat(c, d) =&gt; [1, 2, 3, &#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]</p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_prolog">
+from operator import *</p>
+
+<p>class MyObj(object):
+    """example class for attrgetter"""
+    def __init__(self, arg):
+        super(MyObj, self).__init__()
+        self.arg = arg
+    def __repr__(self):
+        return 'MyObj(%s)' % self.arg  #设置出发一个属性的修改，添加了arg这个属性</p>
+
+<p>l = [ MyObj(i) for i in xrange(5) ]
+print l
+g = attrgetter('arg')  #获取属性arg
+vals = [ g(i) for i in l ]
+print vals
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+from operator import *</p>
+
+<p>print 'Dictionaries:'
+l = [ dict(val=i) for i in xrange(5) ]  #这个的意义就是匿名函数：<tt>lambda x, y=5: x[y]</tt>
+print l
+g = itemgetter('val')
+vals = [ g(i) for i in l ]
+print vals</p>
+
+<p>print
+print 'Tuples:'
+l = [ (i, i*2) for i in xrange(5) ]
+print l
+g = itemgetter(1)
+vals = [ g(i) for i in l ]
+print vals
+</pre>
+<pre class="sh_python">
+from operator import *</p>
+
+<p>class MyObj(object):
+    def __init__(self, val):
+        super(MyObj, self).__init__()
+        self.val = val
+        return
+    def __str__(self):
+        return 'MyObj(%s)' % self.val
+    def __lt__(self, other):  #自定义了比较lt的方法
+        print 'Testing %s &lt; %s' % (self, other)
+        return self.val &lt; other.val
+    def __add__(self, other): #自定义了add的方法
+        print 'Adding %s + %s' % (self, other)
+        return MyObj(self.val + other.val)</p>
+
+<p>a = MyObj(1)
+b = MyObj(2)</p>
+
+<p>print 'Comparison:'
+print lt(a, b)</p>
+
+<p>print '\nArithmetic:'
+print add(a, b)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Comparison:
+Testing MyObj(1) &lt; MyObj(2)   #触发了a的__lt__
+True
+Arithmetic:
+Adding MyObj(1) + MyObj(2) #触发了a的__add__
+MyObj(3)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyummapyanjiu/">关于mmap研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：mmap全称内存映射文件，需要在<a href="http://en.wikipedia.org/wiki/Python_%28programming_">Python<img src="http://i.ixnp.com/images/v3.45/t.gif" alt="" /></a>程序中存取一个很大的数组，数组的每一项是(int, int, float, int)的记录。如果直接用list来存放，占据的内存巨大（因为不仅所有这些数都是对象，且tuple本身也是对象），或者要将正则表达式应用于匹配整个文件，但又不想将整个文件内容全部读入内存（特别是对于大文件而言，更是如此），那么就是mmap的作用了，Memory-mapped文件可以被当作可变的字符串或类似文件的对象</p>
+
+<p><pre class="sh_python">
+import mmap
+import contextlib</p>
+
+<p>with open('text', 'r') as f:  #创建的一个文件text
+    with contextlib.closing(mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)) as m:  #mmap.mmap创建一个内存映射文件,第一个参数是文件描述符，第二个参数要是0，表示隐射全部文件
+                                                #第三个参数可选，ACCESS_READ表示只读，<tt>ACCESS_WRITE</tt>内存直接写文件 <tt>ACCESS_COPY</tt>不会真的修改到源文件
+        print 'First 10 bytes via read :', m.read(10)
+        print 'First 10 bytes via slice:', m[:10]
+        print '2nd   10 bytes via read :', m.read(10)
+</pre></p>
+
+<p><pre class="sh_python">
+import mmap
+import contextlib</p>
+
+<p>word = 'Icinga'
+reversed = word[::-1]
+print 'Looking for    :', word
+print 'Replacing with :', reversed</p>
+
+<p>with open('text', 'r+') as f:  #'r+'不能只是写，而是追加
+    with contextlib.closing(mmap.mmap(f.fileno(), 0)) as m:
+        print 'Before:', m.readline().rstrip()   #替换前的源文件
+        m.seek(0)  #指针到文件开头</p>
+
+<p>        loc = m.find(word)   #在内存中找到'Icinga'
+        m[loc:loc+len(word)] = reversed #替换
+        m.flush()</p>
+
+<p>        m.seek(0) 
+        print 'After :', m.readline().rstrip()
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyulogging/">关于logging</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：logging为python模块提供状态、错误、信息输出的标准接口</p>
+
+<p><pre class="sh_python">
+import logging</p>
+
+<p>LOG_FILENAME = 'logging.out'
+logging.basicConfig(filename=LOG_FILENAME,  #将信息输入到一个文件
+                    level=logging.DEBUG, #级别是DEBUG
+                    )
+logging.debug('This message should go to the log file') #给文件添加一条信息，如果重复运行就会在文件尾部添加一行一行
+f = open(LOG_FILENAME, 'rt')
+try:
+    body = f.read()
+finally:
+    f.close()</p>
+
+<p>print body
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+DEBUG:root:This message should go to the log file  #前面的&#8217;DEBUG&#8217;是因为设定的级别，root是默认的。后面会修改</p>
+
+<p><pre class="sh_python">
+import glob
+import logging
+import logging.handlers</p>
+
+<p>LOG_FILENAME = 'logging.out'</p>
+
+<p>my_logger = logging.getLogger('MyLogger')  #默认是数据是'root'，这里修改这个标识
+my_logger.setLevel(logging.DEBUG)</p>
+
+<p>handler = logging.handlers.RotatingFileHandler(LOG_FILENAME,
+                                               maxBytes=20, #文件最大字节数
+                                               backupCount=5, #会轮转5个文件，共6个
+                                               ) #最新的文件总是logging.out，每次达到大小限制，它更名为后缀<tt>.1</tt>，然后.1变成.2，.5删掉
+my_logger.addHandler(handler)</p>
+
+<p>for i in range(20):  
+    my_logger.debug('i = %d' % i)</p>
+
+<p>logfiles = glob.glob('%s*' % LOG_FILENAME) #查看建立的文件
+for filename in logfiles:
+    print filename
+</pre>
+详细级别：CRITICAL 50 ERROR 40 WARNING 30 INFO 20 DEBUG 10 UNSET 0，这个数值比如是10的debug，但是设置日志调试记录模式是INFO，那么这个信息不被打印</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyulinecacheyanjiu/">关于linecache研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：linecache是一个被广泛使用的，从文件或者导入模块中检索文本行, 对结果采用缓冲来提高读文件的效率的模块。缓冲的实现是读取文件的内容, 并解析成行, 保存在内存的字典中. API 根据索引返回列表中的请求行. 在读取文件和寻找需要的行信息上可以节省一定时间. 这对于从同一个文件中查询多行内容是非常有用的, 比如为一个error report产生trackback.</p>
+
+<p><pre class="sh_python">
+import linecache
+import os
+import tempfile
+text='''The design of all built-in operating system dependent modules of Python is such that as long as the same
+functionality is available, it uses the same interface; for example, the function <tt>os.stat(path)</tt> returns stat
+information about <em>path</em> in the same format (which happens to have originated with the POSIX interface)
+Extensions peculiar to a particular operating system are also available through the <a title="os: Miscellaneous operating system interfaces." href="http://docs.python.org/library/os.html#module-os"><tt>os</tt></a> module, 
+but using them is of course a threat to portability.</p>
+
+<p>An “Availability: Unix” note means that this function is commonly found on Unix systems. It does not make any claims 
+about its existence on a specific operating system.If not separately noted, all functions that claim “Availability: 
+Unix” are supported on Mac OS X, which builds on a Unix core
+'''
+def make_tempfile():
+    fd, temp_file_name = tempfile.mkstemp()  #创建一个临时文件
+    os.close(fd)
+    f = open(temp_file_name, 'wt')
+    try:
+        f.write(text)
+    finally:
+        f.close()
+    return temp_file_name #返回文件地址</p>
+
+<p>def cleanup(filename):
+    os.unlink(filename) #类似删除文件</p>
+
+<p>filename = make_tempfile()
+print 'SOURCE: ', text.split('\n')[4]  #显示第5行  从0开始计数
+print 'CACHE : ', linecache.getline(filename, 5).rstrip() #显示第5行，从1开始计数
+print '\nBLANK : "%s"' % linecache.getline(filename, 6)  #第六行为空行  显示空行
+not_there = linecache.getline(filename, 500) #文件没有500行，所以返回空
+print '\nNOT THERE: "%s" includes %d characters' %  (not_there, len(not_there)) 
+no_such_file = linecache.getline('this_file_does_not_exist.txt', 1) #没有这个文件，但是不会出现异常，返回空
+print '\nNO FILE: ', no_such_file
+module_line = linecache.getline('linecache.py', 3) #用在输出tracebacks上, 另一个重要特性是可以通过指定模块名在sys.path中寻找python模块源码. 
+                                      #如果在当前路径中无法找到文件, 那么linecache中的缓冲直接搜索sys.path中的模块
+print '\nMODULE : ', module_line</p>
+
+<p>cleanup(filename)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyujsonyanjiu/">关于json研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：json模块全称JavaScript对象符号的序列话，他是理想的数据交换语言。易于人阅读和编写，同时也易于机器解析和生成，在python2.6之前是<em>simplejson</em>，需要安装。有点像<tt>pickle,但是广泛使用在Web服务器和客户端AJAX应用程序之间的通信</tt></p>
+
+<p><pre class="sh_python">
+import json</p>
+
+<p>data = [ { 'x':'A', 'y':(2, 4), 'z':3.0 } ]
+print 'DATA:', repr(data)</p>
+
+<p>unsorted = json.dumps(data)
+print 'JSON:', json.dumps(data)  #编码为json，支持string, unicode, int, float, list, tuple, dict，还可以设定separators，设定分割符，
+                                #当key不是字符串会引发<em>ValueError</em>,skipkeys=True的话会过滤掉
+print 'SORT:', json.dumps(data, sort_keys=True) #编码并且按键排序</p>
+
+<p>first = json.dumps(data, sort_keys=True)
+second = json.dumps(data, sort_keys=True)
+print 'INDENT:', json.dumps(data, sort_keys=True, indent=2) #指定缩进值，输出类似于pprint</p>
+
+<p>
+print 'UNSORTED MATCH:', unsorted == first
+print 'SORTED MATCH  :', first == second
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+DATA: [{&#8216;y&#8217;: (2, 4), &#8216;x&#8217;: &#8216;A&#8217;, &#8216;z&#8217;: 3.0}]
+JSON: [{&#8220;y&#8221;: [2, 4], &#8220;x&#8221;: &#8220;A&#8221;, &#8220;z&#8221;: 3.0}]
+SORT: [{&#8220;x&#8221;: &#8220;A&#8221;, &#8220;y&#8221;: [2, 4], &#8220;z&#8221;: 3.0}]</p>
+
+<p>INDENT: [
+{
+&#8220;x&#8221;: &#8220;A&#8221;,
+&#8220;y&#8221;: [
+2,
+4
+],
+&#8220;z&#8221;: 3.0
+}
+]
+UNSORTED MATCH: False
+SORTED MATCH  : True
+<pre class="sh_python">
+import json</p>
+
+<p>class MyObj(object):
+    def __init__(self, s):
+        self.s = s
+    def __repr__(self):  #设置元类，触发打印初始化的self.s
+        return '&lt;MyObj(%s)&gt;' % self.s
+obj = MyObj('instance value goes here')</p>
+
+<p>print 'First attempt'
+try:
+    print json.dumps(obj)  #因为我们设计的不是内置支持的类型
+except TypeError, err:
+    print 'ERROR:', err</p>
+
+<p>def convert_to_builtin_type(obj):  #定义自己的类型
+    print 'default(', repr(obj), ')'
+    d = { '__class__':obj.__class__.__name__, 
+          '__module__':obj.__module__,
+          }
+    d.update(obj.__dict__)  #保持以前的内置属性
+    return d
+def dict_to_object(d):
+    if '__class__' in d:
+        class_name = d.pop('__class__')
+        module_name = d.pop('__module__')
+        module = __import__(module_name)
+        print 'MODULE:', module
+        class_ = getattr(module, class_name)
+        print 'CLASS:', class_
+        args = dict( (key.encode('ascii'), value) for key, value in d.items())
+        print 'INSTANCE ARGS:', args
+        inst = class_(**args)
+    else:
+        inst = d
+    return inst
+print
+print 'With default'
+encode = json.dumps(obj, default=convert_to_builtin_type)  #根据自己的类型编码
+print encode
+print json.loads(encode, object_hook=dict_to_object)  #根据hook解码</p>
+
+<p>
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>First attempt
+ERROR: &lt;MyObj(instance value goes here)&gt; is not JSON serializable</p>
+
+<p>With default
+default( &lt;MyObj(instance value goes here)&gt; )  #触发__repr__
+{&#8221;s&#8221;: &#8220;instance value goes here&#8221;, &#8220;__module__&#8221;: &#8220;__main__&#8221;, &#8220;__class__&#8221;: &#8220;MyObj&#8221;} #打印属性
+MODULE: &lt;module &#8216;__main__&#8217; from &#8216;test.py&#8217;&gt;
+CLASS: &lt;class &#8216;__main__.MyObj&#8217;&gt;
+INSTANCE ARGS: {&#8217;s&#8217;: &#8216;instance value goes here&#8217;}
+&lt;MyObj(instance value goes here)&gt;
+<pre class="sh_python">
+import json</p>
+
+<p>encoder = json.JSONEncoder()  
+data = [ { 'a':'A', 'b':(2, 4), 'c':3.0 } ]</p>
+
+<p>for part in encoder.iterencode(data): #生成生产编码数据的 “chunks”的迭代器
+    print 'PART:', part</p>
+
+<p>print 
+class MyObj(object):
+    def __init__(self, s):
+        self.s = s
+    def __repr__(self):
+        return '&lt;MyObj(%s)&gt;' % self.s
+class MyEncoder(json.JSONEncoder):  #通过使用类，可以创建子类来定制自己的行为，就和上面一样，他继承了json.JSONEncode</p>
+
+<p>    def default(self, obj):   #和上面的莉子效果一样，但是使用了类API,重写了default方法
+        print 'default(', repr(obj), ')'
+        d = { '__class__':obj.__class__.__name__, 
+              '__module__':obj.__module__,
+              }
+        d.update(obj.__dict__)
+        return d
+class MyDecoder(json.JSONDecoder):</p>
+
+<p>    def __init__(self):
+        json.JSONDecoder.__init__(self, object_hook=self.dict_to_object)  #和上面一行，指定hook的初始化</p>
+
+<p>    def dict_to_object(self, d):
+        if '__class__' in d:
+            class_name = d.pop('__class__')
+            module_name = d.pop('__module__')
+            module = __import__(module_name)
+            print 'MODULE:', module
+            class_ = getattr(module, class_name)
+            print 'CLASS:', class_
+            args = dict( (key.encode('ascii'), value) for key, value in d.items())
+            print 'INSTANCE ARGS:', args
+            inst = class_(**args)
+        else:
+            inst = d
+        return inst
+obj = MyObj('internal data')
+print obj
+encode = MyEncoder().encode(obj)
+print encode
+print '-'*30
+myobj_instance = MyDecoder().decode(encode)
+print myobj_instance
+</pre>
+<pre class="sh_python">
+import json
+import tempfile</p>
+
+<p>f = tempfile.NamedTemporaryFile(mode='w+')  #用随机文件模块生成一个随机文件，在操作完后自动删除这个文件
+f.write('[{"a": "A", "c": 3.0, "b": [2, 4]}]') 
+f.flush() #<span>写入缓冲区的任何数据都复制到文件中，并且缓冲区被清除</span>
+f.seek(0)  #把指针指到文件最开始的位置</p>
+
+<p>print json.load(f)
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuitertoolsyanjiu/">关于itertools研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：itertools用于高效循环的迭代函数集合</p>
+
+<p><strong>1 chain 合并迭代器 ：将多个迭代器作为参数, 但只返回单个迭代器, 它产生所有参数迭代器的内容, 就好像他们是来自于一个单一的序列.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import chain
+for i in chain([1, 2, 3], ['a', 'b', 'c']):
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>2 izip 切分迭代器 ：返回一个合并了多个迭代器为一个元组的迭代器. 它类似于内置函数zip(), 只是它返回的是一个迭代器而不是一个列表.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import izip
+for i in izip([1, 2, 3], ['a', 'b', 'c']):
+    print i
+</pre></p>
+
+<p><strong>3 count 返回一个不断产生连续整数的迭代器. 第一个数可以由参数指定, 默认为0. 它没有上届参数(可参见内置函数 <tt>xrange()</tt> , 它更好的控制结果集). 在下面的例子中, 迭代器由于参数列表结束而停止.</strong></p>
+
+<p><strong>4 </strong><tt><strong>islice 返回的迭代器是返回了输入迭代器根据索引来选取的项.</strong>
+</tt></p>
+
+<p><pre class="sh_python">
+from itertools import islice,count #count
+print 'Stop at 5:'
+for i in islice(count(), 5):
+    print i
+print 'By tens to 100:' 
+for i in islice(count(), 0, 100, 10):  #从0开始 步长为10  最大是100
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>5 tee 返回一些基于单个原始输入的独立迭代器(默认为2). 它和Unix上的tee工具有点语义相似, </strong></p>
+
+<p><strong>也就是说它们都重复读取输入设备中的值并将值写入到一个命名文件和标准输出中</strong></p>
+
+<p><pre class="sh_python">
+r = islice(count(), 5)
+i1, i2 = tee(r) </p>
+
+<p>for i in i1:
+    print 'i1:', i
+for i in i2:
+    print 'i2:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>6 <tt>imap</tt> 返回一个迭代器, 它是调用了一个其值在输入迭代器上的函数, 返回结果. 它类似于内置函数 <tt>map()</tt> , 只是前者在</strong></p>
+
+<p><strong>任意输入迭代器结束后就停止(而不是插入None值来补全所有的输入).</strong></p>
+
+<p><pre class="sh_python">
+print 'Doubles:'
+for i in imap(lambda x:2*x, xrange(5)):
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>7 <tt>starmap</tt> <tt>starmap()</tt> 函数类似于 <tt>imap()</tt> , 但是在从多个迭代器中构造元组时, 它先将各个项切分成单个迭代器并将它作为参数以*语</strong></p>
+
+<p><strong>法传递给映射函数. <tt>imap()</tt> 的映射函数被称为f(i1, i2), <tt>startmap()</tt> 的映射函数被称为f(<a href="http://pymotwcn.readthedocs.org/en/latest/documents/itertools.html#id4">*</a>i).</strong></p>
+
+<p><pre class="sh_python">
+from itertools import starmap
+values = [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]
+for i in starmap(lambda x,y:(x, y, x*y), values):
+    print '%d * %d = %d' % i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>8 <tt>cycle</tt> 返回一个不断重复参数内容的迭代器. 由于它必须记住整个输入迭代器的内容, 所以如果输入迭代器很长的话, 它可能会消耗大量</strong></p>
+
+<p><strong>的内存. 在下面的例子中, 一个计数变量用于在一定数量的循环后, 跳出循环</strong></p>
+
+<p><pre class="sh_python">
+from itertools import cycle
+i = 0
+for item in cycle(['a', 'b', 'c']):
+    i += 1
+    if i == 10:
+        break
+    print (i, item)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>9 <tt>repeat</tt> 函数返回一个每次都产生相同值的迭代器. 它也是永远继续的, 除非你设置了times参数来限制.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import  repeat
+for i in repeat('over-and-over', 5):
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>10 <tt>dropwhile</tt> 函数返回一个当条件为false之后的输入迭代器中剩余元素的迭代器. 它不过滤输入迭代器中的每一个项; </strong></p>
+
+<p><strong>在条件为false之后的第一次, 返回迭代器中剩下来的项.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import dropwhile
+def should_drop(x):
+    print 'Testing:', x
+    return (x&lt;1)</p>
+
+<p>for i in dropwhile(should_drop, [ -1, 0, 1, 2, 3, 4, 1, -2 ]):
+    print 'Yielding:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>11 <tt>takewhile ：和dropwhile相反, 它返回的是一个产生输入迭代器中只要测试函数返回true的项的迭代器</tt></strong></p>
+
+<p><pre class="sh_python">
+from itertools import takewhile</p>
+
+<p>def should_take(x):
+    print 'Testing:', x
+    return (x&lt;2)</p>
+
+<p>for i in takewhile(should_take, [ -1, 0, 1, 2, 3, 4, 1, -2 ]):
+    print 'Yielding:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>12 <tt>ifilter</tt> 返回的是迭代器类似于针对列表的内置函数 <tt>filter()</tt> , 它只包括当测试函数返回true时的项. 它不同于 <tt>dropwhile()</tt> </strong></p>
+
+<p><strong>的是每个项是在被返回之前进行测试的.</strong></p>
+
+<p><pre class="sh_python">
+def check_item(x):
+    print 'Testing:', x
+    return (x&lt;1)</p>
+
+<p>for i in ifilter(check_item, [ -1, 0, 1, 2, 3, 4, 1, -2 ]):
+    print 'Yielding:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>13  <tt> </tt><tt>ifilterfalse</tt> 和ifilter(函数相反 ， 返回一个包含那些测试函数返回false的项的迭代器.</strong></p>
+
+<p><strong>14 <tt>groupby</tt> 返回一个产生按照key进行分组后的值集合的迭代器.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import *
+from operator import itemgetter</p>
+
+<p>d = dict(a=1, b=2, c=1, d=2, e=1, f=2, g=3)
+di = sorted(d.iteritems(), key=itemgetter(1))
+for k, g in groupby(di, key=itemgetter(1)):
+    print k, map(itemgetter(0), g)  #将一个字典根据值将关键字分组
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/14/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/12/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

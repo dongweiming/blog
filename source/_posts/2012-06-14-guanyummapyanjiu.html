@@ -1,0 +1,48 @@
+---
+layout: post
+title: 关于mmap研究
+categories:
+- python模块研究
+tags:
+- mmap
+published: true
+comments: true
+indexer: true
+---
+<p>前言：mmap全称内存映射文件，需要在<a href="http://en.wikipedia.org/wiki/Python_%28programming_">Python<img src="http://i.ixnp.com/images/v3.45/t.gif" alt="" /></a>程序中存取一个很大的数组，数组的每一项是(int, int, float, int)的记录。如果直接用list来存放，占据的内存巨大（因为不仅所有这些数都是对象，且tuple本身也是对象），或者要将正则表达式应用于匹配整个文件，但又不想将整个文件内容全部读入内存（特别是对于大文件而言，更是如此），那么就是mmap的作用了，Memory-mapped文件可以被当作可变的字符串或类似文件的对象</p>
+
+<p><pre class="sh_python">
+import mmap
+import contextlib</p>
+
+<p>with open('text', 'r') as f:  #创建的一个文件text
+    with contextlib.closing(mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)) as m:  #mmap.mmap创建一个内存映射文件,第一个参数是文件描述符，第二个参数要是0，表示隐射全部文件
+                                                #第三个参数可选，ACCESS_READ表示只读，<tt>ACCESS_WRITE</tt>内存直接写文件 <tt>ACCESS_COPY</tt>不会真的修改到源文件
+        print 'First 10 bytes via read :', m.read(10)
+        print 'First 10 bytes via slice:', m[:10]
+        print '2nd   10 bytes via read :', m.read(10)
+</pre></p>
+
+<p><pre class="sh_python">
+import mmap
+import contextlib</p>
+
+<p>word = 'Icinga'
+reversed = word[::-1]
+print 'Looking for    :', word
+print 'Replacing with :', reversed</p>
+
+<p>with open('text', 'r+') as f:  #'r+'不能只是写，而是追加
+    with contextlib.closing(mmap.mmap(f.fileno(), 0)) as m:
+        print 'Before:', m.readline().rstrip()   #替换前的源文件
+        m.seek(0)  #指针到文件开头</p>
+
+<p>        loc = m.find(word)   #在内存中找到'Icinga'
+        m[loc:loc+len(word)] = reversed #替换
+        m.flush()</p>
+
+<p>        m.seek(0) 
+        print 'After :', m.readline().rstrip()
+</pre></p>
+
+<p>&nbsp;</p>

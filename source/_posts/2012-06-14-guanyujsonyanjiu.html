@@ -1,0 +1,176 @@
+---
+layout: post
+title: 关于json研究
+categories:
+- python模块研究
+tags:
+- json
+published: true
+comments: true
+indexer: true
+---
+<p>前言：json模块全称JavaScript对象符号的序列话，他是理想的数据交换语言。易于人阅读和编写，同时也易于机器解析和生成，在python2.6之前是<em>simplejson</em>，需要安装。有点像<tt>pickle,但是广泛使用在Web服务器和客户端AJAX应用程序之间的通信</tt></p>
+
+<p><pre class="sh_python">
+import json</p>
+
+<p>data = [ { 'x':'A', 'y':(2, 4), 'z':3.0 } ]
+print 'DATA:', repr(data)</p>
+
+<p>unsorted = json.dumps(data)
+print 'JSON:', json.dumps(data)  #编码为json，支持string, unicode, int, float, list, tuple, dict，还可以设定separators，设定分割符，
+                                #当key不是字符串会引发<em>ValueError</em>,skipkeys=True的话会过滤掉
+print 'SORT:', json.dumps(data, sort_keys=True) #编码并且按键排序</p>
+
+<p>first = json.dumps(data, sort_keys=True)
+second = json.dumps(data, sort_keys=True)
+print 'INDENT:', json.dumps(data, sort_keys=True, indent=2) #指定缩进值，输出类似于pprint</p>
+
+<p>
+print 'UNSORTED MATCH:', unsorted == first
+print 'SORTED MATCH  :', first == second
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+DATA: [{'y': (2, 4), 'x': 'A', 'z': 3.0}]
+JSON: [{"y": [2, 4], "x": "A", "z": 3.0}]
+SORT: [{"x": "A", "y": [2, 4], "z": 3.0}]</p>
+
+<p>INDENT: [
+{
+"x": "A",
+"y": [
+2,
+4
+],
+"z": 3.0
+}
+]
+UNSORTED MATCH: False
+SORTED MATCH  : True
+<pre class="sh_python">
+import json</p>
+
+<p>class MyObj(object):
+    def __init__(self, s):
+        self.s = s
+    def __repr__(self):  #设置元类，触发打印初始化的self.s
+        return '&lt;MyObj(%s)&gt;' % self.s
+obj = MyObj('instance value goes here')</p>
+
+<p>print 'First attempt'
+try:
+    print json.dumps(obj)  #因为我们设计的不是内置支持的类型
+except TypeError, err:
+    print 'ERROR:', err</p>
+
+<p>def convert_to_builtin_type(obj):  #定义自己的类型
+    print 'default(', repr(obj), ')'
+    d = { '__class__':obj.__class__.__name__, 
+          '__module__':obj.__module__,
+          }
+    d.update(obj.__dict__)  #保持以前的内置属性
+    return d
+def dict_to_object(d):
+    if '__class__' in d:
+        class_name = d.pop('__class__')
+        module_name = d.pop('__module__')
+        module = __import__(module_name)
+        print 'MODULE:', module
+        class_ = getattr(module, class_name)
+        print 'CLASS:', class_
+        args = dict( (key.encode('ascii'), value) for key, value in d.items())
+        print 'INSTANCE ARGS:', args
+        inst = class_(**args)
+    else:
+        inst = d
+    return inst
+print
+print 'With default'
+encode = json.dumps(obj, default=convert_to_builtin_type)  #根据自己的类型编码
+print encode
+print json.loads(encode, object_hook=dict_to_object)  #根据hook解码</p>
+
+<p>
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>First attempt
+ERROR: &lt;MyObj(instance value goes here)&gt; is not JSON serializable</p>
+
+<p>With default
+default( &lt;MyObj(instance value goes here)&gt; )  #触发__repr__
+{"s": "instance value goes here", "__module__": "__main__", "__class__": "MyObj"} #打印属性
+MODULE: &lt;module '__main__' from 'test.py'&gt;
+CLASS: &lt;class '__main__.MyObj'&gt;
+INSTANCE ARGS: {'s': 'instance value goes here'}
+&lt;MyObj(instance value goes here)&gt;
+<pre class="sh_python">
+import json</p>
+
+<p>encoder = json.JSONEncoder()  
+data = [ { 'a':'A', 'b':(2, 4), 'c':3.0 } ]</p>
+
+<p>for part in encoder.iterencode(data): #生成生产编码数据的 “chunks”的迭代器
+    print 'PART:', part</p>
+
+<p>print 
+class MyObj(object):
+    def __init__(self, s):
+        self.s = s
+    def __repr__(self):
+        return '&lt;MyObj(%s)&gt;' % self.s
+class MyEncoder(json.JSONEncoder):  #通过使用类，可以创建子类来定制自己的行为，就和上面一样，他继承了json.JSONEncode</p>
+
+<p>    def default(self, obj):   #和上面的莉子效果一样，但是使用了类API,重写了default方法
+        print 'default(', repr(obj), ')'
+        d = { '__class__':obj.__class__.__name__, 
+              '__module__':obj.__module__,
+              }
+        d.update(obj.__dict__)
+        return d
+class MyDecoder(json.JSONDecoder):</p>
+
+<p>    def __init__(self):
+        json.JSONDecoder.__init__(self, object_hook=self.dict_to_object)  #和上面一行，指定hook的初始化</p>
+
+<p>    def dict_to_object(self, d):
+        if '__class__' in d:
+            class_name = d.pop('__class__')
+            module_name = d.pop('__module__')
+            module = __import__(module_name)
+            print 'MODULE:', module
+            class_ = getattr(module, class_name)
+            print 'CLASS:', class_
+            args = dict( (key.encode('ascii'), value) for key, value in d.items())
+            print 'INSTANCE ARGS:', args
+            inst = class_(**args)
+        else:
+            inst = d
+        return inst
+obj = MyObj('internal data')
+print obj
+encode = MyEncoder().encode(obj)
+print encode
+print '-'*30
+myobj_instance = MyDecoder().decode(encode)
+print myobj_instance
+</pre>
+<pre class="sh_python">
+import json
+import tempfile</p>
+
+<p>f = tempfile.NamedTemporaryFile(mode='w+')  #用随机文件模块生成一个随机文件，在操作完后自动删除这个文件
+f.write('[{"a": "A", "c": 3.0, "b": [2, 4]}]') 
+f.flush() #<span>写入缓冲区的任何数据都复制到文件中，并且缓冲区被清除</span>
+f.seek(0)  #把指针指到文件最开始的位置</p>
+
+<p>print json.load(f)
+</pre></p>
+
+<p>&nbsp;</p>

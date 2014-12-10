@@ -1,0 +1,11 @@
+---
+layout: post
+title: 准确掌握puppet client向server请求时间
+categories:
+- puppet
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p><p>使用puppet，发现默认半小时客户端就和服务器端请求一次信息，如果发现有更新就会自动更新。但是在使用了tagmail后，这是一件很郁闷的事情，因为请求一次就产生一个邮件，设想有上千台client，没30分钟一个邮件。。。但是我不希望用cron，因为有些事情是很紧急的，不能等到下一个定时任务执行时才去执行。</p>  <p>解决方法：</p>  <p>修改puppet.conf修改向server请求的时间间隔：</p>  <p>在[agent]下面加一行：</p>  <p>runinterval = 86400&#160; //单位是秒 我设置的一天更新一次&#160; 然后puppetd进程是一直后台运行的</p>  <p>采用server端向客户端主动发送要求，触发客户端来向server请求</p>  <p>#puppetrun –host 主机名</p>  <p>可以吧主机做个for循环，虽然性能不够，也不能实现并行执行。幸好puppetrun只是发送一个信号</p></p>

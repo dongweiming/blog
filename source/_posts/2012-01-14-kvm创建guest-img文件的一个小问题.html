@@ -1,0 +1,67 @@
+---
+layout: post
+title: kvm创建guest img文件的一个小问题
+categories:
+- kvm
+- linux基础
+- python
+tags:
+- statvfs
+published: true
+comments: true
+indexer: true
+---
+<p>前言：这是作kvm项目的一个小发现：当我使用命令创建i㎎文件‘qemu-img create -f raw  i㎎路径具体位置 文件大小’，但是当查看文件的具体占用空间发现：</p>
+
+<p>[root@localhost ~]# qemu-img create -f raw  /data1//1.img 10G
+Formatting '/data1/domains/1.img', fmt=raw, size=10485760 kB
+使用python模块statvfs+os查看分区大小没有改变，然后使用‘df －h’发现新建guest后剩余容量未变</p>
+
+<p>[root@localhost ~]# du -sh /data1/1.img
+0    /data1/domains/1.img   ＃这里是0  相当于没有占用的磁盘空间</p>
+
+<p>但是
+[root@localhost ~]# ls -lh !$
+ls -lh /data1/domains/1.img
+-rw-r--r-- 1 root root 10G Jan 14 15:23 /data1/1.img</p>
+
+<p>虽然img文件随着数据增加而占用越来越多，直到创建值。但是我们在统计剩余磁盘空间的时候需要把这些量预留出来。但是既然系统命令无法得到需要的值，那么自己取：</p>
+
+<p><pre class="sh_python"></p>
+
+<p>from  statvfs import F_BLOCKS,F_BAVAIL,F_BSIZE
+import os
+class Capture：
+    def main(self):
+        try:
+            fp=open('/proc/mounts','r')
+        except:
+            print 'open /proc/mounts error'
+            return
+        mounts=[i.strip() for i in fp.readlines()]
+        for i in mounts:
+             tmpList=i.split(' ')
+             if tmpList[0]=='/dev/root':
+                 continue  
+             if os.path.exists(tmpList[0]) and not os.path.isdir(tmpList[0]):
+                 total_size,avail_size=self.getSize(tmpList[1])
+    def du(self,data):
+             d = os.popen('du -sh %s' % data)
+             return d.readline().split('\t')[0]
+    def lslh(self,data):
+             d = os.popen('ls -lh %s' % data)
+             return int(re.compile(r'\S+').findall(d.readline())[4][:-1])
+    def getSize(self,dir):
+             vfs=os.statvfs(dir)
+             total_disk=vfs[F_BLOCKS]*vfs[F_BSIZE]/1024/1024/1024
+             free_disk=vfs[F_BAVAIL]*vfs[F_BSIZE]/1024/1024/1024
+             num = 0
+             for parent, dirnames, filenames in os.walk(dir):
+                 for i in filenames:
+                     if re.compile(r'.*\.img$').match(i) and not re.compile(r'root.img$').match(i):
+                         path = '%s/%s' % (parent,i)
+                         if self.du(path) == '0':
+                             num+= self.lslh(path)
+             free_disk -=num
+             return total_disk,free_disk
+</pre></p>

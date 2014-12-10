@@ -1,0 +1,45 @@
+---
+layout: post
+title: 关于urlparse研究
+categories:
+- python模块研究
+tags:
+- urlparse
+published: true
+comments: true
+indexer: true
+---
+<p>前言：urlparse是一个用来解析http的url的模块</p>
+
+<p>例子：</p>
+
+<p><pre class="sh_python">
+import urlparse
+url = 'http://user:pass@NetLoc:80/path;parameters?query=argument#fragment'  #这个是设计的一个url
+parsed = urlparse.urlparse(url)   #urlparse.urlparse和urlparse.<tt>urlsplit的区别主要在path，后者不会分裁url的path地址</tt>
+print 'scheme  :', parsed.scheme  #url的协议
+print 'netloc  :', parsed.netloc  #服务器地址
+print 'path    :', parsed.path #url的路径
+print 'params  :', parsed.params #url中的参数和值
+print 'query   :', parsed.query #url的查询部分
+print 'fragment:', parsed.fragment #url的分片部分
+print 'username:', parsed.username #url登录用户的用户名称
+print 'password:', parsed.password #url登录用户的密码
+print 'hostname:', parsed.hostname, '(netloc in lower case)'  #url的主机名，自动转化成小写
+print 'port    :', parsed.port
+</pre></p>
+
+<p>结果是：</p>
+
+<p>scheme  : http
+netloc  : user:pass@NetLoc:80
+path    : /path  #假如是urlparse.<tt>urlsplit</tt>，结果为：/path;parameters
+params  : parameters  # #假如是urlparse.<tt>urlsplit</tt>，没有params
+query   : query=argument
+fragment: fragment
+username: user
+password: pass
+hostname: netloc (netloc in lower case)
+port    : 80</p>
+
+<p>&nbsp;</p>

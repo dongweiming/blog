@@ -1,0 +1,217 @@
+---
+layout: post
+title: 关于find命令的研究
+categories:
+- linux基础
+tags:
+- find
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1  忽略大小写的查找</strong></p>
+
+<p><strong> </strong><strong>2  查找文件目录的深度限制</strong></p>
+
+<p><strong>3 根据文件属性查找</strong></p>
+
+<p><strong>4 查找空文件</strong></p>
+
+<p><strong>5  工作中可能想要删除一些临时文件，想要删除最大的五个文件，这样查找</strong></p>
+
+<p><strong>6  查找指定文件类型的文件</strong></p>
+
+<p><strong>7  根据文件修改时间查找</strong></p>
+
+<p><strong>8  根据文件大小查找</strong></p>
+
+<p><strong>9  alias小技巧</strong></p>
+
+<p><!--more--></p>
+
+<p><strong></strong></p>
+
+<p><strong>1  忽略大小写的查找：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server test]# ls
+fan  Fan  FAN</td></tr></tbody></table></p>
+
+<p>[root@server test]# find -name 'fan'
+./fan
+[root@server test]# find -iname 'fan'
+./Fan
+./FAN
+./fan</pre>
+
+
+
+<strong>2  查找文件目录的深度限制（从/开始计算。包括maxdepth和mindepth）：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="467">
+<tbody>
+<tr>
+<td width="465" valign="top"><pre class="sh_bash">[root@server test]# find / -name 'passwd'
+/usr/share/doc/nss_ldap-253/pam.d/passwd
+/usr/bin/passwd
+/etc/pam.d/passwd
+/etc/passwd</td></tr></tbody></table></p>
+
+<p>[root@server test]# cd /</p>
+
+<p>[root@server /]# find -mindepth 3 -maxdepth 3 -name 'passwd'
+./usr/bin/passwd
+./etc/pam.d/passwd</p>
+
+<p>看到了吧，第一个和最后一个文件没有被列出来          </pre>
+
+
+
+<strong>3 根据文件属性查找：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="503">
+<tbody>
+<tr>
+<td width="501" valign="top"><pre class="sh_bash">[root@server test]# ll
+总计 0
+-rw-r--r-- 1 root root 0 01-08 17:01 fan
+-rwxrwxrwx 1 root root 0 01-08 17:00 Fan
+----r----- 1 root root 0 01-08 20:45 FAn
+-rw-r----- 1 root root 0 01-08 17:01 FAN</pre></td>
+</tr>
+</tbody>
+</table>
+1  查找其中组权限是r的，也可以包括其他的权限：
+<table border="0" cellspacing="0" cellpadding="2" width="445">
+<tbody>
+<tr>
+<td width="443" valign="top"><pre class="sh_bash">[root@server test]#  find . -perm -g=r -type f -exec ls -l {} \;
+----r----- 1 root root 0 01-08 20:45 ./FAn
+-rwxrwxrwx 1 root root 0 01-08 17:00 ./Fan
+-rw-r----- 1 root root 0 01-08 17:01 ./FAN
+-rw-r--r-- 1 root root 0 01-08 17:01 ./fan</pre></td>
+</tr>
+</tbody>
+</table>
+2 查找其中组权限是r的，不能包括其他权限：
+<table border="0" cellspacing="0" cellpadding="2" width="446">
+<tbody>
+<tr>
+<td width="444" valign="top"><pre class="sh_bash">[root@server test]#  find . -perm g=r -type f -exec ls -l {} \;
+----r----- 1 root root 0 01-08 20:45 ./FAn</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>4 查找空文件（0字节文件）</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="448">
+<tbody>
+<tr>
+<td width="446" valign="top"><pre class="sh_bash">[root@server /]#  find ~ -empty
+/root/.gconf/apps/%gconf.xml
+/root/.gconf/apps/gnome-session/%gconf.xml
+/root/test/FAn
+/root/test/Fan
+/root/test/faN
+/root/test/FAN
+/root/test/fan
+/root/spread-bin-4.0.0</pre></td>
+</tr>
+</tbody>
+</table>
+注按照深度去查找，日不我只想查找2层深度的文件：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server /]# find . -maxdepth 2 –empty
+./root/spread-bin-4.0.0</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>5  工作中可能想要删除一些临时文件，想要删除最大的五个文件，这样查找：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="493">
+<tbody>
+<tr>
+<td width="491" valign="top"><pre class="sh_bash">[root@server ~]#  find . -type f -exec ls -s {} \; | sort -n -r | head -5
+201424 ./ctier-server-3.6.0-1.noarch.rpm
+14568 ./.cpan/Metadata
+4700 ./ruby-1.8.7.tar.gz
+4316 ./ruby-1.8.7/libruby-static.a
+3372 ./passenger-2.2.11/ext/apache2/ApplicationPoolServerExecutable</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>6  查找指定文件类型的文件:使用-type选项</strong></p>
+
+<p>d：目录；s：socket文件；f：普通文件 ……
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">查找隐藏的目录：
+[root@server ~]# find -type d -name ".*"
+.
+./.gconf
+./.elinks
+./.gem
+./.gconfd
+./.ssh
+./ruby-1.8.7/.ext
+./.cpan</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>7  根据文件修改时间查找：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="450">
+<tbody>
+<tr>
+<td width="448" valign="top"><pre class="sh_bash">[root@server test]# ls -lrt
+总计 0
+-rwxrwxrwx 1 root root 0 01-08 17:00 Fan
+-rw-r--r-- 1 root root 0 01-08 17:01 fan
+-rw-r----- 1 root root 0 01-08 17:01 FAN
+----r----- 1 root root 0 01-08 20:45 FAn
+-rw-r--r-- 1 root root 0 01-08 20:49 faN指定查找某文件修改时间之前修改或者创建的文件：</td></tr></tbody></table></p>
+
+<p>[root@server test]# find -newer FAN
+.
+./FAn
+./faN</pre>
+
+
+
+<strong>8  根据文件大小查找：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">查找大于20M的文件
+[root@server ~]# find . -size +20M
+./ctier-server-3.6.0-1.noarch.rpm
+查找小于1M的文件：
+[root@server ~]# find . -size -1M
+./.gconf/apps/%gconf.xml
+./.gconf/apps/gnome-session/%gconf.xml
+./test/FAn
+./test/Fan
+./test/faN
+./test/FAN
+./test/fan</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>9  alias小技巧：</strong></p>
+
+<p><strong>工作中可能会经常删除一些core文件，可以这样定义到profie文件</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">alias rmcore="find . -iname core -exec rm {} \;"</pre></td>
+</tr>
+</tbody>
+</table>
+也可能要删除一些log文件，可以这样定义：
+<table border="0" cellspacing="0" cellpadding="2" width="502">
+<tbody>
+<tr>
+<td width="500" valign="top"><pre class="sh_bash">alias rmlog="find /logs -type f -name *.tar -size +500M -exec rm -i {} \;"
+alias rm1g="find / -type f -name *.tar -size +1G -exec rm -i {} \;"</pre></td>
+</tr>
+</tbody>
+</table></p>

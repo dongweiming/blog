@@ -1,0 +1,38 @@
+---
+layout: post
+title: 修改opensuse修改开机过程背景画面和Grub开启企鹅动画技巧
+categories:
+- linux基础
+tags:
+- suse企鹅
+published: true
+comments: true
+indexer: true
+---
+<p>类似于XP开机那个来回循环走的小进度条的方式,opensuse其实也是可以修改的
+1  制作注意事项:
+使用GIMP编辑注意保存时候参数设置:另存为-&gt;保存-&gt;高级选项.其中质量的参数能控制图片大小,子采样需要<em><strong>2x2,1x1,1x1</strong></em> DCT方法 需要"整数"
+2 备份复制图片
+<pre class="sh_bash">linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/silent-1024x768.jpg
+linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/bootsplash-bootsplash-1024x768.jpg </pre>
+3 生成新的initrd
+<pre class="sh_bash">mkinitrd -s 1024x768</pre></p>
+
+<p>企鹅动态画面是openSUSE发行的Grub自带的启动画面，只需要修改gfxboot的配置文件就可以开启企鹅动态画面。
+<pre class="sh_bash">
+linux-3qd1:/home/dongwm #  gfxboot --change-config base::penguin=100
+还可以自己修改gfxboot.cfg文件，启用企鹅画面：
+linux-3qd1:/home/dongwm # vi /etc/bootsplash/themes/openSUSE/cdrom/gfxboot.cfg</p>
+
+<p>; penguin theme likelihood (in percent, -1 = auto)
+penguin=-1
+</pre></p>
+
+<p>修改peguin变量的值为企鹅画面显示的几率（从0-100选个数字，代表出现几率为0%-100%）:</p>
+
+<p>; penguin theme likelihood (in percent, -1 = auto)
+penguin=100</p>
+
+<p>&nbsp;
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=670cf740-daf0-8a3f-ab8a-79decfa2c7a8" alt="" /></div></p>

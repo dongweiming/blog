@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: octopress | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[octopress自定义markdown的code语法]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/octopresszi-ding-yi-markdownde-codeyu-fa/"/>
+    <updated>2013-04-27T14:17:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/octopresszi-ding-yi-markdownde-codeyu-fa</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>octopress自带的markdown语法高亮代码，最后展示在页面上的效果比较不友好-不能复制粘贴代码，不高亮，还有很丑的行数提示。
+我一直使<a href="shjs.sourceforge.net">SHJS</a>,还算比较喜欢，但是以前每次都是编辑markdown文章，在使用</p>
+
+<p><code>python
+</code>XX<code>
+</code></p>
+
+<p>的时候，使用</p>
+
+<p><code>python
+&lt;div class="bogus-wrapper"&gt;&lt;notextile&gt;&lt;figure class="code"&gt;&lt;pre class="sh_python"&gt;
+XXX
+&lt;/pre&gt;&lt;/figure&gt;&lt;/notextile&gt;&lt;/div&gt;
+</code></p>
+
+<p>这样的苦逼方式，最近实在是不了了，自定义octopress的解析过程</p>
+
+<p>其实就是修改plugins/pygments_code.rb</p>
+
+<p>```python
+require ‘pygments’
+require ‘fileutils’
+require ‘digest/md5’</p>
+
+<p>PYGMENTS_CACHE_DIR = File.expand_path(‘../../.pygments-cache’, <strong>FILE</strong>)
+FileUtils.mkdir_p(PYGMENTS_CACHE_DIR)</p>
+
+<p>module HighlightCode
+  def highlight(str, lang)
+    lang = ‘ruby’ if lang == ‘ru’
+    lang = ‘objc’ if lang == ‘m’
+    lang = ‘perl’ if lang == ‘pl’
+    lang = ‘yaml’ if lang == ‘yml’
+    str = pygments(str, lang).match(/&lt;pre&gt;(.+)&lt;\/pre&gt;/m)[1].to_s.gsub(/ *$/, ‘’) #strip out divs &lt;div class="highlight"&gt;
+    tableize_code(str, lang)
+  end</p>
+
+<p>def pygments(code, lang)
+    if defined?(PYGMENTS_CACHE_DIR)
+      path = File.join(PYGMENTS_CACHE_DIR, “#{lang}-#{Digest::MD5.hexdigest(code)}.html”)
+      if File.exist?(path)
+        highlighted_code = File.read(path)
+      else
+        highlighted_code = Pygments.highlight(code, :lexer =&gt; lang, :formatter =&gt; ‘html’, :options =&gt; {:encoding =&gt; ‘utf-8’})
+        File.open(path, ‘w’) {|f| f.print(highlighted_code) }
+      end
+    else
+      highlighted_code = Pygments.highlight(code, :lexer =&gt; lang, :formatter =&gt; ‘html’, :options =&gt; {:encoding =&gt; ‘utf-8’})
+    end
+    highlighted_code
+  end
+  def tableize_code (str, lang = ‘python’) #主要是修改这个方法
+    table = “&lt;pre class='sh_#{lang}'&gt;”
+    str.lines.each_with_index do |line,index|
+      table += “<span class="line">#{line}</span>”
+    end
+    table += “&lt;/pre&gt;”
+  end
+end
+```</p>
+
+<h4 id="section-1">使用方法</h4>
+
+<p>和过去一样，在md的文章中使用:</p>
+
+<p><code>python
+</code>XX<code>
+</code></p>
+
+<p>要是想指定某语言，需要先引用这个css，然后在md中
+比如这里用bash语法（也是我的默认）</p>
+
+<p><code>
+</code>bash
+XX
+`<code># 这里不能正常显示，加个反斜杠
+</code>`</p>
+]]></content>
+  </entry>
+  
+</feed>

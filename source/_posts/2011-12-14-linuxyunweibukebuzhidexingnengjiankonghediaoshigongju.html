@@ -1,0 +1,212 @@
+---
+layout: post
+title: Linux运维不可不知的性能监控和调试工具（一）
+categories:
+- linux基础
+tags:
+- iostat
+- mpstat
+- pidstat
+- sar
+- sysstat
+- vmstat
+published: true
+comments: true
+indexer: true
+---
+<p><strong>前言：献给现在正在作运维或者立志作运维的朋友</strong></p>
+
+<p><strong>sysstat组件，包含了：sar，iostat，mpstat，pidstat，nfsiostat 等命令</strong></p>
+
+<p>wget http://pagesperso-orange.fr/sebastien.godard/sysstat-10.0.3.tar.gz
+tar zxvf sysstat-10.0.3.tar.gz
+cd sysstat-10.0.3/
+./configure  --enable-install-cron &amp;&amp; make &amp;&amp; sudo make install</p>
+
+<p><strong>1 sar 主要用来监控系统实时性能（CPU，内存，I / O等），以及在一个持续的基础上上，在后台性能数据收集并分析历史数据，以确定瓶颈问题</strong></p>
+
+<p><strong> 1 所有CPU的CPU使用率</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -u 1 3
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>09时23分00秒     CPU     %user     %nice   %system   %iowait    %steal     %idle
+09时23分01秒     all     23.87      0.00      3.27      0.00      0.00     72.86
+09时23分02秒     all     22.94      0.00      2.49      0.00      0.00     74.56
+09时23分03秒     all     23.50      0.00      3.00      2.00      0.00     71.50
+平均时间:     all     23.44      0.00      2.92      0.67      0.00     72.98
+<ul>
+	<li><strong>sar -u </strong>显示CPU使用率，目前每天收集到这一点。</li>
+	<li><strong>sar -u 1 3</strong>显示实时CPU使用率每隔1秒,3次。</li>
+	<li><strong>sar -u  ALL 1 3“</strong>和 “sar -u 1 3”相同，还显示了附加 ​​字段。</li>
+	<li><strong></strong><strong>sar -u -f /var/log/sa/sa10 </strong><strong></strong>显示sa10文件中10天的CPU使用率。</li>
+</ul>
+<strong>2 单个CPU或核心的CPU使用率</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -P ALL 1 1
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>09时27分08秒     CPU     %user     %nice   %system   %iowait    %steal     %idle
+09时27分09秒     all     24.31      0.00      2.51      0.00      0.00     73.18
+09时27分09秒       0     34.00      0.00      4.00      0.00      0.00     62.00
+09时27分09秒       1     47.00      0.00      3.00      0.00      0.00     50.00
+09时27分09秒       2     12.00      0.00      1.00      0.00      0.00     87.00
+09时27分09秒       3      4.00      0.00      2.00      0.00      0.00     94.00</p>
+
+<p>平均时间:     CPU     %user     %nice   %system   %iowait    %steal     %idle
+平均时间:     all     24.31      0.00      2.51      0.00      0.00     73.18
+平均时间:       0     34.00      0.00      4.00      0.00      0.00     62.00
+平均时间:       1     47.00      0.00      3.00      0.00      0.00     50.00
+平均时间:       2     12.00      0.00      1.00      0.00      0.00     87.00
+<ul>
+	<li><strong>sar -P ALL </strong>显示当天所有核心CPU使用率。</li>
+	<li><strong>sar -P ALL 1 3 </strong>实时显示的时间为每1秒3次的所有核心的CPU使用率。</li>
+	<li><strong>sar -P 1，</strong>显示当前日期的CPU数1使用。</li>
+	<li><strong>sar- P 1 1 3</strong> 实时显示的时间为核心的数字1，每1秒3次的CPU使用率。</li>
+	<li><strong>sar  -P ALL --f  / var/log/sa/sa10</strong>显示CPU使用率，和上面解释类似</li>
+</ul>
+<strong>3 内存使用和空闲</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -r 1 3  ＃表示实时显示的时间为每1秒,3次的内存情况
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>09时31分59秒 kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit  kbactive   kbinact
+09时32分00秒   1282240   1991048     60.83    189256    979120   2308156     42.93   1091840    771404
+09时32分01秒   1284348   1988940     60.76    189256    979120   2304796     42.87   1089208    771404
+09时32分02秒   1282364   1990924     60.82    189272    979112   2308156     42.93   1091828    771412
+平均时间:   1282984   1990304     60.80    189261    979117   2307036     42.91   1090959    771407</p>
+
+<p><strong>4 交换分区的使用情况</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -S 1 3  ＃表示实时显示的时间为每1秒,3次的sawp使用情况
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>09时33分26秒 kbswpfree kbswpused  %swpused  kbswpcad   %swpcad
+09时33分27秒   2011680     91612      4.36      3076      3.36
+09时33分28秒   2011680     91612      4.36      3076      3.36
+09时33分29秒   2011680     91612      4.36      3076      3.36
+平均时间:   2011680     91612      4.36      3076      3.36</p>
+
+<p><strong>5 I/O状态 ＃表示实时显示的时间为每1秒3次的I/O使用情况</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -b 1 3
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>09时35分43秒       tps      rtps      wtps   bread/s   bwrtn/s
+09时35分44秒      2.00      0.00      2.00      0.00     32.00
+09时35分45秒     97.00      0.00     97.00      0.00   1192.00
+09时35分46秒      6.00      0.00      6.00      0.00    144.00
+平均时间:     35.00      0.00     35.00      0.00    456.00
+<strong>6 单个dev设备的I／O状态</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -d 1 3</p>
+
+<p>注：也可以显示成sda，sdb这样的形式：</p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -p -d 1 3
+<strong>7 显示每秒的上下文切换</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -w 1 3</p>
+
+<p><strong>8 报告运行队列和平均负载(个人最喜欢)</strong></p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -q 1 3
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)<!--more--></p>
+
+<p>09时41分02秒   runq-sz  plist-sz   ldavg-1   ldavg-5  ldavg-15   blocked
+09时41分03秒         0       416      0.25      0.26      0.39         0
+09时41分04秒         0       416      0.25      0.26      0.39         0
+09时41分05秒         1       416      0.25      0.26      0.39         0
+平均时间:         0       416      0.25      0.26      0.39         0</p>
+
+<p>注：blocked显示目前封锁和等待I / O操作完成的任务数量
+<strong>9 报告网络统计信息</strong></p>
+
+<p>sar -n KEYWORD</p>
+
+<p>KEYWORD可能是DEV(比如eth0，eth1)，NFS,SOCK,IP,TCP.ICMP,UDP,ALL等值</p>
+
+<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -n DEV 1 1
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>09时45分12秒     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s
+09时45分13秒        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+09时45分13秒      eth0      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+09时45分13秒      eth3      8.00      0.00      1.73      0.00      0.00      0.00      0.00
+09时45分13秒    vmnet1      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+09时45分13秒    vmnet8      0.00      0.00      0.00      0.00      0.00      0.00      0.00</p>
+
+<p>平均时间:     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s
+平均时间:        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+平均时间:      eth0      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+平均时间:      eth3      8.00      0.00      1.73      0.00      0.00      0.00      0.00
+平均时间:    vmnet1      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+平均时间:    vmnet8      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+<strong>10 sadc 的意思是“系统活动数据收集”。 这是sar的后端工具，它的数据收集。</strong></p>
+
+<p><strong>    sa1 存储系统的活动，二进制数据文件。 为此，SA1取决于sadc。 SA1从cron运行。例如，如果今天是26号，SA1写入到/ var/log/sa/sa26，这文件是二进制文件</strong></p>
+
+<p><strong>    sa2 创建每日汇总收集的统计信息。 SA2从cron运行。创建的文件是一个ASCII文件，可以在文本编辑器编辑。</strong></p>
+
+<p><strong>   sadf 可以生成CSV，XML和其他各种格式特区的报告。 使用此与其他工具相结合的SAR数据。</strong></p>
+
+<p>设计定时任务：
+cat /etc/cron.d/sysstat
+*/10 * * * * root /usr/local/lib/sa/sa1 1 1
+53 23 * * * root /usr/local/lib/sa/sa2 -A</p>
+
+<p><strong>2 iostat 顾名思义，这个会生成CPU，I / O统计</strong>
+dongwm@linux-b8lh:~&gt; iostat
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+26.46    0.00    2.10    0.45    0.00   70.99</p>
+
+<p>Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+sda               7.15        52.35        71.16    4660976    6335976
+注：使用特定盘的实现 可以这样 iostat -p sda</p>
+
+<p><strong>3  mpstat  主要报告处理器统计</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; mpstat -I ALL -u -P ALL
+<strong>4  vmstat 报告虚拟内存统计信息</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; vmstat 1 3  #这个命令很常用了 表示实时显示一秒钟,三次然后自动停止
+procs -----------memory---------- ---swap-- -----io---- -system-- -----cpu------
+r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+2  0  91596 1222220 195704 1036060    0    0    13    18   17   98 26  2 71  0  0
+0  0  91596 1221344 195712 1036092    0    0     0    84 1871 5774  9  2 88  1  0
+0  0  91596 1221228 195712 1036092    0    0     0   108 1987 6060 18  3 79  0  0
+<strong>5  pidstat #进程性能监测,这个我很喜欢，因为他是vmstat，top，iostat的一个结合：</strong></p>
+
+<p>pidstat -d 1   <strong> #列出当前 active 进程的 io</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; pidstat -d 1 -p $(pidof gnome-terminal)  <strong>#单个进程的状态，这里是gnome终端</strong>
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>10时04分06秒       PID   kB_rd/s   kB_wr/s kB_ccwr/s  Command
+10时04分07秒      9428      0.00      0.00      0.00  gnome-terminal
+10时04分08秒      9428      0.00      0.00      0.00  gnome-terminal
+10时04分09秒      9428      0.00      0.00      0.00  gnome-terminal
+10时04分10秒      9428      0.00      0.00      0.00  gnome-terminal</p>
+
+<p>dongwm@linux-b8lh:~&gt; pidstat -r -p $(pidof WebQQ增强版) 1<strong>  #单个进程内存使用情况</strong>
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>10时05分27秒       PID  minflt/s  majflt/s     VSZ    RSS   %MEM  Command
+10时05分28秒     24090  21133.00      0.00  654272 246492   7.53  WebQQ增强版
+10时05分29秒     24090  18880.00      0.00  654272 246492   7.53  WebQQ增强版</p>
+
+<p>dongwm@linux-b8lh:~&gt; pidstat -u -p $(pidof WebQQ增强版) 1<strong> #单个进程CPU使用情况</strong>
+Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
+
+<p>10时06分01秒       PID    %usr %system  %guest    %CPU   CPU  Command
+10时06分02秒     24090   67.00    5.00    0.00   72.00     1  WebQQ增强版
+10时06分03秒     24090   64.00    4.00    0.00   68.00     1  WebQQ增强版
+<strong></strong></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>SQLAlchemy教程(六) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengliu">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">SQLAlchemy教程(六)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>本文主要是ORM的sission查询和更新</strong></p>
+
+<p>session负责执行内存中的对象和数据库表之间的同步工作,创建session可以这样:</p>
+
+<p>Session = sessionmaker(bind=engine) #sqlalchemy.orm.session.Session类有很多参数,使用sessionmaker是为了简化这个过程</p>
+
+<p>或者:
+Session = sessionmaker()
+Session.configure(bind=engine)</p>
+
+<p>注:sessionmaker的参数:
+autoflush=True  #为True时，session将在执行session的任何查询前自动调用flush()。这将确保返回的结果</p>
+
+<p>transactional=False #为True时，session将自动使用事务commit
+twophase=False #当处理多个数据库实例,当使用flush()但是没有提交事务commit时,给每个数据库一个标识,使整个事务回滚</p>
+
+<p>创建session,添加数据的例子(以前也出现过很多次了)
+dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17)
+[GCC 4.5.3] on linux2
+Type &#8220;help&#8221;, &#8220;copyright&#8221;, &#8220;credits&#8221; or &#8220;license&#8221; for more information.
+&gt;&gt;&gt; from sqlalchemy import *
+&gt;&gt;&gt; from sqlalchemy.orm import *
+&gt;&gt;&gt; engine = create_engine(&#8216;sqlite://&#8217;)
+&gt;&gt;&gt; metadata = MetaData(engine)
+&gt;&gt;&gt; account_table = Table(
+&#8230; &#8216;account&#8217;, metadata,
+&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230; Column(&#8216;balance&#8217;, Numeric))
+&gt;&gt;&gt; class Account(object): pass
+&#8230;
+&gt;&gt;&gt; mapper(Account, account_table)
+&lt;Mapper at 0x84e6f2c; Account&gt;
+&gt;&gt;&gt; account_table.create()
+&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session = sessionmaker(bind=engine)
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session.add(a)
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; session.delete(a) #自动删除 account_table相应条目,但是在1:N和M:N关系中不会自动删除它的级联关系
+&gt;&gt;&gt; session.flush()</p>
+
+<p><strong>注:session的对象状态:</strong></p>
+
+<p>Transient:短暂的,主要指内存中的对象</p>
+
+<p>Pending:挂起的,这样的对象准备插入数据库,等执行了flush就会插入</p>
+
+<p>Persistent:持久的</p>
+
+<p>Detached:对象在数据库里面有记录,但是不属于session</p>
+
+<p>&gt;&gt;&gt; make_transient(a)  #因为标识了已删除,恢复a的状态
+&gt;&gt;&gt; session.add(a) #重新添加
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; print query
+SELECT account.id AS account_id, account.balance AS account_balance
+FROM account
+&gt;&gt;&gt; for obj in query:
+&#8230;     print obj
+&#8230;
+&lt;__main__.Account object at 0x84eef0c&gt;</p>
+
+<p>&gt;&gt;&gt; query.all()  #查询所有
+[&lt;__main__.Account object at 0x84eef0c&gt;]
+&gt;&gt;&gt; query = query.filter(Account.balance &gt; 10.00)  #filter过滤
+&gt;&gt;&gt; for obj in query:
+&#8230;     print obj.balance
+&#8230;</p>
+
+<p>100.00</p>
+
+<p>&gt;&gt;&gt; for i in session.query(Account).filter_by(balance=100.00 ):  #通过条件过滤
+&#8230;     print i
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; query = query.from_statement(&#8216;select *from account where balance=:bac&#8217;) #通过带通配符的SQL语句其中:bac标识这个参数是bac
+&gt;&gt;&gt; query = query.params(bac=&#8217;100.00&#8217;) #根据bac指定值寻找
+&gt;&gt;&gt; print query.all()
+[&lt;__main__.Account object at 0x84eef0c&gt;]</p>
+
+<p><strong>本地session</strong></p>
+
+<p>&gt;&gt;&gt; Session = scoped_session(sessionmaker(  #设置一个本地的共享session
+&#8230;     bind=engine, autoflush=True))
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session2 = Session()
+&gt;&gt;&gt; session is session2  #他们是同一个
+True</p>
+
+<p>&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session.add(a) #注意 这是的&#8217;S&#8217;是大写
+&gt;&gt;&gt; Session.flush()
+&gt;&gt;&gt; b = Account()
+&gt;&gt;&gt; a.balance = 200.00
+&gt;&gt;&gt; session.add(a)  #其实他们是一个共享的session 名字都可以
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Account).all() #查询到了2个
+[&lt;__main__.Account object at 0x851be0c&gt;, &lt;__main__.Account object at 0x84f7d6c&gt;]</p>
+
+<p>注:这样的映射mapper也可以这样是用:</p>
+
+<p>mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref=&#8217;products&#8217;)))</p>
+
+<p>Session.mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref=&#8217;products&#8217;))) #它的优点是可以初始化参数</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/sqlalchemy/'>SQLAlchemy</a>, <a class='category' href='/blog/categories/linuxji-chu/'>linux基础</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengliu/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/sqlalchemyjiaochengba/" title="Previous Post:
+        SQLAlchemy教程(八)">&laquo; SQLAlchemy教程(八)</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/sqlalchemyjiaochengqi/"
+        title="Next Post: SQLAlchemy教程(七)">SQLAlchemy教程(七)
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengliu/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengliu/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

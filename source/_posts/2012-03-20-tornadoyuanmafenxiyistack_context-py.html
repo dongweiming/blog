@@ -1,0 +1,203 @@
+---
+layout: post
+title: tornado 源码分析（一）：stack_context.py
+categories:
+- linux基础
+tags: []
+published: false
+comments: true
+indexer: true
+---
+<p>1 from __future__ import absolute_import, division, with_statement</p>
+
+<p>引入了三个特性：</p>
+
+<p>1 absolute_import</p>
+
+<p>举个简单的例子，这里有个文件目录结构：
+ackage/
+    __init__.py
+    subpackage1/
+        __init__.py
+        moduleX.py
+        moduleY.py
+    subpackage2/
+        __init__.py
+        moduleZ.py
+    moduleA.py
+假如现在在subpackage1目录下，可以使用以下的import模块的方法：
+from .moduleY import spam
+from .moduleY import spam as ham
+from . import moduleY
+from ..subpackage1 import moduleY
+from ..subpackage2.moduleZ import eggs
+from ..moduleA import foo
+from ...package import bar
+from ...sys import path
+2 division
+对经典除，地板除，真除的一些结果作出修正，让结果更正确，因为我很少接触数字运算，举一个例子：
+&gt;&gt;&gt; 1/2
+0
+&gt;&gt;&gt; from __future__ import absolute_import, division, with_statement
+&gt;&gt;&gt; 1/2
+0.5
+3 with_statement
+添加‘with’关键字，这属于错误和异常处理，类似于：try/except/finally，还是举例一个：
+<pre class="sh_python">
+dongwm@linux-dongwm:~&gt; cat traceback.py
+#!/bin/env python
+class Traceback:
+    def message(self,arg):
+        print 'running %s' % arg
+    def __enter__(self):
+        print 'start "with"'
+	return self
+    def __exit__(self,exc_type,exc_value,exc_tb):
+	if exc_type is None:
+	    print 'exit normailly\n'
+	else:
+            print 'raise exception',exc_type
+	    return False
+with Traceback() as action:
+    action.message('test 1')
+    print 'reached'
+with Traceback() as action:
+    action.message('test 2')
+    raise TypeError
+    print 'not reached'
+dongwm@linux-dongwm:~&gt; python !$
+python traceback.py
+start "with"
+running test 1
+reached
+exit normailly</p>
+
+<p>start "with"
+running test 2
+raise exception &lt;type 'exceptions.TypeError'&gt;
+Traceback (most recent call last):
+  File "traceback.py", line 19, in &lt;module&gt;
+    raise TypeError
+TypeError
+</pre>
+2 @contextlib.contextmanager
+利用contextlib实现AOP,所谓AOP就是面向切面编程，我理解是在编写程序的基础上，
+添加一个路障一样的东西（比如记录日志），当执行到这个路障时就停下，做路障这里的工作，这样的话，
+一个程序就分为几个不一样的层面，看下面一个例子：
+dongwm@linux-dongwm:~&gt; cat test1
+from contextlib import contextmanager
+@contextmanager
+def tag(name):
+    print "&lt;%s&gt;" % name
+    yield
+    print "&lt;/%s&gt;" % name</p>
+
+<p>with tag("h1"):
+    print "foo"
+dongwm@linux-dongwm:~&gt; python test1
+&lt;h1&gt;
+foo
+&lt;/h1&gt;  先进入tag() 先 &lt;h1&gt; 再 yield print 最后 再完成&lt;/h1&gt;
+<address>3 functools.partial
+函数在执行时，要带上所有必要的参数进行调用。然后，有时参数可以在函数被调用之前提前获知。
+这种情况下，一个函数有一个或多个参数预先就能用上，以便函数能用更少的参数进行调用。
+dongwm@linux-dongwm:~&gt; cat partial.py
+import functools
+def myfunc(a,b=2):
+print ' called myfunc with:',(a,b)
+p2=functools.partial(myfunc,'default a',b=99)
+p2()
+p2(b='override b')
+dongwm@linux-dongwm:~&gt; python !$
+python partial.py
+called myfunc with: ('default a', 99)
+called myfunc with: ('default a', 'override b')
+4 itertools.izip
+返回组合成元组的几个迭代器元素的一个迭代器，它类似于内置函数 <tt>zip()</tt>,但是不同的是返回的是迭代器不是列表
+dongwm@linux-dongwm:~&gt; cat test1
+from itertools import *for i in izip([1, 2, 3], ['a', 'b', 'c']):
+print i
+print '-'*20
+for i in  zip([1, 2, 3], ['a', 'b', 'c']):
+print i
+dongwm@linux-dongwm:~&gt; python test1
+(1, 'a')
+(2, 'b')
+(3, 'c')
+--------------------
+(1, 'a')
+(2, 'b')
+(3, 'c')
+5 threading.local
+<tt>thread-local对象最重要的就是它的数据对线程是局部的</tt><tt>,
+在另一个线程里对数据的更改不会影响到当前线程里的数据</tt>（各线程独自定义局部参数）看下面的例子：
+&gt;&gt;&gt; import threading
+&gt;&gt;&gt; class MyLocal(threading.local):
+...     number = 2
+...     def __init__(self, **kw):
+...         self.__dict__.update(kw)
+...     def squared(self):
+...         return self.number ** 2
+...
+&gt;&gt;&gt; mydata = MyLocal(name='dongwm')
+&gt;&gt;&gt; print mydata.number
+2
+&gt;&gt;&gt; print mydata.__dict__
+{'name': 'dongwm'}
+&gt;&gt;&gt; del mydata.name
+&gt;&gt;&gt; print mydata.squared()
+4
+&gt;&gt;&gt; log = []
+&gt;&gt;&gt; def test():
+...     items = mydata.__dict__.items()
+...     items.sort()
+...     log.append(items)
+...     mydata.number = 11
+...     log.append(mydata.number)
+...
+<tt>我们可以在另一个线程里访问数据： </tt>
+&gt;&gt;&gt; thread = threading.Thread(target=test)
+&gt;&gt;&gt; thread.start()
+&gt;&gt;&gt; thread.join()
+&gt;&gt;&gt; log
+[[('name', 'dongwm')], 11]
+<tt>当前线程的数据不受影响</tt>
+&gt;&gt;&gt; mydata.number
+2
+&gt;&gt;&gt; mydata.name
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AttributeError: 'MyLocal' object has no attribute 'name'
+&gt;&gt;&gt; class MyLocal(threading.local):
+...     __slots__ = 'number'
+...
+&gt;&gt;&gt; mydata = MyLocal()
+&gt;&gt;&gt; mydata.number = 42
+&gt;&gt;&gt; mydata.name = 'dongwm'
+<tt>另一个线程： </tt>
+&gt;&gt;&gt; thread = threading.Thread(target=test)
+&gt;&gt;&gt; thread.start()
+&gt;&gt;&gt; thread.join()
+&gt;&gt;&gt; mydata.number <tt>会影响到当前线程</tt> 变成了11
+11
+6 <tt>在web.py的调用</tt>@functools.wraps(method)
+def wrapper(self, *args, **kwargs):
+if self.application._wsgi:
+raise Exception("@asynchronous is not supported for WSGI apps")
+self._auto_finish = False
+with stack_context.ExceptionStackContext(
+self._stack_context_handle_exception):
+return method(self, *args, **kwargs)
+return wrapper
+可以对曾经的调用在内存建立缓存，提高性能，其中使用了wraps装饰器wraps主要是用来包装函数，使被包装含数更像原函数，它是对partial(update_wrapper, ...)的简单包装，
+partial主要是用来修改函数签名，使一些参数固化，以提供一个更简单的函数供以后调用
+update_wrapper是wraps的主要功能提供者，它负责考贝原函数的属性，默认是：'__module__', '__name__', '__doc__'， '__dict__'。</address></p>
+
+<p>所以＠wraps的等价形式如下：
+wrapper = partial(update_wrapper, wrapped=func, assigned=assigned, updated=updated)(wrapper)
+进一步等价：
+wrapper = update_wrapper(wrapper=wrapper, wrapped=func, assigned=assigned, updated=updated)</p>
+
+<p><address> </address><address> </address><address> </address>
+
+</p>

@@ -1,0 +1,48 @@
+---
+layout: post
+title: 关于hmac研究
+categories:
+- python模块研究
+tags:
+- hmac
+published: true
+comments: true
+indexer: true
+---
+<p>前言：hmac是一个加密签名和验证的消息的模块，主要验证数据在传送或者储存后是否完整，基本思路是生成一个共享密钥结合实际数据的加密hash</p>
+
+<p><pre class="sh_python">
+import hmac
+import hashlib</p>
+
+<p>digest_maker = hmac.new('secret-shared-key-goes-here', '', hashlib.sha1) #默认使用md5，将第三个参数置空，但是md5可能发生碰撞（2个文件的md5值一样），这里用sha1</p>
+
+<p>f = open('text1', 'rb')
+try:
+    while True:
+        block = f.read(1024)
+        if not block:
+            break
+        digest_maker.update(block)
+finally:
+    f.close()</p>
+
+<p>print digest_maker.hexdigest()
+</pre></p>
+
+<p><pre class="sh_python">
+import base64
+import hmac
+import hashlib</p>
+
+<p>f = open('text1', 'rb')
+try:
+    body = f.read()
+finally:
+    f.close()</p>
+
+<p>digest = hmac.new('secret-shared-key-goes-here', body, hashlib.sha1).digest() #有些场景（比如http post等）不使用update，而直接把内容放到new()
+print base64.encodestring(digest) #有些服务或者内容包含非ascii字符或者提供的网络服务使用<tt>base64</tt>编码的二进制版本，那么就要编码一下
+</pre></p>
+
+<p>&nbsp;</p>

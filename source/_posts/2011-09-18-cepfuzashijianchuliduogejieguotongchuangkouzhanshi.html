@@ -1,0 +1,266 @@
+---
+layout: post
+title: 复杂事件（cep）处理多个结果同窗口展示
+categories:
+- cep
+- perl
+tags:
+- cepstat
+- dstat
+- perl结果展示
+published: true
+comments: true
+indexer: true
+---
+<p>展示效果类似于dstat（python）将日志文件的结果格式化显示到终端界面</p>
+
+<p><pre class="sh_perl">
+#!/usr/bin/perl -w</p>
+
+<p>use strict;
+no strict 'refs';
+use Getopt::Long;
+use Pod::Usage;
+use Term::ReadKey;
+use Time::HiRes qw ( time alarm sleep );
+Getopt::Long::Configure('bundling');</p>
+
+<p>#####初始化变量######
+my @ltime=localtime();
+my $date=sprintf("%d-%d-%d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);
+my $cfgfile='/cepdata/conf/cepstat.cfg';</p>
+
+<p>###获取配置文件内容###
+my %config;
+get_config();
+my $LogPath=$config{main}-&gt;{logpath};</p>
+
+<p>###参数选项####
+my @opt_spec=(
+	{ s =&gt; 'h', d =&gt; 'display help message'},
+	{ s =&gt; 't', d =&gt; 'display system time'},
+);</p>
+
+<p>foreach my $page (keys %{$config{pagelist}}) {
+	my $href = { s=&gt;$config{pagelist}{$page}-&gt;{argc},d=&gt;$config{pagelist}{$page}-&gt;{desc} || $page };  # { s =&gt; 'm', d =&gt; 'some description'  }
+	push @opt_spec,$href;
+}
+###获取命令行参数###
+my %opts;
+pod2usage(-verbose =&gt; 1,-message =&gt; "Need at least one argument\ntry -h for more information") unless @ARGV;
+GetOptions(
+	map { $_-&gt;{s} =&gt; \$opts{$_-&gt;{s}} } @opt_spec  # { 'm' =&gt; \$opts{m} }
+) or pod2usage(1);</p>
+
+<p>###要输出的日志###
+my %pagelist;
+map {$pagelist{$config{pagelist}-&gt;{$_}-&gt;{argc}} = $_ if $opts{$config{pagelist}-&gt;{$_}-&gt;{argc}} } keys %{$config{pagelist}} ;  # m =&gt; sumtime</p>
+
+<p>### HELP MESSAGE ###
+if ($opts{h}) {
+    foreach my $spec (sort {$a-&gt;{s} cmp $b-&gt;{s}}  @opt_spec) {
+        printf "  -%-4s %-15s\n",$spec-&gt;{s},$spec-&gt;{d};
+    }
+    exit 1;
+}</p>
+
+<p>###打开文件句柄####
+my $lastmtime='0';
+foreach my $fh (values %pagelist) {   # m =&gt; sumtime
+		my $logfile;
+		if ($config{pagelist}-&gt;{$fh}-&gt;{logfile} =~ /^\//) {
+			$logfile="$config{pagelist}-&gt;{$fh}-&gt;{logfile}.$date";
+		} else {
+			$logfile="$LogPath/$config{pagelist}-&gt;{$fh}-&gt;{logfile}.$date";
+		}
+		my $logmtime=(stat($logfile))[9];
+		$lastmtime = $logmtime if ( $logmtime &gt; $lastmtime );
+		open $fh,"$logfile" or die "cant open $logfile:$!";
+		seek $fh,0,2;
+}
+my $currenttime=time();
+my $sleep = $lastmtime + 5.5 - $currenttime;</p>
+
+<p>#######标题与结果的格式化处理########
+	my $resultformat;					#结果输出格式
+	my $fieldformat;					#列名输出格式
+	my $pagenameformat;					#日志名居中显示
+	my $tmp_regex;                      #临时正则
+	my @FIELDS;							#存放所有列名的全局数组
+	my %FieldCount;
+	#循环开始
+	foreach my $page (values %pagelist) {											 #对每个日志做处理
+#		my $fields = $config{pagelist}-&gt;{$page}-&gt;{fields};                           #取出列名
+		my $alias = $config{pagelist}-&gt;{$page}-&gt;{alias};
+#		my @Fieldname = split /\s+/,$fields;										 #将列名存入临时数组
+		my @Alias = split /\s+/,$alias;
+		my $count = @Alias;														 #列名个数
+		$FieldCount{$page}=$count;
+		my $num = $count;															 #用来计算数组下标
+		while ($count) {															 #遍历每个列名
+#			$tmp_regex .= $Fieldname[$num -$count] . '=' . '([\w\.]+),.*?';			 #拼接正则表达式
+			$tmp_regex .= '=' . '([\w\.]+),.*?';									 #拼接正则表达式
+			push @FIELDS,$Alias[$num -$count];										 #将列名存入全局数组
+			$count--;
+        }
+		$tmp_regex =~ s/,\.\*\?$/.*?/;												 #去掉临时正则后多余的字符
+	#####页面名居中显示######
+		my $tmp_pagename = $config{pagelist}-&gt;{$page}-&gt;{format};					 #从配置文件中取出格式
+	# g%7d y%7d p%7d c%10d
+		$tmp_pagename =~ s/\.\d*//g;			#去掉浮点数 1.23f -&gt; 1f
+		$tmp_pagename =~ s/\s/ 1 /g;			#空格需要占1个字符
+		$tmp_pagename =~ s/[^\d\s]//g;			#去掉非数字非空格 如: 7 1 7 1 7 1 10
+		my @tmp=split /\s+/,$tmp_pagename;
+		my $cnt;
+		my $desc = $config{pagelist}-&gt;{$page}-&gt;{desc};
+		map { $cnt += $_ } @tmp;				#得出共占多少字符
+		my $pagenameleft = sprintf "%d",($cnt - length($desc))/ 2;			#计算页面名前后有多少字符
+		my $pagenameright = $cnt - length($desc) - $pagenameleft;
+		my $tt = '-' x $pagenameleft . $desc . '-' x $pagenameright . ' ';  #定好格式
+		$pagenameformat .= $tt;					#将每个页面临时格式拼接起来</p>
+
+<p>		$resultformat .= $config{pagelist}-&gt;{$page}-&gt;{format} . '|';                           #拼接结果输出格式
+	}
+	#循环结束</p>
+
+<p>	my $regex = qr/$tmp_regex/;                                     #构建正则表达式，存入变量中
+	#页面名头尾加颜色代码
+	$pagenameformat = '---sys--' . ' ' . $pagenameformat if ($opts{t});
+	$pagenameformat =~ s/^/\e[0;34m/;
+	$pagenameformat =~ s/$/\e[0m/;</p>
+
+<p>	#每个列名后加颜色代码
+	$resultformat =~ s/\|$//;										#去掉结果输出格式最后的分割线 |
+    $fieldformat = $resultformat;                                   #列名的输出格式               g%7d y%7d p%7d c%10d|r%10s y%7s
+    $fieldformat =~ s/\.\d+f|d/s/g;                                 #列名都为字符串，将d,f转成s   g%7s y%7s p%7s c%10s|r%10s y%7s
+	$fieldformat =~ s/\w?(?=%)/\e[1;4;34m/g;
+	$fieldformat =~ s/(?=\s|$)/\e[0m/g;								#转为\e[1;4;34m%7s\e[0m ..... 高亮下划线蓝色
+	$fieldformat =~ s/(?=\|)/\e[0;34m/g;							# | 为普通蓝色</p>
+
+<p>	#结果格式预处理
+	$resultformat =~ s/(?=\s|$)/\e[0m/g;							#转为 g%7d\e[0m y%7d\e[0m
+	$resultformat =~ s/(?=\|)/\e[0;34m/g;							# | 为普通蓝色
+	my @MasterColor;												#默认颜色的数组
+	push @MasterColor,$1 while ($resultformat =~ s/(\w)%/!%/);		#格式转为 !%7d\e[0m !%7d\e[0m  数组内容 (g y p c r y)</p>
+
+<p>	my $lines_left;												#终端所剩行数
+	my @OldData=();												#日志最后一行匹配出的结果，用来与新数据比较
+	my @NewData;
+######主循环######
+print "Waiting for new data......\n";
+sleep $sleep if ($sleep &gt; 0);
+while (1) {
+		my $logline;
+		PrintTitle() unless $lines_left;					#打印标题栏
+		foreach my $page (values %pagelist) {				#从每个日志文件读入一行
+			if (my $line = &lt;$page&gt;) {
+			chomp($line);
+			$logline .= $line . " ";						#所有行拼接起来
+			} else {
+					my $count = $FieldCount{$page};
+					$logline .= '=0,' while ($count--);
+					$logline =~ s/,$/ /;
+				}
+			}
+		if (@NewData = $logline =~ $regex) {						#匹配出新数据
+			@OldData = @NewData unless @OldData;
+			CheckThreshold();								#与旧数据比较并打印
+			$lines_left--;									#所剩行数 -1
+		}
+		sleep 5;
+}</p>
+
+<p>sub PrintTitle{
+    $lines_left = (GetTerminalSize())[1] ;                              #获取行数
+	print "$pagenameformat\n";
+	print "\e[1;4;34m  time  \e[0;34m|" if $opts{t};
+	printf "$fieldformat\n",@FIELDS;
+	$lines_left -= 3;
+}</p>
+
+<p>sub get_config
+{
+    open CEPCONF,"&lt;$cfgfile" or die "can't open configfile!"; #打开配置文件
+    while (&lt;CEPCONF&gt;) {
+        next if /^$/;           #忽略空行
+        next if /^\s*\#/;       #忽略注释
+        if (my ($menu) = /\[(\w+)\]/) {     #遇到[a]
+                while (&lt;CEPCONF&gt;) {         #循环读取[a]下的内容
+                    next if /^$/;
+                    next if /^\s*\#/;
+                    last if /\[\/(\w+)\]/;  #如果遇到[/a]结束此循环
+                    chomp;
+                    if (my ($pagename) = /\[(\w+)\]/) { #又遇到[b]
+                        while (&lt;CEPCONF&gt;) {             #循环读取[]下的内容
+                        next if /^$/;
+                        next if /^\s*\#/;
+                        last if /\[\/(\w+)\]/;          #如果遇到[/b]结束此循环
+                        chomp;
+                        my ($cfg_key,$cfg_value)= split /=/;    #获取以=分隔的变量名，变量值
+                        $cfg_key =~ s/^\s+|\s+$//g;             #去掉变量名前后的空白字符
+                        $cfg_value =~ s/\#.*$//g;               #去掉变量值后的注释
+                        $cfg_value =~ s/^\s+|\s+$//g;           #去掉变量值前后的空白字符
+                        $cfg_value =~ s/['"]//g;                #去掉变量值前后的引号
+                        $config{$menu}-&gt;{$pagename}-&gt;{$cfg_key}=$cfg_value;     #将变量名、变量值存入hash $config{a}-&gt;{b}-&gt;{变量名}=变量值
+                            }
+                        }
+                    next if /\[\/(\w+)\]/;              #遇到[/b]跳过
+                    my ($cfg_key,$cfg_value)= split /=/;        #获取以=分隔的变量名，变量值
+                $cfg_key =~ s/^\s+|\s+$//g;                 #同上
+            $cfg_value =~ s/\#.*$//g;
+        $cfg_value =~ s/^\s+|\s+$//g;
+        $cfg_value =~ s/['"]//g;                    #去掉变量值前后的引号
+    $config{$menu}-&gt;{$cfg_key} = $cfg_value;    #存入hash $config{a}-&gt;{变量名}=变量值
+            }
+        }
+    }
+    close CEPCONF;      #关闭文件句柄
+}           </p>
+
+<p>sub CheckThreshold{</p>
+
+<p>	my $threadformat=$resultformat;						#格式 !%7d\e[0m !%7d\e[0m
+	my $numrel=@NewData;
+	my $cnt=$numrel;											#用来计算下标
+	my @format;
+	while ($cnt) {
+		my $xiabiao=$numrel-$cnt;
+		$NewData[$xiabiao] =~ s/null/0/;
+		if ($NewData[$xiabiao] =~ /[a-z\.]+/) {				#非数字不比较，直接更新到旧数据数组
+			$format[$xiabiao]=$MasterColor[$xiabiao];	#取默认颜色
+			$cnt--;
+			next;
+		} elsif  ($NewData[$xiabiao] == 0 ) {			#值为0,转变为白色
+			$format[$xiabiao]='w';
+			$cnt--;
+			next;
+			}
+		if ( abs($NewData[$xiabiao]  - $OldData[$xiabiao] + 0) /($OldData[$xiabiao] + 1 ) &gt; 0.5 ) {
+			$format[$xiabiao]='z';						#新数据变化率超过阀值，转变为高亮红色，不更新到旧数据数据
+        } else {
+			$format[$xiabiao]=$MasterColor[$xiabiao];	#未超过阀值,取默认颜色
+			$OldData[$xiabiao]=$NewData[$xiabiao];		#更新到旧数据数组
+		}
+		$cnt--;
+	}</p>
+
+<p>	map { $threadformat =~ s/!/$_/} @format;			#g%7d\e[0m y%7d\e[0m ....</p>
+
+<p>	$threadformat =~ s/z/\e[1;31m/g;
+#	$threadformat =~ s/r/\e[0;31m/g;
+	$threadformat =~ s/g/\e[1;32m/g;
+	$threadformat =~ s/y/\e[1;33m/g;
+	$threadformat =~ s/b/\e[0;34m/g;
+	$threadformat =~ s/p/\e[1;35m/g;
+	$threadformat =~ s/c/\e[1;36m/g;
+	$threadformat =~ s/w/\e[0;37m/g;</p>
+
+<p>	if ($opts{t}) {
+		my @localtime=localtime;
+		my $time=sprintf("%02d:%02d:%02d",$localtime[2],$localtime[1],$localtime[0]);
+		print "\e[0;37m$time\e[0;34m|";
+		}</p>
+
+<p>	printf "$threadformat\n",@NewData;
+}
+</pre></p>

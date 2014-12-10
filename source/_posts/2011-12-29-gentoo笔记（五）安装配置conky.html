@@ -1,0 +1,282 @@
+---
+layout: post
+title: gentoo笔记（五）安装配置conky
+categories:
+- gentoo
+- linux基础
+- python
+tags:
+- conky
+- conkyforecast
+published: true
+comments: true
+indexer: true
+---
+<p>前言：这是一个很cool的桌面监控显示软件并可以自定义实现你想要监控的所有</p>
+
+<p>首先上图：</p>
+
+<p><img class="alignnone" title="conky" src="http://farm8.staticflickr.com/7003/6592961307_c888ee70c4_z.jpg" alt="" width="163" height="640" /></p>
+
+<p><img class="alignnone" title="conky2" src="http://farm8.staticflickr.com/7020/6598839395_4a9dab05b9_z.jpg" alt="" width="640" height="400" /></p>
+
+<p><strong>1 安装相应工具</strong>
+echo app-admin/conky truetype audacious -ipv6 &gt;&gt; /etc/portage/package.use
+echo app-admin/conkyforecast  &gt;&gt; /etc/portage/package.keywords
+sudo  emerge app-admin/conkyapp-admin/conkyforecast  #conky是主程序，conkyforecast是
+conky天气预报的脚本 其实也有一个叫做 conky-colors 的软件。
+里面集成了很多功能 包括天气预报，检查邮件 视频，照片预览等功能。作者是在ubuntu下开发的
+<strong>2 支持中文字体显示</strong>
+首先需要下载一个中文字体 我这里是simhei字体，然后拷贝simhei.ttf到/usr/share/fonts/TTF/conky/
+在需要显示中文的text部分需要utf-8编码 这个地方使用这个字体就可以显示了
+<strong>3 配置文件</strong>
+每一行可以分为样式属性、文字和元素。其中样式属性和元素都以“$”开头，并包含在“{}”里面，
+“${}”应该放在应用目标的前面。
+一些变量的解释：
+${color #XXXXXX} 设计显示的颜色 （在/etc/X11/rgb.txt中找到全部颜色的列表）
+${font Monospace:style=Bold:size=10} 字体属性的定义格式
+${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对齐，${alignc}表示居中对齐
+<!--more-->
+
+我的个人配置文件：
+<pre class="sh_php">
+background yes  #嵌入桌面
+use_spacer right
+use_xft yes #使用xft字体
+font Comic Sans MS:size=9
+xftfont Comic Sans MS:size=9  #在下面的样式定义段可以特别定义使用别的字体，如不特别指定，则使用默认字体
+override_utf8_locale yes
+update_interval 1.0
+own_window yes
+own_window_type normal
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+minimum_size 200 5
+maximum_width 205
+draw_shades no
+draw_outline no
+draw_borders no
+draw_graph_borders no
+default_color ffffff   #默认背景颜色  这里是黑色
+default_shade_color 000000
+default_outline_color 000000
+alignment top_right
+gap_x 5
+gap_y 5
+cpu_avg_samples 2
+uppercase no # set to yes if you want all text to be in uppercase
+override_utf8_locale yes
+text_buffer_size 2048</p>
+
+<p>TEXT
+${color #ffd700}${hr 1}$color
+${color #98c2c7}HostName:${color #db7093} $alignr$nodename
+${color #98c2c7}Kernel: ${color #db7093}$alignr$kernel
+${color #98c2c7}UpTime: ${color #db7093}$alignr$uptime
+${color #ffd700}${hr 1}$color
+${font Comic Sans MS:style=Bold:pixelsize=30}${alignc}${time %H:%M:%S}
+${font Comic Sans MS:pixelsize=18}${alignc}${time %G/%m/%d}${font Comic Sans MS:pixelsize=12}
+${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=CN}
+${font Weather:size=44}${color gold}${execi 3600 conkyForecast --location=CHXX0008 --datatype=WF}${font}${color}${voffset -20}${offset 18}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=CC}${offset 10}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=HT}${offset 10}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=WS} ${font Arrows:size=10}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=BF}$font
+${offset 10}Sol: ${color}${execi 3600 conkyForecast --location=CHXX0008 --datatype=SR}-${execi 60 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=SS}
+${font Weather:size=26}${execi 3600 conkyForecast --location=CHXX0008 --datatype=WF --startday=1 --endday=4 --spaces=1}${font}
+${execi 3600 conkyForecast --location=CHXX0008 --datatype=HT --startday=1 --endday=4 --spaces=11}
+${color yellow}${hr 1}$color
+${color yellow} ${alignc}GYYX MAIL
+${font simhei:style=Bold:size=9}${color1}${texeci 180 python ~/conky/conkyCheckMail.py mail.gyyx.cn dongweiming 5782086} ${color yellow}${font}
+${color yellow} ${alignc}GMAIL
+${font simhei:style=Bold:size=9}${color1}${texeci 180 python ~/conky/conkyCheckMail_imap.py imap.gmail.com ciici123@gmail.com dwm5782086} ${color yellow}${font}
+${color #ffd700}${hr 1}$color
+${color red}CPU Used: ${color #db7093} $alignr$cpu%
+${color #78af78}$cpubar
+${color red}Ram:${color #4169e1}$alignr ${color}$mem ${color #98c2c7}${color}/$memmax${color #4169e1}${color #db7093}($memperc%)
+${color #78af78}${membar}
+${color red}Processes:$alignr${color }$processes ($running_processes running)
+${color red}Highest CPU:$alignr PID CPU%
+${color #ddaa00} ${top name 1}$alignr ${top pid 1}${top cpu 1}
+${color lightgrey} ${top name 2}$alignr ${top pid 2}${top cpu 2}
+${color lightgrey} ${top name 3}$alignr ${top pid 3}${top cpu 3}
+${color red}Highest Ram:$alignr PID MEM%
+${color #ddaa00}${top_mem name 1}$alignr${top_mem pid 1}${top_mem mem 1}
+${color}${top_mem name 2}$alignr${top_mem pid 2}${top_mem mem 2}
+${color}${top_mem name 3}$alignr${top_mem pid 3}${top_mem mem 3}
+${color #ffd700}${hr 1}$color
+${color EE9944}${fs_bar 4 /}${color}
+${execpi 30 python ~/conky/conkyHD1.py }
+${color #ffd700}${hr 1}$color
+${color red}${font simhei:size=12}${alignc}网络$color
+${if_up eth1}
+${voffset -13}${color0}${font Comic Sans MS:size=8}${font}${color}${goto 32}${voffset -6} Up: ${font Comic Sans MS:size=8}${color1}${upspeed eth1}${color}${font Comic Sans MS:size=8} ${alignr}${color2}${upspeedgraph eth1 8,60 CE5C00 E07A1F}${color}
+${goto 32}Total: ${font Comic Sans MS:size=8}${color2}${totalup eth1}${color}${font}
+${voffset -2}${color0}${font Comic Sans MS:size=8}${font}${color}${goto 32}${voffset -6} Down: ${font Comic Sans MS:size=8}${color1}${downspeed eth1}${color}${font Comic Sans MS:size=8} ${alignr}${color2}${downspeedgraph eth1 8,60 CE5C00 E07A1F}${color}
+${goto 32}Total: ${font Comic Sans MS:size=8}${color2}${totaldown eth1}${color}${font}
+${voffset -2}${color0}${font Comic Sans MS:size=8}${font}${color}${goto 32}${voffset -4}Local IP: ${alignr}${color2}${addr eth1}${color}
+${goto 32}Public IP: ${alignr}${color2}${execi 10800 ~/conky/onkyIp.sh}${color}
+</pre>
+<strong>2 家目录下的配置文件.conkyForecast.config</strong><pre class="sh_python">
+#=============================================#
+# EXPERT SETTINGS, NOT REQUIRED TO BE ALTERED #
+#=============================================#
+BASE_XOAP_URL = http://xoap.weather.com/weather/local/&lt;LOCATION&gt;?cc=*&amp;dayf=5&amp;link=xoap&amp;prod=xoap&amp;par=1003666583&amp;key=4128909340a9b2fc&amp;unit=m
+#BASE_XOAP_URL = http://xml.weather.com/weather/local/&lt;LOCATION&gt;?cc=*&amp;dayf=10&amp;link=xoap&amp;prod=xoap&amp;par=&lt;XOAP_PARTNER_ID&gt;&amp;key=&lt;XOAP_LICENCE_KEY&gt;&amp;unit=m
+MAXIMUM_DAYS_FORECAST = 4</p>
+
+<p>#===============================================#
+# USER SETTINGS, EDIT BASED ON DOCUMENTED SETUP #
+#===============================================#
+CACHE_FOLDERPATH = /tmp/
+CONNECTION_TIMEOUT = 5
+EXPIRY_MINUTES = 30
+TIME_FORMAT = %H:%M
+DATE_FORMAT = %Y-%m-%d
+LOCALE = en
+XOAP_PARTNER_ID =
+XOAP_LICENCE_KEY =
+DEFAULT_LOCATION = UKXX0103
+AUTO_NIGHT = False
+PROXY_HOST =
+PROXY_PORT = 8080
+PROXY_USERNAME =
+PROXY_PASSWORD =
+</pre>
+<strong>4 相关的脚本文件</strong>
+<strong>1 ~/conky/conkyHD1.py 检查硬件信息</strong>
+<pre class="sh_python">
+#!/usr/bin/env python
+import sys
+import os
+import subprocess</p>
+
+<p># root filesystem
+print ("${voffset -2}${color0}${font Poky:size=15}y${font}${color}${offset 6}${voffset -7}Root: ${font Ubuntu:style=Bold:size=8}${color1}${fs_free_perc /}%${color}${font}\n")
+print ("${voffset -12}${color0}${fs_bar 4,20 /}${color}${offset 8}${voffset -2}F: ${font Ubuntu:style=Bold:size=8}${color2}${fs_free /}${color}${font} U: ${font Ubuntu:style=Bold:size=8}${color2}${fs_used /}${color}${font}\n")</p>
+
+<p># /home folder (if its a separate mount point)
+if os.path.ismount("/home"):
+	print ("${voffset -12}${color0}${font Poky:size=15}y${font}${color}${offset 6}${voffset -7}Home: ${font Ubuntu:style=Bold:size=8}${color1}${fs_free_perc /home}%${color}${font}\n")
+	print ("${voffset -12}${color0}${fs_bar 4,20 /home}${color}${offset 8}${voffset -2}F: ${font Ubuntu:style=Bold:size=8}${color2}${fs_free /home}${color}${font} U: ${font Ubuntu:style=Bold:size=8}${color2}${fs_used /home}${color}${font}\n")</p>
+
+<p># folder in /media
+for device in os.listdir("/media/"):
+	if (not device.startswith("cdrom")) and (os.path.ismount('/media/'+device)):
+		print ("${voffset -12}${color0}${font Poky:size=15}y${font}${color}${offset 6}${voffset -7}"+device.capitalize()+": ${font Ubuntu:style=Bold:size=8}${color1}${fs_free_perc /media/"+device+"}%${color}${font}\n")
+		print ("${voffset -12}${color0}${fs_bar 4,20 /media/"+device+"}${color}${offset 8}${voffset -2}F: ${font Ubuntu:style=Bold:size=8}${color2}${fs_free /media/"+device+"}${color}${font} U: ${font Ubuntu:style=Bold:size=8}${color2}${fs_used /media/"+device+"}${color}${font}\n")
+print ("${voffset -12}")
+</pre>
+<strong>2 ~/conky/onkyIp.sh 网络相关，流量 IP 信息</strong>
+<pre class="sh_bash">
+#!/bin/bash
+wget http://checkip.dyndns.org/ -q -O - |
+grep -Eo '\&lt;[[:digit:]]{1,3}(\.[[:digit:]]{1,3}){3}\&gt;'
+</pre>
+<strong>3 检查我公司邮箱的邮件 因为是POP3的 无法抓取未读邮件的标记 写本地文件对比是不是有新邮件，显示最近的三条邮件的主题。参数是 mail服务器 用户 密码</strong>
+<pre class="sh_python">
+import sys
+import poplib  
+import time
+import email.Header
+mailserver = sys.argv[1]
+user = sys.argv[2]
+passwd = sys.argv[3]</p>
+
+<p>emailServer = poplib.POP3(mailserver)  
+emailServer.user(user)  
+emailServer.pass_(passwd)  </p>
+
+<p>emailMsgNum, emailSize = emailServer.stat()  
+time.sleep(3)
+try:
+    f = open('text','r')
+    data = f.read()
+    f.close()
+except:
+    data ='0'
+if int(emailMsgNum) &gt; int(data):
+    f = open('text','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have %d new mail(s)' % (int(emailMsgNum)-int(data))
+else:
+    f = open('text','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have 0 new mail(s)'
+for i in range(emailMsgNum)[::-1][0:3]:  
+    for piece in emailServer.retr(i+1)[1]:  
+        if piece.startswith('Subject'):  
+            try:
+               code = email.Header.decode_header(piece)[1][1]
+               print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(piece)[1][0].decode(code)).encode('utf-8')
+            except:
+               code =  email.Header.decode_header(piece)[0][1]
+               if code == None:
+                   code = 'utf-8'
+               print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(piece)[0][0].decode(code)).encode('utf-8')
+emailServer.quit()
+</pre>
+ 5<strong>检查GMAIL邮件 这里是imap，显示最近的三条邮件的主题。参数是 mail服务器 用户 密码 
+</strong><pre class="sh_python">
+import sys
+import imaplib
+import time
+import email.Header
+import traceback
+import re</p>
+
+<p>mailserver = sys.argv[1]
+user = sys.argv[2]
+passwd = sys.argv[3]
+emailServer=imaplib.IMAP4_SSL(mailserver)
+try:
+    emailServer.login(user,passwd)
+    emailServer.select()
+    x,y=emailServer.status('INBOX','(MESSAGES UNSEEN)')
+    emailMsgNum=int(re.search('MESSAGES\s+(\d+)',y[0]).group(1))
+    unseen=int(re.search('UNSEEN\s+(\d+)',y[0]).group(1))
+except:
+    print 'connect error'</p>
+
+<p>time.sleep(3)
+try:
+    f = open('imaptext','r')
+    data = f.read()
+    f.close()
+except:
+    data ='0'
+if int(emailMsgNum) &gt; int(data):
+    f = open('imaptext','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have %d new mail(s)  unseen %s mail(s)' % (int(emailMsgNum)-int(data),unseen)
+else:
+    f = open('imaptext','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have 0 new mail(s)'
+for num in range(emailMsgNum)[::-1][0:3]:
+        type, msg_data = emailServer.fetch(num, '(RFC822)')
+        for response_part in msg_data:
+            if isinstance(response_part, tuple):
+                msg = email.message_from_string(response_part[1])
+                subject=msg['subject']
+                try:
+                   code = email.Header.decode_header(subject)[1][1]
+                   print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(subject)[1][0].decode(code)).encode('utf-8')
+                except:
+                   code =  email.Header.decode_header(subject)[0][1]
+                   if code == None:
+                       code = 'utf-8'
+                   print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(subject)[0][0].decode(code)).encode('utf-8')</p>
+
+<p>emailServer.logout()
+</pre>
+<strong>6 开机启动</strong>
+因为需要等待以下再启动程序 要不然桌面还没有启动好 conky就启动了
+startconky
+<pre class="sh_bash">
+#!/bin/bash
+sleep 10 &amp;&amp; conky -c ~/conky/conkyrc
+</pre>
+chmod +x startconky
+系统 首选项  启动应用程序 添加</p>

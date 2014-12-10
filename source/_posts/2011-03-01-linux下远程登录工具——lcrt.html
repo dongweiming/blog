@@ -1,0 +1,32 @@
+---
+layout: post
+title: linux下远程登录工具——lcrt
+categories:
+- opensuse
+tags:
+- lcrt
+published: true
+comments: true
+indexer: true
+---
+<p>windows下我一直钟爱Xshell，但是linux却真的没有什么好的登录工具，比如Yakuake下使用luit命令很不方便，不能记录帐号密码，不能进行多终端操作等。后来我发现了此工具--Lcrt，这是一个类似于windows下的SecureCRT的软件，虽然功能相对还是很少，但是我相信它是linux最好的远程登录的工具！<!--more-->
+它的项目地址是：http://code.google.com/p/lcrt/
+1 下载安装：
+首先确定依赖的库
+#zypper install   vte-devel
+#yast -i gtk2-devel
+我使用的是从项目版<tt>本库check out一个副本再编译安装：
+</tt><tt id="checkoutcmd">#svn checkout http://lcrt.googlecode.com/svn/trunk/  lcrt
+#cd lcrt
+#make
+#make install
+2  建立一个软连接到桌面
+#ln -s /usr/bin/lcrt  /home/dongwm/桌面/lcrt
+</tt>
+3 目前版本0.0.8功能简介：
+1 支持帐号密码的记忆
+2 支持克隆会话
+3 支持同窗口多个终端会话
+<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/03/sshot-1.png" alt="" />
+<tt id="checkoutcmd">
+</tt>Technorati 标签: <a class="performancingtags" rel="tag" href="http://technorati.com/tag/lcrt">lcrt</a></p>

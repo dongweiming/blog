@@ -1,0 +1,1774 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: gevent | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/gevent/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用http和websocket连接服务器]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shi-yong-httphe-websocketlian-jie-fu-wu-qi/"/>
+    <updated>2013-07-19T22:53:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shi-yong-httphe-websocketlian-jie-fu-wu-qi</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>想想吧，通过网页ssh登录服务器是一件多么酷的事情?今天看了<a href="http://www.vpsee.com/2013/06/invoke-a-linux-shell-with-ssh-account-from-browser">使用浏览器访问 Linux 终端</a>,
+也就是这个<a href="https://github.com/dongweiming/wssh">wssh</a>,你也可以理解为websocket-ssh, 觉得有点意思就拿出来</p>
+
+<h4 id="section-1">原路</h4>
+
+<p>它是一个库，很简单，作者写了2个flask+gevent+websocket+paramiko的例子，其中网页版的使用了bootstrap.
+简单的理解就是不通过ssh连接服务器，而是通过网页或者一个client请求url+相应参数调用
+shell到服务器的方式，但是遗憾的是作者一年没有再维护，bootstrap的网页竟然没有指定ssh端口的选项，但是很多时候为了安全
+都会把ssh端口换成其它端口，这样就不能用了,好吧 我动手给它加了这个功能，也提了pull request.目前大家可以用我的这版:<a href="https://github.com/dongweiming/wssh">wssh</a></p>
+
+<h4 id="update"><strong>update</strong></h4>
+
+<p>wssh作者已经合并了我的修改</p>
+
+<h4 id="section-2">使用说明</h4>
+
+<p>当你使用</p>
+
+<p><code>
+sudo python setup.py install
+</code></p>
+
+<p>安装后，就能直接使用wssh和wsshd,wsshd是一个flask作为httpserver和gevent作为wsgi的服务端，默认启动在你本机的5000端口.
+网页登录就能看见简单大气的选项页面，可以指定用户，服务器ip，端口，以及使用密钥或者密码登录.输入点击连接就会登录到那台服务器,数据通过websocket实时显示到页面上</p>
+
+<p>而wssh是一个命令行登录的带选项的命令，其实就是页面输入的参数通过命令行的方式输入然后直接登录服务器，比如我下面的用法:</p>
+
+<p><code>
+wssh dongwm@dongwm.com -p XXX -s 58404
+</code></p>
+
+<h4 id="section-3">我觉得有空可以基于这个做点好玩的东西</h4>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[gevent-twisted-多线程谁更快?]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/gevent-twisted-duo-xian-cheng-shui-geng-kuai/"/>
+    <updated>2013-01-11T13:54:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/gevent-twisted-duo-xian-cheng-shui-geng-kuai</id>
+    <content type="html"><![CDATA[<h4 id="section"><em>前言</em></h4>
+
+<p>标题有点唬人，以前了解过研究gevent，twisted，scrapy（基于twisted）。最近有个想法：这些东西比如做爬虫，谁的效率更好呢？
+我就写了以下程序（附件）测试然后用timeit（跑3次，每次10遍，时间有限）看效果</p>
+
+<h4 id="section-1">原理：</h4>
+
+<ol>
+  <li>为了防止远程网络的问题，从一个网站爬下网页代码（html），页面下载本地放在了我的本机（gentoo+apache）</li>
+  <li>然后爬虫去分析这些页面上面的链接（开始是主页），再挖掘其他页面，抓取页面关键字（我这里就是个‘py’）
+程序打包<a href="http://www.dongwm.com/Crawler.tar.bz2">Crawler.tar.bz2</a></li>
+</ol>
+
+<p>先看代码树：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~ $ tree Crawler/
+Crawler/
+├── common_Crawler.py  #标准爬虫，里面只是多线程编程，抓取分析类在common.py
+├── common.py  #共用函数，里面只是抓取页面分析页面关键字
+├── common.pyc #你懂得
+├── Crawler #scrapy和django框架差不多的用法
+│   ├── __init__.py
+│   ├── __init__.pyc
+│   ├── items.py #不需要利用，默认
+│   ├── pipelines.py
+│   ├── settings.py
+│   ├── settings.pyc
+│   └── spiders #抓取脚本文件夹
+│       ├── __init__.py
+│       ├── __init__.pyc
+│       ├── spiders.py #我做的分析页面，这个和多线程/gevent调用的抓取分析类不同，我使用了内置方法（大家可以修改共用函数改成scrapy的方式，这样三种效果就更准确了）
+│       └── spiders.pyc
+├── gevent_Crawler.py #gevent版本爬虫，效果和标准版一样，抓取分析类也是common.py 保证其他环节相同，只是一个多线程，一个用协程
+├── scrapy.cfg
+└── scrapy_Crawler.py #因为scrapy使用是命令行，我用subproess封装了命令，然后使用timeit计算效果
+
+2 directories, 16 files
+</pre></figure></notextile></div>
+
+<h4 id="section-2">实验前准备：</h4>
+<p>停掉我本机使用的耗费资源的进程 firefox，vmware，compiz等，直到负载保持一个相对拨波动平衡</p>
+
+<h4 id="section-3">测试程序：</h4>
+
+<ol>
+  <li>common.py </li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：多线程抓取
+# 方式： lxml + xpath + requests
+
+import requests
+from  cStringIO import StringIO
+from lxml import etree
+
+class Crawler(object):
+
+    def __init__(self, app):
+        self.deep = 2  #指定网页的抓取深度        
+        self.url = '' #指定网站地址
+        self.key = 'by' #搜索这个词
+        self.tp = app #连接池回调实例
+        self.visitedUrl = [] #抓取的网页放入列表,防止重复抓取
+
+    def _hasCrawler(self, url): 
+        '''判断是否已经抓取过这个页面'''
+        return (True if url in self.visitedUrl else False)
+     
+    def getPageSource(self, url, key, deep): 
+        ''' 抓取页面,分析,入库.
+        '''
+        if self._hasCrawler(url): #发现重复直接return
+            return 
+        else:
+            self.visitedUrl.append(url) #发现新地址假如到这个列
+        r = requests.get('http://localhost/%s' % url)
+        encoding = r.encoding #判断页面的编码
+        result = r.text.encode('utf-8').decode(encoding)
+	    #f = StringIO(r.text.encode('utf-8'))
+        try:  
+            self._xpath(url, result, ['a'], unicode(key, 'utf8'), deep) #分析页面中的连接地址,以及它的内容
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], unicode(key, "utf8"), deep) #分析这几个标签的内容
+        except TypeError: #对编码类型异常处理,有些深度页面和主页的编码不同
+            self._xpath(url, result, ['a'], key, deep)
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], key, deep)
+        return True
+
+    def _xpath(self, weburl, data, xpath, key, deep):
+        page = etree.HTML(data)
+        for i in xpath:
+            hrefs = page.xpath(u"//%s" % i) #根据xpath标签
+            if deep &gt;1:
+                for href in hrefs:
+                    url = href.attrib.get('href','')
+                    if not url.startswith('java') and not url.startswith('#') and not \
+                        url.startswith('mailto') and url.endswith('html'):  #过滤javascript和发送邮件的链接
+                            self.tp.add_job(self.getPageSource,url, key, deep-1) #递归调用,直到符合的深
+            for href in hrefs:
+                value = href.text  #抓取相应标签的内容
+                if value:
+                    m = re.compile(r'.*%s.*' % key).match(value) #根据key匹配相应内容
+
+    def work(self):
+        self.tp.add_job(self.getPageSource, self.url, self.key, self.deep)
+        self.tp.wait_for_complete() #等待线程池完成
+</pre></figure></notextile></div>
+
+<ol>
+  <li>common_Crawler.py</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：多线程
+
+
+
+import time
+import threading
+import Queue
+from common import Crawler
+
+#lock = threading.Lock()   #设置线程锁
+
+
+class MyThread(threading.Thread):
+
+    def __init__(self, workQueue, timeout=1, **kwargs):
+        threading.Thread.__init__(self, kwargs=kwargs)
+        self.timeout = timeout #线程在结束前等待任务队列多长时间
+        self.setDaemon(True)  #设置deamon,表示主线程死掉,子线程不跟随死掉
+        self.workQueue = workQueue
+        self.start() #初始化直接启动线程
+
+    def run(self):
+        '''重载run方法'''
+        while True:
+            try:
+                #lock.acquire() #线程安全上锁 PS:queue 实现就是线程安全的，没有必要上锁 ,否者可以put/get_nowait
+                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
+                res = callable(*args)  #执行的任务
+                #lock.release()  #执行完,释放锁 
+            except Queue.Empty: #任务队列空的时候结束此线程
+                break
+            except Exception, e:
+                return -1
+
+
+class ThreadPool(object):
+
+    def __init__(self, num_of_threads):
+         self.workQueue = Queue.Queue()
+         self.threads = []
+         self.__createThreadPool(num_of_threads)
+ 
+    def __createThreadPool(self, num_of_threads):
+        for i in range(num_of_threads):
+             thread = MyThread(self.workQueue)
+             self.threads.append(thread)
+
+    def wait_for_complete(self):
+        '''等待所有线程完成'''
+        while len(self.threads):
+            thread = self.threads.pop()
+            if thread.isAlive():  #判断线程是否还存活来决定是否调用join
+                thread.join()
+     
+    def add_job( self, callable, *args):
+        '''增加任务,放到队列里面'''
+        self.workQueue.put((callable, args))
+def main():
+
+    tp = ThreadPool(10) 
+    crawler = Crawler(tp)
+    crawler.work()
+
+if __name__ == '__main__':
+
+    import timeit
+    t = timeit.Timer("main()") 
+    t.repeat(3, 10)
+</pre></figure></notextile></div>
+
+<ol>
+  <li>gevent_Crawler.py</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：gevent
+
+import gevent.monkey
+gevent.monkey.patch_all()
+from gevent.queue import Empty, Queue
+import gevent
+from common import Crawler
+
+class GeventLine(object):
+
+    def __init__(self, workQueue, timeout=1, **kwargs):
+        self.timeout = timeout #线程在结束前等待任务队列多长时间
+        self.workQueue = workQueue
+
+    def run(self):
+        '''重载run方法'''
+        while True:
+            try:
+                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
+                res = callable(*args)  #执行的任务
+                print res
+            except Empty:
+                break
+            except Exception, e:
+            	print e
+                return -1
+
+class GeventPool(object):
+
+	def __init__(self, num_of_threads):
+	         self.workQueue = Queue()
+	         self.threads = []
+	         self.__createThreadPool(num_of_threads)
+	 
+	def __createThreadPool(self, num_of_threads):
+	    for i in range(num_of_threads):
+	         thread = GeventLine(self.workQueue)
+	         self.threads.append(gevent.spawn(thread.run))
+
+
+	def wait_for_complete(self):
+	    '''等待所有线程完成'''
+
+	    while len(self.threads):
+	        thread = self.threads.pop()
+	        thread.join()
+	    gevent.shutdown()
+	 
+	def add_job( self, callable, *args):
+	    '''增加任务,放到队列里面'''
+	    self.workQueue.put((callable, args))
+
+def main():
+	tp = GeventPool(10) 
+	crawler = Crawler(tp)
+	crawler.work()
+
+if __name__ == '__main__':
+
+    import timeit
+    t = timeit.Timer("main()") 
+    t.repeat(3, 10)
+
+</pre></figure></notextile></div>
+
+<ol>
+  <li>Crawler/spiders/spiders.py</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.selector import HtmlXPathSelector
+from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+from scrapy.item import Item
+
+class MySpider(CrawlSpider):
+    name = 'localhost'
+    allowed_domains = ['localhost']
+    start_urls = ['http://localhost']
+    rules = ( 
+        Rule(SgmlLinkExtractor(allow=(r'http://localhost/.*')), callback="parse_item"),  
+    )  
+    def parse_item(self, response):
+        hxs = HtmlXPathSelector(response)
+        hxs.select('//*[@*]/text()').re(r'py')  #实现了common.py里面的抓取和分析，但是common.py是抓取五种标签，分2次抓取，这里是抓取所有标签，不够严禁
+
+</pre></figure></notextile></div>
+
+<ol>
+  <li>scrapy_Crawler.py #时间有限，没有研究模块调用，也不够严禁</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：scrapy
+
+from subprocess import call
+
+def main():
+	call('scrapy crawl localhost --nolog', shell=True)
+
+if __name__ == '__main__':
+
+    import timeit
+    t = timeit.Timer("main()") 
+    t.repeat(3, 10)
+</pre></figure></notextile></div>
+
+<h4 id="section-4">实验过程</h4>
+
+<h5 id="section-5">1. 同时启动三个终端，一起跑（手点回车，肯定有点延迟）</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python scrapy_Crawler.py
+10000000 loops, best of 3: 0.024 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop #他是最快跑完的，非常快～～  数据很稳定
+
+dongwm@localhost ~/Crawler $ python gevent_Crawler.py
+100000000 loops, best of 3: 0.0134 usec per loop
+100000000 loops, best of 3: 0.0131 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0134 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop  #跑得很慢，不知道是不是timeit的原因(或者调用的优先级太低，抢资源能力不行)，很奇怪，但是它的数据最快，数据稳定在0.0123-0.0133
+
+
+dongwm@localhost ~/Crawler $ python common_Crawler.py
+100000000 loops, best of 3: 0.0274 usec per loop
+10000000 loops, best of 3: 0.0245 usec per loop
+10000000 loops, best of 3: 0.0252 usec per loop
+10000000 loops, best of 3: 0.0239 usec per loop
+10000000 loops, best of 3: 0.025 usec per loop
+10000000 loops, best of 3: 0.0273 usec per loop
+10000000 loops, best of 3: 0.0255 usec per loop
+10000000 loops, best of 3: 0.0261 usec per loop
+10000000 loops, best of 3: 0.0275 usec per loop
+10000000 loops, best of 3: 0.0261 usec per loop
+10000000 loops, best of 3: 0.0257 usec per loop
+10000000 loops, best of 3: 0.0273 usec per loop
+10000000 loops, best of 3: 0.0241 usec per loop
+10000000 loops, best of 3: 0.0257 usec per loop
+10000000 loops, best of 3: 0.0275 usec per loop
+10000000 loops, best of 3: 0.0241 usec per loop
+10000000 loops, best of 3: 0.0259 usec per loop
+10000000 loops, best of 3: 0.0251 usec per loop
+10000000 loops, best of 3: 0.0193 usec per loop
+10000000 loops, best of 3: 0.0176 usec per loop
+100000000 loops, best of 3: 0.0199 usec per loop
+100000000 loops, best of 3: 0.0167 usec per loop
+100000000 loops, best of 3: 0.018 usec per loop
+10000000 loops, best of 3: 0.0179 usec per loop
+100000000 loops, best of 3: 0.0173 usec per loop
+100000000 loops, best of 3: 0.0172 usec per loop
+100000000 loops, best of 3: 0.018 usec per loop
+100000000 loops, best of 3: 0.0162 usec per loop
+100000000 loops, best of 3: 0.0179 usec per loop
+100000000 loops, best of 3: 0.0171 usec per loop  #第二跑得快，但是还是数据不稳定，时间在0.017-0.026之间
+</pre></figure></notextile></div>
+<p>#####2. 挨个启动，待负载保持一个相对拨波动平衡 在换另一个</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python scrapy_Crawler.py
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop   #数据很稳定，在0.0122-0.0126之间 机器负载在1.3左右,最高超过了1.4（闲暇0.6左右）
+</pre></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python gevent_Crawler.py
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop  #数据很稳定，在0.0124-0.0126之间 机器负载在1.2左右（闲暇0.6左右）
+</pre></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python common_Crawler.py
+10000000 loops, best of 3: 0.0135 usec per loop
+100000000 loops, best of 3: 0.0185 usec per loop
+10000000 loops, best of 3: 0.0174 usec per loop
+100000000 loops, best of 3: 0.019 usec per loop
+10000000 loops, best of 3: 0.016 usec per loop
+10000000 loops, best of 3: 0.0181 usec per loop
+10000000 loops, best of 3: 0.0146 usec per loop
+100000000 loops, best of 3: 0.0192 usec per loop
+10000000 loops, best of 3: 0.0165 usec per loop
+10000000 loops, best of 3: 0.0176 usec per loop
+10000000 loops, best of 3: 0.0177 usec per loop
+10000000 loops, best of 3: 0.0182 usec per loop
+100000000 loops, best of 3: 0.0195 usec per loop
+10000000 loops, best of 3: 0.0163 usec per loop
+10000000 loops, best of 3: 0.0161 usec per loop
+100000000 loops, best of 3: 0.0191 usec per loop
+100000000 loops, best of 3: 0.0193 usec per loop
+10000000 loops, best of 3: 0.0147 usec per loop
+100000000 loops, best of 3: 0.0197 usec per loop
+10000000 loops, best of 3: 0.0178 usec per loop
+10000000 loops, best of 3: 0.0172 usec per loop
+100000000 loops, best of 3: 0.022 usec per loop
+100000000 loops, best of 3: 0.0191 usec per loop
+10000000 loops, best of 3: 0.0208 usec per loop
+10000000 loops, best of 3: 0.0144 usec per loop
+10000000 loops, best of 3: 0.0201 usec per loop
+100000000 loops, best of 3: 0.0195 usec per loop
+100000000 loops, best of 3: 0.0231 usec per loop
+10000000 loops, best of 3: 0.0149 usec per loop
+100000000 loops, best of 3: 0.0211 usec per loop #数据有点不稳定，浮动较大，但是最要在0.016-0.019  机器负载曾经长时间在1.01,最高未超过1.1 （闲暇0.6左右）
+</pre></figure></notextile></div>
+
+<h4 id="section-6">一些我的看法</h4>
+
+<p>虽然我的实验有不够严禁的地方，我的代码能力也有限（希望有朋友看见代码能提供修改意见或更NB的版本），但是效果还是比较明显的，我总结下</p>
+
+<ol>
+  <li>gevent确实性能很好，并且很稳定，占用io一般(据说长时间使用有内存泄露的问题？我不理解)</li>
+  <li>scrapy这个框架把爬虫封装的很好，只需要最少的代码就能实现，性能也不差gevent</li>
+  <li>多线程编程确实有瓶颈，并且不稳定</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于gevent的一些理解(一)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieyi-2/"/>
+    <updated>2012-07-26T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieyi-2</id>
+    <content type="html"><![CDATA[<p>前言:gevent是python的一个并发框架,以微线程greenlet为核心，使用了epoll事件监听机制以及诸多其他优化而变得高效.而且其中有个monkey类,
+将现有基于Python线程直接转化为greenlet(类似于打patch).他和线程框架性能比高大概4倍(看下图,是gevent和paste的对比):</p>
+
+<p><img class="alignnone" title="性能" src="http://code.mixpanel.com/wp-content/uploads/2010/10/performance2.png" alt="" width="664" height="389" /></p>
+
+<p>工作暂时没有用gevent的地方,这里就简单的对http://sdiehl.github.com/gevent-tutorial的一些例子和内容翻译:</p>
+
+<p><strong>1 同步和异步</strong></p>
+
+<p><pre class="sh_python">
+import gevent
+
+<p>def foo():
+    print('Running in foo')
+    gevent.sleep(0) #让当前的greenlet睡眠N秒,这0标识控制其它协程而不会让其它进程睡眠
+    print('Explicit context switch to foo again')</p>
+
+<p>def bar():
+    print('Explicit context to bar')
+    gevent.sleep(0)
+    print('Implicit context switch back to bar')</p>
+
+<p>gevent.joinall([  #<tt>gevent.Greenlet</tt>实例,直到这个greenlet完成或者超时
+    gevent.spawn(foo),  #spawn可以实现一个grennlet实例并且加到队列并且启动,效果类似于gevent.Greenlet(foo).start()
+    gevent.spawn(bar),
+])
+</p>
+
+<p>执行结果的效果图:</p>
+
+<p><img class="alignnone" title="效果" src="http://sdiehl.github.com/gevent-tutorial/flow.gif" alt="" width="284" height="277" /></p>
+
+<p>dongwm@localhost ~ $ python test.py
+Explicit context to bar
+Running in foo
+Explicit context switch to foo again
+Implicit context switch back to bar</p>
+
+<p><pre class="sh_python">
+import time
+import gevent
+from gevent import select #类似于内置的<tt>select.select()</tt>实现(请关注http://www.dongwm.com/archives/guanyuselectyanjiu/),只是将线程操作改成了greenlet
+
+<p>start = time.time()
+tic = lambda: 'at %1.1f seconds' % (time.time() - start)</p>
+
+<p>def gr1():
+    print('Started Polling: ', tic())
+    select.select([], [], [], 2)  #参数分别是,等待的可读列表,等待的可写列表,等待的可执行列表,超时时间(这里是2秒)
+    print('Ended Polling: ', tic())</p>
+
+<p>def gr2():
+    print('Started Polling: ', tic())
+    select.select([], [], [], 2)
+    print('Ended Polling: ', tic())</p>
+
+<p>def gr3():
+    print("Hey lets do some stuff while the greenlets poll, at", tic())
+    gevent.sleep(1)</p>
+
+<p>gevent.joinall([
+    gevent.spawn(gr1),
+    gevent.spawn(gr2),
+    gevent.spawn(gr3),
+])
+</p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+('Hey lets do some stuff while the greenlets poll, at', 'at 0.0 seconds')  #因为gr1和gr2开始是阻塞的,gr3直接打印
+('Started Polling: ', 'at 0.0 seconds')
+('Started Polling: ', 'at 0.0 seconds')
+('Ended Polling: ', 'at 2.0 seconds')
+('Ended Polling: ', 'at 2.0 seconds')
+<pre class="sh_python">
+import gevent
+import random
+
+<p>def task(pid):
+    gevent.sleep(random.randint(0,2)*0.001)
+    print('Task', pid, 'done')</p>
+
+<p>def synchronous():  #同步
+    for i in range(1,10):
+        task(i)</p>
+
+<p>def asynchronous(): #异步
+    threads = [gevent.spawn(task, i) for i in xrange(10)]
+    gevent.joinall(threads)</p>
+
+<p>print('Synchronous:')
+synchronous()</p>
+
+<p>print('Asynchronous:')
+asynchronous()
+</p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+Synchronous:  #协程不会控制其它进程睡眠,所以挨个执行
+('Task', 1, 'done')
+('Task', 2, 'done')
+('Task', 3, 'done')
+('Task', 4, 'done')
+('Task', 5, 'done')
+('Task', 6, 'done')
+('Task', 7, 'done')
+('Task', 8, 'done')
+('Task', 9, 'done')
+Asynchronous:  #他们放在grennlet里面,sleep的时间是随机的,完成顺序也就不同了
+('Task', 2, 'done')
+('Task', 3, 'done')
+('Task', 5, 'done')
+('Task', 7, 'done')
+('Task', 9, 'done')
+('Task', 6, 'done')
+('Task', 1, 'done')
+('Task', 0, 'done')
+('Task', 8, 'done')
+('Task', 4, 'done')
+<pre class="sh_python">
+import gevent
+from gevent import Greenlet
+
+<p>def foo(message, n):
+    gevent.sleep(n)
+    print(message)</p>
+
+<p>thread1 = Greenlet.spawn(foo, "Hello", 1)  #实例化Greenlet
+thread2 = gevent.spawn(foo, "I live!", 2) #实例化gevent,其实也是创建Greenlet实例,只是包装了一下
+thread3 = gevent.spawn(lambda x: (x+1), 2)  #一个lambda表达式</p>
+
+<p>threads = [thread1, thread2, thread3]
+gevent.joinall(threads) #等待所有greenlet完成
+</p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+Hello
+I live!  #打印出来效果不明显,事实上等待一秒打印第一行,再等待一秒打印第二行,然后马上完成(lambda没有显示)</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Greenlet
+
+<p>class MyGreenlet(Greenlet):  #重载Greenlet类</p>
+
+<p>    def __init__(self, message, n):
+        Greenlet.__init__(self)
+        self.message = message
+        self.n = n</p>
+
+<p>    def _run(self): #重写_run方法
+        print(self.message)
+        gevent.sleep(self.n)</p>
+
+<p>g = MyGreenlet("Hi there!", 3)
+g.start()
+g.join()
+</p>
+
+<p><pre class="sh_python">
+import gevent
+
+<p>def win():
+    return 'You win!'</p>
+
+<p>def fail():
+    raise Exception('You fail at failing.')</p>
+
+<p>winner = gevent.spawn(win)
+loser = gevent.spawn(fail)</p>
+
+<p>print(winner.started) # started表示的Greenlet是否已经开始,返回布尔值
+print(loser.started)  # True</p>
+
+<p>try:
+    gevent.joinall([winner, loser])
+except Exception as e:
+    print('This will never be reached')</p>
+
+<p>print(winner.value) # value表示greenlet实例返回值:'You win!'
+print(loser.value)  # None</p>
+
+<p>print(winner.ready()) # 是否已停止Greenlet的布尔值,True
+print(loser.ready())  # True</p>
+
+<p>print(winner.successful()) # 表示的Greenlet是否已成功停止，而不是抛出异常,True
+print(loser.successful())  # False
+print(loser.exception) #打印异常的报错信息
+</p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+True
+True
+Traceback (most recent call last):
+File "/usr/lib/python2.7/site-packages/gevent-1.0dev-py2.7-linux-i686.egg/gevent/greenlet.py", line 328, in run
+result = self._run(*self.args, **self.kwargs)
+File "test.py", line 7, in fail
+raise Exception('You fail at failing.')
+Exception: You fail at failing.
+&lt;Greenlet at 0xb73cd39cL: fail&gt; failed with Exception</p>
+
+<p>You win!
+None
+True
+True
+True
+False
+You fail at failing.
+<pre class="sh_python">
+import gevent
+from gevent import Timeout
+
+<p>seconds = 10</p>
+
+<p>timeout = Timeout(seconds)
+timeout.start()</p>
+
+<p>def wait():
+    gevent.sleep(10)</p>
+
+<p>try:
+    gevent.spawn(wait).join()
+except Timeout:
+    print 'Could not complete'
+</p>
+
+<p>上面的例子是可以执行完成的,但是假如修改seconds = 5,让数值少入sleep,那么就会有超时被捕捉到</p>
+
+<p>还可以使用with关键字处理上下文:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Timeout
+
+<p>time_to_wait = 5 # seconds</p>
+
+<p>class TooLong(Exception):
+    pass</p>
+
+<p>with Timeout(time_to_wait, TooLong):
+    gevent.sleep(10)
+</p>
+
+<p>以及其他的方式的:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Timeout
+
+<p>def wait():
+    gevent.sleep(2)</p>
+
+<p>timer = Timeout(1).start()
+thread1 = gevent.spawn(wait)  #这种超时类型前面讲过</p>
+
+<p>try:
+    thread1.join(timeout=timer)
+except Timeout:
+    print('Thread 1 timed out')</p>
+
+<p>timer = Timeout.start_new(1) #start_new是一个快捷方式
+thread2 = gevent.spawn(wait)</p>
+
+<p>try:
+    thread2.get(timeout=timer) #get返回greenlet的结果,包含异常
+except Timeout:
+    print('Thread 2 timed out')</p>
+
+<p>try:
+    gevent.with_timeout(1, wait) #如果超时前返回异常,取消这个方法
+except Timeout:
+    print('Thread 3 timed out')
+</p>
+
+<p><strong>2 数据结构</strong></p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.event import AsyncResult
+
+<p>a = AsyncResult() #保存一个值或者一个异常的事件实例</p>
+
+<p>def setter():
+    gevent.sleep(3)  #3秒后唤起所有线程的a的值
+    a.set() #保存值,唤起等待线程</p>
+
+<p>def waiter():
+    a.get() # 3秒后get方法不再阻塞,返回存贮的值或者异常
+    print 'I live!'</p>
+
+<p>gevent.joinall([
+    gevent.spawn(setter),
+    gevent.spawn(waiter),
+])
+</p>
+
+<p>更清晰的例子:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.event import AsyncResult
+a = AsyncResult()
+
+<p>def setter():
+    gevent.sleep(3)
+    a.set('Hello!')</p>
+
+<p>def waiter():
+    print a.get()</p>
+
+<p>gevent.joinall([
+    gevent.spawn(setter),
+    gevent.spawn(waiter),
+])
+
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue  #类似于内置的Queue
+
+<p>tasks = Queue() #队列实例</p>
+
+<p>def worker(n):
+    while not tasks.empty():
+        task = tasks.get()
+        print('Worker %s got task %s' % (n, task))
+        gevent.sleep(0)</p>
+
+<p>    print('Quitting time!')</p>
+
+<p>def boss():
+    for i in xrange(1,25):
+        tasks.put_nowait(i) #非阻塞的把数据放到队列里面</p>
+
+<p>gevent.spawn(boss).join()</p>
+
+<p>gevent.joinall([
+    gevent.spawn(worker, 'steve'),
+    gevent.spawn(worker, 'john'),
+    gevent.spawn(worker, 'nancy'),
+])
+</p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python !$
+python test.py
+Worker steve got task 1 #3个用户循环的取出数据
+Worker john got task 2
+Worker nancy got task 3
+Worker steve got task 4
+Worker nancy got task 5
+Worker john got task 6
+Worker steve got task 7
+Worker john got task 8
+Worker nancy got task 9
+Worker steve got task 10
+Worker nancy got task 11
+Worker john got task 12
+Worker steve got task 13
+Worker john got task 14
+Worker nancy got task 15
+Worker steve got task 16
+Worker nancy got task 17
+Worker john got task 18
+Worker steve got task 19
+Worker john got task 20
+Worker nancy got task 21
+Worker steve got task 22
+Worker nancy got task 23
+Worker john got task 24
+Quitting time!
+Quitting time!
+Quitting time!</p>
+
+<p>一个更复杂的例子:
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue, Empty
+
+<p>tasks = Queue(maxsize=3)  #限制队列的长度</p>
+
+<p>def worker(n):
+    try:
+        while True:
+            task = tasks.get(timeout=1) # 减少队列,超时为1秒
+            print('Worker %s got task %s' % (n, task))
+            gevent.sleep(0)
+    except Empty:
+        print('Quitting time!')</p>
+
+<p>def boss():
+    """
+    Boss will wait to hand out work until a individual worker is
+    free since the maxsize of the task queue is 3.
+    """</p>
+
+<p>    for i in xrange(1,10):
+        tasks.put(i)  #这里boss没有盲目的不停放入数据,而是在当最大三个队列数有空余才放入数据,事实上方法转换过程中,boss放入三个数据,worker取出三个数据,boss再放入数据....
+    print('Assigned all work in iteration 1')</p>
+
+<p>    for i in xrange(10,20):
+        tasks.put(i)
+    print('Assigned all work in iteration 2')</p>
+
+<p>gevent.joinall([
+    gevent.spawn(boss),
+    gevent.spawn(worker, 'steve'),
+    gevent.spawn(worker, 'john'),
+    gevent.spawn(worker, 'bob'),
+])
+
+<pre class="sh_python">
+import gevent
+from gevent.pool import Group 
+def talk(msg):
+    for i in xrange(3):
+        print(msg)
+
+<p>g1 = gevent.spawn(talk, 'bar')
+g2 = gevent.spawn(talk, 'foo')
+g3 = gevent.spawn(talk, 'fizz')</p>
+
+<p>group = Group() #保持greenlet实例的组运行,连接到没个项目,在其完成后删除
+group.add(g1)
+group.add(g2)
+group.join()</p>
+
+<p>group.add(g3)
+group.join()
+</p>
+
+<p>看更加明确的例子:
+<pre class="sh_python">
+import gevent
+from gevent import getcurrent
+from gevent.pool import Group
+
+<p>group = Group()</p>
+
+<p>def hello_from(n):
+    print('Size of group', len(group))
+    print('Hello from Greenlet %s' % id(getcurrent()))  #获取当前gevent实例的id</p>
+
+<p>group.map(hello_from, xrange(3)) #map迭代方法,参数为方法和其参数</p>
+
+<p>def intensive(n):
+    gevent.sleep(3 - n)
+    return 'task', n</p>
+
+<p>print('Ordered')</p>
+
+<p>ogroup = Group()
+for i in ogroup.imap(intensive, xrange(3)):  #相当于 itertools.imap,返回一个迭代器, 它是调用了一个其值在输入迭代器上的函数, 返回结果. 它类似于函数 <tt>map()</tt> , 只是前者在
+#任意输入迭代器结束后就停止(而不是插入None值来补全所有的输入)
+    print(i)</p>
+
+<p>print('Unordered')</p>
+
+<p>igroup = Group()
+for i in igroup.imap_unordered(intensive, xrange(3)):
+    print(i)
+</p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+('Size of group', 3)
+Hello from Greenlet 314818960
+('Size of group', 3)
+Hello from Greenlet 314819280
+('Size of group', 3)
+Hello from Greenlet 314819440
+Ordered
+('task', 0)
+('task', 1)
+('task', 2)
+Unordered
+('task', 2)
+('task', 1)
+('task', 0)</p>
+
+<p>还能限制pool池的大小
+<pre class="sh_python">
+import gevent
+from gevent import getcurrent
+from gevent.pool import Pool
+
+<p>pool = Pool(2)</p>
+
+<p>def hello_from(n):
+    print('Size of pool', len(pool))</p>
+
+<p>pool.map(hello_from, xrange(3))
+</p>
+
+<p>返回结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+('Size of pool', 2)
+('Size of pool', 2)
+('Size of pool', 1) #因为上面的pool容纳不了第三个,这是一个新的pool</p>
+
+<p>以下是作者写的一个pool操作类:</p>
+
+<p><pre class="sh_python">
+from gevent.pool import Pool
+
+<p>class SocketPool(object):</p>
+
+<p>    def __init__(self):
+        self.pool = Pool(1000)  #设置池容量1000
+        self.pool.start()</p>
+
+<p>    def listen(self, socket):
+        while True:
+            socket.recv()</p>
+
+<p>    def add_handler(self, socket):
+        if self.pool.full(): #容量慢报错
+            raise Exception("At maximum pool size")
+        else: #否则执行在新的grenlet里面执行listen方法
+            self.pool.spawn(self.listen, socket)</p>
+
+<p>    def shutdown(self):
+        self.pool.kill() #关闭pool
+</p>
+
+<p><pre class="sh_python">
+from gevent import sleep
+from gevent.pool import Pool
+from gevent.coros import BoundedSemaphore
+
+<p>sem = BoundedSemaphore(2) #设定对共享资源的访问数量</p>
+
+<p>def worker1(n):
+    sem.acquire() #获取资源
+    print('Worker %i acquired semaphore' % n)
+    sleep(0)
+    sem.release()  #释放资源
+    print('Worker %i released semaphore' % n)</p>
+
+<p>def worker2(n):
+    with sem: #使用with关键字
+        print('Worker %i acquired semaphore' % n)
+        sleep(0)
+    print('Worker %i released semaphore' % n)</p>
+
+<p>pool = Pool()
+pool.map(worker1, xrange(0,2)) 
+pool.map(worker2, xrange(3,6))
+
+执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+Worker 0 acquired semaphore
+Worker 1 acquired semaphore  #因为pool能容纳这2个请求,所以同时获取,再释放
+Worker 0 released semaphore
+Worker 1 released semaphore
+Worker 3 acquired semaphore #因为只能接收2个,那么5就要到下一轮
+Worker 4 acquired semaphore
+Worker 3 released semaphore
+Worker 4 released semaphore
+Worker 5 acquired semaphore
+Worker 5 released semaphore</p>
+
+<p>一个gevent教材上面说过的ping pong的那个协程例子的另一个实现:
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue
+from gevent import Greenlet
+
+<p>class Actor(gevent.Greenlet): #自定义actor类</p>
+
+<p>    def __init__(self):
+        self.inbox = Queue() #收件箱作为一个队列
+        Greenlet.__init__(self) </p>
+
+<p>    def receive(self, message): 
+        raise NotImplemented() #内置常量,表面意为没有实施</p>
+
+<p>    def _run(self): #
+        self.running = True</p>
+
+<p>        while self.running:
+            message = self.inbox.get() #获取队列数据
+            self.receive(message)</p>
+
+<p>class Pinger(Actor):
+    def receive(self, message): #重写方法
+        print message
+        pong.inbox.put('ping') #当获取收件箱有数据,获取数据,再放入数据(注意:是ping中放pong数据),其中pong是一个局部变量,它是Ponger的实例,以下的同理
+        gevent.sleep(0)</p>
+
+<p>class Ponger(Actor):
+    def receive(self, message):
+        print message
+        ping.inbox.put('pong')
+        gevent.sleep(0)</p>
+
+<p>ping = Pinger()
+pong = Ponger()</p>
+
+<p>ping.start()
+pong.start()</p>
+
+<p>ping.inbox.put('start') #最开始都是阻塞的,给一个触发
+gevent.joinall([ping, pong])
+</p>
+
+<p>&nbsp;</p>
+
+<p><code data-result="[object Object]" /></p>
+</pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于gevent的一些理解(二)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieer/"/>
+    <updated>2012-07-26T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieer</id>
+    <content type="html"><![CDATA[<p><strong>3 实际应用</strong></p>
+
+<p>1 zeromq和gevent:</p>
+
+<p>zeromq的介绍请参看:http://www.infoq.com/cn/news/2010/09/introduction-zero-mq</p>
+
+<p>假设你已经安装了zeromq,gevent_zeromq(https://github.com/traviscline/gevent-zeromq.git)和pyzmq</p>
+
+<p>一个很基础的例子:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent_zeromq import zmq
+
+<p># Global Context
+context = zmq.Context() #它是GreenContext的一个简写,确保greenlet化socket</p>
+
+<p>def server():
+    server_socket = context.socket(zmq.REQ) #创建一个socket,使用mq类型模式REQ/REP(请求/回复,服务器是请求),还有PUB/SUB(发布/订阅),push/pull等
+    server_socket.bind("tcp://127.0.0.1:5000") #绑定socket</p>
+
+<p>    for request in range(1,10):
+        server_socket.send("Hello")
+        print('Switched to Server for ', request)
+        server_socket.recv()  #这里发生上下文切换</p>
+
+<p>def client():
+    client_socket = context.socket(zmq.REP)  (客户端是回复)
+    client_socket.connect("tcp://127.0.0.1:5000")  #连接server的socket端口</p>
+
+<p>    for request in range(1,10):</p>
+
+<p>        client_socket.recv()
+        print('Switched to Client for ', request)
+        client_socket.send("World")</p>
+
+<p>publisher = gevent.spawn(server)
+client    = gevent.spawn(client)</p>
+
+<p>gevent.joinall([publisher, client])
+</p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+('Switched to Server for ', 1)
+('Switched to Client for ', 1)
+('Switched to Server for ', 2)
+('Switched to Client for ', 2)
+('Switched to Server for ', 3)
+('Switched to Client for ', 3)
+('Switched to Server for ', 4)
+('Switched to Client for ', 4)
+('Switched to Server for ', 5)
+('Switched to Client for ', 5)
+('Switched to Server for ', 6)
+('Switched to Client for ', 6)
+('Switched to Server for ', 7)
+('Switched to Client for ', 7)
+('Switched to Server for ', 8)
+('Switched to Client for ', 8)
+('Switched to Server for ', 9)
+('Switched to Client for ', 9)</p>
+
+<p>&nbsp;</p>
+
+<p>2 telnet 服务器</p>
+
+<p><pre class="sh_python">
+from gevent.server import StreamServer #StreamServer是一个通用的TCP服务器
+
+<p>def handle(socket, address):
+    socket.send("Hello from a telnet!\n")
+    for i in range(5):
+        socket.send(str(i) + '\n') #给socket客户端发送数据
+    socket.close() #关闭客户端连接</p>
+
+<p>server = StreamServer(('127.0.0.1', 5000), handle) #当出现连接调用定义的方法handle
+server.serve_forever()
+</p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ nc 127.0.0.1 5000
+Hello from a telnet!
+0
+1
+2
+3
+4
+dongwm@localhost ~ $ telnet 127.0.0.1 5000
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+Hello from a telnet!
+0
+1
+2
+3
+4
+Connection closed by foreign host.
+<strong>3 wsgi服务器</strong></p>
+
+<p><pre class="sh_python">
+from gevent.wsgi import WSGIServer
+
+<p>def application(environ, start_response):
+    status = '200 OK' #页面状态指定为200 ok
+    body = '&lt;p&gt;Hello World&lt;/p&gt;'</p>
+
+<p>    headers = [
+        ('Content-Type', 'text/html')
+    ]</p>
+
+<p>    start_response(status, headers)
+    return [body]</p>
+
+<p>WSGIServer(('', 8000), application).serve_forever() #启动一个占用8000端口的wsgi服务器
+</p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+from gevent.pywsgi import WSGIServer #使用pywsgi可以我们自己定义产生结果的处理引擎
+
+<p>def application(environ, start_response):
+    status = '200 OK'</p>
+
+<p>    headers = [
+        ('Content-Type', 'text/html')
+    ]</p>
+
+<p>    start_response(status, headers)
+    yield "&lt;p&gt;Hello" #yield出数据
+    yield "World&lt;/p&gt;"</p>
+
+<p>WSGIServer(('', 8000), application).serve_forever()
+</p>
+
+<p>我们看一个用ab(Apache Benchmark)的性能测试(更多信息请查看http://nichol.as/benchmark-of-python-web-servers),我这里只</p>
+
+<p>对比了gevent和paste的性能比(没做系统优化,只是在同样条件下看性能差距):</p>
+
+<p>paste的wsgi程序:</p>
+
+<p><pre class="sh_python">
+from gevent.wsgi import WSGIServer
+
+<p>def application(environ, start_response):
+    status = '200 OK'
+    body = '&lt;p&gt;Hello World&lt;/p&gt;'</p>
+
+<p>    headers = [
+        ('Content-Type', 'text/html')
+    ]</p>
+
+<p>    start_response(status, headers)
+    return [body]</p>
+
+<p>#WSGIServer(('', 8000), application).serve_forever()
+from paste import httpserver
+httpserver.serve(application, '0.0.0.0', request_queue_size=500)
+</p>
+
+<p>dongwm@localhost ~ $ /usr/sbin/ab2 -n 10000 -c 100 http://127.0.0.1:8000/ #gevent的性能,条件是:并发100,请求1W
+This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/</p>
+
+<p>Benchmarking 127.0.0.1 (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests</p>
+
+<p>Server Software:
+Server Hostname:        127.0.0.1
+Server Port:            8000</p>
+
+<p>Document Path:          /
+Document Length:        18 bytes</p>
+
+<p>Concurrency Level:      100
+Time taken for tests:   2.805 seconds
+Complete requests:      10000
+Failed requests:        0
+Write errors:           0
+Total transferred:      1380000 bytes
+HTML transferred:       180000 bytes
+Requests per second:    3564.90 [#/sec] (mean)
+Time per request:       28.051 [ms] (mean)
+Time per request:       0.281 [ms] (mean, across all concurrent requests)
+Transfer rate:          480.43 [Kbytes/sec] received</p>
+
+<p>Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   28  15.1     27      69
+Waiting:        1   28  15.1     27      69
+Total:          2   28  15.1     27      69</p>
+
+<p>Percentage of the requests served within a certain time (ms)
+50%     27
+66%     35
+75%     40
+80%     42
+90%     48
+95%     54
+98%     59
+99%     62
+100%     69 (longest request)</p>
+
+<p>dongwm@localhost ~ $ /usr/sbin/ab2 -n 10000 -c 100 http://127.0.0.1:8080/  #paste的性能
+This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/</p>
+
+<p>Benchmarking 127.0.0.1 (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests</p>
+
+<p>Server Software:        PasteWSGIServer/0.5
+Server Hostname:        127.0.0.1
+Server Port:            8080</p>
+
+<p>Document Path:          /
+Document Length:        18 bytes</p>
+
+<p>Concurrency Level:      100
+Time taken for tests:   4.119 seconds
+Complete requests:      10000
+Failed requests:        0
+Write errors:           0
+Total transferred:      1600000 bytes
+HTML transferred:       180000 bytes
+Requests per second:    2427.52 [#/sec] (mean)
+Time per request:       41.194 [ms] (mean)
+Time per request:       0.412 [ms] (mean, across all concurrent requests)
+Transfer rate:          379.30 [Kbytes/sec] received</p>
+
+<p>Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   41   5.4     41     107
+Waiting:        1   41   5.2     40      97
+Total:          4   41   5.3     41     107</p>
+
+<p>Percentage of the requests served within a certain time (ms)
+50%     41
+66%     41
+75%     42
+80%     43
+90%     46
+95%     50
+98%     56
+99%     59
+100%    107 (longest request)</p>
+
+<p><strong>很不好理解吧,那我把数据直接整理下:</strong></p>
+
+<p>1 测试用时:</p>
+
+<p>Time taken for tests:   2.805 seconds #gevent</p>
+
+<p>Time taken for tests:   4.119 seconds #paste 花费时间更长
+2 每秒请求数:</p>
+
+<p>Requests per second:    3564.90 [#/sec] (mean) #gevent的嘛,每秒请求数大的多
+Requests per second:    2427.52 [#/sec] (mean) #paste</p>
+
+<p>3 每请求数耗时:</p>
+
+<p>Time per request:       28.051 [ms] (mean) #gevent耗时少
+Time per request:       0.281 [ms] (mean, across all concurrent requests) #gevent并发请求时耗时少
+Time per request:       41.194 [ms] (mean) #paste
+Time per request:       0.412 [ms] (mean, across all concurrent requests) #paste</p>
+
+<p>4 传输效率:</p>
+
+<p>Transfer rate:          448.26 [Kbytes/sec] received #gevent的效率更高
+Transfer rate:          379.30 [Kbytes/sec] received #paste</p>
+
+<p>5 连接消耗的时间的分解:</p>
+
+<p>Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   28  15.1     27      69
+Waiting:        1   28  15.1     27      69
+Total:          2   28  15.1     27      69</p>
+
+<p>Connection Times (ms) #paste
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   41   5.4     41     107
+Waiting:        1   41   5.2     40      97
+Total:          4   41   5.3     41     107 #明显其中最大用时107/97都大于gevent的69ms,最小用时gevent略强</p>
+
+<p>6 整个场景中所有请求的响应情况。在场景中每个请求都有一个响应时间</p>
+
+<p>Percentage of the requests served within a certain time (ms) #gevent
+50%     29
+66%     31
+75%     34
+80%     34
+90%     36
+95%     38
+98%     42
+99%     44
+100%     71 (longest request)</p>
+
+<p>可以这样理解:50%用户效应小于29ms,60%用户响应小于31ms,最长的访问响应为71ms
+Percentage of the requests served within a certain time (ms) #paste
+50%     41
+66%     41
+75%     42
+80%     43
+90%     46
+95%     50
+98%     56
+99%     59
+100%    107 (longest request)  #很明显,无论那个区间,paste性能都略差</p>
+
+<p><strong>4 长轮询</strong></p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.queue import Queue, Empty
+from gevent.pywsgi import WSGIServer
+import json
+
+<p>data_source = Queue()</p>
+
+<p>def producer():
+    while True:
+        data_source.put_nowait('Hello World') #往队列非阻塞的放入数据
+        gevent.sleep(1)</p>
+
+<p>def ajax_endpoint(environ, start_response):
+    status = '200 OK'
+    headers = [
+        ('Content-Type', 'application/json') #设定<span>网络文件的类型</span>是json
+    ]
+    try:
+        datum = data_source.get(timeout=5)
+    except Empty:
+        datum = [] #假如gevent.sleep的时间设置的长一些(比如5s),在不停刷新过程中会获得空列表</p>
+
+<p>    start_response(status, headers)
+    return json.dumps(datum) #返回数据,打印出来的数据是一个带引号的字符串</p>
+
+<p>gevent.spawn(producer)</p>
+
+<p>WSGIServer(('', 8000), ajax_endpoint).serve_forever()
+
+<strong>4 聊天室</strong>(源码在这里https://github.com/sdiehl/minichat.git):</p>
+
+<p><pre class="sh_python">
+from gevent import monkey
+monkey.patch_all() #给模块打包
+from flask import Flask, render_template, request, json #作者在这里使用了flask框架,当然你也可以用其它比如django.tornado,bottle等
+
+<p>from gevent import queue
+from gevent.pywsgi import WSGIServer</p>
+
+<p>app = Flask(__name__) 
+app.debug = True</p>
+
+<p>class Room(object):</p>
+
+<p>    def __init__(self):
+        self.users = set()
+        self.messages = []</p>
+
+<p>    def backlog(self, size=25):
+        return self.messages[-size:]</p>
+
+<p>    def subscribe(self, user):
+        self.users.add(user)</p>
+
+<p>    def add(self, message):
+        for user in self.users:
+            print user
+            user.queue.put_nowait(message)
+        self.messages.append(message)</p>
+
+<p>class User(object):</p>
+
+<p>    def __init__(self):
+        self.queue = queue.Queue()</p>
+
+<p>rooms = {
+    'python': Room(),
+    'django': Room(),
+}</p>
+
+<p>users = {}</p>
+
+<p>@app.route('/') #flask指定url的处理使用路由的方式,访问页面地址根目录就会执行choose_name
+def choose_name():
+    return render_template('choose.html') #然后调用模板choose.html,这个html文件最后使用了GET方法提交了一个uid页面(/&lt;uid&gt;)</p>
+
+<p>@app.route('/&lt;uid&gt;') #请求被转到了这里
+def main(uid):
+    return render_template('main.html', #调用模板提供几个room的连接
+        uid=uid,
+        rooms=rooms.keys() #格局选择的连接,通过GET方法转到那个相应url:/&lt;room&gt;/&lt;uid&gt;
+    )</p>
+
+<p>@app.route('/&lt;room&gt;/&lt;uid&gt;') #请求被转到了这里
+def join(room, uid):
+    user = users.get(uid, None)</p>
+
+<p>    if not user:
+        users[uid] = user = User()</p>
+
+<p>    active_room = rooms[room]
+    active_room.subscribe(user)
+    print 'subscribe', active_room, user</p>
+
+<p>    messages = active_room.backlog()</p>
+
+<p>    return render_template('room.html', #room.html包含一个POST提交方式,把你的聊天数据提交,并且更新页面(通过jquery的ajax调用url/poll/&lt;uid&gt;)
+        room=room, uid=uid, messages=messages)</p>
+
+<p>@app.route("/put/&lt;room&gt;/&lt;uid&gt;", methods=["POST"]) #通过这个url
+def put(room, uid):
+    user = users[uid]
+    room = rooms[room]</p>
+
+<p>    message = request.form['message']
+    room.add(':'.join([uid, message]))</p>
+
+<p>    return ''</p>
+
+<p>@app.route("/poll/&lt;uid&gt;", methods=["POST"])
+def poll(uid):
+    try:
+        msg = users[uid].queue.get(timeout=10)
+    except queue.Empty:
+        msg = []
+    return json.dumps(msg) #返回队列中包含的聊天记录</p>
+
+<p>if __name__ == "__main__":
+    http = WSGIServer(('', 5000), app)
+    http.serve_forever()
+</p>
+
+<p>来一个更复杂带有前台后端的模型(例子来自http://blog.pythonisito.com/2011/07/gevent-zeromq-websockets-and-flot-ftw.html):</p>
+
+<p>源码在:http://dl.dropbox.com/u/24086834/blog/20110723/zmq_websocket.tar.gz</p>
+
+<p>其中需要修改graph.js第二行:</p>
+
+<p>var ws = new WebSocket("ws://localhost:9999/test");</p>
+
+<p>为:</p>
+
+<p>var ws = new MozWebSocket("ws://localhost:9999/test");  #因为我的火狐用的websocket不同</p>
+
+<p>这个demo.py,我来解析下:</p>
+
+<p><pre class="sh_python">
+import os
+import time
+import math
+import json
+import webbrowser
+
+<p>import paste.urlparser #paste是一个WSGI工具包，在WSGI的基础上包装了几层，让应用管理和实现变得方便</p>
+
+<p>import gevent
+from gevent_zeromq import zmq
+from geventwebsocket.handler import WebSocketHandler #基于gevent的pywsgi的WebSocket的处理程序</p>
+
+<p>def main(): #主方法
+    context = zmq.Context()
+    gevent.spawn(zmq_server, context) #上个例子使用joinall,这个例子是spawn+start,context是参数,也就是实例化的GreenContext
+    ws_server = gevent.pywsgi.WSGIServer(
+        ('', 9999), WebSocketApp(context),
+        handler_class=WebSocketHandler)
+    http_server = gevent.pywsgi.WSGIServer(
+        ('', 8000),
+        paste.urlparser.StaticURLParser(os.path.dirname(__file__))) # paste.urlparser用来处理url和静态文件
+    http_server.start()  #启动grennlet实例
+    ws_server.start()
+    webbrowser.open('http://localhost:8000/graph.html') #启动浏览器看这个页面,当正常启动后js会画图
+    zmq_producer(context)</p>
+
+<p>def zmq_server(context):
+    sock_incoming = context.socket(zmq.SUB)
+    sock_outgoing = context.socket(zmq.PUB)
+    sock_incoming.bind('tcp://*:5000') #发布绑定
+    sock_outgoing.bind('inproc://queue') #订阅绑定,本地(通过内存)进程（线程间）通信传输
+    sock_incoming.setsockopt(zmq.SUBSCRIBE, "") #这里表示对发布的所有信息都订阅
+    while True:
+        msg = sock_incoming.recv()
+        sock_outgoing.send(msg)</p>
+
+<p>class WebSocketApp(object):</p>
+
+<p>    def __init__(self, context):
+        self.context = context</p>
+
+<p>    def __call__(self, environ, start_response): 
+        ws = environ['wsgi.websocket']
+        sock = self.context.socket(zmq.SUB) 
+        sock.setsockopt(zmq.SUBSCRIBE, "") #订阅所有信息
+        sock.connect('inproc://queue') #websocket连接到订阅的地址
+        while True:
+            msg = sock.recv()
+            ws.send(msg)</p>
+
+<p>def zmq_producer(context):  #发布的方法
+    socket = context.socket(zmq.PUB)
+    socket.connect('tcp://127.0.0.1:5000') #绑定到发布的socket</p>
+
+<p>    while True:
+        x = time.time() * 1000
+        y = 2.5 * (1 + math.sin(x / 500))
+        socket.send(json.dumps(dict(x=x, y=y))) #往发布socket发送数据,这样,数据会被inproc://queue订阅,而被websocket获取,根据数据展示
+        gevent.sleep(0.05)</p>
+
+<p>if __name__ == '__main__':
+    main()
+</p>
+</pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,194 @@
+---
+layout: post
+title: 关于wget研究
+categories:
+- linux基础
+tags:
+- wget
+published: true
+comments: true
+indexer: true
+---
+<p><strong>什么是wget？</strong></p>
+
+<p>wget是一个很好的linux下的下载工具，支持递归下载，非交互下载等各种场景。</p>
+
+<p><strong>1 通常下载单个文件方式：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="517">
+<tbody>
+<tr>
+<td width="515" valign="top"><pre class="sh_bash">#wget http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>2  下载一个和下载地址文件名不同的文件：</strong></p>
+
+<p>默认wget会自动分隔最后一个斜线的后面作为文件名，正常模式下载：
+<table border="0" cellspacing="0" cellpadding="2" width="519">
+<tbody>
+<tr>
+<td width="517" valign="top"><pre class="sh_bash">#wget <a href="http://www.dongwm.com/test/download.php?src_id=02">http://www.<span style="color: #555555;">dongwm.com</span>/test/download.php?src_id=02</a></pre></td>
+</tr>
+</tbody>
+</table>
+下载后：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">#ls
+download_.php?src_id=02</pre></td>
+</tr>
+</tbody>
+</table>
+可以使用-O选项解决：
+<table border="0" cellspacing="0" cellpadding="2" width="500">
+<tbody>
+<tr>
+<td width="498" valign="top"><pre class="sh_bash">#wget –O test.zip <a href="http://www.dongwm.com/test/download.php?src_id=02">http://www.<span style="color: #555555;">dongwm.com</span>/test/download.php?src_id=02</a></pre></td>
+</tr>
+</tbody>
+</table>
+下载后：<!--more-->
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">#ls
+test.zip</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>3  指定下载速度（本例限制下载速度为3k/秒）：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="521">
+<tbody>
+<tr>
+<td width="519" valign="top"><pre class="sh_bash">[root@server ~]# wget --limit-rate=3k http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>4  断点续传</strong></p>
+
+<p>当因为某种原因中断了下载想继续下载使用-c选项：
+<table border="0" cellspacing="0" cellpadding="2" width="529">
+<tbody>
+<tr>
+<td width="527" valign="top"><pre class="sh_bash">[root@server ~]# wget --limit-rate=3k <a href="http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz">http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz</a>
+--2011-01-22 12:10:13--  <a href="http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz">http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz</a>
+正在解析主机 denism.homeip.net... 69.12.216.47
+Connecting to denism.homeip.net|69.12.216.47|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 200 OK
+长度：18215 (18K) [application/x-gzip]
+Saving to: `rsnapgraph-0.6.tar.gz'&nbsp;</td></tr></tbody></table></p>
+
+<p>16% [=======&gt;                                        ] 3,072       2.99K/s
+[root@server ~]# wget -c --limit-rate=3k <a href="http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz">http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz</a>
+--2011-01-22 12:10:19--  <a href="http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz">http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz</a>
+正在解析主机 denism.homeip.net... 69.12.216.47
+Connecting to denism.homeip.net|69.12.216.47|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 206 Partial Content
+长度：18215 (18K), 12071 (12K) remaining [application/x-gzip]
+Saving to: `rsnapgraph-0.6.tar.gz'</p>
+
+<p>100%[++++++++++++++++===============================&gt;] 18,215      3.08K/s   in 3.8s</p>
+
+<p>2011-01-22 12:10:24 (3.08 KB/s) - `rsnapgraph-0.6.tar.gz' saved [18215/18215]</pre>
+
+
+
+<strong>5  后台下载</strong></p>
+
+<p>可能这是一个很大的文件，所以使用-b选项进行后台下载，但是可以查看日志看进度：
+<table border="0" cellspacing="0" cellpadding="2" width="536">
+<tbody>
+<tr>
+<td width="534" valign="top"><pre class="sh_bash">[root@server ~]# wget -b <a href="http://mirrors.sohu.com/gentoo/releases/x86/current-iso/stage3-i686-20110111.tar.bz2">http://mirrors.sohu.com/gentoo/releases/x86/current-iso/stage3-i686-20110111.tar.bz2</a>
+继续在后台运行，pid 为 21327。
+将把输出写入至“wget-log”。&nbsp;</td></tr></tbody></table></p>
+
+<p>[root@server ~]# tail -f wget-log
+12900K .......... .......... .......... .......... ..........  8%  459K 4m28s
+12950K .......... .......... .......... .......... ..........  9%  411K 4m28s
+13000K .......... .......... .......... .......... ..........  9%  502K 4m28s
+13050K .......... .......... .......... .......... ..........  9%  548K 4m28s
+13100K .......... .......... .......... .......... ..........  9%  566K 4m28s
+13150K .......... .......... .......... .......... ..........  9%  670K 4m27s
+13200K .......... .......... .......... .......... ..........  9%  698K 4m27s
+13250K .......... .......... .......... .......... ..........  9%  878K 4m26s</pre>
+
+
+
+<strong>6 当下载多个内容时，可以将这些地址放在一个文件中，然后下载这个文件：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash"># cat &gt; download-file-list.txt
+URL1
+URL2
+URL3
+URL4&nbsp;</td></tr></tbody></table></p>
+
+<p>#wget -i download-file-list.txt</pre>
+
+
+
+<strong>7 下载一个站点（这样就可</strong>以下载我的网站的，并刚在了当前目录的localhost子目录下）：
+<table border="0" cellspacing="0" cellpadding="2" width="478">
+<tbody>
+<tr>
+<td width="476" valign="top"><pre class="sh_bash">[root@server ~]# wget --mirror -p --convert-links -P localhost www.dongwm.com</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>8 限制下载的类型（本例是不下载网站的gif图像文件）</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">#wget --reject=gif www.dongwm.com</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>9  记录下载日志，使用-o选项：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="495">
+<tbody>
+<tr>
+<td width="493" valign="top"><pre class="sh_bash"># wget -o /var/log/wget.log www.dongwm.com</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>10  仅下载某些类型的文件：</strong></p>
+
+<p>呵呵我最喜欢的选项：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[#wget -r -A.pdf mirrors.sohu.com/ebook</pre></td>
+</tr>
+</tbody>
+</table>
+你会发现 搜狐镜像的PDF文档都被你下载了^.^，而且：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">--2011-01-22 12:27:51-- <a href="http://mirrors.sohu.com/">http://mirrors.sohu.com/</a>
+Reusing existing connection to mirrors.sohu.com:80.
+已发出 HTTP 请求，正在等待回应... 200 OK
+长度：12456 (12K) [text/html]
+Saving to: `mirrors.sohu.com/index.html'&nbsp;</td></tr></tbody></table></p>
+
+<p>100%[===============================================&gt;] 12,456      --.-K/s   in 0.06s</p>
+
+<p>2011-01-22 12:27:51 (195 KB/s) - `mirrors.sohu.com/index.html' saved [12456/12456]</p>
+
+<p>正在删除 mirrors.sohu.com/index.html 因为它应该被指定了拒绝下载。</pre>
+
+
+
+其他类型的文件就不下载了…</p>
+
+<p>11  下载ftp协议的文件：
+<table border="0" cellspacing="0" cellpadding="2" width="460">
+<tbody>
+<tr>
+<td width="458" valign="top"><pre class="sh_bash">[root@server ~]# wget --ftp-user=USERNAME --ftp-password=PASSWORD www.dongwm.com</pre></td>
+</tr>
+</tbody>
+</table></p>

@@ -1,0 +1,224 @@
+---
+layout: post
+title: 关于linux安全
+categories:
+- linux基础
+tags: []
+published: false
+comments: true
+indexer: true
+---
+<p>前言：关于linux安全网上也有一些文章可以借鉴，所以就有了这篇文章</p>
+
+<p>1 物理安全
+其实就是服务器本身的硬件安全，加入在机房这个其实基本没必要，因为监控以及身份验证已经很不错了。我想唯一的可能就是设置BIOS使之只可从你的硬驱引导，而不允许从光驱软驱引导</p>
+
+<p>2 分区方案</p>
+
+<p>1 任何用户可写的目录树(/home、/tmp和/var) 应放在单独的分区上并使用磁盘配额。根据需要把这些分区或者某个分区要大一点</p>
+
+<p>2 任何非发行软件的目录树应放在单独的分区上。, 应为 /opt或/usr/local,/home。这样如果你需要重装系统时， 它们可以不受影响。这个很重要</p>
+
+<p>3 管理员root</p>
+
+<p>建立一个日常使用的用户，如该用户需要有root访问权，把该用户加入wheel组。 这使普通用户可以su为root用户（默认的PAM设置规定wheel组的成员才可使用su）</p>
+
+<p>4 GRUB密码（md5加密）</p>
+
+<p>这个在远程管理时候很麻烦。
+#grub
+grub&gt; md5crypt
+Password: ********
+// Typed changeme
+Encrypted: $1$TuIA.RO.$FHsEOR1MphueQgVk8/5d1  #将这个内容粘贴到/boot/grub/grub.conf
+ grub&gt; quit
+timeout 5
+password --md5 $1$TuIA.RO.$FHsEOR1MphueQgVk8/5d1
+5 记录日志
+1 Metalog
+这个软件可能想在发生密码失败时收到邮件通知，使用如下脚本。
+我的是postfix /usr/local/sbin/mail_pwd_failures.sh：
+#! /bin/sh
+echo "$3" | mail -s "Warning (program : $2)" root</p>
+
+<p>取代/etc/metalog/metalog.conf里面关于`密码失败'下命令行的注释
+command  = "/usr/local/sbin/mail_pwd_failures.sh"
+2 Syslog-ng
+修改 /etc/syslog-ng/syslog-ng.conf
+options { long_hostnames(off); sync(0); };</p>
+
+<p># 读取日志的源
+source src { unix-stream("/dev/log"); internal(); };
+source kernsrc { file("/proc/kmsg"); };</p>
+
+<p># 定义目的地
+destination authlog { file("/var/log/auth.log"); };
+destination syslog { file("/var/log/syslog"); };
+destination cron { file("/var/log/cron.log"); };
+destination daemon { file("/var/log/daemon.log"); };
+destination kern { file("/var/log/kern.log"); };
+destination lpr { file("/var/log/lpr.log"); };
+destination user { file("/var/log/user.log"); };
+destination mail { file("/var/log/mail.log"); };</p>
+
+<p>destination mailinfo { file("/var/log/mail.info"); };
+destination mailwarn { file("/var/log/mail.warn"); };
+destination mailerr { file("/var/log/mail.err"); };</p>
+
+<p>destination newscrit { file("/var/log/news/news.crit"); };
+destination newserr { file("/var/log/news/news.err"); };
+destination newsnotice { file("/var/log/news/news.notice"); };</p>
+
+<p>destination debug { file("/var/log/debug"); };
+destination messages { file("/var/log/messages"); };
+destination console { usertty("root"); };
+destination console_all { file("/dev/tty12"); };
+destination xconsole { pipe("/dev/xconsole"); };</p>
+
+<p># 创建过滤器
+filter f_auth { facility(auth); };
+filter f_authpriv { facility(auth, authpriv); };
+filter f_syslog { not facility(authpriv, mail); };
+filter f_cron { facility(cron); };
+filter f_daemon { facility(daemon); };
+filter f_kern { facility(kern); };
+filter f_lpr { facility(lpr); };
+filter f_mail { facility(mail); };
+filter f_user { facility(user); };
+filter f_debug { not facility(auth, authpriv, news, mail); };
+filter f_messages { level(info..warn)
+	and not facility(auth, authpriv, mail, news); };
+filter f_emergency { level(emerg); };</p>
+
+<p>filter f_info { level(info); };
+filter f_notice { level(notice); };
+filter f_warn { level(warn); };
+filter f_crit { level(crit); };
+filter f_err { level(err); };
+filter f_failed { match("failed"); };
+filter f_denied { match("denied"); };</p>
+
+<p># 把过滤器和目的地连接起来
+log { source(src); filter(f_authpriv); destination(authlog); };
+log { source(src); filter(f_syslog); destination(syslog); };
+log { source(src); filter(f_cron); destination(cron); };
+log { source(src); filter(f_daemon); destination(daemon); };
+log { source(kernsrc); filter(f_kern); destination(kern); };
+log { source(src); filter(f_lpr); destination(lpr); };
+log { source(src); filter(f_mail); destination(mail); };
+log { source(src); filter(f_user); destination(user); };
+log { source(src); filter(f_mail); filter(f_info); destination(mailinfo); };
+log { source(src); filter(f_mail); filter(f_warn); destination(mailwarn); };
+log { source(src); filter(f_mail); filter(f_err); destination(mailerr); };</p>
+
+<p>log { source(src); filter(f_debug); destination(debug); };
+log { source(src); filter(f_messages); destination(messages); };
+log { source(src); filter(f_emergency); destination(console); };</p>
+
+<p># 默认日志
+log { source(src); destination(console_all); };
+6 挂载分区
+把 /tmp 设为noexec，你懂的（ 但是把 /tmp 设为 noexec 模式可能会妨碍某些脚本正常执行。）
+参看一个例子：
+/dev/sda1 /boot ext2 noauto,noatime 1 1
+/dev/sda2 none swap sw 0 0
+/dev/sda3 / reiserfs notail,noatime 0 0
+/dev/sda4 /tmp reiserfs notail,noatime,nodev,nosuid,noexec 0 0
+/dev/sda5 /var reiserfs notail,noatime,nodev 0 0
+/dev/sda6 /home reiserfs notail,noatime,nodev,nosuid 0 0
+/dev/sda7 /usr reiserfs notail,noatime,nodev,ro 0 0
+/dev/cdroms /cdrom0 /mnt/cdrom iso9660 noauto,ro 0 0
+proc /proc proc defaults 0 0
+7 用户/组限制
+/etc/security/limits.conf #要防止本地DoS或处理一个组或用户的最大登录数，控制资源限制是一个非常有效的途径。
+*    soft core      0
+*    hard core      0
+*    hard nproc     15
+*    hard rss       10000
+*    -    maxlogins 2
+@dev hard core      100000
+@dev soft nproc     20
+@dev hard nproc     35
+@dev -    maxlogins 10
+如果发现自己想设 nproc 或 maxlogins 为0，可能还不如删掉这个用户。 上面的例子设定了 dev 组的进程，核心文件和maxlogins的设置。 其他的设为一个默认值
+/etc/login.defs</p>
+
+<p>如果政策要求用户每两周改变一次密码，把 PASS_MAX_DAYS 的值改为14， PASS_WARN_AGE 改为7。建议使用密码龄因为暴力方法可以找出任何密码， 只是迟早的问题。鼓励将 LOG_OK_LOGINS 设为yes</p>
+
+<p>7. 文件访问权限</p>
+
+<p>一般用户不可拥有配置文件或密码的访问权。攻击者可能从数据库或网站偷窃密码利用密码 歪曲甚而删除资料。这正是访问权限正确的重要性之所在。如果你能肯定某个文件仅为root使用， 设置其访问权限为0600，并通过chown将此文件指派给正确的用户。
+# /usr/bin/find / -type f \( -perm -2 -o -perm -20 \) \
+   -exec ls -lg {} \; 2&gt;/dev/null &gt;writable.txt
+# /usr/bin/find / -type d \( -perm -2 -o -perm -20 \) \
+   -exec ls -ldg {} \; 2&gt;/dev/null &gt;&gt;writable.txt
+这将创建一个包含了所有组成员或其他人有写权限的文件的巨大文件。检查权限， 在这些文件上执行/bin/chmod o-w 以消除其他人的写权限。
+# /usr/bin/find / -type f \( -perm -004000 -o -perm -002000 \) \
+  -exec ls -lg {} \; 2&gt;/dev/null &gt;suidfiles.txt
+这会创建一个包含所有SUID/SGID文件列表的文件。</p>
+
+<p>默认情况下Gentoo Linux没有太多SUID文件(取决于你装的是什么)， 但你可能会得到类似上面的列表。 对ping, mount, umount, chfn, chsh, newgrp, suidperl, pt_chown 和 traceroute 每个文件运行chmod -s以关闭SUID位。不要移去su, qmail-queue 或 unix_chkpwd的SUID位，否则你不能SU或接收邮件了。 移去SUID位后，普通用户(或者攻击者)就不可能通过它们来获取root访问权限了。</p>
+
+<p>我的系统中有SUID位的文件只有 su, passwd, gpasswd, qmail-queue, unix_chkpwd 和 pwdb_chkpwd。 如果你运行X的话，可能会有更多，因为X需要该权限。</p>
+
+<p>8 内核安全
+# /bin/echo "1" &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all
+这会使内核忽略所有又称为ICMP类型0消息的ping消息。 这样做的原因是带有ICMP消息的IP包可能包含你意想不到的其他信息的有效负载。 管理员用ping作为诊断工具，如果不能ping他们会抱怨。外来者没有理由可以ping。 但是有时内部用户可以ping很方便。这可以通过在防火墙中禁止ICMP类型0消息来解决。
+# /bin/echo "1" &gt; /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+这禁止响应ICMP广播，可以避免Smurf攻击。 Smurf攻击的原理是往一个网络的广播地址发送一个ICMP类型0(ping)消息。 攻击者一般使用伪装的源地址。该网络上的所有电脑都会应答这个ping消息， 这样就淹没了被伪装的主机。
+# /bin/echo "0" &gt; /proc/sys/net/ipv4/conf/all/accept_source_route
+不要接受源路由包。攻击者可能利用源路由来产生伪装成产生于你的网络内部的通信量， 而实际上它是在反向路由回产生的地方，这样攻击者可以危及你网络的安全。 源路由极少用于合法用途，因此禁用之。
+# /bin/echo "0" &gt; /proc/sys/net/ipv4/conf/all/accept_redirects
+禁用ICMP重定向。它可用于修改你的路由表，可能是恶意的。
+# /bin/echo "1" &gt; /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+启用响应伪错误信息保护。
+# for i in /proc/sys/net/ipv4/conf/*; do
+        /bin/echo "1" &gt; $i/rp_filter
+done
+打开逆向路径过滤。这可以保证包使用合法源地址，它自动拒绝源地址的路由表项与进入的网络接口不匹配的入包。 这样可以防止IP伪装，有安全优势
+# /bin/echo "1" &gt; /proc/sys/net/ipv4/conf/all/log_martians
+记录IP伪装的包、源路由包和重定向包。
+# /bin/echo "0" &gt; /proc/sys/net/ipv4/ip_forward
+确保关闭了IP转发。只有对多宿主主机我们才需要它。</p>
+
+<p>机器重启后所有这些设置都会被重设，因此建议把它们加入 /etc/sysctl.conf。 /etc/init.d/bootmisc 初始化脚本会自动运行它。</p>
+
+<p>/etc/sysctl.conf 的语法很直白。从前面提到的路径中剥去 /proc/sys/， 用.替换掉 / 就可以了
+(Manual using echo):
+/bin/echo "0" &gt; /proc/sys/net/ipv4/ip_forward</p>
+
+<p>9 ssh安全
+/etc/ssh/sshd_config
+# 只启用版本 2
+Protocol 2</p>
+
+<p># 禁止 root 登录。用户必须su为root
+PermitRootLogin no</p>
+
+<p># 打开公密钥鉴证
+PubkeyAuthentication yes
+AuthorizedKeysFile      .ssh/authorized_keys</p>
+
+<p># 禁止 .rhost 和常规密码鉴证
+RhostsAuthentication no
+PasswordAuthentication no
+PermitEmptyPasswords no</p>
+
+<p>AllowHosts *.gentoo.org</p>
+
+<p># 只允许 wheel 或 admin 组的用户登录
+AllowGroups wheel admin</p>
+
+<p># 只允许那些组中的如下用户
+AllowUsers kn bs</p>
+
+<p># 日志
+SyslogFacility AUTH
+LogLevel INFO</p>
+
+<p>ListenAddress 127.0.0.1</p>
+
+<p>10
+&nbsp;</p>
+
+<p>&nbsp;</p>

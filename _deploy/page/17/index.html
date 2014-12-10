@@ -1,0 +1,1917 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/17">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/zuijindelinuxheshellshiyongzongjie/">最近的linux和shell使用总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-05T00:00:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：很久没有写关于linux和shell的东西了，但是最近研究一些东西，把还有印象的一起拿出来</p>
+
+<p><strong>1 定义函数解压缩不同文件</strong></p>
+
+<p>注：需求产生其实是因为工作中会下载解压缩各种文件，比如.tar.gz ,tar.bz2,.gz,.zip等等后缀，不如自定义一个命令解压：</p>
+
+<p>ec () {
+if [ -f $1 ] ; then
+case $1 in
+*.tar.bz2)   tar xjf $1        ;;
+*.tar.gz)    tar xzf $1     ;;
+*.bz2)       bunzip2 $1       ;;
+*.rar)       rar x $1     ;;
+*.gz)        gunzip $1     ;;
+*.tar)       tar xf $1        ;;
+*.tbz2)      tar xjf $1      ;;
+*.tgz)       tar xzf $1       ;;
+*.zip)       unzip $1     ;;
+*.Z)         uncompress $1  ;;
+*.7z)        7z x $1    ;;
+*)           echo &#8220;&#8217;$1&#8217; cannot be extracted via extract()&#8221; ;;
+esac
+else
+echo &#8220;&#8217;$1&#8217; is not a valid file&#8221;
+fi
+}
+export ec
+你可以将以上内容放在~/.bashrc 中，这样启动shell就可以使用这个ec命令</p>
+
+<p><strong>2 shell的图形程序</strong></p>
+
+<p>注：可能大家一说图形程序那么就是qt，gtk，wxpython这样的语言实现的，但是对于一般的系统管理员或者简单的工作，没有必要</p>
+
+<p>1 Zenity</p>
+
+<p>它依赖X Window环境 与 GNOME 相捆绑。如果使用kde，需要单独安装（gtk依赖是很折磨人的）</p>
+
+<p><pre class="sh_bash">
+#!/bin/bash
+(
+  echo "10" ;  sleep 1 #do something，我这里换成了sleep,以下同样，前面的10表示进度百分比，这个是自定义的数字而已，我根据大概时间占比设计的
+  echo "# Start thunderbird" ; sleep 1
+  echo "30" ; sleep 1
+  echo "# Receive mail" ; sleep 1
+  echo "75" ; sleep 1
+  echo "# handle mail" ; sleep 1
+  echo "100" ; sleep 1
+) |
+zenity --progress \
+  --title="Update System Logs" \
+  --text="Scanning mail ..." \  #这个文件显示就是上面的那个10%过程里
+  --percentage=0</p>
+
+<p>if [ "$?" = -1 ] ; then
+  zenity --error \
+    --text="Operate canceled."
+fi
+</pre></p>
+
+<p><pre class="sh_bash">
+ENTRY=`zenity --entry --text "Please enter your name" \
+   --entry-text "Your name" --title "Enter your name"`
+if [ $? == 0 ]; then
+  zenity --info --text "Hello $ENTRY\!"
+fi
+</pre></p>
+
+<p>2 dialog</p>
+
+<p>注：这个dialog在我以前的工作中还是比较经常使用的，一些脚本给用户一个选择的界面</p>
+
+<p><pre class="sh_bash">
+RESULT=`dialog --stdout  \
+   --checklist "Enable the account options you want:" 10 40 3 \   #这里是是一个可以多选的框
+  1 "Home directory" on \
+  2 "Signature file" off \
+  3 "Simple password" off`
+if [ $? == 0 ]; then
+  zenity --info --text "$RESULT\!"
+fi
+</pre></p>
+
+<p>例子很丰富，下载安装dialog的目录下有sample子文件夹，里面都是一些实现各种功能的shell脚本，大家可以去实践</p>
+
+<p><strong>3 抓取LINUX桌面的视频</strong></p>
+
+<p>注：以前很羡慕youtube的一些高清的关于linux桌面的视频，用录像工具发现很卡，后来发现了这个</p>
+
+<p>需要安装ffmpeg(opensuse11.4)</p>
+
+<p>sudo zypper addrepo -f http://ftp.gwdg.de/pub/linux/packman/suse/11.4/ packman</p>
+
+<p>sudo zypper addrepo -f http://opensuse-guide.org/repo/11.4/ dvd
+sudo zypper install ffmpeg
+ffmpeg -f x11grab -s wxga -r 25 -i :0.0 -sameq /tmp/out.mpg
+注：</p>
+
+<p>-f x11grab 指定输入类型。因为x11的缓冲区不是普通的视频文件可以侦测格式，必须指定后ffmpeg才知道如何获得输入。</p>
+
+<p>-s wxga 设置抓取区域的大小。wxga是1366*768的标准说法，也可以换成-s 800×600的写法。</p>
+
+<p>-r 25 设置帧率，即每秒抓取的画面数。</p>
+
+<p>-i :0.0 设置输入源，本地X默认在0.0</p>
+
+<p>-sameq 保持跟输入流一样的图像质量，以用来后期处理</p>
+
+<p><strong>4 最近的一个脚本，分析postfix的maillog的一些东西，其中使用了sqlite和redis的bash接口,并且格式化数据发送邮件</strong></p>
+
+<p>主要是：分析前一天的maillog，按小时，分析出那个小时里面给某邮件ISP发送的邮件的数量频率（单位封/min，第一封到最后一封，是按分钟，</p>
+
+<p>、不是按照每小时60min），计算全天给某邮件ISP的发送频率（同上，不是一天的24*60min）,计算每天给各邮件ISP发送总量，整天拒绝和弹回的邮件总量</p>
+
+<p><strong><pre class="sh_bash"></strong>
+#!/bin/bash</p>
+
+<p>START=`date +%s`
+function total(){
+for i in qq.comnum foxmail.comnum 163.comnum 126.comnum netease.comnum sina.comnum sina.com.cnnum sohu.comnum gmail.comnum yahoo.comnum yahoo.com.cnnum live.comnum hotmail.comnum mail.alipay.comnum other reject bounced
+do
+redis-bash-cli -h localhost set $i 0 2&gt;&amp;1 &gt;/dev/null
+done
+for i in qq.comint foxmail.comint 163.comint 126.comint netease.comint sina.comint sina.com.cnint sohu.comint gmail.comint yahoo.comint yahoo.com.cnint live.comint hotmail.comint mail.alipay.comint
+do
+redis-bash-cli -h localhost set $i 0 2&gt;&amp;1 &gt;/dev/null
+done
+}
+function initmail(){
+for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
+do
+redis-bash-cli -h localhost set $i 0 2&gt;&amp;1 &gt;/dev/null
+done
+}
+function init(){
+for i in 0{0..9} {10..24}; do sqlite3 test.db "CREATE TABLE IF NOT EXISTS t`date -d last-day +%m%d`$i(Name VARCHAR(40),Start INTEGER,End INTEGER,Num INTEGER)"; done
+sqlite3 test.db "CREATE TABLE IF NOT EXISTS t`date -d last-day +%m%d`(Name VARCHAR(40),DaySum VARCHAR(40),HourHigh VARCHAR(40),DayAv VARCHAR(40))";
+initmail
+}
+function status(){
+status=`echo $@|grep -Po "status=(\w+)"|cut -d '=' -f2`
+if [ "$status" = "sent" ];then
+parse $@
+elif [ "$status" = "bounced" ];then
+bou=`redis-bash-cli -h localhost get bounced`
+((bou++))
+redis-bash-cli -h localhost set bounced $bou 2&gt;&amp;1 &gt;/dev/null
+else
+if [ "`echo $@|grep reject`" != "" ];then
+rej=`redis-bash-cli -h localhost get reject`
+((rej++))
+redis-bash-cli -h localhost set reject $rej 2&gt;&amp;1 &gt;/dev/null
+fi
+fi
+}
+function add(){
+data=`redis-bash-cli -h localhost get $1 `
+mint=`redis-bash-cli -h localhost get $1int`
+mtotal=`redis-bash-cli -h localhost get $1num`
+if [ "$data" = 0 ];then
+m=`echo $@|awk '{print $4}'`
+mstart=`echo $m|cut -d ':' -f2`
+hour=`echo $m|cut -d ':' -f1`
+sqlite3 test.db "insert into t`date -d last-day +%m%d`$c (Name,Start) values ('$1','$mstart');"
+fi
+if [ "$mint" = 0 ];then
+cur=`echo "$hour * 60 + $mstart"|bc`
+redis-bash-cli -h localhost set $1int $cur 2&gt;&amp;1 &gt;/dev/null
+fi
+((data++))
+((mtotal++))
+redis-bash-cli -h localhost set $1 $data 2&gt;&amp;1 &gt;/dev/null
+redis-bash-cli -h localhost set $1num $mtotal 2&gt;&amp;1 &gt;/dev/null
+}
+function parse(){
+data=`echo $@|grep -Po 'to=&lt;(.*@.*?)&gt;'|cut -d',' -f 1|cut -d'@' -f2`
+len=`expr length $data`
+mail=${data:0:$len-1}
+if [ "$mail" = "foxmail.com" ];then
+add $mail $@
+elif [ "$mail" = "163.com" ];then
+add $mail $@
+elif [ "$mail" = "qq.com" ];then
+add $mail $@
+elif [ "$mail" = "mail.alipay.com" ];then
+add $mail $@
+elif [ "$mail" = "126.com" ];then
+add $mail $@
+elif [ "$mail" = "netease.com" ];then
+add $mail $@
+elif [ "$mail" = "sina.com" ];then
+add $mail $@
+elif [ "$mail" = "sina.com.cn" ];then
+add $mail $@
+elif [ "$mail" = "sohu.com" ];then
+add $mail $@
+elif [ "$mail" = "gmail.com" ];then
+add $mail $@
+elif [ "$mail" = "yahoo.com" ];then
+add $mail $@
+elif [ "$mail" = "yahoo.com.cn" ];then
+add $mail $@
+elif [ "$mail" = "live.com" ];then
+add $mail $@
+elif [ "$mail" = "hotmail.com" ];then
+add $mail $@
+else
+mother=`redis-bash-cli -h localhost get other`
+((mother++))
+redis-bash-cli -h localhost set other $mother 2&gt;&amp;1 &gt;/dev/null
+fi
+}
+function day(){
+day=`date -d last-day +%d`
+grep 'to=' /var/log/maillog|awk '$2=='"$day"' {print}'&gt;txt
+}
+function cal(){
+for c in 0{0..9} {10..24}
+do
+for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
+do
+tt=`redis-bash-cli -h localhost get $i`
+table=t`date -d last-day +%m%d`$c
+data=`sqlite3 test.db "select * from '"$table"' where Name='$i';"`
+if [ "$data" != "" ];then
+st=`echo $data|cut -d'|' -f2`
+ed=`echo $data|cut -d'|' -f3`
+nu=`echo $data|cut -d'|' -f4`
+cur=`expr $ed - $st`
+if [ "$cur" != 0 ];then
+d=`echo "scale=2;$nu/$cur"|bc`
+if [ `echo "$d &gt; $tt"|bc` -eq 1 ];then
+redis-bash-cli -h localhost set $i $d 2&gt;&amp;1 &gt;/dev/null
+fi
+fi
+fi
+done
+done
+}
+sqlop(){
+for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
+do
+num=`redis-bash-cli -h localhost get $i'num'`
+hi=`redis-bash-cli -h localhost get $i`
+di=`redis-bash-cli -h localhost get $i'int'`
+sqlite3 test.db "insert into t`date -d last-day +%m%d` (Name,DaySum,HourHigh,DayAv) values ('$i','$num','$hi','$di');"
+done
+}
+function caltotal(){
+for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
+do
+end=`grep 'to=&lt;.*@'"$i"'&gt;' txt|tail -n 1|awk '{print $3}'`
+mstart=`echo $end|cut -d ':' -f2`
+hour=`echo $end|cut -d ':' -f1`
+cur=`echo "$hour * 60 + $mstart"|bc`
+std=`redis-bash-cli -h localhost get $i'int'`
+sum=`redis-bash-cli -h localhost get $i'num'`
+if [ "$sum" != 0 ];then
+d=`expr $cur - $std`
+da=`echo "scale=2;$sum/$d"|bc`
+else
+da=0
+fi
+redis-bash-cli -h localhost set $i'int' $da  2&gt;&amp;1 &gt; /dev/null
+done
+}
+function sendmail()
+{
+END=`date +%s`
+otime=`date -d last-day +%d`
+s=`expr \( $END - $START \)`
+echo -n "&lt;strong&gt;您好：&lt;/br&gt;&lt;/strong&gt;" &gt; Mail
+echo -n "&lt;strong&gt;&lt;br&gt;$otime日邮件服务器数据统计&lt;/br&gt;&lt;/strong&gt;" &gt;&gt; Mail
+echo -n "&lt;table&gt;&lt;TR&gt;&lt;TD&gt;邮件ISP&lt;/TD&gt;&lt;TD&gt;本日发送总量(单位:封)&lt;/TD&gt;&lt;TD&gt;本日发送最高一小时频率（单位:封/min)&lt;/TD&gt;&lt;TD&gt;本日平均(单位:封/min)&lt;/TD&gt;&lt;/TR&gt;" &gt;&gt; Mail
+sqlite3 -html test.db  "select Name,DaySum,HourHigh,DayAv from t`date -d last-day +%m%d`;" &gt;&gt; Mail
+bou=`redis-bash-cli -h localhost get bounced`
+echo -n "&lt;TR&gt;&lt;TD&gt;被弹出邮件数量&lt;/TD&gt;&lt;TD&gt;$bou&lt;/TD&gt;&lt;/TR&gt;" &gt;&gt; Mail
+rej=`redis-bash-cli -h localhost get reject`
+echo -n "&lt;TR&gt;&lt;TD&gt;被拒绝邮件数量&lt;/TD&gt;&lt;TD&gt;$rej&lt;/TD&gt;&lt;/TR&gt;" &gt;&gt; Mail
+oth=`redis-bash-cli -h localhost get other`
+echo -n "&lt;TR&gt;&lt;TD&gt;其它类型邮件数量&lt;/TD&gt;&lt;TD&gt;$oth&lt;/TD&gt;&lt;/TR&gt;&lt;/table&gt;" &gt;&gt; Mail
+echo -n "&lt;font color="red"&gt;&lt;TR&gt;本次操作花费: $s秒&lt;/TR&gt;&lt;/font&gt;" &gt;&gt; Mail
+#cat Mail | /usr/bin/formail -I "From: dongwm@dongwm.com" -I "MIME-Version:1.0" -I "Content-type:text/html;charset=utf-8" -I "Subject:Postfix昨日邮件系统统计结果" -I "To: dongwm2@dongwm.com"|/usr/sbin/sendmail -oi dongwm2@dongwm.com
+}
+function tm(){
+for c in 0{0..9} {10..24}
+do
+awk '/'"$c"':[0-5][0-9]:[0-5][0-9]/ {print}' txt|while read line; do status $line; done
+for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
+do
+data=`redis-bash-cli -h localhost get $i`
+end=`awk '/'"$c"':[0-5][0-9]:[0-5][0-9]/ {print}' txt|grep 'to=&lt;.*@'"$i"'&gt;'|tail -n 1|awk '{print $3}'|cut -d ':' -f2`
+sqlite3 test.db "update t`date -d last-day +%m%d`$c set Num='$data',End='$end' where Name='$i';"
+done
+sleep 5
+initmail
+done
+}
+function end(){
+for i in 0{0..9} {10..24}; do sqlite3 test.db "drop table if exists t`date -d last-day +%m%d`$i"; done
+sqlite3 test.db "drop table if exists t`date -d last-day +%m%d`";
+}
+#主函数
+end
+total
+#day
+init
+tm
+cal
+caltotal
+sqlop
+sendmail
+<strong></pre>
+</strong></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shiyongbeautifulsoupzhuaquyoudaocidianchaxunzidianjieguo/">使用BeautifulSoup抓取有道词典查询字典结果</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-01T00:00:00+08:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：BeautifulSoup是python第三方类库，用于解析和修改html和xml文件。有时候不会一个英语单词想查询还要登录网站输入单词然后搜索，不如写个抓取程序玩玩</p>
+
+<p>首先将一下运行过程：</p>
+
+<p>1 登录网站http://dict.youdao.com 2 在 form区域输入要输入的英语词 3 点击‘搜索’ 4 页面返回结果 5解析html文件 6 找到相关翻译项 7 打印出来</p>
+
+<p>1  分析form（我只截取了一部分）：</p>
+
+<p><pre class="sh_html4strict">
+&lt;form method="<a>get</a>" action="<a href="view-source:http://dict.youdao.com/search">/search</a>" class="<a>c-fm-w</a>" id="<a>f</a>"&gt;    #使用‘get’方法，地址是http://dict.youdao.com/search（程序会用到）
+    &lt;!--Begin 搜索框 --&gt;
+    &lt;span class="<a>s-inpt-w</a>"&gt;
+        &lt;input type="<a>text</a>" class="<a>s-inpt</a>" autocomplete="<a>off</a>" name="<a>q</a>" id="<a>query</a>" onmouseover="<a>this.focus()</a>" onfocus="<a>this.select()</a>" maxlength="<a>256</a>"/&gt; #'name'是'q'，程序会用
+        &lt;span id="<a>hnwBtn</a>" class="<a>hand-write</a>"&gt;&lt;/span&gt;
+        &lt;!-- Begin 这两个SPAN 尽量写一行 --&gt;
+    &lt;/span&gt;&lt;span class="<a>s-btn-w</a>"&gt;
+        &lt;!-- #End 这两个SPAN 尽量写一行 --&gt;
+        &lt;input type="<a>submit</a>" class="<a>s-btn</a>" id="<a>qb</a>" value="<a>搜 索</a>"/&gt;
+        &lt;input type="<a>hidden</a>" name="<a>keyfrom</a>" value="<a>dict.index</a>"/&gt; &lt;/span&gt;
+&lt;/form &gt;
+</pre></p>
+
+<p>当提交后，看我的firebug的分析图：</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/shiyongbeautifulsoupzhuaquyoudaocidianchaxunzidianjieguo/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/linuxjiqiao/">Linux技巧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-10T00:00:00+08:00" pubdate data-updated="true">May 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 cat ~/.ssh/id_rsa.pub | ssh －p port user@server &#8220;cat - &gt;&gt; ~/.ssh/authorized_keys&#8221;  #ssh-copy-id类似</strong></p>
+
+<p><strong>2 awk &#8216;BEGIN{srand()}{a[NR,rand()]=$0}END{y=0;for(i in a){print a[i];y++;if(y==num){exit;}}}&#8217;  file #从file中随机出num行显示出来</strong></p>
+
+<p><strong>3 sorted(dict.iteritems(), key=lambda d:d[1],reverse =True) #将字典dict以value按从大到小的顺序排序（python）</strong></p>
+
+<p><strong>4 history | awk &#8216;{a[$2]++}END{for(i in a){print a[i] &#8221; &#8221; i}}&#8217; | sort -rn | head #最常用的10条命令</strong></p>
+
+<p><strong>5 heapq.nlargest(10, d.iteritems(), operator.itemgetter(1)) #字典排序，返回根据value从大到小前十</strong></p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pythonzhongduanxianshicaisezifu/">Python终端显示彩色字符</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-27T00:00:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：作一个脚本或者程序在需要发音很多输出的时候，默认的白色会让人看的很困，但是有了彩色做个分割线或者让一些重要信息用彩色字体打印出来就好多了，以前一直在用模块实现，后来发现print借用ANSI控制码原来也可以：参见：http://www.oschina.net/code/snippet_87675_8599</p>
+
+<p>1分析这个程序</p>
+
+<p><pre class="sh_python">
+#!/usr/bin/env python
+#-*-coding:utf-8-*-
+#Filename:</p>
+
+<p>__author__ = "maqiang.jacky &lt;maqiang.jacky@snda.com&gt;"
+__version__ = 1.0
+__date__ = "12-2-9"</p>
+
+<p>"""
+0  All attributes off 默认值
+1  Bold (or Bright) 粗体 or 高亮
+4  Underline 下划线
+5  Blink 闪烁
+7  Invert 反显
+30 Black text
+31 Red text
+32 Green text
+33 Yellow text
+34 Blue text
+35 Purple text
+36 Cyan text
+37 White text
+40 Black background
+41 Red background
+42 Green background
+43 Yellow background
+44 Blue background
+45 Purple background
+46 Cyan background
+47 White background
+"""
+def main():
+    """ """
+for atrr in [0,1,4,5,7]:   0表示无属性，1表示高亮，4加下划线，5表示闪烁 ，7反显 ，8消隐 
+    print "attribute %d ------------------------------" % atrr
+    for fore in [30,31,32,33,34,35,36,37]:
+        for back in [40,41,42,43,44,45,46,47]:
+            color = "\x1B[%d;%d;%dm" % (atrr,fore,back)  #除了atrr，分别代表 字的颜色，底色
+            print "%s %d-%d-%d\x1B[0m" % (color,atrr,fore,back),
+        print ""
+if __name__ == "__main__":
+    """ """
+    main()
+</pre></p>
+
+<p>其中</p>
+
+<p>字背景颜色范围:40&#8212;-49
+40:黑
+41:深红
+42:绿
+43:黄色
+44:蓝色
+45:紫色
+46:深绿
+47:白色</p>
+
+<p>字颜色:30&#8212;&#8212;&#8212;&#8211;39
+30:黑
+31:红
+32:绿
+33:黄
+34:蓝色
+35:紫色
+36:深绿
+37:白色</p>
+
+<p>因为我不需要底色，自己写了一个方法：</p>
+
+<p><pre class="sh_python">
+def myprint(color,mes):
+    if color == 'r':
+        fore = 31
+    elif color == 'g':
+        fore = 32
+    elif color == 'b':
+        fore = 36
+    elif color == 'y':
+        fore = 33
+    else:
+        fore = 37
+    color = "\x1B[%d;%dm" % (1,fore)
+    print "%s %s\x1B[0m" % (color,mes)
+</pre></p>
+
+<p>假如想显示一段信息为红色：</p>
+
+<p>dongwm@linux-dongwm:~&gt; myprint(&#8216;r&#8217;,&#8217;some messages&#8217;)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pythonzhaodaoipduankeyongipzuidahezuishaoip/">Python找到ip段可用ip最大和最少ip</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-27T00:00:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：一个小需求，当用户输入‘XXX.XXX.XXX.XXX/XX’（ip/netmask）时候自动帮他分析出这个网段除去网络号和广播地址外的开始和结束ip</p>
+
+<p><pre class="sh_python">
+def ipto(iplist):
+    data = iplist.split('/')
+    ip= data[0]
+    ti = int(data[1])
+    d = int(ti/8)
+    c = 256/(2**(ti%8))
+    ip_items = ip.split('.')
+    if len(ip_items[d:]) == 1:
+        if ti%8 == 0:
+            cmin = '%s.%s' % ('.'.join(ip_items[:d]),'0')
+            cmax = '%s.%s' % ('.'.join(ip_items[:d]),'255')
+        else:
+            for i in range(2**(ti%8)):
+	        mymax = (i+1)*c-1
+	        mymin=  i*c
+	        data =  int(''.join(ip_items[d:]))
+	        if data &lt; mymax and data &gt;= mymin:
+	            cmin = '%s.%s' % ('.'.join(ip_items[:d]),mymin)
+  	            cmax = '%s.%s' % ('.'.join(ip_items[:d]),mymax)
+    else:
+        if ti%8 == 0:
+             cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),'0',('0.'*(len(ip_items)-d-1))[:-1])
+             cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),'255',('255.'*(len(ip_items)-d-1))[:-1])
+        else:
+	    for i in range(2**(ti%8)):
+                mymax = (i+1)*c-1
+                mymin=  i*c
+	        data =  int(''.join(ip_items[d]))
+	        if data &lt; mymax and data &gt;= mymin:
+		    cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymin,('0.'*(len(ip_items)-d-1))[:-1])
+		    cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymax,('255.'*(len(ip_items)-d-1))[:-1])
+    print  cmin,cmax
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiuwu/">关于AWK研究（五）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-23T00:00:00+08:00" pubdate data-updated="true">Apr 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 IGNORECASE忽略大小写</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;/aaa/{print}&#8217; test.txt   #默认IGNORECASE是0
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{IGNORECASE=1}/aaa/{print}&#8217; test.txt
+115,AAA
+<strong>2 ERRNO  错误输出</strong>
+dongwm@linux-dongwm:~&gt; cat test.awk
+{
+print $0;
+x = getline &lt; &#8220;dummy-file.txt&#8221;
+if ( x == -1 )
+print ERRNO   #当出现一个I／O错误，会把ERRNO变成输出信息
+else
+print $0;
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+112,dongwm,dongwm.com,1120
+没有那个文件或目录
+113,ailll,ailll.com,1130
+没有那个文件或目录
+114,ccc,ccc.com,1140
+没有那个文件或目录
+<strong>3 用户自定义方法</strong></p>
+
+<p>语法：</p>
+
+<p>function fn-name(parameters)
+{
+function-body
+}
+dongwm@linux-dongwm:~&gt; cat test.awk
+{
+i=1; total=0;
+while (i &lt;= NF) {
+mydebug(&#8220;quantity is &#8221; $i);
+total = total + $i;
+i++;
+}
+print &#8220;Item&#8221;, $1, &#8220;:&#8221;,&#8221;num is&#8221;,total;
+}
+function mydebug ( message ) {
+printf(&#8220;DEBUG[%d]&gt;%s\n&#8221;, NR, message )
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+DEBUG[1]&gt;quantity is 112,dongwm,dongwm.com,1120
+Item 112,dongwm,dongwm.com,1120 : num is 112
+DEBUG[2]&gt;quantity is 113,ailll,ailll.com,1130
+Item 113,ailll,ailll.com,1130 : num is 113
+DEBUG[3]&gt;quantity is 114,ccc,ccc.com,1140
+Item 114,ccc,ccc.com,1140 : num is 114</p>
+
+<p><strong>4 其他语言输出</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk   # 第一步 建立文件域
+BEGIN {
+FS=&#8221;,&#8221;
+TEXTDOMAIN = &#8220;test&#8221;   #这个很重要 最后的.mo文件要一样
+bindtextdomain(&#8220;.&#8221;)
+print _&#8221;START_TIME:&#8221; strftime(&#8220;%a %b %d %H:%M:%S %Z%Y&#8221;,systime());
+printf &#8220;%-3s\t&#8221;, _&#8221;Num&#8221;;   #‘_’表示定制，打印时候是不显示的
+printf &#8220;%-10s\t&#8221;, _&#8221;Description&#8221;
+printf &#8220;%-10s\t&#8221;, _&#8221;Domain&#8221;
+printf &#8220;%-5s\t&#8221;, _&#8221;Price&#8221;
+printf&#8221;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;\n&#8221;
+}
+{
+printf &#8220;%-3d\t%-10s\t%-10s\t$%-.2f\n&#8221;,
+$1,$2,$3,$4
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt  #格式化输出为下面
+START_TIME:一  4月 23 10:19:29 CST2012
+Num    Description    Domain        Price    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;
+112    dongwm        dongwm.com    $1120.00
+113    ailll         ailll.com     $1130.00
+114    ccc           ccc.com       $1140.00
+dongwm@linux-dongwm:~&gt; gawk &#8211;gen-po -f test.awk &gt; test.po  #第二步  创建.po文件(portable object file  便携式对象文件)
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.po
+#: test.awk:5
+msgid &#8220;START_TIME:&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:6
+msgid &#8220;Num&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:7
+msgid &#8220;Description&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:8
+msgid &#8220;Domain&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:9
+msgid &#8220;Price&#8221;
+msgstr &#8220;&#8221;
+第三步 修改.po文件，比如有一行：msgid &#8220;START_TIME:&#8221;，假如想显示成“Report Generated On:” 可以这样：</p>
+
+<p>#: test.awk:5
+msgid &#8220;START_TIME:&#8221;
+msgstr &#8220;Report Generated On:&#8221;
+dongwm@linux-dongwm:~&gt; msgfmt -v test.po  #第四步 建立消息对象
+1 条已翻译消息，4 条未翻译消息.
+dongwm@linux-dongwm:~&gt; ll messages.mo   #生成了这个文件
+-rw-r&#8211;r&#8211; 1 dongwm users 89  4月 23 10:25 messages.mo
+dongwm@linux-dongwm:~&gt; mkdir -p en_US/LC_MESSAGES   #拷贝这个文件到你想要的语言目录
+dongwm@linux-dongwm:~&gt; mv messages.mo en_US/LC_MESSAGES/test.mo
+<strong>5 双向通讯</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+command = &#8220;sed &#8216;s/Awk/Sed and Awk/&#8217;&#8221;
+print &#8220;Awk is Great!&#8221; |&amp; command                #“|&amp;”表明它是一个双向的沟通。
+close(command,&#8221;to&#8221;);
+command |&amp; getline tmp  #进程完成，按行输出显示
+print tmp;
+close(command);
+}
+dongwm@linux-dongwm:~&gt; awk -f test.awk
+Sed and Awk is Great!
+<strong>6使用系统命令方法</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { system(&#8220;pwd&#8221;) }&#8217;
+/home/dongwm
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { system(&#8220;date&#8221;) }&#8217;
+2012年 04月 23日 星期一 10:49:10 CST
+<strong>7 时间戳方法</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print systime() }&#8217;
+1335149444
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print strftime(&#8220;%c&#8221;,systime()) }&#8217;
+2012年04月23日 星期一 10时50分53秒<strong></strong></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiusi/">关于awk研究（四）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-20T00:00:00+08:00" pubdate data-updated="true">Apr 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 printf</strong></p>
+
+<p>&#8220;print format&#8221;, variable1, variable2, etc.
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;Field 1\t\tField 2\tField 3\tField 4\n&#8221; }&#8217;
+Field 1        Field 2    Field 3    Field 4  #格式化输出
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;Field 1\vField 2\vField 3\vField 4\n&#8221; }&#8217;
+Field 1
+Field 2
+Field 3
+Field 4
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN \
+&gt; { printf &#8220;Field 1\bField 2\bField 3\bField 4\n&#8221; }&#8217;   #\b退格
+Field Field Field Field 4</p>
+
+<p>下面2个例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {print $2,$3}&#8217; test.txt
+dongwm:dongwm.com
+&#8211;
+ailll:ailll.com
+&#8211;
+ccc:ccc.com
+&#8211;
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {printf &#8220;%s:%s\n\n&#8221;,$2,$3}&#8217; test.txt #这里就是格式化输出，%s就是字符串 ，前台2个%s,就是后面的$2 $3
+dongwm:dongwm.com</p>
+
+<p>ailll:ailll.com</p>
+
+<p>ccc:ccc.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {printf &#8220;%10s:%3s:%10s:%-7s\n\n&#8221;,$1,$2,$3,$4}&#8217; test.txt
+112:dongwm:dongwm.com:1120   #固定列宽，正数是右对其，负数左对齐</p>
+
+<p>113:ailll: ailll.com:1130</p>
+
+<p>114:ccc:   ccc.com:1140
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%6s\n&#8221;, &#8220;Good Boy!&#8221; }&#8217;
+Good Boy!
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%.6s\n&#8221;, &#8220;Good Boy!&#8221; }&#8217;  #这个‘.’说明这里只保留6个字符
+Good B
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%6s\n&#8221;, substr(&#8220;Good Boy!&#8221;,1,6) }&#8217;  #效果是一样的
+Good B
+<strong>2 内置数值函数</strong>
+1 int</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print int(3.534);print int(4);print int(-5.223);print int(-5);}&#8217;
+3
+4
+-5
+-5
+<strong>2 log  #对数，不记得了可以翻翻高中数学课本^.^</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print log(13);print log(0);print log(1);print log(-5);}&#8217; #
+2.56495
+-inf
+0
+awk: 警告: log: 收到负数参数 -5
+nan
+<strong>3 sqrt #平方根</strong>
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print sqrt(64);print sqrt(0);print sqrt(-5);}&#8217;
+8
+0
+awk: 警告: sqrt: 收到负数参数 -5
+-nan
+<strong>4 exp ＃e的N次方</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print exp(123456789);print exp(0);print exp(-12);}&#8217;
+awk: 警告: exp: 参数 1.23457e+08 超出范围
+inf
+1
+6.14421e-06
+<strong>3 随机数</strong></p>
+
+<p>1 rand #0-1之间的随机数</p>
+
+<p>cat test.awk
+BEGIN {
+while(i&lt;1000)
+{
+n = int(rand()*100);
+rnd[n]++;
+i++;
+}
+for(i=0;i&lt;=5;i++) {
+print i,&#8221;Occured&#8221;, rnd[i], &#8220;times&#8221;;
+}
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
+0 Occured 11 times
+1 Occured 8 times
+2 Occured 9 times
+3 Occured 15 times
+4 Occured 16 times
+5 Occured 5 times
+2  srand #初始化随机数的开始
+dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+srand(5);
+total=5;
+max=50;
+count=0;  #随机数从5－50
+while(count &lt; total) {
+rnd = int(rand() * max);
+if ( array[rnd] == 0 ) {
+count++;
+array[rnd]++;
+}
+}
+for ( i=5; i&lt;=max; i++) {
+if ( array[i] )
+print i;
+}
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
+14
+16
+23
+33
+35
+<strong>4 字符串函数</strong>
+<strong>1 index #字符串索引</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {dongwm=&#8221;dongwm.com&#8221;;print &#8220;string start at&#8221;,index(dongwm,&#8221;wm&#8221;);}&#8217;  #找到‘wm’的索引
+string start at 5</p>
+
+<p><strong>2 length</strong> #字符串长度
+dongwm@linux-dongwm:~&gt; awk &#8216;{print length($0)}&#8217; test.txt
+26
+24
+20
+<strong>3 split  #分隔</strong></p>
+
+<p>语法：split(input-string,output-array,separator)
+dongwm@linux-dongwm:~&gt; awk &#8216;{split($0,qu,&#8221;,&#8221;);for (x in qu) print qu[x];}&#8217; test.txt
+1120
+112
+dongwm
+dongwm.com
+1130
+113
+ailll
+ailll.com
+1140
+114
+ccc
+ccc.com
+<strong>4 Substr</strong>
+语法：substr(input-string, location, length)
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{FS=&#8221;,&#8221;} {print substr($1,3)}&#8217; test.txt #
+2
+3
+4
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{FS=&#8221;,&#8221;} {print substr($1,1,3)}&#8217; test.txt  #第一个字段，从第一个字符开始打印3个字符
+112
+113
+114
+<strong>5 nawk和gwak特有字符串函数：</strong></p>
+
+<p>语法：sub(original-string,replacement-string,string-variable)
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;sub(&#8220;[Dd]o&#8221;,&#8221;CC&#8221;,dongwm);print dongwm;}&#8217;  test.txt #用‘CC’替换‘Do‘或者’do‘
+CCngwmDongmcom  #只题换了第一个</p>
+
+<p>语法：gsub(original-string,replacement-string,string-variable)</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;gsub(&#8220;[Dd]o&#8221;,&#8221;CC&#8221;,dongwm);print dongwm;}&#8217;  test.txt
+CCngwmCCngmcom  #替换了所有符合的
+语法：match(input-string,search-string)
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;if(match(dongwm,&#8221;dongwm&#8221;));{print &#8220;match!&#8221;}}&#8217;  test.txt
+match! #搜索发现匹配
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;print tolower(dongwm)}&#8217; #转化成小写
+dongwmdongmcom
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;print toupper(dongwm)}&#8217; #转化成大写
+DONGWMDONGMCOM</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiuyi/">关于awk研究（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-18T00:00:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：我想sed是对于行操作，而awk算是对于列操作</p>
+
+<p><strong>1 基本语法</strong></p>
+
+<p>awk -Fs &#8216;/pattern/ {action}&#8217; input-file
+或者</p>
+
+<p>awk -Fs &#8216;{action}&#8217; intput-file
+其中：－F是字段分割符，没有指定的话就是空字符</p>
+
+<p>/pattern/ 假如不存在这个模式匹配，指全文</p>
+
+<p>{action}是要执行的活动</p>
+
+<p>比如：awk -F: &#8216;/dongwm/ {print $1}&#8217; /etc/passwd 就是寻找 /etc/passwd匹配‘dongwm’的行，然后的操作（action）是用&#8217;:&#8217;分割，打印第一列</p>
+
+<p>或者</p>
+
+<p>awk -Fs -f myscript.awk input-file  指定一个文件 和sed类似
+<strong>2 awk结构（BEGIN, body, END）</strong>
+1 BEGIN  它可以初始化变量，这个结构是可选的</p>
+
+<p>语法：BEGIN { awk-commands }
+2 body 也就是awk的主体</p>
+
+<p>语法：/pattern/ {action}
+3 END 结束块</p>
+
+<p>语法：END { awk-commands } 也是可选的
+例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; } /dongwm/{print $1} END { print &#8220;&#8212;footer&#8212;&#8221;}&#8217; /etc/passwd
+&#8212;header&#8212;                              #这个例子，首先执行BEGIN里面的，设定分割符‘:’，打印header，然后匹配行打印分割的第一段，但后执行END，打印footer
+dongwm
+&#8212;footer&#8212;
+或者：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; }
+/dongwm/{print $1}
+END { print &#8220;&#8212;footer&#8212;&#8221;}
+dongwm@linux-dongwm:~&gt; awk -f test.awk /etc/passwd
+&#8212;header&#8212;
+dongwm
+&#8212;footer&#8212;</p>
+
+<p>例子2：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F: &#8216;BEGIN { print &#8220;UID&#8221;} { print $3 }&#8217; /etc/passwd  #awk 的打印都是‘print’
+UID
+25
+103
+1
+2
+102
+40
+12
+107
+109
+<strong>3 awk处理多个文件</strong>
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; } /dongwm/ {print $1} END { print &#8220;&#8212;footer&#8212;&#8221;}&#8217; /etc/passwd /etc/group
+&#8212;header&#8212;
+dongwm
+video   #这个video组包含dongwm
+&#8212;footer&#8212;
+<strong>4 print(打印功能)</strong>
+先看一个例子</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,ccc,ccc.com
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;BEGIN \
+{ print &#8220;&#8212;&#8212;&#8212;&#8212;-\nName\tTitle\n&#8212;&#8212;&#8212;&#8212;-&#8220;} \
+{ print $2,&#8221;\t&#8221;,$3;} \
+END { print &#8220;&#8212;&#8212;&#8212;&#8212;-&#8220;; }&#8217; test.txt  注：你也是格式化文件了
+&#8212;&#8212;&#8212;&#8212;-
+Name    Title
+&#8212;&#8212;&#8212;&#8212;-
+dongwm      dongwm.com
+ailll      ailll.com
+ccc      ccc.com
+&#8212;&#8212;&#8212;&#8212;-
+<strong>5 模式匹配</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;/dongwm/ {print $2, $3}&#8217; test.txt  寻找匹配行
+dongwm dongwm.com
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;/^112/ {print &#8220;Test id 112 is&#8221;, $2}&#8217; test.txt</p>
+
+<p>Test id 112 is dongwm  #选找开头是112的，然后自定义一些打印字符</p>
+
+<p><strong>6 内建变量</strong>
+1 FS :输入字段分隔符，模认的是空格
+看下面的例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;{print $2, $3}&#8217; test.txt
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} {print $2, $3}&#8217; test.txt
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+注：这2个是一样的效果</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com%1120
+113,ailll,ailll.com%1130
+114,ccc,ccc.com%1140
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;[,:%]&#8221;} {print $2, $3}&#8217; test.txt  #在这里会匹配‘,’,‘:’,&#8217;%&#8217;这三个分割符，三者是或者的关系
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+2 OFS 输出字段分隔符，模认的是空格
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;{print $2, &#8220;:&#8221;, $3}&#8217; test.txt
+dongwm : dongwm.com
+ailll : ailll.com
+ccc : ccc.com
+其实这个例子可以用下面的语句实现
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;BEGIN { OFS=&#8221;:&#8221; } { print $2, $3 }&#8217; test.txt
+dongwm:dongwm.com
+ailll:ailll.com
+ccc:ccc.com
+3 RS 记录分隔符
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm:113,ailll:114,ccc
+dongwm@linux-dongwm:~&gt; awk -F, &#8216;{print $2}&#8217; test.txt
+dongwm:113  #因为在一行里面，没有实现取出所有符合要求的值
+dongwm@linux-dongwm:~&gt; awk -F, &#8216;BEGIN { RS=&#8221;:&#8221; } {print $2}&#8217; test.txt  #s使用RS可以实现
+dongwm
+ailll
+ccc
+一个复杂的例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112
+dongwm
+dongwm.com
+-
+113
+ailll
+ailll.com
+-
+114
+ccc
+ccc.com
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;\n&#8221;; RS=&#8221;-\n&#8221;; OFS=&#8221;:&#8221; } {print $2, $3}&#8217; test.txt
+dongwm:dongwm.com
+ailll:ailll.com
+ccc:ccc.com
+4 ORS 输出记录分割符</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;,&#8221;; ORS=&#8221;\n&#8212;\n&#8221; } {print $2, $3}&#8217; test.txt #在输出的时候，每行都添加了一段‘\n&#8212;\n’
+dongwm dongwm.com
+&#8212;
+ailll ailll.com
+&#8212;
+ccc ccc.com
+&#8212;
+5 NR 对数量的记录
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
+{print &#8220;Test Id of record number&#8221;,NR,&#8221;is&#8221;,$1;} \
+END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt
+Test Id of record number 1 is 112
+Test Id of record number 2 is 113
+Test Id of record number 3 is 114
+Total number of records: 3
+6 FILENAME  当前的文件名</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;{ print FILENAME }&#8217; test.txt
+test.txt
+test.txt
+test.txt  #因为有三行数据，每行打印了一次</p>
+
+<p>7 FNR 记录的数量的文件  NR会保存数据在多文件中一直增长，但FNR不会，他只是记录当前文件的数量记录</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
+{print FILENAME &#8220;: record number&#8221;,NR,&#8221;is&#8221;,$1;} \
+END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt test.txt.bak
+test.txt: record number 1 is 112
+test.txt: record number 2 is 113
+test.txt: record number 3 is 114
+test.txt.bak: record number 4 is 112
+test.txt.bak: record number 5 is 113
+test.txt.bak: record number 6 is 114
+Total number of records: 6
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
+{print FILENAME &#8220;: record number&#8221;,FNR,&#8221;is&#8221;,$1;} \
+END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt test.txt.bak
+test.txt: record number 1 is 112
+test.txt: record number 2 is 113
+test.txt: record number 3 is 114
+test.txt.bak: record number 1 is 112
+test.txt.bak: record number 2 is 113
+test.txt.bak: record number 3 is 114
+Total number of records: 6</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiuer/">关于awk研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-18T00:00:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 变量</strong></p>
+
+<p>注：假如有一些需要设置的变量，建议在BEGIN块里面</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com,1120
+113,ailll,ailll.com,1130
+114,ccc,ccc.com,1140</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+FS=&#8221;,&#8221;;
+total=0;
+}
+{
+print $2 &#8220;&#8216;s num is: &#8221; $4;
+total+=$4
+}
+END {
+print &#8220;&#8212;\nTotal num = &#8220;total;
+}
+dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+dongwm&#8217;s num is: 1120
+ailll&#8217;s num is: 1130
+ccc&#8217;s num is: 1140
+&#8212;
+Total num = 3390  #我曾经把语句没有放在外面，但是计算失败。。。一直没研究出原因
+<strong>2 运算符</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F, &#8216;{print ++$4}&#8217; test.txt  #自增长
+1121
+1131
+1141
+dongwm@linux-dongwm:~&gt; awk -F &#8216;:&#8217; &#8216;$NF ~ /\/bin\/bash/ { n++ }; END { print n }&#8217; /etc/passwd  #计算包含shell的用户数
+14
+<strong>3 算术运算符</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;NR %2==0&#8217; test.txt
+113,ailll,ailll.com,1130
+<strong>4  字符串运算</strong>
+dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+FS=&#8221;,&#8221;;
+OFS=&#8221;,&#8221;;
+string1=&#8221;Audio&#8221;;
+string2=&#8221;Video&#8221;;
+numberstring=&#8221;100&#8221;;
+string3=string1 string2;
+print &#8220;Concatenate string is:&#8221; string3;
+numberstring=numberstring+1;
+print &#8220;String to number:&#8221; numberstring;
+}
+dongwm@linux-dongwm:~&gt; awk -f test.awk  #因为在BEGIN里面，是在操作文件前执行，所以可以不指定文件
+Concatenate string is:AudioVideo
+String to number:101
+<strong>5 比较运算符</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F &#8220;,&#8221; &#8216;$4 &lt;= 1130 &amp;&amp; $4&gt;=1121&#8217; test.txt
+113,ailll,ailll.com,1130
+dongwm@linux-dongwm:~&gt; awk -F &#8220;,&#8221; &#8216;$1 == 113 {print $2}&#8217; test.txt  匹配$1等于113的行
+ailll
+dongwm@linux-dongwm:~&gt; awk -F &#8220;,&#8221; &#8216;$1 &lt; 113 || $4 &lt;= 1120&#8217; test.txt
+112,dongwm,dongwm.com,1120
+dongwm@linux-dongwm:~&gt; awk -F &#8216;:&#8217; &#8216;$3 &gt; maxuid { maxuid=$3; maxline=$0 }; \
+&gt; END { print maxuid, maxline }&#8217; /etc/passwd  #这是一个很巧妙的方法找到uid最大的那一行数据
+65534 nobody:x:65534:65533:nobody:/var/lib/nobody:/bin/bash
+dongwm@linux-dongwm:~&gt; awk -F &#8216;:&#8217; &#8216;$3&gt;=100 &amp;&amp; $NF ~ /\/bin\/bash/&#8217; /etc/passwd   #获取uid大于100 并且 shell是 /bin/bash的行  &#8216;~&#8217;表示匹配
+nobody:x:65534:65533:nobody:/var/lib/nobody:/bin/bash
+suse-ncc:x:106:109:Novell Customer Center User:/var/lib/YaST2/suse-ncc-fakehome:/bin/bash
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p><strong>6 正则匹配</strong>
+以下2句意思是一样的：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F &#8220;:&#8221; &#8216;$1 == &#8220;dongwm&#8221;&#8217; /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+dongwm@linux-dongwm:~&gt; awk -F &#8220;:&#8221; &#8216;$1 ~ &#8220;dongwm&#8221;&#8217; /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+<strong>7 awk的条件语句</strong></p>
+
+<p>语法：if (conditional-expression)
+action
+或者if (conditional-expression)
+{
+action1;
+action2;
+}
+例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F &#8220;,&#8221; &#8216;{ if ($4 &lt;= 1130) print &#8220;Only&#8221;,$4,&#8221;qty of&#8221;,$2, &#8220;is available&#8221;; }&#8217; test.txt
+Only 1120 qty of dongwm is available
+Only 1130 qty of ailll is available</p>
+
+<p>语法：</p>
+
+<p>if (conditional-expression)
+action1
+else
+action2
+或者：conditional-expression ? action1 : action2 ;</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+FS=&#8221;,&#8221;;
+}
+{
+if ( $4 &lt;= 1130 )
+print &#8220;Buy More: Order&#8221;, $2, &#8220;immediately!&#8221;
+else
+print &#8220;Sell More: Give discount on&#8221;, $2,
+&#8220;immediately!&#8221;
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+Buy More: Order dongwm immediately!
+Buy More: Order ailll immediately!
+Sell More: Give discount on ccc immediately!
+语法：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;ORS=NR%2?&#8221;,&#8221;:&#8221;\n&#8221;&#8217; test.txt
+112,dongwm,dongwm.com,1120,113,ailll,ailll.com,1130
+114,ccc,ccc.com,1140,dongwm@linux-dongwm:~&gt;</p>
+
+<p><strong>8 awk的循环语句</strong>
+语法：</p>
+
+<p>while(condition)
+actions  #假如第一次执行错误就会失败</p>
+
+<p>例子：
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { while (count++&lt;50) string=string &#8220;x&#8221;; print string }&#8217;
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+语法：</p>
+
+<p>do
+action
+while(condition)  #就算第一次失败，也会执行一次</p>
+
+<p>语法：</p>
+
+<p>for(initialization;condition;increment/decrement)
+actions
+dongwm@linux-dongwm:~&gt; echo &#8220;1 2 3 4&#8221; | awk &#8216;{ for (i = 1; i &lt;= NF; i++) total =total+$i }; END { print total }&#8217;
+10</p>
+
+<p>9 break和Continue
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{x=1;while(x&lt;=10){if(x==5){x++;break;}print &#8220;Value of x&#8221;,x;x++;}}&#8217;
+Value of x 1
+Value of x 2
+Value of x 3
+Value of x 4
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{x=1;while(x&lt;=10){if(x==5){x++;continue;}print &#8220;Value of x&#8221;,x;x++;}}&#8217;
+Value of x 1
+Value of x 2
+Value of x 3
+Value of x 4
+Value of x 6
+Value of x 7
+Value of x 8
+Value of x 9
+Value of x 10<strong></strong></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusedyanjiuee/">关于sed研究（三）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-17T00:00:00+08:00" pubdate data-updated="true">Apr 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 存储空间</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+dongwm
+ADMIN 1
+ailll
+AILLL
+ccc
+ADMIN 2</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;x;n&#8217; -e &#8216;/ADMIN/{x;p}&#8217; test.txt  #临时存储匹配空间的前一行，x;n 转换匹配空间为临时空间，</p>
+
+<p>#读取下一行；/ADMIN/{x;p}，如果这个行的下一行匹配，那么输出临时空间
+dongwm
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{x;p}&#8217; test.txt  #使用‘h’会让匹配空间和临时空间都缓存这个行，所以使用‘’
+dongwm
+ccc</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{H;x;p}&#8217; test.txt #使用‘H’模式空间没有改变，但是临时空间将包含：下一行\n这一行
+dongwm
+ADMIN 1
+ccc
+ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{H;x;s/\n/:/;p}&#8217; test.txt #这个和上面的意思一样，但是将&#8217;\n&#8217;替换成了&#8217;:&#8217;
+dongwm:ADMIN 1
+ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{g;p}&#8217; test.txt  #使用&#8217;g&#8217;，模式空间改成了下一行，但是临时空间不变，也就是说，</p>
+
+<p>#他从临时空间取到这一行，再把他放在模式空间
+dongwm
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{x;G;s/\n/:/;p}&#8217; test.txt #简单的说，临时空间不变，模式空间不仅包含以前的行，再添加了临时空间的行
+dongwm:ADMIN 1
+ccc:ADMIN 2<strong></strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -e &#8216;{N;s/\n/:/}&#8217; test.txt  #‘N’表示不仅打印这个模式空间行，还加‘\n’再加文件的下一行，在这里使用&#8217;:&#8217;替换了‘\n’
+dongwm:ADMIN 1
+ailll:AILLL
+ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;=&#8217; test.txt | sed -e &#8216;{N;s/\n/:/}&#8217; #首先打印行号，然后把行号和这行打印在一行
+1:dongwm
+2:ADMIN 1
+3:ailll
+4:AILLL
+5:ccc
+6:ADMIN 2</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;N&#8217; -e &#8216;/ADMIN/p&#8217; test.txt
+dongwm
+ADMIN 1
+ccc
+ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;N&#8217; -e &#8216;/ADMIN/P&#8217; test.txt#这个‘P’会打印多行中的第一行
+dongwm
+ccc
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+dongwm @test1@
+ADMIN 1 @test2@
+ailll
+AILLL @test@
+ccc
+ADMIN 2</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/{/@.*@/{s/@.*@//;p;D}}&#8217; test.txt  #这个不好懂 请看下面的拆解
+dongwm
+AILLL
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/p&#8217; test.txt  #打印匹配行
+dongwm @test1@
+ADMIN 1 @test2@
+AILLL @test@
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/{/@.*@/p}&#8217; test.txt  ＃加了‘N’这样会在模式空间加下面的一行，但是假如下一行也是模式空间就没有下一行
+dongwm @test1@
+ADMIN 1 @test2@
+AILLL @test@
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/{N;/@.*@/{s/@.*@//;p;D}}&#8217; test.txt   #‘p’打印，‘D’是删除模式空间
+dongwm
+AILLL
+ccc
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/;/ADMIN/!b end;s/^/*/;:end&#8217; test.txt #看不懂还是看以下的拆解
+dongwm
+*dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+*ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/&#8217; test.txt  #这个很好懂，临时空间包含这行和下一行，&#8217;\n&#8217;替换成了‘:’
+dongwm
+dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/;/ADMIN/!b end;s/^/*/;:end&#8217; test.txt #匹配行，使用‘b’，使用这标签，把行首添加&#8217;*&#8217;
+dongwm
+*dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+*ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/;:repeat;/ADMIN/s/^/*/;/\*\*\*/!t repeat&#8217; test.txt #使用&#8217;t&#8217;以前的替代成功，跳转到行标签标记，并继续执行，否则继续正常执行流程。
+dongwm                                                                                                                                #如果发现模式空间行没有‘＊＊＊’并且赏个替换成功，就会执行
+***dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+***ccc:ADMIN 2</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/18/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/16/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

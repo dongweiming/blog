@@ -1,0 +1,217 @@
+---
+layout: post
+title: 关于subprocess研究
+categories:
+- python模块研究
+tags:
+- subprocess
+published: true
+comments: true
+indexer: true
+---
+<p>前言：subprocess启动一个新的进程（子进程）并与其进行通讯的模块，subprocess被用来替换一些老的模块和函数，如：os.system、os.spawn*、os.popen*、popen2.*、commands.*。可见，subprocess是被推荐使用的模块。</p>
+
+<p><pre class="sh_python">
+import subprocess</p>
+
+<p>subprocess.call(['ls', '-1'], shell=True)  #call类似于<em>os.system()</em>执行外部命令，而且他也支持定义的变量比如echo $HOME'
+subprocess.check_call(['false'])  #这个false命令会返回一个exitcode不为0的结果，她会被捕捉raise
+output = subprocess.check_output(['ls', '-1'])  #捕获执行结果输出
+print 'Have %d bytes in output' % len(output)
+output = subprocess.check_output(
+    'echo to stdout; echo to stderr 1&gt;&amp;2; exit 1',   #因为重定向了输出，输出流数据不被记录，错误输出流被记录
+    shell=True,
+    )
+output = subprocess.check_output(
+    'echo to stdout; echo to stderr 1&gt;&amp;2; exit 1',
+    shell=True,
+    stderr=subprocess.STDOUT,   #错误输出也被重定向，只会打印check捕捉到的退出代码不是0的异常
+    )
+print 'Have %d bytes in output' % len(output)
+print output
+print '\nread:'
+proc = subprocess.Popen(['echo', '"to stdout"'],   Popen类似于os.popen，将输出，输入，错误定向到管道 
+                        stdout=subprocess.PIPE,  #将输出流定向到管道
+                        )
+stdout_value = proc.communicate()[0]  #获取数据
+print '\tstdout:', repr(stdout_value)
+import subprocess</p>
+
+<p>print '\nwrite:'
+proc = subprocess.Popen(['cat', '-'],
+                        stdin=subprocess.PIPE,  #输入流定向到管道
+                        )
+proc.communicate('\tstdin: to stdin\n')
+print '\npopen2:'</p>
+
+<p>proc = subprocess.Popen(['cat', '-'],
+                        stdin=subprocess.PIPE,  #同时定向输出输入流
+                        stdout=subprocess.PIPE,
+                        )
+stdout_value = proc.communicate('through stdin to stdout')[0]
+print '\tpass through:', repr(stdout_value)
+print '\npopen3:'
+proc = subprocess.Popen('cat -; echo "to stderr" 1&gt;&amp;2',
+                        shell=True,
+                        stdin=subprocess.PIPE,  ##同时定向输出输入错误流
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        )
+stdout_value, stderr_value = proc.communicate('through stdin to stdout')
+print '\tpass through:', repr(stdout_value)
+print '\tstderr      :', repr(stderr_value)
+print '\npopen4:'
+proc = subprocess.Popen('cat -; echo "to stderr" 1&gt;&amp;2',
+                        shell=True,
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,  #把错误流定向到输出流，那么错误流就是none
+                        )
+stdout_value, stderr_value = proc.communicate('through stdin to stdout\n')
+print '\tcombined output:', repr(stdout_value)
+print '\tstderr value   :', repr(stderr_value)
+</pre></p>
+
+<p><pre class="sh_python">
+import subprocess</p>
+
+<p>cat = subprocess.Popen(['cat', 'index.rst'], 
+                        stdout=subprocess.PIPE,
+                        )</p>
+
+<p>grep = subprocess.Popen(['grep', '.. include::'],
+                        stdin=cat.stdout,
+                        stdout=subprocess.PIPE,
+                        )</p>
+
+<p>cut = subprocess.Popen(['cut', '-f', '3', '-d:'],
+                        stdin=grep.stdout,
+                        stdout=subprocess.PIPE,
+                        )</p>
+
+<p>end_of_pipe = cut.stdout #这个效果也就是执行：cat index.rst|grep '.. include::'|cut -f2 -d':'</p>
+
+<p>print 'Included files:'
+for line in end_of_pipe:
+    print '\t', line.strip()
+</pre></p>
+
+<p>以下是一个测试的脚本（test1.py）：</p>
+
+<p><pre class="sh_python">
+import os
+import signal
+import time
+import sys</p>
+
+<p>pid = os.getpid()
+received = False</p>
+
+<p>def signal_usr1(signum, frame):   #回调接收到信号时调用
+    global received
+    received = True
+    print 'CHILD %6s: Received USR1' % pid
+    sys.stdout.flush()</p>
+
+<p>print 'CHILD %6s: Setting up signal handler' % pid
+sys.stdout.flush()
+signal.signal(signal.SIGUSR1, signal_usr1)
+print 'CHILD %6s: Pausing to wait for signal' % pid
+sys.stdout.flush()
+time.sleep(3)</p>
+
+<p>if not received:
+    print 'CHILD %6s: Never received signal' % pid
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import signal
+import subprocess
+import time
+import sys</p>
+
+<p>proc = subprocess.Popen(['python', 'signal_child.py'])
+print 'PARENT      : Pausing before sending signal...'
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling child'
+sys.stdout.flush()
+os.kill(proc.pid, signal.SIGUSR1)
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+PARENT      : Pausing before sending signal...
+CHILD  15335: Setting up signal handler
+CHILD  15335: Pausing to wait for signal
+PARENT      : Signaling child
+CHILD  15335: Received USR1
+<pre class="sh_python">
+import os
+import signal
+import subprocess
+import tempfile
+import time
+import sys</p>
+
+<p>script = '''#!/bin/sh
+echo "Shell script in process $$"
+set -x
+python signal_child.py
+'''
+script_file = tempfile.NamedTemporaryFile('wt')
+script_file.write(script)
+script_file.flush() #创建一个临时文件</p>
+
+<p>proc = subprocess.Popen(['sh', script_file.name], close_fds=True)  #执行新进程前关闭0/1/2之外的文件
+print 'PARENT      : Pausing before sending signal to child %s...' % proc.pid
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling child %s' % proc.pid
+sys.stdout.flush()
+os.kill(proc.pid, signal.SIGUSR1)
+time.sleep(3)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+PARENT      : Pausing before sending signal to child 15434...
+Shell script in process 15434
++ python test1.py
+CHILD  15435: Setting up signal handler
+CHILD  15435: Pausing to wait for signal
+PARENT      : Signaling child 15434
+CHILD  15435: Never received signal  #child不能收到父进程的信号</p>
+
+<p><pre class="sh_python">
+import os
+import signal
+import subprocess
+import tempfile
+import time
+import sys</p>
+
+<p>script = '''#!/bin/sh
+echo "Shell script in process $$"
+set -x
+python test1.py
+'''
+script_file = tempfile.NamedTemporaryFile('wt')
+script_file.write(script)
+script_file.flush()</p>
+
+<p>proc = subprocess.Popen(['sh', script_file.name], 
+                        close_fds=True,
+                        preexec_fn=os.setsid,  # 钩子函数， 在fork和exec之间执行
+                        )
+print 'PARENT      : Pausing before sending signal to child %s...' % proc.pid
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling process group %s' % proc.pid
+sys.stdout.flush()
+os.killpg(proc.pid, signal.SIGUSR1)
+time.sleep(3)
+</pre></p>

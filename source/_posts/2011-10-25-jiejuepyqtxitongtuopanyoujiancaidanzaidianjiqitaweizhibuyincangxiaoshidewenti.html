@@ -1,0 +1,31 @@
+---
+layout: post
+title: 解决pyqt系统托盘右键菜单在点击其他位置不隐藏（消失）的问题
+categories:
+- linux基础
+tags:
+- pyqt4
+- trayIcon
+- 系统托盘
+published: true
+comments: true
+indexer: true
+---
+<p>前言：在使用一些软件的时候都发现当你右键点开这个软件的菜单，再点击其他位置这个菜单会隐藏起来。这样不弹出的菜单无法消失，必须点击菜单项或者应用程序窗体才会消失。。pyqt软件也有这个问题。我研究了一下：该菜单的context是默认的应用程序窗体，当窗体获得焦点时，系统托盘的上下文菜单才会消失。</p>
+
+<p>请看我的部分代码：</p>
+
+<p>self.minimizeAction = QtGui.QAction(u"最小化", self,
+triggered=self.hide)   ＃这个self是继承QtGui.QMainWindow的类
+self.restoreAction = QtGui.QAction(u"显示菜单", self,
+triggered=self.show)
+self.quitAction = QtGui.QAction(u"退出", self,
+triggered=QtGui.qApp.quit)</p>
+
+<p>self.trayIconMenu = QtGui.QMenu(self)
+self.trayIconMenu.addAction(self.restoreAction)
+self.trayIconMenu.addAction(self.minimizeAction)
+self.trayIconMenu.addAction(self.quitAction)
+需要将“self.trayIconMenu = QtGui.QMenu(self)”这行修改为“self.trayIconMenu = QtGui.QMenu(QtGui.QApplication.desktop())”  原理是将这个菜单当作一个桌面</p>
+
+<p>&nbsp;</p>

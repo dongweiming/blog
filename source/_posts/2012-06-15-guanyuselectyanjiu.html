@@ -1,0 +1,308 @@
+---
+layout: post
+title: 关于select研究
+categories:
+- linux基础
+tags:
+- select
+published: true
+comments: true
+indexer: true
+---
+<p>前言：select可以完成非阻塞（所谓非阻塞方式non-block，就是进程或线程执行此函数时不必非要等待事件的发生，一旦执行肯定返回，以返回值的不同 来反映函数的执行情况，如果事件发生则与阻塞方式相同，若事件没有发生则返回一个代码来告知事件未发生，而进程或线程继续执行，所以效率较高）方式工作的 程序，还能够监视我们需要监视的文件描述符，socket，pipe的变化情况——读写或是异常（windows只能用于socket）。他可以访问select()和epoll()的系统调用，他通常用来实现轮询，也可以在不使用多线程和或者子进程的前提下跨多个I／O流进行多重处理</p>
+
+<p>服务器的程序：</p>
+
+<p><pre class="sh_python"></p>
+
+<p>import select
+import socket
+import sys
+import Queue</p>
+
+<p>server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setblocking(0) #设置socket非阻塞</p>
+
+<p>server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+server.bind(server_address)</p>
+
+<p>server.listen(5)
+inputs = [server] #等待输入对象的列表
+outputs = [] #等待输出对想的列表
+message_queues = {} #异常情况的对象列表
+while inputs:
+print &gt;&gt;sys.stderr, '\nwaiting for the next event'
+readable, writable, exceptional = select.select(inputs, outputs, inputs) #其实还是第四个参数：timeout，未设置表示函数一直等待直到准备好一个文件描述符
+for s in readable:  #数据可以读取了
+if s is server:
+connection, client_address = s.accept()  #文件描述符准备好就接受连接
+print &gt;&gt;sys.stderr, 'new connection from', client_address
+connection.setblocking(0)
+inputs.append(connection) #操作完继续放到查询队列
+message_queues[connection] = Queue.Queue()  #为我们要发送的数据把连接给一个队列
+else:
+data = s.recv(1024)
+if data:  #一个客户端sokcet有数据准备着
+print &gt;&gt;sys.stderr, 'received "%s" from %s' % (data, s.getpeername())
+message_queues[s].put(data) ＃往队列中的连接写入数据
+if s not in outputs:
+outputs.append(s)  #为响应增加输出通道
+else: #关闭空连接
+print &gt;&gt;sys.stderr, 'closing', client_address, 'after reading no data'
+if s in outputs: #停止监听这个等待输入的连接
+outputs.remove(s)  #也删除等待输出的连接
+inputs.remove(s)
+s.close()</p>
+
+<p>del message_queues[s]  #从队列把这个连接内容也删掉
+for s in writable: #缓存区已经有空间了，可以写入了
+try:
+next_msg = message_queues[s].get_nowait() #获取输出的数据
+except Queue.Empty: #队列没有数据
+print &gt;&gt;sys.stderr, 'output queue for', s.getpeername(), 'is empty'
+outputs.remove(s)  #停止查询这个等待输出连接
+else:
+print &gt;&gt;sys.stderr, 'sending "%s" to %s' % (next_msg, s.getpeername())
+s.send(next_msg) #发送数据
+for s in exceptional:
+print &gt;&gt;sys.stderr, 'handling exceptional condition for', s.getpeername()
+inputs.remove(s)
+if s in outputs:
+outputs.remove(s)
+s.close()
+del message_queues[s]
+
+</pre></p>
+
+<p>客户端程序：</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+messages = [ 'This is the message. ',
+             'It will be sent ',
+             'in parts.',
+             ]
+server_address = ('localhost', 10000)</p>
+
+<p>socks = [ socket.socket(socket.AF_INET, socket.SOCK_STREAM),
+          socket.socket(socket.AF_INET, socket.SOCK_STREAM),
+          ]   #创建2个socket</p>
+
+<p>print &gt;&gt;sys.stderr, 'connecting to %s port %s' % server_address
+for s in socks:
+    s.connect(server_address)  #通过2个socket连接，数据都是发送接受2次</p>
+
+<p>for message in messages:</p>
+
+<p>    for s in socks:
+        print &gt;&gt;sys.stderr, '%s: sending "%s"' % (s.getsockname(), message)
+        s.send(message)  #发送数据</p>
+
+<p>    for s in socks:
+        data = s.recv(1024)  #接受数据
+        print &gt;&gt;sys.stderr, '%s: received "%s"' % (s.getsockname(), data)
+        if not data:
+            print &gt;&gt;sys.stderr, 'closing socket', s.getsockname()
+            s.close()
+</pre></p>
+
+<p>看2端的打印信息：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test1.py  #客户端
+connecting to localhost port 10000
+('127.0.0.1', 39054): sending "This is the message. "
+('127.0.0.1', 39055): sending "This is the message. "
+('127.0.0.1', 39054): received "This is the message. "
+('127.0.0.1', 39055): received "This is the message. "
+('127.0.0.1', 39054): sending "It will be sent "
+('127.0.0.1', 39055): sending "It will be sent "
+('127.0.0.1', 39054): received "It will be sent "
+('127.0.0.1', 39055): received "It will be sent "
+('127.0.0.1', 39054): sending "in parts."
+('127.0.0.1', 39055): sending "in parts."
+('127.0.0.1', 39054): received "in parts."
+('127.0.0.1', 39055): received "in parts."</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+starting up on localhost port 10000</p>
+
+<p>waiting for the next event
+new connection from ('127.0.0.1', 39054)</p>
+
+<p>waiting for the next event
+new connection from ('127.0.0.1', 39055)
+received "This is the message. " from ('127.0.0.1', 39054)</p>
+
+<p>waiting for the next event
+received "This is the message. " from ('127.0.0.1', 39055)
+sending "This is the message. " to ('127.0.0.1', 39054)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 39054) is empty
+sending "This is the message. " to ('127.0.0.1', 39055)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 39055) is empty</p>
+
+<p>waiting for the next event
+received "It will be sent " from ('127.0.0.1', 39054)</p>
+
+<p>waiting for the next event
+received "It will be sent " from ('127.0.0.1', 39055)
+sending "It will be sent " to ('127.0.0.1', 39054)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 39054) is empty
+sending "It will be sent " to ('127.0.0.1', 39055)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 39055) is empty</p>
+
+<p>waiting for the next event
+received "in parts." from ('127.0.0.1', 39054)
+received "in parts." from ('127.0.0.1', 39055)</p>
+
+<p>waiting for the next event
+sending "in parts." to ('127.0.0.1', 39054)
+sending "in parts." to ('127.0.0.1', 39055)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 39054) is empty
+output queue for ('127.0.0.1', 39055) is empty</p>
+
+<p>waiting for the next event
+closing ('127.0.0.1', 39055) after reading no data</p>
+
+<p>waiting for the next event
+closing ('127.0.0.1', 39055) after reading no data  #发现没有数据了
+waiting for the next event  #一直在等待数据</p>
+
+<p><pre class="sh_python">
+import select
+import socket
+import sys
+import Queue</p>
+
+<p>server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #建立tcp socket
+server.setblocking(0)</p>
+
+<p>server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+server.bind(server_address) #绑定socket到地址和端口</p>
+
+<p>server.listen(5) #监听传入的连接</p>
+
+<p># Keep up with the queues of outgoing messages
+message_queues = {} #建立传出的消息队列
+TIMEOUT = 1000 #设置poll超时值（毫秒为单位）
+READ_ONLY = select.POLLIN | select.POLLPRI | select.POLLHUP | select.POLLERR #其中POLLIN事件表示输入准备，POLLPRI表示优先的输入准备，POLLHUP表示通道被关闭，POLLERR表示错误
+READ_WRITE = READ_ONLY | select.POLLOUT #其中POLLOUT表示状态可以收取传入
+poller = select.poll() #poll类似select,但底层实现更加高效
+poller.register(server, READ_ONLY) #设置socket被注册让传入的连接和数据触发事件
+fd_to_socket = { server.fileno(): server,}#poll()返回一个包含文件描述符和上面说的状态的元组列表，从文件描述符号码映射对象需要检索socket读取或写入这个列表
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting for the next event'
+    events = poller.poll(TIMEOUT)
+    for fd, flag in events:
+        s = fd_to_socket[fd] #从文件描述符找回从实际的socket
+        if flag &amp; (select.POLLIN | select.POLLPRI): #当已经准备好输入
+            if s is server:
+                connection, client_address = s.accept() #可读socket准备接受连接
+                print &gt;&gt;sys.stderr, 'new connection from', client_address
+                connection.setblocking(0)
+                fd_to_socket[ connection.fileno() ] = connection
+                poller.register(connection, READ_ONLY)
+                message_queues[connection] = Queue.Queue() 
+            else:
+                data = s.recv(1024)
+                if data:
+                    print &gt;&gt;sys.stderr, 'received "%s" from %s' % (data, s.getpeername())
+                    message_queues[s].put(data) 
+                    poller.modify(s, READ_WRITE) #为响应增加输出通道
+                else:
+                    print &gt;&gt;sys.stderr, 'closing', client_address, 'after reading no data' 
+                    poller.unregister(s) #停止在连接上监听输入
+                    s.close()
+                    del message_queues[s] #从队列中移出这个连接
+        elif flag &amp; select.POLLHUP: #当通道已经关闭
+            print &gt;&gt;sys.stderr, 'closing', client_address, 'after receiving HUP'
+            poller.unregister(s)
+            s.close()
+        elif flag &amp; select.POLLOUT:  #当已经准备好发送
+            try:
+                next_msg = message_queues[s].get_nowait()
+            except Queue.Empty:
+                print &gt;&gt;sys.stderr, 'output queue for', s.getpeername(), 'is empty'
+                poller.modify(s, READ_ONLY) #没有消息等待
+            else:
+                print &gt;&gt;sys.stderr, 'sending "%s" to %s' % (next_msg, s.getpeername())
+                s.send(next_msg)
+        elif flag &amp; select.POLLERR: #当出现错误
+            print &gt;&gt;sys.stderr, 'handling exceptional condition for', s.getpeername()
+            poller.unregister(s)
+            s.close()
+            del message_queues[s]
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+starting up on localhost port 10000</p>
+
+<p>waiting for the next event</p>
+
+<p>waiting for the next event  #因为超时是1秒，没有数据一秒钟连一次</p>
+
+<p>waiting for the next event</p>
+
+<p>waiting for the next event
+new connection from ('127.0.0.1', 57127)  #当server准备接受连接，发现了这2个连接。</p>
+
+<p>waiting for the next event
+new connection from ('127.0.0.1', 57128)
+received "This is the message. " from ('127.0.0.1', 57127) #因为连接存在，接受数据</p>
+
+<p>waiting for the next event
+sending "This is the message. " to ('127.0.0.1', 57127) #当发现输出通道准备好，发送数据出去
+received "This is the message. " from ('127.0.0.1', 57128)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 57127) is empty #对列空了，修改成准备接受读入
+sending "This is the message. " to ('127.0.0.1', 57128)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 57128) is empty</p>
+
+<p>waiting for the next event
+received "It will be sent " from ('127.0.0.1', 57127)
+received "It will be sent " from ('127.0.0.1', 57128)</p>
+
+<p>waiting for the next event
+sending "It will be sent " to ('127.0.0.1', 57127)
+sending "It will be sent " to ('127.0.0.1', 57128)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 57127) is empty
+output queue for ('127.0.0.1', 57128) is empty</p>
+
+<p>waiting for the next event
+received "in parts." from ('127.0.0.1', 57127)
+received "in parts." from ('127.0.0.1', 57128)</p>
+
+<p>waiting for the next event
+sending "in parts." to ('127.0.0.1', 57127)
+sending "in parts." to ('127.0.0.1', 57128)</p>
+
+<p>waiting for the next event
+output queue for ('127.0.0.1', 57127) is empty
+output queue for ('127.0.0.1', 57128) is empty</p>
+
+<p>waiting for the next event
+closing ('127.0.0.1', 57128) after reading no data
+closing ('127.0.0.1', 57128) after reading no data</p>
+
+<p>waiting for the next event</p>
+
+<p>waiting for the next event</p>

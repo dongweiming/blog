@@ -1,0 +1,33 @@
+---
+layout: post
+title: linux系统下更改时区（TimeZone）
+categories:
+- linux基础
+tags:
+- TimeZone，更改时区
+published: true
+comments: true
+indexer: true
+---
+<p>假如安装过程没有设置正确的时区，可以修改/etc/localtime文件，改成软链接方式：
+<pre class="sh_bash">[root@9-100 ~]# date
+Mon Mar  7 13:45:57 CST 2011
+[root@9-100 ~]# rm /etc/localtime
+[root@9-100 ~]# ll /usr/share/zoneinfo/US/
+total 48
+-rw-r--r-- 2 root root 2358 Sep  7 15:39 Alaska
+-rw-r--r-- 3 root root 2353 Sep  7 15:39 Aleutian
+-rw-r--r-- 2 root root  327 Sep  7 15:39 Arizona
+-rw-r--r-- 2 root root 3543 Sep  7 15:39 Central
+-rw-r--r-- 3 root root 3519 Sep  7 15:39 Eastern
+-rw-r--r-- 4 root root 1649 Sep  7 15:39 East-Indiana
+-rw-r--r-- 2 root root  312 Sep  7 15:39 Hawaii
+-rw-r--r-- 3 root root 2395 Sep  7 15:39 Indiana-Starke
+-rw-r--r-- 2 root root 2202 Sep  7 15:39 Michigan
+-rw-r--r-- 4 root root 2427 Sep  7 15:39 Mountain
+-rw-r--r-- 2 root root 2819 Sep  7 15:39 Pacific
+-rw-r--r-- 3 root root  290 Sep  7 15:39 Samoa
+[root@9-100 ~]# cd /etc
+[root@9-100 etc]# ln -s /usr/share/zoneinfo/US/Pacific localtime
+[root@9-100 etc]# date
+Sun Mar  6 21:47:38 PST 2011</pre></p>

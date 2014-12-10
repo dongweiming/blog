@@ -1,0 +1,91 @@
+---
+layout: post
+title: 关于textwrap研究
+categories:
+- python模块研究
+tags:
+- textwrap
+published: true
+comments: true
+indexer: true
+---
+<p>前言：textwrap通过调整段落中的换行符位置来格式化文本以美化输出</p>
+
+<p><pre class="sh_python">
+import textwrap</p>
+
+<p>sample_text = '''  #一段测试文本</p>
+
+<p> The textwrap module can be used to format text for output in situations
+ where pretty-printing is desired.  It offers programmatic functionality similar
+ to the paragraph wrapping or filling features found in many text editors.</p>
+
+<p>'''
+print 'No dedent:\n'
+print textwrap.fill(sample_text)  #默认的输出
+print
+dedented_text = textwrap.dedent(sample_text).strip() #删除样本行中的普通空格前缀
+print 'Dedented:\n'
+print dedented_text
+print
+for width in [ 20, 60, 80 ]:
+    print
+    print '%d Columns:\n' % width
+    print textwrap.fill(dedented_text, width=width) #使用不同行宽值进行格式化输出
+print
+print '\nHanging indent:\n'
+print textwrap.fill(dedented_text, initial_indent='', subsequent_indent='    ') #控制首行缩进, 他独立于接下来的行
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+No dedent:  #嵌入的tab符号和多余的空格被混合在输出文本中</p>
+
+<p>The textwrap module can be used to format text for output in
+situations  where pretty-printing is desired.  It offers programmatic
+functionality similar  to the paragraph wrapping or filling features
+found in many text editors.</p>
+
+<p>Dedented: #将每行开始的普通空白符删除了. 如果某行已经比另一行多了个缩进层次, 那么对应的空格不会被去掉.</p>
+
+<p>The textwrap module can be used to format text for output in situations
+where pretty-printing is desired.  It offers programmatic functionality similar
+to the paragraph wrapping or filling features found in many text editors.</p>
+
+<p>20 Columns:</p>
+
+<p>The textwrap module
+can be used to
+format text for
+output in situations
+where pretty-
+printing is desired.
+It offers
+programmatic
+functionality
+similar to the
+paragraph wrapping
+or filling features
+found in many text
+editors.</p>
+
+<p>60 Columns:</p>
+
+<p>The textwrap module can be used to format text for output in
+situations where pretty-printing is desired.  It offers
+programmatic functionality similar to the paragraph wrapping
+or filling features found in many text editors.</p>
+
+<p>80 Columns:</p>
+
+<p>The textwrap module can be used to format text for output in situations where
+pretty-printing is desired.  It offers programmatic functionality similar to the
+paragraph wrapping or filling features found in many text editors.</p>
+
+<p>Hanging indent:</p>
+
+<p>The textwrap module can be used to format text for output in
+situations where pretty-printing is desired.  It offers
+programmatic functionality similar to the paragraph wrapping or
+filling features found in many text editors.</p>

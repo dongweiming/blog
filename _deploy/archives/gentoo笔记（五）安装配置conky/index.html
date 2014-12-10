@@ -1,0 +1,677 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>gentoo笔记（五）安装配置conky - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEconky">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Gentoo笔记（五）安装配置conky</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-29T00:00:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前言：这是一个很cool的桌面监控显示软件并可以自定义实现你想要监控的所有</p>
+
+<p>首先上图：</p>
+
+<p><img class="alignnone" title="conky" src="http://farm8.staticflickr.com/7003/6592961307_c888ee70c4_z.jpg" alt="" width="163" height="640" /></p>
+
+<p><img class="alignnone" title="conky2" src="http://farm8.staticflickr.com/7020/6598839395_4a9dab05b9_z.jpg" alt="" width="640" height="400" /></p>
+
+<p><strong>1 安装相应工具</strong>
+echo app-admin/conky truetype audacious -ipv6 &gt;&gt; /etc/portage/package.use
+echo app-admin/conkyforecast  &gt;&gt; /etc/portage/package.keywords
+sudo  emerge app-admin/conkyapp-admin/conkyforecast  #conky是主程序，conkyforecast是
+conky天气预报的脚本 其实也有一个叫做 conky-colors 的软件。
+里面集成了很多功能 包括天气预报，检查邮件 视频，照片预览等功能。作者是在ubuntu下开发的
+<strong>2 支持中文字体显示</strong>
+首先需要下载一个中文字体 我这里是simhei字体，然后拷贝simhei.ttf到/usr/share/fonts/TTF/conky/
+在需要显示中文的text部分需要utf-8编码 这个地方使用这个字体就可以显示了
+<strong>3 配置文件</strong>
+每一行可以分为样式属性、文字和元素。其中样式属性和元素都以“$”开头，并包含在“{}”里面，
+“${}”应该放在应用目标的前面。
+一些变量的解释：
+${color #XXXXXX} 设计显示的颜色 （在/etc/X11/rgb.txt中找到全部颜色的列表）
+${font Monospace:style=Bold:size=10} 字体属性的定义格式
+${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对齐，${alignc}表示居中对齐
+<!--more-->
+
+我的个人配置文件：
+<pre class="sh_php">
+background yes  #嵌入桌面
+use_spacer right
+use_xft yes #使用xft字体
+font Comic Sans MS:size=9
+xftfont Comic Sans MS:size=9  #在下面的样式定义段可以特别定义使用别的字体，如不特别指定，则使用默认字体
+override_utf8_locale yes
+update_interval 1.0
+own_window yes
+own_window_type normal
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+minimum_size 200 5
+maximum_width 205
+draw_shades no
+draw_outline no
+draw_borders no
+draw_graph_borders no
+default_color ffffff   #默认背景颜色  这里是黑色
+default_shade_color 000000
+default_outline_color 000000
+alignment top_right
+gap_x 5
+gap_y 5
+cpu_avg_samples 2
+uppercase no # set to yes if you want all text to be in uppercase
+override_utf8_locale yes
+text_buffer_size 2048</p>
+
+<p>TEXT
+${color #ffd700}${hr 1}$color
+${color #98c2c7}HostName:${color #db7093} $alignr$nodename
+${color #98c2c7}Kernel: ${color #db7093}$alignr$kernel
+${color #98c2c7}UpTime: ${color #db7093}$alignr$uptime
+${color #ffd700}${hr 1}$color
+${font Comic Sans MS:style=Bold:pixelsize=30}${alignc}${time %H:%M:%S}
+${font Comic Sans MS:pixelsize=18}${alignc}${time %G/%m/%d}${font Comic Sans MS:pixelsize=12}
+${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=CN}
+${font Weather:size=44}${color gold}${execi 3600 conkyForecast --location=CHXX0008 --datatype=WF}${font}${color}${voffset -20}${offset 18}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=CC}${offset 10}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=HT}${offset 10}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=WS} ${font Arrows:size=10}${execi 3600 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=BF}$font
+${offset 10}Sol: ${color}${execi 3600 conkyForecast --location=CHXX0008 --datatype=SR}-${execi 60 python ~/conkyrc/conkyForecast.py --location=CHXX0008 --datatype=SS}
+${font Weather:size=26}${execi 3600 conkyForecast --location=CHXX0008 --datatype=WF --startday=1 --endday=4 --spaces=1}${font}
+${execi 3600 conkyForecast --location=CHXX0008 --datatype=HT --startday=1 --endday=4 --spaces=11}
+${color yellow}${hr 1}$color
+${color yellow} ${alignc}GYYX MAIL
+${font simhei:style=Bold:size=9}${color1}${texeci 180 python ~/conky/conkyCheckMail.py mail.gyyx.cn dongweiming 5782086} ${color yellow}${font}
+${color yellow} ${alignc}GMAIL
+${font simhei:style=Bold:size=9}${color1}${texeci 180 python ~/conky/conkyCheckMail_imap.py imap.gmail.com ciici123@gmail.com dwm5782086} ${color yellow}${font}
+${color #ffd700}${hr 1}$color
+${color red}CPU Used: ${color #db7093} $alignr$cpu%
+${color #78af78}$cpubar
+${color red}Ram:${color #4169e1}$alignr ${color}$mem ${color #98c2c7}${color}/$memmax${color #4169e1}${color #db7093}($memperc%)
+${color #78af78}${membar}
+${color red}Processes:$alignr${color }$processes ($running_processes running)
+${color red}Highest CPU:$alignr PID CPU%
+${color #ddaa00} ${top name 1}$alignr ${top pid 1}${top cpu 1}
+${color lightgrey} ${top name 2}$alignr ${top pid 2}${top cpu 2}
+${color lightgrey} ${top name 3}$alignr ${top pid 3}${top cpu 3}
+${color red}Highest Ram:$alignr PID MEM%
+${color #ddaa00}${top_mem name 1}$alignr${top_mem pid 1}${top_mem mem 1}
+${color}${top_mem name 2}$alignr${top_mem pid 2}${top_mem mem 2}
+${color}${top_mem name 3}$alignr${top_mem pid 3}${top_mem mem 3}
+${color #ffd700}${hr 1}$color
+${color EE9944}${fs_bar 4 /}${color}
+${execpi 30 python ~/conky/conkyHD1.py }
+${color #ffd700}${hr 1}$color
+${color red}${font simhei:size=12}${alignc}网络$color
+${if_up eth1}
+${voffset -13}${color0}${font Comic Sans MS:size=8}${font}${color}${goto 32}${voffset -6} Up: ${font Comic Sans MS:size=8}${color1}${upspeed eth1}${color}${font Comic Sans MS:size=8} ${alignr}${color2}${upspeedgraph eth1 8,60 CE5C00 E07A1F}${color}
+${goto 32}Total: ${font Comic Sans MS:size=8}${color2}${totalup eth1}${color}${font}
+${voffset -2}${color0}${font Comic Sans MS:size=8}${font}${color}${goto 32}${voffset -6} Down: ${font Comic Sans MS:size=8}${color1}${downspeed eth1}${color}${font Comic Sans MS:size=8} ${alignr}${color2}${downspeedgraph eth1 8,60 CE5C00 E07A1F}${color}
+${goto 32}Total: ${font Comic Sans MS:size=8}${color2}${totaldown eth1}${color}${font}
+${voffset -2}${color0}${font Comic Sans MS:size=8}${font}${color}${goto 32}${voffset -4}Local IP: ${alignr}${color2}${addr eth1}${color}
+${goto 32}Public IP: ${alignr}${color2}${execi 10800 ~/conky/onkyIp.sh}${color}
+</pre>
+<strong>2 家目录下的配置文件.conkyForecast.config</strong><pre class="sh_python">
+#=============================================#
+# EXPERT SETTINGS, NOT REQUIRED TO BE ALTERED #
+#=============================================#
+BASE_XOAP_URL = http://xoap.weather.com/weather/local/&lt;LOCATION&gt;?cc=*&amp;dayf=5&amp;link=xoap&amp;prod=xoap&amp;par=1003666583&amp;key=4128909340a9b2fc&amp;unit=m
+#BASE_XOAP_URL = http://xml.weather.com/weather/local/&lt;LOCATION&gt;?cc=*&amp;dayf=10&amp;link=xoap&amp;prod=xoap&amp;par=&lt;XOAP_PARTNER_ID&gt;&amp;key=&lt;XOAP_LICENCE_KEY&gt;&amp;unit=m
+MAXIMUM_DAYS_FORECAST = 4</p>
+
+<p>#===============================================#
+# USER SETTINGS, EDIT BASED ON DOCUMENTED SETUP #
+#===============================================#
+CACHE_FOLDERPATH = /tmp/
+CONNECTION_TIMEOUT = 5
+EXPIRY_MINUTES = 30
+TIME_FORMAT = %H:%M
+DATE_FORMAT = %Y-%m-%d
+LOCALE = en
+XOAP_PARTNER_ID =
+XOAP_LICENCE_KEY =
+DEFAULT_LOCATION = UKXX0103
+AUTO_NIGHT = False
+PROXY_HOST =
+PROXY_PORT = 8080
+PROXY_USERNAME =
+PROXY_PASSWORD =
+</pre>
+<strong>4 相关的脚本文件</strong>
+<strong>1 ~/conky/conkyHD1.py 检查硬件信息</strong>
+<pre class="sh_python">
+#!/usr/bin/env python
+import sys
+import os
+import subprocess</p>
+
+<p># root filesystem
+print ("${voffset -2}${color0}${font Poky:size=15}y${font}${color}${offset 6}${voffset -7}Root: ${font Ubuntu:style=Bold:size=8}${color1}${fs_free_perc /}%${color}${font}\n")
+print ("${voffset -12}${color0}${fs_bar 4,20 /}${color}${offset 8}${voffset -2}F: ${font Ubuntu:style=Bold:size=8}${color2}${fs_free /}${color}${font} U: ${font Ubuntu:style=Bold:size=8}${color2}${fs_used /}${color}${font}\n")</p>
+
+<p># /home folder (if its a separate mount point)
+if os.path.ismount("/home"):
+	print ("${voffset -12}${color0}${font Poky:size=15}y${font}${color}${offset 6}${voffset -7}Home: ${font Ubuntu:style=Bold:size=8}${color1}${fs_free_perc /home}%${color}${font}\n")
+	print ("${voffset -12}${color0}${fs_bar 4,20 /home}${color}${offset 8}${voffset -2}F: ${font Ubuntu:style=Bold:size=8}${color2}${fs_free /home}${color}${font} U: ${font Ubuntu:style=Bold:size=8}${color2}${fs_used /home}${color}${font}\n")</p>
+
+<p># folder in /media
+for device in os.listdir("/media/"):
+	if (not device.startswith("cdrom")) and (os.path.ismount('/media/'+device)):
+		print ("${voffset -12}${color0}${font Poky:size=15}y${font}${color}${offset 6}${voffset -7}"+device.capitalize()+": ${font Ubuntu:style=Bold:size=8}${color1}${fs_free_perc /media/"+device+"}%${color}${font}\n")
+		print ("${voffset -12}${color0}${fs_bar 4,20 /media/"+device+"}${color}${offset 8}${voffset -2}F: ${font Ubuntu:style=Bold:size=8}${color2}${fs_free /media/"+device+"}${color}${font} U: ${font Ubuntu:style=Bold:size=8}${color2}${fs_used /media/"+device+"}${color}${font}\n")
+print ("${voffset -12}")
+</pre>
+<strong>2 ~/conky/onkyIp.sh 网络相关，流量 IP 信息</strong>
+<pre class="sh_bash">
+#!/bin/bash
+wget http://checkip.dyndns.org/ -q -O - |
+grep -Eo '\&lt;[[:digit:]]{1,3}(\.[[:digit:]]{1,3}){3}\&gt;'
+</pre>
+<strong>3 检查我公司邮箱的邮件 因为是POP3的 无法抓取未读邮件的标记 写本地文件对比是不是有新邮件，显示最近的三条邮件的主题。参数是 mail服务器 用户 密码</strong>
+<pre class="sh_python">
+import sys
+import poplib  
+import time
+import email.Header
+mailserver = sys.argv[1]
+user = sys.argv[2]
+passwd = sys.argv[3]</p>
+
+<p>emailServer = poplib.POP3(mailserver)  
+emailServer.user(user)  
+emailServer.pass_(passwd)  </p>
+
+<p>emailMsgNum, emailSize = emailServer.stat()  
+time.sleep(3)
+try:
+    f = open('text','r')
+    data = f.read()
+    f.close()
+except:
+    data ='0'
+if int(emailMsgNum) &gt; int(data):
+    f = open('text','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have %d new mail(s)' % (int(emailMsgNum)-int(data))
+else:
+    f = open('text','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have 0 new mail(s)'
+for i in range(emailMsgNum)[::-1][0:3]:  
+    for piece in emailServer.retr(i+1)[1]:  
+        if piece.startswith('Subject'):  
+            try:
+               code = email.Header.decode_header(piece)[1][1]
+               print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(piece)[1][0].decode(code)).encode('utf-8')
+            except:
+               code =  email.Header.decode_header(piece)[0][1]
+               if code == None:
+                   code = 'utf-8'
+               print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(piece)[0][0].decode(code)).encode('utf-8')
+emailServer.quit()
+</pre>
+ 5<strong>检查GMAIL邮件 这里是imap，显示最近的三条邮件的主题。参数是 mail服务器 用户 密码 
+</strong><pre class="sh_python">
+import sys
+import imaplib
+import time
+import email.Header
+import traceback
+import re</p>
+
+<p>mailserver = sys.argv[1]
+user = sys.argv[2]
+passwd = sys.argv[3]
+emailServer=imaplib.IMAP4_SSL(mailserver)
+try:
+    emailServer.login(user,passwd)
+    emailServer.select()
+    x,y=emailServer.status('INBOX','(MESSAGES UNSEEN)')
+    emailMsgNum=int(re.search('MESSAGES\s+(\d+)',y[0]).group(1))
+    unseen=int(re.search('UNSEEN\s+(\d+)',y[0]).group(1))
+except:
+    print 'connect error'</p>
+
+<p>time.sleep(3)
+try:
+    f = open('imaptext','r')
+    data = f.read()
+    f.close()
+except:
+    data ='0'
+if int(emailMsgNum) &gt; int(data):
+    f = open('imaptext','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have %d new mail(s)  unseen %s mail(s)' % (int(emailMsgNum)-int(data),unseen)
+else:
+    f = open('imaptext','w')
+    f.write(str(emailMsgNum))
+    f.close()
+    print 'You have 0 new mail(s)'
+for num in range(emailMsgNum)[::-1][0:3]:
+        type, msg_data = emailServer.fetch(num, '(RFC822)')
+        for response_part in msg_data:
+            if isinstance(response_part, tuple):
+                msg = email.message_from_string(response_part[1])
+                subject=msg['subject']
+                try:
+                   code = email.Header.decode_header(subject)[1][1]
+                   print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(subject)[1][0].decode(code)).encode('utf-8')
+                except:
+                   code =  email.Header.decode_header(subject)[0][1]
+                   if code == None:
+                       code = 'utf-8'
+                   print '%s' % (u'\u4e3b\u9898\uff1a' + email.Header.decode_header(subject)[0][0].decode(code)).encode('utf-8')</p>
+
+<p>emailServer.logout()
+</pre>
+<strong>6 开机启动</strong>
+因为需要等待以下再启动程序 要不然桌面还没有启动好 conky就启动了
+startconky
+<pre class="sh_bash">
+#!/bin/bash
+sleep 10 &amp;&amp; conky -c ~/conky/conkyrc
+</pre>
+chmod +x startconky
+系统 首选项  启动应用程序 添加</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-29T00:00:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/gentoo/'>gentoo</a>, <a class='category' href='/blog/categories/linuxji-chu/'>linux基础</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEconky/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/gentoobijisianzhuangchangyongruanjian/" title="Previous Post:
+        gentoo笔记（四）安装常用软件">&laquo; gentoo笔记（四）安装常用软件</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/unicodeencodeerror-latin-1-codec-cant-encode-characters-in-position-%E6%8A%A5%E9%94%99%E8%A7%A3%E5%86%B3/"
+        title="Next Post: UnicodeEncodeError: 'latin-1' codec can't encode characters in position 报错解决">UnicodeEncodeError: 'latin-1' codec can't encode characters in position 报错解决
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEconky/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEconky/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

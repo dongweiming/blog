@@ -1,0 +1,55 @@
+---
+layout: post
+title: 关于xargs命令的研究
+categories:
+- linux基础
+tags:
+- xargs
+published: true
+comments: true
+indexer: true
+---
+<p><strong>前言：假如使用find将寻找到的匹配的文件传递给exec或者ok执行，可能几分钟后会报类似的错误：”/bin/rm Argument list too log -linux“，这时候可以使用xargs命令来避免，
+1 查找当前目录下所有用户具有读写执行权限的文件，并收回其他用户的写权限：</strong>
+<pre class="sh_bash">[root@client test]# ls -l
+总计 12
+-rwxrwxrwx 1 root root  8 03-16 09:11 1.txt
+-rwxrwxrwx 1 root root  8 03-16 09:11 2.txt
+-rw-r--r-- 1 root root 32 03-16 09:28 3.txt
+[root@client test]# find . -perm -7 -print |xargs chmod o-w
+[root@client test]# ls -l
+总计 12
+-rwxrwxr-x 1 root root  8 03-16 09:11 1.txt
+-rwxrwxr-x 1 root root  8 03-16 09:11 2.txt
+-rw-r--r-- 1 root root 32 03-16 09:28 3.txt</pre><!--more--></p>
+
+<p><strong>2 设计包含一定数量文件名的命令：</strong>
+<pre class="sh_bash">[root@client ~]# xargs -t -n 2 echo &lt;&lt;EOF
+&gt; test1 1 test2 2 test3 3
+&gt; EOF
+echo test1 1
+test1 1
+echo test2 2
+test2 2
+echo test3 3
+test3 3
+其中-t表示运行时先显示每个命令，-n表示分割数量，本例表示每2列分割</pre></p>
+
+<p><strong>3 显示每次匹配。并提示是否运行，按“y”运行，按其它任意键不运行：</strong>
+<pre class="sh_bash">[root@client ~]# ls |xargs -p -n 1 rm -rf
+rm -rf 22 ?...y
+rm -rf 9922 ?...y
+rm -rf anaconda-ks.cfg ?...
+rm -rf apache-ant-1.8.2-bin.tar.bz2 ?...
+rm -rf colordiff-1.0.9 ?...//<span style="color: #ff0000;">本例rm -rf 已经强制删除，但是运行中仍然提示是否执行这个rm操作，而不是rm中的删除确认</span></pre></p>
+
+<p><strong>4  将xargs前面的结果作为后面命令其中的一个参数：</strong>
+<pre class="sh_bash">[root@client ~]# ls test |xargs -i -p mv test/\{\} test1/\{\}
+mv test/1.txt test1/1.txt ?...y
+mv test/2.txt test1/2.txt ?...y
+mv test/3.txt test1/3.txt ?...y
+其中{}代表前面匹配的结果 </pre>
+<pre class="sh_bash">[root@client ~]# pwd |xargs -i cp /etc/hosts {}  //表示将/etc/hosts文件 拷贝到当前目录下</pre></p>
+
+<p>&nbsp;
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=66cfe7d7-7783-88c4-b34d-d0ce11007fef" alt="" /></div></p>

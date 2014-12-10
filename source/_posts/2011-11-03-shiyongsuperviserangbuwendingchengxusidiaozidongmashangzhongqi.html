@@ -1,0 +1,73 @@
+---
+layout: post
+title: 使用supervise让不稳定程序死掉自动马上重启
+categories:
+- linux基础
+- python
+tags:
+- runit
+- supervise
+published: true
+comments: true
+indexer: true
+---
+<p>前言：supervise是daemontools的一个工具，可以用来监控linux下程序的进程状态，当程序有一些问题（例如死掉）会根据设置 自动重启。我有一个socket服务器端需要一直监听数据，但是为了保证它不会莫名其妙的死掉而不可知，但是使用ICE(全称Internet Communications Engine)有点大材小用，所以使用了这个supervise自动重启死掉的程序并记录日志</p>
+
+<p><strong>1 下载安装配置：</strong></p>
+
+<p>wget http://cr.yp.to/daemontools/daemontools-0.76.tar.gz</p>
+
+<p>wget http://www.qmail.org/moni.csi.hu/pub/glibc-2.3.1/daemontools-0.76.errno.patch  ＃这个补丁是修复有些操作系统无法编译安装成功，过程中会报错停止的问题</p>
+
+<p>tar xvzf daemontools-0.76.tar.gz</p>
+
+<p>cd admin/daemontools-0.76</p>
+
+<p>patch -Np1 -i ../../daemontools-0.76.errno.patch</p>
+
+<p>package/compile</p>
+
+<p>cd package &amp;&amp;  sed 's|/command|/usr/sbin|' boot.inittab &gt; boot.inittab~</p>
+
+<p>mv -f boot.inittab~ boot.inittab &amp;&amp;  cd ../command</p>
+
+<p>sed -e 's/command:\/usr\/local\/bin:/usr\/local\/sbin:/'  -e 's/command\/svc/usr\/sbin\/svc/' svscanboot &gt; svscanboot~</p>
+
+<p>mv -f svscanboot~ svscanboot &amp;&amp; chmod +x svscanboot</p>
+
+<p>sudo /bin/cp * /usr/sbin</p>
+
+<p>添加： SV:123456:respawn:/usr/sbin/svscanboot  到  /etc/inittab</p>
+
+<p><strong>2 检查是否安装成功：</strong></p>
+
+<p># pstree -p|grep svs ＃然后有下面类似的进程结构（括号中数据会不一样）</p>
+
+<p>|-svscanboot(22011)-+-readproctitle(22014)         |</p>
+
+<p>`-svscan(22013)</p>
+
+<p><strong>3 编辑你要使用supervise的程序和配置文件</strong></p>
+
+<p>首先建立一个目录：</p>
+
+<p>mkdir /home/dongwm/SocketSrv</p>
+
+<p>然后编辑run配置文件：</p>
+
+<p>cat /home/dongwm/SocketSrv/run
+#!/bin/sh
+echo 'kill Socketsrv...'
+kill -9 `ps -ef |grep Socketsrv.py |grep -v grep |awk '{print $2}'`</p>
+
+<p>echo "`date +%Y%m%d-%H%M%S`"
+echo 'start Socketsrv...'
+python Socketsrv.py ＃这个就是你要让它关里的进程程序 就在Socketsrv目录下</p>
+
+<p><strong>4 启动进程：</strong>
+为了排错，我使用了日志记录＋日志轮转的方式（）</p>
+
+<p>nohup supervise /home/dongwm/SocketSrv |/usr/sbin/cronolog "/var/log/Socketsrv.log_%Y%m%d" &amp;</p>
+
+<p>表示后台运行，将输入定向到/var/log/Socketsrv.log 并且按天分日志
+<strong></strong></p>

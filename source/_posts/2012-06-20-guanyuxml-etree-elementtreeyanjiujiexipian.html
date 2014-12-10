@@ -1,0 +1,473 @@
+---
+layout: post
+title: 关于xml.etree.ElementTree研究(解析篇)
+categories:
+- python模块研究
+tags:
+- xml.etree.ElementTree
+published: true
+comments: true
+indexer: true
+---
+<p>&nbsp;</p>
+
+<p>前言：xml.etree.ElementTree是xml模块中的一部分，从python2.5开始添加，是一个处理xml的接口模块</p>
+
+<p>这里有一个需要解析的opml文件（<a href="http://www.opml.org/">OPML</a>(Outline Processor Markup Language)是建立在XML基础上的“大纲处理标记语言”，</p>
+
+<p>主要用于描述一份资料的结构。它的优势是订阅集中及分享）：</p>
+
+<p><pre class="sh_xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是podcasts.opml
+&lt;opml version="1.0"&gt;
+&lt;head&gt;
+	&lt;title&gt;My Podcasts&lt;/title&gt;
+	&lt;dateCreated&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateCreated&gt;
+	&lt;dateModified&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateModified&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;outline text="Science and Tech"&gt;
+    &lt;outline text="APM: Future Tense" type="rss" 
+             xmlUrl="http://www.publicradio.org/columns/futuretense/podcast.xml" 
+             htmlUrl="http://www.publicradio.org/columns/futuretense/" /&gt;
+	&lt;outline text="Engines Of Our Ingenuity Podcast" type="rss" 
+             xmlUrl="http://www.npr.org/rss/podcast.php?id=510030" 
+             htmlUrl="http://www.uh.edu/engines/engines.htm" /&gt;
+	&lt;outline text="Science &amp;#38; the City" type="rss" 
+             xmlUrl="http://www.nyas.org/Podcasts/Atom.axd" 
+             htmlUrl="http://www.nyas.org/WhatWeDo/SciencetheCity.aspx" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Books and Fiction"&gt;
+	&lt;outline text="Podiobooker" type="rss" 
+             xmlUrl="http://feeds.feedburner.com/podiobooks" 
+             htmlUrl="http://www.podiobooks.com/blog" /&gt;
+	&lt;outline text="The Drabblecast" type="rss" 
+             xmlUrl="http://web.me.com/normsherman/Site/Podcast/rss.xml" 
+             htmlUrl="http://web.me.com/normsherman/Site/Podcast/Podcast.html" /&gt;
+	&lt;outline text="tor.com / category / tordotstories" type="rss" 
+             xmlUrl="http://www.tor.com/rss/category/TorDotStories" 
+             htmlUrl="http://www.tor.com/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Computers and Programming"&gt;
+	&lt;outline text="MacBreak Weekly" type="rss" 
+             xmlUrl="http://leo.am/podcasts/mbw" 
+             htmlUrl="http://twit.tv/mbw" /&gt;
+	&lt;outline text="FLOSS Weekly" type="rss" 
+             xmlUrl="http://leo.am/podcasts/floss" 
+             htmlUrl="http://twit.tv" /&gt;
+	&lt;outline text="Core Intuition" type="rss" 
+             xmlUrl="http://www.coreint.org/podcast.xml" 
+             htmlUrl="http://www.coreint.org/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Python"&gt;
+    &lt;outline text="PyCon Podcast" type="rss" 
+             xmlUrl="http://advocacy.python.org/podcasts/pycon.rss" 
+             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
+	&lt;outline text="A Little Bit of Python" type="rss" 
+             xmlUrl="http://advocacy.python.org/podcasts/littlebit.rss" 
+             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
+	&lt;outline text="Django Dose Everything Feed" type="rss" 
+             xmlUrl="http://djangodose.com/everything/feed/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Miscelaneous"&gt;
+	&lt;outline text="dhellmann's CastSampler Feed" type="rss" 
+             xmlUrl="http://www.castsampler.com/cast/feed/rss/dhellmann/" 
+             htmlUrl="http://www.castsampler.com/users/dhellmann/" /&gt;
+  &lt;/outline&gt;
+&lt;/body&gt;
+&lt;/opml&gt;
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是data.xml
+&lt;top&gt;
+  &lt;child&gt;This child contains text.&lt;/child&gt;
+  &lt;child_with_tail&gt;This child has regular text.&lt;/child_with_tail&gt;And "tail" text.
+  &lt;with_attributes name="value" foo="bar" /&gt;
+  &lt;entity_expansion attribute="This &amp;#38; That"&gt;That &amp;#38; This&lt;/entity_expansion&gt;
+&lt;/top&gt;
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+from xml.etree import ElementTree</p>
+
+<p>with open('podcasts.opml', 'rt') as f:
+    tree = ElementTree.parse(f)  #返回一个ElementTree的对象</p>
+
+<p>print tree</p>
+
+<p>for node in tree.iter():  #遍历解析树
+    print node.tag, node.attrib #标签和值 </p>
+
+<p>for node in tree.iter('outline'): #遍历outline部分
+    name = node.attrib.get('text') 
+    url = node.attrib.get('xmlUrl')
+    if name and url:
+        print '  %s :: %s' % (name, url)
+    else:
+        print name</p>
+
+<p>for node in tree.findall('.//outline'): #没有用getiterator()，而是findall出一个列表迭代 outline是node的名字
+    url = node.attrib.get('xmlUrl')
+    if url:
+        print url
+for node in tree.findall('.//outline/outline'): #寻找2级层次的node 就是node'outline'的子node是'outline'的过滤
+    url = node.attrib.get('xmlUrl')
+    print url
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+&lt;xml.etree.ElementTree.ElementTree object at 0xb748e58c&gt;
+opml {'version': '1.0'}
+head {}
+title {}
+dateCreated {}
+dateModified {}
+body {}
+outline {'text': 'Science and Tech'}
+outline {'xmlUrl': 'http://www.publicradio.org/columns/futuretense/podcast.xml', 'text': 'APM: Future Tense', 'type': 'rss', 'htmlUrl': 'http://www.publicradio.org/columns/futuretense/'}
+outline {'xmlUrl': 'http://www.npr.org/rss/podcast.php?id=510030', 'text': 'Engines Of Our Ingenuity Podcast', 'type': 'rss', 'htmlUrl': 'http://www.uh.edu/engines/engines.htm'}
+outline {'xmlUrl': 'http://www.nyas.org/Podcasts/Atom.axd', 'text': 'Science &amp; the City', 'type': 'rss', 'htmlUrl': 'http://www.nyas.org/WhatWeDo/SciencetheCity.aspx'}
+outline {'text': 'Books and Fiction'}
+outline {'xmlUrl': 'http://feeds.feedburner.com/podiobooks', 'text': 'Podiobooker', 'type': 'rss', 'htmlUrl': 'http://www.podiobooks.com/blog'}
+outline {'xmlUrl': 'http://web.me.com/normsherman/Site/Podcast/rss.xml', 'text': 'The Drabblecast', 'type': 'rss', 'htmlUrl': 'http://web.me.com/normsherman/Site/Podcast/Podcast.html'}
+outline {'xmlUrl': 'http://www.tor.com/rss/category/TorDotStories', 'text': 'tor.com / category / tordotstories', 'type': 'rss', 'htmlUrl': 'http://www.tor.com/'}
+outline {'text': 'Computers and Programming'}
+outline {'xmlUrl': 'http://leo.am/podcasts/mbw', 'text': 'MacBreak Weekly', 'type': 'rss', 'htmlUrl': 'http://twit.tv/mbw'}
+outline {'xmlUrl': 'http://leo.am/podcasts/floss', 'text': 'FLOSS Weekly', 'type': 'rss', 'htmlUrl': 'http://twit.tv'}
+outline {'xmlUrl': 'http://www.coreint.org/podcast.xml', 'text': 'Core Intuition', 'type': 'rss', 'htmlUrl': 'http://www.coreint.org/'}
+outline {'text': 'Python'}
+outline {'xmlUrl': 'http://advocacy.python.org/podcasts/pycon.rss', 'text': 'PyCon Podcast', 'type': 'rss', 'htmlUrl': 'http://advocacy.python.org/podcasts/'}
+outline {'xmlUrl': 'http://advocacy.python.org/podcasts/littlebit.rss', 'text': 'A Little Bit of Python', 'type': 'rss', 'htmlUrl': 'http://advocacy.python.org/podcasts/'}
+outline {'xmlUrl': 'http://djangodose.com/everything/feed/', 'text': 'Django Dose Everything Feed', 'type': 'rss'}
+outline {'text': 'Miscelaneous'}
+outline {'xmlUrl': 'http://www.castsampler.com/cast/feed/rss/dhellmann/', 'text': "dhellmann's CastSampler Feed", 'type': 'rss', 'htmlUrl': 'http://www.castsampler.com/users/dhellmann/'}
+Science and Tech
+APM: Future Tense :: http://www.publicradio.org/columns/futuretense/podcast.xml
+Engines Of Our Ingenuity Podcast :: http://www.npr.org/rss/podcast.php?id=510030
+Science &amp; the City :: http://www.nyas.org/Podcasts/Atom.axd
+Books and Fiction
+Podiobooker :: http://feeds.feedburner.com/podiobooks
+The Drabblecast :: http://web.me.com/normsherman/Site/Podcast/rss.xml
+tor.com / category / tordotstories :: http://www.tor.com/rss/category/TorDotStories
+Computers and Programming
+MacBreak Weekly :: http://leo.am/podcasts/mbw
+FLOSS Weekly :: http://leo.am/podcasts/floss
+Core Intuition :: http://www.coreint.org/podcast.xml
+Python
+PyCon Podcast :: http://advocacy.python.org/podcasts/pycon.rss
+A Little Bit of Python :: http://advocacy.python.org/podcasts/littlebit.rss
+Django Dose Everything Feed :: http://djangodose.com/everything/feed/
+Miscelaneous
+dhellmann's CastSampler Feed :: http://www.castsampler.com/cast/feed/rss/dhellmann/
+http://www.publicradio.org/columns/futuretense/podcast.xml
+http://www.npr.org/rss/podcast.php?id=510030
+http://www.nyas.org/Podcasts/Atom.axd
+http://feeds.feedburner.com/podiobooks
+http://web.me.com/normsherman/Site/Podcast/rss.xml
+http://www.tor.com/rss/category/TorDotStories
+http://leo.am/podcasts/mbw
+http://leo.am/podcasts/floss
+http://www.coreint.org/podcast.xml
+http://advocacy.python.org/podcasts/pycon.rss
+http://advocacy.python.org/podcasts/littlebit.rss
+http://djangodose.com/everything/feed/
+http://www.castsampler.com/cast/feed/rss/dhellmann/
+http://www.publicradio.org/columns/futuretense/podcast.xml
+http://www.npr.org/rss/podcast.php?id=510030
+http://www.nyas.org/Podcasts/Atom.axd
+http://feeds.feedburner.com/podiobooks
+http://web.me.com/normsherman/Site/Podcast/rss.xml
+http://www.tor.com/rss/category/TorDotStories
+http://leo.am/podcasts/mbw
+http://leo.am/podcasts/floss
+http://www.coreint.org/podcast.xml
+http://advocacy.python.org/podcasts/pycon.rss
+http://advocacy.python.org/podcasts/littlebit.rss
+http://djangodose.com/everything/feed/
+http://www.castsampler.com/cast/feed/rss/dhellmann/
+<pre class="sh_python">
+from xml.etree import ElementTree</p>
+
+<p>with open('data.xml', 'rt') as f:
+    tree = ElementTree.parse(f)</p>
+
+<p>node = tree.find('./with_attributes') #找到这个节点
+print node.tag #打印这个节点的值
+for name, value in sorted(node.attrib.items()): #
+    print '  %-4s = "%s"' % (name, value)</p>
+
+<p>for path in [ './child', './child_with_tail' ]:
+    node = tree.find(path)
+    print node.tag
+    print '  child node text:', node.text  #标签中间部分
+    print '  and tail text  :', node.tail  #标签结束后的那部分</p>
+
+<p>node = tree.find('entity_expansion')
+print node.tag
+print '  in attribute:', node.attrib['attribute']  #获取这个标签的属性
+print '  in text     :', node.text #获取这个标签的值
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>with_attributes
+foo  = "bar"
+name = "value"
+child
+child node text: This child contains text.
+and tail text  :</p>
+
+<p>child_with_tail
+child node text: This child has regular text.
+and tail text  : And "tail" text.</p>
+
+<p>entity_expansion
+in attribute: This &amp; That  #转换为适当的字符值返回
+in text     : That &amp; This</p>
+
+<p><pre class="sh_python">
+from xml.etree.ElementTree import iterparse</p>
+
+<p>depth = 0
+prefix_width = 8
+prefix_dots = '.' * prefix_width
+line_template = '{prefix:&lt;0.{prefix_len}}{event:&lt;8}{suffix:&lt;{suffix_len}} {node.tag:&lt;12} {node_id}'  #模式匹配</p>
+
+<p>for (event, node) in iterparse('podcasts.opml', ['start', 'end', 'start-ns', 'end-ns']): #iterparse返回一个迭代产生的元组
+                                   #包含事件的名称和触发事件的节点，这些事件：包含在参数第二个参数的列表
+    if event == 'end':
+        depth -= 1  #当事件结束深度－1</p>
+
+<p>    prefix_len = depth * 2</p>
+
+<p>    print line_template.format(prefix=prefix_dots,  #解析格式化  前缀使用设定的一定位数的'.'
+                               prefix_len=prefix_len,
+                               suffix='',
+                               suffix_len=(prefix_width - prefix_len),
+                               node=node,
+                               node_id=id(node),
+                               event=event,
+                               )</p>
+
+<p>    if event == 'start':
+        depth += 1
+
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+start            opml         3074976588
+..start          head         3074976748
+....start        title        3074976908
+....end          title        3074976908
+....start        dateCreated  3074977228
+....end          dateCreated  3074977228
+....start        dateModified 3074977292
+....end          dateModified 3074977292
+..end            head         3074976748
+..start          body         3074977324
+....start        outline      3074977420
+......start      outline      3074977644
+......end        outline      3074977644
+......start      outline      3074977676
+......end        outline      3074977676
+......start      outline      3074990124
+......end        outline      3074990124
+....end          outline      3074977420
+....start        outline      3074990188
+......start      outline      3074990220
+......end        outline      3074990220
+......start      outline      3074990156
+......end        outline      3074990156
+......start      outline      3074990284
+......end        outline      3074990284
+....end          outline      3074990188
+....start        outline      3074990348
+......start      outline      3074990380
+......end        outline      3074990380
+......start      outline      3074990316
+......end        outline      3074990316
+......start      outline      3074990412
+......end        outline      3074990412
+....end          outline      3074990348
+....start        outline      3074990508
+......start      outline      3074990444
+......end        outline      3074990444
+......start      outline      3074990476
+......end        outline      3074990476
+......start      outline      3074990636
+......end        outline      3074990636
+....end          outline      3074990508
+....start        outline      3074990700
+......start      outline      3074990604
+......end        outline      3074990604
+....end          outline      3074990700
+..end            body         3074977324
+end              opml         3074976588</p>
+
+<p><pre class="sh_python">
+import csv
+from xml.etree.ElementTree import iterparse
+import sys</p>
+
+<p>writer = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)  #将xml解析成csv文件格式</p>
+
+<p>group_name = ''</p>
+
+<p>for (event, node) in iterparse('podcasts.opml', events=['start']):  
+    if node.tag != 'outline':
+        continue
+    if not node.attrib.get('xmlUrl'):
+        group_name = node.attrib['text']
+    else:
+        # Output a podcast entry
+        writer.writerow( (group_name, node.attrib['text'],
+                          node.attrib['xmlUrl'],
+                          node.attrib.get('htmlUrl', ''),
+                          )
+                         )
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+"Science and Tech","APM: Future Tense","http://www.publicradio.org/columns/futuretense/podcast.xml","http://www.publicradio.org/columns/futuretense/"
+"Science and Tech","Engines Of Our Ingenuity Podcast","http://www.npr.org/rss/podcast.php?id=510030","http://www.uh.edu/engines/engines.htm"
+"Science and Tech","Science &amp; the City","http://www.nyas.org/Podcasts/Atom.axd","http://www.nyas.org/WhatWeDo/SciencetheCity.aspx"
+"Books and Fiction","Podiobooker","http://feeds.feedburner.com/podiobooks","http://www.podiobooks.com/blog"
+"Books and Fiction","The Drabblecast","http://web.me.com/normsherman/Site/Podcast/rss.xml","http://web.me.com/normsherman/Site/Podcast/Podcast.html"
+"Books and Fiction","tor.com / category / tordotstories","http://www.tor.com/rss/category/TorDotStories","http://www.tor.com/"
+"Computers and Programming","MacBreak Weekly","http://leo.am/podcasts/mbw","http://twit.tv/mbw"
+"Computers and Programming","FLOSS Weekly","http://leo.am/podcasts/floss","http://twit.tv"
+"Computers and Programming","Core Intuition","http://www.coreint.org/podcast.xml","http://www.coreint.org/"
+"Python","PyCon Podcast","http://advocacy.python.org/podcasts/pycon.rss","http://advocacy.python.org/podcasts/"
+"Python","A Little Bit of Python","http://advocacy.python.org/podcasts/littlebit.rss","http://advocacy.python.org/podcasts/"
+"Python","Django Dose Everything Feed","http://djangodose.com/everything/feed/",""
+"Miscelaneous","dhellmann's CastSampler Feed","http://www.castsampler.com/cast/feed/rss/dhellmann/","http://www.castsampler.com/users/dhellmann/"
+<pre class="sh_python">
+import csv
+from xml.etree.ElementTree import XMLTreeBuilder  #创建一个自定义的xml数建构
+import sys</p>
+
+<p>class PodcastListToCSV(object):</p>
+
+<p>    def __init__(self, outputFile):
+        self.writer = csv.writer(outputFile, quoting=csv.QUOTE_NONNUMERIC)
+        self.group_name = ''
+        return</p>
+
+<p>    def start(self, tag, attrib):
+        if tag != 'outline':
+            return
+        if not attrib.get('xmlUrl'):
+            self.group_name = attrib['text']
+        else:
+            self.writer.writerow( (self.group_name, attrib['text'],
+                                   attrib['xmlUrl'],
+                                   attrib.get('htmlUrl', ''),
+                                   )
+                                  )</p>
+
+<p>    def end(self, tag):
+        pass  #放弃关闭标签
+    def data(self, data):
+        pass  #放弃node数据
+    def close(self):
+        return #什么都不做</p>
+
+<p>target = PodcastListToCSV(sys.stdout)
+parser = XMLTreeBuilder(target=target)
+with open('podcasts.opml', 'rt') as f:
+    for line in f:
+        parser.feed(line)
+parser.close()
+</pre>
+执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+"Science and Tech","APM: Future Tense","http://www.publicradio.org/columns/futuretense/podcast.xml","http://www.publicradio.org/columns/futuretense/"
+"Science and Tech","Engines Of Our Ingenuity Podcast","http://www.npr.org/rss/podcast.php?id=510030","http://www.uh.edu/engines/engines.htm"
+"Science and Tech","Science &amp; the City","http://www.nyas.org/Podcasts/Atom.axd","http://www.nyas.org/WhatWeDo/SciencetheCity.aspx"
+"Books and Fiction","Podiobooker","http://feeds.feedburner.com/podiobooks","http://www.podiobooks.com/blog"
+"Books and Fiction","The Drabblecast","http://web.me.com/normsherman/Site/Podcast/rss.xml","http://web.me.com/normsherman/Site/Podcast/Podcast.html"
+"Books and Fiction","tor.com / category / tordotstories","http://www.tor.com/rss/category/TorDotStories","http://www.tor.com/"
+"Computers and Programming","MacBreak Weekly","http://leo.am/podcasts/mbw","http://twit.tv/mbw"
+"Computers and Programming","FLOSS Weekly","http://leo.am/podcasts/floss","http://twit.tv"
+"Computers and Programming","Core Intuition","http://www.coreint.org/podcast.xml","http://www.coreint.org/"
+"Python","PyCon Podcast","http://advocacy.python.org/podcasts/pycon.rss","http://advocacy.python.org/podcasts/"
+"Python","A Little Bit of Python","http://advocacy.python.org/podcasts/littlebit.rss","http://advocacy.python.org/podcasts/"
+"Python","Django Dose Everything Feed","http://djangodose.com/everything/feed/",""
+"Miscelaneous","dhellmann's CastSampler Feed","http://www.castsampler.com/cast/feed/rss/dhellmann/","http://www.castsampler.com/users/dhellmann/"
+<pre class="sh_python">
+from xml.etree.ElementTree import XML,XMLID</p>
+
+<p>parsed = XML('''  参数是一段xml文本
+&lt;root&gt;
+  &lt;group&gt;
+    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
+    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
+  &lt;/group&gt;
+  &lt;group&gt;
+    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
+  &lt;/group&gt;
+&lt;/root&gt;
+''')</p>
+
+<p>print 'parsed =', parsed</p>
+
+<p>for elem in parsed:
+    print elem.tag
+    if elem.text is not None and elem.text.strip():
+        print '  text: "%s"' % elem.text
+    if elem.tail is not None and elem.tail.strip():
+        print '  tail: "%s"' % elem.tail
+    for name, value in sorted(elem.attrib.items()):
+        print '  %-4s = "%s"' % (name, value)
+    print
+tree, id_map = XMLID('''  #使用<tt>id</tt>属性分析xml文本
+&lt;root&gt;
+  &lt;group&gt;
+    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
+    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
+  &lt;/group&gt;
+  &lt;group&gt;
+    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
+  &lt;/group&gt;
+&lt;/root&gt;
+''')</p>
+
+<p>for key, value in sorted(id_map.items()):
+    print '%s = %s' % (key, value)
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+parsed = &lt;Element 'root' at 0xb738fa2c&gt;
+group</p>
+
+<p>group</p>
+
+<p>a = &lt;Element 'child' at 0xb738fdcc&gt;
+b = &lt;Element 'child' at 0xb738fcec&gt;
+c = &lt;Element 'child' at 0xb738fe2c&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

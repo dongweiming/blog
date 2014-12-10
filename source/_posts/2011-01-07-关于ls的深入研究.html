@@ -1,0 +1,146 @@
+---
+layout: post
+title: 关于ls的深入研究
+categories:
+- linux基础
+tags:
+- ls
+published: true
+comments: true
+indexer: true
+---
+<p><strong>以下是本文重点内容：</strong></p>
+
+<p><strong>1 显示最后一次执行的命令中修改的文件：使用-t选项</strong></p>
+
+<p><strong>2  每行显示一个条目</strong></p>
+
+<p><strong>3  显示文件大小</strong></p>
+
+<p><strong>4 显示文件上次修改的时间</strong></p>
+
+<p><strong>5  递归显示文件</strong></p>
+
+<p><strong>6  显示文件的uid和gid：使用-n选项</strong></p>
+
+<p><strong>7 在颜色不明显分辨时，使不同的文件显示不同的效果</strong></p>
+
+<p><strong>8 一些.bashrc的别名技巧</strong></p>
+
+<p><!--more--></p>
+
+<p><strong> </strong></p>
+
+<p><strong>1 显示最后一次执行的命令中修改的文件：使用-t选项</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server ~]# cat 1
+i am first file ^.^
+[root@server ~]# cat 2
+i am second file ^.^
+[root@server ~]# cat `ls -t | head -1`
+i am second file ^.^ 看见了吧 它执行了2中的文件</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>2  每行显示一个条目：使用-1选项</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server ~]# ls -1
+1
+2
+anaconda-ks.cfg
+ctier-server-3.6.0-1.noarch.rpm</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>3  显示文件大小：根据大小自动显示为KB，MG，GB：使用-lh选项</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="552">
+<tbody>
+<tr>
+<td width="550" valign="top"><pre class="sh_bash">[root@server ~]# ls –l
+-rw-r--r--  1 root    root   206047591 09-16 09:02 ctier-server-3.6.0-1.noarch.rpm
+drwxrwxr-x  7 puppet  puppet      4096 08-28 07:58 facter-1.5.8</td></tr></tbody></table></p>
+
+<p>[root@server ~]# ls –lh</p>
+
+<p>-rw-r--r--  1 root    root   197M 09-16 09:02 ctier-server-3.6.0-1.noarch.rpm
+drwxrwxr-x  7 puppet  puppet 4.0K 08-28 07:58 facter-1.5.8</pre>
+
+
+
+<strong>4 显示文件上次修改的时间：使用-t选项</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="480">
+<tbody>
+<tr>
+<td width="478" valign="top"><pre class="sh_bash">[root@server ~]# ls -lt
+drwxr-xr-x  8 root    root        4096 01-07 15:09 inove
+-rw-r--r--  1 root    root      609001 01-07 11:07 wackamole-2.1.4.tar.gz
+-rwxr-xr-x  1 root    root         234 01-07 09:50 checkc</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>假如想反过来顺序（请注意上面的是按时间顺序排列）：使用-r选项</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="481">
+<tbody>
+<tr>
+<td width="479" valign="top"><pre class="sh_bash">[root@server ~]# ls –ltr
+-rwxr-xr-x  1 root    root         234 01-07 09:50 checkc
+-rw-r--r--  1 root    root      609001 01-07 11:07 wackamole-2.1.4.tar.gz
+drwxr-xr-x  8 root    root        4096 01-07 15:09 inove</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>5  递归显示文件：使用-R选项</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="518">
+<tbody>
+<tr>
+<td width="516" valign="top"><pre class="sh_bash">[root@server ~]# ls -R  /tmp
+/tmp:
+4803                        hsperfdata_root
+cherokee-admin-scgi.socket  org.hibernate.cache.StandardQueryCache.data
+derby.log                   org.hibernate.cache.UpdateTimestampsCache.data
+hsperfdata_ctier</td></tr></tbody></table></p>
+
+<p>/tmp/hsperfdata_ctier:
+2352</p>
+
+<p>/tmp/hsperfdata_root:</pre>
+
+
+
+<strong>6  显示文件的uid和gid：使用-n选项</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="470">
+<tbody>
+<tr>
+<td width="468" valign="top"><pre class="sh_bash">[root@server ~]# ls -l rubygems-1.3.5/Rakefile
+-rw-r--r-- 1 foreman games 5111 2009-06-27 rubygems-1.3.5/Rakefile
+[root@server ~]# ls -n rubygems-1.3.5/Rakefile
+-rw-r--r-- 1 501 20 5111 2009-06-27 rubygems-1.3.5/Rakefile</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>7  在颜色不明显分辨时，使不同的文件显示不同的效果：（/:目录；@：链接文件；*：可执行文件；=：socket文件）</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="526">
+<tbody>
+<tr>
+<td width="524" valign="top"><pre class="sh_bash">[root@server ~]# ls -F /tmp/
+4803=                        hsperfdata_root/
+cherokee-admin-scgi.socket=  org.hibernate.cache.StandardQueryCache.data
+derby.log                    org.hibernate.cache.UpdateTimestampsCache.data
+hsperfdata_ctier/</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>8 一些.bashrc的别名技巧：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash"><strong>以下是我个人定制的2个别名：
+</strong>1 alias ll="ls -lh"
+2 alias ls="ls -F --color=auto"  </pre></td>
+</tr>
+</tbody>
+</table></p>

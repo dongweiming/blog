@@ -1,0 +1,819 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>SQLAlchemy教程(一) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengyi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">SQLAlchemy教程(一)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-17T00:00:00+08:00" pubdate data-updated="true">Jul 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前言:最近开始学习SQLAlchemy,本教程是其官方文档以及在读英文版&lt;Essential SQLAlchemy&gt;的翻译加一些自己的理解和总结</p>
+
+<p>1 什么是 SQLAlchemy?</p>
+
+<p>它是给mysql, oracle,sqlite等关系型数据库的python接口,不需要大幅修改原有的python代码,它已经包含了SQL表达式语言和ORM,看一些例子:</p>
+
+<p>sql=&#8221;INSERT INTO user(user_name, password) VALUES (%s, %s)&#8221;
+cursor = conn.cursor()
+cursor.execute(sql, (&#8216;dongwm&#8217;, &#8216;testpass&#8217;))</p>
+
+<p>以上是一个常用的mysql的SQL语句,但是冗长也容易出错,并且可能导致安全问题(因为是字符串的语句,会存在SQL注入),并且代码不跨平台,在不同数据库软件的语句不同(以下是一个 Oracle例子),不具备客移植性:</p>
+
+<p>sql=&#8221;INSERT INTO user(user_name, password) VALUES (:1, :2)&#8221;
+cursor = conn.cursor()
+cursor.execute(sql, &#8216;dongwm&#8217;, &#8216;testpass&#8217;)</p>
+
+<p>而在SQLAlchemy里只需要这样写:</p>
+
+<p>statement = user_table.insert(user_name=&#8217;rick&#8217;, password=&#8217;parrot&#8217;)
+statement.execute()  #护略是什么数据库环境</p>
+
+<p>SQLAlchemy还能让你写出很pythonic的语句:</p>
+
+<p>statement = user_table.select(and_(
+user_table.c.created &gt;= date(2007,1,1),
+user_table.c.created &lt; date(2008,1,1))
+result = statement.execute()  #检索所有在2007年创建的用户</p>
+
+<p>metadata=MetaData(&#8216;sqlite://&#8217;) # 告诉它你设置的数据库类型是基于内存的sqlite
+user_table = Table(  #创建一个表
+&#8216;tf_user&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),  #一些字段,假设你懂SQL,那么以下的字段很好理解
+Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False),
+Column(&#8216;email_address&#8217;, Unicode(255), unique=True, nullable=False),
+Column(&#8216;password&#8217;, Unicode(40), nullable=False),
+Column(&#8216;first_name&#8217;, Unicode(255), default=&#8221;),
+Column(&#8216;last_name&#8217;, Unicode(255), default=&#8221;),
+Column(&#8216;created&#8217;, DateTime, default=datetime.now))</p>
+
+<p>users_table = Table(&#8216;users&#8217;, metadata, autoload=True) #假设table已经存在.就不需要指定字段,只是加个autoload=True</p>
+
+<p>class User(object): pass  #虽然SQLAlchemy强大,但是插入更新还是需要手动指定,可以使用ORM,方法就是:设定一个类,定义一个表,把表映射到类里面
+mapper(User, user_table)</p>
+
+<p>下面是一个完整ORM的例子:</p>
+
+<p><pre class="sh_python">
+from sqlalchemy.orm import mapper, sessionmaker #sessionmaker() 函数是最常使用的创建最顶层可用于整个应用 Session 的方法,Session 管理着所有与数据库之间的会话
+from datetime import datetime
+from sqlalchemy import Table, MetaData, Column, ForeignKey, Integer, String, Unicode, DateTime #会SQL的人能理解这些函数吧?
+engine = create_engine("sqlite:///tutorial.db", echo=True) #创建到数据库的连接,echo=True 表示用logging输出调试结果
+metadata = MetaData() #跟踪表属性
+user_table = Table( #创建一个表所需的信息:字段,表名等
+'tf_user', metadata,
+Column('id', Integer, primary_key=True),
+Column('user_name', Unicode(16), unique=True, nullable=False),
+Column('email_address', Unicode(255), unique=True, nullable=False),
+Column('password', Unicode(40), nullable=False),
+Column('first_name', Unicode(255), default=''),
+Column('last_name', Unicode(255), default=''),
+Column('created', DateTime, default=datetime.now))
+metadata.create_all(engine)  #在数据库中生成表
+class User(object): pass #创建一个映射类
+mapper(User, user_table) #把表映射到类
+Session = sessionmaker() #创建了一个自定义了的 Session类
+Session.configure(bind=engine)  #将创建的数据库连接关联到这个session
+session = Session()
+u = User()
+u.user_name='dongwm'
+u.email_address='dongwm@dongwm.com'
+u.password='testpass'  #给映射类添加以下必要的属性,因为上面创建表指定这几个字段不能为空
+session.add(u)  #在session中添加内容</p>
+
+<p>session.flush() #保存数据
+session.commit() #数据库事务的提交,sisson自动过期而不需要关闭</p>
+
+<p>query = session.query(User) #query() 简单的理解就是select() 的支持 ORM 的替代方法,可以接受任意组合的 class/column 表达式
+print list(query) #列出所有user
+print query.get(1) #根据主键显示
+print query.filter_by(user_name='dongwm').first()  #类似于SQL的where,打印其中的第一个
+u = query.filter_by(user_name='dongwm').first()
+u.password = 'newpass' #修改其密码字段
+session.commit() #提交事务
+print query.get(1).password #打印会出现新密码</p>
+
+<p>for instance in session.query(User).order_by(User.id):  #根据id字段排序,打印其中的用户名和邮箱地址
+    print instance.user_name, instance.email_address
+</pre></p>
+
+<p>既然是ORM框架,我们来一个更复杂的包含关系的例子,先看sql语句:</p>
+
+<p>CREATE TABLE tf_user (
+id INTEGER NOT NULL,
+user_name VARCHAR(16) NOT NULL,
+email_address VARCHAR(255) NOT NULL,
+password VARCHAR(40) NOT NULL,
+first_name VARCHAR(255),
+last_name VARCHAR(255),
+created TIMESTAMP,
+PRIMARY KEY (id),
+UNIQUE (user_name),
+UNIQUE (email_address));
+CREATE TABLE tf_group (
+id INTEGER NOT NULL,
+group_name VARCHAR(16) NOT NULL,
+PRIMARY KEY (id),
+UNIQUE (group_name));
+CREATE TABLE tf_permission (
+id INTEGER NOT NULL,
+permission_name VARCHAR(16) NOT NULL,
+PRIMARY KEY (id),
+UNIQUE (permission_name));
+CREATE TABLE user_group (
+user_id INTEGER,
+group_id INTEGER,
+PRIMARY KEY(user_id, group_id),
+FOREIGN KEY(user_id) REFERENCES tf_user (id), #user_group的user_id关联了tf_user的id字段
+FOREIGN KEY(group_id) REFERENCES tf_group (id));  #group_id关联了 tf_group 的id字段</p>
+
+<p>CREATE TABLE group_permission (
+group_id INTEGER,
+permission_id INTEGER,
+PRIMARY KEY(group_id, permission_id),
+FOREIGN KEY(group_id) REFERENCES tf_group (id),  #group_permission的id关联 tf_group的id字段
+FOREIGN KEY(permission_id) REFERENCES tf_permission (id)); #permission_id关联了tf_permission 的id字段</p>
+
+<p>这是一个复杂的多对多的关系,比如检查用户是否有admin权限,sql需要这样:</p>
+
+<p>SELECT COUNT(*) FROM tf_user, tf_group, tf_permission WHERE
+tf_user.user_name=&#8217;dongwm&#8217; AND tf_user.id=user_group.user_id
+AND user_group.group_id = group_permission.group_id
+AND group_permission.permission_id = tf_permission.id
+AND permission_name=&#8217;admin&#8217;;  看起来太复杂并且繁长了</p>
+
+<p>在面向对象的世界里,是这样的:</p>
+
+<p>class User(object):
+groups=[]
+class Group(object):
+users=[]
+permissions=[]
+class Permission(object):
+groups=[]</p>
+
+<p><pre class="sh_python">
+print 'Summary for %s' % user.user_name
+for g in user.groups:
+    print ' Member of group %s' % g.group_name
+    for p in g.permissions:
+        print '... which has permission %s' % p.permission_name
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+def user_has_permission(user, permission_name):  #检查用户是否有permission_name的权限的函数
+    for g in user.groups:
+        for p in g.permissions: #可以看出来使用了for循环
+            if p.permission_name == 'admin':
+                return True
+    return False
+</pre></p>
+
+<p>而在SQLAlchemy中,这样做:</p>
+
+<p>mapper(User, user_table, properties=dict(
+groups=relation(Group, secondary=user_group, backref=&#8217;users&#8217;))) #properties是一个字典值。增加了一个groups 值，它又是一个 relation 对象，这个对象实现</p>
+
+<p>#了Group类与user_group的  映射。这样我通过user_table的groups 属性就可以反映出RssFeed的值来,</p>
+
+<p>#中间表对象(user_group)传给secondary参数，backref为自己的表(users)
+mapper(Group, group_table, properties=dict(
+permissions=relation(Permission, secondary=group_permission,
+backref=&#8217;groups&#8217;)))
+mapper(Permission, permission_table)</p>
+
+<p>&nbsp;</p>
+
+<p>q = session.query(Permission)
+dongwm_is_admin = q.count_by(permission_name=&#8217;admin&#8217;,user_name=&#8217;dongwm&#8217;)</p>
+
+<p>假如计算组里用户数(不包含忘记删除但是重复的)</p>
+
+<p>for p in permissions:
+users = set()
+for g in p.groups:
+for u in g.users:
+users.add(u)
+print &#8216;Permission %s has %d users&#8217; % (p.permission_name, len(users))</p>
+
+<p>在SQLAlchemy可以这样:</p>
+
+<p>q=select([Permission.c.permission_name,
+func.count(user_group.c.user_id)],
+and_(Permission.c.id==group_permission.c.permission_id,
+Group.c.id==group_permission.c.group_id,
+Group.c.id==user_group.c.group_id),
+group_by=[Permission.c.permission_name],
+distinct=True)
+rs=q.execute()
+for permission_name, num_users in q.execute():
+print &#8216;Permission %s has %d users&#8217; % (permission_name, num_users) #虽然也长,但是减少了数据库查询次数,也就是让简单事情简单化,复杂事情可能简单解决</p>
+
+<p>看一个综合的例子:</p>
+
+<p>class User(object):  #这些类设计数据库的模型</p>
+
+<p>def __init__(self, group_name=None, users=None, permissions=None):
+if users is None: users = []
+if permissions is None: permissions = []
+self.group_name = group_name
+self._users = users
+self._permissions = permissions</p>
+
+<p>def add_user(self, user):
+self._users.append(user)</p>
+
+<p>def del_user(self, user):
+self._users.remove(user)</p>
+
+<p>def add_permission(self, permission):
+self._permissions.append(permission)</p>
+
+<p>def del_permission(self, permission):
+self._permissions.remove(permission)</p>
+
+<p>class Permission(object):</p>
+
+<p>def __init__(self, permission_name=None, groups=None):
+self.permission_name = permission_name
+self._groups = groups</p>
+
+<p>def join_group(self, group):
+self._groups.append(group)</p>
+
+<p>def leave_group(self, group):
+self._groups.remove(group)</p>
+
+<p>用sqlalchemy的效果是这样的:</p>
+
+<p>user_table = Table(
+&#8216;tf_user&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False),
+Column(&#8216;password&#8217;, Unicode(40), nullable=False))</p>
+
+<p>group_table = Table(
+&#8216;tf_group&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;group_name&#8217;, Unicode(16), unique=True, nullable=False))</p>
+
+<p>permission_table = Table(
+&#8216;tf_permission&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;permission_name&#8217;, Unicode(16), unique=True,
+nullable=False))</p>
+
+<p>user_group = Table(
+&#8216;user_group&#8217;,  metadata,
+Column(&#8216;user_id&#8217;, None, ForeignKey(&#8216;tf_user.id&#8217;),
+primary_key=True),
+Column(&#8216;group_id&#8217;, None, ForeignKey(&#8216;tf_group.id&#8217;),
+primary_key=True))</p>
+
+<p>group_permission = Table(
+&#8216;group_permission&#8217;,  metadata,
+Column(&#8216;group_id&#8217;, None, ForeignKey(&#8216;tf_group.id&#8217;),
+primary_key=True),
+Column(&#8216;permission_id&#8217;, None, ForeignKey(&#8216;tf_permission.id&#8217;),
+primary_key=True))</p>
+
+<p>mapper(User, user_table, properties=dict(
+_groups=relation(Group, secondary=user_group, backref=&#8217;_users&#8217;)))
+mapper(Group, group_table, properties=dict(
+_permissions=relation(Permission, secondary=group_permission,
+backref=_&#8217;groups&#8217;)))
+mapper(Permission, permission_table)</p>
+
+<p>这里没有修改对象,而join_group,leave_group这样的函数依然可用,sqlalchemy会跟踪变化,并且自动刷新数据库</p>
+
+<p>上面介绍了一个完整的例子,连接数据库嗨可以这样:</p>
+
+<p>engine = create_engine(&#8216;sqlite://&#8217;)
+connection = engine.connect()  #使用connect
+result = connection.execute(&#8220;select user_name from tf_user&#8221;)
+for row in result:
+print &#8216;user name: %s&#8217; % row[&#8216;user_name&#8217;]
+result.close()</p>
+
+<p>engine = create_engine(&#8216;sqlite://&#8217;, strategy=&#8217;threadlocal&#8217;)  #,strategy=&#8217;threadlocal&#8217;表示重用其它本地线程减少对数据库的访问</p>
+
+<p>from sqlalchemy.databases.mysql import MSEnum, MSBigInteger  #这个 sqlalchemy.databases是某数据库软件的&#8217;方言&#8217;集合,只支持特定平台
+user_table = Table(&#8216;tf_user&#8217;, meta,
+Column(&#8216;id&#8217;, MSBigInteger),
+Column(&#8216;honorific&#8217;, MSEnum(&#8216;Mr&#8217;, &#8216;Mrs&#8217;, &#8216;Ms&#8217;, &#8216;Miss&#8217;, &#8216;Dr&#8217;, &#8216;Prof&#8217;)))</p>
+
+<p>以下是几个MetaData的应用:
+unbound_meta = MetaData()  #这个metadata没有绑定
+db1 = create_engine(&#8216;sqlite://&#8217;)
+unbound_meta.bind = db1  #关联引擎</p>
+
+<p>db2 = MetaData(&#8216;sqlite:///test1.db&#8217;)  #直接设置引擎
+bound_meta1 = MetaData(db2)</p>
+
+<p># Create a bound MetaData with an implicitly created engine
+bound_meta2 = MetaData(&#8216;sqlite:///test2.db&#8217;)  #隐式绑定引擎
+meta = MetaData(&#8216;sqlite://&#8217;) #直接绑定引擎可以让源数据直接访问数据库</p>
+
+<p>user_table = Table(
+&#8216;tf_user&#8217;, meta,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False),
+Column(&#8216;password&#8217;, Unicode(40), nullable=False))</p>
+
+<p>group_table = Table(
+&#8216;tf_group&#8217;, meta,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;group_name&#8217;, Unicode(16), unique=True, nullable=False))</p>
+
+<p>meta.create_all() #创建所有的数据库(以上2个),函数无参数</p>
+
+<p>result_set = group_table.select().execute() #选取 group_table的所有表数据</p>
+
+<p>以下看一个关联多引擎的例子:</p>
+
+<p>meta = MetaData()  #这里不能直接关联了
+engine1 = create_engine(&#8216;sqlite:///test1.db&#8217;)  #2个引擎
+engine2 = create_engine(&#8216;sqlite:///test2.db&#8217;)</p>
+
+<p># Use the engine parameter to load tables from the first engineuser_table = Table(
+&#8216;tf_user&#8217;, meta, autoload=True, autoload_with=engine1)  #从第一个引擎加载这些表
+group_table = Table(
+&#8216;tf_group&#8217;, meta, autoload=True, autoload_with=engine1)
+permission_table = Table(
+&#8216;tf_permission&#8217;, meta, autoload=True, autoload_with=engine1)
+user_group_table = Table(
+&#8216;user_group&#8217;, meta, autoload=True, autoload_with=engine1)
+group_permission_table = Table(
+&#8216;group_permission&#8217;, meta, autoload=True, autoload_with=engine1)</p>
+
+<p>meta.create_all(engine2) #在第二个引擎里面创建表</p>
+
+<p>class ImageType(sqlalchemy.types.Binary):  #自定义我们的table的类
+def convert_bind_param(self, value, engine):
+sfp = StringIO()
+value.save(sfp, &#8216;JPEG&#8217;)
+return sfp.getvalue()
+def convert_result_value(self, value, engine):
+sfp = StringIO(value)
+image = PIL.Image.open(sfp)
+return image  #这里我们定义了一个图形处理的类型</p>
+
+<p>当定义了metadata后,会自定生成一个table.c object:
+q = user_table.select(  #查询创建在2007年6月1号之前的用户,并且第一个字母是&#8217;r&#8217;
+user_table.c.user_name.like(&#8216;r%&#8217;)  #这里的c就是那个特殊的类,当使用sql表达式会用到
+&amp; user_table.c.created &lt; datetime(2007,6,1))
+或者替代这样:
+q = user_table.select(and_(
+user_table.c.user_name.like(&#8216;r%&#8217;),
+user_table.c.created &lt; datetime(2007,6,1)))
+也可以使用rom映射:
+q = session.query(User)
+q = q.filter(User.c.user_name.like(&#8216;r%&#8217;)
+&amp; User.c.created &gt; datetime(2007,6,1))</p>
+
+<p>还是一个ORM的例子:</p>
+
+<p>user_table = Table(
+&#8216;tf_user&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False),
+Column(&#8216;email_address&#8217;, Unicode(255), unique=True, nullable=False),
+Column(&#8216;password&#8217;, Unicode(40), nullable=False),
+Column(&#8216;first_name&#8217;, Unicode(255), default=&#8221;),
+Column(&#8216;last_name&#8217;, Unicode(255), default=&#8221;),
+Column(&#8216;created&#8217;, DateTime, default=datetime.now))  #这是一个定义的表类型</p>
+
+<p>group_table = Table(
+&#8216;tf_group&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;group_name&#8217;, Unicode(16), unique=True, nullable=False))</p>
+
+<p>user_group = Table(
+&#8216;user_group&#8217;,  metadata,
+Column(&#8216;user_id&#8217;, None, ForeignKey(&#8216;tf_user.id&#8217;), primary_key=True),
+Column(&#8216;group_id&#8217;, None, ForeignKey(&#8216;tf_group.id&#8217;),
+&#8230; primary_key=True))</p>
+
+<p>import sha
+class User(object):  #映射类</p>
+
+<p>def _get_password(self):
+return self._password
+def _set_password(self, value):
+self._password = sha.new(value).hexdigest() #只存储用户的哈希密码
+password=property(_get_password, _set_password)</p>
+
+<p>def password_matches(self, password):
+return sha.new(password).hexdigest() == self._password</p>
+
+<p>mapper(User, user_table, properties=dict( #映射将创建id, user_name, email_address, password, first_name, last_name, created等字段
+_password=user_table.c.password)) #使用哈希后的密码替换真实密码,数据库只保存哈希后的,这里在orm上修改</p>
+
+<p>mapper(User, user_table, properties=dict(
+_password=user_table.c.password,
+groups=relation(Group, secondary=user_group, backref=&#8217;users&#8217;))) #这里表示可以访问所有的组，用户只需访问一个成员团体属性,user_group映射类添加group和Group关联,</p>
+
+<p># User类添加users访问group属性,看效果:
+group1.users.append(user1)  #给group1添加用户user1,自动更新
+user2.groups.append(group2) #把user2添加到group2组,自动更新</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-17T00:00:00+08:00" pubdate data-updated="true">Jul 17<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/sqlalchemy/'>SQLAlchemy</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengyi/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/sqlalchemyjiaochengsi/" title="Previous Post:
+        SQLAlchemy教程(四)">&laquo; SQLAlchemy教程(四)</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/sqlalchemyjiaochengba/"
+        title="Next Post: SQLAlchemy教程(八)">SQLAlchemy教程(八)
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengyi/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengyi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

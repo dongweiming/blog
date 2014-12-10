@@ -1,0 +1,49 @@
+---
+layout: post
+title: suse的远程连接技巧
+categories:
+- opensuse
+tags:
+- ssh乱码
+- suse
+- windows远程桌面
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 suse的windows远程桌面：</strong></p>
+
+<p>rdesktop是一个很好的windows远程桌面的工具，suse默认已经安装。但是一定要确保Windows开启Windows Terminal Service。</p>
+
+<p>我习惯使用命令行，将登录命令写在脚本里面并作为外部命令，看我的操作：</p>
+
+<p><pre class="sh_bash">#vi /bin/25</p>
+
+<p>#!/bin/bash
+rdesktop -u admin -p admiN@\(23324 -f -r clipboard:PRIMARYCLIPBOARD -r disk:sunray=/home/dongwm 192.168.9.100:9922</pre></p>
+
+<p>其中 －u加用户名</p>
+
+<p>－p加密码，但是注意特殊符号需要进行加转义符“\”</p>
+
+<p>-r clipboard:PRIMARYCLIPBOARD  可以在linux和windows直接进行复制粘贴</p>
+
+<p>-r disk:sunray=/home/dongwm   效果类似于samba，直接实现ftp等功能</p>
+
+<p>设置其执行权限：</p>
+
+<p>＃chmod +x /bin/25</p>
+
+<p>这样这个脚本就成了外部命令，只要在终端输入：</p>
+
+<p>＃25</p>
+
+<p>即可</p>
+
+<p><strong>2  suse的远程ssh乱码</strong></p>
+
+<p>我们远程登录一些系统，可能他使用的一些编码会让我们在终端显示乱码，但是因为某些原因却不能对远程主机修改其编码类型，所以我们使用luit,命令如下：</p>
+
+<p><pre class="sh_bash">luit -encoding gbk ssh root@192.168.9.100 -p 9922</pre></p>
+
+<p>luit主要进行终端的编码转换，这样的话我们就不会看见乱码，也不用修改远程主机的编码类型了</p>

@@ -1,0 +1,210 @@
+---
+layout: post
+title: 关于sed研究（一）
+categories:
+- linux基础
+- sed
+tags:
+- sed
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 sed语法和命令结构</strong></p>
+
+<p>sed [options] {sed-commands} {input-file}</p>
+
+<p>或者：</p>
+
+<p>sed [options] -f {sed-commands-in-a-file} {input-file}
+注：这里的sed-commands-in-a-file 其实就是把要执行的语句写在一个文件(这里是test.sed)中：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.sed
+/^dongwm/ p
+/^icinga/ p</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -f test.sed /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p>或者：</p>
+
+<p>sed [options] -e {sed-command-1} -e {sed-command-2}  #这里使用 '-e' 也就是执行相对应的语句,每个‘-e’执行结果都要返回，而不是符合全部'-e'的结果
+{input-file}
+dongwm@linux-dongwm:~&gt; sed -n -e '/^dongwm/ p' -e '/^icinga/ p' /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p>或者：</p>
+
+<p>sed [options] '{sed-command-1 sed-command-2}'  {input-file}  #使用多个执行语句用"{}"括起来,每个执行语句用';'隔开</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e '{/^dongwm/ p;/^icinga/ p}' /etc/passwd  #"-n"表示打印时候去重复（我的理解）
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p><strong>2 打印输出文件</strong></p>
+
+<p>这里有个文件：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+例子:</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n '2 p' !$  #打印第二行
+sed -n '2 p' test.txt
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n '1,2 p' test.txt  #打印某几行这里是start（1）－end（2）行
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n '2,$ p' test.txt  #打印某行到最后一行 这里是第二行
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n '1~2 p' test.txt  #这里‘~’修改了打印间隔，比如：1~2 匹配第一行，第三行（间隔为2）...；比如1~3 匹配第一行，第四行...
+112,dongwm,dongwm.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n '/dongwm/ p' test.txt  #模式匹配，匹配包含‘dongwm’的行
+112,dongwm,dongwm.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n '/dongwm/,3 p' test.txt #模式匹配，匹配包含‘dongwm’的行，直到某一行的数据（这里是第3行）
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n '/dongwm/,/ailll/ p' test.txt #模式匹配，匹配包含‘dongwm’的行，直到包含‘ailll’的行
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n '/dongwm/,+1 p' test.txt  #模式匹配，匹配包含‘dongwm’的行 然后再加某数值的行数（这里是1行）
+112,dongwm,dongwm.com
+113,ailll,ailll.com</p>
+
+<p><strong>3 删除行</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed '2 d' test.txt  #删除指定行，只是输出 源文件没有被操作
+112,dongwm,dongwm.com
+114,test,test.com</p>
+
+<p>删除的语句和上面打印的相同</p>
+
+<p>例子：</p>
+
+<p>sed '/^$/ d' test.txt  #删除所有行</p>
+
+<p>sed '/^#/ d' employee.txt  #删除所有注释行</p>
+
+<p><strong>4 将执行语句结果写入其他文件</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n 'w test2.txt' test.txt
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+写入的语句和上面打印的相同，比如：</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n '/dongwm/,2 w test2.txt' test.txt   #写入匹配行到第二行数据到text2.txt
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+<strong>5 替换</strong></p>
+
+<p>语法：sed '[address-range|pattern-range] s/original-
+string/replacement-string/[substitute-flags]' inputfile
+dongwm@linux-dongwm:~&gt; sed  's/dongwm/dongwm2/' test.txt  #s 表示是要替换，这里只是替换第一个dongwm,如果sed  's/dongwm/dongwm2/g' test.txt 表示全文替换
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  '/com/s/dongwm/dongwm2/' test.txt  #喜爱指定匹配的行执行替换，这里是匹配行包括‘com’
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed  's/dongwm/dongwm2/2' test.txt #替换全文中第几个符合匹配条件的匹配项，这里文件有2个，只替换第2个
+112,dongwm,dongwm2.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed  's/com/com2/1' test.txt  #这里其实是匹配每行否和要求的匹配项
+112,dongwm,dongwm.com2
+113,ailll,ailll.com2
+114,test,test.com2
+dongwm@linux-dongwm:~&gt; sed  -n 's/dongwm/dongwm2/1p' test.txt  打印匹配行  －n 去重复
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; sed  -n 's/dongwm/dongwm2/1w test2.txt' test.txt  #匹配替换后写入文件
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; sed  's/dongwm/dongwm2/i' test.txt #替换被匹配字符串忽略大小写，比如 Dongwm</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt   #这个文件记录了2个创建的文件的名字
+test1
+test2
+dongwm@linux-dongwm:~&gt; !sed
+sed 's/^/ls -l /e' test.txt   #e 主要是替换后直接执行
+-rw-r--r-- 1 dongwm users 2763  4月 16 13:53 test1
+-rw-r--r-- 1 dongwm users 0  4月 16 13:53 test2
+dongwm@linux-dongwm:~&gt; sed -n 's/dongwm/dongwm2/gipw text2.txt' test.txt  #多操作g i p w
+112,dongwm2,dongwm2.com
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; cat test.txt
+reading /usr/local/bin directory</p>
+
+<p>除了使用反斜杠外 行可以使用一下字串进行快捷操作：
+dongwm@linux-dongwm:~&gt; sed 's^/usr/local/bin^/usr/bin^' test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed 's@/usr/local/bin@/usr/bin@' test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed 's!/usr/local/bin!/usr/bin!' test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed 's|/usr/local/bin|/usr/bin|' test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed '{s/dongwm/dongwm2/;s/ailll/ailll2/}' test.txt  多条件替换，之间用‘；’
+112,dongwm2,dongwm.com
+113,ailll2,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed 's/^[0-9][0-9][0-9]/[&amp;]/g' test.txt #替换文件中数字，在数字外面加'[]'
+[112],dongwm,dongwm.com
+[113],ailll,ailll.com
+[114],test,test.com
+dongwm@linux-dongwm:~&gt; sed 's/^.*/&lt;&amp;&gt;/' test.txt #替换每行，在每行内容外加'&lt;&gt;'
+&lt;112,dongwm,dongwm.com&gt;
+&lt;113,ailll,ailll.com&gt;
+&lt;114,test,test.com&gt;</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed 's/\([^,]*\).*/\1/g' test.txt #匹配组，这里匹配的是 第一个‘，’前的内容 \1表示第一个匹配组
+112
+113
+114
+dongwm@linux-dongwm:~&gt; echo 'Dong Wei Ming' |sed 's/\(\b[A-Z]\)/\(\1\)/g'  #匹配每个词的大写字母，给他加个括号
+(D)ong (W)ei (M)ing</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+1
+12
+123
+1234
+12345
+123456
+dongwm@linux-dongwm:~&gt; sed 's/\(^\|[^0-9.]\)\([0-9]\+\)\([0-9]\{3\}\)/\1\2,\3/g' test.txt  #这里有三个匹配组，所以有 \1,\2\3
+1
+12
+123
+1,234
+12,345
+123,456
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed 's/\([^,]*\),\([^,]*\),\([^,]*\).*/\1,\3/g' test.txt  #这里根据‘，’分割出三个匹配组，然后替换把1，2，3组替换为1，3组
+112,dongwm.com
+113,ailll.com
+114,test.com
+dongwm@linux-dongwm:~&gt; sed -n 's/dongwm/\udongwm/p' test.txt  #\u会让挨着他后面的那个字母（这里是d）变成大写
+112,Dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n 's/dongwm/\Udongwm/p' test.txt  #\U会让挨着他后面的所有字母都变成大写</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

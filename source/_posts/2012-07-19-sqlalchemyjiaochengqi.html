@@ -1,0 +1,156 @@
+---
+layout: post
+title: SQLAlchemy教程(七)
+categories:
+- python
+- SQLAlchemy
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p><strong>本文主要是面向对象的继承映射到关系数据库表的方法</strong></p>
+
+<p>&gt;&gt;&gt; class Product(object):
+...     def __init__(self, sku, msrp):
+...         self.sku = sku
+...         self.msrp = msrp
+...     def __repr__(self):
+...         return '&lt;%s %s&gt;' % (
+...             self.__class__.__name__, self.sku)
+...
+&gt;&gt;&gt; class Clothing(Product):
+...     def __init__(self, sku, msrp, clothing_info):
+...         Product.__init__(self, sku, msrp) #继承了Product
+...         self.clothing_info = clothing_info
+...
+&gt;&gt;&gt; class Accessory(Product):
+...     def __init__(self, sku, msrp, accessory_info):
+...         Product.__init__(self, sku, msrp) #继承了Product
+...         self.accessory_info = accessory_info
+也就是这样的意思:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png"><img class="alignnone  wp-image-1267" title="Screenshot-1" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png" alt="" width="700" height="251" /></a></p>
+
+<p>这个单表继承中(如下图,黑色的表示没有被映射):</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png"><img class="alignnone  wp-image-1270" title="Screenshot-2" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png" alt="" width="683" height="316" /></a></p>
+
+<p>从创建表结构是这样:</p>
+
+<p>&gt;&gt;&gt; product_table = Table(
+...     'product', metadata,
+...     Column('sku', String(20), primary_key=True),
+...     Column('msrp', Numeric),
+...     Column('clothing_info', String),
+...     Column('accessory_info', String),
+...     Column('product_type', String(1), nullable=False)) #一个新的字段
+&gt;&gt;&gt; mapper(
+...     Product, product_table,
+...     polymorphic_on=product_table.c.product_type, #映射继承层次结构使用polymorphic_on表示继承在product_type字段,值是polymorphic_identity指定的标识
+...     polymorphic_identity='P') #标识继承 Product ,父类
+&lt;Mapper at 0x85833ec; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, inherits=Product,
+...        polymorphic_identity='C')   #标识继承Clothing product
+&lt;Mapper at 0x858362c; Clothing&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt; mapper(Accessory, inherits=Product, #继承至Product
+...        polymorphic_identity='A') #标识继承Accessory
+&lt;Mapper at 0x8587d8c; Accessory&gt;
+&gt;&gt;&gt; products = [  #创建一些产品
+...     Product('123', 11.22),
+...     Product('456', 33.44),
+...     Clothing('789', 123.45, "Nice Pants"),
+...     Clothing('111', 125.45, "Nicer Pants"),
+...     Accessory('222', 24.99, "Wallet"),
+...     Accessory('333', 14.99, "Belt") ]
+&gt;&gt;&gt; Session = sessionmaker()
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; for p in products:
+...     session.add(p)
+...
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Product).all() #全部都有
+[&lt;Product 123&gt;, &lt;Product 456&gt;, &lt;Clothing 789&gt;, &lt;Clothing 111&gt;, &lt;Accessory 222&gt;, &lt;Accessory 333&gt;]
+&gt;&gt;&gt; print session.query(Clothing).all()  #只显示2个
+[&lt;Clothing 789&gt;, &lt;Clothing 111&gt;]
+&gt;&gt;&gt; print session.query(Accessory).all() #只显示2个,是不是上面的映射效果和创建3个类而分别orm好的多呢?
+[&lt;Accessory 222&gt;, &lt;Accessory 333&gt;]</p>
+
+<p>&gt;&gt;&gt; for row in product_table.select().execute(): #从父类库查询,所有数据都有,只是product_type不同
+...     print row
+...
+(u'123', Decimal('11.2200000000'), None, None, u'P')
+(u'456', Decimal('33.4400000000'), None, None, u'P')
+(u'789', Decimal('123.4500000000'), u'Nice Pants', None, u'C')
+(u'111', Decimal('125.4500000000'), u'Nicer Pants', None, u'C')
+(u'222', Decimal('24.9900000000'), None, u'Wallet', u'A')
+(u'333', Decimal('14.9900000000'), None, u'Belt', u'A')</p>
+
+<p>具体的映射见下图:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png"><img class="alignnone  wp-image-1271" title="Screenshot-3" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png" alt="" width="629" height="232" /></a></p>
+
+<p>查询一个没有的不存在的映射:</p>
+
+<p>&gt;&gt;&gt; print session.query(Accessory)[0].clothing_info
+None</p>
+
+<p><strong>具体表的继承</strong></p>
+
+<p><strong></strong>每个表包含的数据量,需要实现它的类;没有浪费的空间</p>
+
+<p>&gt;&gt;&gt; metadata.remove(product_table)
+&gt;&gt;&gt; product_table = Table(
+...     'product', metadata,
+...     Column('sku', String(20), primary_key=True),
+...     Column('msrp', Numeric))
+&gt;&gt;&gt; clothing_table = Table(
+...     'clothing', metadata,
+...     Column('sku', String(20), primary_key=True),
+...     Column('msrp', Numeric),
+...     Column('clothing_info', String))
+&gt;&gt;&gt;
+&gt;&gt;&gt; accessory_table = Table(
+...     'accessory', metadata,
+...     Column('sku', String(20), primary_key=True),
+...     Column('msrp', Numeric),
+...     Column('accessory_info', String))
+&gt;&gt;&gt;
+摄像我们想要获取Product'sku'是222的数据(没有其他额外的工作),我们不得不层次型的查询每个类,请看这个例子:</p>
+
+<p>&gt;&gt;&gt; punion = polymorphic_union(
+...     dict(P=product_table,
+...     C=clothing_table,
+...     A=accessory_table),
+...     'type_')
+&gt;&gt;&gt;
+&gt;&gt;&gt; print punion
+SELECT accessory.sku, accessory.msrp, accessory.accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, 'A' AS type_
+FROM accessory UNION ALL SELECT product.sku, product.msrp, CAST(NULL AS VARCHAR) AS accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, 'P' AS type_
+FROM product UNION ALL SELECT clothing.sku, clothing.msrp, CAST(NULL AS VARCHAR) AS accessory_info, clothing.clothing_info, 'C' AS type_
+FROM clothing
+现在我们就有了一个很好的标记了(C,A,P)</p>
+
+<p>&gt;&gt;&gt; mapper(
+...     Product, product_table, with_polymorphic=('*', punion),  #使用with_polymorphic=('*', punion)的方式映射父类,指定不同表选择,实现多态,并且提高了性能(只select了一次)
+...     polymorphic_on=punion.c.type_,
+...     polymorphic_identity='P')
+&lt;Mapper at 0x8605b6c; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, clothing_table, inherits=Product,
+... polymorphic_identity='C',
+... concrete=True)
+&lt;Mapper at 0x84f1bac; Clothing&gt;
+&gt;&gt;&gt; mapper(Accessory, accessory_table, inherits=Product,
+... polymorphic_identity='A',
+... concrete=True)
+&lt;Mapper at 0x858770c; Accessory&gt;</p>
+
+<p>&gt;&gt;&gt; session.query(Product).get('222')
+&lt;Accessory 222&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

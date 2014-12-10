@@ -1,0 +1,161 @@
+---
+layout: post
+title: 关于BaseHTTPServer研究
+categories:
+- python模块研究
+tags:
+- BaseHTTPRequestHandler
+- BaseHTTPServer
+- HTTPServer
+published: true
+comments: true
+indexer: true
+---
+<p>前言：BaseHTTPServer是一个实现web server的基类</p>
+
+<p>例子1 http get方法：</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler  #BaseHTTPRequestHandler类细分到处理每个协议的方法，这里是‘GET’方法的例子
+import urlparse</p>
+
+<p>class GetHandler(BaseHTTPRequestHandler):
+    def do_GET(self):   #重写这个方法
+        parsed_path = urlparse.urlparse(self.path)
+        message_parts = [  #建立一个想要返回的列表
+                'CLIENT VALUES:',    #客户端信息
+                'client_address=%s (%s)' % (self.client_address,
+                                            self.address_string()),  #返回客户端的地址和端口
+                'command=%s' % self.command,  #返回操作的命令，这里比然是'get'
+                'path=%s' % self.path,  #返回请求的路径
+                'real path=%s' % parsed_path.path, #返回通过urlparse格式化的路径
+                'query=%s' % parsed_path.query, #返回urlparse格式化的查询语句的键值
+                'request_version=%s' % self.request_version, #返回请求的http协议版本号
+                '',
+                'SERVER VALUES:', #服务器段信息
+                'server_version=%s' % self.server_version, #返回服务器端http的信息
+                'sys_version=%s' % self.sys_version, #返回服务器端使用的python版本
+                'protocol_version=%s' % self.protocol_version,  #返回服务器端使用的http协议版本
+                '',
+                'HEADERS RECEIVED:',
+                ]
+        for name, value in sorted(self.headers.items()):  #返回項添加头信息，包含用户的user-agent信息，主机信息等
+            message_parts.append('%s=%s' % (name, value.rstrip()))
+        message_parts.append('')
+        message = '\r\n'.join(message_parts)
+        self.send_response(200)  #返回给客户端结果，这里的响应码是200 OK，并包含一些其他信息
+        self.end_headers() #结束头信息
+        self.wfile.write(message) #返回数据
+        return
+if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), GetHandler)  #在本地8080端口上启用httpserver，使用自定义的GetHandler处理
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()  #保存程序一直运行
+</pre></p>
+
+<p>客户端测试（linux的curl即可）</p>
+
+<p>dongwm@linux-dongwm:~&gt; curl -i http://localhost:8080/?arg=value
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.3 Python/2.7
+Date: Mon, 11 Jun 2012 06:59:20 GMT</p>
+
+<p>CLIENT VALUES:
+client_address=('127.0.0.1', 54016) (localhost)
+command=GET
+path=/?arg=value
+real path=/
+query=arg=value
+request_version=HTTP/1.1</p>
+
+<p>SERVER VALUES:
+server_version=BaseHTTP/0.3
+sys_version=Python/2.7
+protocol_version=HTTP/1.0</p>
+
+<p>HEADERS RECEIVED:
+accept=*/*
+host=localhost:8080
+user-agent=curl/7.21.2 (i686-pc-linux-gnu) libcurl/7.21.2 OpenSSL/1.0.0c zlib/1.2.5 libidn/1.15 libssh2/1.2.7</p>
+
+<p>例子2 http post方法：</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import cgi   #cgi模块，让使用者通过Web服务器来执 行Web程序，并将所执行的结果通过Web服务器返回给浏览器，它产生HTML数据</p>
+
+<p>class PostHandler(BaseHTTPRequestHandler):
+    def do_POST(self): #还是重写这个方法
+        form = cgi.FieldStorage(  #cgi.FieldStorage实例效果类似一个字典，包含键－值和len等内置函数
+            fp=self.rfile,
+            headers=self.headers,
+            environ={'REQUEST_METHOD':'POST',
+                     'CONTENT_TYPE':self.headers['Content-Type'],
+                     })
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write('Client: %s\n' % str(self.client_address))
+        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
+        self.wfile.write('Path: %s\n' % self.path)
+        self.wfile.write('Form data:\n')</p>
+
+<p>        for field in form.keys():
+            field_item = form[field]
+            self.wfile.write('\t%s=%s\n' % (field, form[field].value))
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), PostHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p>客户端测试（linux的curl）</p>
+
+<p>dongwm@linux-dongwm:~&gt; curl http://localhost:8080/ -F name=dongwm -F site=www.dongwm.com
+Client: ('127.0.0.1', 44314)
+User-agent: curl/7.21.2 (i686-pc-linux-gnu) libcurl/7.21.2 OpenSSL/1.0.0c zlib/1.2.5 libidn/1.15 libssh2/1.2.7
+Path: /
+Form data:
+name=dongwm
+site=www.dongwm.com
+例子3 使用多线程</p>
+
+<p>注：<tt></tt><tt>HTTPServer</tt>是SocketServer.TCPServer的一个简单的子类，不能使用多个线程或进程来处理请求，可以这样使用</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from SocketServer import ThreadingMixIn
+import threading</p>
+
+<p>class Handler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        message =  threading.currentThread().getName()  #换取当前线程的名字
+        self.wfile.write(message)  #返回这个名字
+        self.wfile.write('\n')
+        return</p>
+
+<p>class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    """Handle requests in a separate thread."""</p>
+
+<p>if __name__ == '__main__':
+    server = ThreadedHTTPServer(('localhost', 8080), Handler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p>客户端测试：</p>
+
+<p>dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
+Thread-1
+dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
+Thread-2
+dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
+Thread-3
+dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
+Thread-4</p>

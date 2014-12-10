@@ -1,0 +1,209 @@
+---
+layout: post
+title: 关于SocketServer研究
+categories:
+- python模块研究
+tags:
+- SocketServer
+published: true
+comments: true
+indexer: true
+---
+<p>前言;SocketServer模块是一个用于创建网络服务器的框架. 他提供了处理TCP, UDP, Unix流和Unix数据包的基本类和支持线程和进程服务器</p>
+
+<p><pre class="sh_python">
+import logging
+import sys
+import SocketServer</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+  format='%(name)s: %(message)s',
+)</p>
+
+<p>class EchoRequestHandler(SocketServer.BaseRequestHandler):   #通过启动不同的线程（进程）来实现每个链接一个线程</p>
+
+<p>    def __init__(self, request, client_address, server):
+        self.logger = logging.getLogger('EchoRequestHandler')
+        self.logger.debug('__init__')
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        return</p>
+
+<p>    def setup(self):  #准备一个请求处理者
+        self.logger.debug('setup')
+        return SocketServer.BaseRequestHandler.setup(self)</p>
+
+<p>    def handle(self):  #做实际处理请求的工作. 解析到来的请求, 处理数据并发送一个response.
+        self.logger.debug('handle')
+        data = self.request.recv(1024)
+        self.logger.debug('recv()-&gt;"%s"', data)
+        self.request.send(data)
+        return</p>
+
+<p>    def finish(self):  #清除在setup()中创建的所有东西.
+        self.logger.debug('finish')
+        return SocketServer.BaseRequestHandler.finish(self)</p>
+
+<p>class EchoServer(SocketServer.TCPServer):  #使用TCP/IP sockets来通信</p>
+
+<p>    def __init__(self, server_address, handler_class=EchoRequestHandler):  #设置使用的处理类是上面创建的
+        self.logger = logging.getLogger('EchoServer')
+        self.logger.debug('__init__')
+        SocketServer.TCPServer.__init__(self, server_address, handler_class)
+        return</p>
+
+<p>    def server_activate(self): #激活server
+        self.logger.debug('server_activate')
+        SocketServer.TCPServer.server_activate(self)
+        return</p>
+
+<p>    def serve_forever(self): 
+        self.logger.debug('waiting for request')
+        self.logger.info('Handling requests, press &lt;Ctrl-C&gt; to quit')
+        while True:   #在一个无穷循环中调用 <tt>handle_request()</tt>，激活后进入这个循环
+            self.handle_request()
+        return</p>
+
+<p>    def handle_request(self):  
+        self.logger.debug('handle_request')
+        return SocketServer.TCPServer.handle_request(self)</p>
+
+<p>    def verify_request(self, request, client_address):  #返回True来处理请求, 或者False表示忽略这个请求. 比如, 你也可以拒绝从一个IP范围来的请求, 假如你想要阻断某些客户端访问服务器.
+        self.logger.debug('verify_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.verify_request(self, request, client_address)</p>
+
+<p>    def process_request(self, request, client_address): #它通常是调用finish_request()来完成实际工作. 但它也看创建一个独立的线程或进程, 作为混合类来使用(如下).
+        self.logger.debug('process_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.process_request(self, request, client_address)</p>
+
+<p>    def server_close(self):  
+        self.logger.debug('server_close')
+        return SocketServer.TCPServer.server_close(self)</p>
+
+<p>    def finish_request(self, request, client_address): #使用在服务器构造时指定的类来创建一个请求处理实例. 她调用请求处理类的 <tt>handle()</tt> 来处理请求.
+        self.logger.debug('finish_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.finish_request(self, request, client_address)</p>
+
+<p>    def close_request(self, request_address):
+        self.logger.debug('close_request(%s)', request_address)
+        return SocketServer.TCPServer.close_request(self, request_address)
+if __name__ == '__main__':
+    import socket
+    import threading</p>
+
+<p>    address = ('localhost', 0) # 让内核自动分配一个端口
+    server = EchoServer(address, EchoRequestHandler)
+    ip, port = server.server_address </p>
+
+<p>    t = threading.Thread(target=server.serve_forever) #将EchoServer放在线程运行，不影响继续操作
+    t.setDaemon(True) # 设置deamon
+    t.start()</p>
+
+<p>    logger = logging.getLogger('client')
+    logger.info('Server on %s:%s', ip, port)</p>
+
+<p>    logger.debug('creating socket')
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    logger.debug('connecting to server')
+    s.connect((ip, port))</p>
+
+<p>    message = 'Hello, world'
+    logger.debug('sending data: "%s"', message)
+    len_sent = s.send(message)</p>
+
+<p>    logger.debug('waiting for response')
+    response = s.recv(len_sent)
+    logger.debug('response from server: "%s"', response)</p>
+
+<p>    logger.debug('closing socket')
+    s.close()
+    logger.debug('done')
+    server.socket.close()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+EchoServer: __init__
+EchoServer: server_activate
+EchoServer: waiting for request
+client: Server on 127.0.0.1:42902
+EchoServer: Handling requests, press &lt;Ctrl-C&gt; to quit
+client: creating socket
+EchoServer: handle_request
+client: connecting to server
+client: sending data: "Hello, world"
+EchoServer: verify_request(&lt;socket._socketobject object at 0x8114ae4&gt;, ('127.0.0.1', 33084))
+client: waiting for response
+EchoServer: process_request(&lt;socket._socketobject object at 0x8114ae4&gt;, ('127.0.0.1', 33084))
+EchoServer: finish_request(&lt;socket._socketobject object at 0x8114ae4&gt;, ('127.0.0.1', 33084))
+EchoRequestHandler: __init__
+EchoRequestHandler: setup
+EchoRequestHandler: handle
+EchoRequestHandler: recv()-&gt;"Hello, world"
+EchoRequestHandler: finish
+client: response from server: "Hello, world"
+EchoServer: close_request(&lt;socket._socketobject object at 0x8114ae4&gt;)
+client: closing socket
+EchoServer: handle_request
+client: done
+<pre class="sh_python">
+import threading
+import SocketServer</p>
+
+<p>class ThreadedEchoRequestHandler(SocketServer.BaseRequestHandler):</p>
+
+<p>    def handle(self):  #重写handle函数
+        data = self.request.recv(1024)
+        cur_thread = threading.currentThread() # 当要处理一个请求时开始一个新的线程, 并且会在一个新的孩子线程中完成工作
+        response = '%s: %s' % (cur_thread.getName(), data)
+        self.request.send(response)
+        return</p>
+
+<p>class ThreadedEchoServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer): 对于线程, 使用ThreadingMixIn:
+    pass</p>
+
+<p>if __name__ == '__main__':
+    import socket
+    import threading</p>
+
+<p>    address = ('localhost', 0) 
+    server = ThreadedEchoServer(address, ThreadedEchoRequestHandler)
+    ip, port = server.server_address </p>
+
+<p>    t = threading.Thread(target=server.serve_forever)
+    t.setDaemon(True)
+    t.start()
+    print 'Server loop running in thread:', t.getName()</p>
+
+<p>    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((ip, port))</p>
+
+<p>    message = 'Hello, world'
+    print 'Sending : "%s"' % message
+    len_sent = s.send(message)</p>
+
+<p>    response = s.recv(1024)
+    print 'Received: "%s"' % response</p>
+
+<p>    s.close()
+    server.socket.close()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>注：使用独立的进程, 可以使用ForkingMixIn:</p>
+
+<p><pre class="sh_python">
+class ForkingEchoRequestHandler(SocketServer.BaseRequestHandler):</p>
+
+<p>    def handle(self):
+        # Echo the back to the client
+        data = self.request.recv(1024)
+        cur_pid = os.getpid()
+        response = '%s: %s' % (cur_pid, data)
+        self.request.send(response)
+        return</p>
+
+<p>class ForkingEchoServer(SocketServer.ForkingMixIn, SocketServer.TCPServer):
+    pass
+</pre></p>

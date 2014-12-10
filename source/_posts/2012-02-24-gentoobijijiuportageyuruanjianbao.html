@@ -1,0 +1,92 @@
+---
+layout: post
+title: gentoo笔记（九）Portage 与软件包
+categories:
+- gentoo
+tags:
+- gentoo
+- Portage
+published: true
+comments: true
+indexer: true
+---
+<p>前言：Portage 工具中用户用得最多的便是 emerge，它 是一个用以安装, 卸载, 查询以及维护软件的命令. 它是 ebuild 的一个前端，而且它有ebuild缺少的功能（比如解决依赖性、搜索Portage树等。</p>
+
+<p><strong>1 查看 Portage 树</strong>
+lls /usr/portage --classify
+注，也能切换到更深的目录查看类别，软件包等
+<strong>2 搜寻软件包</strong></p>
+
+<p>emerge --search mozilla 或者emerge -s mozilla # 搜寻和anjuta有关的软件信息</p>
+
+<p>Searching...
+[ Results for search key : anjuta ]
+[ Applications found : 1 ]</p>
+
+<p>*  dev-util/anjuta
+Latest version available: 2.32.1.1
+Latest version installed: 2.32.1.1
+Size of files: 9,934 kB
+Homepage:      http://www.anjuta.org
+Description:   A versatile IDE for GNOME
+License:       GPL-2
+<strong>3 搜寻相关描述信息</strong>
+dongwm@localhost ~ $sudo emerge --searchdesc mozilla
+<strong>4 更新portage</strong>
+dongwm@localhost ~ $sudo emerge --sync #要以 rsync 更新 Portage,因为不更新portage树的话 gentoo软件会停留在一些版本上，系统会很快变得过时
+<strong>5 预编译 也就是假装编译，其实并没有编译安装</strong>
+dongwm@localhost ~ $sudo emerge --pretend anjuta （不编译安装，可以用来查看这个软件包将安装的依赖性软件，简写: -p）
+<strong>6 只获取软件的源码</strong>
+dongwm@localhost ~ $sudo emerge --fetchonly anjuta  [不编译安装，下载这个软件的源代码以及他的依赖性软件，简写：-f]
+<strong>7 安装指定版本的</strong>
+dongwm@localhost ~ $sudo emerge "&lt;anjuta-2.22"
+<strong>8 显示安装软件所有的依赖性</strong>
+dongwm@localhost ~ $sudo emerge --emptytree --pretend anjuta
+<strong>9 查看软件所需源代码的网址</strong>
+dongwm@localhost ~ $sudo emerge --fetchonly --pretend anjuta
+<strong>10 不理会依赖关系而安装</strong>
+dongwm@localhost ~ $sudo emerge --nodeps anjuta
+<strong>11 安装软件的依赖关系</strong>
+dongwm@localhost ~ $sudo emerge --onlydeps anjuta
+<strong>12 列出与删除已不需要的 (orphaned) 依赖关系</strong></p>
+
+<p>dongwm@localhost ~ $sudo emerge -p depclean
+(在认真检查过输出的列表之后, 开始卸载不用的依赖关系包)
+dongwm@localhost ~ $sudo emerge depclean</p>
+
+<p>注：使用 depclean 很有可能严重地损坏gentoo系统 ，需要小心谨慎, 并在实际删除前反复检查依赖关系包列表.
+<strong>13 更新系统软件包</strong>
+dongwm@localhost ~ $sudo emerge --update system
+<strong>14 更新整个系统</strong>
+dongwm@localhost ~ $sudo emerge --update world
+<strong>15 预更新整个系统</strong></p>
+
+<p>dongwm@localhost ~ $sudo emerge --pretend --update world</p>
+
+<p>在单词 "ebuild" 旁边您可以看到一个字母 (或字母的组合)：<em></em></p>
+
+<p><em>B</em> (blocks) 左边列出来的软件因为冲突原因将阻碍右边列出来的软件的安装<em></em></p>
+
+<p><em>N</em> (new) 对于您的系统来说这是一个新软件, 且为第一次安装<em></em></p>
+
+<p><em>R</em> (replace) 不是新软件, 不过会被重新 emerge (reemerged)<em></em></p>
+
+<p><em>F</em> (fetch) 该软件要求您先把源码手工地下载回来 (例如因为许可 (licencing issues) 的缘故)<em></em></p>
+
+<p><em>U</em> (update) 软件包已安装, 不过将被升级<em></em></p>
+
+<p><em>UD</em> (downgrade) 软件包已安装, 不过将被降级
+<strong>注：</strong>
+1 可能更新后重启登录到login界面出现键盘无响应的问题，需要使用安装光盘那chroot到系统重新安装xf86-input-evdev（热插拔）问题，或者在更新系统旧重新安装，防止重启出现无响应
+sudo emerge xf86-input-evdev
+2 当更新时出现某软件包 404 not found 你可以去找一个其它的源下载这个软件包到/usr/portage/distfiles/目录下（如果你没有修改Portage对存放软件包位置的配置）</p>
+
+<p><strong>16 更新整个系统, 且包括所有依赖关系</strong></p>
+
+<p>dongwm@localhost ~ $sudo  emerge --update --deep world <em> 注：world</em> 文件不包含依赖关系. 当您
+运行 emerge --update world 时, 仅有 world 文件中列出的那些软件包及其直接的 (immediate)
+依赖包会被检查或, 必要的话, 会被更新. 如果您想让 emerge 检查<em>所有的</em>依赖关系
+(包括依赖包的依赖包), 则请加多一个 --deep 参数:</p>
+
+<p><strong>17 卸载软件</strong>
+emerge -C anjuta</p>

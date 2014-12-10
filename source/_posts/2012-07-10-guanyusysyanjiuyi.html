@@ -1,0 +1,126 @@
+---
+layout: post
+title: 关于sys研究（一）
+categories:
+- python模块研究
+tags:
+- sys
+published: true
+comments: true
+indexer: true
+---
+<p>前言：sys是一个关系系统配置使用的模块，和os一样经常被使用</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>print 'Version info:'
+print
+print 'sys.version      =', repr(sys.version) #这些是编译python时候的一些系统信息，这事python版本
+print 'sys.version_info =', sys.version_info #python版本号元组格式
+print 'sys.hexversion   =', hex(sys.hexversion) #版本标识为一个整数
+print 'sys.subversion   =', sys.subversion #python分支，修订号等信息
+print 'sys.api_version  =', sys.api_version #C的api版本
+print 'This interpreter was built for:', sys.platform #系统版本，比如linux，windows等类似于命令uname -s的结果
+print 'Interpreter executable:', sys.executable #编译器的位置 /usr/bin/python
+print 'Installation prefix   :', sys.prefix #包含bin,lib目录的服目录，这里是/usr
+print <tt>sys.flags</tt> #当执行python -h 出现很多选项，当执行某选项和参数，那么sys.flag就包含了这个项
+print 'Default encoding    :', sys.getdefaultencoding()  #默认文件Unicode编码
+print 'Filesystem encoding :', sys.getfilesystemencoding() #默认文件系统编码
+#reload(sys) #当想要修改文件编码，先reloadsys模块（否则没有setdefaultencoding函数），再set
+#sys.setdefaultencoding('utf-8')
+</pre></p>
+
+<p><pre class="sh_python">
+&gt;&gt;&gt; sys.ps1
+'&gt;&gt;&gt; ' #ps1是交互模式中的提示符，效果类似于linux的PS1
+&gt;&gt;&gt; sys.ps2
+'... ' #ps2是交互模式中，当出现":"等需要多行输入的数据时候的提示符
+&gt;&gt;&gt; sys.ps1='--&gt;'
+--&gt;sys.ps2='~~~'
+--&gt;for i in xrange(2): 
+~~~    print i
+~~~
+0
+1
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class LineCounter(object): #修改PS1修饰符还可以定义类的方式，假设本文件是test.py
+    def __init__(self):
+        self.count = 0 #对命令计数，初始为0
+    def __str__(self):
+        self.count += 1 #使用一次触发一次计数增加      
+        return '(%3d)&gt; ' % self.count
+</pre></p>
+
+<p>进入交互模式：</p>
+
+<p><pre class="sh_python">
+&gt;&gt;&gt; from test import LineCounter
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; sys.ps1 = LineCounter()
+(  1)&gt; 
+(  2)&gt; #点击一次增加1
+(  3)&gt;
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class ExpressionCounter(object):</p>
+
+<p>    def __init__(self):
+        self.count = 0
+        self.previous_value = self</p>
+
+<p>    def __call__(self, value):
+        print
+        print '  Previous:', self.previous_value
+        print '  New     :', value
+        print
+        if value != self.previous_value:
+            self.count += 1
+            sys.ps1 = '(%3d)&gt; ' % self.count
+        self.previous_value = value
+        sys.__displayhook__(value) #默认值保存在这里
+print 'installing'
+sys.displayhook = ExpressionCounter()#钩子，我的理解是每次使用都要触发的表达式  假设本文件是test
+</pre></p>
+
+<p><pre class="sh_python">
+dongwm@linux-vkmz:~&gt; python
+Python 2.6.5 (r265:79063, Jul  5 2010, 11:47:21) 
+[GCC 4.5.0 20100604 [gcc-4_5-branch revision 160292]] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import test
+installing
+&gt;&gt;&gt; 1+2</p>
+
+<p>  Previous: &lt;test.ExpressionCounter object at 0x80ab2ac&gt;
+  New     : 3</p>
+
+<p>3
+(  1)&gt; 'abc'</p>
+
+<p>  Previous: 3
+  New     : abc</p>
+
+<p>'abc'
+(  2)&gt; 'abc'</p>
+
+<p>  Previous: abc
+  New     : abc</p>
+
+<p>'abc'
+(  2)&gt; 'abc'*3</p>
+
+<p>  Previous: abc
+  New     : abcabcabc</p>
+
+<p>'abcabcabc'
+</pre></p>
+
+<p>&nbsp;</p>

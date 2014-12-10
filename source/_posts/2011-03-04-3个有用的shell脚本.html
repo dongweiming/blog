@@ -1,0 +1,75 @@
+---
+layout: post
+title: 3个有用的shell脚本
+categories:
+- Bash Shell
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1  监视系统的CPU，内存使用等情况：（根据CPU和内存使用排序）</strong>
+<pre class="sh_bash">$ cat processes.sh
+#! /bin/bash
+#用于显示CPU使用和内存使用的检查</p>
+
+<p>echo "开始时间" `date`
+if [ $# -eq 0 ]
+then</p>
+
+<p>	echo "CPU使用率升序排列"
+	ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu  # sorted based on %cpu
+	echo "内存使用升序排列"
+	ps -e -orss=,args= | sort -b -k1,1n # sorted bases rss value</p>
+
+<p># 可以添加位置参数(mem/cpu)
+else
+	case "$1" in
+	mem)
+	 echo "内存使用升序排列"
+ 	 ps -e -orss=,args= | sort -b -k1,1n
+	 ;;
+ 	cpu)
+	 echo "CPU使用率升序排列"
+	 ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu
+	 ;;
+ 	*)
+		echo "请输入正确的参数 \n"
+		echo "可以使用 : $0 mem/cpu"
+		exit 1
+ 	esac	</p>
+
+<p>fi
+echo "结束时间" `date`
+exit 0</pre>
+使用方式：
+<pre class="sh_bash">
+$ processes.sh
+$ processes.sh mem
+$ processes.sh cpu</pre><!--more-->
+<strong>2 显示登录的用户，以及谁占用的CPU更高：</strong>
+<pre class="sh_bash">$ cat loggedin.sh&lt;br /&gt;#! /bin/bash
+w &gt; /tmp/a
+echo "当前登录的用户总数"
+cat /tmp/a|  sed '1,2d' | awk '{print $1}' | uniq | wc -l
+echo ""
+echo "当前登录的用户列表"&lt;br /&gt;cat /tmp/a | sed '1,2d'|  awk '{print $1}' | uniq
+echo ""
+echo "占用最高CPU占用率的用户"
+cat /tmp/a | sed '1,2d' | awk   '$7 &gt; maxuid { maxuid=$7; maxline=$0 }; END { print maxuid, maxline }'
+echo ""&lt;br /&gt;echo "当前登录的用户正在进行的操作"
+cat /tmp/a</pre>
+<strong>3  显示目前内存信息：</strong>
+<pre class="sh_bash">$ cat mem.sh
+#! /bin/bash
+# Total memory space details
+echo "Memory Space Details"
+free -t -m | grep "Total" | awk '{ print "Total Memory space : "$2 " MB";
+print "Used Memory Space : "$3" MB";
+print "Free Memory : "$4" MB";
+echo "Swap memory Details"
+free -t -m | grep "Swap" | awk '{ print "Total Swap space : "$2 " MB";
+print "Used Swap Space : "$3" MB";
+print "Free Swap : "$4" MB";</pre>
+&nbsp;
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=b7e6dd89-7b9a-849a-8b75-c2024e5e7b15" alt="" /></div></p>

@@ -1,0 +1,44 @@
+---
+layout: post
+title: linux下升级到最新版本firefox浏览器
+categories:
+- linux基础
+- opensuse
+tags:
+- firefox
+published: true
+comments: true
+indexer: true
+---
+<p>前言：一直是firefox忠实用户，本文是普及篇，系统是opensuse11.3，其他系统请借鉴方法</p>
+
+<p>1 首先查看当前系统firefox信息：</p>
+
+<p>linux-vkmz:~ # rpm -qa|grep -i firefox
+MozillaFirefox-3.6.6-1.2.i586  #这里就是firefox的版本3.6.6，而现在最新版本已经是firefox13.0.1，可是系统源没有更高版本
+MozillaFirefox-branding-openSUSE-3.5-16.2.i586
+MozillaFirefox-translations-common-3.6.6-1.2.i586
+2 下载最新版本firefox：</p>
+
+<p>linux-vkmz:~ # wget http://download.firefox.com.cn/releases/firefox/13.0/zh-CN/Firefox-latest.tar.bz2</p>
+
+<p>linux-vkmz:~ #tar jxf Firefox-latest.tar.bz2 #解压缩</p>
+
+<p>3 查看系统firefox被安装到了那里</p>
+
+<p>linux-vkmz:~ # rpm -ql MozillaFirefox-3.6.6-1.2.i586</p>
+
+<p>/usr/bin/firefox  #我只截取了一部分，可以看见库文件在/usr/lib，可执行文件在/usr/bin
+/usr/lib/firefox
+/usr/lib/firefox/application.ini
+/usr/lib/firefox/blocklist.xml
+/usr/lib/firefox/chrome
+/usr/lib/firefox/chrome/browser.jar
+/usr/lib/firefox/chrome/browser.m</p>
+
+<p>...
+linux-vkmz:~ #cp -rp firefox/* /usr/lib/firefox/   #拷贝lib文件到系统安装的firefox路径下</p>
+
+<p>linux-vkmz:~ #cp -rp firefox/firefox* /usr/bin/ #拷贝2个可执行文件到/usr/bin下</p>
+
+<p>OK了</p>

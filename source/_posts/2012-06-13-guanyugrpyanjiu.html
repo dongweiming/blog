@@ -1,0 +1,84 @@
+---
+layout: post
+title: 关于grp研究
+categories:
+- python模块研究
+tags:
+- grp
+published: true
+comments: true
+indexer: true
+---
+<p>前言：grp是从Unix组数据库中读取组数据,通常是<tt>/etc/group</tt></p>
+
+<p><pre class="sh_python">
+import grp
+import operator  #主要是运算符操作模块
+all_groups = grp.getgrall()  #得到所有系统的组信息
+interesting_groups = sorted((g   #排序
+                            for g in all_groups 
+                            if not g.gr_name.startswith('_')),  #去掉排除'_'开头的组
+                            key=operator.attrgetter('gr_name'))  #这个函数返回一个可调用对象,取此对象的attr属性值（tuple方式）</p>
+
+<p># Find the longest length for the name
+name_length = max(len(g.gr_name) for g in interesting_groups) + 1</p>
+
+<p># Print report headers
+fmt = '%-*s %4s %10s %s'
+print fmt % (name_length, 'Name', 
+             'GID', 
+             'Password',
+             'Members')
+print '-' * name_length, '----', '-' * 10, '-' * 30</p>
+
+<p># Print the data
+for g in interesting_groups:
+    print fmt % (name_length, g.gr_name, 
+                 g.gr_gid, 
+                 g.gr_passwd,
+                 ', '.join(g.gr_mem))
+</pre></p>
+
+<p><pre class="sh_python">
+import grp
+import sys</p>
+
+<p>username = sys.argv[1]
+groups = [g.gr_name for g in grp.getgrall() if username in g.gr_mem] #查找某用户属于那个组的列表
+print username, 'belongs to:', ', '.join(groups) 
+~
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py dongwm
+dongwm belongs to: vboxusers, video</p>
+
+<p><pre class="sh_python">
+import grp
+import os</p>
+
+<p>name = 'root'
+info = grp.getgrnam(name)  #root用户的组信息
+print 'Name    :', info.gr_name
+print 'GID     :', info.gr_gid
+print 'Password:', info.gr_passwd
+print 'Members :', ', '.join(info.gr_mem)
+gid = os.getgid()  #当前用户gid
+group_info = grp.getgrgid(gid)
+print 'Currently running with GID=%s name=%s' % (gid, group_info.gr_name)
+filename=os.path.basename(__file__) #当前文件名
+stat_info = os.stat(filename)
+owner = grp.getgrgid(stat_info.st_gid).gr_name #查找文件的所有者
+print '%s is owned by %s (%s)' % (filename, owner, stat_info.st_gid)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Name    : root
+GID     : 0
+Password: x
+Members :
+Currently running with GID=100 name=users
+test.py is owned by users (100)</p>

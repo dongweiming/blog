@@ -1,0 +1,39 @@
+---
+layout: post
+title: 关于cStringIO研究
+categories:
+- linux基础
+tags:
+- cStringIO
+- StringIO
+published: true
+comments: true
+indexer: true
+---
+<p>前言：cStringIO的行为与file对象非常像，但它不是磁盘上文件，而是一个内存里的“文件”，我们可以将操作磁盘文件那样来操作cStringIO，经常被用来作为字符串的缓存，因为StringIO有个好处，他的有些接口和文件操作是一致的</p>
+
+<p><pre class="sh_python">
+#coding=utf-8
+try:
+    from cStringIO import StringIO
+except:
+    from StringIO import StringIO</p>
+
+<p>output = StringIO()
+output.write('This goes into the buffer. ') #写到内存缓存里面
+print &gt;&gt;output, 'And so does this.'
+print output.getvalue() #找到缓存结果
+output.close() #放弃内存中的缓存</p>
+
+<p>input = StringIO('Inital value for read buffer') #初始化一个缓存区</p>
+
+<p>print input.read() # 读取缓存区内容
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+This goes into the buffer. And so does this.</p>
+
+<p>Inital value for read buffer
+注：还可以使用<tt>readline()</tt>和<tt>readlines()</tt>，也可以使用seek()</p>

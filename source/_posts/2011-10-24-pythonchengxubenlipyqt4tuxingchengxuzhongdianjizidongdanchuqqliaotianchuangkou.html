@@ -1,0 +1,111 @@
+---
+layout: post
+title: python程序（本例pyqt4图形程序）中点击自动弹出QQ聊天窗口
+categories:
+- python
+tags:
+- pyqt4
+- python 打开QQ对话框
+- python打开网页
+published: true
+comments: true
+indexer: true
+---
+<p>前言：很向往点击某网页就能弹出QQ聊天窗口，最近做的一个python程序为了方便用户提交bug，也设计了一个点击自动弹出和我QQ聊天的对话框供大家参考（只剪切了其中一部分）：</p>
+
+<p><pre class="sh_python"></p>
+
+<p>from PyQt4 import QtCore, QtGui
+import systray_rc
+import threading,os
+import re,time
+try:
+_fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+_fromUtf8 = lambda s: s
+#设计一个界面，可以做成记事本效果，能够打印文件中的文本
+class Ui_notepad(object):
+def setupUi(self, notepad):
+notepad.setObjectName(_fromUtf8("notepad"))
+notepad.setWindowTitle(QtGui.QApplication.translate("notepad", "Form", None, QtGui.QApplication.UnicodeUTF8))
+self.editor_window = QtGui.QTextEdit(notepad)
+self.editor_window.setGeometry(QtCore.QRect(10, 50, 380, 240))
+self.editor_window.setObjectName(_fromUtf8("editor_window"))</p>
+
+<p>self.retranslateUi(notepad)
+QtCore.QMetaObject.connectSlotsByName(notepad)</p>
+
+<p>def retranslateUi(self, notepad):
+pass
+class Window(QtGui.QMainWindow):
+    def __init__(self):
+       # super(Window, self).__init__()
+	QtGui.QMainWindow.__init__(self)
+        self.iconComboBox = QtGui.QComboBox()
+        self.iconComboBox.addItem(
+            QtGui.QIcon('../image/app.jpg'), "Dmyz")
+	#通知区域图标右键菜单设置,弹出的菜单的行为，包括退出，还原，最小化
+        self.minimizeAction = QtGui.QAction(u"最小化", self,
+                triggered=self.hide)
+        self.restoreAction = QtGui.QAction(u"显示菜单", self,
+                triggered=self.showNormal)
+        self.quitAction = QtGui.QAction(u"退出", self,
+                triggered=QtGui.qApp.quit)
+	self.ui = Ui_notepad()
+        self.ui.setupUi(self)
+        self.trayIconMenu = QtGui.QMenu(self)
+        self.trayIconMenu.addAction(self.restoreAction)
+        self.trayIconMenu.addAction(self.minimizeAction)
+        self.trayIconMenu.addAction(self.quitAction)
+        self.trayIcon = QtGui.QSystemTrayIcon(self)
+        self.trayIcon.setContextMenu(self.trayIconMenu)
+        self.iconComboBox.currentIndexChanged.connect(
+            self.setIcon)
+        #设置第一个按键 效果退出
+        exit = QtGui.QAction(QtGui.QIcon('../image/exit.png'), 'Exit', self)
+	exit.setShortcut('Ctrl+Q')
+        exit.setStatusTip(u'\u9000\u51fa\u4e3b\u83dc\u5355')
+        self.connect(exit, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
+	#设置第二个按键  历史记录
+        lishi = QtGui.QAction(QtGui.QIcon('../image/history.png'),u'\u5386\u53f2', self)
+	lishi.setShortcut('Ctrl+L')
+        lishi.setStatusTip(u'\u5386\u53f2')
+        lishi.connect(lishi,QtCore.SIGNAL('triggered()'), self.file_dialog)
+	#设置第3个按键  关于信息
+	guangyu = QtGui.QAction(QtGui.QIcon('../image/app.jpg'),u'\u5173\u4e8e', self)
+	guangyu.setShortcut('Ctrl+K')
+        guangyu.setStatusTip(u'\u5173\u4e8e')
+        guangyu.connect(guangyu,QtCore.SIGNAL('triggered()'), self.print_text)
+	#设置第4个按键 bug提交 弹出QQ对话框
+	qq = QtGui.QAction(QtGui.QIcon('../image/QQ.png'),u'BUG\u8bf7\u8054\u7cfb\u6211', self)
+	qq.setShortcut('Ctrl+U')
+        qq.setStatusTip(u'\u70b9\u51fb\u6253\u5f00QQ')
+        qq.connect(qq,QtCore.SIGNAL('triggered()'), self.contqq)</p>
+
+<p>        self.statusBar()
+        menubar = self.menuBar()
+        file = menubar.addMenu('&amp;Exit')
+        file.addAction(exit)
+	file2 = menubar.addMenu('&amp;History')
+        file2.addAction(lishi)
+	file3 = menubar.addMenu('About')
+        file3.addAction(guangyu)
+	file3 = menubar.addMenu('Contact')
+        file3.addAction(qq)
+    #设置打开文件 在pyqt4的主餐单里面的记事本区域显示
+    def file_dialog(self):
+        s = open('../log/Communicate.log','r').read()
+	if len(s) == 0:
+	    self.atext = u'目前您还没收到什么信息哦^.^'
+	    self.ui.editor_window.setPlainText('sdf')
+        self.ui.editor_window.setPlainText(self.atext)
+    def print_text(self):  #设置打印关于的信息
+	self.ui.editor_window.setPlainText(self.text)
+    def contqq(self):  #设置打开QQ
+	import win32com.client
+	ie6=win32com.client.Dispatch("InternetExplorer.Application")
+	ie6.Navigate("tencent://message/?exe=qq&amp;menu=yes&amp;Uin=61966225")
+	ie6.Visible=1
+	while ie6.Busy:
+	  time.sleep(1)
+</pre></p>

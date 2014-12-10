@@ -1,0 +1,107 @@
+---
+layout: post
+title: Bash History （变态用法）
+categories:
+- linux基础
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>首先看一个例子：</p>
+
+<p>root@client ~&gt; history</p>
+
+<p>1002  ll /root
+1003  cat moxi
+1004  cd /home/dongwm
+1005  history</p>
+
+<p>1 从历史执行一个特定的命令使用，这里我想要执行“cat moxi”，使用“！histroy前面的数字”</p>
+
+<p>root@client ~&gt; !1003
+cat moxi
+21233 = {
+"hashAlgorithm": "fnv1a_32",
+"numReplicas": 2,
+"serverList": ["192.168.8.138:11211","192.168.8.137:11211"],
+"vBucketMap": [
+[0,2,3],
+[1,2,3]
+]
+}<!--more--></p>
+
+<p>或者：“！-从下网上数倒数第X（本例-3为1003）”</p>
+
+<p>2  执行前面钢之行的命令 使用“!!”</p>
+
+<p>3  使用关键字查找最近执行的某命令，比如 ll这个命令 他就会匹配1002  而不是1002以前的ll命令
+root@client ~&gt; !ll</p>
+
+<p>4 使用关键字匹配 找到最近包含此字符串的命令：</p>
+
+<p>root@client ~&gt; !?dongwm
+cd /home/dongwm
+5 使用^ str1的替换字符串^ str2 ^，例子一看就懂</p>
+
+<p>root@client ~&gt; ll moxi
+-rw-r--r-- 1 root root 193 Jun 10 18:48 moxi
+root@client ~&gt; ^ll^cat^
+cat moxi
+6 获取命令的第一个参数，使用“:^”</p>
+
+<p>root@client ~&gt; cp moxi moxi.bak
+root@client ~&gt; ll !cp:^
+ll moxi
+-rw-r--r-- 1 root root 193 Jun 10 18:48 moxi</p>
+
+<p>7 获取命令的最后一个参数，使用“:$”</p>
+
+<p>root@client ~&gt; cp moxi moxi.bak
+root@client ~&gt; ll !cp:$
+ll moxi.bak
+-rw-r--r-- 1 root root 193 Aug 12 10:58 moxi.bak
+8使用命令获取第n个参数，使用“:n”</p>
+
+<p>root@client ~&gt; mv moxi moxi.bak test
+root@client ~&gt; ll !mv:2
+ll moxi.bak
+ls: moxi.bak: No such file or directory</p>
+
+<p>9 使用命令获取所有参数，使用“:*”</p>
+
+<p>root@client ~&gt; cp moxi moxi.bak
+root@client ~&gt; ll !cp:*
+ll moxi moxi.bak
+-rw-r--r-- 1 root root 193 Jun 10 18:48 moxi
+-rw-r--r-- 1 root root 193 Aug 12 11:00 moxi.bak
+10 使用命令获取特定参数，使用“:x-y”
+root@client ~&gt; ll moxi moxi.bak moxi.new
+-rw-r--r-- 1 root root 193 Jun 10 18:48 moxi
+-rw-r--r-- 1 root root 193 Aug 12 11:01 moxi.bak
+-rw-r--r-- 1 root root 193 Aug 12 11:02 moxi.new
+root@client ~&gt; ll !ll:2-3
+ll moxi.bak moxi.new
+-rw-r--r-- 1 root root 193 Aug 12 11:01 moxi.bak
+-rw-r--r-- 1 root root 193 Aug 12 11:02 moxi.new</p>
+
+<p>11从使用的命令中删除结尾的路径名
+root@client ~&gt; ll test/icinga-cn-web-1.3.1/README
+-rwxr-xr-x 1 root root 1668 Apr 20 16:03 test/icinga-cn-web-1.3.1/README
+root@client ~&gt; ll !!:$:h
+ll test/icinga-cn-web-1.3.1  //去掉了文件具体路径</p>
+
+<p>12 从使用的命令中删除结尾的后缀名</p>
+
+<p>root@client ~&gt; ll test/icinga-cn-web-1.3.1/build.xml
+-rwxr-xr-x 1 root root 171 Apr 20 08:53 test/icinga-cn-web-1.3.1/build.xml
+root@client ~&gt; ll !!:$:r
+ll test/icinga-cn-web-1.3.1/build
+13 模仿sed替换命令值的参数等：</p>
+
+<p>root@client ~&gt; cp /etc/password /etc/password.bak
+cp: cannot stat `/etc/password': No such file or directory
+root@client ~&gt; !!:gs/password/passwd
+cp /etc/passwd /etc/passwd.bak</p>
+
+<p>&nbsp;</p>

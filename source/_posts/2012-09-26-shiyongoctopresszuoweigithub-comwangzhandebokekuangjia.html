@@ -1,0 +1,92 @@
+---
+layout: post
+title: 使用octopress作为github.com网站的博客框架
+categories:
+- ruby
+tags:
+- github
+- octopress
+published: true
+comments: true
+indexer: true
+---
+<p>前言:使用ruby写的开源octopress越来越受到欢迎,并且因为github.com,很多作者把blog放在其二级域名上面,使用了它.国内也有很多人使用,比如mrzhang.me,其作者的主题还是不错滴,最近在华蟒python邮件组一封招聘邮件,里面竟然其中有一条:* 有github账号，开源项目和octpress的blog(但是职位是python的web开发,我很囧)</p>
+
+<p><strong>1 安装前准备:</strong></p>
+
+<p>假设你有github帐号,利用github提供的一个特性,使用key实现ssh信任链接</p>
+
+<p>ssh-keygen -t dsa
+cat ~/.ssh/id_dsa.pub#把其中的数据粘贴到github上面,这个就不说了</p>
+
+<p><strong>2 使用rvm:</strong>
+echo insecure &gt;&gt; ~/.curlrc
+curl -k https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer | bash -s stable #ruby版本管理,类似于python的pythonbrew
+export PATH=$PATH:/home/dongwm/.rvm/bin #或者直接写到profile
+rvm list known #列出已知的ruby #本来我使用的ruby是1.8的 但是这个框架需要1.9.2以上?
+ruby 1.8.7 (2011-06-30 patchlevel 352) [i686-linux]
+dongwm@dongwm ~ $ rvm install 1.9.3 #安装ruby1.9.3</p>
+
+<p>git clone git://github.com/imathis/octopress.git dongwm.github.com  #下载octopress源码
+dongwm@dongwm ~ $ rvm  --create use 1.9.3@dongwm.github.com #使用ruby1.9.3
+Using /home/dongwm/.rvm/gems/ruby-1.9.3-p194 with gemset dongwm.github.com
+Running /home/dongwm/.rvm/hooks/after_use</p>
+
+<p>dongwm@dongwm ~ $ cd dongweiming.github.com/  #第一次切换到这个放置octopress目录时会提示你以下信息
+Do you wish to trust this .rvmrc file? (/home/dongwm/dongwm.github.com/.rvmrc)
+y[es], n[o], v[iew], c[ancel]&gt; y  #选择 y  以后就不在问你了</p>
+
+<p><strong>3 使用bundle管理项目中所有gem依赖</strong></p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ gem install bundler</p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ bundle install #安装需要的gem依赖</p>
+
+<p><strong>4 安装主题,假如我们不想用默认的主题</strong></p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ git clone git://github.com/bkutil/bootstrap-theme.git .themes/bootstrap-theme
+#git clone git://github.com/sevenadrian/foxslide .themes/foxslide
+#git clone git://github.com/barmstrong/octopress-bootstrap.git .themes/octopress-bootstrap
+dongwm@dongwm ~/dongwm.github.com $ rake install['foxslide'] #安装主题,默认主题rake install
+dongwm@dongwm ~/dongwm.github.com $ rake generate #生成模板文件</p>
+
+<p>注:每次换主题其实就是下载git源码+rake install + rake generate</p>
+
+<p><strong>5 可选 代码预览</strong></p>
+
+<p>假如测试环境想预览效果可以使用rake preview</p>
+
+<p><strong>6 部署代码到github</strong></p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ rake setup_github_pages  #设置链接
+Enter the read/write url for your repository
+(For example, 'git@github.com:your_username/your_username.github.com)
+Repository url: git@github.com:dongweiming/dongweiming.github.com  这里的dongweiming是我的帐号名字,后面的dongweiming.github.com是我的源,也就是github创建的源的名字,需要你手动在github网站增加,其实也是最后项直接访问的网站名字 以后访问 http://dongweiming.github.com
+dongwm@dongwm ~/dongwm.github.com $ rake deploy #部署到github</p>
+
+<p>当你看到“Github Pages deploy complete”后，就表示done,可以访问了</p>
+
+<p><strong>7 版本控制</strong></p>
+
+<p>既然是github,不用git就搞笑了</p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ 832  cd source/_posts/ #因为在添加文章之类都会在source/_posts目录下面增加相应的文件,那么我要备份这个目录,也就是使用版本控制
+dongwm@dongwm ~/octopress/source/_posts $ git init #初始化
+dongwm@dongwm ~/octopress/source/_posts $ touch README.md
+dongwm@dongwm ~/octopress/source/_posts $  git add *
+dongwm@dongwm ~/octopress/source/_posts $ git commit -m 'First version'</p>
+
+<p>dongwm@dongwm ~/octopress/source/_posts $ git remote add dongwm git@github.com:dongweiming/dongweiming.github.com.git</p>
+
+<p>这个意思就是 我添加了一个叫做'dongwm'的远程快捷方式,他链接到dongweiming帐号的dongweiming.github.com项目</p>
+
+<p>dongwm@dongwm ~/octopress/source/_posts $ git checkout -b backup #创建一个分支叫做backup
+Switched to a new branch 'backup'
+dongwm@dongwm ~/octopress/source/_posts $ git push dongwm backup #将修改push到backup分支,这样就实现了对这个目录的控制
+Counting objects: 3, done.
+Writing objects: 100% (3/3), 213 bytes, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To git@github.com:dongweiming/dongweiming.github.com.git
+* [new branch]      backup -&gt; backup</p>
+
+<p>&nbsp;</p>

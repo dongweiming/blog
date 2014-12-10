@@ -1,0 +1,108 @@
+---
+layout: post
+title: gentoo笔记（四）安装常用软件
+categories:
+- gentoo
+tags:
+- conky
+- gentoo 常用软件
+- last.fm
+published: true
+comments: true
+indexer: true
+---
+<p>前言：使用linux需要一些工具，比如看视频，分析系统性能，ftp文件等功能，以下是我推荐的</p>
+
+<p><strong>1 ftp上传下载工具</strong></p>
+
+<p>emerge filezilla</p>
+
+<p><strong>2 flash看视频以及一些网站的特效</strong></p>
+
+<p>emerge adobe-flash</p>
+
+<p><strong>3 系统性能工具</strong></p>
+
+<p>emerge htop dstat</p>
+
+<p><strong>4 浏览器</strong></p>
+
+<p>emerge firefox oprea google-chrome  安装火狐相当慢  80M的源码包 我很无语</p>
+
+<p>注：其中的谷歌浏览器需要修改一下make.conf文件 添加授权 ： ACCEPT_LICENSE="google-chrome"</p>
+
+<p><strong>5 邮件客户端</strong></p>
+
+<p>emerge thunderbird  编译也是 相当慢</p>
+
+<p>注：一般kde下有kmail</p>
+
+<p><strong>6编辑器</strong></p>
+
+<p>emerge  vim</p>
+
+<p><strong>7 输入法（我这里是小企鹅输入法，也可以用ibus 但不能用scim： 直接和我内核冲突 ）</strong></p>
+
+<p>字体的存放目录
+/usr/share/fonts</p>
+
+<p>fontconfig配置文件
+/etc/fonts/fonts.conf<!--more-->
+~/.fonts.conf</p>
+
+<p>可能要用到的字体工具
+emerge mkfontdir mkfontscale</p>
+
+<p>下载好看的英文字体:
+emerge ttf-bitstream-vera corefonts</p>
+
+<p>下载好看的中文字体:
+emerge media-fonts/wqy-bitmapfont  和wqy-zenhei</p>
+
+<p>在xorg.conf中Section "Files"中加入新增的字体目录</p>
+
+<p>使用fc-cache更新系统字体</p>
+
+<p>使用xlsfonts检查字体是否已经存在</p>
+
+<p>安装小企鹅输入法
+emerge fcitx</p>
+
+<p>touch /etc/X11/xinit/xinitrc.d/100-xinputrc
+chmod +x /etc/X11/xinit/xinitrc.d/100-xinputrc
+cat /etc/X11/xinit/xinitrc.d/100-xinputrc
+# !/bin/bash
+XIM="fcitx"
+XIM_PROGRAM="fcitx"
+XIM_ARGS="-d"
+XMODIFIERS="@im=fcitx"
+GTK_IM_MODULE="fcitx"
+export XIM XIM_PROGRAM XMODIFIERS GTK_IM_MODULE
+$XIM_PROGRAM $XIM_ARGS &amp;
+LC_CTYPE="zh_CN"
+在/etc/profile添加几行
+export XMODIFIERS="@im=fcitx"
+export XIM=fcitx
+export XIM_PROGRAM=fcitx
+注使用五笔的话
+cp /usr/share/fcitx/data/wbx.mb ~/.fcitx</p>
+
+<p>cp /usr/share/fcitx/data/erbi.mb ~/.fcitx</p>
+
+<p>cp /usr/share/fcitx/data/tables.conf ~/.fcitx</p>
+
+<p>8 办公软件</p>
+
+<p>emerge libreoffice   这个的编译速度那是相当的慢</p>
+
+<p>9 编程工具</p>
+
+<p>emerge sshfs-fuse bluefish  # linux下的程序员开发工具bluefish +sshfs远程挂载文件系统</p>
+
+<p>10 截图工具ksnapshot</p>
+
+<p>需要在USE里面添加 “kde” emerge ksnapshot</p>
+
+<p>11 听歌软件last.fm</p>
+
+<p>sudo emerge media-sound/lastfmplayer</p>

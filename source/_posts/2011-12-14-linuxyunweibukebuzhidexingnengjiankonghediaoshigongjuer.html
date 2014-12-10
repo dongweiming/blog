@@ -1,0 +1,191 @@
+---
+layout: post
+title: Linux运维不可不知的性能监控和调试工具（二）
+categories:
+- linux基础
+tags:
+- dstat
+- htop
+- netstat
+- pmap
+- ss
+- vnstat
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 nagios</strong></p>
+
+<p>Nagios是一个开源监控解决方案，我觉得他可以监控一切 ，可以看一下我以前的文章：<a href="http://www.dongwm.com/archives/category/%e7%b3%bb%e7%bb%9f%e7%9b%91%e6%8e%a7/nagios/">NAGIOS</a></p>
+
+<p><strong>2 ps #用来查看程序的运行情况</strong></p>
+
+<p>ps -ef |grep svr.py|grep -v grep |awk '{print $2}' #查看svr.py的进程pid号
+14554</p>
+
+<p>dongwm@linux-b8lh:~&gt; ps -e -o pid,args --forest #层次结构中的进程ID</p>
+
+<p><strong>3 free #查看系统的物理（RAM）和交换内存的信息</strong>
+dongwm@linux-b8lh:~&gt;  free -mto #MB值显示，显示总计
+total       used       free     shared    buffers     cached
+Mem:          3196       2947        249          0        264       1436
+Swap:         2053         88       1965
+Total:        5250       3035       2215
+<strong>4 top #显示所有正在运行的进程的信息，类似于windows的资源管理器 详细的清参看：</strong><a href="http://www.dongwm.com/archives/%e5%85%b3%e4%ba%8etop%e7%81%b5%e5%91%bd%e7%9a%84%e7%a0%94%e7%a9%b6/"><strong>关于top命令的研究</strong>
+</a>5 pmap #显示一个给定的进程的内存映射</p>
+
+<p>dongwm@linux-b8lh:~&gt; pmap 14443
+14443: bash
+START       SIZE     RSS     PSS   DIRTY    SWAP PERM MAPPING
+08048000    580K    476K     74K      0K      0K r-xp /bin/bash
+080d9000      4K      4K      4K      4K      0K r--p /bin/bash
+080da000      8K      8K      8K      8K      0K rw-p /bin/bash
+080dc000   1076K    976K    976K    976K      0K rw-p [heap]
+b744c000      8K      8K      8K      8K      0K rw-p [anon]
+b744e000    252K     32K      6K      0K      0K r--p /usr/lib/locale/zh_CN.utf8/LC_CTYPE
+b748d000   1344K     24K      2K      0K      0K r--p /usr/lib/locale/zh_CN.utf8/LC_COLLATE<!--more--></p>
+
+<p><strong>6 nestat #显示各种网络相关信息，如网络连接，路由表，接口统计等,这个很常用，比如判断某程序的端口是否在监听</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo /bin/netstat -ap |grep ssh  #-a 表示所有端口 －p显示pid
+root's password:
+tcp        0      0 linux-b8lh.site:59073   mta1:61002              ESTABLISHED 29323/ssh
+tcp        0      0 linux-b8lh.site:35252   10.14.22.26:61300       ESTABLISHED 11986/ssh
+tcp        0      0 linux-b8lh.site:57146   mta1:61002              ESTABLISHED 9138/ssh
+tcp        0      0 linux-b8lh.site:32997   10.14.22.26:61300       ESTABLISHED 15122/ssh
+tcp        0      0 linux-b8lh.site:45807   10.14.22.26:61300       ESTABLISHED 29240/ssh
+tcp        0      0 linux-b8lh.site:35865   mta1:61002              ESTABLISHED 28751/ssh
+unix  2      [ ACC ]     STREAM     LISTENING     13182  2929/gnome-keyring- /tmp/keyring-TMukPL/ssh
+unix  3      [ ]         STREAM     CONNECTED     607118 29323/ssh
+unix  3      [ ]         STREAM     CONNECTED     607117 29326/sshfs
+unix  3      [ ]         STREAM     CONNECTED     608427 29240/ssh
+unix  3      [ ]         STREAM     CONNECTED     608426 29244/sshfs</p>
+
+<p><strong>dongwm@linux-b8lh:~&gt; sudo /bin/netstat -tunlp|grep name  ＃我常用的命令</strong>
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 172.16.180.1:53         0.0.0.0:*               LISTEN      5160/named
+tcp        0      0 172.16.110.1:53         0.0.0.0:*               LISTEN      5160/named
+tcp        0      0 192.168.8.46:53         0.0.0.0:*               LISTEN      5160/named
+tcp        0      0 127.0.0.2:53            0.0.0.0:*               LISTEN      5160/named
+tcp        0      0 127.0.0.1:53            0.0.0.0:*               LISTEN      5160/named
+tcp        0      0 127.0.0.1:953           0.0.0.0:*               LISTEN      5160/named
+udp        0      0 172.16.180.1:53         0.0.0.0:*                           5160/named
+udp        0      0 172.16.110.1:53         0.0.0.0:*                           5160/named
+udp        0      0 192.168.8.46:53         0.0.0.0:*                           5160/named
+udp        0      0 127.0.0.2:53            0.0.0.0:*                           5160/named
+udp        0      0 127.0.0.1:53            0.0.0.0:*</p>
+
+<p>dongwm@linux-b8lh:~&gt; netstat -r  #显示路由信息类似于'route -n'的输出
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+172.16.180.0    *               255.255.255.0   U         0 0          0 vmnet8
+172.16.110.0    *               255.255.255.0   U         0 0          0 vmnet1
+192.168.8.0     *               255.255.255.0   U         0 0          0 eth3
+link-local      *               255.255.0.0     U         0 0          0 eth3
+loopback        *               255.0.0.0       U         0 0          0 lo
+default         192.168.8.254   0.0.0.0         UG        0 0          0 eth3
+<strong>7 IPTraf</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo zypper install iptraf</p>
+
+<p>网络流量实时监控工具，可以监控所有的流量,IP流量,按协议分的流量,还可以设置过滤器等</p>
+
+<p>启动需要root权限，一个图形化的工具，可以抓包，报告网卡流量情况，网卡数据包个数等，我也比较喜欢它来判断一些网络问题</p>
+
+<p><strong>8 htop</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo zypper install htop</p>
+
+<p>彩色字体的top ，支持鼠标点击，对cpu使用情况。内存使用情况，当前负载情况等都直接显示，替代了top</p>
+
+<p><strong>9 dstat</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo zypper install dstat</p>
+
+<p>#彩色字体的vmstat</p>
+
+<p>dongwm@linux-b8lh:~&gt; dstat -a
+----total-cpu-usage---- -dsk/total- -net/total- ---paging-- ---system--
+usr sys idl wai hiq siq| read  writ| recv  send|  in   out | int   csw
+25   2  72   0   0   0|  43k   75k|   0     0 | 107B  839B|2066  7231
+25   2  72   0   0   0|   0    40k|1328B    0 |   0     0 |2029  6175
+27   2  70   1   0   0|   0    20k|2245B 1231B|   0     0 |2191  6545
+28   1  70   0   0   0|   0     0 |1610B    0 |   0     0 |2243  6815
+25   2  72   0   0   0|   0   104k|1224B    0 |   0     0 |2075  6610</p>
+
+<p><strong>10 Strace #i like it 用于调试和故障排除Linux环境下的可执行文件的执行。 它显示了系统调用的进程所使用的过程中收到的信号,常用 ＊2 不会这个基本不要作运维了</strong></p>
+
+<p>＃strace + 可执行程序</p>
+
+<p>注：想要特定一个系统调用 使用‘-e’</p>
+
+<p><strong>11 lsof #卸载移动存储时经常提示device busy，也可能误删了一个正在打开的文件,lsof（list open files）是一个列出当前系统打开文件的工具.应用程序打开文件的描述符列表提供了大量关于这个应用程序本身的信息，因此通过lsof工具能够查看这个列表有助于系统监测以及排错</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; lsof -a -u dongwm -d txt #查看所属root用户进程所打开的文件类型为txt的文件
+dongwm@linux-b8lh:~&gt; lsof /home  #在卸载文件系统时，如果该文件系统中有任何打开的文件，操作通常将会失败。那么通过lsof可以找出那些进程在使用当前要卸载的文件系统</p>
+
+<p>WebQQ\xe5 24090 dongwm    2u   REG    8,7  7247256 12320783 /home/dongwm/.xsession-errors
+notificat 27261 dongwm  mem    REG    8,7     1512 12982245 /home/dongwm/.local/share/mime/mime.cache
+bluefish  29204 dongwm  cwd    DIR    8,7    12288 12320769 /home/dongwm
+bluefish  29204 dongwm  DEL    REG    8,7          12321855 /home/dongwm/.local/share/gvfs-metadata/home-4be5293d.log
+bluefish  29204 dongwm  DEL    REG    8,7          12320866 /home/dongwm/.local/share/gvfs-metadata/home</p>
+
+<p>恢复文件：当系统中的某个文件被意外地删除了，只要这个时候系统中还有进程正在访问该文件，那么我们就可以通过lsof从/proc目录下恢复该文件的内容。思路就是lsof|grep 这个删除了的文件，如果输出了项，记住pid 和第4列的“数字＋字母”其中的数字，然后， cat /proc/那个pid/fd/那个数字 &gt; 删掉的文件 就恢复了</p>
+
+<p><strong>12 w ＃查看当前登录系统的用户</strong></p>
+
+<p><strong>13 uptime #查看当前负载的命令</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; uptime
+17:52 已启动1 天 8:41，6 个用户，平均负载：0.42, 0.26, 0.24
+<strong>14 vnstat  #用来统计网络流量</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo zypper install vnstat</p>
+
+<p>vnstati -i eth0 – -months – -output /dir/month.png ＃每月的流量统计图，做成定时任务＋html显示就更OK了</p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo vnstat-create-db eth0
+root's password:
+Error: Unable to read database "/var/lib/vnstat/eth0".
+Info: -&gt; A new database has been created.
+dongwm@linux-b8lh:~&gt; vnstat --top10  #创建数据库信息，查看流量前10</p>
+
+<p><strong>15 ss #socket流量状态情况, 我喜欢</strong></p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo /usr/sbin/ss -o state established  #查看建立连接的socket
+Recv-Q Send-Q           Local Address:Port               Peer Address:Port
+0      0                 192.168.8.46:59073              60.2.235.195:61002    timer:(keepalive,60min,0)
+0      0                 192.168.8.46:52996             112.95.243.28:http
+0      0                 192.168.8.46:51066            128.121.22.144:http
+0      0                 192.168.8.46:38547            112.95.240.222:http
+0      0                 192.168.8.46:49295             74.125.71.154:http
+0      0                 192.168.8.46:46500               10.14.22.26:61300    timer:(keepalive,48min,0)</p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo /usr/sbin/ss -l  ＃显示所有的监听套接字
+Recv-Q Send-Q           Local Address:Port               Peer Address:Port
+0      3                 172.16.180.1:domain                        *:*
+0      3                 172.16.110.1:domain                        *:*
+0      3                 192.168.8.46:domain                        *:*
+0      3                    127.0.0.2:domain                        *:*
+0      3                    127.0.0.1:domain                        *:*
+0      128                  127.0.0.1:ipp                           *:*
+0      128                        ::1:ipp                          :::*
+0      128                  127.0.0.1:953                           *:*
+0      50                           *:mysql                         *:*
+0      128                         :::sunrpc                       :::*
+0      128                          *:sunrpc                        *:*
+0      128                         :::http</p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo /usr/sbin/ss -s  #显示根据类型划分的总数值统计
+Total: 719 (kernel 769)
+TCP:   62 (estab 5, closed 16, orphaned 4, synrecv 0, timewait 2/0), ports 42</p>
+
+<p>Transport Total     IP        IPv6
+*      769       -         -
+RAW      1         1         0
+UDP      12        10        2
+TCP      46        43        3
+INET      59        54        5
+FRAG      0         0         0</p>
+
+<p>&nbsp;</p>

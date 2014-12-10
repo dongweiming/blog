@@ -1,0 +1,72 @@
+---
+layout: post
+title: gentoo笔记（十三）更新系统的总结和报错解决
+categories:
+- gentoo
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>升级步骤：</p>
+
+<p>1 emerge -–sync ＃同步更新目录
+2 emerge portage ＃更新portage
+3 emerge python ＃更新python，这属于个人习惯
+4 python-updater ＃更新python配置
+5 emerge -aDjNquv @world ＃升级整个系统（包括依赖）,-D 表示-deep,－j不加参数表示不限制同时运行的emerge进程（模式是1）</p>
+
+<p>#－N表示查看每个包的可用的USE参数，－q表示减少显示器屏幕输出，－u表示 --update ,-v表示详细模式
+6 emerge -av –depclean ＃清除不需要的软件包
+7 revdep-rebuild ＃检查系统依赖关系自动安装不满足的 关系包,假如过程中出现错误，重新 执行还是过去的包数量，</p>
+
+<p>#这是因为对需要重新安装的依赖包的数据缓存了，可以删除：rm /var/cache/revdep-rebuild/*.rr
+8 dispatch-conf或etc-update ＃更新系统配置文件</p>
+
+<p>9 （可选）emerge -ej world #重新编译系统，假如USE修改不大就不需要</p>
+
+<p>1 [blocks B ] 原因：说明小于sys-libs/talloc-2.0.5的包被sys-libs/talloc-2.0.7被屏蔽了，需要卸载重装新版本
+解决：dongwm@localhost ~ $sudo emerge -C talloc &amp;&amp; sudo emerge -1 talloc
+2 !!! The following updates are masked by LICENSE changes: - www-plugins/adobe-flash-11.2.202.236
+原因：这是adobe-flash造成的阻止安装，需要手动容许这个LICENSE
+解决：echo "www-plugins/adobe-flash AdobeFlash-10.3" &gt;&gt; /etc/portage/package.license #其中的10.3是报错提示信息重提到的</p>
+
+<p>3 !!! One of the following masked packages is required to complete your request:
+- x11-plugins/compiz-plugins-extra-0.8.8::gentoo (masked by: corruption)</p>
+
+<p>原因：主要是权限问题,本来更新portage后不存在这个ebuild，但是依赖关系又需要，所以去http://gpo.zugaina.org/x11-plugins/compiz-plugins-extra下载了一个相应版本，其他的地址，你懂的!</p>
+
+<p>解决：ebuild compiz-plugins-extra-0.8.8.ebuild digest</p>
+
+<p>4 emerge: there are no ebuilds built with USE flags to satisfy "&gt;=x11-libs/libdrm-2.4.24[video_cards_nouveau]".
+!!! One of the following packages is required to complete your request:
+- x11-libs/libdrm-2.4.33::gentoo (Change USE: +video_cards_nouveau)</p>
+
+<p>原因：需要指定一个USE标识，可以直接在安装指定
+解决：这样安装：USE=video_cards_nouveau emerge  x11-drivers/xf86-video-nouveau 或者给某个包一个特定的USE到/etc/portage/package.use，这里也就是添加一行：</p>
+
+<p>x11-drivers/xf86-video-nouveau video_cards_nouveau
+5The following REQUIRED_USE flag constraints are unsatisfied:</p>
+
+<p>osdmenu? ( X ) xscreensaver? ( X ) xv? ( X )</p>
+
+<p>原因：说明USE包括osdmenu对其他标识有影响</p>
+
+<p>解决：需要去掉，或者'-osdmenu'</p>
+
+<p>6 /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../i686-pc-linux-gnu/bin/ld: warning: libxcb-util.so.0, needed by /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../lib/libstartup-notification-1.so, not found (try using -rpath or -rpath-link)(安装时)</p>
+
+<p>原因： libxcb-util的动态链接有问题</p>
+
+<p>解决：需要重新emerge x11-libs/xcb-util, x11-libs/libxc 然后 revdep-rebuild重建依赖关系</p>
+
+<p>7 Traceback (most recent call last):
+File "configure.py", line 32, in &lt;module&gt;
+import sipconfig
+ImportError: No module named sipconfig
+* ERROR: dev-python/PyQt4-4.9.1 failed (configure phase):
+*   (no error message)
+原因：安装qt需要sip</p>
+
+<p>解决：重新安装dev-python/sip
+</p>

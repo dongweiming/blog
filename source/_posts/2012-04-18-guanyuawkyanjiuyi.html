@@ -1,0 +1,212 @@
+---
+layout: post
+title: 关于awk研究（一）
+categories:
+- awk
+- linux基础
+tags:
+- awk
+published: true
+comments: true
+indexer: true
+---
+<p>前言：我想sed是对于行操作，而awk算是对于列操作</p>
+
+<p><strong>1 基本语法</strong></p>
+
+<p>awk -Fs '/pattern/ {action}' input-file
+或者</p>
+
+<p>awk -Fs '{action}' intput-file
+其中：－F是字段分割符，没有指定的话就是空字符</p>
+
+<p>/pattern/ 假如不存在这个模式匹配，指全文</p>
+
+<p>{action}是要执行的活动</p>
+
+<p>比如：awk -F: '/dongwm/ {print $1}' /etc/passwd 就是寻找 /etc/passwd匹配‘dongwm’的行，然后的操作（action）是用':'分割，打印第一列</p>
+
+<p>或者</p>
+
+<p>awk -Fs -f myscript.awk input-file  指定一个文件 和sed类似
+<strong>2 awk结构（BEGIN, body, END）</strong>
+1 BEGIN  它可以初始化变量，这个结构是可选的</p>
+
+<p>语法：BEGIN { awk-commands }
+2 body 也就是awk的主体</p>
+
+<p>语法：/pattern/ {action}
+3 END 结束块</p>
+
+<p>语法：END { awk-commands } 也是可选的
+例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN { FS=":";print "---header---" } /dongwm/{print $1} END { print "---footer---"}' /etc/passwd
+---header---                              #这个例子，首先执行BEGIN里面的，设定分割符‘:’，打印header，然后匹配行打印分割的第一段，但后执行END，打印footer
+dongwm
+---footer---
+或者：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN { FS=":";print "---header---" }
+/dongwm/{print $1}
+END { print "---footer---"}
+dongwm@linux-dongwm:~&gt; awk -f test.awk /etc/passwd
+---header---
+dongwm
+---footer---</p>
+
+<p>例子2：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F: 'BEGIN { print "UID"} { print $3 }' /etc/passwd  #awk 的打印都是‘print’
+UID
+25
+103
+1
+2
+102
+40
+12
+107
+109
+<strong>3 awk处理多个文件</strong>
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { FS=":";print "---header---" } /dongwm/ {print $1} END { print "---footer---"}' /etc/passwd /etc/group
+---header---
+dongwm
+video   #这个video组包含dongwm
+---footer---
+<strong>4 print(打印功能)</strong>
+先看一个例子</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,ccc,ccc.com
+dongwm@linux-dongwm:~&gt; awk -F ',' 'BEGIN \
+{ print "-------------\nName\tTitle\n-------------"} \
+{ print $2,"\t",$3;} \
+END { print "-------------"; }' test.txt  注：你也是格式化文件了
+-------------
+Name    Title
+-------------
+dongwm      dongwm.com
+ailll      ailll.com
+ccc      ccc.com
+-------------
+<strong>5 模式匹配</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F ',' '/dongwm/ {print $2, $3}' test.txt  寻找匹配行
+dongwm dongwm.com
+dongwm@linux-dongwm:~&gt; awk -F ',' '/^112/ {print "Test id 112 is", $2}' test.txt</p>
+
+<p>Test id 112 is dongwm  #选找开头是112的，然后自定义一些打印字符</p>
+
+<p><strong>6 内建变量</strong>
+1 FS :输入字段分隔符，模认的是空格
+看下面的例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F ',' '{print $2, $3}' test.txt
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS=","} {print $2, $3}' test.txt
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+注：这2个是一样的效果</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com%1120
+113,ailll,ailll.com%1130
+114,ccc,ccc.com%1140
+dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS="[,:%]"} {print $2, $3}' test.txt  #在这里会匹配‘,’,‘:’,'%'这三个分割符，三者是或者的关系
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+2 OFS 输出字段分隔符，模认的是空格
+dongwm@linux-dongwm:~&gt; awk -F ',' '{print $2, ":", $3}' test.txt
+dongwm : dongwm.com
+ailll : ailll.com
+ccc : ccc.com
+其实这个例子可以用下面的语句实现
+dongwm@linux-dongwm:~&gt; awk -F ',' 'BEGIN { OFS=":" } { print $2, $3 }' test.txt
+dongwm:dongwm.com
+ailll:ailll.com
+ccc:ccc.com
+3 RS 记录分隔符
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm:113,ailll:114,ccc
+dongwm@linux-dongwm:~&gt; awk -F, '{print $2}' test.txt
+dongwm:113  #因为在一行里面，没有实现取出所有符合要求的值
+dongwm@linux-dongwm:~&gt; awk -F, 'BEGIN { RS=":" } {print $2}' test.txt  #s使用RS可以实现
+dongwm
+ailll
+ccc
+一个复杂的例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112
+dongwm
+dongwm.com
+-
+113
+ailll
+ailll.com
+-
+114
+ccc
+ccc.com
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { FS="\n"; RS="-\n"; OFS=":" } {print $2, $3}' test.txt
+dongwm:dongwm.com
+ailll:ailll.com
+ccc:ccc.com
+4 ORS 输出记录分割符</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN { FS=","; ORS="\n---\n" } {print $2, $3}' test.txt #在输出的时候，每行都添加了一段‘\n---\n’
+dongwm dongwm.com
+---
+ailll ailll.com
+---
+ccc ccc.com
+---
+5 NR 对数量的记录
+dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS=","} \
+{print "Test Id of record number",NR,"is",$1;} \
+END {print "Total number of records:",NR}' test.txt
+Test Id of record number 1 is 112
+Test Id of record number 2 is 113
+Test Id of record number 3 is 114
+Total number of records: 3
+6 FILENAME  当前的文件名</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk '{ print FILENAME }' test.txt
+test.txt
+test.txt
+test.txt  #因为有三行数据，每行打印了一次</p>
+
+<p>7 FNR 记录的数量的文件  NR会保存数据在多文件中一直增长，但FNR不会，他只是记录当前文件的数量记录</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS=","} \
+{print FILENAME ": record number",NR,"is",$1;} \
+END {print "Total number of records:",NR}' test.txt test.txt.bak
+test.txt: record number 1 is 112
+test.txt: record number 2 is 113
+test.txt: record number 3 is 114
+test.txt.bak: record number 4 is 112
+test.txt.bak: record number 5 is 113
+test.txt.bak: record number 6 is 114
+Total number of records: 6
+dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS=","} \
+{print FILENAME ": record number",FNR,"is",$1;} \
+END {print "Total number of records:",NR}' test.txt test.txt.bak
+test.txt: record number 1 is 112
+test.txt: record number 2 is 113
+test.txt: record number 3 is 114
+test.txt.bak: record number 1 is 112
+test.txt.bak: record number 2 is 113
+test.txt.bak: record number 3 is 114
+Total number of records: 6</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

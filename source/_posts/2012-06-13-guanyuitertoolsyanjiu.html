@@ -1,0 +1,187 @@
+---
+layout: post
+title: 关于itertools研究
+categories:
+- python模块研究
+tags:
+- chain
+- cycle
+- dropwhile
+- groupby
+- ifilter
+- ifilterfalse
+- imap
+- islice
+- itertools
+- izip
+- repeat
+- starmap
+- takewhile
+- tee
+published: true
+comments: true
+indexer: true
+---
+<p>前言：itertools用于高效循环的迭代函数集合</p>
+
+<p><strong>1 chain 合并迭代器 ：将多个迭代器作为参数, 但只返回单个迭代器, 它产生所有参数迭代器的内容, 就好像他们是来自于一个单一的序列.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import chain
+for i in chain([1, 2, 3], ['a', 'b', 'c']):
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>2 izip 切分迭代器 ：返回一个合并了多个迭代器为一个元组的迭代器. 它类似于内置函数zip(), 只是它返回的是一个迭代器而不是一个列表.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import izip
+for i in izip([1, 2, 3], ['a', 'b', 'c']):
+    print i
+</pre></p>
+
+<p><strong>3 count 返回一个不断产生连续整数的迭代器. 第一个数可以由参数指定, 默认为0. 它没有上届参数(可参见内置函数 <tt>xrange()</tt> , 它更好的控制结果集). 在下面的例子中, 迭代器由于参数列表结束而停止.</strong></p>
+
+<p><strong>4 </strong><tt><strong>islice 返回的迭代器是返回了输入迭代器根据索引来选取的项.</strong>
+</tt></p>
+
+<p><pre class="sh_python">
+from itertools import islice,count #count
+print 'Stop at 5:'
+for i in islice(count(), 5):
+    print i
+print 'By tens to 100:' 
+for i in islice(count(), 0, 100, 10):  #从0开始 步长为10  最大是100
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>5 tee 返回一些基于单个原始输入的独立迭代器(默认为2). 它和Unix上的tee工具有点语义相似, </strong></p>
+
+<p><strong>也就是说它们都重复读取输入设备中的值并将值写入到一个命名文件和标准输出中</strong></p>
+
+<p><pre class="sh_python">
+r = islice(count(), 5)
+i1, i2 = tee(r) </p>
+
+<p>for i in i1:
+    print 'i1:', i
+for i in i2:
+    print 'i2:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>6 <tt>imap</tt> 返回一个迭代器, 它是调用了一个其值在输入迭代器上的函数, 返回结果. 它类似于内置函数 <tt>map()</tt> , 只是前者在</strong></p>
+
+<p><strong>任意输入迭代器结束后就停止(而不是插入None值来补全所有的输入).</strong></p>
+
+<p><pre class="sh_python">
+print 'Doubles:'
+for i in imap(lambda x:2*x, xrange(5)):
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>7 <tt>starmap</tt> <tt>starmap()</tt> 函数类似于 <tt>imap()</tt> , 但是在从多个迭代器中构造元组时, 它先将各个项切分成单个迭代器并将它作为参数以*语</strong></p>
+
+<p><strong>法传递给映射函数. <tt>imap()</tt> 的映射函数被称为f(i1, i2), <tt>startmap()</tt> 的映射函数被称为f(<a href="http://pymotwcn.readthedocs.org/en/latest/documents/itertools.html#id4">*</a>i).</strong></p>
+
+<p><pre class="sh_python">
+from itertools import starmap
+values = [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]
+for i in starmap(lambda x,y:(x, y, x*y), values):
+    print '%d * %d = %d' % i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>8 <tt>cycle</tt> 返回一个不断重复参数内容的迭代器. 由于它必须记住整个输入迭代器的内容, 所以如果输入迭代器很长的话, 它可能会消耗大量</strong></p>
+
+<p><strong>的内存. 在下面的例子中, 一个计数变量用于在一定数量的循环后, 跳出循环</strong></p>
+
+<p><pre class="sh_python">
+from itertools import cycle
+i = 0
+for item in cycle(['a', 'b', 'c']):
+    i += 1
+    if i == 10:
+        break
+    print (i, item)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>9 <tt>repeat</tt> 函数返回一个每次都产生相同值的迭代器. 它也是永远继续的, 除非你设置了times参数来限制.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import  repeat
+for i in repeat('over-and-over', 5):
+    print i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>10 <tt>dropwhile</tt> 函数返回一个当条件为false之后的输入迭代器中剩余元素的迭代器. 它不过滤输入迭代器中的每一个项; </strong></p>
+
+<p><strong>在条件为false之后的第一次, 返回迭代器中剩下来的项.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import dropwhile
+def should_drop(x):
+    print 'Testing:', x
+    return (x&lt;1)</p>
+
+<p>for i in dropwhile(should_drop, [ -1, 0, 1, 2, 3, 4, 1, -2 ]):
+    print 'Yielding:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>11 <tt>takewhile ：和dropwhile相反, 它返回的是一个产生输入迭代器中只要测试函数返回true的项的迭代器</tt></strong></p>
+
+<p><pre class="sh_python">
+from itertools import takewhile</p>
+
+<p>def should_take(x):
+    print 'Testing:', x
+    return (x&lt;2)</p>
+
+<p>for i in takewhile(should_take, [ -1, 0, 1, 2, 3, 4, 1, -2 ]):
+    print 'Yielding:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>12 <tt>ifilter</tt> 返回的是迭代器类似于针对列表的内置函数 <tt>filter()</tt> , 它只包括当测试函数返回true时的项. 它不同于 <tt>dropwhile()</tt> </strong></p>
+
+<p><strong>的是每个项是在被返回之前进行测试的.</strong></p>
+
+<p><pre class="sh_python">
+def check_item(x):
+    print 'Testing:', x
+    return (x&lt;1)</p>
+
+<p>for i in ifilter(check_item, [ -1, 0, 1, 2, 3, 4, 1, -2 ]):
+    print 'Yielding:', i
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><strong>13  <tt> </tt><tt>ifilterfalse</tt> 和ifilter(函数相反 ， 返回一个包含那些测试函数返回false的项的迭代器.</strong></p>
+
+<p><strong>14 <tt>groupby</tt> 返回一个产生按照key进行分组后的值集合的迭代器.</strong></p>
+
+<p><pre class="sh_python">
+from itertools import *
+from operator import itemgetter</p>
+
+<p>d = dict(a=1, b=2, c=1, d=2, e=1, f=2, g=3)
+di = sorted(d.iteritems(), key=itemgetter(1))
+for k, g in groupby(di, key=itemgetter(1)):
+    print k, map(itemgetter(0), g)  #将一个字典根据值将关键字分组
+</pre></p>

@@ -1,0 +1,21 @@
+{% capture root_url %}{{ site.root | strip_slash }}{% endcapture %}
+{% include head.html %}
+<body {% if page.body_id %} id="{{ page.body_id }}" {% endif %} {% if page.sidebar == false %} class="no-sidebar" {% endif %} {% if page.sidebar == 'collapse' or site.sidebar == 'collapse' %} class="collapse-sidebar sidebar-footer" {% endif %} onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation">{% include navigation.html %}</nav>
+  <div class="alert  alert-info alert-block">
+    <a href="#" class="close" onclick="$('.alert').hide()">&times;</a>
+    <h4 class="alert-heading">博客更新通知</h4>
+    <p>感谢一直支持我的朋友，目前在做一个自己的博客项目。几个月后会有新版本的博客,新版本博客将主要涉及<span class="alert-error">python，ruby，lisp，算法，devops，emacs，github开源项目</span>等方面内容，敬请关注</p>
+    </div>
+  <div class="container">
+    <div class="row-fluid">
+      {{ content | expand_urls: root_url }}
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">{% include footer.html %}</footer>
+  {% include after_footer.html %}
+</body>
+</html>

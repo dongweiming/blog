@@ -1,0 +1,26 @@
+---
+layout: post
+title: 关于base64研究
+categories:
+- python模块研究
+tags:
+- base64
+published: true
+comments: true
+indexer: true
+---
+<p>前言：这事一个很常用的模块，主要用来将二进制数据编码成ASCII字符。其实base64，base32和base16就是把8位字节值转化成可用的每字节6，5，4位的数据，容许非ascii字节编码为ascii字符，比如stmp协议数据</p>
+
+<p>一个简单的例子：</p>
+
+<p><pre class="sh_python">
+import base64
+original_string = 'This is the data, in the clear.'
+print 'Original:', original_string   #原文
+encoded_string = base64.b64encode(original_string)
+print 'Encoded :', encoded_string  #编码后的数据
+decoded_string = base64.b64decode(encoded_string)
+print 'Decoded :', decoded_string  #将编码后数据解码
+</pre></p>
+
+<p>&nbsp;</p>

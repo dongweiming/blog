@@ -1,0 +1,71 @@
+---
+layout: post
+title: 查看和提取rpm，deb文件
+categories:
+- linux基础
+tags:
+- deb查看和提取
+- rpm
+published: true
+comments: true
+indexer: true
+---
+<p><strong><tt id="checkoutcmd">1 </tt>Redhat/Centos/Fedorade的rpm查看和提取</strong>
+<pre class="sh_bash">#rpm -qlp VirtualBox-4.0-4.0.2_69518_openSUSE113-1.i586.rpm
+warning: VirtualBox-4.0-4.0.2_69518_openSUSE113-1.i586.rpm: Header V4 DSA/SHA1 Signature, key ID 98ab5139: NOKEY
+/etc/init.d/vboxdrv
+/etc/init.d/vboxweb-service</p>
+
+<p>/etc/vbox
+/lib/modules
+/lib/modules/2.6.34.7-0.7-default
+...﻿﻿</pre>
+其中 q -查询RPM文件  l -列出文件  p -指定包的名称<!--more--></p>
+
+<p><span><em>cpio</em>命令是通过重定向的方式将文件进行打包备份，还原恢复的工具，在这里先转换到cpio归档文件，再提取！
+</span><pre class="sh_bash"><span>#  rpm2cpio VirtualBox-4.0-4.0.2_69518_openSUSE113-1.i586.rpm |cpio  -idmv
+./etc/init.d/vboxdrv
+./etc/init.d/vboxweb-service
+./etc/vbox
+./lib/modules
+./lib/modules/2.6.34.7-0.7-default
+...</span></pre>
+<span> <strong>2 Debian/Ubuntu的deb查看和提取</strong>
+</span><span>dpkg的是Debian软件包管理器，使用dpkg可以列出和提取
+</span><pre class="sh_bash"><span># dpkg -c lcrt_0.0.8_i386.deb
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:27 ./
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/pixmaps/
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/doc/
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/menu/
+-rw-r--r-- niutao/niutao   157 2011-02-28 21:55 ./usr/share/menu/lcrt
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/man/
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/man/man1/
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/lcrt/
+drwxr-xr-x niutao/niutao     0 2011-02-28 21:55 ./usr/share/lcrt/pixmaps/
+...</span></pre>
+<span> # dpkg -x lcrt_0.0.8_i386.deb lcrt  //提取文件到lcrt目录下
+linux-3qd1:/home/dongwm/下载 # cd lcrt/
+DEB是ar文件，他总是包含三个文件-</span><span>- debian-binary，control.tar.gz ，data.tar.gz，可以使用ar </span>提取data.tar.gz  再解压data.tar.gz
+<pre class="sh_bash"><span># ar -vx lcrt_0.0.8_i386.deb
+x - debian-binary
+x - control.tar.gz
+x - dat</span><span>a.tar.gz</span></p>
+
+<p><span># tar zxvf data.tar.gz
+./
+./usr/
+./usr/share/
+./usr/share/pixmaps/
+./usr/share/doc/
+./usr/share/menu/
+./usr/share/menu/lcrt
+./usr/share/man/
+./usr/share/man/man1/
+./usr/share/lcrt/
+./usr/share/lcrt/pixmaps/
+...</span></pre></p>
+
+<p>Technorati 标签: <a class="performancingtags" rel="tag" href="http://technorati.com/tag/deb%EF%BC%8Crpm%20%E6%8F%90%E5%8F%96">deb，rpm 提取</a>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=85bcf861-826e-88ae-875a-9782b192b7d1" alt="" /></div></p>

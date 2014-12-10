@@ -1,0 +1,107 @@
+---
+layout: post
+title: 关于string研究
+categories:
+- python模块研究
+tags:
+- string
+published: true
+comments: true
+indexer: true
+---
+<p>前言：string是包括文本处理中的常量和类的模块，大量简化我们工作</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>for n in dir(string):
+    if n.startswith('_'):
+        continue
+    v = getattr(string, n)
+    if isinstance(v, basestring):  #打印模块定义的常量
+        print '%s=%s' % (n, repr(v))
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+ascii_letters='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+ascii_lowercase='abcdefghijklmnopqrstuvwxyz'
+ascii_uppercase='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+digits='0123456789'
+hexdigits='0123456789abcdefABCDEF'
+letters='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+lowercase='abcdefghijklmnopqrstuvwxyz'
+octdigits='01234567'
+printable='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
+punctuation='!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~'
+uppercase='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+whitespace='\t\n\x0b\x0c\r '</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>s = 'The quick brown fox jumped over the lazy dog.'  #一段字符串
+leet = string.maketrans('abegiloprstz', '463611092572') #想要把某些字母翻译成对应的东西 比如 a翻译成4</p>
+
+<p>print s
+print string.capwords(s) #每个单词第一个字母大写
+print s.translate(leet)
+</pre>
+结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+The quick brown fox jumped over the lazy dog.
+The Quick Brown Fox Jumped Over The Lazy Dog.
+Th3 qu1ck 620wn f0x jum93d 0v32 7h3 142y d06.
+<pre class="sh_python">
+import string</p>
+
+<p>values = { 'var':'foo' }</p>
+
+<p>t = string.Template("""  #使用了 <tt>string.Template</tt> 的占位符, 前缀为$的单词就被认为是变量(如$var), 如果需要将其在上下文中区别出来的话, 也可以将变量名包括在大括号中(如${var}).
+$var
+$$
+${var}iable
+""")  #设置string模板</p>
+
+<p>print 'TEMPLATE:', t.substitute(values) #假如某个键不存在会报错，避免报错，可以用t.safe_substitute(values)捕获了异常并将这个未知的变量表达式保留在文本中</p>
+
+<p>s = """
+%(var)s
+%%
+%(var)siable
+"""</p>
+
+<p>print 'INTERPLOATION:', s % values
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+TEMPLATE:
+foo  #var的value是 foo
+$ #重复两次则被转义为普通字符
+fooiable #只替换一段</p>
+
+<p>INTERPLOATION:
+foo
+%
+fooiable</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>class MyTemplate(string.Template):
+    delimiter = '%' #默认是'$'  这里修改成了'%'
+    idpattern = '[a-z]+_[a-z]+'  #修改默认的匹配模式：这里有个"_"</p>
+
+<p>t = MyTemplate('%% %with_underscore %notunderscored')  
+d = { 'with_underscore':'replaced',
+          'notunderscored':'not replaced',  #这里的value没有"_"，不匹配
+}</p>
+
+<p>print t.safe_substitute(d)
+</pre></p>
+
+<p>&nbsp;</p>

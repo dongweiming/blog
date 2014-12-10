@@ -1,0 +1,93 @@
+---
+layout: post
+title: 关于warnings研究
+categories:
+- python模块研究
+tags:
+- warnings
+published: true
+comments: true
+indexer: true
+---
+<p>前言：warnings是非致命级别警报的模块,当执行行程序时遇到问题时给用户非致命性的警示</p>
+
+<p><pre class="sh_python">
+print 'Before the warning'
+warnings.warn('This is a warning message')  #产生一个警告
+print 'After the warning'
+print
+warnings.simplefilter('error', UserWarning)#当出现报错 就停止继续</p>
+
+<p>print 'Before the warning'
+warnings.warn('This is a warning message')  
+print 'After the warning'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before the warning
+test.py:5: UserWarning: This is a warning message
+warnings.warn('This is a warning message')
+After the warning</p>
+
+<p>Before the warning
+Traceback (most recent call last):
+File "test.py", line 11, in &lt;module&gt;
+warnings.warn('This is a warning message')
+UserWarning: This is a warning message   #UserWarning  执行报错 停止</p>
+
+<p><pre class="sh_python">
+import warnings
+import logging
+warnings.filterwarnings('ignore', '.*do not.*',) #过滤报错信息，其中包含6种：error：变成一个异常警告，ignore:丢弃警告，
+#always:始终报警，default:它是从每个位置产生的第一次打印警告，module:它是从每个模块产生的第一次打印警告，once:它生成的第一次打印警告
+warnings.warn('Show this message')   #打印这个信息
+warnings.warn('Do not show this message')  #不打印这个信息，上面过滤了'.*do not.*'这样的模式匹配</p>
+
+<p>def function_with_warning():
+    warnings.warn('This is a warning!')</p>
+
+<p>function_with_warning() #虽然调用三次，只打印一次 不重复
+function_with_warning()
+function_with_warning()</p>
+
+<p>warnings.simplefilter('once', UserWarning)  #也可以这样调用，告诉值是第一次打印错误警告</p>
+
+<p>warnings.warn('This is a warning!')
+warnings.warn('This is a warning!')
+warnings.warn('This is a warning!')</p>
+
+<p>logging.basicConfig(level=logging.INFO)</p>
+
+<p>def send_warnings_to_log(message, category, filename, lineno, file=None):  #设定一个记录日志的方法
+    logging.warning(
+        '%s:%s: %s:%s' % 
+        (filename, lineno, category.__name__, message))
+    return</p>
+
+<p>old_showwarning = warnings.showwarning  #默认是终端显示错误信息，但是也可能改变方式  这里保存旧的方式
+warnings.showwarning = send_warnings_to_log  #将显示错误信息的方式改成用这个函数执行</p>
+
+<p>warnings.warn('This is a warning message')  #这里就会以logging的方式显示</p>
+
+<p>def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
+    return ' %s:%s: %s:%s' % (filename, lineno, category.__name__, message)</p>
+
+<p>warnings.warn('This is a warning message, before')
+warnings.formatwarning = warning_on_one_line #修改显示错误信息的格式
+warnings.warn('This is a warning message, after')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+test.py:5: UserWarning: Show this message
+warnings.warn('Show this message')
+test.py:9: UserWarning: This is a warning!
+warnings.warn('This is a warning!')
+test.py:17: UserWarning: This is a warning!
+warnings.warn('This is a warning!')
+WARNING:root:test.py:32: UserWarning:This is a warning message
+WARNING:root:test.py:37: UserWarning:This is a warning message, before
+WARNING:root:test.py:39: UserWarning:This is a warning message, after</p>

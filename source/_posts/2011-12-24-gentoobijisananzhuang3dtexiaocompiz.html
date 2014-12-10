@@ -1,0 +1,62 @@
+---
+layout: post
+title: gentoo笔记（三）安装3D特效compiz
+categories:
+- gentoo
+tags:
+- gentoo 3D
+- gentoo compiz
+published: true
+comments: true
+indexer: true
+---
+<p>前言：玩linux桌面的都会项研究下compiz 我作为一个使用compiz很多年有很深感情的人那是必然要试一试的</p>
+
+<p><strong>1 安装前准备</strong></p>
+
+<p>目前Compiz和大多数的依赖被认为是不稳定的，因此在Portage默认是被掩盖的。 需要添加以下几行到/etc/portage目录下的文件里面，这个解决办法在gentoo安装手册写来着</p>
+
+<p>/etc/portage/package.keywords  没有这个文件创建</p>
+
+<p>dev-libs/protobuf
+dev-util/intltool
+dev-python/compizconfig-python
+x11-apps/ccsm
+x11-libs/libcompizconfig
+x11-libs/compizconfig-backend-gconf
+x11-libs/compizconfig-backend-kconfig4
+x11-libs/compiz-bcop
+x11-plugins/compiz-plugins-main
+x11-plugins/compiz-plugins-extra
+x11-plugins/compiz-plugins-unsupported
+x11-themes/emerald-themes
+x11-wm/compiz
+x11-wm/compiz-fusion
+x11-wm/emerald
+app-i18n/fcitx
+x11-apps/fusion-icon
+/etc/portage/package.use</p>
+
+<p>media-libs/mesa xcb
+x11-libs/libX11 xcb
+x11-libs/cairo xcb svg
+x11-wm/compiz-fusion emerald</p>
+
+<p>我也初始化了一下ati：</p>
+
+<p>aticonfig --initial --input=/etc/X11/xorg.conf</p>
+
+<p><strong>2 安装compiz</strong></p>
+
+<p>emerge compiz compiz-fusion fusion-icon</p>
+
+<p><strong>3 启动compiz</strong></p>
+
+<p>执行 compiz-manager 默认ccsm什么特效都没有选择不要害怕。 先在emerald里面选择一个主题，然后打开compizconfig设置管理器（都在 系统-首选项里面）一定选择：特效里面的窗口装饰 和 窗口管理的移动窗口 呵呵</p>
+
+<p><strong>4 设置开机自启动</strong></p>
+
+<p>其实就是在 系统-首选项的 启动应用程序里面加2项  其他的都怎么描述无所谓  但是命令那一栏  一个是 /usr/bin/compiz-manager 一个是 emerald --replace</p>
+
+<p>5玩其他compiz特向 请参看
+<h2><a href="http://www.dongwm.com/archives/compiz-%e5%a4%96%e6%8c%82%e6%8f%92%e4%bb%b6%e6%ac%a3%e8%b5%8f%e5%92%8c%e5%ae%89%e8%a3%85/">compiz 外挂插件欣赏和安装</a></h2></p>

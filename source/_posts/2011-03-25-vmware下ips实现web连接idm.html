@@ -1,0 +1,42 @@
+---
+layout: post
+title: VMWARE下IPS实现web连接(IDM)
+categories:
+- ips
+tags:
+- IDM
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1  设置IPS初始化</strong></p>
+
+<p>sensor# conf t
+sensor(config)# service host
+sensor(config-hos)# network-settings
+sensor(config-hos-net)#host-ip 192.168.1.144/24,192.168.1.1 //定义IPS地址 掩码 网关
+sensor(config-hos-net)# telnet-option enabled //支持telnet管理
+sensor(config-hos-net)# access-list 192.168.1.144/32 //定义管理IP
+sensor(config-hos-net)# exit
+sensor(config-hos)# time-zone-settings //设置时区
+sensor(config-hos-tim)# offset 8
+sensor(config-hos-tim)# standard-time-zone-name
+sensor(config-hos-tim)# standard-time-zone-name beijing
+sensor(config-hos-tim)# exit
+sensor(config-hos)# exit Apply C
+hanges:?[yes]: yes
+sensor(config)# service web-server // 启动GUI管理
+sensor(config-web)# enable-tls true
+sensor(config-web)# port 443<!--more--></p>
+
+<p><strong>2 设置java虚拟机Applet Memory Limit</strong></p>
+
+<p>在最开始的版本里面，设置在“高级”中，在java1.5和其以后版本都在“java”选项</p>
+
+<p>我的操作系统win7，控制面板--程序--java--“java”选项--查看--修改Runtime参数为-Xmx300m</p>
+
+<p>注：1.5版本256M即可，但是java1.6需要更高</p>
+
+<p><strong>3  web登录</strong></p>
+
+<p><a href="https://192.168.1.144">https://192.168.1.144</a></p>

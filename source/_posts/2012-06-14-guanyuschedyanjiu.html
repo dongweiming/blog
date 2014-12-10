@@ -1,0 +1,108 @@
+---
+layout: post
+title: 关于sched研究
+categories:
+- python模块研究
+tags:
+- sched
+published: true
+comments: true
+indexer: true
+---
+<p>前言：我们经常需要定时的执行某个任务，在Linux下我们有强大的crontab，但是在Python这个粒度（定时执行函数），如何处理呢？sched是一个调度（延时处理机制），每次想要定时执行某任务都必须写入一个调度</p>
+
+<p><pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>def print_event(name):
+    print 'EVENT:', time.time(), name</p>
+
+<p>print 'START:', time.time()
+scheduler.enter(2, 1, print_event, ('first',)) #第一个参数代表延迟多久，第二个表示优先级，第三个是需要被调用的函数，地四个是函数的参数（元组类型）
+scheduler.enter(3, 1, print_event, ('second',))</p>
+
+<p>scheduler.run()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+START: 1339660487.96
+EVENT: 1339660489.96 first
+EVENT: 1339660490.96 second
+<pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>def long_event(name):
+    print 'BEGIN EVENT :', time.time(), name
+    time.sleep(2)
+    print 'FINISH EVENT:', time.time(), name</p>
+
+<p>print 'START:', time.time()
+scheduler.enter(2, 1, long_event, ('first',))
+scheduler.enter(3, 1, long_event, ('second',))</p>
+
+<p>scheduler.run()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+START: 1339660898.83
+BEGIN EVENT : 1339660900.84 first
+FINISH EVENT: 1339660902.84 first
+BEGIN EVENT : 1339660902.84 second
+FINISH EVENT: 1339660904.84 second
+注：run()一直被阻塞, 直到所有事件被全部执行完. 每个事件在同一线程中运行, 所以如果一个事件的执行时间大于其他事件的延迟时间,</p>
+
+<p>那么, 就会产生重叠. 重叠的解决方法是推迟后来事件的执行时间. 这样保证没有丢失任何事件, 但这些事件的调用时刻会比原先设定的迟</p>
+
+<p>上面的例子第二个事件在第一个事件运行结束后立即运行, 因为第一个事件的执行时间足够长, 已经超过第二个事件的预期开始时刻.（本来应该1339660903秒运行）</p>
+
+<p><pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)
+now = time.time()
+def print_event(name):
+    print 'EVENT:', time.time(), name
+print 'START:', now
+scheduler.enterabs(now+2, 2, print_event, ('first',)) #enterabs保证事件准确的在同一时刻执行,,第一个参数是运行事件的确切时间, 而不是延迟时间量
+scheduler.enterabs(now+2, 1, print_event, ('second',))
+scheduler.run()
+</pre></p>
+
+<p><pre class="sh_python">
+import sched
+import threading
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>counter = 0 #一个全局变量的计数器</p>
+
+<p>def increment_counter(name):</p>
+
+<p>    global counter
+    print 'EVENT:', time.time(), name
+    counter += 1
+    print 'NOW:', counter</p>
+
+<p>print 'START:', time.time()
+e1 = scheduler.enter(2, 1, increment_counter, ('E1',))
+e2 = scheduler.enter(3, 1, increment_counter, ('E2',))</p>
+
+<p>t = threading.Thread(target=scheduler.run) #enter()和enterabs()返回一事件的引用, 该引用可被用于事件的取消. 由于run()阻塞, 
+             #所以事件的取消操作需要在另外一个线程中进行. 如下例子, 在一个子线程开始执行调度, 而主处理线程用于取消某个事件
+t.start()
+scheduler.cancel(e1)  #取消了e1的那个调度
+t.join()  #等调度完成再开始下一个
+print 'FINAL:', counter
+</pre></p>

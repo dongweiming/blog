@@ -1,0 +1,62 @@
+---
+layout: post
+title: shell脚本调试高级学习
+categories:
+- Bash Shell
+tags:
+- shell
+- trap
+- 伪信号
+- 脚本调试
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1  函数调试--额这个函数使用了shell内置变量$?，执行$?的值可以接着执行命令，调用函数</strong></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+alert ()
+{ if [ "$1" -ne 0 ]; then echo "WARNING: $2 did not complete successfully." &gt;&amp;2; exit $1; else echo "INFO: $2 completed successfully" &gt;&amp;2; fi;}
+sh test11.sh  //一个我用来测试的脚本,当脚本正确或者不正确输出不一样的调试报错
+alert $?</pre></p>
+
+<p><strong>2 trap</strong></p>
+
+<p>trap命令用于捕获指定的信号并执行预定义的命令。</p>
+
+<p>语法：trap 'command' signal</p>
+
+<p>转：其中signal是要捕获的信号，command是捕获到指定的信号之后，所要执行的命令。可以用kill –l命令看到系统中全部可用的信号名，捕获信号后所执行的命令可以是任何一条或多条合法的shell语句，也可以是一个函数名。
+shell脚本在执行时，会产生三个所谓的“伪信号”，(之所以称之为“伪信号”是因为这三个信号是由shell产生的，而其它的信号是由操作系统产生的)，通过使用trap命令捕获这三个“伪信号”并输出相关信息对调试非常有帮助。</p>
+
+<p><a name="table1"><span style="background-color: #ffff00;"><strong> shell伪信号</strong></span></a><span style="background-color: #ffff00;"><strong>分类：</strong></span></p>
+
+<p>EXIT
+从一个函数中退出或整个脚本执行完毕</p>
+
+<p>ERR
+当一条命令返回非零状态时(代表命令执行不成功)</p>
+
+<p>DEBUG
+脚本中每一条命令执行之前</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+trap 'echo “before execute line:$LINENO, a=$a,b=$b,c=$c”' DEBUG
+a=1
+b=$(($a+1))
+c=$(($b+1))
+echo $c</p>
+
+<p>[root@server ~]# sh !$
+sh test.sh
+“before execute line:3, a=,b=,c=”
+“before execute line:4, a=1,b=,c=”
+“before execute line:5, a=1,b=2,c=”
+“before execute line:6, a=1,b=2,c=3”
+3</p>
+
+<p>注：这个调试脚本不需要每句语句都加echo，只要最上面一行trap。本例表示此行执行前执行信号</p>
+
+<p></pre></p>

@@ -1,0 +1,153 @@
+---
+layout: post
+title: 关于zipfile研究
+categories:
+- python模块研究
+tags:
+- zipfile
+published: true
+comments: true
+indexer: true
+---
+<p>前言：zipfile是一个读写ZIP档案文件的模块</p>
+
+<p><pre class="sh_python">
+import zipfile
+import datetime</p>
+
+<p>for filename in [ 'README.txt', 'example.zip', 'bad_example.zip', 'notthere.zip' ]:
+    print '%20s %s' % (filename, zipfile.is_zipfile(filename))  #返回一个布尔值, 判断给定的文件是否是一个有效的ZIP文件.
+zf = zipfile.ZipFile('example.zip', 'r')  
+print zf.namelist() #读取现有存档中所有文件的名字  返回一个列表
+def print_info(archive_name):
+    zf = zipfile.ZipFile(archive_name)
+    for info in zf.infolist(): #访问存档内容的所有元数据
+        print info.filename
+        print '\tComment:\t', info.comment  #注释信息
+        print '\tModified:\t', datetime.datetime(*info.date_time) #修改时间
+        print '\tSystem:\t\t', info.create_system, '(0 = Windows, 3 = Unix)' #系统  3便是linux
+        print '\tZIP version:\t', info.create_version
+        print '\tCompressed:\t', info.compress_size, 'bytes' #压缩后的大小
+        print '\tUncompressed:\t', info.file_size, 'bytes' #压缩前大小
+        print
+print_info('example.zip')
+zf = zipfile.ZipFile('example.zip') 
+for filename in [ 'README.txt', 'notthere.txt' ]:
+    try:
+        info = zf.getinfo(filename) #通过文件名获取ZipInfo对象
+    except KeyError:
+        print 'ERROR: Did not find %s in zip file' % filename
+    else:
+        print '%s is %d bytes' % (info.filename, info.file_size)</p>
+
+<p>    try:
+        data = zf.read(filename) #读取访问存档文件的数据，必要时, 数据会自动解压缩.
+    except KeyError:
+        print 'ERROR: Did not find %s in zip file' % filename
+    else:
+        print filename, ':'
+        print repr(data)
+        print
+print 'creating archive'
+zf = zipfile.ZipFile('zipfile_write.zip', mode='w')  #创建zip存档文件，档案中任何现有文件会被清空, 开始新档案
+try:
+    print 'adding README.txt'
+    zf.write('README.txt')  #增加文件
+finally:
+    print 'closing'
+    zf.close()</p>
+
+<p>print
+</pre></p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python test.py
+README.txt False
+example.zip True
+bad_example.zip False
+notthere.zip False
+['README.txt']
+README.txt
+Comment:
+Modified:    2012-06-18 15:40:00
+System:        3 (0 = Windows, 3 = Unix)
+ZIP version:    20
+Compressed:    9 bytes
+Uncompressed:    9 bytes</p>
+
+<p>README.txt is 9 bytes
+README.txt :
+'test mes\n'</p>
+
+<p>ERROR: Did not find notthere.txt in zip file
+ERROR: Did not find notthere.txt in zip file
+creating archive
+adding README.txt
+closing
+<pre class="sh_python">
+import zipfile
+import sys 
+try:
+    import zlib
+    compression = zipfile.ZIP_DEFLATED #zlib模块提供压缩功能. 如果zlib是可用的, 你能使用zipfile.ZIP_DEFLATED对个人文件或者整个档案设置压缩模式.
+except:
+    compression = zipfile.ZIP_STORED #默认压缩模式为zipfile.ZIP_STORED.</p>
+
+<p>modes = { zipfile.ZIP_DEFLATED: 'deflated',
+    zipfile.ZIP_STORED: 'stored',
+}</p>
+
+<p>print 'creating archive'
+zf = zipfile.ZipFile('zipfile_write_compression.zip', mode='w')
+try:
+    print 'adding README.txt with compression mode', modes[compression]
+    zf.write('README.txt', compress_type=compression)
+finally:
+    print 'closing'
+    zf.close()</p>
+
+<p>print
+zf = zipfile.ZipFile('zipfile_write_arcname.zip', mode='w')
+try:
+    zf.write('README.txt', arcname='NOT_README.txt') #将一个文件添加到存档中, 但命名不能是原始文件名,而是重命名为'NOT_README.txt'
+finally:
+    zf.close()
+msg = 'This data did not exist in a file before being added to the ZIP file'
+zf = zipfile.ZipFile('zipfile_writestr.zip',
+ mode='w',
+ compression=zipfile.ZIP_DEFLATED,
+)
+try:
+    zf.writestr('from_string.txt', msg)  #将数据直接写到存档zip的这个文件里
+finally:
+    zf.close()
+msg = 'This data did not exist in a file before being added to the ZIP file'
+zf = zipfile.ZipFile('zipfile_writestr_zipinfo.zip', mode='w',)
+try:
+    info = zipfile.ZipInfo('from_string.txt', date_time=time.localtime(time.time()),) #创建一个ZipInfo实例，修改时间
+    info.compress_type=zipfile.ZIP_DEFLATED #修改压缩方式
+    info.comment='Remarks go here' #添加文件注释
+    info.create_system=0 #修改文件的系统信息 这里变成了windows系统
+    zf.writestr(info, msg) #将数据写道这个ZipInfo实例 也就是把from_string.txt的属性和内容都修改了
+finally:
+    zf.close()
+zf = zipfile.ZipFile('zipfile_append.zip', mode='a')  #模式'a'是追加模式，追加一个文件或在一个现有文件的末尾增加一个档案文件
+try:
+    zf.write('README.txt', arcname='README2.txt')
+finally:
+    zf.close()
+zf = zipfile.PyZipFile('zipfile_pyzipfile.zip', mode='w') #直接将当前目录压缩打包，还能编译py脚本
+    try:
+        zf.debug = 3
+        print 'Adding python files'
+        zf.writepy('.') #PyZipFile浏览目录寻找.py文件, 并且将关联文件 <tt>.pyo</tt> 或 <tt>.pyc</tt> 加入到档案中. 如果两者都不存在, 则生成一个.pyc文件, 并将其加入到档案中.
+    finally:
+        zf.close()
+        for name in zf.namelist():
+            print name</p>
+
+<p>    print
+    sys.path.insert(0, 'zipfile_pyzipfile.zip')
+    import zipfile_pyzipfile
+    print 'Imported from:', zipfile_pyzipfile.__file__
+</pre></p>

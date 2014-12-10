@@ -1,0 +1,80 @@
+---
+layout: post
+title: Nagios深入进阶之一：被动检查
+categories:
+- nagios
+tags:
+- nagios
+- nsca
+- 被动检查
+published: true
+comments: true
+indexer: true
+---
+<p><strong> </strong>工作中有一些需要我们监控的服务，但是中心服务器的nrpe不能取到远程主机的结果，比如dmesg输出的结果（这个信息有助于提早发现硬件问题）。这就 需要远程主机使用一个构件借助定时任务将强制检测结果送到指定的服务器上去，这就是nsca，。可以夸张地说，只要有了被动检查，什么服务都能监控。<strong><!--more--><img title="更多..." src="http://64.120.134.162/wp-includes/js/tinymce/plugins/wordpress/img/trans.gif" alt="" /></strong></p>
+
+<p><strong> 中文文档里这样介绍：Nsca第一部分是客户端程序(send_nsca)，运行于远程主机上并负责将强制检测结果送到指定的服务器上去，另一部分是 NSCA守护进程(nsca)，它既可以独立地运行于守护服务也可以注册到inetd里作为一个inetd客户程序来提供监听联接。</strong></p>
+
+<p><strong>1 安装NSCA构件</strong></p>
+
+<p>#wget <a href="http://nchc.dl.sourceforge.net/sourceforge/nagios/nsca-2.7.2.tar.gz">http://nchc.dl.sourceforge.net/sourceforge/nagios/nsca-2.7.2.tar.gz</a></p>
+
+<p>#tar zxvf nsca-2.7.2.tar.gz</p>
+
+<p>#cd nsca-2.7.2</p>
+
+<p># ./configure （非默认需要根据nagios用户和组适当指定nsca的用户和组，选项详细信息在帮助里面）&amp;&amp; make all</p>
+
+<p><strong>2 拷贝相关文件至nagios目录下</strong></p>
+
+<p>#cp sample-config/send_nsca.cfg  /opt/nagios/etc/</p>
+
+<p># cp src/send_nsca  /opt/nagios/bin/</p>
+
+<p>注：权限有问题会导致提交不了监控信息</p>
+
+<p><strong>3 修改nsca.cfg相应选项</strong></p>
+
+<p>enable_notifications=0</p>
+
+<p>obsess_over_services=1</p>
+
+<p>我粘贴我的一个被动检查脚本（用于监控一些关键文件的改动，执行脚本使用定时任务）：</p>
+
+<p>[ccine_perl height="100%" width="99%"]#!/bin/bash</p>
+
+<p>NagiosPath=/opt/nagios</p>
+
+<p>if [ -e $NagiosPath ];then</p>
+
+<p>MD5FILE="/opt/nagios/libexec/sys_files_md5.conf"</p>
+
+<p>SendNscaBin="opt/nagios/bin/send_nsca"</p>
+
+<p>SendNscaConf="/opt/nagios/etc/send_nsca.cfg"</p>
+
+<p>else</p>
+
+<p>MD5FILE="/usr/local/nagios/libexec/sys_files_md5.conf"</p>
+
+<p>SendNscaBin="/usr/local/nagios/bin/send_nsca"</p>
+
+<p>SendNscaConf="/usr/local/nagios/etc/send_nsca.cfg"</p>
+
+<p>fi</p>
+
+<p>MD5SUMBIN="/usr/bin/md5sum"</p>
+
+<p>HostName=`hostname`</p>
+
+<p>Result=`$MD5SUMBIN -c $MD5FILE 2&gt;/dev/null | grep FAILED`</p>
+
+<p>if [ "$Result" != "" ];then</p>
+
+<p>echo -e   "$HostName\tcheck_sys_files\t2\t$Result" | $SendNscaBin -H logserver   -c $SendNscaConf</p>
+
+<p>else</p>
+
+<p>echo -e   "$HostName\tcheck_sys_files\t0\tSystem File is OK." | $SendNscaBin   -H logserver -c $SendNscaConf</p>
+
+<p>fi[/ccine_perl]</p>

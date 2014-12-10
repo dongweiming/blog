@@ -1,0 +1,176 @@
+---
+layout: post
+title: 关于awk研究（二）
+categories:
+- awk
+- linux基础
+tags:
+- awk
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 变量</strong></p>
+
+<p>注：假如有一些需要设置的变量，建议在BEGIN块里面</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com,1120
+113,ailll,ailll.com,1130
+114,ccc,ccc.com,1140</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+FS=",";
+total=0;
+}
+{
+print $2 "'s num is: " $4;
+total+=$4
+}
+END {
+print "---\nTotal num = "total;
+}
+dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+dongwm's num is: 1120
+ailll's num is: 1130
+ccc's num is: 1140
+---
+Total num = 3390  #我曾经把语句没有放在外面，但是计算失败。。。一直没研究出原因
+<strong>2 运算符</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F, '{print ++$4}' test.txt  #自增长
+1121
+1131
+1141
+dongwm@linux-dongwm:~&gt; awk -F ':' '$NF ~ /\/bin\/bash/ { n++ }; END { print n }' /etc/passwd  #计算包含shell的用户数
+14
+<strong>3 算术运算符</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'NR %2==0' test.txt
+113,ailll,ailll.com,1130
+<strong>4  字符串运算</strong>
+dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+FS=",";
+OFS=",";
+string1="Audio";
+string2="Video";
+numberstring="100";
+string3=string1 string2;
+print "Concatenate string is:" string3;
+numberstring=numberstring+1;
+print "String to number:" numberstring;
+}
+dongwm@linux-dongwm:~&gt; awk -f test.awk  #因为在BEGIN里面，是在操作文件前执行，所以可以不指定文件
+Concatenate string is:AudioVideo
+String to number:101
+<strong>5 比较运算符</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F "," '$4 &lt;= 1130 &amp;&amp; $4&gt;=1121' test.txt
+113,ailll,ailll.com,1130
+dongwm@linux-dongwm:~&gt; awk -F "," '$1 == 113 {print $2}' test.txt  匹配$1等于113的行
+ailll
+dongwm@linux-dongwm:~&gt; awk -F "," '$1 &lt; 113 || $4 &lt;= 1120' test.txt
+112,dongwm,dongwm.com,1120
+dongwm@linux-dongwm:~&gt; awk -F ':' '$3 &gt; maxuid { maxuid=$3; maxline=$0 }; \
+&gt; END { print maxuid, maxline }' /etc/passwd  #这是一个很巧妙的方法找到uid最大的那一行数据
+65534 nobody:x:65534:65533:nobody:/var/lib/nobody:/bin/bash
+dongwm@linux-dongwm:~&gt; awk -F ':' '$3&gt;=100 &amp;&amp; $NF ~ /\/bin\/bash/' /etc/passwd   #获取uid大于100 并且 shell是 /bin/bash的行  '~'表示匹配
+nobody:x:65534:65533:nobody:/var/lib/nobody:/bin/bash
+suse-ncc:x:106:109:Novell Customer Center User:/var/lib/YaST2/suse-ncc-fakehome:/bin/bash
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p><strong>6 正则匹配</strong>
+以下2句意思是一样的：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F ":" '$1 == "dongwm"' /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+dongwm@linux-dongwm:~&gt; awk -F ":" '$1 ~ "dongwm"' /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+<strong>7 awk的条件语句</strong></p>
+
+<p>语法：if (conditional-expression)
+action
+或者if (conditional-expression)
+{
+action1;
+action2;
+}
+例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F "," '{ if ($4 &lt;= 1130) print "Only",$4,"qty of",$2, "is available"; }' test.txt
+Only 1120 qty of dongwm is available
+Only 1130 qty of ailll is available</p>
+
+<p>语法：</p>
+
+<p>if (conditional-expression)
+action1
+else
+action2
+或者：conditional-expression ? action1 : action2 ;</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+FS=",";
+}
+{
+if ( $4 &lt;= 1130 )
+print "Buy More: Order", $2, "immediately!"
+else
+print "Sell More: Give discount on", $2,
+"immediately!"
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+Buy More: Order dongwm immediately!
+Buy More: Order ailll immediately!
+Sell More: Give discount on ccc immediately!
+语法：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'ORS=NR%2?",":"\n"' test.txt
+112,dongwm,dongwm.com,1120,113,ailll,ailll.com,1130
+114,ccc,ccc.com,1140,dongwm@linux-dongwm:~&gt;</p>
+
+<p><strong>8 awk的循环语句</strong>
+语法：</p>
+
+<p>while(condition)
+actions  #假如第一次执行错误就会失败</p>
+
+<p>例子：
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { while (count++&lt;50) string=string "x"; print string }'
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+语法：</p>
+
+<p>do
+action
+while(condition)  #就算第一次失败，也会执行一次</p>
+
+<p>语法：</p>
+
+<p>for(initialization;condition;increment/decrement)
+actions
+dongwm@linux-dongwm:~&gt; echo "1 2 3 4" | awk '{ for (i = 1; i &lt;= NF; i++) total =total+$i }; END { print total }'
+10</p>
+
+<p>9 break和Continue
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{x=1;while(x&lt;=10){if(x==5){x++;break;}print "Value of x",x;x++;}}'
+Value of x 1
+Value of x 2
+Value of x 3
+Value of x 4
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{x=1;while(x&lt;=10){if(x==5){x++;continue;}print "Value of x",x;x++;}}'
+Value of x 1
+Value of x 2
+Value of x 3
+Value of x 4
+Value of x 6
+Value of x 7
+Value of x 8
+Value of x 9
+Value of x 10<strong></strong></p>
+
+<p>&nbsp;</p>

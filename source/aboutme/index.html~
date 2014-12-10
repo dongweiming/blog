@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8" />
+    <meta name="author" content="Dongweiming" />
+    <meta name="copyright" content="dongwm.com" />
+	<title>关于我</title>
+	<meta http-equiv="imagetoolbar" content="no">
+	<link href="css/page.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<h1>关于我</h1>
+
+	<div id="box" class="docBox">
+	<p>这是我的博客 - <a href="http://www.dongwm.com/" target="_blank">小明明s à domicile</a>, 那么我是谁？
+			<p>Email - <a href="mailto:ciici1234@hotmail.com">ciici1234#hotmail.com</a></p>
+			<p>QQ - <a href="tencent://message/?exe=qq&amp;menu=yes&amp;Uin=61966225">点击这里</a></p>
+			<p>github - <a href="https://github.com/dongweiming" target="_blank">dongweiming</a></p>
+			<p>51cto - <a href="http://dongwm.blog.51cto.com" target="_blank">小明明的窝</a></p>
+			<p>zhihu - <a href="http://www.zhihu.com/people/dongweiming" target="_blank">@dongweiming</a>（经常逛逛）</p>
+			<p>quora - <a href="http://www.quora.com/Weiming-Dong" target="_blank">@Weiming-Dong(经常逛逛)</a></p>
+			<p>小明明s Github Blog - <a href="http://dongweiming.github.io" target="_blank">dongweiming.github.io</a></p>
+			<p>GAE - <a href="http://youhouer.appspot.com" target="_blank">youhouer.appspot.com</a>（关于爱情）</p>
+	</div>
+
+	<div id="frm"></div>
+
+	<form id="mtxform" name="mtxform">
+	<span id="inputext" class="hidden">
+	<textarea rows="6" cols="46" id="text" name="text">
+	出生年代: 在那个传说中的1985
+	工作时间: 2009,11-至今（毕业较晚, 每思于此, 唯长叹而已矣）
+	技术: python/lisp/web前端
+	目前工作: 运维→ devops → RD@douban
+	自评: 我不会弹卡农, 只能作码农,, 但是想做一个伟大的程序员
+	  - by  Dongweiming
+	</textarea>
+	</span>
+	</form>
+
+
+    <script src="js/about.js"></script>
+    <script type="text/javascript">
+        onload = function () {
+            document.getElementById('frm').style['height'] = document.documentElement.clientHeight - document.getElementById('box').offsetHeight - 60 + 'px';
+            mtx.init("frm", 800, 150, [255,255,255], [255,64,0], [44,44,44]);
+        }
+	</script>
+
+</body>
+</html>

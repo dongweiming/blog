@@ -1,0 +1,108 @@
+---
+layout: post
+title: 关于shutil研究
+categories:
+- linux基础
+- python模块研究
+tags:
+- shutil
+published: true
+comments: true
+indexer: true
+---
+<p>前言：shutil是一个高层次的文件操作，比如复制，移动和修改权限等</p>
+
+<p><pre class="sh_python">
+import os
+import time 
+from shutil import *
+from commands import *
+print 'BEFORE:', os.listdir(os.getcwd())
+copyfile('text', 'test_to_copy')   #将源文件内容完全复制给目标文件. 如果没有写入目标文件的权限, 会引起IOError. 
+                            #由于该函数是为了读取文件内容而打开此输入文件, 而不管它的类型是什么, 特殊类型的文件使用copyfile()是不能拷贝的, 比如管道文件
+print 'AFTER:', os.listdir(os.getcwd())
+print
+os.mkdir('example')
+print 'BEFORE:', os.listdir('example')
+copy('test.py', 'example') #类似于Unix命令cp. 如果目标参数是一个目录而不是一个文件, 那么在这个目录中复制一个源文件副本(它与源文件同名). 文件的权限也随之复制
+print 'AFTER:', os.listdir('example')
+print
+def show_file_info(filename):
+    stat_info = os.stat(filename)
+    print '\tMode    :', stat_info.st_mode
+    print '\tCreated :', time.ctime(stat_info.st_ctime)
+    print '\tAccessed:', time.ctime(stat_info.st_atime)
+    print '\tModified:', time.ctime(stat_info.st_mtime)
+rmtree('example') #可以删除整个目录树. 里面若产生错误会作为异常抛出. 但是如果它的第二个参数是目录树, 那么错误会被忽略, 第三个参数可以指定为一个特殊出错处理函数句柄.
+os.mkdir('example')
+print 'SOURCE:'
+show_file_info('test.py')
+copy2('test', 'example') #copy2()函数类似于copy(), 但是它将一些元信息, 如文件最后一次被读取时间和修改时间等, 也复制至新文件中.
+print 'DEST:'
+show_file_info('test.py')
+print
+print 'BEFORE:', getstatus('test1.py')
+copymode('test.py', 'test1.py')
+print 'AFTER :', getstatus('test1.py')
+print
+print 'BEFORE:'
+show_file_info('test1.py')
+copystat('test.py', 'test1.py') #复制文件的其他元信息(权限, 最后读取时间, 最后修改时间)
+print 'AFTER :'
+show_file_info('test1.py')
+print
+print 'BEFORE:'
+print getoutput('ls -rlast /tmp/example')
+copytree('example', '/tmp/example')
+print 'AFTER:'
+print getoutput('ls -rlast /tmp/example')
+print
+print 'BEFORE: example : ', os.listdir('example')
+move('example', 'example2')
+print 'AFTER : example2: ', os.listdir('example2')
+</pre></p>
+
+<p>执行结果</p>
+
+<p>dongwm@linux-dongwm:~/test&gt; python test.py</p>
+
+<p>BEFORE: ['text', 'test.py']
+AFTER: ['text', 'test.py', 'test_to_copy']
+BEFORE: []
+AFTER: ['test.py']</p>
+
+<p>SOURCE:
+Mode    : 33188
+Created : Fri Jun 15 11:08:12 2012
+Accessed: Fri Jun 15 11:08:12 2012
+Modified: Fri Jun 15 11:08:11 2012
+DEST:
+Mode    : 33188
+Created : Fri Jun 15 11:08:12 2012
+Accessed: Fri Jun 15 11:08:12 2012
+Modified: Fri Jun 15 11:08:11 2012</p>
+
+<p>BEFORE: -rwxr-xr-x 1 dongwm users 965  6月 14 17:45 test1.py
+AFTER : -rw-r--r-- 1 dongwm users 965  6月 14 17:45 test1.py</p>
+
+<p>BEFORE:
+Mode    : 33188
+Created : Fri Jun 15 11:11:39 2012
+Accessed: Thu Jun 14 17:45:57 2012
+Modified: Thu Jun 14 17:45:54 2012
+AFTER :
+Mode    : 33188
+Created : Fri Jun 15 11:14:23 2012
+Accessed: Fri Jun 15 11:14:23 2012
+Modified: Fri Jun 15 11:14:20 2012</p>
+
+<p>BEFORE:
+ls: 无法访问/tmp/example: 没有那个文件或目录
+AFTER:
+总用量 28
+4 -rw-r--r--   1 dongwm users   468  6月 15 11:08 test.py
+4 drwxr-xr-x   2 dongwm users  4096  6月 15 11:08 .
+20 drwxrwxrwt 355 root   root  20480  6月 15 11:16 ..</p>
+
+<p>BEFORE: example :  ['test.py']
+AFTER : example2:  ['test.py']</p>

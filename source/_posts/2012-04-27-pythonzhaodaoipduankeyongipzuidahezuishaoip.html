@@ -1,0 +1,47 @@
+---
+layout: post
+title: python找到ip段可用ip最大和最少ip
+categories:
+- python
+tags:
+- python ip段
+published: true
+comments: true
+indexer: true
+---
+<p>前言：一个小需求，当用户输入‘XXX.XXX.XXX.XXX/XX’（ip/netmask）时候自动帮他分析出这个网段除去网络号和广播地址外的开始和结束ip</p>
+
+<p><pre class="sh_python">
+def ipto(iplist):
+    data = iplist.split('/')
+    ip= data[0]
+    ti = int(data[1])
+    d = int(ti/8)
+    c = 256/(2**(ti%8))
+    ip_items = ip.split('.')
+    if len(ip_items[d:]) == 1:
+        if ti%8 == 0:
+            cmin = '%s.%s' % ('.'.join(ip_items[:d]),'0')
+            cmax = '%s.%s' % ('.'.join(ip_items[:d]),'255')
+        else:
+            for i in range(2**(ti%8)):
+	        mymax = (i+1)*c-1
+	        mymin=  i*c
+	        data =  int(''.join(ip_items[d:]))
+	        if data &lt; mymax and data &gt;= mymin:
+	            cmin = '%s.%s' % ('.'.join(ip_items[:d]),mymin)
+  	            cmax = '%s.%s' % ('.'.join(ip_items[:d]),mymax)
+    else:
+        if ti%8 == 0:
+             cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),'0',('0.'*(len(ip_items)-d-1))[:-1])
+             cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),'255',('255.'*(len(ip_items)-d-1))[:-1])
+        else:
+	    for i in range(2**(ti%8)):
+                mymax = (i+1)*c-1
+                mymin=  i*c
+	        data =  int(''.join(ip_items[d]))
+	        if data &lt; mymax and data &gt;= mymin:
+		    cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymin,('0.'*(len(ip_items)-d-1))[:-1])
+		    cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymax,('255.'*(len(ip_items)-d-1))[:-1])
+    print  cmin,cmax
+</pre></p>

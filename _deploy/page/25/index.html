@@ -1,0 +1,999 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/25">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pythonfasongyoujian/">Python 发送中文邮件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-08T00:00:00+08:00" pubdate data-updated="true">Jul 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>发送邮件直接参考本文</p>
+
+<p>mail_server = &#8216;mail@dongwm.com&#8217;
+mail_server_port = 25
+mail_user=&#8217;ops@dongwm.com&#8217;
+mail_list = [&#8216;dongwm@dongwm.com&#8217;,&#8217;XXX@dongwm.com&#8217;]
+sub=&#8217;邮件标题内容‘</p>
+
+<p>content=&#8217;邮件内容&#8217;</p>
+
+<p>def send_mail(mail_list,sub,content):
+msg=email.MIMEText.MIMEText(content,_subtype=&#8217;plain&#8217;,_charset=&#8217;gb2312&#8217;)
+msg[&#8216;Subject&#8217;] = sub
+msg[&#8216;From&#8217;] = &#8216;ops@dongwm.com&#8217;
+msg[&#8216;To&#8217;] = &#8220;;&#8221;.join(mail_list)
+msg[&#8216;date&#8217;]=time.ctime()
+me = mail_user+&#8217;&lt;&#8217;+mail_user+&#8217;@&#8217;+&#8217;dongwm.com+&#8217;&gt;&#8217;
+body=email.MIMEText.MIMEText(content,_charset=&#8217;gb2312&#8217;)
+bb =msg.as_string()+body.as_string()
+s = smtplib.SMTP(mail_server, mail_server_port)
+s.sendmail(me,mail_list,msg.as_string())
+s.quit()</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/centos%E4%B8%8Bvsftpd%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%9E%B6%E8%AE%BEftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">STP特性总结（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-23T00:00:00+08:00" pubdate data-updated="true">Jun 23<span>rd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p><strong>1 Tuning Timers 以尽量减少延误而端口在听/学习状态的时间</strong></p>  <p>spanning-tree vlan 1 root primary   spanning-tree vlan 1 forward-time 4</p>  <p>SW1#show spanning-tree vlan 1   VLAN0001    Spanning tree enabled protocol ieee    Root ID Priority 24577    Address 0016.4639.d580    This bridge is the root    Hello Time 2 sec Max Age 20 sec Forward Delay 4 sec    Bridge ID Priority 24577 (priority 24576 sys-id-ext 1)    Address 0016.4639.d580    Hello Time 2 sec Max Age 20 sec Forward Delay 4 sec    Aging Time 15</p>  <p>SW2#debug spanning-tree events   Spanning Tree event debugging is on    SW2#conf t    Enter configuration commands, one per line. End with CNTL/Z.    SW2(config)#int fa 0/3    SW2(config-if)#shut    01:00:02: STP: VLAN0001 sent Topology Change Notice on Fa0/13    01:00:04: %LINK-5-CHANGED: Interface FastEthernet0/3, changed state to    administratively down    01:00:05: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3,    changed state to down    SW2(config-if)#no shut    01:00:10: %LINK-3-UPDOWN: Interface FastEthernet0/3, changed state to down    01:00:10: set portid: VLAN0001 Fa0/3: new port id 8005    01:00:10: STP: VLAN0001 Fa0/3 -&gt; listening    01:00:12: %LINK-3-UPDOWN: Interface FastEthernet0/3, changed state to up    01:00:13: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3,    changed state to up    01:00:14: STP: VLAN0001 Fa0/3 -&gt; learning    01:00:18: STP: VLAN0001 sent Topology Change Notice on Fa0/13    01:00:18: STP: VLAN0001 Fa0/3 –&gt; forwarding&#160; //注意从监听-学习-转发状态都是用了4秒</p></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/centos%E4%B8%8Bvsftpd%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%9E%B6%E8%AE%BEftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/zxtm%E5%AE%9E%E7%8E%B0mongodb%E7%9A%84route-server%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/">zxtm实现mongodb的Route Server负载均衡</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Route Server是一个mongos 实例，客户端由此接入，可以让整个集群看上去像单一数据库，简单的理解就是一个前端的路由。在实际配置中Route Server的冗余那也是很必须的，伟大的ZXTM也支持了它！关键步骤是1&nbsp; 创建pool时每个node都填入其ip和route sever的端口2&nbsp; 在创建virtual server时选择协议“Generic&nbsp; client first”这样就可以通过负载均衡来访问：[root@test ~]# mongo 192.168.8.20:30000MongoDB shell version: 1.8.1connecting to: 192.168.8.200:30000/test&gt; </p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/linux-%E5%9C%A8%E7%BA%BF%E5%90%AC%E6%AD%8C%E8%BD%AF%E4%BB%B6/">Linux 在线听歌软件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直遗憾的是linux没有什么好的音乐软件，比如实现一些重复播放，保存列表的方式也比较落后，后来发现了这款亦歌AIR版本(并且显示歌词额)：
+<img style="max-width: 800px;" src="http://www.flickr.com/photos/56416171@N03/5832311362/" alt="" />
+<img style="max-width: 800px;" src="http://farm4.static.flickr.com/3358/5832311362_124f342c81_b.jpg" alt="" /></p>
+
+<p><a href="http://get.adobe.com/air/" target="_blank">这里可以获得Adobe AIR</a>
+<a href="http://www.1g1g.org/dl.php?id=1g1gair&amp;source=1g1g.air" target="_blank">这里直接下载亦歌.air文件</a></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/luyouqidhcppeizhi/">路由器DHCP配置</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-10T00:00:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>实验要求:
+R1模拟成PC，R2模拟成DHCP服务器。
+R1的E0/0不配置地址，R2的E0/0可配成192.168.1.1/24。
+完成DHCP的相关配置。
+查看R1的e0/0是否成功获得地址。</p>
+
+<p>实验步骤
+R1
+R1(config)#no ip routing
+R1(config)#int e0/0
+R1(config-if)#no shutdown
+R1(config-if)#ip address dhcp</p>
+
+<p>R2
+R2 (config)#int e0/0
+R2 (config-if)#no shutdown
+R2 (config-if)#ip address 192.168.1.1  255.255.255.0
+R2 (config-if)#exit
+R2 (config)#ip dhcp pool dongwm
+R2 (dhcp-config)#network 192.168.1.96  255.255.255.224
+R2 (dhcp-config)#default-router 192.168.1.1
+R2 (dhcp-config)#dns-server 202.106.196.115  202.106.0.20
+R2 (dhcp-config)#domain-name dongwm.com
+R2 (dhcp-config)#lease 1
+R2 (dhcp-config)#exit
+R2 (config)#ip dhcp excluded-address 192.168.1.97  192.168.1.99
+R2 (config)#end
+R2#</p>
+
+<p>测试命令</p>
+
+<p>R1
+R1#sh interface e0/0
+R1#sh run</p>
+
+<p>R2
+R2#sh ip dhcp binding
+R2#sh run</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/ubuntu11-04%E5%AE%89%E8%A3%85macbuntu/">ubuntu11.04安装Macbuntu</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-31T00:00:00+08:00" pubdate data-updated="true">May 31<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>Macbuntu是什么呢？从名字就可以看出来和苹果的Mac OS有关，是滴，他就是让ubuntu变成Mac，并且保留了ubuntu所有的3D特效：</strong>
+<img style="max-width: 800px;" src="http://farm3.static.flickr.com/2699/5779619664_10bb87a0c5_b.jpg" alt="" />它的官方下载地址是：https://sourceforge.net/projects/macbuntu/ 但是目前还没出11.04版本 只能使用10.10版本，需要修改install.sh文件，否则因为版本问题会报错：
+将这一段：</p>
+
+<p>chk_system()
+{
+echo &#8220;&#8221;
+echo &#8220;Checking Ubuntu version&#8230;&#8221;
+#       s=`cat /etc/issue | grep -i &#8220;$UBUNTU&#8221;`
+#       if [ ! -n &#8220;$s&#8221; ]; then
+#               echo &#8220;Failed. System not supported, script will end here&#8221;
+#               echo &#8220;To ignore their compatibility with current OS try ./install.sh force&#8221;
+#               echo &#8220;Exiting&#8230;&#8221;
+#               exit 1;
+#       fi
+echo &#8220;Passed&#8221;
+}
+去掉其中的判断修改为：
+chk_system()
+{
+echo &#8220;&#8221;
+echo &#8220;Checking Ubuntu version&#8230;&#8221;
+echo &#8220;Passed&#8221;
+}
+然后按照提示安装
+<img style="max-width: 800px;" src="http://www.flickr.com/photos/63483712@N05/5779619664/" alt="" /></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/compiz-%E5%A4%96%E6%8C%82%E6%8F%92%E4%BB%B6%E6%AC%A3%E8%B5%8F%E5%92%8C%E5%AE%89%E8%A3%85/">Compiz 外挂插件欣赏和安装</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-27T00:00:00+08:00" pubdate data-updated="true">May 27<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>其实很早就想写一篇关于compiz一个不为人知的插件的安装使用文章。很多人以为compiz就是那一些，其实在http://gitweb.compiz.org/上面有很多插件。不过有一些年代久远没人维护。网上可能有一些介绍这些插件的文章，只是停留在截图和简单地说明，包括ubuntu社区也没有相关的解释。作为一个菜鸟 呵呵 我来写一下：</strong>
+<strong>视频地址：http://v.youku.com/v_show/id_XMjcwNDUyODQ0.html
+视频顺序：wizard，trip，freewins，autumn，stars，snow，fireslies，bubbles，screensaver，dodge（非</strong>
+<strong> “动画”里面的选项），ghost，贯穿始终的包括peek和mousetrails。因为我的电脑比较卡，显卡性能不行，没有展示立体效果的</strong>
+<strong> photowheel和snowglobe以及extra-animations，anaglyph（需要3D眼镜）</strong>
+<strong>1 前提知识准备：</strong>
+cmake：和make类似，全名&#8221;cross platform make”。好像compiz在0.9.0以后编译系统都从automake换成cmake。
+boost库：因为compiz再0.9.0以后重写了C 使用C++ 需要这个C++库
+git：版本控制工具，linux之父所作！一般更新包文件都使用这个工具，我们要下载的compiz插件都是git版本控制</p>
+
+<p><strong>2 前期准备：</strong>
+dongwm@dongwm:~$sudo apt-get install git-core cmake libcairo2-dev librsvg2-dev libglib2.0-dev libpng12-dev libdbus-1-dev libboost-dev libxml2-dev libgl1-mesa-dev libglu1-mesa-dev libwnck-dev libgconf2-dev libx11-xcb-dev libxslt1-dev libnotify-dev libmetacity-dev libgnome-window-settings-dev libgnome-desktop-dev gnome-control-center-dev intltool cython  git
+注 等以后安装过程中要是提示boost不存在或者怎么样 那就是libboost的库没有装全，我没有挨个研究，就把新立得关于boost相关的勾选了
+<strong>3 安装思路</strong></p>
+
+<p>所有的插件地址都在http://gitweb.compiz.org/ 点开每个链接 里面会有类似的地址：git://URL（一个地址）
+然后我们在本地执行：
+dongwm@dongwm:~$git clone git://URL
+一下过程也可以实现：
+dongwm@dongwm:~$cd 下载的插件的英文名称
+dongwm@dongwm:~$mkdir build &amp;&amp; cd build &amp;&amp; cmake .. &amp;&amp; make &amp;&amp; make install
+其中的autumn，snow，气泡等插件都是compiz/plugins-unsupported里面集成了！但是默认不在compiz目录下需要执行以下命令（注意  修改为你实际的家目录，我的用户是dongwm 所以家目录是/home/dongwm，而.compiz-1目录不知道是不是也是同名，反正是“.”开头的compiz目录，如果下面的目录有plugins，metadata等说明就是这个目录）：</p>
+
+<p>cp /usr/local/lib/compiz/lib* /home/dongwm/.compiz-1/plugins/
+cp /usr/local/share/compiz/* /home/dongwm/.compiz-1/metadata/ -rp</p>
+
+<p>问题解决：</p>
+
+<p>/usr/bin/ld: cannot find -lGL
+/usr/bin/ld: cannot find -lGL
+collect2: ld returned 1 exit status
+make[2]: *** [libfreewins.so] 错误 1
+make[1]: *** [CMakeFiles/freewins.dir/all] 错误 2</p>
+
+<p>cd  /usr/lib/
+sudo mv libGL.so libGL.so.bak
+sudo ln -s libGL.so.1 libGL.so</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/peizhiautopagpdeyitaixindao/">配置auto Pagp的以太信道</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-11T00:00:00+08:00" pubdate data-updated="true">May 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>SW1(config)#int range f0/13 -15
+Creating a port-channel interface Port-channel1
+SW1(config-if-range)#
+*Mar  1 00:01:59.131: %EC-5-BUNDLE: Interface Fa0/13 joined port-channel Po1
+*Mar  1 00:01:59.375: %EC-5-BUNDLE: Interface Fa0/14 joined port-channel Po1
+*Mar  1 00:01:59.479: %EC-5-BUNDLE: Interface Fa0/15 joined port-channel Po1
+SW1(config-if-range)#
+*Mar  1 00:02:01.971: %LINEPROTO-5-UPDOWN: Line protocol on Interface Port-channel1, changed state to up
+SW1(config-if-range)#int port-channel1
+SW1(config-if)#switchport mode</p>
+
+<p>SW2(config)#int range f0/13 -15
+Creating a port-channel interface Port-channel1
+SW2(config-if-range)#int port-channel1
+SW2(config-if)#switchport mode  SW1(config)#int range f0/13 -15
+SW2(config-if-range)#channel-group 1 mode auto
+Creating a port-channel interface Port-channel1
+SW2(config-if-range)#
+SW2(config-if-range)#int port-channel1
+SW2(config-if)#switchport mode  dynamic desirable</p>
+
+<p>注：desirable和auto是PAGP协议主动协商和被动协商专用词
+SW1#show etherchannel summary
+Flags: D - down P - in port-channel
+I - stand-alone s - suspended
+H - Hot-standby (LACP only)
+R - Layer3 S - Layer2
+u - unsuitable for bundling
+U - in use f - failed to allocate aggregator
+d - default port
+Number of channel-groups in use: 1
+Number of aggregators: 1
+Group Port-channel Protocol Ports
+&#8212;&#8212;+&#8212;&#8212;&#8212;&#8212;-+&#8212;&#8212;&#8212;&#8211;+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;
+1 Po1(SU) PAgP Fa0/13(P) Fa0/14(P) Fa0/15(P)
+SW1#show interface port-channel1 switchport
+Name: Po1
+Switchport: Enabled
+Administrative Mode: dynamic desirable
+Operational Mode: trunk
+Administrative Trunking Encapsulation: negotiate
+Operational Trunking Encapsulation: isl
+Negotiation of Trunking: On
+Access Mode VLAN: 1 (default)
+Trunking Native Mode VLAN: 1 (default)
+SW1#show interface trunk
+Port Mode Encapsulation Status Native vlan
+Po1 desirable n-isl trunking 1
+Port Vlans allowed on trunk
+Po1 1-4094
+Port Vlans allowed and active in management domain
+Po1 1
+Port Vlans in spanning tree forwarding state and not pruned
+Po1 1
+SW1#show spanning-tree vlan 1
+VLAN0001
+Spanning tree enabled protocol ieee
+Root ID Priority 32769
+Address 000a.f411.0e00
+This bridge is the root
+Hello Time 2 sec Max Age 20 sec Forward Delay 15 sec
+Bridge ID Priority 32769 (priority 32768 sys-id-ext 1)
+Address 000a.f411.0e00
+Hello Time 2 sec Max Age 20 sec Forward Delay 15 sec
+Aging Time 15
+Interface Role Sts Cost Prio.Nbr Type
+&#8212;&#8212;&#8212;&#8212;&#8212;- &#8212;- &#8212; &#8212;&#8212;&#8212; &#8212;&#8212;&#8211; &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;
+Po1 Desg FWD 9 128.65 P2p</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8vsftpd%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%90%AD%E5%BB%BAftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">使用vsftpd虚拟用户搭建FTP服务器</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-10T00:00:00+08:00" pubdate data-updated="true">May 10<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>需求：</strong>
+<strong> 用户：dongwm，ftpuser1,ftpuser2</strong>
+<strong> 用户dongwm可以有本用户和其他2个用户的文件相关权限，ftpuser1和ftpuser2只有对本用户的相关权限，不能查看其他用户信息</strong></p>
+
+<p><strong>思路：用户dongwm使用本地用户，但是不能登录服务器，ftpuser使用虚拟用户，并chroot。</strong></p>
+
+<p><strong>前期准备：</strong></p>
+
+<p><strong>1 安装vsftp</strong>
+yum install vsftpd -y
+<strong>2  安装db4 //虚拟用户数据库相关</strong>
+yum install db4-utils db4 db4-devel db4 -y
+<strong>3  创建相关用户信息文本文件：</strong>
+root@client ~&gt;  cat /etc/vsftpd/virtualuser.txt
+ftpuser1  //用户1
+e5bm0Nw}Bj  //用户1密码
+ftpuser2
+e5bm0sf4ss
+<strong>4 生成数据库文件：</strong>
+db_load -T -t hash -f /etc/vsftpd/virtualuser.txt /etc/vsftpd/virtualuser.db
+chmod 600 /etc/vsftpd/vsftpd_virtualuser.db
+<strong>5 删除用户信息文本文件</strong>
+rm -rf  /etc/vsftpd/virtualuser.txt  //很重要的一步 要不然多恐怖阿？
+<strong>6 修改pam.d验证：</strong>
+root@client ~&gt;  vi /etc/pam.d/vsftpd
+将里面的所有行都注释掉，添加以下2行：
+auth required /lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_virtualuser
+account required /lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_virtualuser
+注：里面使用lib64是因为我的是64位系统  指定的db文件后面没有后缀.db
+<strong>7 创建用户：</strong>
+useradd -s /sbin/nologin -d /var/ftp/dongwm -G ftp dongwm //设置shell不能登录，家目录为/var/ftp/dongwm
+chown 755 /var/ftp/dongwm -R</p>
+
+<p><strong>配置vsftpd：</strong>
+<strong>cd /etc/vsftpd</strong>
+<strong>1 vsftpd.conf  //本地用户使用了这个配置文件的配置</strong>
+anonymous_enable=NO  //因为我们使用了虚拟用户登录 这个选项不需要
+local_enable=YES  //容许本地登录
+write_enable=YES
+local_umask=022
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+xferlog_std_format=YES
+chroot_list_enable=YES  //使用chroot
+chroot_list_file=/etc/vsftpd/chroot_list //这个文件里面列出来的用户是chroot环境
+listen=YES
+pam_service_name=vsftpd  //虚拟用户需要有这个配置
+userlist_enable=YES
+tcp_wrappers=YES
+userlist_deny=NO  //只容许userlist这个文件里面的用户访问ftp
+user_config_dir=/etc/vsftpd/vuserconfig  //虚拟用户的配置文件的主目录
+guest_enable=YES //虚拟用户使用本地用户
+guest_username=dongwm  //指定本地用户dongwm
+virtual_use_local_privs=YES
+chmod_enable=YES
+anon_other_write_enable=YES
+download_enable=YES
+anon_world_readable_only=NO</p>
+
+<p><strong>2 cat chroot_list</strong>
+ftpuser1
+ftpuser2  //这2个用户只能在它的家目录下相关权限
+<strong>3 root@client /etc/vsftpd&gt; cat user_list </strong>
+ftpuser1
+ftpuser2
+dongwm  //只有这三个用户能登录ftp</p>
+
+<p><strong>4 ftpuser1的配置文件，注意文件地址：</strong>
+root@client /etc/vsftpd&gt; cat vuserconfig/ftpuser1
+local_root=/var/ftp/dongwm/ftpuser1 //指定这个用户的家目录地址，在dongwm的家目录的子目录下
+write_enable=YES
+download_enable=YES
+anon_world_readable_only=NO
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+local_umask=022
+ftpuser2的配置文件类似于ftpuser1,只是家目录不同：
+root@client /etc/vsftpd&gt; cat vuserconfig/ftpuser2
+local_root=/var/ftp/dongwm/ftpuser2
+write_enable=YES
+download_enable=YES
+anon_world_readable_only=NO
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+local_umask=022</p>
+
+<p><strong>5 启动服务</strong>
+root@client /etc/vsftpd&gt; /etc/init.d/vsftpd start
+root@client /etc/vsftpd&gt; chkconfig vsftpd on</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/fedora-3d%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0/">Fedora 3D效果实现</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-08T00:00:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>很多会觉得这个有什么可写的。。的确，在ubuntu，opensuse下都是很简单就可以实现的。尤其是suse的ymp一键安装^.^，但是fedora有点问题，因为第一他默认已经安装了一个驱动nouveau，需要先把它禁掉，然后安装你的电脑配置的显卡驱动，这个需要自己去找，然后去官网下载再安装：
+过程如下：
+1 查找下载电脑的显卡品牌型号：
+<pre class="sh_bash">[root@dongwm dongwm]# lspci | grep VGA
+00:0d.0 VGA compatible controller: nVidia Corporation C61 [GeForce 6150SE nForce 430] (rev a2)
+这是nvidia驱动，在官网选择以下信息搜索：
+产品类型-GeForce --产品系列-GeForce 6 Series -- 产品家族 GeForce 6150SE nForce 430 --操作系统 Linux32-bit --语言 Chinese
+然后下载。</pre>
+2 禁用nouveau驱动 （网上的方法都是抄人家的，结果还没抄完。。）
+<pre class="sh_bash">1 编辑grub配置
+vi /boot/grub/grub.conf
+在操作系统的kernel 哪行 末尾 加一句:rdblacklist=nouveau
+类似这样 ：
+kernel /boot/vmlinuz-2.6.35.6-45.fc14.i686 ro root=UUID=7e01d298-0882-4484-b9e9-4da41ccb5308 rd_NO_LUKS rd_NO_LVM rd_NO_MD rd_NO_DM LANG=zh_CN.UTF-8 KEYTABLE=us rhgb quiet rdblacklist=nouveau
+2 设置模块加载黑名单：
+vi /etc/modprobe.d/blacklist.conf
+1 注释   blacklist nvidiafb
+#  blacklist nvidiafb
+2 最后添加一行：
+blacklist nouveau
+3 <span style="color: #ff0000;">这里是关键</span>，dracut 在fedora12以后就取代 initrd 成为新的引导系统：
+# mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img
+# dracut /boot/initramfs-$(uname -r).img $(uname -r)  //重新生成引导系统</pre></p>
+
+<p>3 修改为开机自动文本启动，因为不能打开X窗口，这里也可以编辑开机启动文件选项，因为我需要重启2次  就直接了：
+<pre class="sh_bash"> cat /etc/inittab
+id:3:initdefault:   //5是启动Xwindows 3是文本启动</pre>
+4  下载内核头文件和dkms，因为yum环境下kernel-devel永远是最新的版本，这样安装的就和内核版本不一样，安装驱动时候是找不到头文件的，所以需要指定一下具体的版本：
+<pre class="sh_bash">[root@dongwm dongwm]# rpm -qa |grep kernel
+kernel-headers-2.6.35.12-90.fc14.i686
+kernel-2.6.35.6-45.fc14.i686
+然后下载同一个版本的：
+yum install kernel-devel-2.6.35.6-45.fc14.i686  dkms -y</pre>
+5  重启后检查是不是有nouveau
+<pre class="sh_bash">lsmod|grep nouveau</p>
+
+<p></pre>6 没有就可以安装驱动了：
+<pre class="sh_bash">sh /home/dongwm/NVIDIA-Linux-x86-270.41.06.run
+安装后重启</pre>
+7 下载3D需要的compiz等工具：
+<pre class="sh_bash">yum install compiz compiz-fusion* fusion* emerald emerald-themes avant-window-navigator</pre></p>
+
+<p>在系统工具中有那个熟悉的蓝色图标喽</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/26/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/24/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

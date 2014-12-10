@@ -1,0 +1,147 @@
+---
+layout: post
+title: 关于AWK研究（五）
+categories:
+- awk
+- linux基础
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 IGNORECASE忽略大小写</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk '/aaa/{print}' test.txt   #默认IGNORECASE是0
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{IGNORECASE=1}/aaa/{print}' test.txt
+115,AAA
+<strong>2 ERRNO  错误输出</strong>
+dongwm@linux-dongwm:~&gt; cat test.awk
+{
+print $0;
+x = getline &lt; "dummy-file.txt"
+if ( x == -1 )
+print ERRNO   #当出现一个I／O错误，会把ERRNO变成输出信息
+else
+print $0;
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+112,dongwm,dongwm.com,1120
+没有那个文件或目录
+113,ailll,ailll.com,1130
+没有那个文件或目录
+114,ccc,ccc.com,1140
+没有那个文件或目录
+<strong>3 用户自定义方法</strong></p>
+
+<p>语法：</p>
+
+<p>function fn-name(parameters)
+{
+function-body
+}
+dongwm@linux-dongwm:~&gt; cat test.awk
+{
+i=1; total=0;
+while (i &lt;= NF) {
+mydebug("quantity is " $i);
+total = total + $i;
+i++;
+}
+print "Item", $1, ":","num is",total;
+}
+function mydebug ( message ) {
+printf("DEBUG[%d]&gt;%s\n", NR, message )
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+DEBUG[1]&gt;quantity is 112,dongwm,dongwm.com,1120
+Item 112,dongwm,dongwm.com,1120 : num is 112
+DEBUG[2]&gt;quantity is 113,ailll,ailll.com,1130
+Item 113,ailll,ailll.com,1130 : num is 113
+DEBUG[3]&gt;quantity is 114,ccc,ccc.com,1140
+Item 114,ccc,ccc.com,1140 : num is 114</p>
+
+<p><strong>4 其他语言输出</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk   # 第一步 建立文件域
+BEGIN {
+FS=","
+TEXTDOMAIN = "test"   #这个很重要 最后的.mo文件要一样
+bindtextdomain(".")
+print _"START_TIME:" strftime("%a %b %d %H:%M:%S %Z%Y",systime());
+printf "%-3s\t", _"Num";   #‘_’表示定制，打印时候是不显示的
+printf "%-10s\t", _"Description"
+printf "%-10s\t", _"Domain"
+printf "%-5s\t", _"Price"
+printf"-----------------------------------------------------\n"
+}
+{
+printf "%-3d\t%-10s\t%-10s\t$%-.2f\n",
+$1,$2,$3,$4
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt  #格式化输出为下面
+START_TIME:一  4月 23 10:19:29 CST2012
+Num    Description    Domain        Price    -----------------------------------------------------
+112    dongwm        dongwm.com    $1120.00
+113    ailll         ailll.com     $1130.00
+114    ccc           ccc.com       $1140.00
+dongwm@linux-dongwm:~&gt; gawk --gen-po -f test.awk &gt; test.po  #第二步  创建.po文件(portable object file  便携式对象文件)
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.po
+#: test.awk:5
+msgid "START_TIME:"
+msgstr ""</p>
+
+<p>#: test.awk:6
+msgid "Num"
+msgstr ""</p>
+
+<p>#: test.awk:7
+msgid "Description"
+msgstr ""</p>
+
+<p>#: test.awk:8
+msgid "Domain"
+msgstr ""</p>
+
+<p>#: test.awk:9
+msgid "Price"
+msgstr ""
+第三步 修改.po文件，比如有一行：msgid "START_TIME:"，假如想显示成“Report Generated On:” 可以这样：</p>
+
+<p>#: test.awk:5
+msgid "START_TIME:"
+msgstr "Report Generated On:"
+dongwm@linux-dongwm:~&gt; msgfmt -v test.po  #第四步 建立消息对象
+1 条已翻译消息，4 条未翻译消息.
+dongwm@linux-dongwm:~&gt; ll messages.mo   #生成了这个文件
+-rw-r--r-- 1 dongwm users 89  4月 23 10:25 messages.mo
+dongwm@linux-dongwm:~&gt; mkdir -p en_US/LC_MESSAGES   #拷贝这个文件到你想要的语言目录
+dongwm@linux-dongwm:~&gt; mv messages.mo en_US/LC_MESSAGES/test.mo
+<strong>5 双向通讯</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+command = "sed 's/Awk/Sed and Awk/'"
+print "Awk is Great!" |&amp; command                #“|&amp;”表明它是一个双向的沟通。
+close(command,"to");
+command |&amp; getline tmp  #进程完成，按行输出显示
+print tmp;
+close(command);
+}
+dongwm@linux-dongwm:~&gt; awk -f test.awk
+Sed and Awk is Great!
+<strong>6使用系统命令方法</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN { system("pwd") }'
+/home/dongwm
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { system("date") }'
+2012年 04月 23日 星期一 10:49:10 CST
+<strong>7 时间戳方法</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN { print systime() }'
+1335149444
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { print strftime("%c",systime()) }'
+2012年04月23日 星期一 10时50分53秒<strong></strong></p>

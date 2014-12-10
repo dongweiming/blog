@@ -1,0 +1,113 @@
+---
+layout: post
+title: rpm命令深入研究
+categories:
+- linux基础
+tags:
+- rpm
+published: true
+comments: true
+indexer: true
+---
+<p><strong>rpm命令是工作中经常用得到的命令了，他是Red Hat Package Manager的简称。</strong></p>
+
+<p><strong>1 通过文件查找它属于那个软件包：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">
+<pre class="sh_bash">
+[root@bogon ~]# rpm -qf /usr/bin/multitail
+multitail-5.2.6-1.el5.rf</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>2  查看rpm包大量信息：</strong></p>
+
+<p><!--more--></p>
+
+<p><strong> </strong>
+<table border="0" cellspacing="0" cellpadding="2" width="536">
+<tbody>
+<tr>
+<td width="534" valign="top">
+<pre class="sh_bash">
+[root@bogon ~]# rpm -qip multitail-5.2.6-1.el6.rf.i686.rpm
+warning: multitail-5.2.6-1.el6.rf.i686.rpm: Header V3 DSA signature: NOKEY, key ID 6b8d79e6
+Name        : multitail                    Relocations: (not relocatable)
+Version     : 5.2.6                             Vendor: Dag Apt Repository, <a href="http://dag.wieers.com/apt/">http://dag.wieers.com/apt/</a>
+Release     : 1.el6.rf                      Build Date: Thu 11 Nov 2010 08:58:08 PM EST
+Install Date: (not installed)               Build Host: lisse.hasselt.wieers.com
+Group       : Applications/Text             Source RPM: multitail-5.2.6-1.el6.rf.src.rpm
+Size        : 432097                           License: GPL
+Signature   : DSA/SHA1, Thu 11 Nov 2010 10:57:14 PM EST, Key ID a20e52146b8d79e6
+Packager    : Dries Verachtert &lt;dries@ulyssis.org&gt;
+URL         : <a href="http://www.vanheusden.com/multitail/">http://www.vanheusden.com/multitail/</a>
+Summary     : View one or multiple files like tail but with multiple windows
+Description :
+MultiTail lets you view one or multiple files like the original tail
+program. The difference is that it creates multiple windows on your console
+(with ncurses). Merging of 2 or even more logfiles is possible. It can also
+use colors while displaying the logfiles (through regular expressions), for
+faster recognition of what is important and what not. It can also filter
+lines (again with regular expressions). It has interactive menus for editing
+given regular expressions and deleting and adding windows.</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>3 查看rpm包软件里面文件列表：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">
+<pre class="sh_bash">
+[root@bogon ~]# rpm -qlp multitail-5.2.6-1.el6.rf.i686.rpm
+warning: multitail-5.2.6-1.el6.rf.i686.rpm: Header V3 DSA signature: NOKEY, key ID 6b8d79e6
+/etc/multitail
+/etc/multitail.conf
+/etc/multitail/colors-example.pl
+/etc/multitail/colors-example.sh
+/etc/multitail/convert-simple.pl
+/usr/bin/multitail
+/usr/share/doc/multitail-5.2.6
+/usr/share/doc/multitail-5.2.6/Changes
+/usr/share/doc/multitail-5.2.6/INSTALL
+/usr/share/doc/multitail-5.2.6/license.txt
+/usr/share/doc/multitail-5.2.6/manual-nl.html
+/usr/share/doc/multitail-5.2.6/manual.html
+/usr/share/doc/multitail-5.2.6/multitail.conf
+/usr/share/doc/multitail-5.2.6/readme.txt
+/usr/share/doc/multitail-5.2.6/scripts
+/usr/share/doc/multitail-5.2.6/scripts/colors-example.pl
+/usr/share/doc/multitail-5.2.6/scripts/colors-example.sh
+/usr/share/doc/multitail-5.2.6/scripts/convert-geoip.pl
+/usr/share/doc/multitail-5.2.6/scripts/convert-simple.pl
+/usr/share/doc/multitail-5.2.6/thanks.txt
+/usr/share/man/man1/multitail.1.gz</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>4 列出rpm包的依赖关系：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">
+<pre class="sh_bash">
+[root@bogon ~]# rpm -qRp multitail-5.2.6-1.el6.rf.i686.rpm
+warning: multitail-5.2.6-1.el6.rf.i686.rpm: Header V3 DSA signature: NOKEY, key ID 6b8d79e6
+/bin/sh
+/usr/bin/perl
+config(multitail) = 5.2.6-1.el6.rf
+libc.so.6
+libc.so.6(GLIBC_2.0)
+libc.so.6(GLIBC_2.1)
+libc.so.6(GLIBC_2.2)
+libc.so.6(GLIBC_2.3)
+libc.so.6(GLIBC_2.3.4)
+libc.so.6(GLIBC_2.7)
+libm.so.6
+libm.so.6(GLIBC_2.0)
+libncurses.so.5  </pre></td>
+</tr>
+</tbody>
+</table></p>

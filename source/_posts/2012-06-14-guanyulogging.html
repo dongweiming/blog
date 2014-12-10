@@ -1,0 +1,65 @@
+---
+layout: post
+title: 关于logging
+categories:
+- python模块研究
+tags:
+- logging
+published: true
+comments: true
+indexer: true
+---
+<p>前言：logging为python模块提供状态、错误、信息输出的标准接口</p>
+
+<p><pre class="sh_python">
+import logging</p>
+
+<p>LOG_FILENAME = 'logging.out'
+logging.basicConfig(filename=LOG_FILENAME,  #将信息输入到一个文件
+                    level=logging.DEBUG, #级别是DEBUG
+                    )
+logging.debug('This message should go to the log file') #给文件添加一条信息，如果重复运行就会在文件尾部添加一行一行
+f = open(LOG_FILENAME, 'rt')
+try:
+    body = f.read()
+finally:
+    f.close()</p>
+
+<p>print body
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+DEBUG:root:This message should go to the log file  #前面的'DEBUG'是因为设定的级别，root是默认的。后面会修改</p>
+
+<p><pre class="sh_python">
+import glob
+import logging
+import logging.handlers</p>
+
+<p>LOG_FILENAME = 'logging.out'</p>
+
+<p>my_logger = logging.getLogger('MyLogger')  #默认是数据是'root'，这里修改这个标识
+my_logger.setLevel(logging.DEBUG)</p>
+
+<p>handler = logging.handlers.RotatingFileHandler(LOG_FILENAME,
+                                               maxBytes=20, #文件最大字节数
+                                               backupCount=5, #会轮转5个文件，共6个
+                                               ) #最新的文件总是logging.out，每次达到大小限制，它更名为后缀<tt>.1</tt>，然后.1变成.2，.5删掉
+my_logger.addHandler(handler)</p>
+
+<p>for i in range(20):  
+    my_logger.debug('i = %d' % i)</p>
+
+<p>logfiles = glob.glob('%s*' % LOG_FILENAME) #查看建立的文件
+for filename in logfiles:
+    print filename
+</pre>
+详细级别：CRITICAL 50 ERROR 40 WARNING 30 INFO 20 DEBUG 10 UNSET 0，这个数值比如是10的debug，但是设置日志调试记录模式是INFO，那么这个信息不被打印</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

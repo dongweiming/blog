@@ -1,0 +1,533 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>AST - 像lisp一样自定义代码行为 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery, ast">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">AST - 像lisp一样自定义代码行为</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-29T07:57:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3 id="section">前言</h3>
+
+<p>学common lisp(以下除非特殊需要说明的都简称lisp)以及用emacs的人都有一个体会 - lisp无所不能, 可以使用lisp修改lisp的行为. 什么意思呢?</p>
+
+<p>我来举个例子. 我希望重置<code>+</code>的行为为实际意义的减法<code>-</code>. 看起来这是语言不可能完成的任务, 对lisp来说很简洁(我使用sbcl):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line">* <span class="o">(</span>+ 1 1<span class="o">)</span>
+</span><span class="line">
+</span><span class="line">2  ; 正确结果
+</span><span class="line">* <span class="o">(</span>shadow <span class="s1">&#39;+)</span>
+</span><span class="line">
+</span><span class="line"><span class="s1">T</span>
+</span><span class="line"><span class="s1">* (defgeneric + (a &amp;rest b))</span>
+</span><span class="line">
+</span><span class="line"><span class="s1">#&lt;STANDARD-GENERIC-FUNCTION + (0)&gt;</span>
+</span><span class="line"><span class="s1">* (defmethod + ((a number) &amp;rest b) (apply &#39;</span>cl:- a b<span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="c">#&lt;STANDARD-METHOD + (NUMBER) {1002E43E73}&gt;</span>
+</span><span class="line">* <span class="o">(</span>+ 1 1<span class="o">)</span>
+</span><span class="line">
+</span><span class="line">0  ; 这里的加号的意义其实是我们所理解的<span class="sb">`</span>减号<span class="sb">`</span>
+</span></pre></figure></notextile></div>
+
+<p>是不是很神奇?</p>
+
+<p>那么对于python这种高级语言能不能做到呢? 答案是肯定的. 我们马上就来实现它</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">ast</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s">&#39;1 + 1&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">x</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Sub</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">compile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="mi">0</span>
+</span></pre></figure></notextile></div>
+
+<p>我想大家开始明白AST有多大能量了吧?</p>
+
+<h3 id="ast">AST的故事</h3>
+
+<p><a href="https://docs.python.org/2/library/ast.html">AST</a>中文叫做抽象语法树,
+也就是<code>分析当前版本的python代码的语法, 用一种树的结构解析出来</code>.
+这个模块提供给我们一个在编译代码之前, 用python语言本身去修改.</p>
+
+<p>它的作者是Armin Ronacher.
+如果你听过或者觉得似曾相识, 对. 他就是mitsuhiko - flask的作者.
+也是<a href="http://www.pocoo.org/">pocoo</a>的leader之一(另外一个是看起来不知名的birkenfeld - 对我来说他很有名).</p>
+
+<p>那么AST有什么意义呢? 但是有绝大多数人其实不了解也用不到这个模块, 为什么呢?</p>
+
+<ol>
+  <li>出现需要对代码默认行为做更改的场景很少</li>
+  <li>它主要用来做静态文件的检查, 比如pylint, pychecker，以及写flake8插件. 而我们平时的写代码都是在运行不需要进行预先的语法检查之类, 那么实际接触它就很难得了.</li>
+</ol>
+
+<h3 id="section-1">一些文章的索引</h3>
+
+<p>为了对本文有更深的理解可以看看以下文章</p>
+
+<p><a href="http://pycoders-weekly-chinese.readthedocs.org/en/latest/issue3/static-modification-of-python-with-python-the-ast-module.html#cpython">AST 模块：用 Python 修改 Python 代码</a>这里对流程说的很好了. 可以直接读一下</p>
+
+<p>模块代码也写得非常精炼, 可能不直接让你明白, 那么这时候可以看看</p>
+
+<p><a href="http://greentreesnakes.readthedocs.org/">Abstract Syntax Trees</a>, 这个时候我再强调一下作者吧, takluyver是ipython的核心开发成员, 他也参与了很多我们常用的开源项目, 比如pexpect和pandas</p>
+
+<p>上面的2篇文章写了很多, 既有理解, 也有一些初级的用法.</p>
+
+<h3 id="section-2">我个人用它的例子</h3>
+
+<p>最近做的<a href="https://github.com/dongweiming/slack-alert">slack-alert</a>. 先说它和AST的关系:</p>
+
+<ol>
+  <li>我没有使用注册或者import的方式，而是直接去遍历文件, 找到符合我要求的函数当做一个任务需要执行的任务</li>
+  <li>任务就要设置间隔, 那么会加某种格式的装饰器, 装饰器的参数就是间隔类型, 比如<code>@deco(seconds=10)</code>表示没十秒跑一次的意思</li>
+  <li>我这样就可以放心的写plugin就好了, 我只关注任务本身的逻辑. 而这个装饰器(类似上面说的@deco), 它其实是不存在</li>
+  <li>这个特殊格式的装饰器本身不存在没有关系, 因为我不会直接运行代码, 我只是把代码通过AST的处理, 解析出我要的任务和任务的执行间隔. 再去编译代码.</li>
+</ol>
+
+<p>上代码:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">class</span> <span class="nc">GetJobs</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeTransformer</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># 原来的ast.NodeTransformer其实没有__init__方法</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># 一个方便的获得任务的方法</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get_job_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decorator</span><span class="p">):</span>  <span class="c"># 这属于解析装饰器这个结构, 拿到执行的间隔</span>
+</span><span class="line">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">arg</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">n</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">decorator</span><span class="o">.</span><span class="n">keywords</span>
+</span><span class="line">                <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">arg</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;hours&#39;</span><span class="p">,</span> <span class="s">&#39;seconds&#39;</span><span class="p">,</span> <span class="s">&#39;minutes&#39;</span><span class="p">,</span> <span class="s">&#39;days&#39;</span><span class="p">)</span>
+</span><span class="line">                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Num</span><span class="p">)}</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">visit_FunctionDef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>  <span class="c"># 这个visit_xxx的方法被重载的时候, 就会对这个类型的语法加一些特殊处理. 因为我设计的时候只有函数才有可能是任务</span>
+</span><span class="line">        <span class="n">decorator_list</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">decorator_list</span>  <span class="c"># 或者一个函数的装饰器列表</span>
+</span><span class="line">        <span class="k">if</span> <span class="ow">not</span> <span class="n">decorator_list</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">node</span>  <span class="c"># 没有装饰器明显不是我想要的任务, 可能只是一个helper函数而已</span>
+</span><span class="line">        <span class="n">decorator</span> <span class="o">=</span> <span class="n">decorator_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># 这里我把最外面的装饰器取出来看看是不是符合我要的格式</span>
+</span><span class="line">        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_job_args</span><span class="p">(</span><span class="n">decorator</span><span class="p">)</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>  <span class="c"># 当获得了适合的参数, 那么正确这个格式是正确的</span>
+</span><span class="line">            <span class="n">node</span><span class="o">.</span><span class="n">decorator_list</span> <span class="o">=</span> <span class="n">decorator_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="c"># 最外面的装饰器就是语法hack, 它不存在也没有意义，以后完成历史任务 去掉之</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">node</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">find_jobs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span class="line">    <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+</span><span class="line">            <span class="nb">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span><span class="line">            <span class="k">if</span> <span class="ow">not</span> <span class="nb">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.py&#39;</span><span class="p">):</span>
+</span><span class="line">                <span class="k">continue</span>
+</span><span class="line">            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">                <span class="n">expr_ast</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c"># 读文件, 解析</span>
+</span><span class="line">                <span class="n">transformer</span> <span class="o">=</span> <span class="n">GetJobs</span><span class="p">()</span>
+</span><span class="line">                <span class="n">sandbox</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># 其实就是把执行放在一个命名空间里面, 因为最后我还是会把任务编译执行的, 我在这里面存了执行后的环境</span>
+</span><span class="line">                <span class="k">exec</span><span class="p">(</span><span class="nb">compile</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">expr_ast</span><span class="p">),</span>
+</span><span class="line">                             <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;exec&#39;</span><span class="p">),</span> <span class="n">sandbox</span><span class="p">)</span>
+</span><span class="line">                <span class="n">jobs</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">sandbox</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">transformer</span><span class="o">.</span><span class="n">jobs</span><span class="p">])</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">jobs</span>
+</span></pre></figure></notextile></div>
+
+<p>其实看起来不能完成的事情, 就是这么简单.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-29T07:57:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ast/'>ast</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/" title="Previous Post:
+        slack-alert - 把定时任务的结果发送slack消息的微框架">&laquo; slack-alert - 把定时任务的结果发送slack消息的微框架</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/dou-ban-tiao-mu-zu-zhao-pin/"
+        title="Next Post: [置顶]豆瓣条目组招聘-产品开发">[置顶]豆瓣条目组招聘-产品开发
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

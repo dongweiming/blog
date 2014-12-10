@@ -1,0 +1,638 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ipython的一些高级用法(一) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Ipython的一些高级用法(一)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-07T09:56:00+08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4 id="section">前言</h4>
+
+<p>以前在我的PPT<a href="http://dongweiming.github.io/Expert-Python/">python高级编程</a>也提到了一些关于ipython的用法. 今天继续由浅入深的看看ipython,
+本文作为读者的你已经知道ipython并且用了一段时间了.</p>
+
+<h5 id="run">%run</h5>
+
+<p>这是一个magic命令, 能把你的脚本里面的代码运行, 并且把对应的运行结果存入ipython的环境变量中:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat t.py
+</span><span class="line"># coding=utf-8
+</span><span class="line">l = range(5)
+</span><span class="line">
+</span><span class="line">$ipython
+</span><span class="line">In [1]: %run t.py # `%`可加可不加
+</span><span class="line">
+</span><span class="line">In [2]: l # 这个l本来是t.py里面的变量, 这里直接可以使用了
+</span><span class="line">Out[2]: [0, 1, 2, 3, 4]</span></pre></figure></notextile></div>
+
+<h5 id="alias">alias</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="o">%</span><span class="n">alias</span> <span class="n">largest</span> <span class="n">ls</span> <span class="o">-</span><span class="mi">1</span><span class="n">sSh</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">%</span><span class="n">s</span>
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">largest</span> <span class="n">to</span>
+</span><span class="line"><span class="n">total</span> <span class="mi">42</span><span class="n">M</span>
+</span><span class="line"> <span class="mi">20</span><span class="n">K</span> <span class="n">tokenize</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"> <span class="mi">16</span><span class="n">K</span> <span class="n">tokenize</span><span class="o">.</span><span class="n">pyc</span>
+</span><span class="line"><span class="mf">8.0</span><span class="n">K</span> <span class="n">story</span><span class="o">.</span><span class="n">html</span>
+</span><span class="line"><span class="mf">4.0</span><span class="n">K</span> <span class="n">autopep8</span>
+</span><span class="line"><span class="mf">4.0</span><span class="n">K</span> <span class="n">autopep8</span><span class="o">.</span><span class="n">bak</span>
+</span><span class="line"><span class="mf">4.0</span><span class="n">K</span> <span class="n">story_layout</span><span class="o">.</span><span class="n">html</span>
+</span></pre></figure></notextile></div>
+
+<p>PS 别名需要存储的, 否则重启ipython就不存在了:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="o">%</span><span class="n">store</span> <span class="n">largest</span>
+</span><span class="line"><span class="n">Alias</span> <span class="n">stored</span><span class="p">:</span> <span class="n">largest</span> <span class="p">(</span><span class="n">ls</span> <span class="o">-</span><span class="mi">1</span><span class="n">sSh</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">%</span><span class="n">s</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>下次进入的时候<code>%store -r</code></p>
+
+<h5 id="bookmark---">bookmark - 对目录做别名</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="o">%</span><span class="n">pwd</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="s">u&#39;/home/vagrant&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="o">%</span><span class="n">bookmark</span> <span class="n">dongxi</span> <span class="o">~/</span><span class="n">shire</span><span class="o">/</span><span class="n">dongxi</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="o">%</span><span class="n">cd</span> <span class="n">dongxi</span>
+</span><span class="line"><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">vagrant</span><span class="o">/</span><span class="n">shire</span><span class="o">/</span><span class="n">dongxi_code</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="o">%</span><span class="n">pwd</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="s">u&#39;/home/vagrant/shire/dongxi_code&#39;</span>
+</span></pre></figure></notextile></div>
+
+<h5 id="ipcluster---">ipcluster - 并行计算</h5>
+
+<p>其实ipython提供的方便的并行计算的功能. 先回答ipython做并行计算的特点:</p>
+
+<p>1.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line"><span class="nv">$wget</span> http://www.gutenberg.org/files/27287/27287-0.txt
+</span></pre></figure></notextile></div>
+
+<p>第一个版本是直接的, 大家习惯的用法.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">re</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">io</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">non_word</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;[\W\d]+&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">common_words</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;the&#39;</span><span class="p">,</span><span class="s">&#39;of&#39;</span><span class="p">,</span><span class="s">&#39;and&#39;</span><span class="p">,</span><span class="s">&#39;in&#39;</span><span class="p">,</span><span class="s">&#39;to&#39;</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;is&#39;</span><span class="p">,</span><span class="s">&#39;it&#39;</span><span class="p">,</span><span class="s">&#39;that&#39;</span><span class="p">,</span><span class="s">&#39;which&#39;</span><span class="p">,</span><span class="s">&#39;as&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;by&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;be&#39;</span><span class="p">,</span><span class="s">&#39;this&#39;</span><span class="p">,</span><span class="s">&#39;with&#39;</span><span class="p">,</span><span class="s">&#39;are&#39;</span><span class="p">,</span><span class="s">&#39;from&#39;</span><span class="p">,</span><span class="s">&#39;will&#39;</span><span class="p">,</span><span class="s">&#39;at&#39;</span><span class="p">,</span><span class="s">&#39;you&#39;</span><span class="p">,</span><span class="s">&#39;not&#39;</span><span class="p">,</span><span class="s">&#39;for&#39;</span><span class="p">,</span><span class="s">&#39;no&#39;</span><span class="p">,</span><span class="s">&#39;have&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;i&#39;</span><span class="p">,</span><span class="s">&#39;or&#39;</span><span class="p">,</span><span class="s">&#39;if&#39;</span><span class="p">,</span><span class="s">&#39;his&#39;</span><span class="p">,</span><span class="s">&#39;its&#39;</span><span class="p">,</span><span class="s">&#39;they&#39;</span><span class="p">,</span><span class="s">&#39;but&#39;</span><span class="p">,</span><span class="s">&#39;their&#39;</span><span class="p">,</span><span class="s">&#39;one&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">,</span><span class="s">&#39;he&#39;</span><span class="p">,</span><span class="s">&#39;when&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;than&#39;</span><span class="p">,</span><span class="s">&#39;so&#39;</span><span class="p">,</span><span class="s">&#39;these&#39;</span><span class="p">,</span><span class="s">&#39;them&#39;</span><span class="p">,</span><span class="s">&#39;may&#39;</span><span class="p">,</span><span class="s">&#39;see&#39;</span><span class="p">,</span><span class="s">&#39;other&#39;</span><span class="p">,</span><span class="s">&#39;was&#39;</span><span class="p">,</span><span class="s">&#39;has&#39;</span><span class="p">,</span><span class="s">&#39;an&#39;</span><span class="p">,</span><span class="s">&#39;there&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;more&#39;</span><span class="p">,</span><span class="s">&#39;we&#39;</span><span class="p">,</span><span class="s">&#39;footnote&#39;</span><span class="p">,</span> <span class="s">&#39;who&#39;</span><span class="p">,</span> <span class="s">&#39;had&#39;</span><span class="p">,</span> <span class="s">&#39;been&#39;</span><span class="p">,</span>  <span class="s">&#39;she&#39;</span><span class="p">,</span> <span class="s">&#39;do&#39;</span><span class="p">,</span> <span class="s">&#39;what&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;her&#39;</span><span class="p">,</span> <span class="s">&#39;him&#39;</span><span class="p">,</span> <span class="s">&#39;my&#39;</span><span class="p">,</span> <span class="s">&#39;me&#39;</span><span class="p">,</span> <span class="s">&#39;would&#39;</span><span class="p">,</span> <span class="s">&#39;could&#39;</span><span class="p">,</span> <span class="s">&#39;said&#39;</span><span class="p">,</span> <span class="s">&#39;am&#39;</span><span class="p">,</span> <span class="s">&#39;were&#39;</span><span class="p">,</span> <span class="s">&#39;very&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;your&#39;</span><span class="p">,</span> <span class="s">&#39;did&#39;</span><span class="p">,</span> <span class="s">&#39;not&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">yield_words</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="kn">import</span> <span class="nn">io</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;latin-1&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="n">word</span> <span class="o">=</span> <span class="n">non_word</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="k">if</span> <span class="n">word</span> <span class="ow">and</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">common_words</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>                     <span class="k">yield</span> <span class="n">word</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">word_count</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">word_iterator</span> <span class="o">=</span> <span class="n">yield_words</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">counts</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">try</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="n">word</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">word_iterator</span><span class="p">)</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="k">break</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">else</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="n">counts</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">return</span> <span class="n">counts</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span> <span class="c"># 脑残了 忘记放进去了..</span>
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="o">%</span><span class="n">time</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">word_count</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line"><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">88.5</span> <span class="n">ms</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mf">2.48</span> <span class="n">ms</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mi">91</span> <span class="n">ms</span>
+</span><span class="line"><span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">89.3</span> <span class="n">ms</span>
+</span></pre></figure></notextile></div>
+
+<p>现在用ipython来跑一下:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">ipcluster</span> <span class="n">start</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span> <span class="c"># 好吧, 我的Mac是双核的</span>
+</span></pre></figure></notextile></div>
+
+<p>先讲下ipython 并行计算的用法:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">IPython.parallel</span> <span class="kn">import</span> <span class="n">Client</span> <span class="c"># import之后才能用%px*的magic</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">rc</span><span class="o">.</span><span class="n">ids</span> <span class="c"># 因为我启动了2个进程</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="o">%</span><span class="n">autopx</span> <span class="c"># 如果不自动 每句都需要: `%px xxx`</span>
+</span><span class="line"><span class="o">%</span><span class="n">autopx</span> <span class="n">enabled</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">os</span> <span class="c"># 这里没autopx的话 需要: `%px import os`</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="k">print</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span> <span class="c"># 2个进程的pid</span>
+</span><span class="line"><span class="p">[</span><span class="n">stdout</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="mi">62638</span>
+</span><span class="line"><span class="p">[</span><span class="n">stdout</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="mi">62636</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="o">%</span><span class="n">pxconfig</span> <span class="o">--</span><span class="n">targets</span> <span class="mi">1</span> <span class="c"># 在autopx下 这个magic不可用</span>
+</span><span class="line"><span class="p">[</span><span class="n">stderr</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="n">ERROR</span><span class="p">:</span> <span class="n">Line</span> <span class="n">magic</span> <span class="n">function</span> <span class="sb">`%pxconfig`</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span>
+</span><span class="line"><span class="p">[</span><span class="n">stderr</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="n">ERROR</span><span class="p">:</span> <span class="n">Line</span> <span class="n">magic</span> <span class="n">function</span> <span class="sb">`%pxconfig`</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="o">%</span><span class="n">autopx</span> <span class="c"># 再执行一次就会关闭autopx</span>
+</span><span class="line"><span class="o">%</span><span class="n">autopx</span> <span class="n">disabled</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="o">%</span><span class="n">pxconfig</span> <span class="o">--</span><span class="n">targets</span> <span class="mi">1</span> <span class="c"># 指定目标对象, 这样下面执行的代码就会只在第2个进程下运行</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="o">%%</span><span class="n">px</span> <span class="o">--</span><span class="n">noblock</span> <span class="c"># 其实就是执行一段非阻塞的代码</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">AsyncResult</span><span class="p">:</span> <span class="n">execute</span><span class="o">&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="o">%</span><span class="n">pxresult</span> <span class="c"># 看 只返回了第二个进程的pid</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">21</span><span class="p">]:</span> <span class="mi">62636</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rc</span><span class="p">[:]</span> <span class="c"># 使用全部的进程, ipython可以细粒度的控制那个engine执行的内容</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="k">with</span> <span class="n">v</span><span class="o">.</span><span class="n">sync_imports</span><span class="p">():</span> <span class="c"># 每个进程都导入time模块</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>
+</span><span class="line"><span class="n">importing</span> <span class="n">time</span> <span class="n">on</span> <span class="n">engine</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="n">v</span><span class="o">.</span><span class="n">map_sync</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c"># 同步的执行</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">81</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c"># 异步的执行</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="n">r</span><span class="o">.</span><span class="n">ready</span><span class="p">(),</span> <span class="n">r</span><span class="o">.</span><span class="n">elapsed</span> <span class="c"># celery的用法</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="mf">5.87735</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="c"># 获得执行的结果</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">81</span><span class="p">]</span>
+</span></pre></figure></notextile></div>
+
+<p>入正题:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">split_text</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">nlines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">block</span> <span class="o">=</span> <span class="n">nlines</span><span class="o">//</span><span class="n">n</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>        <span class="n">chunk</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">block</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">block</span><span class="p">)]</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;count_file</span><span class="si">%i</span><span class="s">.txt&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">fnames</span> <span class="o">=</span> <span class="p">[</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s">&#39;count_file</span><span class="si">%i</span><span class="s">.txt&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="c"># 不用glob是为了精准</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="k">return</span> <span class="n">fnames</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">parallel</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="n">view</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">load_balanced_view</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rc</span><span class="p">[:]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="n">v</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">non_word</span><span class="o">=</span><span class="n">non_word</span><span class="p">,</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">yield_words</span><span class="o">=</span><span class="n">yield_words</span><span class="p">,</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">common_words</span><span class="o">=</span><span class="n">common_words</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="p">))</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">AsyncResult</span><span class="p">:</span> <span class="n">_push</span><span class="o">&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]:</span> <span class="n">fnames</span> <span class="o">=</span> <span class="n">split_text</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">27</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">count_parallel</span><span class="p">():</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="n">pcounts</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">word_count</span><span class="p">,</span> <span class="n">fnames</span><span class="p">)</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">for</span> <span class="n">pcount</span> <span class="ow">in</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pcount</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>             <span class="n">counts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">return</span> <span class="n">counts</span><span class="p">,</span> <span class="n">pcounts</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]:</span> <span class="o">%</span><span class="n">time</span> <span class="n">counts</span><span class="p">,</span> <span class="n">pcounts</span> <span class="o">=</span> <span class="n">count_parallel</span><span class="p">()</span> <span class="c"># 这个时间包含了我再聚合的时间</span>
+</span><span class="line"><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">47.6</span> <span class="n">ms</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mf">6.67</span> <span class="n">ms</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mf">54.3</span> <span class="n">ms</span> <span class="c"># 是不是比直接运行少了很多时间?</span>
+</span><span class="line"><span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mi">106</span> <span class="n">ms</span> <span class="c"># 这个时间是</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">serial_time</span><span class="p">,</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">wall_time</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="p">(</span><span class="mf">0.104384</span><span class="p">,</span> <span class="mf">0.13980499999999998</span><span class="p">,</span> <span class="mf">0.104384</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>更多地关于并行计算请看这里: <a href="http://nbviewer.ipython.org/url/www.astro.washington.edu/users/vanderplas/Astr599/notebooks/21_IPythonParallel.ipynb">Parallel Computing with IPython</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-07T09:56:00+08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ipython/'>ipython</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/pythonji-ge-te-bie-de-kai-tou-de-fang-fa/" title="Previous Post:
+        python几个特别的__开头的方法">&laquo; python几个特别的__开头的方法</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa-er/"
+        title="Next Post: ipython的一些高级用法(二)">ipython的一些高级用法(二)
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

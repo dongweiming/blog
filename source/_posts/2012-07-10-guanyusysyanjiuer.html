@@ -1,0 +1,174 @@
+---
+layout: post
+title: 关于sys研究（二）
+categories:
+- python模块研究
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p><pre class="sh_python">
+import sys
+print 'Arguments:', sys.argv #命令行参数
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~ python test.py -h
+Arguments: ['test.py', '-h']
+<pre class="sh_python">
+import sys</p>
+
+<p>print sys.stderr, 'STATUS: Reading from stdin' #<tt>stderr</tt>被用于警告或错误信息使用</p>
+
+<p>data = sys.stdin.read()  #输入流保存</p>
+
+<p>print sys.stderr, 'STATUS: Writing data to stdout'</p>
+
+<p>sys.stdout.write(data) #打印数据
+sys.stdout.flush() #将stdout实时自动刷出来</p>
+
+<p>print sys.stderr, 'STATUS: Done'
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>exit_code = int(sys.argv[1])
+sys.exit(exit_code) #设置退出时候的code，正常执行是0，不正常就是非0
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>one = []
+print 'At start         :', sys.getrefcount(one) #Python使用<em>引用计数</em>和<em>垃圾收集</em>的自动内存管理。一个对象被自动标记被收集时，它的引用计数下降到零,使用<tt>getrefcount（）</tt>审查现有对象的引用计数
+<tt></tt>two = one
+print 'Second reference :', sys.getrefcount(one)
+del two
+print 'After del        :', sys.getrefcount(one)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+At start         : 2
+Second reference : 3
+After del        : 2
+<pre class="sh_python">
+import sys</p>
+
+<p>class OldStyle:
+    pass</p>
+
+<p>class NewStyle(object):
+    pass</p>
+
+<p>for obj in [ [], (), {}, 'c', 'string', 1, 2.3, 
+             OldStyle, OldStyle(), NewStyle, NewStyle(),
+             ]:    
+    print '%10s : %s' % (type(obj).__name__, sys.getsizeof(obj)) #各种类型对象的大小
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+list : 32
+tuple : 24
+dict : 136
+str : 25
+str : 30
+int : 12
+float : 16
+classobj : 44
+instance : 32
+type : 448
+NewStyle : 28
+<pre class="sh_python">
+import sys</p>
+
+<p>class WithoutAttributes(object):
+    pass</p>
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return</p>
+
+<p>without_attrs = WithoutAttributes()
+print 'WithoutAttributes:', sys.getsizeof(without_attrs)</p>
+
+<p>with_attrs = WithAttributes()
+print 'WithAttributes:', sys.getsizeof(with_attrs)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+WithoutAttributes: 28
+WithAttributes: 28 #带属性的和不带属性的类竟然一样大看下面的例子，通过聚合对象的 属性的大小来计算：</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return
+    def __sizeof__(self):
+        return object.__sizeof__(self) + \
+            sum(sys.getsizeof(v) for v in self.__dict__.values())</p>
+
+<p>my_inst = WithAttributes()
+print sys.getsizeof(my_inst)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+78  #这样就不是28，这样就合理了</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>print 'Initial limit:', sys.getrecursionlimit()  #得到递归的次数，要不然不停的自己调用自己会引起崩溃
+sys.setrecursionlimit(10) #设置递归的次数</p>
+
+<p>print 'Modified limit:', sys.getrecursionlimit()</p>
+
+<p>def generate_recursion_error(i):
+    print 'generate_recursion_error(%s)' % i
+    generate_recursion_error(i+1) #不断的递归调用自己，但是计数加+1</p>
+
+<p>try:
+    generate_recursion_error(1)
+except RuntimeError, err:
+    print 'Caught exception:', err
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Initial limit: 1000 #默认可递归的次数为1000
+Modified limit: 10
+generate_recursion_error(1)
+generate_recursion_error(2)
+generate_recursion_error(3)
+generate_recursion_error(4)
+generate_recursion_error(5)
+generate_recursion_error(6)
+generate_recursion_error(7)
+generate_recursion_error(8)
+Caught exception: maximum recursion depth exceeded while getting the str of an object #到达递归限制
+<pre class="sh_python">
+import sys</p>
+
+<p>print 'maxint    :', sys.maxint #python支持的最大数字
+print 'maxsize   :', sys.maxsize #python支持的最大的数据大小
+print 'maxunicode:', sys.maxunicode #支持 Unicode的最大整数
+</pre></p>
+
+<p>&nbsp;</p>

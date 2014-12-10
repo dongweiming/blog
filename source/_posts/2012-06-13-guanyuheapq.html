@@ -1,0 +1,204 @@
+---
+layout: post
+title: 关于heapq
+categories:
+- python模块研究
+tags:
+- heapq
+published: true
+comments: true
+indexer: true
+---
+<p>前言：heapq实现了适用于Python列表的小顶堆排序算法.堆是一种树型数据结构, 其父子节点间具有顺序关系. 二进制堆可以使用一个列表或数组来表示, 其中元素N的孩子所在位置为2*N+1 和 2*N+2(以0开始计算位置). 这种特征让就地重排成为可能, 这样在增加或删除元素时就不需要重新分配内存空间.大顶堆确保每个父元素都大于或等于他的任一个孩子元素. 而小顶堆则需要每个父元素都要小于或等于他的任一个孩子元素. Python的heapq模块实现的是小顶堆.</p>
+
+<p><pre class="sh_python">
+import math
+import heapq
+from cStringIO import StringIO</p>
+
+<p>list = [12,19,34,2,10,1]
+heap = []
+def show_tree(tree, total_width=36, fill=' '):  #这个方法很直观了显示了树的变化
+    output = StringIO()
+    last_row = -1
+    for i, n in enumerate(tree):
+        if i:
+            row = int(math.floor(math.log(i+1, 2)))
+        else:
+            row = 0
+        if row != last_row:
+            output.write('\n')
+        columns = 2**row
+        col_width = int(math.floor((total_width * 1.0) / columns))
+        output.write(str(n).center(col_width, fill))
+        last_row = row
+    print output.getvalue()
+    print '-' * total_width
+    print
+    return
+for n in list:
+    print 'add %3d:' % n
+    heapq.heappush(heap, n)  #创建一个堆,使用heappush(), 堆中元素排序顺序是随着新元素的不断增加而不断更新的
+    show_tree(heap)
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+add  12:
+12                    #增加列表的第一个元素，因为是第一个元素 换行
+------------------------------------
+add  19:
+12                 #因为新增的19大于12，所以成了子树一部分
+19
+------------------------------------
+add  34:
+12
+19                34        #因为这是第三个,3的对数也还是和19在一行
+------------------------------------
+add   2:
+2
+12                34
+19
+------------------------------------
+add  10:
+2
+10                34
+19       12
+------------------------------------
+add   1:
+1
+10                2
+19       12       34
+------------------------------------
+<pre class="sh_python">
+import math
+import heapq
+from cStringIO import StringIO</p>
+
+<p>list = [12,19,34,2,10,1]
+heap = []
+def show_tree(tree, total_width=36, fill=' '):
+    output = StringIO()
+    last_row = -1
+    for i, n in enumerate(tree):
+        if i:
+            row = int(math.floor(math.log(i+1, 2)))
+        else:
+            row = 0
+            print 'd'
+        if row != last_row:
+            output.write('\n')
+        columns = 2**row
+        col_width = int(math.floor((total_width * 1.0) / columns))
+        output.write(str(n).center(col_width, fill))
+        last_row = row
+    print output.getvalue()
+    print '-' * total_width
+    print
+    return</p>
+
+<p>heapq.heapify(list)  #如果数据已经在内存中了, 使用heapify()进行就地排序会更有效.
+print 'heapified :'
+show_tree(list) 
+print</p>
+
+<p>inorder = []
+while list:
+    smallest = heapq.heappop(list)  #删掉最小的数据
+    print 'pop %3d:' % smallest #打印这个最小的数据
+    show_tree(list)
+    inorder.append(smallest)  #这个李彪从小到大的收集了原list数据
+print 'inorder :', inorder
+</pre></p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+heapified :</p>
+
+<p>1
+2                 12
+19       10       34
+------------------------------------</p>
+
+<p>pop   1:</p>
+
+<p>2
+10                12
+19       34
+------------------------------------</p>
+
+<p>pop   2:</p>
+
+<p>10
+19                12
+34
+------------------------------------</p>
+
+<p>pop  10:</p>
+
+<p>12
+19                34
+------------------------------------</p>
+
+<p>pop  12:</p>
+
+<p>19
+34
+------------------------------------</p>
+
+<p>pop  19:</p>
+
+<p>34
+------------------------------------</p>
+
+<p>pop  34:</p>
+
+<p>------------------------------------</p>
+
+<p>inorder : [1, 2, 10, 12, 19, 34]</p>
+
+<p><pre class="sh_python">
+import math
+import heapq
+from cStringIO import StringIO</p>
+
+<p>list = [12,19,34,2,10,1]
+heap = []
+def show_tree(tree, total_width=36, fill=' '):
+    output = StringIO()
+    last_row = -1
+    for i, n in enumerate(tree):
+        if i:
+            row = int(math.floor(math.log(i+1, 2)))
+        else:
+            row = 0
+        if row != last_row:
+            output.write('\n')
+        columns = 2**row
+        col_width = int(math.floor((total_width * 1.0) / columns))
+        output.write(str(n).center(col_width, fill))
+        last_row = row
+    print output.getvalue()
+    print '-' * total_width
+    print
+    return</p>
+
+<p>heapq.heapify(list)
+for n in [1, 7, 12, 9, 5]:
+    smallest = heapq.heapreplace(list, n)  #这里可以删除掉原值，然后替换成新值，保持了堆的长度
+    print 'replace %2d with %2d:' % (smallest, n)
+    show_tree(list)
+</pre></p>
+
+<p><pre class="sh_python">
+import heapq</p>
+
+<p>data = [12,19,34,2,10,1]
+print 'all :', data
+print '3 largest :', heapq.nlargest(3, data) #相对最大的3个数
+print 'from sort :', list(reversed(sorted(data)[-3:]))  #效果一样
+print '3 smallest:', heapq.nsmallest(3, data) #相对最小的3个数
+print 'from sort :', sorted(data)[:3] #效果一样
+</pre></p>
+
+<p>&nbsp;</p>

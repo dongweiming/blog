@@ -1,0 +1,47 @@
+---
+layout: post
+title: debian下使用sshfs＋fuse挂载远端文件系统
+categories:
+- debian
+tags:
+- fuse
+- sshfs
+- 远端文件系统
+published: true
+comments: true
+indexer: true
+---
+<p>前言：这个想法是因为在linux通过wine安装editplus后发现不能编辑ftp远程服务器的代码。而bluefish也没有提供远程ftp编辑的功能，于是想将远程服务器的文件系统挂载到本地（但是因为某些原因，他没有类似于nfs这样的网络文件系统），于是有了此文－－通过ssh的特性。而fuse,他是Linux 中用于挂载某些网络空间，如SSH，到本地文件系统的模块。</p>
+
+<p>1  安装fuse和sshfs：</p>
+
+<p>dongwm@dongwm:~$sudo apt-get install sshfs fuse-utils</p>
+
+<p>2 将你想要的用户（这里是我的用户dongwm）添加到fuse组里面：</p>
+
+<p>dongwm@dongwm:~$sudo adduser dongwm fuse   ＃为了生效需要注销再进来</p>
+
+<p>3 加载fuse模块：</p>
+
+<p>dongwm@dongwm:~$sudo modprobe fuse</p>
+
+<p>注：如果想开机自动加载这个模块需要编辑t<strong>/etc/modules</strong>   添加 “fuse”到单独的一行</p>
+
+<p>4 创建相应挂载目录，然后挂载远端文件系统，前提是要有很高的权限，比如我要挂载根目录，就需要root的 ssh密码或者信任，格式如下：</p>
+
+<p>dongwm@dongwm:~$mkdir 挂载目录</p>
+
+<p>dongwm@dongwm:~$sshfs  远程服务器用户名称@服务器地址:/服务器目录  挂载目录</p>
+
+<p>看我的挂载：</p>
+
+<p>dongwm@dongwm:~$ df -h
+文件系统          容量  已用  可用 已用%% 挂载点
+/dev/sda1              74G  5.6G   65G   9% /
+tmpfs                 1.9G     0  1.9G   0% /lib/init/rw
+udev                  1.9G  196K  1.9G   1% /dev
+tmpfs                 1.9G     0  1.9G   0% /dev/shm
+/dev/sda2             382G  7.0G  356G   2% /home
+root@192.168.10.89:/ 1000G     0 1000G   0% /home/dongwm/10.89</p>
+
+<p>&nbsp;</p>

@@ -1,0 +1,49 @@
+---
+layout: post
+title: 路由器DHCP配置
+categories:
+- 思科
+tags:
+- dhcp
+published: true
+comments: true
+indexer: true
+---
+<p>实验要求:
+R1模拟成PC，R2模拟成DHCP服务器。
+R1的E0/0不配置地址，R2的E0/0可配成192.168.1.1/24。
+完成DHCP的相关配置。
+查看R1的e0/0是否成功获得地址。</p>
+
+<p>实验步骤
+R1
+R1(config)#no ip routing
+R1(config)#int e0/0
+R1(config-if)#no shutdown
+R1(config-if)#ip address dhcp</p>
+
+<p>R2
+R2 (config)#int e0/0
+R2 (config-if)#no shutdown
+R2 (config-if)#ip address 192.168.1.1  255.255.255.0
+R2 (config-if)#exit
+R2 (config)#ip dhcp pool dongwm
+R2 (dhcp-config)#network 192.168.1.96  255.255.255.224
+R2 (dhcp-config)#default-router 192.168.1.1
+R2 (dhcp-config)#dns-server 202.106.196.115  202.106.0.20
+R2 (dhcp-config)#domain-name dongwm.com
+R2 (dhcp-config)#lease 1
+R2 (dhcp-config)#exit
+R2 (config)#ip dhcp excluded-address 192.168.1.97  192.168.1.99
+R2 (config)#end
+R2#</p>
+
+<p>测试命令</p>
+
+<p>R1
+R1#sh interface e0/0
+R1#sh run</p>
+
+<p>R2
+R2#sh ip dhcp binding
+R2#sh run</p>

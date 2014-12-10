@@ -1,0 +1,177 @@
+---
+layout: post
+title: puppet-dashboard的基于.htaccess验证
+categories:
+- puppet
+tags:
+- .htaccess
+- 验证
+published: true
+comments: true
+indexer: true
+---
+<p><div /></p>
+
+<p>由于<a title="puppet" href="http://64.120.134.162/puppet-4">puppet</a>使用自己系统的web前端，并且目前还不支持密码验证机制，直接使用http://IP:port模式登陆，这就造成了很大的安全隐患。所以我将其与Apache结合（Nginx方法类似），实现了和<a title="nagios" href="http://64.120.134.162/%e7%b3%bb%e7%bb%9f%e7%9b%91%e6%8e%a7/nagios-2">nagios</a>一样的密码验证机制。<!--more--><img title="更多..." src="http://64.120.134.162/wp-includes/js/tinymce/plugins/wordpress/img/trans.gif" alt="trans puppet dashboard基于.htaccess验证puppet dashboard基于.htaccess验证" /><img title="更多..." src="http://64.120.134.162/wp-includes/js/tinymce/plugins/wordpress/img/trans.gif" alt="" /></p>
+
+<p>本文假设已经搭建好dashboard环境。</p>
+
+<p>确认版本： <a title="Puppet" href="http://64.120.134.162/archives/category/puppet">Puppet</a> (&gt;0.24.6)；否则不支持.htaccess验证</p>
+
+<p>首先需要了解一下概念</p>
+
+<p>Passenger 又名mod_rails或mod_rack，是Apache    2.x的扩展，允许你运行Apache的Rails或者rack的应用。目前最新版本是3.0.0,不同的操作系统和版本都可能有    一些未知的问题，所以使用了稳定版本2.2.11（不要超过2.2.15）</p>
+
+<p># gem install -v=2.2.11 passenger</p>
+
+<p>Rack 官网的介绍：a Ruby Webserver Interface 如果使用gem安装默认版本是0.8.7,我安装的是1.01</p>
+
+<p><strong>1 </strong><strong>在master端puppet. conf添加以下语句</strong></p>
+
+<p>[ccine_perl][main]</p>
+
+<p>ssl_client_header = SSL_CLIENT_S_DN</p>
+
+<p>ssl_client_verify_header = SSL_CLIENT_VERIFY[/ccine_perl]</p>
+
+<p>重启puppet</p>
+
+<p>#/etc/init.d/puppetmaster restart</p>
+
+<p><strong>2 </strong><strong>安装Apache, Rack and Passenger（假设存在apache不必安装，由于我自己编译了apache，rubygems和ruby所以只安装Rack and Passenger）</strong></p>
+
+<p># yum install httpd httpd-devel ruby-devel rubygems</p>
+
+<p>#gem install -v=2.2.11 passenger</p>
+
+<p># gem install -v=1.0.1 rack</p>
+
+<p><strong>3 </strong><strong>安装passenger-install-apache2-module模块</strong></p>
+
+<p>#passenger-install-apache2-module</p>
+
+<p>注：nginx有passenger-install-nginx-module模块，默认passenger启动使用nginx。</p>
+
+<p>技巧：安装rack如果安装0。87版本，现不要安装，在安装模块时会检测没有rake，根据他的提示安装即1.0.1版本。</p>
+
+<p>选择菜单中2步回车即可。注意以下信息：</p>
+
+<p>LoadModule passenger_module /usr/lib64/ruby/gems/1.8/gems/passenger-2.2.11/ext/apache2/mod_passenger.so</p>
+
+<p>PassengerRoot /usr/lib64/ruby/gems/1.8/gems/passenger-2.2.11</p>
+
+<p>PassengerRuby /usr/bin/ruby</p>
+
+<p>等一下将其复制到虚拟主机的配置文件中。</p>
+
+<p><strong>4 </strong><strong>安装 Apache 模块mod_ssl</strong></p>
+
+<p>#yum install mod_ssl
+<div /></p>
+
+<p><strong>5 </strong><strong>编辑config.ru文件</strong></p>
+
+<p>#vi /你的puppet-dashboard安装根目录/config.ru</p>
+
+<p>修改成一下内容：</p>
+
+<p>[ccine_perl]$0 = "puppetmasterd"
+ARGV &lt;&lt; "--debug"
+require 'puppet'
+ARGV &lt;&lt; "--rack"
+require 'puppet/application/master'
+run Puppet::Application[:master].run[/ccine_perl]
+注意修改文件权限：</p>
+
+<p>#chown puppet /你的puppet-dashboard安装根目录/config.ru</p>
+
+<p><strong>6 </strong><strong>编辑虚拟主机配置文件</strong></p>
+
+<p>#vi /opt/apache/conf.d/puppetmaster.conf</p>
+
+<p>修改为以下内容：</p>
+
+<p>[ccine_perl]LoadModule passenger_module /usr/lib64/ruby/gems/1.8/gems/passenger-2.2.11/ext/apache2/mod_passenger.so</p>
+
+<p>PassengerRoot /usr/lib64/ruby/gems/1.8/gems/passenger-2.2.11</p>
+
+<p>PassengerRuby /usr/bin/ruby</p>
+
+<p>PassengerHighPerformance on
+PassengerMaxPoolSize 12
+PassengerPoolIdleTime 1500
+PassengerMaxRequests 2000
+PassengerStatThrottleRate 120
+RackAutoDetect Off
+RailsAutoDetect Off</p>
+
+<p>Listen 8140</p>
+
+<p>&lt;VirtualHost *:8140&gt;</p>
+
+<p>ServerName server.dongwm.com</p>
+
+<p>SSLEngine on
+SSLProtocol -ALL +SSLv3 +TLSv1
+SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:-LOW:-SSLv2:-EXP</p>
+
+<p>SSLCertificateFile      /var/lib/puppet/ssl/certs/server.dongwm.com.pem
+SSLCertificateKeyFile   /var/lib/puppet/ssl/private_keys/server.dongwm.com.pem
+SSLCertificateChainFile /var/lib/puppet/ssl/ca/ca_crt.pem
+SSLCACertificateFile    /var/lib/puppet/ssl/ca/ca_crt.pem</p>
+
+<p>SSLCARevocationFile     /var/lib/puppet/ssl/ca/ca_crl.pem
+SSLVerifyClient optional
+SSLVerifyDepth  1
+SSLOptions +StdEnvVars</p>
+
+<p>DocumentRoot /你的puppet-dashboard安装根目录/public/</p>
+
+<p>&lt;Directory /你的puppet-dashboard安装根目录/public&gt;</p>
+
+<p>Options None</p>
+
+<p>AllowOverride   AuthConfig</p>
+
+<p>Order allow,deny</p>
+
+<p>allow from all</p>
+
+<p>&lt;/Directory&gt;</p>
+
+<p>ErrorLog /var/log/httpd/dashboard.error.log</p>
+
+<p>LogLevel warn</p>
+
+<p>CustomLog /var/log/httpd/dashboard.access.log combined</p>
+
+<p>&lt;/VirtualHost&gt;[/ccine_perl]</p>
+
+<p><strong>7 </strong><strong>创建密码文件</strong></p>
+
+<p>#htpasswd -c /opt/htpasswd.users dashboard（文件路径和用户名根据自己习惯，但是下面的.htaccess文件会用到。创建文件加 ‘c’选项）</p>
+
+<p><strong>8 </strong><strong>在puppet-dashboard主目录下创建.htaccess</strong></p>
+
+<p>添加内容：</p>
+
+<p>[ccine_perl]AuthType Basic</p>
+
+<p>AuthName “This is for puppete”</p>
+
+<p>AuthUserFile “/opt/htpasswd.users ”</p>
+
+<p>Require User dashboard      # 也可以写成require valid-user只要是文件中定义过的用户那么就可以访问这个目录[/ccine_perl]</p>
+
+<p><strong>9 </strong><strong>测试httpd.conf文件</strong></p>
+
+<p>#httpd -t</p>
+
+<p>#httpd –S</p>
+
+<p><strong>10 </strong><strong>重新加载配置文件</strong></p>
+
+<p>service httpd reload</p>
+
+<p>
+</p>

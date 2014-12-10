@@ -1,0 +1,2390 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/6">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/udevsheng-ji-de-wang-qia-zhong-ming-ming-wen-ti-he-jie-jue/">Udev升级的网卡重命名问题和解决</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-27T15:32:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">故障描述</h4>
+
+<p>最近终于更新了下gentoo，重启发现我的eth0网卡启动失败：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"> * Bringing up interface eth0
+</span><span class="line"> *   ERROR: interface eth0 does not exist
+</span><span class="line"> *   Ensure that you have loaded the correct kernel module for your hardware
+</span><span class="line"> * ERROR: net.eth0 failed to start</span></pre></figure></notextile></div>
+<p>而启动某些我常用的服务，比如mongodb，也报错：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">~ # /etc/init.d/mongodb restart
+</span><span class="line"> * Bringing up interface eth0
+</span><span class="line"> *   ERROR: interface eth0 does not exist
+</span><span class="line"> *   Ensure that you have loaded the correct kernel module for your hardware
+</span><span class="line"> * ERROR: net.eth0 failed to start
+</span><span class="line"> * ERROR: cannot start mongodb as net.eth0 would not start</span></pre></figure></notextile></div>
+
+<p>竟然也需要启动网卡？</p>
+
+<h6 id="dmesg">查看内核和dmesg：</h6>
+
+<p>查看内核模块已经选中，而且以前eth0也有，再看dmesg</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">dmesg |grep network 
+</span><span class="line">[   74.261872] systemd-udevd[14259]: renamed network interface wlan0 to wlp2s0
+</span><span class="line">[   74.391865] systemd-udevd[14259]: renamed network interface eth0 to enp0s4
+</span></pre></figure></notextile></div>
+
+<p>原来被重命名了</p>
+
+<h4 id="section-1">为什么？</h4>
+
+<p>从udev-197将自动分配更好的接口名字，具体解释请看[PredictableNetworkInterfaceNames]
+(http://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames),</p>
+
+<h4 id="section-2">解决办法，有三种</h4>
+
+<ol>
+  <li>临时办法，重启还是会失效</li>
+</ol>
+
+<p>ifrename -i enp0s4 -n eth0 #修改网卡名字变成原来的eth0</p>
+
+<ol>
+  <li>使用新的名字</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">rm /etc/init.d/net.eth0 #删除不存在的引用
+</span><span class="line">
+</span><span class="line">localhost ~ # rc-update delete net.eth0 default #删除不存在的开机启动
+</span><span class="line"> * service net.eth0 removed from runlevel default
+</span><span class="line">localhost ~ # rc-update add net.enp0s4 default #使用新名字</span></pre></figure></notextile></div>
+
+<ol>
+  <li>重置udev的rules，还是用原来的方法</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">ln -s /dev/null /etc/udev/rules.d/80-net-name-slot.rules</span></pre></figure></notextile></div>
+
+<p>第二种，和第三种需要重启</p>
+
+<h4 id="section-3">启动应用为什么也需要启动应该启动的网卡</h4>
+
+<p>查看/etc/init.d/mongodb脚本，发现是因为depend，一般的初始化脚本结构是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">#!/sbin/runscript
+</span><span class="line">
+</span><span class="line">depend() {
+</span><span class="line">  （依赖关系信息）
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">start() {
+</span><span class="line">  （启动服务所必需的命令）
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">stop() {
+</span><span class="line">  （停止服务所必需的命令）
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">restart() {
+</span><span class="line">  （重启服务所必需的命令）
+</span><span class="line">}</span></pre></figure></notextile></div>
+<p>比如 mongodb 的依赖是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">depend() {
+</span><span class="line">  need net #需要依赖net.X
+</span><span class="line">}</span></pre></figure></notextile></div>
+
+<p>下次我专门研究一篇gentoo初始化脚本的文章</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/octopresszi-ding-yi-markdownde-codeyu-fa/">Octopress自定义markdown的code语法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-27T14:17:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>octopress自带的markdown语法高亮代码，最后展示在页面上的效果比较不友好-不能复制粘贴代码，不高亮，还有很丑的行数提示。
+我一直使<a href="shjs.sourceforge.net">SHJS</a>,还算比较喜欢，但是以前每次都是编辑markdown文章，在使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="sb">```XX```</span>
+</span></pre></figure></notextile></div>
+
+<p>的时候，使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;bogus-wrapper&quot;</span><span class="o">&gt;&lt;</span><span class="n">notextile</span><span class="o">&gt;&lt;</span><span class="n">figure</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;code&quot;</span><span class="o">&gt;&lt;</span><span class="n">pre</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;sh_python&quot;</span><span class="o">&gt;</span>
+</span><span class="line"><span class="n">XXX</span>
+</span><span class="line"><span class="o">&lt;/</span><span class="n">pre</span><span class="o">&gt;&lt;/</span><span class="n">figure</span><span class="o">&gt;&lt;/</span><span class="n">notextile</span><span class="o">&gt;&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></pre></figure></notextile></div>
+
+<p>这样的苦逼方式，最近实在是不了了，自定义octopress的解析过程</p>
+
+<p>其实就是修改plugins/pygments_code.rb</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">require</span> <span class="s">&#39;pygments&#39;</span>
+</span><span class="line"><span class="n">require</span> <span class="s">&#39;fileutils&#39;</span>
+</span><span class="line"><span class="n">require</span> <span class="s">&#39;digest/md5&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">PYGMENTS_CACHE_DIR</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s">&#39;../../.pygments-cache&#39;</span><span class="p">,</span> <span class="n">__FILE__</span><span class="p">)</span>
+</span><span class="line"><span class="n">FileUtils</span><span class="o">.</span><span class="n">mkdir_p</span><span class="p">(</span><span class="n">PYGMENTS_CACHE_DIR</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">module</span> <span class="n">HighlightCode</span>
+</span><span class="line">  <span class="k">def</span> <span class="nf">highlight</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
+</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;ruby&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;ru&#39;</span>
+</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;objc&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;m&#39;</span>
+</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;perl&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;pl&#39;</span>
+</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;yaml&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;yml&#39;</span>
+</span><span class="line">    <span class="nb">str</span> <span class="o">=</span> <span class="n">pygments</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="o">/&lt;</span><span class="n">pre</span><span class="o">&gt;</span><span class="p">(</span><span class="o">.+</span><span class="p">)</span><span class="o">&lt;</span>\<span class="o">/</span><span class="n">pre</span><span class="o">&gt;/</span><span class="n">m</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="o">/</span> <span class="o">*</span><span class="err">$</span><span class="o">/</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span> <span class="c">#strip out divs &lt;div class=&quot;highlight&quot;&gt;</span>
+</span><span class="line">    <span class="n">tableize_code</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
+</span><span class="line">  <span class="n">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nf">pygments</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">defined</span><span class="err">?</span><span class="p">(</span><span class="n">PYGMENTS_CACHE_DIR</span><span class="p">)</span>
+</span><span class="line">      <span class="n">path</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYGMENTS_CACHE_DIR</span><span class="p">,</span> <span class="s">&quot;#{lang}-#{Digest::MD5.hexdigest(code)}.html&quot;</span><span class="p">)</span>
+</span><span class="line">      <span class="k">if</span> <span class="n">File</span><span class="o">.</span><span class="n">exist</span><span class="err">?</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span class="line">        <span class="n">highlighted_code</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span class="line">      <span class="k">else</span>
+</span><span class="line">        <span class="n">highlighted_code</span> <span class="o">=</span> <span class="n">Pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">:</span><span class="n">lexer</span> <span class="o">=&gt;</span> <span class="n">lang</span><span class="p">,</span> <span class="p">:</span><span class="n">formatter</span> <span class="o">=&gt;</span> <span class="s">&#39;html&#39;</span><span class="p">,</span> <span class="p">:</span><span class="n">options</span> <span class="o">=&gt;</span> <span class="p">{:</span><span class="n">encoding</span> <span class="o">=&gt;</span> <span class="s">&#39;utf-8&#39;</span><span class="p">})</span>
+</span><span class="line">        <span class="n">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">highlighted_code</span><span class="p">)</span> <span class="p">}</span>
+</span><span class="line">      <span class="n">end</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">highlighted_code</span> <span class="o">=</span> <span class="n">Pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">:</span><span class="n">lexer</span> <span class="o">=&gt;</span> <span class="n">lang</span><span class="p">,</span> <span class="p">:</span><span class="n">formatter</span> <span class="o">=&gt;</span> <span class="s">&#39;html&#39;</span><span class="p">,</span> <span class="p">:</span><span class="n">options</span> <span class="o">=&gt;</span> <span class="p">{:</span><span class="n">encoding</span> <span class="o">=&gt;</span> <span class="s">&#39;utf-8&#39;</span><span class="p">})</span>
+</span><span class="line">    <span class="n">end</span>
+</span><span class="line">    <span class="n">highlighted_code</span>
+</span><span class="line">  <span class="n">end</span>
+</span><span class="line">  <span class="k">def</span> <span class="nf">tableize_code</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;python&#39;</span><span class="p">)</span> <span class="c">#主要是修改这个方法</span>
+</span><span class="line">    <span class="n">table</span> <span class="o">=</span> <span class="s">&quot;&lt;pre class=&#39;sh_#{lang}&#39;&gt;&quot;</span>
+</span><span class="line">    <span class="nb">str</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">each_with_index</span> <span class="n">do</span> <span class="o">|</span><span class="n">line</span><span class="p">,</span><span class="n">index</span><span class="o">|</span>
+</span><span class="line">      <span class="n">table</span> <span class="o">+=</span> <span class="s">&quot;&lt;span class=&#39;line&#39;&gt;#{line}&lt;/span&gt;&quot;</span>
+</span><span class="line">    <span class="n">end</span>
+</span><span class="line">    <span class="n">table</span> <span class="o">+=</span> <span class="s">&quot;&lt;/pre&gt;&quot;</span>
+</span><span class="line">  <span class="n">end</span>
+</span><span class="line"><span class="n">end</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-1">使用方法</h4>
+
+<p>和过去一样，在md的文章中使用:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="sb">```XX```</span>
+</span></pre></figure></notextile></div>
+
+<p>要是想指定某语言，需要先引用这个css，然后在md中
+比如这里用bash语法（也是我的默认）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="sb">``</span><span class="err">`</span><span class="n">bash</span>
+</span><span class="line"><span class="n">XX</span>
+</span><span class="line">\<span class="sb">``</span><span class="err">`</span> <span class="c"># 这里不能正常显示，加个反斜杠</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/duo-tai-fu-wu-qi-jin-cheng-cha-kan-jiao-ben-pexpect-plus-yaml/">多台服务器进程查看脚本(pexpect+yaml)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-19T16:18:00+08:00" pubdate data-updated="true">Apr 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>最近做自己开发用相关服务的一个checklist，就写了这个脚本，用来在跳板机去检查各个服务器上面的相关服务是否正常</p>
+
+<h4 id="section-1">思路</h4>
+
+<p>使用expect登录每个机器(因为安全问题，不能直接使用ssh信任),然后根据yaml文件的配置读取服务名字以及启动的进程数量
+去检查每个服务是否正常
+PS：难点是没有用端口转发也只有普通用户权限</p>
+
+<h4 id="checklistpy">checklist.py</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#coding=utf-8
+import sys
+#因为我这个脚本要让很多人能运行，但是不能给他们看见我的密码算法,所以是pyc
+#我这个脚本要给很多其他普通用户去用，是用我的ssh登录操作，不能放在我的home目录，所以放在tmp
+sys.path.append('/tmp/local/lib/python2.6/site-packages/PyYAML-3.10-py2.6-linux-x86_64.egg') #依赖yaml
+sys.path.append('/tmp/local/lib/python2.6/site-packages/pexpect-2.4-py2.6.egg') #依赖pexpect
+import yaml
+import pexpect
+dataDict = yaml.load(open('/tmp/config.yaml')) #将我的yaml配置load进来
+
+def myprint(color,mes): #以前写的一个终端彩色打印的函数
+    '''使用ANSI控制码终端显示彩色'''
+    d = dict(r=31, g=32, gb=36, y=33, b=34, p=35, o=37)
+    color = "\x1B[%d;%dm" % (1, d[color])
+    print "%s%s\x1B[0m" % (color, mes)
+
+def main():
+    list = ['g', 'b', 'y', 'gb', 'p']
+    light = 0
+    for k in dataDict:
+        if k.startswith('bj-'):
+        color = list[light%5] #根据服务器对颜色轮循
+            SERVER = dataDict[k]
+        #我这是使用了-F 是因为我没有root权限不能修改hosts文件，但是我在config.yaml使用了别名，
+        而这个定义就是自定义了sshconfig，默认是~/.ssh/config
+        child = pexpect.spawn('ssh -F /tmp/sshconfig dongwm@{0}'.format(SERVER['host']))
+        #因为有其他用户，可能他还没有链接过某服务器，最开始会让你确认服务器标识，需要点yes
+        f = child.expect(['Password: ', 'password: ', 'continue connecting (yes/no)?'])
+        if f == 2:
+            #当这个flag为2  表示那个用户没有登录过某服务器
+            child.sendline('yes')
+            child.expect('password:')
+            child.sendline('{0}'.format(mypasswd(SERVER['host']))) #mypasswd是加密我服务器权限的函数，每个服务器密码不同
+        if f == 1:
+            child.sendline('{0}'.format(mypasswd(SERVER['host'])))
+        child.expect('~')
+        for service in SERVER['service']:
+        flag = 0
+        #我在配置里面会加服务,一般会指定服务的进程数来对比是否正常
+        if isinstance(service, dict):
+            data =service.items()[0]
+            service = data[0]
+            num = data[1]
+        else:
+        #假如我在配置只指定服务，不指定进程数，那么只要确定跑了进程 不在乎进程数
+            num = 0
+            flag = 1
+            child.expect('~')
+            child.sendline('ps -ef|grep {0}|grep -v grep|wc -l'.format(
+            service))
+            child.readline()
+            #进程数
+            pro_num = child.readline().split('\r\n')[0]
+        if int(pro_num) == num or flag:
+            #进程数符合配置标注的数值
+            myprint(color, '[{0}]  [{1}]  [{2}]  [{3}]'.format(k.center(12), 
+            SERVER['ip'].center(14), service.center(20), 'ok'.center(4)))
+        else:
+            myprint('r', '[{0}]  [{1}]  [{2}]  [{3}]  [{4}!={5}]'.format(k.center(12), 
+            SERVER['ip'].center(14), service.center(20), 'fail', 
+            pro_num, num))
+        light += 1
+            child.sendline('exit')
+
+if __name__ == '__main__':
+    main()
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="configyaml-">config.yaml 我这里只截取了其中一段</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+bj-2:
+  host: s233 #这个s233在sshconfig指定
+  ip: XXX.XXX.XXX.233 #只是为了显示出ip 好确认
+  service: #服务load后是一个列表
+  #给XX用
+  - nginx: 5
+  - uwsgi: 25
+  - supervisord: 1
+  #给本机XX提供mysql服务
+  - mysql: 3 #django
+  #给本机XX提供XX
+  - celery: 12 
+  #给本机XX提供XX
+  - rabbitmq: 9
+  - redis: 1
+  - mongod: 2
+</pre></figure></notextile></div></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guan-yu-expectyan-jiu-si/">关于expect研究(四)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-11T17:11:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1 id="section">前言</h1>
+
+<p>最近又开始开始了expect的一些更深层次的东西，分享出来</p>
+
+<h2 id="section-1">字典</h2>
+
+<p>expect没有严格意义的字典，但是确实可以使用</p>
+
+<p>创建字典:</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+set mydict [dict create tbj tbjpass server serverpass]
+它表示创建一个字典叫做mydict，包含2个kv对：tbj &amp; tbjpass 和server &amp; serverpass
+</pre></figure></notextile></div></notextile></div>
+
+<p>你也可以这样添加数据:</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+set mydict .dongwm dongwmpass 
+ 表示添加一个键为.dongwm 值为dongwmpass的新数据到mydict
+</pre></figure></notextile></div></notextile></div>
+
+<p>根据key获取值可以这样:</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+[dict get $mydict server]
+表示从mydict获取server的值
+</pre></figure></notextile></div></notextile></div>
+
+<p>NB的事，可以直接这样写，看我的片段:</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+expect "password:"
+send "[dict get $mydict s70]\n"
+也就是直接把这个看起来像列表的东东直接写到字符串里面
+</pre></figure></notextile></div></notextile></div>
+
+<h2 id="section-2">判断变量是否存在</h2>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+if {[info exists serverpass]!=1} {
+    puts 'sd'
+}
+表示如果serverpass这个变量要是不存在，就puts，但是注意的是，
+假如上面你已经set 这个变量，不管有没有值，这个变量都已经被*定义*了
+</pre></figure></notextile></div></notextile></div>
+
+<h2 id="section-3">判断列表包含</h2>
+
+<p>一种使用switch结构，还有一种是if方式，将属于一类的放在一个列表，
+看它是不是’in’:</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+set listserver "1 2 3 4 "
+if {1 in $listserver} {puts 11}
+当1在列表$listserver里面puts
+</pre></figure></notextile></div></notextile></div>
+
+<h2 id="switch">switch多条件</h2>
+
+<p>假如有一些switch的结果，但是他们有一些需要做一样的操作，
+ 那么就可以吧他们放在一起</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+switch $port {
+    100  -
+    200  { puts 1}
+    300  -
+    400 {puts 2}
+    }
+这里表示当port是100,或者200会puts1,当port是300或者400，会puts2
+</pre></figure></notextile></div></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell/">跨操作系统初始化安装工具(laptop)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-08T18:07:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>上周看了<a href="https://github.com/docopt/docopt">docopt</a>, 感想很多。最近因为工作需要用opensuse，用ubuntu，个人pc用gentoo，
+实在够折腾，每个系统都要相应的安装那些软件，搭建环境。早就想好好整理下思路，更geek的做这件事情。上段时间还看了个
+<a href="https://github.com/thoughtbot/laptop">laptop</a>,觉得能力很一般，但是fork真不少。但是确实这个想法很不错，很有必要。
+然后周末就构思了我的<a href="https://github.com/orzrd/laptop.git">laptop</a></p>
+
+<h4 id="section-1">它的特性</h4>
+
+<ul>
+  <li>记录操作记录，当某处出现故障，下次会从这个位置继续执行，而不需要全部执行一遍</li>
+  <li>受<a href="https://github.com/docopt/docopt">docopt</a>启发，根据我特定的语法写配置文件，不需要修改初始化脚本initialize.sh</li>
+  <li>只需要添加你要安装的软件包的安装命令（使用包管理器的就需要修改相应操作系统的install文件）</li>
+  <li>支持对已安装软件的确认，不再安装而跳过</li>
+  <li>根据特定语法打印安装过程的提示</li>
+  <li>提供绿色，红色的asciilinux终端显示字体</li>
+  <li>执行在没有git等环境下git clone项目安装</li>
+</ul>
+
+<h4 id="section-2">目前每个版本会安装那些软件？</h4>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gcc</td>
+          <td>g++</td>
+          <td>automake</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>tmux</td>
+          <td>htop</td>
+          <td>dstat</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>ruby</td>
+          <td>python</td>
+          <td>python库</td>
+          <td>expect</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>zsh</td>
+          <td>oh-my-zsh</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>easy_install</td>
+          <td>pip</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>django</td>
+          <td>torando</td>
+          <td>flask</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>nginx</td>
+          <td>uwsgi</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>redis</td>
+          <td>mongodb</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>mit-scheme</td>
+          <td>commonlisp</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>emacs</li>
+  <li>gitflow</li>
+  <li>celery</li>
+  <li>colout</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>MySQLdb</td>
+          <td>pymongo</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>taglist</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gevent</td>
+          <td>twisted</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>the_silver_searcher</li>
+  <li>检查vim是否自带python/ruby支持，否则下载编译一个执行的版本</li>
+  <li>我的常用脚本<a href="https://github.com/orzrd/mytools.github">mytools</a>,目前包含一个expect脚本和orzdba</li>
+  <li>我的<a href="https://github.com/dongweiming/dotfiles.git">dotfiles</a></li>
+</ul>
+
+<h2 id="gentoo">gentoo系统一些软件</h2>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gentoolkit</td>
+          <td>module-rebuild</td>
+          <td>genlop</td>
+          <td>eix</td>
+          <td>euses</td>
+          <td>elogv</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>fcitx</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>iproute2</td>
+          <td>netkit-telnetd</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="section-3">使用方法</h4>
+
+<ol>
+  <li>有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;git clone https://github.com/orzrd/laptop
+shell&gt;cd laptop
+shell&gt;bash initialize.sh
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>没有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;bash &lt;(curl -s https://raw.github.com/orzrd/laptop/master/setup_laptop)
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="section-4">脚本语法</h5>
+
+<h2 id="section-5">可操作文件</h2>
+
+<ol>
+  <li>common.install: 用户自定义的软件安装脚本，推荐非操作系统包管理器的都放在这里，注意逻辑顺序</li>
+  <li>opensuse/ubuntu/gentoo.install: 相应系统的安装脚本，这个只需要修改，我的脚本会自动根据系统信息找到</li>
+  <li>initialize.sh： 假如你想把需要我的安装方法，添加功能等，修改他，他是主入口</li>
+  <li>
+    <p>setup_laptop： 当用户没有git环境不能git clone  直接远程curl我，主要是下载git，clone我的laptop</p>
+  </li>
+  <li>’#’  以’#’开头的行表示这个信息会被安装过程以绿色字体打印，提示一下你要安装的东西等</li>
+  <li>： 以’:’开头的行，表示后面的字符串是个命令，也就是检查这个软件包有没有被安装需要的，假如which找到了路径说明被安装</li>
+  <li>; 以’;’开头的行为注释</li>
+  <li>其它行就是要执行的语句，请不要当作shell注释等，因为他会把你写的东西当成要执行的命令</li>
+</ol>
+
+<h2 id="todo">TODO</h2>
+
+<ul>
+  <li>文件下载后就不需要再下载而直接使用</li>
+  <li>在执行某软件的安装过程中其他进程继续下载其他软件包（也就是实现shell版本的emerge）</li>
+  <li>进度条或者python_koans的提示已完成/剩余，更多的异常处理等</li>
+  <li>更多的异常处理</li>
+  <li>打印彩色字体内容嵌其他颜色字体（比如提示出错，高亮错误的原因或者软件包）</li>
+</ul>
+
+<h2 id="forkpull-requestissue">注意我的项目地址，欢迎各种fork，pull request，issue</h2>
+
+<h3 id="httpsgithubcomorzrdlaptop">https://github.com/orzrd/laptop</h3>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoo-wpa_supplicant-wireless/">Gentoo使用wpa_supplicant配置无线网卡</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-31T23:22:00+08:00" pubdate data-updated="true">Mar 31<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>公司全部使用了无线网络，我也被‘逼’的开始研究gentoo的无线上网，看了网上很多文章，以及gentoo文档，但是感觉都让我很迷糊，以下是我使用wpa_supplicant是一些总结</p>
+
+<h4 id="section-1">总结</h4>
+
+<ul>
+  <li>查看本机的无线网卡</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+emerge pciutils #这样就有了lspci这个命令
+localhost ~ # lspci |grep -i wire
+02:00.0 Network controller: Atheros Communications Inc. AR9285 Wireless Network Adapter (PCI-Express) (rev 01)
+</pre></figure></notextile></div></notextile></div>
+
+<p>可以发现，网卡是Atheros的AR9285</p>
+
+<ul>
+  <li>安装wpa_supplicant</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+emerge -s wpa_supplicant
+</pre></figure></notextile></div></notextile></div>
+
+<ul>
+  <li>生成一个配置配置文件</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+zcat /usr/share/doc/wpa_supplicant-2.0/wpa_supplicant.conf.bz2 &gt; /etc/wpa_supplicant/wpa_supplicant.conf
+</pre></figure></notextile></div></notextile></div>
+
+<ul>
+  <li>配置，以下是我去掉注释行，空白行等剩下的配置，其中的psk的字符串这样生成：</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # wpa_passphrase 我的ssid 我的key
+network={
+	ssid="我的ssid"
+	#psk="我的key"
+	psk=e596aa911775ed47e04f5b9a9540978203210874eb258208b87cf82b5cf72588
+}
+</pre></figure></notextile></div></notextile></div>
+
+<p>把这段加在配置文件中</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # cat /etc/wpa_supplicant.conf 
+
+ctrl_interface=/var/run/wpa_supplicant
+eapol_version=1
+ap_scan=1
+fast_reauth=1
+network={
+	ssid="我的ssid"
+	psk=e596aa911775ed47e04f5b9a9540978203210874eb258208b87cf82b5cf72588
+	priority=2
+}
+</pre></figure></notextile></div></notextile></div>
+
+<ul>
+  <li>命令行启动wpa(如果想看详细的信息用于调试，加-d选项)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # wpa_supplicant -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf   
+Successfully initialized wpa_supplicant
+wlan0: Trying to associate with 20:dc:c6:61:ab:34 (SSID='我的ssid' freq=2437 MHz)
+ioctl[SIOCSIWFREQ]: Device or resource busy
+wlan0: Association request to the driver failed
+wlan0: Associated with 20:dc:c6:61:ab:34
+wlan0: WPA: Key negotiation completed with 20:dc:c6:61:ab:34 [PTK=CCMP GTK=CCMP]
+wlan0: CTRL-EVENT-CONNECTED - Connection to 20:dc:c6:61:ab:34 completed [id=0 id_str=]
+</pre></figure></notextile></div></notextile></div>
+
+<p>其中wlan0: Association request to the driver failed 没关系</p>
+
+<ul>
+  <li>安装udhcpc</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+emerge udhcpc
+</pre></figure></notextile></div></notextile></div>
+
+<ul>
+  <li>通过dhcp自动获得</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # dhcpcd wlan0
+dhcpcd[12395]: version 5.6.4 starting
+dhcpcd[12395]: wlan0: waiting for carrier
+dhcpcd[12395]: wlan0: carrier acquired
+dhcpcd[12395]: wlan0: carrier lost
+dhcpcd[12395]: wlan0: waiting for carrier
+dhcpcd[12395]: wlan0: carrier acquired
+dhcpcd[12395]: wlan0: sending IPv6 Router Solicitation
+dhcpcd[12395]: wlan0: sendmsg: Cannot assign requested address
+dhcpcd[12395]: wlan0: rebinding lease of 192.168.0.106
+dhcpcd[12395]: wlan0: acknowledged 192.168.0.106 from 192.168.0.1 `�'
+dhcpcd[12395]: wlan0: checking for 192.168.0.106
+dhcpcd[12395]: wlan0: sending IPv6 Router Solicitation
+dhcpcd[12395]: wlan0: leased 192.168.0.106 for 7200 seconds
+dhcpcd[12462]: wlan0: wlan0: MTU set to 576
+dhcpcd[12395]: forked to background, child pid 12479
+</pre></figure></notextile></div></notextile></div>
+
+<p>看到了吧 获得了192.168.0.106这个地址</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/1ge-flaskli-zi/">一个flask例子</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-11T14:34:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言：</h4>
+
+<p>上段时间做了个demo, 使用了flask和mongodb，以及bootstrap, jquery，分享给大家当作入门flask的例子</p>
+
+<h4 id="section-1">启动程序代码</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/env python2
+# encoding=utf-8
+# Version 2 by Dongwm 2012/12/18
+
+import os
+from pymongo import Connection
+
+from flask import Flask, request, render_template, redirect, url_for, jsonify
+from paginate import Pagination
+import setting
+
+def static(filename):
+    filepath = os.path.join(os.path.dirname(__file__), 'static', filename)
+    last_modification = '%d' % os.path.getmtime(filepath)
+    return url_for('.static', filename=filename) + '?' + last_modification  #我这里给每个文件加了一个唯一性质的时间戳
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(setting)  #把一些可以控制的参数放在setting模块里面
+    @app.context_processor
+    def inject_static():
+        return dict(static=static)
+    return app
+
+def conMongo(): #因为我很多地方都需要mongodb的游标，封装了下
+	mongo = Connection(host='127.0.0.1',port=28012)
+	return mongo
+
+app = create_app()
+
+@app.route('/list')  #flask使用装饰器的作为路由方式 表示访问你网站（比如http://localhost/list）的请求都会通过这个函数处理
+def list(): #函数名字不重要，只要你能理解好维护，通过名字了解用途就好
+	pagesize = 100  
+	page = int(request.args.get('page',0))
+	data = get_list_MongoData(page, pagesize) #这个获得mongodb的函数我就不提供了 简单理解就是更具页数和每页条目获取数据
+	pagination = Pagination(total=data[1], per_page=pagesize, page=page)
+	return render_template("list.html", tables=data[0], pagination=pagination) #有点像django的render_to_response,但是flask直接把要渲染的数据用K=V的方式传进来，而django需要放在字典里面，作为第二个参数传
+
+@app.route('/')  
+def index():
+	return redirect(url_for('list')) #到网站跟目录的请求定向到/list
+
+@app.route('/json')  
+def getJson():
+
+	db = conMongo()
+	res = results(db)
+	return jsonify(res)  #类似django的HttpResponse(simplejson.dumps(res), mimetype='application/json') 返回json数据
+
+@app.route('/dev')
+def dev():
+	
+	return render_template("dev.html")
+
+if __name__ == '__main__':
+	app.run(host="0.0.0.0")
+
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="settingspy">settings.py</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+DEBUG = True  #指定开启debug模式
+PORT = 5000  #指定监听端口
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="devhtml">dev.html</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+
+<xmp>
+<!-- 注意这段代码我把 {/}和%分开了 为了和octoress生成的模板语法不冲突-->
+{ % extends 'base.html' % }  //这里是先继承base.html模板 
+{ % block title %}Dev{ % endblock % }  //重新设定title块的内容
+{ %- block css % }  //重新设定css块  注意引用静态文件的方式
+    <link rel="stylesheet" href="" />
+    <style>
+	.col_content{ height:500px; }
+	h2 {text-align:center;}
+	</style>
+{ %- endblock % }
+{ %- block js % }
+    <script type="text/javascript" src=""></script>
+    <script type="text/javascript" src=""></script>
+    <script language="javascript" type="text/javascript">
+		</script>
+		{ %- endblock % }
+		{ %- block diejs % }
+			pie2html();  //这个js函数在core.js定义（base.html有引用）
+		{ %- endblock % }
+		{ %- block dev % }
+	<div>
+		<h2>服务器服务信息</h2>
+		<div class="well col_content" id="webserver_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>服务器应用信息</h2>
+		<div class="well col_content" id="webapp_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>Nginx服务具体版本</h2>
+		<div class="well col_content" id="nginx_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>Apache服务具体版本</h2>
+		<div class="well col_content" id="apache_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>Asp服务具体版本</h2>
+		<div class="well col_content" id="asp_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>网站技术信息</h2>
+		<div class="well col_content" id="tech_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>系统分类</h2>
+		<div class="well col_content" id="system_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>系统分类</h2>
+		<div class="well col_content" id="version_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>os</h2>
+		<div class="well col_content" id="os_content">
+		Loading&#8230;&#8230;
+		</div>
+	</div>
+{ %- endblock % }
+</xmp>
+
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="basehtml">base.html</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+<xmp>
+&lt;!doctype html&gt;
+<html>
+  <head>
+    <title> { % block title % }{ % endblock % }</title>  //block会设置的一个块，每个模板文件要是重新定义会覆盖，否则继承它的值
+    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="" />  
+    <link rel="stylesheet" href="" />
+    { %- block css % }
+    { %- endblock % }
+    <script type="text/javascript" src=""></script>
+    <script type="text/javascript" src=""></script>
+    { %- block js % }
+    { %- endblock % }
+	<script language="javascript" type="text/javascript">
+		$(document).ready(function() {
+		var i = 0;
+		$('#control').click(function() {
+				if(i%2 == 0) {
+					$('#zt-user').slideDown(500);  //加载完成的一个特效,都在style.css中定义
+					$('#control').removeClass('bkg-control-down').addClass('control-up');
+				}
+				else {
+					$('#zt-user').slideUp(500);
+					$('#control').removeClass('bkg-control-up').addClass('control-down');
+				}
+				i++;
+		});
+		{ %- block diejs % }  //这个块定义在这里是为了每个模板文件都能定义文档加载完成执行的函数，一个页面只能有一个$(document).ready
+		{ %- endblock % }
+		</script>
+</head>
+	<body>
+		<div id="zt-user">
+			<div class="container">
+				<div id="zt-user-inner" class="row-fluid">
+					<div id="zt-top1" class="span12">
+						<div class="zt-box-inside">
+							<div class="moduletable">
+								<div class="modulecontent">
+						<form action="/" method="post">
+							<div class="search">
+								<input name="searchword" maxlength="20" class="inputbox" type="text" size="20" value="Start Searching ... " onblur="if (this.value=='') this.value='Start Searching ... ';" onfocus="if (this.value=='Start Searching ... ') this.value='';" /><input type="submit" value="Search" class="button" onclick="this.form.searchword.focus();" />
+							</div>
+						</form>
+								</div>
+							</div>
+						</div>
+					</div>																		
+				</div>
+			</div>
+		</div>
+		{ %- block dev % }{ %- endblock % }   //上面的dev.html重新声明了这个块，那么数据就会显示在这个位置
+		{ %- block top % }
+		<div id="zt-top">
+			<div class="container">						
+				<div class="row-fluid">
+					<div class="control-up span6" id="control"><span>Search</span></div>
+				<ul id="zt-topright" class="pull-right">
+				<li class="blue" target="_blank"><a title="Demo" href="/list">列表</a></li>
+				<li class="green" target="_blank"><a title="Demo" href="/dev">画图</a></li>
+				</ul>
+					</div>
+				</div>
+			</div>
+		{ %- endblock % }
+		{ %- block ttable % }{ %- endblock % }
+		{ %- block footer % }
+		<div id="zt-footer">
+			<div class="container">				
+				<p id="copyright">
+				Copyright &copy; 2009 - 2013 <a href="http://www.dongwm.com" title="dongwm">(C)dongwm</a>. All Rights Reserved
+				</p>
+			</div>						
+		</div>
+		{ %- endblock % }
+	</body>
+</html>
+</xmp>
+
+</pre></figure></notextile></div></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gevent-twisted-duo-xian-cheng-shui-geng-kuai/">Gevent-twisted-多线程谁更快?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-11T13:54:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>标题有点唬人，以前了解过研究gevent，twisted，scrapy（基于twisted）。最近有个想法：这些东西比如做爬虫，谁的效率更好呢？
+我就写了以下程序（附件）测试然后用timeit（跑3次，每次10遍，时间有限）看效果</p>
+
+<h4 id="section-1">原理：</h4>
+
+<ol>
+  <li>为了防止远程网络的问题，从一个网站爬下网页代码（html），页面下载本地放在了我的本机（gentoo+apache）</li>
+  <li>然后爬虫去分析这些页面上面的链接（开始是主页），再挖掘其他页面，抓取页面关键字（我这里就是个‘py’）
+程序打包<a href="http://www.dongwm.com/Crawler.tar.bz2">Crawler.tar.bz2</a></li>
+</ol>
+
+<p>先看代码树：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~ $ tree Crawler/
+Crawler/
+├── common_Crawler.py  #标准爬虫，里面只是多线程编程，抓取分析类在common.py
+├── common.py  #共用函数，里面只是抓取页面分析页面关键字
+├── common.pyc #你懂得
+├── Crawler #scrapy和django框架差不多的用法
+│   ├── __init__.py
+│   ├── __init__.pyc
+│   ├── items.py #不需要利用，默认
+│   ├── pipelines.py
+│   ├── settings.py
+│   ├── settings.pyc
+│   └── spiders #抓取脚本文件夹
+│       ├── __init__.py
+│       ├── __init__.pyc
+│       ├── spiders.py #我做的分析页面，这个和多线程/gevent调用的抓取分析类不同，我使用了内置方法（大家可以修改共用函数改成scrapy的方式，这样三种效果就更准确了）
+│       └── spiders.pyc
+├── gevent_Crawler.py #gevent版本爬虫，效果和标准版一样，抓取分析类也是common.py 保证其他环节相同，只是一个多线程，一个用协程
+├── scrapy.cfg
+└── scrapy_Crawler.py #因为scrapy使用是命令行，我用subproess封装了命令，然后使用timeit计算效果
+
+2 directories, 16 files
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="section-2">实验前准备：</h4>
+<p>停掉我本机使用的耗费资源的进程 firefox，vmware，compiz等，直到负载保持一个相对拨波动平衡</p>
+
+<h4 id="section-3">测试程序：</h4>
+
+<ol>
+  <li>common.py </li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：多线程抓取
+# 方式： lxml + xpath + requests
+
+import requests
+from  cStringIO import StringIO
+from lxml import etree
+
+class Crawler(object):
+
+    def __init__(self, app):
+        self.deep = 2  #指定网页的抓取深度        
+        self.url = '' #指定网站地址
+        self.key = 'by' #搜索这个词
+        self.tp = app #连接池回调实例
+        self.visitedUrl = [] #抓取的网页放入列表,防止重复抓取
+
+    def _hasCrawler(self, url): 
+        '''判断是否已经抓取过这个页面'''
+        return (True if url in self.visitedUrl else False)
+     
+    def getPageSource(self, url, key, deep): 
+        ''' 抓取页面,分析,入库.
+        '''
+        if self._hasCrawler(url): #发现重复直接return
+            return 
+        else:
+            self.visitedUrl.append(url) #发现新地址假如到这个列
+        r = requests.get('http://localhost/%s' % url)
+        encoding = r.encoding #判断页面的编码
+        result = r.text.encode('utf-8').decode(encoding)
+	    #f = StringIO(r.text.encode('utf-8'))
+        try:  
+            self._xpath(url, result, ['a'], unicode(key, 'utf8'), deep) #分析页面中的连接地址,以及它的内容
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], unicode(key, "utf8"), deep) #分析这几个标签的内容
+        except TypeError: #对编码类型异常处理,有些深度页面和主页的编码不同
+            self._xpath(url, result, ['a'], key, deep)
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], key, deep)
+        return True
+
+    def _xpath(self, weburl, data, xpath, key, deep):
+        page = etree.HTML(data)
+        for i in xpath:
+            hrefs = page.xpath(u"//%s" % i) #根据xpath标签
+            if deep &gt;1:
+                for href in hrefs:
+                    url = href.attrib.get('href','')
+                    if not url.startswith('java') and not url.startswith('#') and not \
+                        url.startswith('mailto') and url.endswith('html'):  #过滤javascript和发送邮件的链接
+                            self.tp.add_job(self.getPageSource,url, key, deep-1) #递归调用,直到符合的深
+            for href in hrefs:
+                value = href.text  #抓取相应标签的内容
+                if value:
+                    m = re.compile(r'.*%s.*' % key).match(value) #根据key匹配相应内容
+
+    def work(self):
+        self.tp.add_job(self.getPageSource, self.url, self.key, self.deep)
+        self.tp.wait_for_complete() #等待线程池完成
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>common_Crawler.py</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：多线程
+
+
+
+import time
+import threading
+import Queue
+from common import Crawler
+
+#lock = threading.Lock()   #设置线程锁
+
+
+class MyThread(threading.Thread):
+
+    def __init__(self, workQueue, timeout=1, **kwargs):
+        threading.Thread.__init__(self, kwargs=kwargs)
+        self.timeout = timeout #线程在结束前等待任务队列多长时间
+        self.setDaemon(True)  #设置deamon,表示主线程死掉,子线程不跟随死掉
+        self.workQueue = workQueue
+        self.start() #初始化直接启动线程
+
+    def run(self):
+        '''重载run方法'''
+        while True:
+            try:
+                #lock.acquire() #线程安全上锁 PS:queue 实现就是线程安全的，没有必要上锁 ,否者可以put/get_nowait
+                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
+                res = callable(*args)  #执行的任务
+                #lock.release()  #执行完,释放锁 
+            except Queue.Empty: #任务队列空的时候结束此线程
+                break
+            except Exception, e:
+                return -1
+
+
+class ThreadPool(object):
+
+    def __init__(self, num_of_threads):
+         self.workQueue = Queue.Queue()
+         self.threads = []
+         self.__createThreadPool(num_of_threads)
+ 
+    def __createThreadPool(self, num_of_threads):
+        for i in range(num_of_threads):
+             thread = MyThread(self.workQueue)
+             self.threads.append(thread)
+
+    def wait_for_complete(self):
+        '''等待所有线程完成'''
+        while len(self.threads):
+            thread = self.threads.pop()
+            if thread.isAlive():  #判断线程是否还存活来决定是否调用join
+                thread.join()
+     
+    def add_job( self, callable, *args):
+        '''增加任务,放到队列里面'''
+        self.workQueue.put((callable, args))
+def main():
+
+    tp = ThreadPool(10) 
+    crawler = Crawler(tp)
+    crawler.work()
+
+if __name__ == '__main__':
+
+    import timeit
+    t = timeit.Timer("main()") 
+    t.repeat(3, 10)
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>gevent_Crawler.py</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：gevent
+
+import gevent.monkey
+gevent.monkey.patch_all()
+from gevent.queue import Empty, Queue
+import gevent
+from common import Crawler
+
+class GeventLine(object):
+
+    def __init__(self, workQueue, timeout=1, **kwargs):
+        self.timeout = timeout #线程在结束前等待任务队列多长时间
+        self.workQueue = workQueue
+
+    def run(self):
+        '''重载run方法'''
+        while True:
+            try:
+                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
+                res = callable(*args)  #执行的任务
+                print res
+            except Empty:
+                break
+            except Exception, e:
+            	print e
+                return -1
+
+class GeventPool(object):
+
+	def __init__(self, num_of_threads):
+	         self.workQueue = Queue()
+	         self.threads = []
+	         self.__createThreadPool(num_of_threads)
+	 
+	def __createThreadPool(self, num_of_threads):
+	    for i in range(num_of_threads):
+	         thread = GeventLine(self.workQueue)
+	         self.threads.append(gevent.spawn(thread.run))
+
+
+	def wait_for_complete(self):
+	    '''等待所有线程完成'''
+
+	    while len(self.threads):
+	        thread = self.threads.pop()
+	        thread.join()
+	    gevent.shutdown()
+	 
+	def add_job( self, callable, *args):
+	    '''增加任务,放到队列里面'''
+	    self.workQueue.put((callable, args))
+
+def main():
+	tp = GeventPool(10) 
+	crawler = Crawler(tp)
+	crawler.work()
+
+if __name__ == '__main__':
+
+    import timeit
+    t = timeit.Timer("main()") 
+    t.repeat(3, 10)
+
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>Crawler/spiders/spiders.py</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.selector import HtmlXPathSelector
+from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+from scrapy.item import Item
+
+class MySpider(CrawlSpider):
+    name = 'localhost'
+    allowed_domains = ['localhost']
+    start_urls = ['http://localhost']
+    rules = ( 
+        Rule(SgmlLinkExtractor(allow=(r'http://localhost/.*')), callback="parse_item"),  
+    )  
+    def parse_item(self, response):
+        hxs = HtmlXPathSelector(response)
+        hxs.select('//*[@*]/text()').re(r'py')  #实现了common.py里面的抓取和分析，但是common.py是抓取五种标签，分2次抓取，这里是抓取所有标签，不够严禁
+
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>scrapy_Crawler.py #时间有限，没有研究模块调用，也不够严禁</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+#!/usr/bin/python
+#coding=utf-8
+
+# Version 1 by Dongwm 2013/01/10
+# 脚本作用：scrapy
+
+from subprocess import call
+
+def main():
+	call('scrapy crawl localhost --nolog', shell=True)
+
+if __name__ == '__main__':
+
+    import timeit
+    t = timeit.Timer("main()") 
+    t.repeat(3, 10)
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="section-4">实验过程</h4>
+
+<h5 id="section-5">1. 同时启动三个终端，一起跑（手点回车，肯定有点延迟）</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python scrapy_Crawler.py
+10000000 loops, best of 3: 0.024 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop
+10000000 loops, best of 3: 0.0222 usec per loop
+10000000 loops, best of 3: 0.0223 usec per loop #他是最快跑完的，非常快～～  数据很稳定
+
+dongwm@localhost ~/Crawler $ python gevent_Crawler.py
+100000000 loops, best of 3: 0.0134 usec per loop
+100000000 loops, best of 3: 0.0131 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0134 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0133 usec per loop
+100000000 loops, best of 3: 0.0132 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop  #跑得很慢，不知道是不是timeit的原因(或者调用的优先级太低，抢资源能力不行)，很奇怪，但是它的数据最快，数据稳定在0.0123-0.0133
+
+
+dongwm@localhost ~/Crawler $ python common_Crawler.py
+100000000 loops, best of 3: 0.0274 usec per loop
+10000000 loops, best of 3: 0.0245 usec per loop
+10000000 loops, best of 3: 0.0252 usec per loop
+10000000 loops, best of 3: 0.0239 usec per loop
+10000000 loops, best of 3: 0.025 usec per loop
+10000000 loops, best of 3: 0.0273 usec per loop
+10000000 loops, best of 3: 0.0255 usec per loop
+10000000 loops, best of 3: 0.0261 usec per loop
+10000000 loops, best of 3: 0.0275 usec per loop
+10000000 loops, best of 3: 0.0261 usec per loop
+10000000 loops, best of 3: 0.0257 usec per loop
+10000000 loops, best of 3: 0.0273 usec per loop
+10000000 loops, best of 3: 0.0241 usec per loop
+10000000 loops, best of 3: 0.0257 usec per loop
+10000000 loops, best of 3: 0.0275 usec per loop
+10000000 loops, best of 3: 0.0241 usec per loop
+10000000 loops, best of 3: 0.0259 usec per loop
+10000000 loops, best of 3: 0.0251 usec per loop
+10000000 loops, best of 3: 0.0193 usec per loop
+10000000 loops, best of 3: 0.0176 usec per loop
+100000000 loops, best of 3: 0.0199 usec per loop
+100000000 loops, best of 3: 0.0167 usec per loop
+100000000 loops, best of 3: 0.018 usec per loop
+10000000 loops, best of 3: 0.0179 usec per loop
+100000000 loops, best of 3: 0.0173 usec per loop
+100000000 loops, best of 3: 0.0172 usec per loop
+100000000 loops, best of 3: 0.018 usec per loop
+100000000 loops, best of 3: 0.0162 usec per loop
+100000000 loops, best of 3: 0.0179 usec per loop
+100000000 loops, best of 3: 0.0171 usec per loop  #第二跑得快，但是还是数据不稳定，时间在0.017-0.026之间
+</pre></figure></notextile></div></notextile></div>
+<p>#####2. 挨个启动，待负载保持一个相对拨波动平衡 在换另一个</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python scrapy_Crawler.py
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0123 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0122 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop   #数据很稳定，在0.0122-0.0126之间 机器负载在1.3左右,最高超过了1.4（闲暇0.6左右）
+</pre></figure></notextile></div></notextile></div>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python gevent_Crawler.py
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0126 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop
+100000000 loops, best of 3: 0.0125 usec per loop
+100000000 loops, best of 3: 0.0124 usec per loop  #数据很稳定，在0.0124-0.0126之间 机器负载在1.2左右（闲暇0.6左右）
+</pre></figure></notextile></div></notextile></div>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+dongwm@localhost ~/Crawler $ python common_Crawler.py
+10000000 loops, best of 3: 0.0135 usec per loop
+100000000 loops, best of 3: 0.0185 usec per loop
+10000000 loops, best of 3: 0.0174 usec per loop
+100000000 loops, best of 3: 0.019 usec per loop
+10000000 loops, best of 3: 0.016 usec per loop
+10000000 loops, best of 3: 0.0181 usec per loop
+10000000 loops, best of 3: 0.0146 usec per loop
+100000000 loops, best of 3: 0.0192 usec per loop
+10000000 loops, best of 3: 0.0165 usec per loop
+10000000 loops, best of 3: 0.0176 usec per loop
+10000000 loops, best of 3: 0.0177 usec per loop
+10000000 loops, best of 3: 0.0182 usec per loop
+100000000 loops, best of 3: 0.0195 usec per loop
+10000000 loops, best of 3: 0.0163 usec per loop
+10000000 loops, best of 3: 0.0161 usec per loop
+100000000 loops, best of 3: 0.0191 usec per loop
+100000000 loops, best of 3: 0.0193 usec per loop
+10000000 loops, best of 3: 0.0147 usec per loop
+100000000 loops, best of 3: 0.0197 usec per loop
+10000000 loops, best of 3: 0.0178 usec per loop
+10000000 loops, best of 3: 0.0172 usec per loop
+100000000 loops, best of 3: 0.022 usec per loop
+100000000 loops, best of 3: 0.0191 usec per loop
+10000000 loops, best of 3: 0.0208 usec per loop
+10000000 loops, best of 3: 0.0144 usec per loop
+10000000 loops, best of 3: 0.0201 usec per loop
+100000000 loops, best of 3: 0.0195 usec per loop
+100000000 loops, best of 3: 0.0231 usec per loop
+10000000 loops, best of 3: 0.0149 usec per loop
+100000000 loops, best of 3: 0.0211 usec per loop #数据有点不稳定，浮动较大，但是最要在0.016-0.019  机器负载曾经长时间在1.01,最高未超过1.1 （闲暇0.6左右）
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="section-6">一些我的看法</h4>
+
+<p>虽然我的实验有不够严禁的地方，我的代码能力也有限（希望有朋友看见代码能提供修改意见或更NB的版本），但是效果还是比较明显的，我总结下</p>
+
+<ol>
+  <li>gevent确实性能很好，并且很稳定，占用io一般(据说长时间使用有内存泄露的问题？我不理解)</li>
+  <li>scrapy这个框架把爬虫封装的很好，只需要最少的代码就能实现，性能也不差gevent</li>
+  <li>多线程编程确实有瓶颈，并且不稳定</li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/djangohe-flaskfen-ye/">Django和flask分页</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-29T15:37:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>最近搞了一些关于flask和django的东西，尤其是django的模板和admin功能以及这些框架使用bootstrap的东西，没时间更新博客，先说一下flask和django分页吧</p>
+
+<h5 id="flaskbootstrapflask-paginatehttppackagespythonorgflask-paginate">flask的bootstrap分页插件<a href="http://packages.python.org/Flask-paginate">flask-paginate</a></h5>
+
+<p>其实安装很常规，他的思路就是根据你的数据量给每个页面加一个li前缀到最后返回的div里面。因为官网提供的说明很简单，我在这里仔细说说：</p>
+
+<ol>
+  <li>官网说给你的网站页面添加css：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    background: #6aa6ed;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
+</pre></figure></notextile></div></notextile></div>
+<p>其实这个是给你页面显示统计数据的方法pagination.info提供的样式，默认的class=’pagination’是bootstrap自带的，不需要你添加</p>
+
+<ol>
+  <li>官网的例子使用的是：Blueprint：</li>
+</ol>
+
+<p>我们一般都是： ‘from flask import Flask’，其实Blueprint就是一个可定制的容器，一个应用可以有多个容器，他们都继承于flask.helpers._PackageBoundObject
+可以看我的一个例子：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+@app.route('/')
+def index():
+
+	pagesize = 100 #设定每页显示条目数
+	page = int(request.args.get('page',0)) #获取当前页面页数
+	data = get_MongoData(page, pagesize) #get_MongoData是我自己的函数，根据页数过滤要显示的数据（因为实在太大了）
+	pagination = Pagination(total=data[1], per_page=pagesize, page=page) #total的值是总数据条目，per_page表示每页显示数目，page就是当前页数。还可以设置向前/后页面标签（默认是&lt;&lt;/&gt;&gt;）等
+	return render_template("index.html", pagination=pagination)
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>我对他的一点修改：
+    <ol>
+      <li>我发现在我的程序里面，这个分页栏在后部会放不下而换行显示，我就直接把link_css制定的div改成了行内元素span</li>
+      <li>当我默认使用link_size,代码是这样：</li>
+    </ol>
+    <xmp>
+     link_css = &#8217;<span class="pagination{0} green"><ul>&#8217;
+     其实最后页面出来的效果是&#8217;<span class="paginationNone green"><ul>&#8217; 
+ 
+		
+     这样就没有符合的bootstrap类，所以我修改了links方法:
+
+     <div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+     @property
+     def links(self):
+         '''get all the pagination links'''
+         if self.total_pages &lt;= 1:
+             return ''
+         if not self.link_size:
+             self.link_size = ''
+         s = [link_css.format(self.link_size)]
+         s.append(self.prev_page)
+         for page in self.pages:
+             s.append(self.single_page(page) if page else gap_marker)
+
+         s.append(self.next_page)
+         s.append('')
+         return ''.join(s)
+     </pre></figure></notextile></div></notextile></div>
+
+</ul></span></ul></span></xmp>
+  </li>
+</ol>
+<p>#####flask的bootstrap分页插件<a href="http://tgdn.github.com/django-bootstrap-pagination/">django-bootstrap-pagination</a></p>
+
+<p>django的插件比较复杂，它自己定义了中间件和标签，这样你需要在模板中load它提供的函数，并且很nb的使用了RequestContext去处理变量,可以看张沈鹏以前写的一个小文章：<a href="http://zsp.iteye.com/blog/115254">django 简化 view 函数的编写</a></p>
+
+<ol>
+  <li>先看我的后台方法：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+def showlist(req):
+
+	t = req.GET.get('type', None)
+	l = req.GET.get('app', None)
+	if t and l:
+		db = getMongo('XXX.XXX.XXX.XXX:XX', 'dc2')
+		if t == 'v':
+			q = re.compile(r'.*%s$' % l)
+			data = db.site.find({'modules.site.level':'v4', 'site':{ '$regex' : q }}, 
+				{'site':1, '_id':0, 'modules.site.links':1, 'modules.site.keywords':1}).sort(
+				'modules.site.site.check_time')
+
+	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
+</pre></figure></notextile></div></notextile></div>
+
+<p>但是运行时候会报错：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+Traceback:
+File "/usr/local/lib/python2.6/dist-packages/django/core/handlers/base.py" in get_response
+  111.                         response = callback(request, *callback_args, **callback_kwargs)
+File "/home/dongwm/centerCon/views.py" in showlist
+  68. 	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
+File "/usr/local/lib/python2.6/dist-packages/django/shortcuts/__init__.py" in render_to_response
+  20.     return HttpResponse(loader.render_to_string(*args, **kwargs), **httpresponse_kwargs)
+File "/usr/local/lib/python2.6/dist-packages/django/template/loader.py" in render_to_string
+  176.         return t.render(context_instance)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
+  140.             return self._render(context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in _render
+  134.         return self.nodelist.render(context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
+  823.                 bit = self.render_node(node, context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/debug.py" in render_node
+  74.             return node.render(context)
+File "/home/dongwm/centerCon/templatetags/pagination_tags.py" in render 
+  91.             page_obj = paginator.page(context['request'].page)
+File "/usr/local/lib/python2.6/dist-packages/django/template/context.py" in __getitem__
+  54.         raise KeyError(key)
+
+Exception Type: KeyError at /showlist/
+Exception Value: 'request'
+</pre></figure></notextile></div></notextile></div>
+
+<p>不管你用那个插件都会有这个报错。。。</p>
+
+<p><em>后来发现原因是：</em></p>
+
+<p><em>settings文件没有设置TEMPLATE_CONTEXT_PROCESSORS</em>
+理由：模板上下文处理器会指定了哪些contextprocessors总是默认被使用。这样就省去了每次使用RequestContext都指定processors的麻烦
+在settings加入：
+TEMPLATE_CONTEXT_PROCESSORS = (
+    “django.core.context_processors.media”,
+    “django.core.context_processors.request”
+    )</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/octopress-de-3D-biao-qian-yun/">octopress的3D标签云插件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-17T14:22:00+08:00" pubdate data-updated="true">Nov 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>最近看了《社交网站的数据挖掘与分析》，了解到关于谷歌可视化工具，正好有2次都说到了标签的3D展现，以前用wordpress的时候有个插件叫做wp-cumulus，而octopress里面有一个相应的标签插件，但是却是静态展示，一直不爽，然后就萌发了改一个3D的octoress标签云插件的想法，其中word cumulus借用了<a href="https://www.google.com/jsapi">谷歌api</a>，ruby程序还是借以前的<a href="https://github.com/tokkonopapa/octopress-tagcloud">topress-tagcloud</a>，思路参考了<a href="http://code.google.com/p/word-cumulus-goog-vis">word-cumulus-goog-vis</a>,我的设计是这样的如下：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+
+1. jekyll生成静态页面的时候，根据相关插件计算标签的地址，数量和标签内容
+2. 将这些数据用json.dump的方式写入到一个json文件（因为octopress是静态页面，不能从数据库抓取数据）
+3. 新增一个javascript脚本（需要添加到source/_includes/head.html，具体看我的后面的例子程序中的注释），实现调取谷歌可视化工具的接口，把数据写到swf文件中
+4. 当打开网页的时候会调用jquery的getjson（我用的是.ajax）读取数据，将数据格式化，通过js脚本写入div（div所在的html已经放在边栏）
+
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="section-1">插件代码如下</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+# encoding: utf-8
+
+require 'json' #导入json依赖
+require 'pathname'
+  
+
+module Jekyll 
+
+  class TagCloud &lt; Liquid::Tag  #标签云的类继承至Liquid::Tag，liquid是一个ruby的模版引擎，
+
+    def initialize(tag_name, markup, tokens)
+      @opts = {}
+      if markup.strip =~ /\s*counter:(\w+)/i  #检查是否定义参数，没有的话不计算标签数量
+        @opts['counter'] = ($1 == 'true') #哈希项的结果就是这个参数是否为true的布尔值
+        markup = markup.strip.sub(/counter:\w+/i,'')
+      end
+      super
+    end
+
+    def render(context)
+      lists = {}
+      max, min = 1, 1
+      config = context.registers[:site].config #内置检查站点配置
+      category_dir = config['root'] + config['category_dir'] + '/' #标签基目录
+      categories = context.registers[:site].categories
+      categories.keys.sort_by{ |str| str.downcase }.each do |category| #标签根据小写字符串排序 挨个计算其存在数量
+        count = categories[category].count
+        lists[category] = count
+        max = count if count &gt; max
+      end
+
+      li = []
+      lists.each do | category, counter |
+        nli = []
+        url = category_dir + category.gsub(/_|\P{Word}/, '-').gsub(/-{2,}/, '-').downcase
+        nli[0] = category + '[' + categories[category].count.to_s + ']' #第一个参数是标签和数量的字符串
+        nli[1] = url #第二个标签是标签集合的地址
+        if @config['category_counter']
+          nli[2] = categories[category].count
+        else nli[2] = 8
+        end
+        li.push(nli)
+      end
+      f = File.open('%s/../source/javascripts/tag.json' % \
+          Pathname.new(File.dirname(__FILE__)).realpath,'w') #操作文件
+      f.puts(JSON.dump(li)) #写入数据
+      f.close()
+    end
+  end
+
+end
+
+Liquid::Template.register_tag('tag_cloud', Jekyll::TagCloud)  #让标签生效
+
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="javascript">javascript代码如下</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+
+var json_data = (function () {
+    var json = null;
+    $.ajax({   //通过jquery方法获取json文件的数据
+        'async': false,
+        'global': false,
+        'url': '/javascript/tag.json',  //这里地址是错误的，因为静态页面会把握的标签当成真实环境，其实是javascripts，具体代码请看github项目
+        'dataType': "json",
+        'success': function (data) {
+            json = data;
+        }
+    });
+    return json;
+})(); 
+      google.setOnLoadCallback(drawVisualization);  //设定可视化load后调用函数
+
+    function drawVisualization() {
+
+        var data = new google.visualization.DataTable(); //创建数据表
+        data.addColumn('string', 'Tag'); //加三个字段
+        data.addColumn('string', 'URL'); 
+        data.addColumn('number', 'Font size');
+
+        data.addRows(json_data.length);  //确定标签的数量
+        for (var i = 0; i &lt; json_data.length; i++) {
+            var url = window.location.href + json_data[i][1];
+            data.setCell(i, 0, json_data[i][0]); // 标签
+            data.setCell(i, 1, url); // 标签的真实集合url
+            data.setCell(i, 2, 2+1.5*json_data[i][2]); // 标签字体大小
+        }
+
+        var vis = new gviz_word_cumulus.WordCumulus(document.getElementById('tag-clouds'));  //找到id为‘tag-clou’的div，这里数据也有问题，原因如上
+
+        vis.draw(data, {text_color: '#00ff00', speed: 50, width:220, height:220});  //画图  注意，修改效果云的大小在这里制定 我这里宽高都是220px
+       }
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="htmlsourceincludescustomasidescategorycloudhtml">被包含的html代码如下(我放在了source/_includes/custom/asides/category_cloud.html)</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+<xmp>
+<section class="well">  //这个主要根据你的主题而定吧，我的主题右边栏的风格都是这样
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-clou"></div>   // 制定counter为true就会根据你的标签符合的文章数对画图效果显示的该标签字体大小比例而定，不指定或者制定其他值都按照一个字体大小显示所有标签
+</section>
+</xmp>        
+        
+并且将这个html放在默认的右边栏的配置中，修改_config.yaml，其中：
+
+default_asides: [asides/recent_posts.html, custom/asides/links.html, asides/github.html, asides/delicious.html, asides/pinboard.html, asides/googleplus.html,custom/asides/category_cloud.html, custom/asides/douban.html, asides/article_total_sidebar.html]            
+
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="htmlheadhtmlsourceincludesheadhtmlfoothtmljquery">剩下就是修改你的主页的html（我直接修改了head.html[source/_includes/head.html],愿意的话你可以修改源码的foot.html甚至其它，只要保证它在jquery加载之后加载就好，我只粘贴新增的一部分和它附近的内容）</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+
+<xmp>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>  //原来就有
+  <script type="text/javascript" src="/javascripts/api.js"></script>  //这里是谷歌的jsapi，我直接保存在我脚本里面，因为谷歌可能访问不稳定，你懂得
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script> //这是操作word-cumulus的
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script> //这里是操作wp-cumulus的flash文件的
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script> //这是我新建的上述js脚本地址
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml" /> //原来就有
+</xmp>
+
+</pre></figure></notextile></div></notextile></div>
+
+<p>打包相关文件以及详情请参看我的github项目：<a href="https://github.com/dongweiming/octopress-wp_cumulus_for_tagcloud">octopress-wp_cumulus_for_tagcloud</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/7/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/5/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

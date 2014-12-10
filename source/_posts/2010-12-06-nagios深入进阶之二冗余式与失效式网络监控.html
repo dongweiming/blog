@@ -1,0 +1,53 @@
+---
+layout: post
+title: Nagios深入进阶之二:冗余式与失效式网络监控
+categories:
+- nagios
+tags:
+- nagios
+- 主从
+- 冗余
+- 失效式
+published: true
+comments: true
+indexer: true
+---
+<p>假设我们使用单一的nagios服务器，如果出现一些未知的错误，比如硬件问题，人为因素引起的宕机等，我们在不可知的情况下nagios已 经停止工作了。所以需要做一个“高可用”，也就是所谓的“主从”。原理就是借助定时任务，由"主"机把有关故障信息以通知形式送给联系人。当发生问题后 “从”机接过来报警的工作，当“主”机恢复工作，“从”机停止通知功能。当然，“主”和“从”的信息是同步的。<!--more--></p>
+
+<p>以下是脚本（放在从机上）：
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="568" valign="top">[ccine_perl height="100%" width="99%"]#!/bin/sh</td></tr></tbody></table></p>
+
+<p>case   "$(/home/okooo/apps/nagios/libexec/check_nrpe  –H  logserver –c  check_nagios| awk '{print $2}'|sed   "s/://")" in</p>
+
+<p>CRITICAL)</p>
+
+<p>/opt/nagios/libexec/eventhandlers/enable_notifications</p>
+
+<p>;;</p>
+
+<p>OK)</p>
+
+<p>/opt/nagios/libexec/eventhandlers/disable_notifications</p>
+
+<p>;;</p>
+
+<p>esac</p>
+
+<p>exit 0[/ccine_perl]
+
+
+
+注：其中的enable_notifications和disable_notifications在nagios安装包里面有。</p>
+
+<p>环境配置：</p>
+
+<p>修改“从”机上nagios.cfg</p>
+
+<p><a title="表 5.14. 服务检测执行选项" href="http://nagios-cn.sourceforge.net/nagios-cn/configuration.html#execute_service_checks">execute_service_checks</a> =1  这样从机还能对远程主机进行检测，这样是主从同步</p>
+
+<p><a title="表 5.13. 通知选项" href="http://nagios-cn.sourceforge.net/nagios-cn/configuration.html#enable_notifications">enable_notifications</a> =0 阻止在“主”机正常工作下，"从"机对主机与服务送出通知</p>
+
+<p><a title="表 5.21. 外部命令检查选项" href="http://nagios-cn.sourceforge.net/nagios-cn/configuration.html#check_external_commands">check_external_commands</a> =1 决定了Nagios要检查存于<a title="表 5.23. 外部命令文件" href="http://nagios-cn.sourceforge.net/nagios-cn/configuration.html#command_file">命令文件</a>里的将要执行的命令</p>

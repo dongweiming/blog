@@ -1,0 +1,867 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/30">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Etop%E7%81%B5%E5%91%BD%E7%9A%84%E7%A0%94%E7%A9%B6/">关于top命令的研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-22T00:00:00+08:00" pubdate data-updated="true">Jan 22<span>nd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1  根据一些参数将性能排序</strong></p>
+
+<p>使用-O选项进入选择菜单，选择相关字母即可根据参数排序：</p>
+
+<p><pre class="sh_bash"></p>
+
+<p>Current Sort Field:  K  for window 1:Def
+Select sort field via field letter, type any other key to return</p>
+
+<p>a: PID        = Process Id                  y: WCHAN      = Sleeping in Function
+b: PPID       = Parent Process Pid          z: Flags      = Task Flags &lt;sched.h&gt;
+c: RUSER      = Real user name
+d: UID        = User Id                   Note1:
+e: USER       = User Name                   If a selected sort field can't be
+f: GROUP      = Group Name                  shown due to screen width or your
+g: TTY        = Controlling Tty             field order, the '&lt;' and '&gt;' keys
+h: PR         = Priority                    will be unavailable until a field
+i: NI         = Nice value                  within viewable range is chosen.
+j: P          = Last used cpu (SMP)
+* K: %CPU       = CPU usage                 Note2:
+l: TIME       = CPU Time                    Field sorting uses internal values,
+m: TIME+      = CPU Time, hundredths        not those in column display.  Thus,
+n: %MEM       = Memory usage (RES)          the TTY &amp; WCHAN fields will violate
+o: VIRT       = Virtual Image (kb)          strict ASCII collating sequence.
+p: SWAP       = Swapped size (kb)           (shame on you if WCHAN is chosen)
+q: RES        = Resident size (kb)
+r: CODE       = Code size (kb)
+s: DATA       = Data+Stack size (kb)
+t: SHR        = Shared Mem size (kb)
+u: nFLT       = Page Fault count
+v: nDRT       = Dirty Pages count
+w: S          = Process Status
+x: COMMAND    = Command name/line</p>
+
+<p>本例选择K，这样就会进行CPU占用率的排序：</p>
+
+<p>28520 okooo     15   0  268m  39m  22m S  4.0  0.2   0:01.31 httpd
+top - 22:10:20 up 58 days,  8:34,  1 user,  load average: 3.22, 3.48, 3.76
+Tasks: 192 total,   6 running, 185 sleeping,   0 stopped,   1 zombie
+Cpu(s): 29.0%us,  3.2%sy,  0.0%ni, 65.1%id,  0.1%wa,  0.5%hi,  2.2%si,  0.0%st
+Mem:  16433032k total,  7796168k used,  8636864k free,   625372k buffers
+Swap:        0k total,        0k used,        0k free,  3845252k cached</p>
+
+<p>PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+28536 dongwm     16   0  276m  57m  32m S 27.3  0.4   0:21.60 httpd
+32401 dongwm    16   0  238m  38m  18m S 18.0  0.2   0:00.70 httpd
+29848 dongwm    16   0  278m  55m  29m S 16.6  0.3   0:11.11 httpd
+27389 dongwm     15   0  279m  61m  33m R 16.0  0.4   0:25.40 httpd
+26694 dongwm     15   0  272m  54m  34m S 15.6  0.3   0:30.51 httpd
+26356 dongwm     16   0  280m  65m  37m S 13.0  0.4   0:31.55 httpd
+27445 dongwm     16   0  289m  70m  33m S 12.3  0.4   0:24.50 httpd
+29531 dongwm     16   0  281m  61m  31m S 12.0  0.4   0:12.74 httpd
+9418  dongwm     15   0  338m  91m  42m R 10.0  0.6   1:44.67 httpd    </pre>
+<strong>2  高亮显示：按z或者b：</strong></p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2011/01/image.png"><img style="display: inline; border: 0px;" title="image" src="http://www.dongwm.com/wp-content/uploads/2011/01/image_thumb.png" border="0" alt="image" width="420" height="203" /></a></p>
+
+<p><strong>3  改变刷新top命令的时间间隔（默认是3s）:</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">delay from 3.0 to: 5</pre></td>
+</tr>
+</tbody>
+</table>
+4  <strong>显示/隐藏进程的路径-按c键：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="408">
+<tbody>
+<tr>
+<td width="406" valign="top"><pre class="sh_bash">26371 dongwm     22   0 2444m 384m 8648 S  3.0  1.2   1:42.50 /opt/apps/java6/bin/java -Xms1024m -Xmx2048m -jar /home/okooo/apps/cepServer_zyq/EsperServer.jar ap
+28985 dongwm    15   0 13032 1468  812 R  0.7  0.0   0:00.11 top
+2068 ossec     15   0  8064 2736  724 S  0.3  0.0   0:13.53 /var/ossec/bin/ossec-analysisd   </pre></td>
+</tr>
+</tbody>
+</table>
+<strong>5  设定top查看性能次数-当刷新指定次数后自动退出：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">top -n 你想要的次数</pre></td>
+</tr>
+</tbody>
+</table></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ecrontab%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6/">关于crontab深入研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-18T00:00:00+08:00" pubdate data-updated="true">Jan 18<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p><strong>以下是本文的重点内容：</strong></p>  <p><strong>1</strong><strong>.在一天做N次的计划任务</strong></p>  <p><strong>2.在一天的特定时间段的计划任务</strong></p>  <p><strong>3.查看root以外用户的计划任务内容</strong></p>  <p><strong>4.在相隔时间后执行计划任务</strong></p>  <p><strong>5.某特定相隔时间的计划任务</strong></p>  <p><strong>6.重启后执行计划任务</strong></p>  <p><strong>7.以秒为单位执行计划任务</strong></p> </div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Ecrontab%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/susedeyuanchenglianjiejiqiao/">Suse的远程连接技巧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-12T00:00:00+08:00" pubdate data-updated="true">Jan 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 suse的windows远程桌面：</strong></p>
+
+<p>rdesktop是一个很好的windows远程桌面的工具，suse默认已经安装。但是一定要确保Windows开启Windows Terminal Service。</p>
+
+<p>我习惯使用命令行，将登录命令写在脚本里面并作为外部命令，看我的操作：</p>
+
+<p><pre class="sh_bash">#vi /bin/25</p>
+
+<p>#!/bin/bash
+rdesktop -u admin -p admiN@\(23324 -f -r clipboard:PRIMARYCLIPBOARD -r disk:sunray=/home/dongwm 192.168.9.100:9922</pre></p>
+
+<p>其中 －u加用户名</p>
+
+<p>－p加密码，但是注意特殊符号需要进行加转义符“\”</p>
+
+<p>-r clipboard:PRIMARYCLIPBOARD  可以在linux和windows直接进行复制粘贴</p>
+
+<p>-r disk:sunray=/home/dongwm   效果类似于samba，直接实现ftp等功能</p>
+
+<p>设置其执行权限：</p>
+
+<p>＃chmod +x /bin/25</p>
+
+<p>这样这个脚本就成了外部命令，只要在终端输入：</p>
+
+<p>＃25</p>
+
+<p>即可</p>
+
+<p><strong>2  suse的远程ssh乱码</strong></p>
+
+<p>我们远程登录一些系统，可能他使用的一些编码会让我们在终端显示乱码，但是因为某些原因却不能对远程主机修改其编码类型，所以我们使用luit,命令如下：</p>
+
+<p><pre class="sh_bash">luit -encoding gbk ssh root@192.168.9.100 -p 9922</pre></p>
+
+<p>luit主要进行终端的编码转换，这样的话我们就不会看见乱码，也不用修改远程主机的编码类型了</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Efind%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">关于find命令的研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-08T00:00:00+08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1  忽略大小写的查找</strong></p>
+
+<p><strong> </strong><strong>2  查找文件目录的深度限制</strong></p>
+
+<p><strong>3 根据文件属性查找</strong></p>
+
+<p><strong>4 查找空文件</strong></p>
+
+<p><strong>5  工作中可能想要删除一些临时文件，想要删除最大的五个文件，这样查找</strong></p>
+
+<p><strong>6  查找指定文件类型的文件</strong></p>
+
+<p><strong>7  根据文件修改时间查找</strong></p>
+
+<p><strong>8  根据文件大小查找</strong></p>
+
+<p><strong>9  alias小技巧</strong></p>
+
+<p></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Efind%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ecd%E5%91%BD%E4%BB%A4%E7%9A%84%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6/">关于cd命令的深入研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-08T00:00:00+08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在本文主要以下内容：</p>
+
+<p><strong>1  使用CDPATH定义特需的目录</strong></p>
+
+<p><strong>2  使用alias在bash_profile文件创建别名</strong></p>
+
+<p><strong>3 将几个命令联合使用（这里我使用mkdir+cd）</strong></p>
+
+<p><strong>4 自动纠正拼写错误的目录名称</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Ecd%E5%91%BD%E4%BB%A4%E7%9A%84%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Els%E7%9A%84%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6/">关于ls的深入研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-07T00:00:00+08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>以下是本文重点内容：</strong></p>
+
+<p><strong>1 显示最后一次执行的命令中修改的文件：使用-t选项</strong></p>
+
+<p><strong>2  每行显示一个条目</strong></p>
+
+<p><strong>3  显示文件大小</strong></p>
+
+<p><strong>4 显示文件上次修改的时间</strong></p>
+
+<p><strong>5  递归显示文件</strong></p>
+
+<p><strong>6  显示文件的uid和gid：使用-n选项</strong></p>
+
+<p><strong>7 在颜色不明显分辨时，使不同的文件显示不同的效果</strong></p>
+
+<p><strong>8 一些.bashrc的别名技巧</strong></p>
+
+<p></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Els%E7%9A%84%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/spreadwackamoledazaoquanxingaokeyongfuzaijunheng/">Spread+wackamole打造全新高可用＋负载均衡</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-07T00:00:00+08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>土豆运营团队称之为：穷人的劳斯莱斯。呵呵！我这里一直使用ZXTM，但是因为一些特殊的业务需要，新尝试了这种架构。我参考了土豆网站运维的文章，但是网上相关内容极少，并且含糊其词，所以写了本文。</strong></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/spreadwackamoledazaoquanxingaokeyongfuzaijunheng/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Essh%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6%E4%BB%A5%E5%8F%8Assh%E4%BF%A1%E4%BB%BB%E8%AF%A6%E8%A7%A3/">关于ssh命令研究以及SSH信任详解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-05T00:00:00+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>本文主要介绍一下几个要点内容：</strong></p>
+
+<p><strong>1  ssh客户端的DEBUG调试</strong></p>
+
+<p><strong>2  ssh的转义符用法（比如切换ssh会话）</strong></p>
+
+<p><strong>3  ssh的信任登陆（即登陆不需要手动输入密码）</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Essh%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6%E4%BB%A5%E5%8F%8Assh%E4%BF%A1%E4%BB%BB%E8%AF%A6%E8%A7%A3/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ehistory%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6/">关于history命令研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-05T00:00:00+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>本文主要介绍一下几个要点内容：</strong></p>
+
+<p><strong>1 显示时间戳</strong></p>
+
+<p><strong>2 快速执行以前的命令</strong></p>
+
+<p><strong>3 去掉连续执行的重复命令</strong></p>
+
+<p><strong>4 一些技巧</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Ehistory%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/zuixinfangshianzhuangpeizhismokeping/">最新方式安装配置smokeping</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-28T00:00:00+08:00" pubdate data-updated="true">Dec 28<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>smokeping是对IDC网络质量，稳定性等最好的检测工具，包括常规的 ping，dig，echoping，curl等，可以 监视 www 服务器性能，监视 dns 查询性能，监视 ssh 性能等。选择smokeping我觉得有以下原因：
+<strong>1，最佳的画图功能，延迟和丢包用颜色和阴影表示很直观。
+2，免费和开源，作者是MRTG和RRDtool作者。
+3，支持主从的分布式模式。
+4，可以自定义报警功能。</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/zuixinfangshianzhuangpeizhismokeping/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/31/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/29/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

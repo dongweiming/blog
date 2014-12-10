@@ -1,0 +1,390 @@
+---
+layout: post
+title: 关于threading研究（一）
+categories:
+- python模块研究
+tags:
+- threading
+published: true
+comments: true
+indexer: true
+---
+<p>前言：threading是python的管理多线程模块，实际工作中很常用，很多功能类似于multiprocessing（多进程模块）</p>
+
+<p><pre class="sh_python">
+import threading</p>
+
+<p>def worker(num):   #带参数的函数
+    print 'Worker: %s' % num
+    return</p>
+
+<p>threads = []
+for i in range(5):
+    t = threading.Thread(target=worker, args=(i,))  #实例化，多线程操作
+    threads.append(t)
+    t.start()  #启动多线程，还可以继承threading.Thread类，重写run()函数为worker函数内容，实现一样的效果
+</pre></p>
+
+<p><pre class="sh_python">
+import threading
+import time</p>
+
+<p>def worker():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(2)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>def my_service():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(3)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)  #设置实现的线程函数的名字
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) # 使用线程函数的默认的名字，这里就是Thread-1，Thread-2，这样的累加</p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,   #打印日志使用logging模块
+                    format='[%(levelname)s] (%(threadName)-10s) %(message)s',  #格式格式，前面是logging的级别，因为上面指定DEBUG模式，threadName表示线程的名字
+                    )</p>
+
+<p>def worker():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>def my_service():
+    logging.debug('Starting')
+    time.sleep(3)
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) </p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+[DEBUG] (worker    ) Starting
+[DEBUG] (Thread-1  ) Starting
+[DEBUG] (my_service) Starting
+[DEBUG] (worker    ) Exiting
+[DEBUG] (Thread-1  ) Exiting
+[DEBUG] (my_service) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)  #设置daemon模式，主程序结束，这个子线程依然存在</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)  #默认deamon是false，也就是不使用守护模式，子线程跟随主程序结束</p>
+
+<p>d.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)</p>
+
+<p>d.start()
+t.start()</p>
+
+<p>d.join()  #表示等待子线程死掉再退出，也可以设置超时，超时会返回，不等待子线程结束 d.join(1) 这样sleep的2秒还不够， d.isAlive()得出线程还是存在的
+t.join()  #，但是程序也结束。
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+(daemon    ) Exiting  #等待那个deamon的子线程结束才结束</p>
+
+<p><pre class="sh_python">
+import random
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def worker():
+    t = threading.currentThread()
+    pause = random.randint(1,5)
+    logging.debug('sleeping %s', pause)
+    time.sleep(pause)  #sleep一个随机值
+    logging.debug('ending')
+    return</p>
+
+<p>for i in range(3):
+    t = threading.Thread(target=worker)
+    t.setDaemon(True)  
+    t.start()</p>
+
+<p>main_thread = threading.currentThread()  #获取当前线程
+for t in threading.enumerate():  #enumerate返回线程实例的列表
+    if t is main_thread:  #因为join当前线程会引起死锁，需要过滤
+        continue
+    logging.debug('joining %s', t.getName())
+    t.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) sleeping 3
+(Thread-2  ) sleeping 5
+(Thread-3  ) sleeping 1
+(MainThread) joining Thread-1
+(Thread-3  ) ending
+(Thread-1  ) ending
+(MainThread) joining Thread-3
+(MainThread) joining Thread-2
+(Thread-2  ) ending
+<pre class="sh_python">
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class MyThreadWithArgs(threading.Thread):  #和第一个例子说的继承threading.Thread类，实例化，重写run，然后调用start()启动</p>
+
+<p>    def __init__(self, group=None, target=None, name=None,  #初始化
+                 args=(), kwargs=None, verbose=None):
+        threading.Thread.__init__(self, group=group, target=target, name=name,  #初始化threading.Thread类，因为这个类初始化有很多参数需要设定
+                                  verbose=verbose)
+        self.args = args
+        self.kwargs = kwargs
+        return</p>
+
+<p>    def run(self):
+        logging.debug('running with %s and %s', self.args, self.kwargs)
+        return</p>
+
+<p>for i in range(5):
+    t = MyThreadWithArgs(args=(i,), kwargs={'a':'A', 'b':'B'}) #kwargs被初始化
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) running with (0,) and {'a': 'A', 'b': 'B'}
+(Thread-2  ) running with (1,) and {'a': 'A', 'b': 'B'}
+(Thread-3  ) running with (2,) and {'a': 'A', 'b': 'B'}
+(Thread-4  ) running with (3,) and {'a': 'A', 'b': 'B'}
+(Thread-5  ) running with (4,) and {'a': 'A', 'b': 'B'}
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def delayed():
+    logging.debug('worker running')
+    return</p>
+
+<p>t1 = threading.Timer(3, delayed)   #Timer主要是计时器用来延迟
+t1.setName('t1')
+t2 = threading.Timer(3, delayed)
+t2.setName('t2')</p>
+
+<p>logging.debug('starting timers')
+t1.start()
+t2.start()</p>
+
+<p>logging.debug('waiting before canceling %s', t2.getName())
+time.sleep(2)
+logging.debug('canceling %s', t2.getName())
+t2.cancel()  #取消线程
+logging.debug('done')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) starting timers
+(MainThread) waiting before canceling t2
+(MainThread) canceling t2
+(MainThread) done
+(t1        ) worker running
+<pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def wait_for_event(e):
+    logging.debug('wait_for_event starting')
+    event_is_set = e.wait()  #主线程将被阻塞，它将不会 再被分配时间片 直到现有的一些线程退出运行
+    logging.debug('event set: %s', event_is_set)  ##返回事件是否设置的布尔值</p>
+
+<p>def wait_for_event_timeout(e, t):
+    while not e.isSet():
+        logging.debug('wait_for_event_timeout starting')
+        event_is_set = e.wait(t)  #设置等待超时
+        logging.debug('event set: %s', event_is_set)
+        if event_is_set:
+            logging.debug('processing event')
+        else:
+            logging.debug('doing other work')</p>
+
+<p>e = threading.Event()  #替代time.sleep(),用wait()和set()来精确控制线程，2个或者多个线程同步操作
+t1 = threading.Thread(name='block', 
+                      target=wait_for_event,
+                      args=(e,))
+t1.start()</p>
+
+<p>t2 = threading.Thread(name='non-block', 
+                      target=wait_for_event_timeout, 
+                      args=(e, 2))
+t2.start()</p>
+
+<p>logging.debug('Waiting before calling Event.set()')
+time.sleep(3)
+e.set()
+logging.debug('Event is set')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(block     ) wait_for_event starting
+(MainThread) Waiting before calling Event.set()
+(non-block ) wait_for_event_timeout starting
+(non-block ) event set: False
+(non-block ) doing other work
+(non-block ) wait_for_event_timeout starting
+(MainThread) Event is set
+(block     ) event set: True
+(non-block ) event set: True
+(non-block ) processing event
+<pre class="sh_python">
+import logging
+import random
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class Counter(object):
+    def __init__(self, start=0):
+        self.lock = threading.Lock()  #锁资源，防止同时访问对象
+        self.value = start
+    def increment(self):
+        logging.debug('Waiting for lock')
+        self.lock.acquire()  #获得资源
+        try:
+            logging.debug('Acquired lock')
+            self.value = self.value + 1
+        finally:
+            self.lock.release()  #释放资源</p>
+
+<p>def worker(c):
+    for i in range(2):
+        pause = random.random()
+        logging.debug('Sleeping %0.02f', pause)
+        time.sleep(pause)
+        c.increment()
+    logging.debug('Done')</p>
+
+<p>counter = Counter()
+for i in range(2):
+    t = threading.Thread(target=worker, args=(counter,))
+    t.start()</p>
+
+<p>logging.debug('Waiting for worker threads')
+main_thread = threading.currentThread()
+for t in threading.enumerate():
+    if t is not main_thread:
+        t.join()
+logging.debug('Counter: %d', counter.value)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) Sleeping 0.85
+(Thread-2  ) Sleeping 0.12
+(MainThread) Waiting for worker threads
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Sleeping 0.04
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Done
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Sleeping 0.47
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Done
+(MainThread) Counter: 4</p>

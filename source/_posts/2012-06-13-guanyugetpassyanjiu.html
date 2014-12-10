@@ -1,0 +1,52 @@
+---
+layout: post
+title: 关于getpass研究
+categories:
+- python模块研究
+tags:
+- getpass
+published: true
+comments: true
+indexer: true
+---
+<p>前言：通过终端与用户交互时，getpass提示用户输入密码，并且不明文显示输入的数据</p>
+
+<p><pre class="sh_python">
+import getpass</p>
+
+<p>p = getpass.getpass(prompt='Do you love me?')
+if p.lower() == 'yes':
+    print 'Right.'
+else:
+    print 'oh! no'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Do you love me?
+Right.
+dongwm@linux-dongwm:~&gt; python test.py
+Do you love me?
+oh! no
+<pre class="sh_python">
+import getpass
+import sys</p>
+
+<p>if sys.stdin.isatty(): #当发现这是一个终端的时候 
+    p = getpass.getpass('Using getpass: ')
+else:  #当非终端，比如伪终端
+    print 'Using readline'
+    p = sys.stdin.readline().rstrip()</p>
+
+<p>print 'Read: ', p
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; echo 'sdds' |python test.py
+Using readline
+Read:  sdds
+dongwm@linux-dongwm:~&gt; python test.py
+Using getpass:
+Read:  sdds</p>

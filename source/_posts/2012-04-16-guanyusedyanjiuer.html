@@ -1,0 +1,148 @@
+---
+layout: post
+title: 关于sed研究（二）
+categories:
+- linux基础
+- sed
+tags:
+- sed
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 正则表达式</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n '/^112/ p' test.txt  #'^'表示开头匹配，这里是开头是‘112’
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n '/com$/ p' test.txt #'$'表示结尾匹配 这里是匹配结尾是‘com’
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n '/do..wm\.com/ p' test.txt  #使用‘.’匹配单个字符，\.表示还是匹配‘.’
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n '/do.*/ p' test.txt  #使用‘*’匹配零个或者更多的字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n '/do.\+/ p' test.txt  #使用‘\+’匹配一个或者多个字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n '/do.\?gwm/ p' test.txt  #使用‘\?’匹配零个或者一个字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n '/[2-3]/ p' test.txt  #数字匹配使用[0-9]
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n '/112\|113/ p' test.txt  #这里有个选择(or) 使用‘\|’
+112,dongwm,dongwm.com
+113,ailll,ailll.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test2.txt
+1
+12
+123
+1234
+12345
+123456
+dongwm@linux-dongwm:~&gt; sed -n '/^[0-9]\{3,5\}$/ p' test2.txt  #匹配符合匹配的书两，这里匹配行包含3－5个数字
+123
+1234
+12345
+dongwm@linux-dongwm:~&gt; sed -n '/112,\b/ p' test.txt  #\b表示单词（单词间距范围内）
+112,dongwm,dongwm.com
+<strong>2 直接修改文件</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -i 's/dongwm/dongwm2/' test.txt  #使用‘-i’直接修改源文件
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -i.`date +%m%d%H%M` 's/dongwm/dongwm2/' test.txt  #姐姐修改源文件，但是会保存一个自定义命名的文件为源文件 ，这里使用‘.+时间（月日小时分）’的后缀
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; cat test.txt.04161504
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+<strong>3 增加行</strong></p>
+
+<p>语法：</p>
+
+<p>sed '[address] a the-line-to-append' input-file
+dongwm@linux-dongwm:~&gt; sed '2 a 110,ccc,ccc.com' test.txt  #在指定行（这里是第二行后加一行）
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+110,ccc,ccc.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed '$ a 115,ddd,ddd.com' test.txt #在文件最后加一行
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+115,ddd,ddd.com
+dongwm@linux-dongwm:~&gt; sed '/dongwm/ a 115,ddd,ddd.com' test.txt #在匹配行后面加一行
+112,dongwm2,dongwm.com
+115,ddd,ddd.com
+113,ailll,ailll.com
+114,test,test.com
+<strong>4 插入行</strong>
+语法：sed '[address] i the-line-to-insert' input-file
+这个和‘增加’语法一样，但是是在匹配行‘前’增加
+<strong>5 改变行</strong>
+语法：sed '[address] c the-line-to-insert' input-file
+dongwm@linux-dongwm:~&gt; sed '$ c 115,ccc,ccc.com' test.txt #把最后一行修改为，语法和增加一样，但是这个匹配行就没有了
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+115,ccc,ccc.com
+<strong>6 打印隐藏字符，比如\t  $等</strong>
+dongwm@linux-dongwm:~&gt; sed -n l test.txt
+112,dongwm2,dongwm.com$
+113,ailll,ailll.com$
+114,test,test.com$
+<strong>7 打印行号</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed = test.txt
+1
+112,dongwm2,dongwm.com
+2
+113,ailll,ailll.com
+3
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n '/dongwm/ =' test.txt  #打印匹配行的行号
+1</p>
+
+<p><strong>8 字符翻译 比如将匹配字符转换成大写字母</strong>
+dongwm@linux-dongwm:~&gt; sed  'y/dongwm/DONGWM/' test.txt  #这里只有d，o，n，g，w，m这6个字母其他字母不变
+112,DONGWM2,DONGWM.cOM
+113,ailll,ailll.cOM
+114,test,test.cOM
+<strong>9 quit</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  '2 q' test.txt  #打印每行，直到特定行退出 这里是2行
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+<strong>10 sed里面的grep</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  -n 's/dongwm/&amp;/p' test.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; grep dongwm !$
+grep dongwm test.txt
+112,dongwm2,dongwm.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  -n '/dongwm/ !p' test.txt  #取不匹配
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; grep -v dongwm !$
+grep -v dongwm test.txt
+113,ailll,ailll.com
+114,test,test.com
+<strong>11 sed里面的head
+</strong>sed -n '1,10 p' /etc/passwd
+sed '10 q' /etc/passwd
+sed '11,$ d' /etc/passwd
+或者</p>
+
+<p>head -10<strong>
+12
+</strong></p>
+
+<p>11</p>

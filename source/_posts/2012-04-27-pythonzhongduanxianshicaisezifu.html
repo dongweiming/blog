@@ -1,0 +1,107 @@
+---
+layout: post
+title: python终端显示彩色字符
+categories:
+- linux基础
+- python
+tags:
+- echo -e
+- python终端显示彩色
+- 彩色终端
+published: true
+comments: true
+indexer: true
+---
+<p>前言：作一个脚本或者程序在需要发音很多输出的时候，默认的白色会让人看的很困，但是有了彩色做个分割线或者让一些重要信息用彩色字体打印出来就好多了，以前一直在用模块实现，后来发现print借用ANSI控制码原来也可以：参见：http://www.oschina.net/code/snippet_87675_8599</p>
+
+<p>1分析这个程序</p>
+
+<p><pre class="sh_python">
+#!/usr/bin/env python
+#-*-coding:utf-8-*-
+#Filename:</p>
+
+<p>__author__ = "maqiang.jacky &lt;maqiang.jacky@snda.com&gt;"
+__version__ = 1.0
+__date__ = "12-2-9"</p>
+
+<p>"""
+0  All attributes off 默认值
+1  Bold (or Bright) 粗体 or 高亮
+4  Underline 下划线
+5  Blink 闪烁
+7  Invert 反显
+30 Black text
+31 Red text
+32 Green text
+33 Yellow text
+34 Blue text
+35 Purple text
+36 Cyan text
+37 White text
+40 Black background
+41 Red background
+42 Green background
+43 Yellow background
+44 Blue background
+45 Purple background
+46 Cyan background
+47 White background
+"""
+def main():
+    """ """
+for atrr in [0,1,4,5,7]:   0表示无属性，1表示高亮，4加下划线，5表示闪烁 ，7反显 ，8消隐 
+    print "attribute %d ------------------------------" % atrr
+    for fore in [30,31,32,33,34,35,36,37]:
+        for back in [40,41,42,43,44,45,46,47]:
+            color = "\x1B[%d;%d;%dm" % (atrr,fore,back)  #除了atrr，分别代表 字的颜色，底色
+            print "%s %d-%d-%d\x1B[0m" % (color,atrr,fore,back),
+        print ""
+if __name__ == "__main__":
+    """ """
+    main()
+</pre></p>
+
+<p>其中</p>
+
+<p>字背景颜色范围:40----49
+40:黑
+41:深红
+42:绿
+43:黄色
+44:蓝色
+45:紫色
+46:深绿
+47:白色</p>
+
+<p>字颜色:30-----------39
+30:黑
+31:红
+32:绿
+33:黄
+34:蓝色
+35:紫色
+36:深绿
+37:白色</p>
+
+<p>因为我不需要底色，自己写了一个方法：</p>
+
+<p><pre class="sh_python">
+def myprint(color,mes):
+    if color == 'r':
+        fore = 31
+    elif color == 'g':
+        fore = 32
+    elif color == 'b':
+        fore = 36
+    elif color == 'y':
+        fore = 33
+    else:
+        fore = 37
+    color = "\x1B[%d;%dm" % (1,fore)
+    print "%s %s\x1B[0m" % (color,mes)
+</pre></p>
+
+<p>假如想显示一段信息为红色：</p>
+
+<p>dongwm@linux-dongwm:~&gt; myprint('r','some messages')</p>

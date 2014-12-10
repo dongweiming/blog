@@ -1,0 +1,153 @@
+---
+layout: post
+title: gentoo笔记（一）安装基本gentoo系统随笔
+categories:
+- gentoo
+- linux基础
+tags:
+- 安装gentoo
+published: true
+comments: true
+indexer: true
+---
+<p>前言：gentoo是定制安装的操作系统，非专业人士比较害怕，装过ubuntu，fedora什么的同学也应该知道这个东西比较困难吧？我自称熟悉linux，但是我的个人笔记本光驱坏了，公司机器貌似硬件“太新”装不了linux(我的opnesuse是硬盘安装)一直没有去弄，最近忽然想玩玩，首先我申明没有使用freebsd的经验。基本属于摸索安装吧，以下是我的安装笔记（和官网的有些不同，其他网上资料都是拷贝的一个安装笔记，顺便说一下：我很鄙视转载的这些人），这个安装笔记一值是我安装过程的记录，总结和一些对gentoo的理解请关注系列文章</p>
+
+<p><pre class="sh_bash">
+1 安装选择</p>
+
+<p>有2种方式：1 最小化安装iso，然后自己定制要安装什么，这是我选择的，玩嘛 就要玩这样的</p>
+
+<p>2 livecd，我虽然没有具体体验，但是我觉得想学东西还是不要用这个了</p>
+
+<p>2 引导</p>
+
+<p>出现"boot:"时，有个刺耳的“滴”</p>
+
+<p>输入  gentoo dopcmcia  #非默认内核参数，支持framebuffer缓冲,启动pcmcia设备。 默认的直接回车就行 ,参数
+3 配置网络(自动模式)</p>
+
+<p>net-setup eth0  根据图形界面提示，我选择下面的，选择下面的，再输入IP，掩码，网关，DNS 。最后一个可以直接回车
+然后测试是否联网 ping 一下
+4 分区
+使用fdisk /dev/sda
+我的分区很多删除了2个分区，然后新建2个分区，一个是linux根分区，一个是交换分区，交换分区记得改ID(使用‘t’选项)
+根分区是/dev/sda9
+swap /dev/sda8
+5 创建文件系统</p>
+
+<p>mke2fs -j /dev/sda9  #－j 表示创建ext3 </p>
+
+<p>6 激活swap</p>
+
+<p>mkswap /dev/sda8
+swapon /dev/sda8
+7 挂载</p>
+
+<p>mount /dev/sda9 /mnt/gentoo
+8 下载解压Stage Tarball和Portage</p>
+
+<p>通过 links http://www.gentoo.org/main/en/mirrors.xml  选择镜像地点，我选择的是电子科技大学的那个 （http://mirrors.stuhome.net/gentoo/） 以后我也都是选择的这个网站的相关 速度比较快 163，sohu什么的印象一直不好</p>
+
+<p>#cd /mnt/gentoo &amp;&amp; tar xvjpf stage3-*.tar.bz2 tar xvjf portage-latest.tar.bz2 -C /mnt/gentoo/usr  #stage需要保持以前的权限 portage包在镜像的snapshots目录下
+9 配置编译选项修改
+默认已经是:CFLAGS="-O2 -march=i686 -pipe"
+CXXFLAGS="${CFLAGS}"
+添加 MAKEOPTS="-j3" #cpu+1
+10 选择境像站点 #这2个很重要 要是不选择的话 他可能默认去那些以来软件的官方网站，比如gnome.org，sf.net 你的网速不好的话 清别这么残忍。而且有些软件包官网没有 只有gentoo镜像有</p>
+
+<p>mirrorselect -i -o &gt;&gt; /mnt/gentoo/etc/make.conf</p>
+
+<p>mirrorselect -i -r -o &gt;&gt; /mnt/gentoo/etc/make.conf   #我的都选择了电子科技大学的</p>
+
+<p>11 拷贝dns记录</p>
+
+<p>cp -L /etc/resolv.conf /mnt/gentoo/etc/
+12 挂载/proc和/dev文件系统</p>
+
+<p>mount -t proc none /mnt/gentoo/proc  #过程中我发现有时候执行命令但是proc没挂上 重置执行就行，这个在emerage时候会提示没有挂载
+mount -o bind /dev /mnt/gentoo/dev
+13 chroot到新系统</p>
+
+<p>chroot /mnt/gentoo /bin/bash</p>
+
+<p>env-update
+&gt;&gt; Regenerating /etc/ld.so.cache...
+source /etc/profile
+14 配置Portage</p>
+
+<p>emerge --sync  #同步portage树</p>
+
+<p>eselect profile list #Profile列表</p>
+
+<p>eselect profile  set 4 #我选择的是桌面－gnome
+15 配置USE变量</p>
+
+<p> nano -w /etc/make.conf
+添加 USE="gtk sqlite gnome qt3 qt4 kde dvd alsa cdr libkms python"  #这里的和官网的不一样，这个文件就是emerge使用的配置文件，也是我安装过程添加和总结的，
+很重要 我这里的是安装gnome和kde2个桌面（都是学官网的错，官网的是不安装gnome安装kde），这样的话依赖的软件都会在编译时添加对这些的支持</p>
+
+<p> 16 修改时区</p>
+
+<p>cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime </p>
+
+<p>17 安装源码</p>
+
+<p>emerge gentoo-sources
+18 使用genkernel自动配置内核 #本来最开始使用的是手动配置，但是在安装grub之后，我自己修改的启动项一直报错不能正常启动
+我感觉是因为我的内核名字的原因：我的内核是linux－3.0.6－gentoo，在编辑grub.conf时用了很多表达方法，但是好像没有实现grub的匹配</p>
+
+<p>emerge genkernel
+注：这里需要一个镜像里面的文件：在chroot前：cp -rp /mnt/livecd/lib/firmware /mnt/gentoo/lib  这个目录使用‘df -h’能看见被挂载
+zcat /proc/config.gz &gt; /usr/share/genkernel/arch/x86/kernel-config</p>
+
+<p>genkernel all
+18 修改/etc/fstab #Gentoo系统默认的/etc/fstab文件不是有效的fstab文件。创建自己的/etc/fstab
+我的文件很简单：
+/dev/sda8 none swap sw 0 0
+/dev/sda9 / ext3 noatime 0 1   #noatime 表示不记录该分区中文件的访问时间，提高系统速度
+19 修改网络</p>
+
+<p>nano -w /etc/conf.d/net</p>
+
+<p>config_eth0=( "192.168.2.23/24" )
+routes_eth0=( "default via 192.168.2.254" )</p>
+
+<p>cd /etc/init.d
+ln -s net.lo net.eth0
+rc-update add net.eth0 default #为了让机器启动时候启动网卡,这样船舰初始脚本 能使用/etc/init.d/net.eth0 restart 重启网卡</p>
+
+<p>20 非常重要的一步：设置root密码，要不然你重启启动要求登录你是登录不了的，而且gentoo的单用户模式是不可用的，或者说我的这种genkernel方式的安装是不能进入单用户模式的
+21 安装系统常用软件 syslog和cron，locate（文家你使用索引，不要用find / 这样的方式）并且开机自动默认启动
+emerge syslog-ng vixie-cron mlocate &amp;&amp; rc-update add vixie-cron default &amp;&amp; rc-update add syslog-ng default #官网说是slocalte，但是我的系统是mlocate
+22 安装配置启动引导grub</p>
+
+<p>emerge grub</p>
+
+<p>nano -w /boot/grub/grub.conf</p>
+
+<p>default 1  #默认是超时后进入windows 7
+timeout 10  #超时10s
+splashimage=(hd0,8)/boot/grub/splash.xpm.gz #开机启动背景界面  不需要改动</p>
+
+<p>title Gentoo 3.0.6
+root (hd0,8) #sda9 的9 －1
+kernel /boot/kernel-genkernel-x86-3.0.6-gentoo root=/dev/ram0 init=/linuxrc ramdisk=8192 real_root=/dev/sda9 #默认建好了
+initrd /boot/initramfs-genkernel-x86-3.0.6-gentoo</p>
+
+<p># 我的是windows+gentoo
+title Windows 7
+rootnoverify (hd0,3)
+makeactive
+chainloader +1</p>
+
+<p>grep -v rootfs /proc/mounts &gt; /etc/mtab #创建mtab文件，要不然不能安装 没有创建一个独立的boot分区，排除rootfs行</p>
+
+<p>grub-install --no-floppy /dev/sda #安装grub
+23 退出重启</p>
+
+<p># exit
+cd
+umount /mnt/gentoo/boot /mnt/gentoo/dev /mnt/gentoo/proc /mnt/gentoo
+reboot
+</pre>
+</p>

@@ -1,0 +1,154 @@
+---
+layout: post
+title: pymongo教程（一）
+categories:
+- mongodb
+- python
+tags:
+- pymongo
+published: true
+comments: true
+indexer: true
+---
+<p>前言：本文是一些简单的使用python模块的例子，主旨是帮助使用本模块的朋友找到使用方法</p>
+
+<p>1 一个MongoDB的文档</p>
+
+<p>本质上是附带了一些额外功能一个JSON文件</p>
+
+<p><pre class="sh_python">
+from datetime import datetime
+user_doc = {
+    "username" : "weiming",
+    "firstname" : "dong",
+    "surname" : "Chris",
+    "dateofbirth" : datetime(1985, 4, 18),
+    "email" : "ciici1234@.hotmail.com",
+    "score" : 0
+}
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>2   使用python连接mongodb</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>from pymongo import Connection
+from pymongo.errors import ConnectionFailure</p>
+
+<p>def main():
+    """ Connect to MongoDB """
+    try:
+        c = Connection(host="localhost", port=27017)  #端口可能不同，看你的配置文件
+        print "Connected successfully"
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)</p>
+
+<p>if __name__ == "__main__":
+    main()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>3 插入数据（文档）到集合</p>
+
+<p><pre class="sh_python">
+import sys
+from datetime import datetime
+from pymongo import Connection
+from pymongo.errors import ConnectionFailure</p>
+
+<p>def main():
+    try:
+        c = Connection(host="localhost", port=27017)
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)
+    dbh = c["mydb"]
+    assert dbh.connection == c
+    user_doc = {
+        "username" : "weiming",
+        "firstname" : "dong",
+        "surname" : "Chris",
+        "dateofbirth" : datetime(1985, 4, 18),
+        "email" : "ciici1234@hotmail.com",
+        "score" : 0
+    }</p>
+
+<p>    dbh.users.insert(user_doc, safe=True)   #可确保写成功，或将抛出一个异常
+    print "Successfully inserted document: %s" % user_doc</p>
+
+<p>if __name__ == "__main__":
+    main()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>4 保障写入到多个数据库节点</p>
+
+<p>dbh.users.insert(user_doc, w=2)    #它被写入到至少有一个 replica set的2个服务器才算成功</p>
+
+<p>5 MongoDB的查询语言简介</p>
+
+<p>如果我们想检索firstname是“dong”</p>
+
+<p>q = {
+"firstname" : "jane"
+}
+如果我们想检索firstname是“dong” 和username是 "weiming"</p>
+
+<p>q = {
+ "username" : "weiming",
+ "firstname" : "dong",}
+}
+如果我们想检索score大于0
+q = {
+"score" : { "$gt" : 0 }
+}
+5 查找单个文档;
+user_doc = dbh.users.find_one({"username" : "weiming"})
+if not user_doc:
+    print "no document found for username janedoe"
+6 查找多个文档：
+users = dbh.users.find({"firstname":"dong"})
+for user in users:
+    print user.get("email")
+7 检索单个字段：
+users = dbh.users.find({"firstname":"dong"}, {"email":1})  #只检索邮件字段 但是也包含_id
+for user in users:
+    print user.get("email")
+8 查看有多少文件在用户的集合
+userscount = dbh.users.find().count()
+print "There are %d documents in users collection" % userscount
+9 排序（查找firstname是“dong”的文档，然后根据生日排序）
+users = dbh.users.find(
+    {"firstname":"dong"}).sort(("dateofbirth", pymongo.DESCENDING))
+for user in users:
+    print user.get("email"）
+也可以这样：
+users = dbh.users.find({"firstname":"dong"},
+    sort=[("dateofbirth", pymongo.DESCENDING)])
+for user in users:
+    print user.get("email") 
+10 排序+限制（如果符合的文档太多，假如我想取分数前十）： 
+users = dbh.users.find().sort(("score", pymongo.DESCENDING)).limit(10)
+for user in users:
+    print user.get("username"), user.get("score", 0)
+11 可用于翻页，就是排序后跳过一定数量的结果
+users = dbh.users.find().sort(
+    ("surname", pymongo.ASCENDING)).limit(20).skip(20)
+12 我的理解是，当数据库很繁忙，为了防止重复查询一个可能会修改的结果，遍历整个用户集合，使用快照方式
+for user in dbh.users.find(snapshot=True):
+    print user.get("username"), user.get("score", 0)
+13 更新修改集合数据
+dbh.users.update({"username":"janedoe"},
+    {"$set":{"email":"admin@dongwm.com"}}, safe=True)
+dbh.users.update({"username":"dong"},
+    {"$set":{"email":"admin@dongwm.com", "score":1}}, safe=True)  #更新多个条件
+dbh.users.update({"score":0},{"$set":{"flagged":True}}, multi=True, safe=True)  #所有符合条件"score":0的文档将被更新
+14 删除用户集合中的文档
+dbh.users.remove({"score":1}, safe=True)    #删除用户集合中的符合"score":1文档
+dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>

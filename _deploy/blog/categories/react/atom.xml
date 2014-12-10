@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: react | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/react/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[r - 上传文件服务]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/r-shang-chuan-wen-jian-fu-wu/"/>
+    <updated>2015-09-20T21:15:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/r-shang-chuan-wen-jian-fu-wu</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p>豆瓣内部有一些基础设施我认为做得都很好, 比如bridge和p. 一是身为用户的体验, 一个是我以开发的角度会去想我能不能做的更好.</p>
+
+<p>这些基础设施凝聚了豆瓣早期的工程师文化的精髓, 至今还在影响着每个豆瓣的工程师.</p>
+
+<p>今天我们聊到的是<a href="https://github.com/qingfeng/p">p</a> - 一个文件上传托管服务, 一个被严重低估了的工具, 它已经被清风老师拆分出来不需要跑在dae上.
+而我今天推荐的就是我用react+es6plus+webpack重写的版本 <a href="https://github.com/dongweiming/r">r</a></p>
+
+<p>为什么说我认为被低估呢? 目前star也才五十几. 当时开始用p. 我对效果非常惊艳.</p>
+
+<p>如果你很好奇是不是也会这么认为. 可以先看个heroku的<a href="https://vast-brushlands-4477.herokuapp.com/">demo</a>. 因为连接了heroku的远程cleardb(mysql的封装), 上传反映略慢. 而本地会很流畅. 主要看效果吧.</p>
+
+<h3 id="r">r的用途</h3>
+
+<p>身在互联网工作, 会经常有这样的需求</p>
+
+<ol>
+  <li>希望上传后的文件(包含图片)可以被永久存放.</li>
+  <li>想在github(CODE)上, 能方便的引用一些bug截图(甚至在多个地方引用).</li>
+  <li>希望上传的文件(包含图片), 能有一个比较好的预览页(包含文件大小, 文件类型, 上传时间等), 下载地址, 也能生成短链接, 二维码</li>
+  <li>希望能对某上传的图片传一些参数做对应的缩放和剪切</li>
+  <li>身在互联网, 页面太low, 效果不炫, 作为工程师, 用起来是会有抵制心情的.</li>
+</ol>
+
+<p>对. r(p) 就可以做这些事.</p>
+
+<h3 id="section-1">用到的其他技术</h3>
+
+<p>Flask, SQLAlchemy, Mako, Pillow</p>
+]]></content>
+  </entry>
+  
+</feed>

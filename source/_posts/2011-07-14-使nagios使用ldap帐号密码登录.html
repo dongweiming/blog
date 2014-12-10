@@ -1,0 +1,53 @@
+---
+layout: post
+title: 使nagios使用LDAP帐号密码登录
+categories:
+- nagios
+tags:
+- naigos ldap
+published: true
+comments: true
+indexer: true
+---
+<p>生产环境中使用了LDAP的OSS（单点登录），后来觉得nagios也就放到了ldap里面。</p>
+
+<p>1修改apache配置文件/etc/httpd/conf.d/nagios.conf
+&lt;VirtualHost *:6060&gt;
+DocumentRoot /ops/dongwm/nagios/share
+ServerName nagios.dongwm.com</p>
+
+<p>ScriptAlias /nagios/cgi-bin "/ops/dongwm/nagios/sbin"</p>
+
+<p>&lt;Directory "/ops/dongwm/nagios/sbin"&gt;
+Options ExecCGI
+AllowOverride None
+Order allow,deny
+Allow from all</p>
+
+<p>AuthType Basic
+AuthBasicProvider ldap
+AuthName "Please input user info:"
+AuthzLDAPAuthoritative off
+AuthLDAPURL ldap://你的ldap服务器IP/cn=Manager,dc=你的域名,dc=com?uid?sub?(objectClass=*)
+Require ldap-user dongwm dongwm1
+&lt;/Directory&gt;</p>
+
+<p>Alias /nagios "/opt/dongwm/nagios/share"</p>
+
+<p>&lt;Directory "/opt/dongwm/nagios/share"&gt;
+Options None
+AllowOverride None
+Order allow,deny
+Allow from all</p>
+
+<p>AuthType Basic
+AuthBasicProvider ldap
+AuthName "Please input user info:"
+AuthzLDAPAuthoritative off
+AuthLDAPURL ldap://你的ldap服务器IP/cn=Manager,dc=你的域名,dc=com?uid?sub?(objectClass=*)
+Require ldap-user dongwm dongwm1
+&lt;/Directory&gt;
+2  修改nagios.conf的权限为apache用户 文件属性400
+3  增加apache的ldap模块
+LoadModule ldap_module modules/mod_ldap.so
+LoadModule authnz_ldap_module modules/mod_authnz_ldap.so</p>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: ptpython | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/ptpython/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ptpython- a better Python REPL]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ptpython-a-better-python-repl/"/>
+    <updated>2015-01-26T21:29:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ptpython-a-better-python-repl</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>今天发现一个项目: <a href="https://github.com/jonathanslenders/ptpython">ptpython</a>. 新一代的REPL神器. 玩了一下. 毅然的ipython换成了ptipython - ptpython自带的
+iython的接口. 和大家介绍下</p>
+
+<h4 id="ptpython">ptpython的优点</h4>
+
+<p>先说几个在用ipython过程中遇到的问题吧.</p>
+
+<ol>
+  <li>ipython在Mac下缩进问题. 每次在交互模式里面输入一个缩进的内容, 比如下面</li>
+</ol>
+
+<p>```python
+In [1]: def t():
+   …:     return 1
+      …:</p>
+
+<p>In [2]: def t():
+    return 1
+```</p>
+
+<p>看到了吧, 缩进不正确了. ptpython没有这个问题, 它的底层库<a href="https://github.com/jonathanslenders/python-prompt-toolkit">prompt_toolkit</a>实现了一个替代物</p>
+
+<ol>
+  <li>
+    <p>jedi. 我在emacs里面, jedi是标配. 其一是因为有epc, 可以和python通信, 它的自动补全和跳到函数/类定义真的很方便. 但是python交互解释器
+还没有一个用它的. 这里真的感觉效果很好.</p>
+  </li>
+  <li>emacs/vim键位. 好吧我经常在用ipython的时候习惯<code>Ctrl+x Ctrl+c</code>退出. 能用emacs的键位做编辑真的很爽</li>
+  <li>提供一个终端的菜单, 有多个选项可以选择</li>
+  <li>模式粘贴. 大家知道python有个问题: 你粘贴过来的代码不一定能运行 - 粘贴后的缩进会很奇怪的. ipython虽然有<code>%paste</code>和<code>%cpaste</code>. 但是有时候还是会有<code>IndentationError</code>问题.
+ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多行编辑.</li>
+  <li>可以开启多个Tab,甚至多个Tab的内容一齐显示出来. 类似vim的:split</li>
+  <li>能对你写的每行程序判断是否出现语法错误.如果你的代码有问题, 下面左侧会有错误提示 - 这其实能延伸做很多检查嘛</li>
+  <li>ipython对查看对象的方法有一些问题, 比如这个:</li>
+</ol>
+
+<p><code>python
+$ipython
+In [1]: '/tmp'.&lt;tab&gt; # 不会理你的
+</code></p>
+
+<p>ptpython对这样的处理都很好</p>
+
+<ol>
+  <li>一个很贴心的特性:</li>
+</ol>
+
+<p><code>python
+$ptpython
+In [1]: 'tmp&lt;Tab&gt; # 他会告诉你这是个目录, 还会自动完成列出目录下的文件. autocompletion
+</code></p>
+
+<ol>
+  <li>最后一点吧. 它非常容易的被嵌入你的程序，你的解释器</li>
+</ol>
+
+<p><code>python
+python
+Python 2.7.3 (default, Apr 10 2013, 06:20:15)
+[GCC 4.6.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+Welcome to Lazy Python.  Type "help LazyPython" for help.
+&gt;&gt;&gt; from ptpython.repl import embed
+&gt;&gt;&gt; embed(globals(), locals(), vi_mode=False, history_filename=None)
+In [1]: # 看就这么2句
+</code></p>
+
+<h4 id="ptipython">ptipython</h4>
+
+<p>ptipython = ptpython + ipython</p>
+
+<p>在安装了ptipython之后, 就可以使用了. 完全可以替代ipython. 类似<a href="https://github.com/ivanov/bipython">bipython</a> = bpython + ipython</p>
+]]></content>
+  </entry>
+  
+</feed>

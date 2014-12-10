@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: smokeping | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/smokeping/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[最新方式安装配置smokeping]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/zuixinfangshianzhuangpeizhismokeping/"/>
+    <updated>2010-12-28T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/zuixinfangshianzhuangpeizhismokeping</id>
+    <content type="html"><![CDATA[<p>smokeping是对IDC网络质量，稳定性等最好的检测工具，包括常规的 ping，dig，echoping，curl等，可以 监视 www 服务器性能，监视 dns 查询性能，监视 ssh 性能等。选择smokeping我觉得有以下原因：
+<strong>1，最佳的画图功能，延迟和丢包用颜色和阴影表示很直观。
+2，免费和开源，作者是MRTG和RRDtool作者。
+3，支持主从的分布式模式。
+4，可以自定义报警功能。<!--more--></strong>
+前言：
+本文使用YUM安装其他资源包，编译安装smokeping方式。apt.sw.be这个第三方软件仓库，我觉得很不错，更新很快，资源很全。但是这个源很不稳定。
+<strong>1 使用apt.sw.be源（安装前的准备）：</strong>
+#yum update
+#rpm -Uvh http://apt.sw.be/redhat/el5/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
+<span style="color: #00ff00;">探讨一个工作中经常出现的yum报错：Metadata file does not match checksum</span>
+可能会出现：http://www.mirrorservice.org/sites/apt.sw.be/redhat/el4/en/i386/dag/repodata/primary.xml.gz（不是本文原来的那个报错路径）:
+[Errno -1] Metadata file does not match checksum 这样的错误，原理是当生成metadata数据的时候，会一同产生校验数据。而传输的时候，会用该校验数据判断metadata是否完整。在这里会下载 other.xml.gz filelists.xml.gz primary.xml.gz,repomd.xml四个文件，其中repomd.xml包含其他三个文件的校检内容，如下是检查效果：
+# sha1sum other.xml.gz filelists.xml.gz primary.xml.gz
+497fbed7cddb2f60265c482331af6ac36b7f2720  other.xml.gz
+e7fb32d7e1e683a57b3391e949cc98d9afec1e50  filelists.xml.gz
+70ba2a3faf75b8db9a15a01efafbc1b36ffbc1a9   primary.xml.gz
+和repomd.xml的内容对比：
+# cat repomd.xml |grep -w 'checksum'|grep -v 'open-checksum'
+&lt;checksum type="sha"&gt;497fbed7cddb2f60265c482331af6ac36b7f2720&lt;/checksum&gt;
+&lt;checksum type="sha"&gt;e7fb32d7e1e683a57b3391e949cc98d9afec1e50&lt;/checksum&gt;
+&lt;checksum type="sha"&gt;78a5ab04536a34f691606ebd1244fd63c548610c&lt;/checksum&gt;
+发现primary.xml.gz的校检有问题。
+我用了以下办法：
+<strong>1 使用--cache=off 用于清除缓存，这个方法其他还是有些作用的，有些时候会成功,就是将文件下载到本地，然后yum时候就不会去下载它了</strong>
+#wget --cache=off  http://www.mirrorservice.org/sites/apt.sw.be/redhat/el4/en/i386/dag/repodata/primary.xml.gz
+<strong>2 使用多线程工具下载到/var/cache/yum/，我使用的是myget</strong>
+3 使用--no-cache参数并修改/etc/yum.conf，添加http_caching=none
+wget --no-cache http://www.mirrorservice.org/sites/apt.sw.be/redhat/el4/en/i386/dag/repodata/primary.xml.gz
+但是都没有成功，后来我发现：当我wget下载primary.xml.gz时候，下载的地址被重定向了
+<span style="color: #ff0000;">最后一个强烈建议，使用yum makecache ，将服务器上的软件包信息 现在本地缓存,以提高 搜索 安装软件的速度，可以做成定时任务。</span>
+最后在我的不懈尝试下，终于成功更新了。
+<strong>2 安装smokeping</strong>
+# yum install httpd
+# yum install rrdtool
+# yum install fping
+# yum install echoping
+# yum install curl
+# yum install perl perl-Net-Telnet perl-Net-DNS perl-LDAP  perl-libwww-perl perl-RadiusPerl perl-IO-Socket-SSL perl-Socket6  perl-CGI-SpeedyCGI
+# wget http://oss.oetiker.ch/smokeping/pub/smokeping-2.4.2.tar.gz
+# tar zxvf smokeping-2.4.2.tar.gz
+# mv smokeping-2.4.1 /opt/smokeping
+# cd /opt/smokeping/bin
+# cp smokeping.dist smokeping
+# cd ../htdocs/
+# cp smokeping.cgi.dist smokeping.cgi
+# cp tr.cgi.dist tr.cgi
+# cd ../etc/
+# cp config.dist config
+# cp basepage.html.dist basepage.html
+# cp smokemail.dist smokemail
+# cp tmail.dist tmail
+# cp smokeping_secrets.dist smokeping_secrets
+# chmod 600 /opt/smokeping/etc/smokeping_secrets
+<strong>3 配置smokeping</strong>
+<strong>编辑/opt/smokeping/bin/smokeping</strong>
+修改一下内容：
+[ccine_perl height="100%" width="99%"]
+#!/usr/sepp/bin/perl-5.8.4 -w
+# -*-perl-*-
+use lib qw(/usr/pack/rrdtool-1.2.23-mo/lib/perl);
+use lib qw(lib);
+use Smokeping 2.004002;
+Smokeping::main("etc/config.dist");
+[/ccine_perl]
+为
+[ccine_perl height="100%" width="99%"]
+#!/usr/bin/perl -w
+# -*-perl-*-
+use lib qw(/usr/lib/perl5/vendor_perl/5.8.8/i386-linux-thread-multi/auto/RRDs/);（这个和编译安装的路径不同，注意）
+use lib qw(/opt/smokeping/lib);
+use Smokeping 2.004002;
+Smokeping::main("/opt/smokeping/etc/config");
+[/ccine_perl]
+<strong>编辑/opt/smokeping/htdocs/smokeping.cgi</strong>
+修改以下内容：
+[ccine_perl height="100%" width="99%"]
+#!/usr/sepp/bin/speedy -w
+# -*-perl-*-
+use lib qw(/usr/pack/rrdtool-1.0.33-to/lib/perl);
+use lib qw(/home/oetiker/data/projects/AADJ-smokeping/dist/lib);
+use CGI::Carp qw(fatalsToBrowser);
+use Smokeping 2.004002;
+smokeping::cgi("/home/oetiker/data/projects/AADJ-smokeping/dist/etc/config");
+[/ccine_perl]
+为
+[ccine_perl height="100%" width="99%"]
+#!/usr/bin/speedy -w
+# -*-perl-*-
+use lib qw(/usr/lib/perl5/vendor_perl/5.8.8/i386-linux-thread-multi/auto/RRDs);
+use lib qw(/opt/smokeping/lib);
+use CGI::Carp qw(fatalsToBrowser);
+use Smokeping 2.004002;
+Smokeping::cgi("/opt/smokeping/etc/config");
+[/ccine_perl]
+<strong>编辑/opt/smokeping/htdocs/tr.cgi</strong>
+修改以下内容：
+[ccine_perl height="100%" width="99%"]
+#!/usr/sepp/bin/speedy-5.8.8 -w
+use strict;
+use lib qw(/home/oposs/smokeping/software/lib);
+use lib qw(perl);[/ccine_perl]
+为
+[ccine_perl height="100%" width="99%"]
+#!/usr/bin/speedy -w
+use strict;
+use lib qw(/opt/smokeping/lib);
+use lib qw(perl);[/ccine_perl]
+<strong>编辑/opt/smokeping/etc/basepage.html</strong>
+修改以下内容
+[ccine_perl height="100%" width="99%"]
+&lt;script src="cropper/lib/prototype.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="cropper/lib/scriptaculous.js?load=builder,dragdrop" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="cropper/cropper.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="cropper/smokeping-zoom.js" type="text/javascript"&gt;&lt;/script&gt;
+[/ccine_perl]
+<strong>修改traceroute权限</strong>
+chmod 4775 /bin/traceroute
+<strong>编辑apache配置：</strong>
+去掉AddHandler cgi-script .cgi前面的注释
+修改一下内容：[ccine_perl height="100%" width="99%"]
+&lt;script src="cropper/lib/prototype.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="cropper/lib/scriptaculous.js?load=builder,dragdrop"&gt;&lt;/script&gt;
+&lt;script src="cropper/cropper.js"&gt;&lt;/script&gt;
+&lt;script src="cropper/smokeping-zoom.js" type="text/javascript"&gt;&lt;/script&gt;[/ccine_perl]
+为
+[ccine_perl height="100%" width="99%"]
+&lt;script src="http://dongweiming.github.com/blog/smokeping/cropper/lib/prototype.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="http://dongweiming.github.com/blog/smokeping/cropper/lib/scriptaculous.js?load=builder,dragdrop" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="http://dongweiming.github.com/blog/smokeping/cropper/cropper.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="http://dongweiming.github.com/blog/smokeping/cropper/smokeping-zoom.js" type="text/javascript"&gt;&lt;/script&gt;[/ccine_perl]
+编辑/opt/smokeping/htdocs/tr.html
+修改为：
+[ccine_perl height="100%" width="99%"]
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8" /&gt;
+&lt;title&gt;SmokeTrace&lt;/title&gt;
+&lt;script src="http://dongweiming.github.com/blog/script/Tr.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;/html&gt;[/ccine_perl]
+<strong>编辑/opt/smokeping/etc/config</strong>
+[ccine_perl height="100%" width="99%"]
+*** General ***
+owner    = DONGWM
+contact  = dongwm@dongwm.com
+mailhost = dongwm.com
+sendmail = /usr/sbin/sendmail
+imgcache = /opt/smokeping/htdocs/cache
+imgurl   = http://192.168.9.100/cache
+datadir  = /opt/smokeping/data
+piddir  = /opt/smokeping/var
+cgiurl   = http://192.168.9.100/smokeping/smokeping.cgi
+smokemail = /opt/smokeping/etc/smokemail
+tmail = /opt/smokeping/etc/tmail
+# specify this to get syslog logging
+syslogfacility = local0
+# each probe is now run in its own process
+# disable this to revert to the old behaviour
+# concurrentprobes = no
+*** Alerts ***
+to = alertee@address.somewhere
+from = autopost@dongwm.com
++someloss
+type = loss
+# in percent
+pattern = &gt;0%,*12*,&gt;0%,*12*,&gt;0%
+comment = loss 3 times  in a row
+*** Database ***
+step     = 300
+pings    = 20
+# consfn mrhb steps total
+AVERAGE  0.5   1  1008
+AVERAGE  0.5  12  4320
+MIN  0.5  12  4320
+MAX  0.5  12  4320
+AVERAGE  0.5 144   720
+MAX  0.5 144   720
+MIN  0.5 144   720
+*** Presentation ***
+template = /opt/smokeping/etc/basepage.html
++ charts
+menu = Charts
+title = The most interesting destinations
+++ stddev
+sorter = StdDev(entries=&gt;4)
+title = Top Standard Deviation
+menu = Std Deviation
+format = Standard Deviation %f
+++ max
+sorter = Max(entries=&gt;5)
+title = Top Max Roundtrip Time
+menu = by Max
+format = Max Roundtrip Time %f seconds
+++ loss
+sorter = Loss(entries=&gt;5)
+title = Top Packet Loss
+menu = Loss
+format = Packets Lost %f
+++ median
+sorter = Median(entries=&gt;5)
+title = Top Median Roundtrip Time
+menu = by Median
+format = Median RTT %f seconds
++ overview
+width = 600
+height = 50
+range = 10h
++ detail
+width = 600
+height = 200
+unison_tolerance = 2
+"Last 3 Hours"    3h
+"Last 30 Hours"   30h
+"Last 10 Days"    10d
+"Last 400 Days"   400d
+#+ hierarchies
+#++ owner
+#title = Host Owner
+#++ location
+#title = Location
+*** Probes ***
++ FPing
+binary = /usr/sbin/fping
+*** Targets ***
+menuextra = &lt;a target='_blank' href='http://dongweiming.github.com/blog/smokeping/tr.html{HOST}' class='{CLASS}' \
+onclick="window.open(this.href,this.target, \
+'width=800,height=500,toolbar=no,location=no,status=no,scrollbars=no'); \
+return false;"&gt;(TR)&lt;/a&gt;
+probe = FPing
+menu = Top
+title = Dongwm.com
+remark = Welcome to dongwm.com
++ hosts
+menu= Targets
+++ dongwm.com
+menu = dongwm.com
+title = dongwm.com
+alerts = someloss
+host = dongwm.com
+++ salogs.com
+menu = salogs.cm
+title = salogs.com
+alerts = someloss
+host = salogs.com[/ccine_perl]
+<strong>创建一个启动脚本：</strong>
+#vi /etc/init.d/smokeping
+添加为以下内容：
+[ccine_perl height="100%" width="99%"]
+#!/bin/bash
+#
+# chkconfig: 2345 80 05
+# Description: Smokeping init.d script
+# Hacked by : How2CentOS - http://www.how2centos.com
+# Get function from functions library
+. /etc/init.d/functions
+# Start the service Smokeping
+start() {
+echo -n "Starting Smokeping: "
+/opt/smokeping/bin/smokeping &gt;/dev/null 2&gt;&amp;1
+### Create the lock file ###
+touch /var/lock/subsys/smokeping
+success $"Smokeping startup"
+echo
+}
+# Restart the service Smokeping
+stop() {
+echo -n "Stopping Smokeping: "
+kill -9 `ps ax | grep "/opt/smokeping/bin/smokeping" | grep -v grep | awk '{ print $1 }'` &gt;/dev/null 2&gt;&amp;1
+### Now, delete the lock file ###
+rm -f /var/lock/subsys/smokeping
+success $"Smokeping shutdown"
+echo
+}
+### main logic ###
+case "$1" in
+start)
+start
+;;
+stop)
+stop
+;;
+status)
+status Smokeping
+;;
+restart|reload|condrestart)
+stop
+start
+;;
+*)
+echo $"Usage: $0 {start|stop|restart|reload|status}"
+exit 1
+esac
+exit 0
+[/ccine_perl]
+# chmod 755 /etc/init.d/smokeping
+<strong>最后启动服务：</strong>
+# chkconfig smokeping on
+# chkconfig httpd on
+# service smokeping start
+Starting Smokeping: [ OK ]
+# service httpd start
+Starting httpd: [ OK ]
+网页访问：http://192.168.9.100/smokeping/smokeping.cgi</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,92 @@
+---
+layout: post
+title: Nagios深入进阶之三：服务扩展的定义
+categories:
+- nagios
+tags:
+- nagios
+- 服务定义
+- 服务扩展
+published: true
+comments: true
+indexer: true
+---
+<p>本来有四种高级定义：服务扩展的定义，主机扩展的定义，服务依赖的定义，主机依赖的定义，我在这里重点说的是-服务扩展的定义。
+应用环境：假如短信报警通知默认是2个小时，这样太容易造成不及时处理，设置间隔很短，短信又很烦，尤其是短信也发送给领导，那领导更烦。所以就有了这个扩展
+简单的说，我使用它达到了一下效果：<!--more--></p>
+
+<p><strong>第一次发送通知给A</strong></p>
+
+<p><strong>第二次发送给B， 和第一次间隔10分钟</strong></p>
+
+<p><strong>第三次发送给B,C（c是领导，他只想接收一次，并且在解除报警再接收一次解除故障的报警），和第二次间隔20分钟</strong></p>
+
+<p><strong>从第四次开始发送给A        间隔是前一次60分钟</strong></p>
+
+<p>以下是我的配置：[ccine_perl height="100%" width="99%"]</p>
+
+<p>#vi serviceescalation.cfg</p>
+
+<p>define serviceescalation{</p>
+
+<p>host_name                 HOST1</p>
+
+<p>service_description    SOMESERVICE</p>
+
+<p>first_notification        1</p>
+
+<p>last_notification         1</p>
+
+<p>notification_interval   10</p>
+
+<p>contact_groups           A</p>
+
+<p>}</p>
+
+<p>define serviceescalation{</p>
+
+<p>host_name                 HOST1</p>
+
+<p>service_description    SOMESERVICE</p>
+
+<p>first_notification        2</p>
+
+<p>last_notification         2</p>
+
+<p>notification_interval   20</p>
+
+<p>contact_groups           B</p>
+
+<p>}</p>
+
+<p>define serviceescalation{</p>
+
+<p>host_name                  HOST1</p>
+
+<p>service_description     SOMESERVICE</p>
+
+<p>first_notification         3</p>
+
+<p>last_notification          3</p>
+
+<p>notification_interval    20</p>
+
+<p>contact_groups            B,C</p>
+
+<p>}</p>
+
+<p>define serviceescalation{</p>
+
+<p>host_name                 HOST1</p>
+
+<p>service_description    SOMESERVICE</p>
+
+<p>first_notification        4</p>
+
+<p>last_notification         0</p>
+
+<p>notification_interval   60</p>
+
+<p>contact_groups           A</p>
+
+<p>}[/ccine_perl]</p>

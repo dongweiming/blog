@@ -1,0 +1,118 @@
+---
+layout: post
+title: 关于cd命令的深入研究
+categories:
+- linux基础
+tags:
+- cd
+published: true
+comments: true
+indexer: true
+---
+<p>在本文主要以下内容：</p>
+
+<p><strong>1  使用CDPATH定义特需的目录</strong></p>
+
+<p><strong>2  使用alias在bash_profile文件创建别名</strong></p>
+
+<p><strong>3 将几个命令联合使用（这里我使用mkdir+cd）</strong></p>
+
+<p><strong>4 自动纠正拼写错误的目录名称<!--more--></strong></p>
+
+<p><strong>1  使用CDPATH定义特需的目录：</strong></p>
+
+<p>当我登录到一台主机后，在它的home目录。我想执行cd命令去到一个目录（例如/var/lib下的某个子目录）：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server ~]# pwd
+/root&nbsp;</td></tr></tbody></table></p>
+
+<p>[root@server ~]# ls -l /var/lib
+drwxr-xr-x  3 foreman  foreman  4096 12-25 18:19 foreman</p>
+
+<p>[root@server ~]# cd  foreman
+-bash: cd: foreman: 没有那个文件或目录</pre>
+
+
+
+然后：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server ~]# pwd
+/root&nbsp;</td></tr></tbody></table></p>
+
+<p>[root@server ~]# export CDPATH=/var/lib
+[root@server ~]# cd  foreman
+/var/lib/foreman</pre>
+
+
+
+而且不影响当前目录是切换目录：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server ~]# cd src/
+[root@server src]# pwd
+/root/src</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>2  使用alias在bash_profile文件创建别名：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">alias ..="cd .."
+alias ..2="cd ../.."
+alias ..3="cd ../../.."
+alias ..4="cd ../../../.."
+alias ..5="cd ../../../../.."</pre></td>
+</tr>
+</tbody>
+</table>
+重新登录：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server ~]# mkdir -p /1/2/3/4/5/6/7
+[root@server ~]# cd /1/2/3/4/5/6/7
+[root@server 7]# pwd
+/1/2/3/4/5/6/7
+[root@server 7]# ..4
+[root@server 3]# pwd
+/1/2/3</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>3 例如将几个命令联合使用（这里我使用mkdir+cd）：</strong></p>
+
+<p>工作中可以将命令集合使用：同时执行mkdir一个目录，然后cd进去：</p>
+
+<p>定义自定义功能到bash_profile文件：
+function mkdircd () { mkdir -p "$@" &amp;&amp; eval cd "\"\$$#\""; }
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">[root@server ~]# mkdircd /1/2/3/4/5/6/7/8
+[root@server 8]# pwd
+/1/2/3/4/5/6/7/8</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>4  一个很变态的功能：自动纠正拼写错误的目录名称</strong></p>
+
+<p>假如我想切换到一个目录，例如1中的目录（文中我会打错，但是依然能切换，但是不支持例一的CDPATH）：
+<table border="0" cellspacing="0" cellpadding="2" width="502">
+<tbody>
+<tr>
+<td width="500" valign="top"><pre class="sh_bash">[root@server ~]# cd /var/lib/foremann
+-bash: cd: foremann: 没有那个文件或目录
+[root@server ~]# shopt -s cdspell
+[root@server ~]# cd foremann
+-bash: cd: foremann: 没有那个文件或目录
+[root@server ~]# cd /var/lib/foremann
+/var/lib/foreman</pre></td>
+</tr>
+</tbody>
+</table></p>

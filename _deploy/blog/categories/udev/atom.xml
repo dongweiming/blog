@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: udev | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/udev/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[udev升级的网卡重命名问题和解决]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/udevsheng-ji-de-wang-qia-zhong-ming-ming-wen-ti-he-jie-jue/"/>
+    <updated>2013-04-27T15:32:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/udevsheng-ji-de-wang-qia-zhong-ming-ming-wen-ti-he-jie-jue</id>
+    <content type="html"><![CDATA[<h4 id="section">故障描述</h4>
+
+<p>最近终于更新了下gentoo，重启发现我的eth0网卡启动失败：</p>
+
+<p><code>
+ * Bringing up interface eth0
+ *   ERROR: interface eth0 does not exist
+ *   Ensure that you have loaded the correct kernel module for your hardware
+ * ERROR: net.eth0 failed to start
+</code>
+而启动某些我常用的服务，比如mongodb，也报错：</p>
+
+<p><code>
+~ # /etc/init.d/mongodb restart
+ * Bringing up interface eth0
+ *   ERROR: interface eth0 does not exist
+ *   Ensure that you have loaded the correct kernel module for your hardware
+ * ERROR: net.eth0 failed to start
+ * ERROR: cannot start mongodb as net.eth0 would not start
+</code></p>
+
+<p>竟然也需要启动网卡？</p>
+
+<h6 id="dmesg">查看内核和dmesg：</h6>
+
+<p>查看内核模块已经选中，而且以前eth0也有，再看dmesg</p>
+
+<p>```
+dmesg |grep network 
+[   74.261872] systemd-udevd[14259]: renamed network interface wlan0 to wlp2s0
+[   74.391865] systemd-udevd[14259]: renamed network interface eth0 to enp0s4</p>
+
+<p>```</p>
+
+<p>原来被重命名了</p>
+
+<h4 id="section-1">为什么？</h4>
+
+<p>从udev-197将自动分配更好的接口名字，具体解释请看[PredictableNetworkInterfaceNames]
+(http://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames),</p>
+
+<h4 id="section-2">解决办法，有三种</h4>
+
+<ol>
+  <li>临时办法，重启还是会失效</li>
+</ol>
+
+<p>ifrename -i enp0s4 -n eth0 #修改网卡名字变成原来的eth0</p>
+
+<ol>
+  <li>使用新的名字</li>
+</ol>
+
+<p>```
+rm /etc/init.d/net.eth0 #删除不存在的引用</p>
+
+<p>localhost ~ # rc-update delete net.eth0 default #删除不存在的开机启动
+ * service net.eth0 removed from runlevel default
+localhost ~ # rc-update add net.enp0s4 default #使用新名字
+```</p>
+
+<ol>
+  <li>重置udev的rules，还是用原来的方法</li>
+</ol>
+
+<p><code>
+ln -s /dev/null /etc/udev/rules.d/80-net-name-slot.rules
+</code></p>
+
+<p>第二种，和第三种需要重启</p>
+
+<h4 id="section-3">启动应用为什么也需要启动应该启动的网卡</h4>
+
+<p>查看/etc/init.d/mongodb脚本，发现是因为depend，一般的初始化脚本结构是</p>
+
+<p>```
+#!/sbin/runscript</p>
+
+<p>depend() {
+  （依赖关系信息）
+}</p>
+
+<p>start() {
+  （启动服务所必需的命令）
+}</p>
+
+<p>stop() {
+  （停止服务所必需的命令）
+}</p>
+
+<p>restart() {
+  （重启服务所必需的命令）
+}
+```
+比如 mongodb 的依赖是</p>
+
+<p><code>
+depend() {
+  need net #需要依赖net.X
+}
+</code></p>
+
+<p>下次我专门研究一篇gentoo初始化脚本的文章</p>
+]]></content>
+  </entry>
+  
+</feed>

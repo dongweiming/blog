@@ -1,0 +1,42 @@
+---
+layout: post
+title: 关于expect研究（三）
+categories:
+- expect
+- linux基础
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>前言：本文主要介绍expect的正则表达式和参数匹配的一个例子</p>
+
+<p>需求： ssh常用的端口是22 但是有些端口可能不是，所以设计了一个如果有参数就表示端口指定了其它 没有参数表示使用默认的22。我本机设置了一些hosts，假如以‘mta’开头的就匹配第二条</p>
+
+<p><pre class="sh_tcl">
+#!/usr/bin/expect
+set timeout 10
+set file1 [lindex $argv 0]
+set port [lindex $argv 1]
+if {$port==""} {
+set port 22
+}
+if {$argc&gt;2} {
+puts stderr "参数错误,请使用以下格式: $argv0 {想去的服务器简称,比如89} "
+exit 1
+}
+if {$file1=="26"} {
+spawn sshfs -p 62100 root@10.14.22.26:/home/dongwm 26
+expect "password:"
+send "$password1089\n"
+interact
+} elseif {[regexp {^mta} $file1 found]} {
+spawn sshfs -p 61012 root@$file1:/home/dongwm $file1
+interact
+} else {
+spawn luit -encoding gbk ssh -p $port root@$file1
+interact
+}
+</pre></p>
+
+<p>&nbsp;</p>

@@ -1,0 +1,42 @@
+---
+layout: post
+title: pymongo教程（三）
+categories:
+- mongodb
+- python
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>1 MongoDB 队列查询
+$gt 大于 例子：“score”:{"$gt”:0}
+$lt小于 例子：“score”:{"$lt”:0}
+$gte 大于等于例子： “score”:{"$gte”:0}
+$lte 小于等于 例子：“score”:{"$lte”:0} ⇐
+$all all  例子：“skills”:{"$all”:["mongodb”,"python"]}
+$exists 属性必须存在 例子：“email”:{"$exists”:True}
+$mod 模块X等于Y 例子： “seconds”:{"$mod”:[60,0]}
+$ne 不等于 例子：“seconds”:{"$ne”:60}
+$in In 例子： “skills”:{"$in”:["c”,"c++"]}
+$nin Not In 例子：“skills”:{"$nin”:["php”,"ruby”,"perl"]}
+$nor Nor例子： “$nor”:[{"language”:"english"},{"coun- N/A
+try”:"usa"}]
+$or Or 例子：“$or”:[{"language”:"english"},{"coun- OR
+try”:"usa"}]
+$size 数组个数 例子： “skills”:{"$size”:3}</p>
+
+<p>2 MongoDB更新修改</p>
+
+<p>$inc 子增长 “$inc”:{"score”:1}
+$set 设置属性值 “$set”:{"username”:"niall"}
+$unset 取消（删除）属性值 “$unset”:{"username”:1}
+$push 增加  “$push”:{"emails”:"foo@example.com"}
+$pushAll 增加多个 “$pushall”:{"emails”:["foo@example.com”,"foo2@ex-
+ample.com"]}
+$addToSet 不存在增加 “$addToSet”:{"emails”:"foo@example.com"}
+$pop 数组尾部去除 “$pop”:{"emails”:1}
+$pull  数组删除项 “$pull”:{"emails”:"foo@example.com"}
+$pullAll 删除数组all项 “$pullAll”:{"emails”:["foo@example.com”, “foo2@ex-
+moval ample.com"]}
+$rename 属性重命名 “$rename”:{"emails”:"old_emails"}</p>

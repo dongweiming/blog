@@ -1,0 +1,20 @@
+---
+layout: post
+title: opensuse安装kiba-dock
+categories:
+- opensuse
+tags:
+- kiba-dock
+published: true
+comments: true
+indexer: true
+---
+<p>前言：我想很多人都用过ubuntu下的cairo-dock，那么这个kiba－dock真的有点被遗忘，今天突然没事做，回忆了一下刚开始学习ubuntu时候的感觉。</p>
+
+<p>目前opensuse新版本已经不含这个软件了。然后搜索了一下：</p>
+
+<p>wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/swyear/openSUSE_11.1/i586/kiba-dock-0.svn862-6.6.i586.rpm
+wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/swyear/openSUSE_11.1/i586/kiba-plugins-0.svn862-7.6.i586.rpm</p>
+
+<p>但是发现：需要一个比较老的libcrypto.so.0.9.8和libssl.so.0.9.8，但是我的版本已经提高到1.0.0，所以安装时候忽略依赖关系
+sudo rpm -ivh kiba-plugins-0.svn862-7.6.i586.rpm kiba-dock-0.svn862-6.6.i586.rpm --nodeps</p>

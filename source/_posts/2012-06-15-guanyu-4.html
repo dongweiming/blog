@@ -1,0 +1,85 @@
+---
+layout: post
+title: 关于smtpd研究
+categories:
+- python模块研究
+tags:
+- smtpd
+published: true
+comments: true
+indexer: true
+---
+<p>前言：smtpd？大家是不是一下子想到了smtplib？其实smtpd是一个实现建立简单邮件传输协议服务器的模块，smtplib是一个实现smtp客户端的模块。</p>
+
+<p><pre class="sh_python">
+import smtpd #服务器端
+import asyncore</p>
+
+<p>class CustomSMTPServer(smtpd.SMTPServer): #定一个自己的SMTPServer类</p>
+
+<p>    def process_message(self, peer, mailfrom, rcpttos, data): 
+        print 'Receiving message from:', peer #客户端的ip和端口
+        print 'Message addressed from:', mailfrom  #发件人 
+        print 'Message addressed to  :', rcpttos #手件人列表
+        print 'Message length        :', len(data) #信息长度
+        return</p>
+
+<p>server = CustomSMTPServer(('127.0.0.1', 1025), None) #只需要服务器的ip和端口</p>
+
+<p>asyncore.loop()
+</pre></p>
+
+<p>客户端</p>
+
+<p><pre class="sh_python">
+import smtplib
+import email.utils
+from email.mime.text import MIMEText</p>
+
+<p>msg = MIMEText('This is the body of the message.') #邮件主体
+msg['To'] = email.utils.formataddr(('Recipient', 'recipient@example.com'))  #收件人，这个是邮件内容里面的，就是我们收件会告诉我们，要不然就是一个未定义状态
+msg['From'] = email.utils.formataddr(('Author', 'author@example.com')) #发件人 
+msg['Subject'] = 'Simple test message' #邮件主题</p>
+
+<p>server = smtplib.SMTP('127.0.0.1', 1025)
+server.set_debuglevel(True) # 显示debug
+try:
+    server.sendmail('author@example.com', ['recipient@example.com'], msg.as_string()) #最后一个参数是构建好的邮件的字符串模式
+finally:
+    server.quit()
+</pre></p>
+
+<p><pre class="sh_python">
+import smtpd
+import asyncore</p>
+
+<p>server = smtpd.DebuggingServer(('127.0.0.1', 1025), None) #这是模块自带的调试服务器</p>
+
+<p>asyncore.loop()
+~
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>---------- MESSAGE FOLLOWS ----------
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+To: Recipient &lt;recipient@example.com&gt;
+From: Author &lt;author@example.com&gt;
+Subject: Simple test message
+X-Peer: 127.0.0.1</p>
+
+<p>This is the body of the message.
+------------ END MESSAGE ------------</p>
+
+<p><pre class="sh_python">
+import smtpd
+import asyncore
+server = smtpd.PureProxy(('127.0.0.1', 1025), ('mail', 25)) #设置成代理，让将数据传到本地25端口发送邮件
+asyncore.loop()
+</pre></p>
+
+<p>查看日志需要读取你的比如postfix或者sendmail的mail日志</p>
+
+<p>&nbsp;</p>

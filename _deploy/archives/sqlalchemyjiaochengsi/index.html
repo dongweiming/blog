@@ -1,0 +1,1126 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>SQLAlchemy教程(四) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengsi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">SQLAlchemy教程(四)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-17T00:00:00+08:00" pubdate data-updated="true">Jul 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>1  ORM模型的简单性简化了数据库查询过程。使用ORM查询工具，用户可以访问期望数据，而不必理解数据库的底层结构</strong></p>
+
+<p>以下是SQL语句:
+region_table = Table(
+&#8216;region&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;name&#8217;, Unicode(255)))
+相应的类:
+class Region(object):</p>
+
+<p>def __init__(self, name):
+self.name = name</p>
+
+<p>def __repr__(self):
+return &#8216;&lt;Region %s&gt;&#8217; % self.name</p>
+
+<p>看一下在交互模式下:</p>
+
+<p>&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;]
+&gt;&gt;&gt; mapper(Region,region_table)  #ORM映射
+&lt;Mapper at 0x84bdb2c; Region&gt;
+&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;, &#8216;_sa_class_manager&#8217;, &#8216;id&#8217;, &#8216;name&#8217;] #增加了很多属性
+&gt;&gt;&gt; Region.id
+&lt;sqlalchemy.orm.attributes.InstrumentedAttribute object at 0x84c238c&gt;
+&gt;&gt;&gt; Region.name
+&lt;sqlalchemy.orm.attributes.InstrumentedAttribute object at 0x84c254c&gt;</p>
+
+<p>&gt;&gt;&gt; r0 = Region(name=&#8221;Northeast&#8221;)
+&gt;&gt;&gt; r1 = Region(name=&#8221;Southwest&#8221;)
+&gt;&gt;&gt; r0
+&lt;Region Northeast&gt;  #类能显示这样的数据是因为类定义了__repr__方法
+&gt;&gt;&gt; r1
+&lt;Region Southwest&gt;
+&gt;&gt;&gt; from sqlalchemy.orm import clear_mappers
+&gt;&gt;&gt; clear_mappers() #取消映射
+&gt;&gt;&gt; Region.name #不再有这个属性
+Traceback (most recent call last):
+File &#8220;&lt;stdin&gt;&#8221;, line 1, in &lt;module&gt;
+AttributeError: type object &#8216;Region&#8217; has no attribute &#8216;name&#8217;
+&gt;&gt;&gt; dir(Region)  #回到了原来的只有类属性
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;]</p>
+
+<p>&gt;&gt;&gt; r0 = Region(name=&#8221;Northeast&#8221;)  #从这里开始理解ORM做了什么
+&gt;&gt;&gt; r1 = Region(name=&#8221;Southwest&#8221;) #实现了2个类的实例</p>
+
+<p>&gt;&gt;&gt; metadata.create_all(engine) #创建table</p>
+
+<p>&gt;&gt;&gt; Session = sessionmaker()  #通过sessionmaker产生一个会话
+&gt;&gt;&gt; Session.configure(bind=engine) #绑定到数据库连接
+&gt;&gt;&gt; session = Session()  #产生会话实例,让对象可以被载入或保存到数据库,而只需要访问类却不用直接访问数据库
+&gt;&gt;&gt; session.bind.echo = True #显示打印信息</p>
+
+<p>&gt;&gt;&gt; session.add(r1) #把r0,r12个实例加到会话中
+&gt;&gt;&gt; session.add(r0)
+&gt;&gt;&gt; print r0.id  #因为还没有保存,数据为空
+None
+&gt;&gt;&gt; session.flush() #提交数据到数据库
+2012-07-18 10:24:07,116 INFO sqlalchemy.engine.base.Engine BEGIN (implicit)
+2012-07-18 10:24:07,116 INFO sqlalchemy.engine.base.Engine INSERT INTO region (name) VALUES (?)
+2012-07-18 10:24:07,116 INFO sqlalchemy.engine.base.Engine (&#8216;Southwest&#8217;,)
+2012-07-18 10:24:07,117 INFO sqlalchemy.engine.base.Engine INSERT INTO region (name) VALUES (?)
+2012-07-18 10:24:07,117 INFO sqlalchemy.engine.base.Engine (&#8216;Northeast&#8217;,)
+&gt;&gt;&gt; print r0.id #id因为子增长,出现了
+2
+&gt;&gt;&gt; r0.name = &#8216;Northwest&#8217;
+&gt;&gt;&gt; session.flush() #修改提交
+2012-07-18 10:24:50,644 INFO sqlalchemy.engine.base.Engine UPDATE region SET name=? WHERE region.id = ?
+2012-07-18 10:24:50,644 INFO sqlalchemy.engine.base.Engine (&#8216;Northwest&#8217;, 2)
+&gt;&gt;&gt; print r0.name #数据库中的数据被update成了新值
+Northwest
+&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;]
+&gt;&gt;&gt; mapper(Region, region_table, include_properties=[&#8216;id&#8217;]) #使用 include_properties只映射某些字段,同样还有exclude_properties
+&lt;Mapper at 0x84c26cc; Region&gt;
+&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;, &#8216;_sa_class_manager&#8217;, &#8216;id&#8217;]  #只多了一个&#8221;id&#8221;</p>
+
+<p>&gt;&gt;&gt; clear_mappers()
+&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;]
+&gt;&gt;&gt; mapper(Region, region_table, column_prefix=&#8217;_&#8217;)  #映射后自定义修改新属性的前缀
+&lt;Mapper at 0x84f73ac; Region&gt;
+&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;, &#8216;_id&#8217;, &#8216;_name&#8217;, &#8216;_sa_class_manager&#8217;] #id和name等前面都有了&#8221;_&#8221;</p>
+
+<p>&gt;&gt;&gt; clear_mappers()
+&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;]
+&gt;&gt;&gt; mapper(Region, region_table, properties=dict(
+&#8230;     region_name=region_table.c.name,  #想把name的属性定义为region_name,因为c.name就是用Table创建的表结构的特定实例的name属性
+&#8230;     region_id=region_table.c.id))
+&lt;Mapper at 0x8509d2c; Region&gt;
+&gt;&gt;&gt; dir(Region)
+[&#8216;__class__&#8217;, &#8216;__delattr__&#8217;, &#8216;__dict__&#8217;, &#8216;__doc__&#8217;, &#8216;__format__&#8217;, &#8216;__getattribute__&#8217;, &#8216;__hash__&#8217;, &#8216;__init__&#8217;, &#8216;__module__&#8217;, &#8216;__new__&#8217;, &#8216;__reduce__&#8217;, &#8216;__reduce_ex__&#8217;, &#8216;__repr__&#8217;, &#8216;__setattr__&#8217;, &#8216;__sizeof__&#8217;, &#8216;__str__&#8217;, &#8216;__subclasshook__&#8217;, &#8216;__weakref__&#8217;, &#8216;_sa_class_manager&#8217;, &#8216;region_id&#8217;, &#8216;region_name&#8217;]  #id改名为region_id</p>
+
+<p>&gt;&gt;&gt; class Region(object):  #重新定义类
+&#8230;     def __init__(self, name):
+&#8230;         self.name = name
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;Region %s&gt;&#8217; % self.name
+&#8230;     def _get_name(self): #这个_get和_set是为了让内置的property调用
+&#8230;         return self._name
+&#8230;     def _set_name(self, value):
+&#8230;         assert value.endswith(&#8216;Region&#8217;), \
+&#8230;             &#8216;Region names must end in &#8220;Region&#8221;&#8217;
+&#8230;         self._name = value
+&#8230;     name=property(_get_name, _set_name) #<span style="font-family: Tahoma; font-size: small;">通过property的定义，当获取成员x的值时，就会调用_get_name函数(第一个参数)，当给成员x赋值时，就会调用_set_name函数(第二个参数)，当删除x时，就会调用delx函数</span>(这里没有设置)
+&#8230;
+&gt;&gt;&gt; from sqlalchemy.orm import synonym
+&gt;&gt;&gt; mapper(Region, region_table, column_prefix=&#8217;_&#8217;, properties=dict(
+&#8230;     name=synonym(&#8216;_name&#8217;))) #首先检验_name的属性是否满足
+&lt;Mapper at 0x84f7acc; Region&gt;
+&gt;&gt;&gt; s0 = Region(&#8216;Southeast&#8217;)  #没有正确结尾
+Traceback (most recent call last):
+File &#8220;&lt;stdin&gt;&#8221;, line 1, in &lt;module&gt;
+File &#8220;&lt;string&gt;&#8221;, line 4, in __init__
+File &#8220;/usr/lib/python2.7/site-packages/SQLAlchemy-0.7.8-py2.7-linux-i686.egg/sqlalchemy/orm/state.py&#8221;, line 98, in initialize_instance
+return manager.original_init(*mixed[1:], **kwargs)
+File &#8220;&lt;stdin&gt;&#8221;, line 3, in __init__
+File &#8220;&lt;string&gt;&#8221;, line 1, in __set__
+File &#8220;&lt;stdin&gt;&#8221;, line 10, in _set_name
+AssertionError: Region names must end in &#8220;Region&#8221;
+&gt;&gt;&gt; s0 = Region(&#8216;Southeast Region&#8217;) #正常</p>
+
+<p>&gt;&gt;&gt; segment_table = Table(
+&#8230;     &#8216;segment&#8217;, metadata,
+&#8230;     Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230;     Column(&#8216;lat0&#8217;, Float),
+&#8230;     Column(&#8216;long0&#8217;, Float),
+&#8230;     Column(&#8216;lat1&#8217;, Float),
+&#8230;     Column(&#8216;long1&#8217;, Float))</p>
+
+<p>&gt;&gt;&gt; metadata.create_all(engine) #创建表
+&gt;&gt;&gt; class RouteSegment(object): #一个含有begin和end的类
+&#8230;     def __init__(self, begin, end):
+&#8230;         self.begin = begin
+&#8230;         self.end = end
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;Route %s to %s&gt;&#8217; % (self.begin, self.end)
+&#8230;
+&gt;&gt;&gt; class MapPoint(object):
+&#8230;     def __init__(self, lat, long):
+&#8230;         self.coords = lat, long
+&#8230;     def __composite_values__(self): #返回比较后的列表或者元祖
+&#8230;         return self.coords
+&#8230;     def __eq__(self, other):
+&#8230;         return self.coords == other.coords
+&#8230;     def __ne__(self, other):
+&#8230;         return self.coords != other.coords
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;(%s lat, %s long)&#8217; % self.coords
+&#8230;
+&#8230;</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy.orm import composite
+&gt;&gt;&gt; mapper(RouteSegment, segment_table, properties=dict(
+&#8230;     begin=composite(MapPoint,  #创建多个属性
+&#8230;         segment_table.c.lat0,
+&#8230;         segment_table.c.long0),
+&#8230;     end=composite(MapPoint,
+&#8230;         segment_table.c.lat1, segment_table.c.long1)))
+&lt;Mapper at 0x86203cc; RouteSegment&gt;
+&gt;&gt;&gt; work=MapPoint(33.775562,-84.29478)
+&gt;&gt;&gt; library=MapPoint(34.004313,-84.452062)
+&gt;&gt;&gt; park=MapPoint(33.776868,-84.389785)
+&gt;&gt;&gt; routes = [
+&#8230;     RouteSegment(work, library),
+&#8230;     RouteSegment(work, park),
+&#8230;     RouteSegment(library, work),
+&#8230;     RouteSegment(library, park),
+&#8230;     RouteSegment(park, library),
+&#8230;     RouteSegment(park, work)]</p>
+
+<p>&gt;&gt;&gt; for rs in routes:
+&#8230;     session.add(rs)
+&#8230;
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; q = session.query(RouteSegment)
+&gt;&gt;&gt; print RouteSegment.begin==work
+segment.lat0 = :lat0_1 AND segment.long0 = :long0_1
+&gt;&gt;&gt; q = q.filter(RouteSegment.begin==work)
+&gt;&gt;&gt; for rs in q:
+&#8230;     print rs
+&#8230;
+2012-07-18 11:12:29,360 INFO sqlalchemy.engine.base.Engine SELECT segment.id AS segment_id, segment.lat0 AS segment_lat0, segment.long0 AS segment_long0, segment.lat1 AS segment_lat1, segment.long1 AS segment_long1
+FROM segment
+WHERE segment.lat0 = ? AND segment.long0 = ?
+2012-07-18 11:12:29,360 INFO sqlalchemy.engine.base.Engine (33.775562, -84.29478)
+&lt;Route (33.775562 lat, -84.29478 long) to (34.004313 lat, -84.452062 long)&gt;
+&lt;Route (33.775562 lat, -84.29478 long) to (33.776868 lat, -84.389785 long)&gt;</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy.orm import PropComparator
+&gt;&gt;&gt; class MapPointComparator(PropComparator): #自定义运算符继承PropComparator类
+&#8230;     def __lt__(self, other):  #自定义小于运算结果
+&#8230;         return and_(*[a&lt;b for a, b in
+&#8230;             zip(self.prop.columns,
+&#8230;                 other.__composite_values__())])
+&#8230;
+&gt;&gt;&gt; mapper(RouteSegment, segment_table, properties=dict(
+&#8230;     begin=composite(MapPoint,
+&#8230;                     segment_table.c.lat0, segment_table.c.long0,
+&#8230;                     comparator=MapPointComparator),  #定义使用自定义的运算类
+&#8230;     end=composite(MapPoint,
+&#8230;                   segment_table.c.lat1, segment_table.c.long1,
+&#8230;                   comparator=MapPointComparator)))
+&lt;Mapper at 0x85b2bac; RouteSegment&gt;
+&gt;&gt;&gt; product_table = Table(
+&#8230; &#8216;product&#8217;, metadata,
+&#8230; Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230; Column(&#8216;msrp&#8217;, Numeric),
+&#8230; Column(&#8216;image&#8217;, BLOB))
+&gt;&gt;&gt; from sqlalchemy.orm import deferred
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     image=deferred(product_table.c.image)))  #deferred意思是延迟,就是在实现 mapper 时，可以指定某些字段是 Deferred 装入的，这样象通常一样取出数据时，这些字段并不真正的从数据库中取出，只有在你真正需要时才取出，这样可以减少资源的占用和提高效率,只有在读取 image时才会取出相应的数据
+&lt;Mapper at 0x862a40c; Product&gt;</p>
+
+<p>&gt;&gt;&gt; metadata.remove(product_table)  #因为已经常见了表,先删除
+&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;image1&#8217;, Binary),
+&#8230;     Column(&#8216;image2&#8217;, Binary),
+&#8230;     Column(&#8216;image3&#8217;, Binary))</p>
+
+<p>&gt;&gt;&gt; clear_mappers() #已经映射,先取消
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     image1=deferred(product_table.c.image1, group=&#8217;images&#8217;),
+&#8230;     image2=deferred(product_table.c.image2, group=&#8217;images&#8217;),
+&#8230;     image3=deferred(product_table.c.image3, group=&#8217;images&#8217;))) #Deferred字段可以通过在 properties 中指定 group参数来表示编组情况。这样当一个组的某个</p>
+
+<p>#字段被取出时， 同组的其它字段均被取出
+&lt;Mapper at 0x85b8c4c; Product&gt;</p>
+
+<p>&gt;&gt;&gt; q = product_table.join(  被映射的是join了product_summary_table到product_table的结果
+&#8230; product_summary_table,
+&#8230; product_table.c.sku==product_summary_table.c.sku).alias(&#8216;full_product&#8217;)
+&gt;&gt;&gt; class FullProduct(object): pass
+&#8230;
+&gt;&gt;&gt; mapper(FullProduct, q)
+&lt;Mapper at 0x86709cc; FullProduct&gt;</p>
+
+<p>mapper函数的一些参数:</p>
+
+<p>always_refresh =False:返回查询旧会修改内存中的值,但是populate_existing优先级高</p>
+
+<p>allow_column_override =False:允许关系属性将具有相同的名称定义为一个映射列,否则名称冲突,产生异常</p>
+
+<p><strong>2 ORM的关系</strong></p>
+
+<p><strong>1 1:N relations (1对多)</strong></p>
+
+<p>&gt;&gt;&gt; mapper(Store, store_table)
+&lt;Mapper at 0x84fba4c; Store&gt;
+&gt;&gt;&gt; from sqlalchemy.orm import relation
+&gt;&gt;&gt; mapper(Region, region_table, properties=dict(
+&#8230;     stores=relation(Store))) #让2个表关联,给Region添加一个属性stores,通过它联系Store来修改Store
+&lt;Mapper at 0x84f76ac; Region&gt;</p>
+
+<p>&gt;&gt;&gt; r0 = Region(&#8216;test&#8217;)</p>
+
+<p><strong></strong>&gt;&gt;&gt; session.add(r0) #先生成一条数据
+&gt;&gt;&gt; session.commit()
+2012-07-18 13:56:26,858 INFO sqlalchemy.engine.base.Engine BEGIN (implicit)
+2012-07-18 13:56:26,859 INFO sqlalchemy.engine.base.Engine INSERT INTO region (name) VALUES (?)
+2012-07-18 13:56:26,859 INFO sqlalchemy.engine.base.Engine (&#8216;test&#8217;,)
+2012-07-18 13:56:26,859 INFO sqlalchemy.engine.base.Engine COMMIT
+&gt;&gt;&gt; rgn = session.query(Region).get(1)  #获取这条数据
+2012-07-18 13:56:37,250 INFO sqlalchemy.engine.base.Engine BEGIN (implicit)
+2012-07-18 13:56:37,251 INFO sqlalchemy.engine.base.Engine SELECT region.id AS region_id, region.name AS region_name
+FROM region
+WHERE region.id = ?
+2012-07-18 13:56:37,251 INFO sqlalchemy.engine.base.Engine (1,)
+&gt;&gt;&gt; s0 = Store(name=&#8217;3rd and Juniper&#8217;) #创建一个实例
+&gt;&gt;&gt; rgn.stores.append(s0) #通过Region的依赖建立新的Store(其中的一个字段region_id值来着region的id字段)
+2012-07-18 13:56:51,611 INFO sqlalchemy.engine.base.Engine SELECT store.id AS store_id, store.region_id AS store_region_id, store.name AS store_name
+FROM store
+WHERE ? = store.region_id
+2012-07-18 13:56:51,611 INFO sqlalchemy.engine.base.Engine (1,)
+&gt;&gt;&gt; session.flush() #保存数据库
+2012-07-18 13:57:02,131 INFO sqlalchemy.engine.base.Engine INSERT INTO store (region_id, name) VALUES (?, ?)
+2012-07-18 13:57:02,131 INFO sqlalchemy.engine.base.Engine (1, &#8216;3rd and Juniper&#8217;)
+注:假如2个表之间有多个外部依赖关系,需要使用primaryjoin指定:</p>
+
+<p>mapper(Region, region_table, properties=dict(
+stores=relation(Store,
+primaryjoin=(store_table.c.region_id  #判断关系来着region_id和region的id
+==region_table.c.id))))</p>
+
+<p><strong>2 M:N relations(多对多)</strong></p>
+
+<p>上面有SQL语句:我复制过来:</p>
+
+<p>category_table = Table(
+&#8216;category&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;level_id&#8217;, None, ForeignKey(&#8216;level.id&#8217;)),
+Column(&#8216;parent_id&#8217;, None, ForeignKey(&#8216;category.id&#8217;)),
+Column(&#8216;name&#8217;, String(20)))
+product_table = Table(
+&#8216;product&#8217;, metadata,
+Column(&#8216;sku&#8217;, String(20), primary_key=True),
+Column(&#8216;msrp&#8217;, Numeric))
+product_category_table = Table(
+&#8216;product_category&#8217;, metadata,
+Column(&#8216;product_id&#8217;, None, ForeignKey(&#8216;product.sku&#8217;), primary_key=True),
+Column(&#8216;category_id&#8217;, None, ForeignKey(&#8216;category.id&#8217;), primary_key=True))</p>
+
+<p>可以看出来product_category_table和category_table 是多对多的关系.</p>
+
+<p>&gt;&gt;&gt; mapper(Category, category_table, properties=dict(
+&#8230;     products=relation(Product,
+&#8230;     secondary=product_category_table)))
+&lt;Mapper at 0x859c8cc; Category&gt;
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     categories=relation(Category,
+&#8230;     secondary=product_category_table)))
+&lt;Mapper at 0x859c5cc; Product&gt;</p>
+
+<p>&gt;&gt;&gt; r0=Product(&#8216;123&#8217;,&#8217;234&#8217;)</p>
+
+<p>&gt;&gt;&gt; session.add(r0)
+&gt;&gt;&gt; session.flush()
+2012-07-18 14:18:06,599 INFO sqlalchemy.engine.base.Engine BEGIN (implicit)
+2012-07-18 14:18:06,618 INFO sqlalchemy.engine.base.Engine INSERT INTO product (sku, msrp) VALUES (?, ?)
+2012-07-18 14:18:06,618 INFO sqlalchemy.engine.base.Engine (&#8216;123&#8217;, 234.0)
+&gt;&gt;&gt; session.query(Product).get(&#8216;123&#8217;).categories</p>
+
+<p>&gt;&gt;&gt; clear_mappers()
+&gt;&gt;&gt; mapper(Category, category_table, properties=dict(
+&#8230;     products=relation(Product, secondary=product_category_table,
+&#8230; primaryjoin=(product_category_table.c.category_id  #primaryjoin是要被映射的表和连接表的条件
+&#8230;                                    == category_table.c.id),
+&#8230; secondaryjoin=(product_category_table.c.product_id  #secondaryjoin是连接表和想加入的表的条件
+&#8230;                                      == product_table.c.sku))))
+&lt;Mapper at 0x84ff7cc; Category&gt;
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     categories=relation(Category, secondary=product_category_table,
+&#8230; primaryjoin=(product_category_table.c.product_id
+&#8230;                                      == product_table.c.sku),
+&#8230; secondaryjoin=(product_category_table.c.category_id
+&#8230;                                        == category_table.c.id))))
+&lt;Mapper at 0x859cb8c; Product&gt;
+<strong>1:1 relations(一对一)</strong>:特殊的(1:N)
+还是上面的SQL:</p>
+
+<p>product_table = Table(
+&#8216;product&#8217;, metadata,
+Column(&#8216;sku&#8217;, String(20), primary_key=True),
+Column(&#8216;msrp&#8217;, Numeric))
+product_summary_table = Table(
+&#8216;product_summary&#8217;, metadata,
+Column(&#8216;sku&#8217;, None, ForeignKey(&#8216;product.sku&#8217;), primary_key=True), #只有一个外联到product
+Column(&#8216;name&#8217;, Unicode(255)),
+Column(&#8216;description&#8217;, Unicode))</p>
+
+<p>&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     summary=relation(ProductSummary)))
+KeyboardInterrupt
+&gt;&gt;&gt; mapper(ProductSummary, product_summary_table)
+&lt;Mapper at 0x84fbe6c; ProductSummary&gt;
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     summary=relation(ProductSummary)))
+&lt;Mapper at 0x85bee6c; Product&gt;
+&gt;&gt;&gt; prod = session.query(Product).get(&#8216;123&#8217;)
+[]  #product_summary_table因为product_table儿存在,浪费了</p>
+
+<p>&gt;&gt;&gt; mapper(ProductSummary, product_summary_table)
+&lt;Mapper at 0x84f7dec; ProductSummary&gt;
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     summary=relation(ProductSummary,uselist=False)))  #使用uselist=False就不会这样了
+&lt;Mapper at 0x860584c; Product&gt;
+&gt;&gt;&gt; prod = session.query(Product).get(&#8216;123&#8217;)
+&gt;&gt;&gt; print prod.summary
+None
+&gt;&gt;&gt; mapper(ProductSummary, product_summary_table)
+&lt;Mapper at 0x859ca0c; ProductSummary&gt;
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     summary=relation(ProductSummary, uselist=False,
+&#8230;     backref=&#8217;product&#8217;))) #自定义自己表的函数
+&lt;Mapper at 0x860e90c; Product&gt;
+&gt;&gt;&gt; prod = session.query(Product).get(&#8216;123&#8217;)
+&gt;&gt;&gt; prod.summary = ProductSummary(name=&#8221;Fruit&#8221;, description=&#8221;Some
+&#8230; Fruit&#8221;)
+&gt;&gt;&gt; print prod.summary
+&lt;ProductSummary Fruit&gt;
+&gt;&gt;&gt; print prod.summary.product #他的属性就是prod,可就是表本身
+&lt;Product 123&gt;
+&gt;&gt;&gt; print prod.summary.product is prod
+True</p>
+
+<p>&gt;&gt;&gt; mapper(Level, level_table, properties=dict(
+&#8230;     categories=relation(Category, backref=&#8217;level&#8217;)))
+&lt;Mapper at 0x860590c; Level&gt;
+&gt;&gt;&gt; mapper(Category, category_table, properties=dict(
+&#8230;     products=relation(Product,
+&#8230;         secondary=product_category_table)))
+&lt;Mapper at 0x860ec8c; Category&gt;
+&gt;&gt;&gt; mapper(Product, product_table, properties=dict(
+&#8230;     categories=relation(Category,
+&#8230;         secondary=product_category_table)))
+&lt;Mapper at 0x860e7ec; Product&gt;
+&gt;&gt;&gt; lvl = Level(name=&#8217;Department&#8217;)
+&gt;&gt;&gt; cat = Category(name=&#8217;Produce&#8217;, level=lvl)
+&gt;&gt;&gt; session.add(lvl)
+&gt;&gt;&gt; session.flush()
+2012-07-18 14:44:02,005 INFO sqlalchemy.engine.base.Engine INSERT INTO level (parent_id, name) VALUES (?, ?)
+2012-07-18 14:44:02,005 INFO sqlalchemy.engine.base.Engine (None, &#8216;Department&#8217;)
+2012-07-18 14:44:02,020 INFO sqlalchemy.engine.base.Engine INSERT INTO category (level_id, parent_id, name) VALUES (?, ?, ?)
+2012-07-18 14:44:02,020 INFO sqlalchemy.engine.base.Engine (1, None, &#8216;Produce&#8217;)
+&gt;&gt;&gt; prod = session.query(Product).get(&#8216;123&#8217;)
+&gt;&gt;&gt; print prod.categories
+[]
+&gt;&gt;&gt; print cat.products
+2012-07-18 14:44:25,517 INFO sqlalchemy.engine.base.Engine SELECT product.sku AS product_sku, product.msrp AS product_msrp
+FROM product, product_category
+WHERE ? = product_category.category_id AND product.sku = product_category.product_id
+2012-07-18 14:44:25,517 INFO sqlalchemy.engine.base.Engine (1,)
+[]
+&gt;&gt;&gt; prod.categories.append(cat)
+&gt;&gt;&gt; print prod.categories
+[&lt;Category Department.Produce&gt;]
+&gt;&gt;&gt; print cat.products  #backref自动更新,在多对多的情况,可以使用relation函数两次,但是2个属性没有保持同步
+[]  #解决方法:</p>
+
+<p>&gt;&gt;&gt; mapper(Level, level_table, properties=dict(
+&#8230;categories=relation(Category, backref=&#8217;level&#8217;)))
+&gt;&gt;&gt; mapper(Category, category_table, properties=dict(
+&#8230;products=relation(Product, secondary=product_category_table,
+&#8230; backref=&#8217;categories&#8217;)))  #在Product也设置backref,就会保持同步
+&gt;&gt;&gt; mapper(Product, product_table)
+&gt;&gt;&gt; lvl = Level(name=&#8217;Department&#8217;)
+&gt;&gt;&gt; cat = Category(name=&#8217;Produce&#8217;, level=lvl)
+&gt;&gt;&gt; session.save(lvl)
+&gt;&gt;&gt; prod = session.query(Product).get(&#8216;123&#8217;)
+&gt;&gt;&gt; print prod.categories
+[]
+&gt;&gt;&gt; print cat.products
+[]
+&gt;&gt;&gt; prod.categories.append(cat)
+&gt;&gt;&gt; print prod.categories
+[&lt;Category Department.Produce&gt;]
+&gt;&gt;&gt;print cat.products
+[&lt;Product 123&gt;]</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy.orm import backref
+&gt;&gt;&gt; clear_mappers()
+&gt;&gt;&gt; mapper(ProductSummary, product_summary_table, properties=dict(
+&#8230; product=relation(Product,
+&#8230; backref=backref(&#8216;summary&#8217;, uselist=False))))  #还可以使用backref函数做一样的事情
+&lt;Mapper at 0x860aaec; ProductSummary&gt;
+&gt;&gt;&gt; mapper(Product, product_table)
+&lt;Mapper at 0x85bee6c; Product&gt;</p>
+
+<p><strong>4 Self-Referential 自我参照映射</strong>
+level_table = Table(
+&#8216;level&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;parent_id&#8217;, None, ForeignKey(&#8216;level.id&#8217;)), #这个外联其实还是这个类的id,也就是映射了自己的对象
+Column(&#8216;name&#8217;, String(20)))
+&gt;&gt;&gt; mapper(Level, level_table, properties=dict(
+&#8230; children=relation(Level))) #不同层次之间的父子关系,我这里指定得到&#8221;子&#8221;的属性
+&lt;Mapper at 0x860a66c; Level&gt;
+&gt;&gt;&gt; mapper(Level, level_table, properties=dict(
+&#8230;     children=relation(Level,
+&#8230;     backref=backref(&#8216;parent&#8217;,
+&#8230;     remote_side=[level_table.c.id]))))  #remote_side指定&#8217;子&#8217;的id,local side”就是字段parent_id
+&lt;Mapper at 0x860e42c; Level&gt;
+&gt;&gt;&gt; l0 = Level(&#8216;Gender&#8217;)
+&gt;&gt;&gt; l1 = Level(&#8216;Department&#8217;, parent=l0)
+&gt;&gt;&gt; session.add(l0)
+&gt;&gt;&gt; session.flush()
+2012-07-18 15:07:55,810 INFO sqlalchemy.engine.base.Engine INSERT INTO level (parent_id, name) VALUES (?, ?)
+2012-07-18 15:07:55,810 INFO sqlalchemy.engine.base.Engine (None, &#8216;Gender&#8217;) #插入l0,他没有父级
+2012-07-18 15:07:55,810 INFO sqlalchemy.engine.base.Engine INSERT INTO level (parent_id, name) VALUES (?, ?)
+2012-07-18 15:07:55,810 INFO sqlalchemy.engine.base.Engine (2, &#8216;Department&#8217;)</p>
+
+<p>注 我们还能反过来用:</p>
+
+<p>mapper(Level, level_table, properties=dict(
+parent=relation(Level, remote_side=[level_table.c.parent_id],
+backref=&#8217;children&#8217;)))</p>
+
+<p>我们创建一个多引擎的例子:</p>
+
+<p><pre class="sh_python">
+from sqlalchemy import create_engine
+from sqlalchemy.orm import mapper, sessionmaker
+from sqlalchemy import Numeric,Table, MetaData, Column, ForeignKey, Integer, String
+engine1 = create_engine('sqlite://')
+engine2 = create_engine('sqlite://')
+metadata = MetaData()
+product_table = Table(
+'product', metadata,
+Column('sku', String(20), primary_key=True),
+Column('msrp', Numeric))
+product_summary_table = Table(
+'product_summary', metadata,
+Column('sku', String(20), ForeignKey('product.sku'), primary_key=True),
+Column('name', Unicode(255)),
+Column('description', Unicode))
+product_table.create(bind=engine1)
+product_summary_table.create(bind=engine2)
+stmt = product_table.insert()
+engine1.execute(
+stmt,
+[dict(sku="123", msrp=12.34),
+dict(sku="456", msrp=22.12),
+dict(sku="789", msrp=41.44)])
+stmt = product_summary_table.insert()
+engine2.execute(
+stmt,
+[dict(sku="123", name="Shoes", description="Some Shoes"),
+dict(sku="456", name="Pants", description="Some Pants"),
+dict(sku="789", name="Shirts", description="Some Shirts")])
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>这样就创建了表并且插入了一些数据</p>
+
+<p>dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17)
+[GCC 4.5.3] on linux2
+Type &#8220;help&#8221;, &#8220;copyright&#8221;, &#8220;credits&#8221; or &#8220;license&#8221; for more information.
+&gt;&gt;&gt; from sqlalchemy import create_engine
+&gt;&gt;&gt; from sqlalchemy.orm import mapper, sessionmaker
+&gt;&gt;&gt; from sqlalchemy import Numeric,Table, MetaData, Column, ForeignKey, Integer, String,Unicode
+&gt;&gt;&gt; engine1 = create_engine(&#8216;sqlite://&#8217;)
+&gt;&gt;&gt; engine2 = create_engine(&#8216;sqlite://&#8217;)  #创建多个引擎
+&gt;&gt;&gt; metadata = MetaData()
+&gt;&gt;&gt; product_table = Table(
+&#8230; &#8216;product&#8217;, metadata,
+&#8230; Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230; Column(&#8216;msrp&#8217;, Numeric))
+&gt;&gt;&gt; product_summary_table = Table(
+&#8230; &#8216;product_summary&#8217;, metadata,
+&#8230; Column(&#8216;sku&#8217;, String(20), ForeignKey(&#8216;product.sku&#8217;), primary_key=True),
+&#8230; Column(&#8216;name&#8217;, Unicode(255)),
+&#8230; Column(&#8216;description&#8217;, Unicode))
+&gt;&gt;&gt; product_table.create(bind=engine1)
+&gt;&gt;&gt; product_summary_table.create(bind=engine2)
+&gt;&gt;&gt; stmt = product_table.insert()
+&gt;&gt;&gt; engine1.execute(
+&#8230; stmt,
+&#8230; [dict(sku=&#8221;123&#8221;, msrp=12.34),
+&#8230; dict(sku=&#8221;456&#8221;, msrp=22.12),
+&#8230; dict(sku=&#8221;789&#8221;, msrp=41.44)])
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x84ef9ec&gt;
+&gt;&gt;&gt; stmt = product_summary_table.insert()
+&gt;&gt;&gt; engine2.execute(  #用引擎2 插入数据,那么product_summary的数据就在这个引擎
+&#8230; stmt,
+&#8230; [dict(sku=&#8221;123&#8221;, name=&#8221;Shoes&#8221;, description=&#8221;Some Shoes&#8221;),
+&#8230; dict(sku=&#8221;456&#8221;, name=&#8221;Pants&#8221;, description=&#8221;Some Pants&#8221;),
+&#8230; dict(sku=&#8221;789&#8221;, name=&#8221;Shirts&#8221;, description=&#8221;Some Shirts&#8221;)])
+/usr/lib/python2.7/site-packages/SQLAlchemy-0.7.8-py2.7-linux-i686.egg/sqlalchemy/engine/default.py:463: SAWarning: Unicode type received non-unicode bind param value.
+param.append(processors[key](compiled_params[key]))
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x84e896c&gt;
+&gt;&gt;&gt; class Product(object):
+&#8230;     def __init__(self, sku, msrp, summary=None):
+&#8230;         self.sku = sku
+&#8230;         self.msrp = msrp
+&#8230;         self.summary = summary
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;Product %s&gt;&#8217; % self.sku
+&#8230;
+&gt;&gt;&gt; class ProductSummary(object):
+&#8230;     def __init__(self, name, description):
+&#8230;         self.name = name
+&#8230;         self.description = description
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;ProductSummary %s&gt;&#8217; % self.name
+&#8230;
+&gt;&gt;&gt; from sqlalchemy.orm import clear_mappers,backref,relation
+&gt;&gt;&gt; clear_mappers()
+&gt;&gt;&gt; mapper(ProductSummary, product_summary_table, properties=dict(
+&#8230;     product=relation(Product,
+&#8230;                      backref=backref(&#8216;summary&#8217;, uselist=False))))
+&lt;Mapper at 0x84efa4c; ProductSummary&gt;
+&gt;&gt;&gt; mapper(Product, product_table)
+&lt;Mapper at 0x84efd0c; Product&gt;
+&gt;&gt;&gt; Session = sessionmaker(binds={Product:engine1,  #这里绑定了2个引擎,不同orm的引擎不同
+&#8230;     ProductSummary:engine2})
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; engine1.echo = engine2.echo = True
+&gt;&gt;&gt; session.query(Product).all() #查询product的数据
+2012-07-18 19:00:59,514 INFO sqlalchemy.engine.base.Engine BEGIN (implicit)
+2012-07-18 19:00:59,514 INFO sqlalchemy.engine.base.Engine SELECT product.sku AS product_sku, product.msrp AS product_msrp
+FROM product
+2012-07-18 19:00:59,514 INFO sqlalchemy.engine.base.Engine ()
+/usr/lib/python2.7/site-packages/SQLAlchemy-0.7.8-py2.7-linux-i686.egg/sqlalchemy/types.py:215: SAWarning: Dialect sqlite+pysqlite does *not* support Decimal objects natively, and SQLAlchemy must convert from floating point - rounding errors and other issues may occur. Please consider storing Decimal numbers as strings or integers on this platform for lossless storage.
+d[coltype] = rp = d[&#8216;impl&#8217;].result_processor(dialect, coltype)
+[&lt;Product 123&gt;, &lt;Product 456&gt;, &lt;Product 789&gt;]
+&gt;&gt;&gt; session.query(ProductSummary).all() #查询ProductSummary
+2012-07-18 19:01:07,510 INFO sqlalchemy.engine.base.Engine BEGIN (implicit)
+2012-07-18 19:01:07,510 INFO sqlalchemy.engine.base.Engine SELECT product_summary.sku AS product_summary_sku, product_summary.name AS product_summary_name, product_summary.description AS product_summary_description
+FROM product_summary
+2012-07-18 19:01:07,510 INFO sqlalchemy.engine.base.Engine ()
+[&lt;ProductSummary Shoes&gt;, &lt;ProductSummary Pants&gt;, &lt;ProductSummary Shirts&gt;]</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy.orm.shard import ShardedSession #使用ShardedSession对会话水平分区,根据需求把数据分开
+&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric))
+&gt;&gt;&gt; metadata.create_all(bind=engine1)
+&gt;&gt;&gt; metadata.create_all(bind=engine2)
+&gt;&gt;&gt; class Product(object):
+&#8230;     def __init__(self, sku, msrp):
+&#8230;         self.sku = sku
+&#8230;         self.msrp = msrp
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;Product %s&gt;&#8217; % self.sku
+&#8230;
+&gt;&gt;&gt; clear_mappers()
+&gt;&gt;&gt; product_mapper = mapper(Product, product_table)
+&gt;&gt;&gt; def shard_chooser(mapper, instance, clause=None):  #返回包含映射和实例的行的分区ID
+&#8230;     if mapper is not product_mapper: #非设定的orm映射叫做odd
+&#8230;         return &#8216;odd&#8217;
+&#8230;     if (instance.sku  #数据为偶数也叫做even
+&#8230;         and instance.sku[0].isdigit()
+&#8230;         and int(instance.sku[0]) % 2 == 0):
+&#8230;         return &#8216;even&#8217;
+&#8230;     else:
+&#8230;         return &#8216;odd&#8217; #否则叫做odd
+&#8230;</p>
+
+<p>&gt;&gt;&gt; def id_chooser(query, ident):  根据查询和映射类的主键返回对象想通过查询驻留的shard ID列表
+&#8230;     if query.mapper is not product_mapper:
+&#8230;         return [&#8216;odd&#8217;]
+&#8230;     if (ident \
+&#8230;         and ident[0].isdigit()
+&#8230;         and int(ident[0]) % 2 == 0):
+&#8230;         return [&#8216;even&#8217;]
+&#8230;     return [&#8216;odd&#8217;]
+&#8230;
+&gt;&gt;&gt; def query_chooser(query): #返回可选的shard ID列表
+&#8230;     return [&#8216;even&#8217;, &#8216;odd&#8217;]
+&#8230;
+&gt;&gt;&gt; Session = sessionmaker(class_=ShardedSession)
+&gt;&gt;&gt; session = Session(
+&#8230;     shard_chooser=shard_chooser,
+&#8230;     id_chooser=id_chooser,
+&#8230;     query_chooser=query_chooser,
+&#8230;     shards=dict(even=engine1,
+&#8230;                 odd=engine2))
+&gt;&gt;&gt; products = [ Product(&#8216;%d%d%d&#8217; % (i,i,i), 0.0)
+&#8230;     for i in range(10) ]
+&gt;&gt;&gt; for p in products:
+&#8230;     session.add(p)
+&#8230;
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for row in engine1.execute(product_table.select()):
+&#8230;     print row
+&#8230;
+2012-07-18 19:11:19,811 INFO sqlalchemy.engine.base.Engine SELECT product.sku, product.msrp
+FROM product
+2012-07-18 19:11:19,811 INFO sqlalchemy.engine.base.Engine ()
+(u&#8217;000&#8217;, Decimal(&#8216;0E-10&#8217;)) #偶数数据写在engine1
+(u&#8217;222&#8217;, Decimal(&#8216;0E-10&#8217;))
+(u&#8217;444&#8217;, Decimal(&#8216;0E-10&#8217;))
+(u&#8217;666&#8217;, Decimal(&#8216;0E-10&#8217;))
+(u&#8217;888&#8217;, Decimal(&#8216;0E-10&#8217;))
+&gt;&gt;&gt; for row in engine2.execute(product_table.select()):
+&#8230;     print row
+&#8230;
+2012-07-18 19:11:40,098 INFO sqlalchemy.engine.base.Engine SELECT product.sku, product.msrp
+FROM product
+2012-07-18 19:11:40,099 INFO sqlalchemy.engine.base.Engine ()
+(u&#8217;111&#8217;, Decimal(&#8216;0E-10&#8217;)) #奇数数据写在engine1
+(u&#8217;333&#8217;, Decimal(&#8216;0E-10&#8217;))
+(u&#8217;555&#8217;, Decimal(&#8216;0E-10&#8217;))
+(u&#8217;777&#8217;, Decimal(&#8216;0E-10&#8217;))
+(u&#8217;999&#8217;, Decimal(&#8216;0E-10&#8217;))
+&gt;&gt;&gt; session.query(Product).all()
+2012-07-18 19:12:36,130 INFO sqlalchemy.engine.base.Engine SELECT product.sku AS product_sku, product.msrp AS product_msrp
+FROM product
+2012-07-18 19:12:36,130 INFO sqlalchemy.engine.base.Engine ()
+2012-07-18 19:12:36,131 INFO sqlalchemy.engine.base.Engine SELECT product.sku AS product_sku, product.msrp AS product_msrp
+FROM product
+2012-07-18 19:12:36,131 INFO sqlalchemy.engine.base.Engine ()
+[&lt;Product 123&gt;, &lt;Product 456&gt;, &lt;Product 789&gt;, &lt;Product 000&gt;, &lt;Product 222&gt;, &lt;Product 444&gt;, &lt;Product 666&gt;, &lt;Product 888&gt;, &lt;Product 111&gt;, &lt;Product 333&gt;, &lt;Product 555&gt;, &lt;Product 777&gt;, &lt;Product 999&gt;]</p>
+
+<p>from sqlalchemy import create_engine
+from sqlalchemy.orm import mapper, sessionmaker
+from datetime import datetime
+from sqlalchemy import Numeric,Table, MetaData, Column, ForeignKey, Integer, String, Unicode, DateTime
+from sqlalchemy import types
+from sqlalchemy.databases import sqlite
+engine1 = create_engine(&#8216;sqlite://&#8217;)
+engine2 = create_engine(&#8216;sqlite://&#8217;)
+metadata = MetaData()
+product_table = Table(
+&#8216;product&#8217;, metadata,
+Column(&#8216;sku&#8217;, String(20), primary_key=True),
+Column(&#8216;msrp&#8217;, Numeric))
+product_summary_table = Table(
+&#8216;product_summary&#8217;, metadata,
+Column(&#8216;sku&#8217;, String(20), ForeignKey(&#8216;product.sku&#8217;), primary_key=True),
+Column(&#8216;name&#8217;, Unicode(255)),
+Column(&#8216;description&#8217;, Unicode))
+product_table.create(bind=engine1)
+product_summary_table.create(bind=engine2)
+stmt = product_table.insert()
+engine1.execute(
+stmt,
+[dict(sku=&#8221;123&#8221;, msrp=12.34),
+dict(sku=&#8221;456&#8221;, msrp=22.12),
+dict(sku=&#8221;789&#8221;, msrp=41.44)])
+stmt = product_summary_table.insert()
+engine2.execute(
+stmt,
+[dict(sku=&#8221;123&#8221;, name=&#8221;Shoes&#8221;, description=&#8221;Some Shoes&#8221;),
+dict(sku=&#8221;456&#8221;, name=&#8221;Pants&#8221;, description=&#8221;Some Pants&#8221;),
+dict(sku=&#8221;789&#8221;, name=&#8221;Shirts&#8221;, description=&#8221;Some Shirts&#8221;)])</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-17T00:00:00+08:00" pubdate data-updated="true">Jul 17<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/sqlalchemy/'>SQLAlchemy</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengsi/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/sqlalchemyjiaochengsan/" title="Previous Post:
+        SQLAlchemy教程(三)">&laquo; SQLAlchemy教程(三)</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/sqlalchemyjiaochengyi/"
+        title="Next Post: SQLAlchemy教程(一)">SQLAlchemy教程(一)
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengsi/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengsi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

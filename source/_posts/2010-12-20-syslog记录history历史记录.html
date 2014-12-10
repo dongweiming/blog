@@ -1,0 +1,67 @@
+---
+layout: post
+title: syslog记录history历史记录
+categories:
+- 其它
+tags:
+- history
+- syslog
+published: true
+comments: true
+indexer: true
+---
+<p>工作中可能会有无聊的黑客在你服务器上转悠，黑客智商都不错，所有离开的时候就会删除history记录。怎么办才能记录下用户的历史记录呢？</p>
+
+<p><strong>原理</strong>：将history记录到syslog上面，并实时的传送到了远端的日志集中服务器上。</p>
+
+<p><strong>方法</strong>：使用bash4.1的新功能：历史命令保存到syslog！然后使用syslog-ng构建集中型日志服务器收集主机日志。<!--more--></p>
+
+<p><strong>1 下载bash：</strong>
+#wget http://ftp.gnu.org/gnu/bash/bash-4.1.tar.gz
+#tar zxvf bash-4.1.tar.gz –C /usr/local/bash-4.1
+#cd /usr/local/bash-4.1
+<strong>2 修改参数(根据个人需要，我只保留了pid，uid，sid等，参数请看目录下的shell.c中)：</strong>
+文件bashhist.c大约708行的位置开始，修改成以下一段：</p>
+
+<p>[ccine_perl height="100%" width="99%"]
+syslog (SYSLOG_FACILITY|SYSLOG_LEVEL, "HISTORY: PID=%d PPID=%d SID=%d User=%s CMD=%s", getpid(), getppid(), getsid(getpid()), current_user.user_name, line);
+else
+{
+strncpy (trunc, line, SYSLOG_MAXLEN);
+trunc[SYSLOG_MAXLEN - 1] = '\0';
+syslog (SYSLOG_FACILITY|SYSLOG_LEVEL, "HISTORY (TRUNCATED): PID=%d PPID=%d SID=%d User=%s CMD=%s", getpid(), getppid(), getsid(getpid()), current_user.user_name, trunc);
+}[/ccine_perl]
+<span style="background-color: #ff0000;">注</span>：ppid：跟踪sh切换后的用户
+Sid： 跟踪 su 切换后的用户
+第二段代表log长度超过600后使用的语句
+<strong>3 去掉config-top.h中define SYSLOG_HISTORY的注释。</strong></p>
+
+<p>结果如下：
+#define SYSLOG_HISTORY
+<strong> 4 编译安装
+</strong> # ./configure &amp; make &amp;&amp; make install
+<strong>5 修改用户配置：
+</strong> 将用户的bash换成现在的bash4.1
+# vi /etc/passwd
+dongwm:x:501:501::/home/dongwm:/usr/local/bash_4.1/bin/bash
+这样日志就会记在/var/log/messages
+结果类似这样：[ccine_perl height="100%" width="99%"]
+Dec 23 17:40:28 server -bash: HISTORY: PID=4089 PPID=4088 SID=4089 User=dongwm CMD=exit
+Dec 23 17:41:47 server -bash: HISTORY: PID=4282 PPID=4278 SID=4282 User=root CMD=exit
+Dec 23 17:41:53 server -bash: HISTORY: PID=4321 PPID=4317 SID=4321 User=root CMD=ssh java00
+Dec 23 17:44:09 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=vi Clean_javalog.sh
+Dec 23 17:45:16 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=sh Clean_javalog.sh
+Dec 23 17:45:30 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=cat /dev/shm/cleanJavaLog.log
+Dec 23 17:46:08 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=vi Clean_javalog.sh
+Dec 23 17:48:54 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=cat Clean_javalog.sh </p>
+
+<p>......[/ccine_perl]
+在整个环境布置了记录功能，就能方便的查出来谁-在何时，用什么账号，做了什么操作...
+
+<strong>6 主机syslog配置（添加日志服务器的地址）</strong>
+# vi /etc/syslog.conf</p>
+
+<p>在最后添加一列：
+*.* @server.dongwm.com
+<strong>7 搭建日志服务器
+</strong> 请参看：<span style="background-color: #00ff00;">http://wenku.baidu.com/view/c3bb49c58bd63186bcebbc7a.html</span></p>

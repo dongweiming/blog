@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: ast | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/ast/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[AST - 像lisp一样自定义代码行为]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/"/>
+    <updated>2015-07-29T07:57:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ast-xiang-lisp[?]-yang-zi-ding-yi-dai-ma-xing-wei</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p>学common lisp(以下除非特殊需要说明的都简称lisp)以及用emacs的人都有一个体会 - lisp无所不能, 可以使用lisp修改lisp的行为. 什么意思呢?</p>
+
+<p>我来举个例子. 我希望重置<code>+</code>的行为为实际意义的减法<code>-</code>. 看起来这是语言不可能完成的任务, 对lisp来说很简洁(我使用sbcl):</p>
+
+<p>```bash
+* (+ 1 1)</p>
+
+<p>2  ; 正确结果
+* (shadow ‘+)</p>
+
+<p>T
+* (defgeneric + (a &amp;rest b))</p>
+
+<h1 id="standard-generic-function--0">&lt;STANDARD-GENERIC-FUNCTION + (0)&gt;</h1>
+<ul>
+  <li>(defmethod + ((a number) &amp;rest b) (apply ‘cl:- a b))</li>
+</ul>
+
+<h1 id="standard-method--number-1002e43e73">&lt;STANDARD-METHOD + (NUMBER) {1002E43E73}&gt;</h1>
+<ul>
+  <li>(+ 1 1)</li>
+</ul>
+
+<p>0  ; 这里的加号的意义其实是我们所理解的<code>减号</code>
+```</p>
+
+<p>是不是很神奇?</p>
+
+<p>那么对于python这种高级语言能不能做到呢? 答案是肯定的. 我们马上就来实现它</p>
+
+<p>```python
+In [1]: import ast</p>
+
+<p>In [2]: x = ast.parse(‘1 + 1’, mode=’eval’)</p>
+
+<p>In [3]: x.body.op = ast.Sub()</p>
+
+<p>In [4]: eval(compile(x, ‘<string>', 'eval'))
+Out[4]: 0
+```</string></p>
+
+<p>我想大家开始明白AST有多大能量了吧?</p>
+
+<h3 id="ast">AST的故事</h3>
+
+<p><a href="https://docs.python.org/2/library/ast.html">AST</a>中文叫做抽象语法树,
+也就是<code>分析当前版本的python代码的语法, 用一种树的结构解析出来</code>.
+这个模块提供给我们一个在编译代码之前, 用python语言本身去修改.</p>
+
+<p>它的作者是Armin Ronacher.
+如果你听过或者觉得似曾相识, 对. 他就是mitsuhiko - flask的作者.
+也是<a href="http://www.pocoo.org/">pocoo</a>的leader之一(另外一个是看起来不知名的birkenfeld - 对我来说他很有名).</p>
+
+<p>那么AST有什么意义呢? 但是有绝大多数人其实不了解也用不到这个模块, 为什么呢?</p>
+
+<ol>
+  <li>出现需要对代码默认行为做更改的场景很少</li>
+  <li>它主要用来做静态文件的检查, 比如pylint, pychecker，以及写flake8插件. 而我们平时的写代码都是在运行不需要进行预先的语法检查之类, 那么实际接触它就很难得了.</li>
+</ol>
+
+<h3 id="section-1">一些文章的索引</h3>
+
+<p>为了对本文有更深的理解可以看看以下文章</p>
+
+<p><a href="http://pycoders-weekly-chinese.readthedocs.org/en/latest/issue3/static-modification-of-python-with-python-the-ast-module.html#cpython">AST 模块：用 Python 修改 Python 代码</a>这里对流程说的很好了. 可以直接读一下</p>
+
+<p>模块代码也写得非常精炼, 可能不直接让你明白, 那么这时候可以看看</p>
+
+<p><a href="http://greentreesnakes.readthedocs.org/">Abstract Syntax Trees</a>, 这个时候我再强调一下作者吧, takluyver是ipython的核心开发成员, 他也参与了很多我们常用的开源项目, 比如pexpect和pandas</p>
+
+<p>上面的2篇文章写了很多, 既有理解, 也有一些初级的用法.</p>
+
+<h3 id="section-2">我个人用它的例子</h3>
+
+<p>最近做的<a href="https://github.com/dongweiming/slack-alert">slack-alert</a>. 先说它和AST的关系:</p>
+
+<ol>
+  <li>我没有使用注册或者import的方式，而是直接去遍历文件, 找到符合我要求的函数当做一个任务需要执行的任务</li>
+  <li>任务就要设置间隔, 那么会加某种格式的装饰器, 装饰器的参数就是间隔类型, 比如<code>@deco(seconds=10)</code>表示没十秒跑一次的意思</li>
+  <li>我这样就可以放心的写plugin就好了, 我只关注任务本身的逻辑. 而这个装饰器(类似上面说的@deco), 它其实是不存在</li>
+  <li>这个特殊格式的装饰器本身不存在没有关系, 因为我不会直接运行代码, 我只是把代码通过AST的处理, 解析出我要的任务和任务的执行间隔. 再去编译代码.</li>
+</ol>
+
+<p>上代码:</p>
+
+<p>```python
+class GetJobs(ast.NodeTransformer):</p>
+
+<pre><code>def __init__(self):  # 原来的ast.NodeTransformer其实没有__init__方法
+    self.jobs = []
+
+def get_jobs(self):  # 一个方便的获得任务的方法
+    return self.jobs
+
+def get_job_args(self, decorator):  # 这属于解析装饰器这个结构, 拿到执行的间隔
+    return {k.arg: k.value.n for k in decorator.keywords
+            if k.arg in ('hours', 'seconds', 'minutes', 'days')
+            and isinstance(k.value, ast.Num)}
+
+def visit_FunctionDef(self, node):  # 这个visit_xxx的方法被重载的时候, 就会对这个类型的语法加一些特殊处理. 因为我设计的时候只有函数才有可能是任务
+    decorator_list = node.decorator_list  # 或者一个函数的装饰器列表
+    if not decorator_list:
+        return node  # 没有装饰器明显不是我想要的任务, 可能只是一个helper函数而已
+    decorator = decorator_list[0]  # 这里我把最外面的装饰器取出来看看是不是符合我要的格式
+    args = self.get_job_args(decorator)
+    if args:  # 当获得了适合的参数, 那么正确这个格式是正确的
+        node.decorator_list = decorator_list[1:] # 最外面的装饰器就是语法hack, 它不存在也没有意义，以后完成历史任务 去掉之
+        self.jobs.append((node.name, args))
+    return node
+</code></pre>
+
+<p>def find_jobs(path):
+    jobs = []
+    for root, dirs, files in os.walk(path):
+        for name in files:
+            file = os.path.join(root, name)
+            if not file.endswith(‘.py’):
+                continue
+            with open(file) as f:
+                expr_ast = ast.parse(f.read())  # 读文件, 解析
+                transformer = GetJobs()
+                sandbox = {}  # 其实就是把执行放在一个命名空间里面, 因为最后我还是会把任务编译执行的, 我在这里面存了执行后的环境
+                exec(compile(transformer.visit(expr_ast),
+                             ‘<string>', 'exec'), sandbox)
+                jobs.extend([(sandbox[j], kw) for j, kw in transformer.jobs])
+    return jobs
+```</string></p>
+
+<p>其实看起来不能完成的事情, 就是这么简单.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[slack-alert - 把定时任务的结果发送slack消息的微框架]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/"/>
+    <updated>2015-07-26T18:08:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>为什么要做<a href="https://github.com/dongweiming/slack-alert">slack-alert</a>呢? 成因其实是我一直想做的AST相关的一个项目.
+正好是一个机会. 其次也是业务需要:</p>
+
+<p>工程师都比较懒, 在每天的各种问题邮件几百几千封的时候会经常遗漏重要的邮件. 会经常被用户以及公司其他同事发现问题时@到时候才发现.
+现在大家也接受了slack这个工具. 那么我就在想何不把更重要的消息发送到slack里呢.</p>
+
+<p>原来也做过, 就是写一些脚本, 会把运行的结果通过<a href="https://github.com/os/slacker">slacker</a>里面封装的<a href="https://api.slack.com/methods/chat.postMessage">postMessage</a>发消息进来.
+先说一下为什么我不用<a href="https://api.slack.com/incoming-webhooks">Incoming-webhooks</a>. 最主要的, 因为通常slack都是用的免费版, 我担心对webhooks会有限制或者未来会有限制.</p>
+
+<p>但是为什么做这个<code>微框架</code>呢? 一则这样的脚本和任务会越来越多, 脚本需要设置的定时任务的间隔也会各不相同. 用系统自带的crontab, 每次新增修改删除都要去做调整.
+代码还需要做抽象; 用celery, rq这些其实一是很浪费, 二也不怎么应景. 所以我写了这个工具.</p>
+
+<h4 id="section-1">优点和特点</h4>
+
+<ol>
+  <li>只支持python3</li>
+  <li>支持多种调度模式: AsyncIOScheduler, BackgroundScheduler, GeventScheduler, TornadoScheduler. 默认是AsyncIO</li>
+  <li>使用<a href="https://docs.python.org/3/library/ast.html">AST</a>, 而没有直接import代码.</li>
+  <li>代码和项目无关, 没有register. 只需要按格式编写plugin脚本即可, 要被执行的任务加一个装饰器(只需要他是一个装饰器, 不需要存在). 指定运行的间隔就好</li>
+  <li>附带常用的配置</li>
+</ol>
+
+<h4 id="section-2">安装</h4>
+
+<p><code>
+pip install slack-alert
+</code></p>
+
+<p>slack-alert有个默认的配置<a href="https://github.com/dongweiming/slack-alert/blob/master/slack_alert.conf">slack_alert.conf</a>.
+使用<code>OS X</code>或者<code>linux</code>可以拷贝到 <code>~/.config/slack_alert.conf</code></p>
+
+<h4 id="section-3">编写插件</h4>
+
+<p>PS: 插件目录默认是当前目录的<code>plugins</code>子目录下.</p>
+
+<p>```
+tree plugins
+plugins
+├── examples.py</p>
+
+<p>0 directories, 1 files
+```</p>
+
+<p>```python
+# coding=utf-8
+import os</p>
+
+<p>@deco(seconds=2)  # 这个一个正确格式的任务, 因为装饰器里面包含<code>hours|seconds|minutes|days</code>这样的键.
+def a():
+    print(1)  # 插件也需要python3的语法
+    print(os)  # 可以使用外部的变量
+    return 1  # 这个返回值最后会被发送到slack的channel里面</p>
+
+<p>def b():  # 这个函数因为没有对应的格式的装饰器 他不会被当做一个任务
+    print(3)
+    return 2</p>
+
+<p>@deco2(xx=1)
+@deco(minutes=2, seconds=30)
+def c():  # 这个函数也不是一个正确格式的装饰器. 我需要把<code>deco</code>放在最外面
+    print(4)
+    return 3
+```</p>
+
+<p>PS: 大家不要迷惑为什么<code>deco</code>这个函数没有介绍. 因为我只需要这个代码文本. 我其实不直接运行这个脚本. 所以不需要装饰器存在.</p>
+
+<h4 id="section-4">使用</h4>
+
+<p><code>
+slack-alert
+</code></p>
+
+<p>这样就启动了.</p>
+
+<p><code>a</code>这个函数就会每隔2秒运行一次， 运行三次后, 停顿60分钟… 这样循环(高级用法看下面的参数). 并且把结果发送到slack里面</p>
+
+<h4 id="section-5">原理</h4>
+
+<ol>
+  <li>启动<code>slack-alert</code> 我首先加载配置.</li>
+  <li>我会根据配置<code>--path</code>去找我应该去哪个文件目录下(默认是当前目录)的<code>plugins</code>子目录下去找符合的任务程序.</li>
+  <li>加载符合的目录下的每个python文件. 生成一个AST(抽象语法树).</li>
+  <li>遍历这棵树. 找到符合我需要的语法的函数. 去掉这个实际不存在的装饰器. 编译源码并且执行. 生成一个命名空间</li>
+  <li>获取这个命名空间的参数, 通过<a href="http://apscheduler.readthedocs.org/en/latest/">apscheduler</a>. 添加一个任务</li>
+  <li>添加全部任务. 再添加一个监控这些任务的任务(主要是用来在某些时机停掉/启动其他某些任务)</li>
+  <li>启动任务调度. 直到<code>Ctrl+C</code></li>
+</ol>
+
+<h4 id="section-6">高级选项</h4>
+
+<p>可以参照源码的选项:</p>
+
+<ol>
+  <li><a href="https://github.com/dongweiming/slack-alert#config-files-options">Config file”s Options</a></li>
+  <li><a href="https://github.com/dongweiming/slack-alert#command-options">Command Options</a></li>
+</ol>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: ubuntu | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/ubuntu/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[跨操作系统初始化安装工具(laptop)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell/"/>
+    <updated>2013-04-08T18:07:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>上周看了<a href="https://github.com/docopt/docopt">docopt</a>, 感想很多。最近因为工作需要用opensuse，用ubuntu，个人pc用gentoo，
+实在够折腾，每个系统都要相应的安装那些软件，搭建环境。早就想好好整理下思路，更geek的做这件事情。上段时间还看了个
+<a href="https://github.com/thoughtbot/laptop">laptop</a>,觉得能力很一般，但是fork真不少。但是确实这个想法很不错，很有必要。
+然后周末就构思了我的<a href="https://github.com/orzrd/laptop.git">laptop</a></p>
+
+<h4 id="section-1">它的特性</h4>
+
+<ul>
+  <li>记录操作记录，当某处出现故障，下次会从这个位置继续执行，而不需要全部执行一遍</li>
+  <li>受<a href="https://github.com/docopt/docopt">docopt</a>启发，根据我特定的语法写配置文件，不需要修改初始化脚本initialize.sh</li>
+  <li>只需要添加你要安装的软件包的安装命令（使用包管理器的就需要修改相应操作系统的install文件）</li>
+  <li>支持对已安装软件的确认，不再安装而跳过</li>
+  <li>根据特定语法打印安装过程的提示</li>
+  <li>提供绿色，红色的asciilinux终端显示字体</li>
+  <li>执行在没有git等环境下git clone项目安装</li>
+</ul>
+
+<h4 id="section-2">目前每个版本会安装那些软件？</h4>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gcc</td>
+          <td>g++</td>
+          <td>automake</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>tmux</td>
+          <td>htop</td>
+          <td>dstat</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>ruby</td>
+          <td>python</td>
+          <td>python库</td>
+          <td>expect</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>zsh</td>
+          <td>oh-my-zsh</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>easy_install</td>
+          <td>pip</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>django</td>
+          <td>torando</td>
+          <td>flask</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>nginx</td>
+          <td>uwsgi</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>redis</td>
+          <td>mongodb</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>mit-scheme</td>
+          <td>commonlisp</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>emacs</li>
+  <li>gitflow</li>
+  <li>celery</li>
+  <li>colout</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>MySQLdb</td>
+          <td>pymongo</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>taglist</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gevent</td>
+          <td>twisted</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>the_silver_searcher</li>
+  <li>检查vim是否自带python/ruby支持，否则下载编译一个执行的版本</li>
+  <li>我的常用脚本<a href="https://github.com/orzrd/mytools.github">mytools</a>,目前包含一个expect脚本和orzdba</li>
+  <li>我的<a href="https://github.com/dongweiming/dotfiles.git">dotfiles</a></li>
+</ul>
+
+<h2 id="gentoo">gentoo系统一些软件</h2>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gentoolkit</td>
+          <td>module-rebuild</td>
+          <td>genlop</td>
+          <td>eix</td>
+          <td>euses</td>
+          <td>elogv</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>fcitx</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>iproute2</td>
+          <td>netkit-telnetd</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="section-3">使用方法</h4>
+
+<ol>
+  <li>有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;git clone https://github.com/orzrd/laptop
+shell&gt;cd laptop
+shell&gt;bash initialize.sh
+</pre></figure></notextile></div>
+
+<ol>
+  <li>没有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;bash &lt;(curl -s https://raw.github.com/orzrd/laptop/master/setup_laptop)
+</pre></figure></notextile></div>
+
+<h5 id="section-4">脚本语法</h5>
+
+<h2 id="section-5">可操作文件</h2>
+
+<ol>
+  <li>common.install: 用户自定义的软件安装脚本，推荐非操作系统包管理器的都放在这里，注意逻辑顺序</li>
+  <li>opensuse/ubuntu/gentoo.install: 相应系统的安装脚本，这个只需要修改，我的脚本会自动根据系统信息找到</li>
+  <li>initialize.sh： 假如你想把需要我的安装方法，添加功能等，修改他，他是主入口</li>
+  <li>
+    <p>setup_laptop： 当用户没有git环境不能git clone  直接远程curl我，主要是下载git，clone我的laptop</p>
+  </li>
+  <li>’#’  以’#’开头的行表示这个信息会被安装过程以绿色字体打印，提示一下你要安装的东西等</li>
+  <li>： 以’:’开头的行，表示后面的字符串是个命令，也就是检查这个软件包有没有被安装需要的，假如which找到了路径说明被安装</li>
+  <li>; 以’;’开头的行为注释</li>
+  <li>其它行就是要执行的语句，请不要当作shell注释等，因为他会把你写的东西当成要执行的命令</li>
+</ol>
+
+<h2 id="todo">TODO</h2>
+
+<ul>
+  <li>文件下载后就不需要再下载而直接使用</li>
+  <li>在执行某软件的安装过程中其他进程继续下载其他软件包（也就是实现shell版本的emerge）</li>
+  <li>进度条或者python_koans的提示已完成/剩余，更多的异常处理等</li>
+  <li>更多的异常处理</li>
+  <li>打印彩色字体内容嵌其他颜色字体（比如提示出错，高亮错误的原因或者软件包）</li>
+</ul>
+
+<h2 id="forkpull-requestissue">注意我的项目地址，欢迎各种fork，pull request，issue</h2>
+
+<h3 id="httpsgithubcomorzrdlaptop">https://github.com/orzrd/laptop</h3>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[解决Linux下打开的应用程序不在gnome桌面面板上面显示]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/jiejuelinuxxiadakaideyingyongchengxubuzaignomezhuomianmianbanshangmianxianshi/"/>
+    <updated>2012-03-08T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/jiejuelinuxxiadakaideyingyongchengxubuzaignomezhuomianmianbanshangmianxianshi</id>
+    <content type="html"><![CDATA[<p>前言：最近把我的opensuse的软件更新了一下，后来发现现在打开的程序没有在底部的面板上显示，当我打开多个程序的时候只能使用compiz特效‘alt’＋‘tab’键去找我想要让目前窗口显示的程序，很不方便（包括安装了Cairo-Dock，当程序最小化了在dock界面也不会有这个程序的图标，也不方便）</p>
+
+<p>解决办法：</p>
+
+<p>中文系统：在下面的gnome面板上，鼠标右键点开－》选择‘添加到面板’ －》‘窗口列表’</p>
+
+<p>英文系统：在下面的gnome面板上，鼠标右键点开－》选择“Add to Panel” －》 "Window List"</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ubuntu11.04安装Macbuntu]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ubuntu11-04%E5%AE%89%E8%A3%85macbuntu/"/>
+    <updated>2011-05-31T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ubuntu11-04安装macbuntu</id>
+    <content type="html"><![CDATA[<p><strong>Macbuntu是什么呢？从名字就可以看出来和苹果的Mac OS有关，是滴，他就是让ubuntu变成Mac，并且保留了ubuntu所有的3D特效：</strong>
+<img style="max-width: 800px;" src="http://farm3.static.flickr.com/2699/5779619664_10bb87a0c5_b.jpg" alt="" />它的官方下载地址是：https://sourceforge.net/projects/macbuntu/ 但是目前还没出11.04版本 只能使用10.10版本，需要修改install.sh文件，否则因为版本问题会报错：
+将这一段：</p>
+
+<p>chk_system()
+{
+echo ""
+echo "Checking Ubuntu version..."
+#       s=`cat /etc/issue | grep -i "$UBUNTU"`
+#       if [ ! -n "$s" ]; then
+#               echo "Failed. System not supported, script will end here"
+#               echo "To ignore their compatibility with current OS try ./install.sh force"
+#               echo "Exiting..."
+#               exit 1;
+#       fi
+echo "Passed"
+}
+去掉其中的判断修改为：
+chk_system()
+{
+echo ""
+echo "Checking Ubuntu version..."
+echo "Passed"
+}
+然后按照提示安装
+<img style="max-width: 800px;" src="http://www.flickr.com/photos/63483712@N05/5779619664/" alt="" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[compiz 外挂插件欣赏和安装]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/compiz-%E5%A4%96%E6%8C%82%E6%8F%92%E4%BB%B6%E6%AC%A3%E8%B5%8F%E5%92%8C%E5%AE%89%E8%A3%85/"/>
+    <updated>2011-05-27T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/compiz-外挂插件欣赏和安装</id>
+    <content type="html"><![CDATA[<p><strong>其实很早就想写一篇关于compiz一个不为人知的插件的安装使用文章。很多人以为compiz就是那一些，其实在http://gitweb.compiz.org/上面有很多插件。不过有一些年代久远没人维护。网上可能有一些介绍这些插件的文章，只是停留在截图和简单地说明，包括ubuntu社区也没有相关的解释。作为一个菜鸟 呵呵 我来写一下：</strong>
+<strong>视频地址：http://v.youku.com/v_show/id_XMjcwNDUyODQ0.html
+视频顺序：wizard，trip，freewins，autumn，stars，snow，fireslies，bubbles，screensaver，dodge（非</strong>
+<strong> “动画”里面的选项），ghost，贯穿始终的包括peek和mousetrails。因为我的电脑比较卡，显卡性能不行，没有展示立体效果的</strong>
+<strong> photowheel和snowglobe以及extra-animations，anaglyph（需要3D眼镜）</strong>
+<strong>1 前提知识准备：</strong>
+cmake：和make类似，全名"cross platform make”。好像compiz在0.9.0以后编译系统都从automake换成cmake。
+boost库：因为compiz再0.9.0以后重写了C 使用C++ 需要这个C++库
+git：版本控制工具，linux之父所作！一般更新包文件都使用这个工具，我们要下载的compiz插件都是git版本控制</p>
+
+<p><strong>2 前期准备：</strong>
+dongwm@dongwm:~$sudo apt-get install git-core cmake libcairo2-dev librsvg2-dev libglib2.0-dev libpng12-dev libdbus-1-dev libboost-dev libxml2-dev libgl1-mesa-dev libglu1-mesa-dev libwnck-dev libgconf2-dev libx11-xcb-dev libxslt1-dev libnotify-dev libmetacity-dev libgnome-window-settings-dev libgnome-desktop-dev gnome-control-center-dev intltool cython  git
+注 等以后安装过程中要是提示boost不存在或者怎么样 那就是libboost的库没有装全，我没有挨个研究，就把新立得关于boost相关的勾选了
+<strong>3 安装思路</strong></p>
+
+<p>所有的插件地址都在http://gitweb.compiz.org/ 点开每个链接 里面会有类似的地址：git://URL（一个地址）
+然后我们在本地执行：
+dongwm@dongwm:~$git clone git://URL
+一下过程也可以实现：
+dongwm@dongwm:~$cd 下载的插件的英文名称
+dongwm@dongwm:~$mkdir build &amp;&amp; cd build &amp;&amp; cmake .. &amp;&amp; make &amp;&amp; make install
+其中的autumn，snow，气泡等插件都是compiz/plugins-unsupported里面集成了！但是默认不在compiz目录下需要执行以下命令（注意  修改为你实际的家目录，我的用户是dongwm 所以家目录是/home/dongwm，而.compiz-1目录不知道是不是也是同名，反正是“.”开头的compiz目录，如果下面的目录有plugins，metadata等说明就是这个目录）：</p>
+
+<p>cp /usr/local/lib/compiz/lib* /home/dongwm/.compiz-1/plugins/
+cp /usr/local/share/compiz/* /home/dongwm/.compiz-1/metadata/ -rp</p>
+
+<p>问题解决：</p>
+
+<p>/usr/bin/ld: cannot find -lGL
+/usr/bin/ld: cannot find -lGL
+collect2: ld returned 1 exit status
+make[2]: *** [libfreewins.so] 错误 1
+make[1]: *** [CMakeFiles/freewins.dir/all] 错误 2</p>
+
+<p>cd  /usr/lib/
+sudo mv libGL.so libGL.so.bak
+sudo ln -s libGL.so.1 libGL.so</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[fedora ubuntu 添加对方grub菜单]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/fedora-ubuntu-%E6%B7%BB%E5%8A%A0%E5%AF%B9%E6%96%B9grub%E8%8F%9C%E5%8D%95/"/>
+    <updated>2011-05-01T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/fedora-ubuntu-添加对方grub菜单</id>
+    <content type="html"><![CDATA[<p><strong>这几天折腾ubuntu11.04，结果把我的opensuse弄坏了...索性直接换成了fedora。乘机研究了下grub2，以及各个操作系统之间的启动菜单的一些特性。
+1 先fedora，后ubuntu
+进入ubuntu系统：
+<pre class="sh_bash">sudo grub-install /dev/sda //安装grub到硬盘mbr，一般系统会自动搜索到
+sudo update-grub2  //更新grub.cfg</pre>
+进入ubuntuliveCD：
+<pre class="sh_bash">sudo su
+mount /dev/sdaX /mnt //挂载系统文件 我这里是根分区
+mount /dev/sdaY /tmp/boot  //挂载boot分区
+cp -rp /tmp/boot/* /mnt/boot //我直接挂载/mnt/boot有问题，所以用这种简介方式，把/boot文件考到/mnt/boot下
+grub-install --root-directory=/mnt /dev/sda --force   //强制安装grub到硬盘mbr root目录是指定的/mnt
+update-grub2  //更新grub.cfg
+注：mbr信息可以执行如下脚本取得：
+http://nchc.dl.sourceforge.net/project/bootinfoscript/bootinfoscript/0.55/boot_info_script055.sh
+
+<p><strong>
+</strong></p>
+
+<p><strong>2 先</strong><strong>ubuntu</strong><strong>，后</strong><strong>fedora</strong></p>
+
+<p><pre class="sh_bash">sudo gedit /boot/grub/menu.lst
+title Ubuntu
+root (hd0,9)  //根目录所在分区，根据上面的脚本自己调整
+kernel /vmlinuz-2.6.38-8-generic root=UUID=7319d96d-4c6e-4e00-84b4-f5ed70052456 ro   quiet splash vt.handoff=7
+可以直接把ubuntu分区上的grub.cfg上的相同字段 linux 行的内容复制
+initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相同字段 /initrd 内容</pre></p>
+</pre></strong></p>
+]]></content>
+  </entry>
+  
+</feed>

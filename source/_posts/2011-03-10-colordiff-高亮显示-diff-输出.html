@@ -1,0 +1,40 @@
+---
+layout: post
+title: ColorDiff--高亮显示 Diff 输出
+categories:
+- linux基础
+tags:
+- ColorDiff
+published: true
+comments: true
+indexer: true
+---
+<p><strong>linux下有diff命令对文件进行对比。但是差异对比不够强烈，在此介绍ColorDiff，它是一个perl脚本：</strong></p>
+
+<p><strong>1  下载安装：</strong>
+<pre class="sh_bash"># wget http://colordiff.sourceforge.net/colordiff-1.0.9.tar.gz
+# tar zxvf colordiff-1.0.9.tar.gz
+# cd colordiff-1.0.9
+# make install</pre></p>
+
+<p><strong>2  使用格式：</strong></p>
+
+<p><pre class="sh_bash">colordiff file1 file2
+diff -u file1 file2 | colordiff</pre>
+<pre class="sh_bash">[root@client ~]# cat line-1.txt
+1
+2
+3
+[root@client ~]# cat line-2.txt
+1
+2
+4</p>
+
+<p>[root@client ~]# colordiff line-1.txt line-2.txt
+3c3,4
+&lt; 3
+---
+&gt; 4
+&gt; </pre></p>
+
+<p>&nbsp;</p>

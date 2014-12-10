@@ -1,0 +1,195 @@
+---
+layout: post
+title: （python）域名查询服务（whois）程序+检查5位以内域名到期时间邮件报警抢注域名！
+categories:
+- python
+tags:
+- whois
+- 域名查询
+- 域名爬虫
+published: true
+comments: true
+indexer: true
+---
+<p>前言：这个程序写了挺长时间，主要的加‘-d’选项+域名（只支持.com域名）查询特定域名，不带任何参数后台运行（可以设定cron）脚本检查域名到期时间，发现域名还有5天以内到期报警提示，方便抢注呵呵！</p>
+
+<p>缺点：1  有些域名是没有域名信息的，比如a.com，p.com  所有就过滤掉了</p>
+
+<p>2  程序执行时间不会对负载有影响，但是可能出现socket超时，我设置了socket连接三次，但是可能会出现一些未知错误break，大家发现BUG留言我再修改</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+import sys
+import string
+import socket
+import optparse
+import smtplib
+import re
+import time
+import itertools
+reload(sys)
+sys.setdefaultencoding('utf8') </p>
+
+<p>class Host(object):</p>
+
+<p>    INTERHOST           ="whois.internic.net"
+    NICHOST             = "whois.crsnic.net"
+    INICHOST            = "whois.networksolutions.com"
+    ip_whois = [ INTERHOST, NICHOST ,INICHOST ]</p>
+
+<p>class Whois(object) :</p>
+
+<p>    WHOIS_SERVER_ID     = "Whois Server:"
+    WHOIS_ORG_SERVER_ID = "Registrant Street1:Whois Server:"
+    WHOIS_RECURSE       = 0x01
+    WHOIS_QUICK         = 0x02</p>
+
+<p>    def whois(self, query, hostname, flags):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        fails =0
+        while True:
+            try:
+                if fails &lt;=3:
+                    s.connect((hostname, 43))
+            except socket.error:
+                fails +=1
+            else:
+                break
+                print 'Socket Connection timed out'
+        queryBytes = None
+        queryBytes = (query  + "\r\n").encode()
+        s.send(queryBytes)
+        response = ''
+        while True:
+            d = s.recv(4096)
+            response += d
+            if not d:
+                break
+        s.close()
+        nhost = None
+        nhost = self.findwhois_server(response.decode(), hostname)
+        if (nhost != None):
+            response += self.whois(query, nhost, 0)
+        return response.decode()
+    def findwhois_server(self, buf, hostname):
+        nhost = None
+        parts_index = 1
+        start = buf.find(Whois.WHOIS_SERVER_ID)
+        if (start == -1):
+            start = buf.find(Whois.WHOIS_ORG_SERVER_ID)
+            parts_index = 2</p>
+
+<p>        if (start &gt; -1):
+            end = buf[start:].find('\n')
+            whois_line = buf[start:end+start]
+            whois_parts = whois_line.split(':')
+            nhost = whois_parts[parts_index].strip()
+        else:
+            for nichost in Host.ip_whois:
+                if (buf.find(nichost) != -1):
+                    nhost = nichost
+                    break
+        return nhost</p>
+
+<p>    def whois_lookup(self, options, query_arg, flags):
+        nichost = None
+        if (options == None):
+            options = {}</p>
+
+<p>        options['whoishost'] = Host.NICHOST
+        if ( not (flags &amp; Whois.WHOIS_QUICK)):
+            flags |= Whois.WHOIS_RECURSE
+        return self.whois(query_arg, options['whoishost'], flags)   </p>
+
+<p>class WhoisEntry(object):
+    _regex = {
+        'domain_name':      'Domain Name:\s?(.+)',
+        'registrar':        'Registrar:\s?(.+)',
+        'whois_server':     'Whois Server:\s?(.+)',
+        'referral_url':     'Referral URL:\s?(.+)',
+        'updated_date':     'Updated Date:\s?(.+)',
+        'creation_date':    'Creation Date:\s?(.+)',
+        'expiration_date':  'Expiration Date:\s?(.+)',
+        'name_servers':     'Name Server:\s?(.+)',
+        'status':           'Status:\s?(.+)',
+        'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}',
+    }
+    def __init__(self, domain, text, regex=None):
+        self.domain = domain
+        self.text = text
+        if regex is not None:
+            self._regex = regex</p>
+
+<p>    def __getattr__(self, attr):
+        whois_regex = self._regex.get(attr)
+        if whois_regex:
+            setattr(self, attr, re.findall(whois_regex, self.text))
+            return getattr(self, attr)</p>
+
+<p>        else:
+            raise KeyError('Unknown attribute: %s' % attr)</p>
+
+<p>    def __str__(self):
+        return '\n'.join('%s: %s' % (attr, str(getattr(self, attr))) for attr in self.attrs())</p>
+
+<p>    def attrs(self):
+        return sorted(self._regex.keys())</p>
+
+<p>    @staticmethod
+    def load(domain, text):
+        if text.strip() == 'No whois server is known for this kind of object.':
+            pass
+        return WhoisCom(domain, text)
+class WhoisCom(WhoisEntry):
+    def __init__(self, domain, text):
+        if 'No match for "' in text:
+            pass
+        else:
+            WhoisEntry.__init__(self, domain, text)
+class Email(object):
+    def __init__(self,body):
+        mail_server = 'mail.dongwm.com'
+        mail_server_port = 25
+        from_addr='whois_check@dongwm.com'
+        to_addr ='dongwm@dongwm.com'
+        from_header = 'From: %s\r\n' % from_addr#    to_header = 'To: %s\r\n\r\n' % to_addr
+        to_header = 'To: %s\r\n\r\n' % to_addr
+        subject_header = 'Subject: Yuming check'
+        email_message = '%s\n%s\n%s\n\n%s' % (from_header, to_header, subject_header, body)
+        s = smtplib.SMTP(mail_server, mail_server_port)
+        s.sendmail(from_addr, to_addr, email_message)
+        s.quit()</p>
+
+<p>def parse_command_line(argv):
+    usage = "usage: %prog [options] name"
+    parser = optparse.OptionParser(add_help_option=False, usage=usage)
+    parser.add_option("-d", "--domain", action="store_const",
+                      const=Host.NICHOST, dest="whoishost",
+                      help="Query for a specific domain name, please use: XXX.com format")
+    parser.add_option("-h", "--help", action="help")
+    return parser.parse_args(argv)</p>
+
+<p>if __name__ == "__main__":
+     whoisclient = Whois()
+     (options, args) = parse_command_line(sys.argv)
+     if len(sys.argv)==3 and re.sub('^.*://', '', args[1]).split('/')[0].lower().split('.')[1]  in 'com':
+             text = whoisclient.whois_lookup(options.__dict__,args[1], 0)
+             print  WhoisEntry.load(args[1], text)</p>
+
+<p>     elif len(sys.argv)==1:
+         #for i in range(97,123):
+         #   print chr(i)
+         len = 1
+         while (len&lt;6):
+             for i in list(itertools.permutations(string.lowercase,len)):
+                 if whoisclient.whois_lookup(options.__dict__,''.join(i)+'.com', 0).encode('utf8').find('Expiration Date: ') != -1:
+                     sa = whoisclient.whois_lookup(options.__dict__,''.join(i)+'.com', 0).encode('utf8').split('Expiration Date: ')[1].split(r'&gt;&gt;&gt; Last')[0][:-2]
+                     wtime = time.strftime('%d-%b-%Y',time.localtime(time.time()))
+                     if wtime.lower()[3:6] == sa[3:6] and wtime[7:11] == sa[7:11] and int(sa[0:2]) - int(wtime[0:2]) &lt;=5 and int(sa[0:2]) - int(wtime[0:2]) &gt;=0:
+                         tt = '%s is %s' % (''.join(i)+'.com',sa)
+                         Email(tt)
+                         time.sleep(1)
+             len +=1
+     else:
+             print "Please use the '-h' or '--help' parameter"
+</pre></p>

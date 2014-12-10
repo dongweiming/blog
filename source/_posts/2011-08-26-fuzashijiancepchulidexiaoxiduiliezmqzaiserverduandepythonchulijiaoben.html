@@ -1,0 +1,48 @@
+---
+layout: post
+title: 复杂事件(cep)处理的消息队列zmq在server端的python日志记录处理脚本
+categories:
+- cep
+- python
+tags:
+- logger
+- zeromq
+- zmq
+- 复杂时间处理
+- 消息队列
+published: true
+comments: true
+indexer: true
+---
+<p><p>前言：主要用来接收客户端服务器传送来的socket内容，并写到指定数据目录下。</p>
+<p><pre class="sh_python"></p>
+import zmq
+import threading
+from datetime import date</p>
+
+<p>def main(addrs):</p>
+
+<p>    context = zmq.Context()
+    client = context.socket(zmq.SUB)
+    client.setsockopt(zmq.SUBSCRIBE, "")
+    print "Connecting to: ", addrs[0]
+    client.connect(addrs[0])</p>
+
+<p>    try:
+        while True:
+                topic, msg = client.recv_multipart()
+                #print "%s: %s" % (topic, msg)
+                FILE = open(addrs[1]+topic+".log."+ date.today().isoformat(), "a"  )
+                FILE.write(msg )
+                FILE.close()
+    except KeyboardInterrupt:
+        raise SystemExit</p>
+
+<p>if __name__ == '__main__':
+    import sys
+    if len(sys.argv) &lt; 2:
+        print "usage: logger.py &lt;address&gt; &lt;path&gt;"
+        raise SystemExit
+    main(sys.argv[1:])
+<p></pre></p>
+</p>

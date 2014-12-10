@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ZXTM专题二：使用ZXTM用自建ssl证书实现网站的https协议访问 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/zxtm%E4%B8%93%E9%A2%98%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8zxtm%E7%94%A8%E8%87%AA%E5%BB%BAssl%E8%AF%81%E4%B9%A6%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E7%9A%84https%E5%8D%8F%E8%AE%AE%E8%AE%BF%E9%97%AE">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">ZXTM专题二：使用ZXTM用自建ssl证书实现网站的https协议访问</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-08T00:00:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><b>可能一些网站的二级域名涉及交易,用户信息等敏感重要信息,所以建议使用https协议替代传统的httpd,我这里使用了负载均衡ZXTM来做这件事情.</b><b>1 创建公钥,私钥,证书</b>习惯借用linux下的openssl工具,zxtm也可以创建相应东东:[root@dongwm conf]# openssl genrsa -des3 1024 &gt; server.key&nbsp;&nbsp; //建立<a style="font-weight: bold; color: #ff0000" href="http://www.fuancn.cn/">服务器</a>密钥Generating RSA private key, 1024 bit long modulus&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;++++++&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;++++++e is 65537 (0x10001)Enter pass phrase:&nbsp;&nbsp;&nbsp; //输入密码Verifying - Enter pass phrase:&nbsp;&nbsp; //重复输入密码[root@dongwm conf]# openssl rsa -in server.key -out server.key&nbsp;&nbsp;&nbsp;&nbsp; //从密钥中删除密码Enter pass phrase for server.key:&nbsp; //输入上面写入的密码writing RSA key&nbsp;&nbsp;&nbsp; //生成了server.key[root@dongwm conf]# openssl req -new -key server.key -out server.csr&nbsp; //建立服务器公钥You are about to be asked to enter information that will be incorporatedinto your certificate request.What you are about to enter is what is called a Distinguished Name or a DN.There are quite a few fields but you can leave some blankFor some fields there will be a default value,If you enter &#8216;.&#8217;, the field will be left blank.&#8212;&#8211;Country Name (2 letter code) [GB]:CN&nbsp;&nbsp; //国家名称State or Province Name (full name) [Berkshire]:Beijing //省名Locality Name (eg, city) [Newbury]:Beijing&nbsp;&nbsp; //城市名Organization Name (eg, company) [My Company Ltd]:www.dongwm.com //域名Organizational Unit Name (eg, section) []:&nbsp; //不填Common Name (eg, your name or your server&#8217;s hostname) []:www.dongwm.com&nbsp; //通称&nbsp; 写域名即可Email Address []:admin@dongwm.com&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //邮箱地址Please enter the following &#8216;extra&#8217; attributesto be sent with your certificate requestA challenge password []:&nbsp; //回车An optional company name []:&nbsp; //回车[root@dongwm conf]# openssl x509 -in server.csr -out server.crt -req -signkey server.key -days 365&nbsp; //建立<a style="font-weight: bold; color: #ff0000" href="http://www.fuancn.cn/">服务器</a>证书Signature ok subject=/C=CN/ST=Beijing/L=Beijing/O=www.dongwm.com/CN=www.dongwm.com/emailAddress=admin@dongwm.comGetting Private key&nbsp;&nbsp; 生成了三个文件:server.key&nbsp;&nbsp; server.crt(证书)&nbsp; server.csr(公钥)<b>2 配置ZXTM</b><b>1 添加一个POOL,添加web节点:</b><img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_1.png" /><b>2&nbsp; 添加SSL证书:</b>&nbsp;进入Catalogs&#8211;&gt;SSL页面<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_2.png" />选择第一项<a href="https://58.83.184.18:9090/apps/zxtm/index.fcgi?section=SSL%3ASSL%20Certs">SSL Certificates catalog</a>进入:<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_3.png" />选择Import Certificate选项导入上面生成的证书和私钥:<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_41.png" />名字随便命名,Certificate file:选择的文件是刚才生成的server.crt ,Private key file选择最开始生成的server.key,单击 Import Certificate<b>3&nbsp; 添加Virtual Servers</b>进入 Services&#8211;&gt;Virtual Servers页面 Create a new Virtual Server<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_6.png" />注意协议为HTTP 端口为443,流量POOL是最初建的那个测试pool点开下面的<a href="https://58.83.184.18:9090/apps/zxtm/index.fcgi?name=test-dongwm&amp;section=Virtual%20Servers%3AEdit%3ASSL%20Decryption">SSL Decryption</a>选项:<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_5.png" />里面的Certificate&nbsp; 选择刚才新建的那个证书,标示最开始就是刚才给那个证书命名的名字.<b>4&nbsp; 现在配置完成,测试</b>注意我以下的表述:<font color="#FF0000">点开https://你的ZXTM的Traffic&nbsp;IP Groups地址(也就是负载均衡前端IP)就实现了访问你最初建的POOL里面节点的web内容不同的域名需要不同的在httpd.conf里面指定因为我这里监听的是192.168.8.108的8080端口,所以在这个端口上的HTTP流量都会走这个加密的https协议 </font><div style="position: absolute; display: none; z-index: 9999;" id="livemargins_control"><img src="chrome://livemargins/skin/monitor-background-horizontal.png" style="position: absolute;left:-77px;top:-5px" height="5" width="77" />	<img src="chrome://livemargins/skin/monitor-background-vertical.png" style="position: absolute;left:0;top:-5px;" />	<img id="monitor-play-button" src="chrome://livemargins/skin/monitor-play-button.png" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" style="position: absolute;left:1px;top:0;opacity:0.5;cursor:pointer" /></div><div class="zemanta-pixie"><img class="zemanta-pixie-img" alt="" src="http://img.zemanta.com/pixy.gif?x-id=0e8b3cc5-5bb3-8e44-83a5-5b82e3858738" /></div></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-08T00:00:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linuxji-chu/'>linux基础</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/zxtm%E4%B8%93%E9%A2%98%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8zxtm%E7%94%A8%E8%87%AA%E5%BB%BAssl%E8%AF%81%E4%B9%A6%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E7%9A%84https%E5%8D%8F%E8%AE%AE%E8%AE%BF%E9%97%AE/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/shell-%E9%AB%98%E7%BA%A7%E5%8F%98%E9%87%8F/" title="Previous Post:
+        Shell 高级变量">&laquo; Shell 高级变量</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/%E4%BD%BF%E7%94%A8vim%E7%9A%84bash-support%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95bash-shell%E8%84%9A%E6%9C%AC/"
+        title="Next Post: 使用Vim的bash-Support插件调试bash shell脚本">使用Vim的bash-Support插件调试bash shell脚本
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/zxtm%E4%B8%93%E9%A2%98%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8zxtm%E7%94%A8%E8%87%AA%E5%BB%BAssl%E8%AF%81%E4%B9%A6%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E7%9A%84https%E5%8D%8F%E8%AE%AE%E8%AE%BF%E9%97%AE/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/zxtm%E4%B8%93%E9%A2%98%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8zxtm%E7%94%A8%E8%87%AA%E5%BB%BAssl%E8%AF%81%E4%B9%A6%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E7%9A%84https%E5%8D%8F%E8%AE%AE%E8%AE%BF%E9%97%AE/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+---
+layout: post
+title: 配置auto  pagp的以太信道
+categories:
+- 思科
+tags:
+- pagp
+- 以太信道
+published: true
+comments: true
+indexer: true
+---
+<p>SW1(config)#int range f0/13 -15
+Creating a port-channel interface Port-channel1
+SW1(config-if-range)#
+*Mar  1 00:01:59.131: %EC-5-BUNDLE: Interface Fa0/13 joined port-channel Po1
+*Mar  1 00:01:59.375: %EC-5-BUNDLE: Interface Fa0/14 joined port-channel Po1
+*Mar  1 00:01:59.479: %EC-5-BUNDLE: Interface Fa0/15 joined port-channel Po1
+SW1(config-if-range)#
+*Mar  1 00:02:01.971: %LINEPROTO-5-UPDOWN: Line protocol on Interface Port-channel1, changed state to up
+SW1(config-if-range)#int port-channel1
+SW1(config-if)#switchport mode</p>
+
+<p>SW2(config)#int range f0/13 -15
+Creating a port-channel interface Port-channel1
+SW2(config-if-range)#int port-channel1
+SW2(config-if)#switchport mode  SW1(config)#int range f0/13 -15
+SW2(config-if-range)#channel-group 1 mode auto
+Creating a port-channel interface Port-channel1
+SW2(config-if-range)#
+SW2(config-if-range)#int port-channel1
+SW2(config-if)#switchport mode  dynamic desirable</p>
+
+<p>注：desirable和auto是PAGP协议主动协商和被动协商专用词
+SW1#show etherchannel summary
+Flags: D - down P - in port-channel
+I - stand-alone s - suspended
+H - Hot-standby (LACP only)
+R - Layer3 S - Layer2
+u - unsuitable for bundling
+U - in use f - failed to allocate aggregator
+d - default port
+Number of channel-groups in use: 1
+Number of aggregators: 1
+Group Port-channel Protocol Ports
+------+-------------+-----------+--------------------------------------
+1 Po1(SU) PAgP Fa0/13(P) Fa0/14(P) Fa0/15(P)
+SW1#show interface port-channel1 switchport
+Name: Po1
+Switchport: Enabled
+Administrative Mode: dynamic desirable
+Operational Mode: trunk
+Administrative Trunking Encapsulation: negotiate
+Operational Trunking Encapsulation: isl
+Negotiation of Trunking: On
+Access Mode VLAN: 1 (default)
+Trunking Native Mode VLAN: 1 (default)
+SW1#show interface trunk
+Port Mode Encapsulation Status Native vlan
+Po1 desirable n-isl trunking 1
+Port Vlans allowed on trunk
+Po1 1-4094
+Port Vlans allowed and active in management domain
+Po1 1
+Port Vlans in spanning tree forwarding state and not pruned
+Po1 1
+SW1#show spanning-tree vlan 1
+VLAN0001
+Spanning tree enabled protocol ieee
+Root ID Priority 32769
+Address 000a.f411.0e00
+This bridge is the root
+Hello Time 2 sec Max Age 20 sec Forward Delay 15 sec
+Bridge ID Priority 32769 (priority 32768 sys-id-ext 1)
+Address 000a.f411.0e00
+Hello Time 2 sec Max Age 20 sec Forward Delay 15 sec
+Aging Time 15
+Interface Role Sts Cost Prio.Nbr Type
+---------------- ---- --- --------- -------- --------------------------
+Po1 Desg FWD 9 128.65 P2p</p>

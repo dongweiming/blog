@@ -1,0 +1,38 @@
+---
+layout: post
+title: 安装debian后无法进入windows 7 解决办法
+categories:
+- debian
+tags:
+- debian
+published: true
+comments: true
+indexer: true
+---
+<p>最近安装了debian6.1版本，发现grub没有了windows7 菜单选项，这个grub是debian的天下。。。研究后感觉应该是debian使用了grub2的缘故，解决办法如下：</p>
+
+<p><pre class="sh_bash">sudo vi /boot/grub/grub.cfg</p>
+
+<p>将 windows 7 信息写进去：</p>
+
+<p>### BEGIN /etc/grub.d/30_os-prober ###</p>
+
+<p>menuentry "Windows 7 (loader) (on /dev/sda2)" {</p>
+
+<p>insmod part_msdos</p>
+
+<p>insmod ntfs</p>
+
+<p>set root='(hd0,msdos2)'</p>
+
+<p>search --no-floppy --fs-uuid --set 2e40f57240f540df</p>
+
+<p>chainloader +1</p>
+
+<p>}</p>
+
+<p>### END /etc/grub.d/30_os-prober ###</pre></p>
+
+<p>注：其中分区信息可以使用在开机进入grub菜单按“c”，然后在grub&gt;下输入 root （hd0，X）（实在不懂X可以从0开始试 ） –&gt; chainloader +1 –&gt; boot 要是启动到windows  说明这个就是需要找的</p>
+
+<p>然后 执行 sudo update-grub    重启电脑就可以了</p>

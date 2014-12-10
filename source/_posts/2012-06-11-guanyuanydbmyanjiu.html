@@ -1,0 +1,48 @@
+---
+layout: post
+title: 关于anydbm研究
+categories:
+- python模块研究
+tags:
+- anydbm
+- whichdb
+published: true
+comments: true
+indexer: true
+---
+<p>前言：DBM数据库和SQL不同，它只是简单的key－value关系</p>
+
+<p>anydbm表示一个通用的接入－DBM数据库的接口，包括<tt>dbhash</tt> (依赖<tt>bsddb</tt>), <tt>gdbm</tt>, or <tt>dbm</tt>，在python3中以及重命名为dbm模块</p>
+
+<p>以下是一个例子：</p>
+
+<p><pre class="sh_python">
+import anydbm
+import whichdb    #确定dbm数据库文件的类型</p>
+
+<p>db = anydbm.open('/tmp/example.db', 'n')   #不存在的话创建用'c'，一直创建用'n'
+db['key'] = 'value' 
+db['author'] = 'dongweiming'
+db.close()</p>
+
+<p>print whichdb.whichdb('/tmp/example.db')</p>
+
+<p>db = anydbm.open('/tmp/example.db', 'r')
+try:
+    print 'keys():', db.keys()
+    for k, v in db.iteritems():
+        print 'iterating:', k, v
+    print 'db["author"] =', db['author']
+finally:
+    db.close()</p>
+
+<p>db = anydbm.open('/tmp/example.db', 'w')
+try:
+    db['one'] = 1
+except TypeError, err:    #异常处理
+    print '%s: %s' % (err.__class__.__name__, err)
+finally:
+    db.close()
+</pre></p>
+
+<p>&nbsp;</p>

@@ -1,0 +1,27 @@
+---
+layout: post
+title: 关于kvm使用virt-manager报错
+categories:
+- kvm
+tags:
+- virt-manager
+published: true
+comments: true
+indexer: true
+---
+<p>前言：使用linux桌面连接远程kvm服务器，使用virt-manager，出现下面报错：</p>
+
+<p>Traceback (most recent call last):
+File "/usr/share/virt-manager/virt-manager.py", line 376, in ?
+_show_startup_error(str(run_e), "".join(traceback.format_exc()))
+File "/usr/share/virt-manager/virt-manager.py", line 52, in _show_startup_error
+import gtk
+File "/usr/lib64/python2.4/site-packages/gtk-2.0/gtk/__init__.py", line 76, in ?
+_init()
+File "/usr/lib64/python2.4/site-packages/gtk-2.0/gtk/__init__.py", line 64, in _init
+_gtk.init_check()
+RuntimeError: could not open display</p>
+
+<p>解决办法（原因是ssh登录参数，传输X窗口相关参数，C应该是压缩）：</p>
+
+<p>luit -encoding gbk ssh -p端口 root@kvm服务器IP -X -C</p>

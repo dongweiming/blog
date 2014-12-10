@@ -1,0 +1,18 @@
+---
+layout: page
+title: "出错了"
+comments: false
+sharing: false
+footer: true
+---
+<img src="/images/404.png" />
+<p>您打开的页面不存在,以下是最近发布的文章,或者去主页<a href="/">dongwm.com</a></p>
+<div id="blog-archives" class="missing">
+{% for post in site.posts limit: 10 %}
+<article>
+  {% include archive_post.html %}
+</article>
+{% endfor %}
+</div>
+~                                                                               
+~                                        

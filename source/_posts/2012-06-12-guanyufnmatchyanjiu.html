@@ -1,0 +1,56 @@
+---
+layout: post
+title: 关于fnmatch研究
+categories:
+- linux基础
+tags:
+- fnmatch
+published: true
+comments: true
+indexer: true
+---
+<p>前言：fnmatch是一个底层比较文件名匹配的模块</p>
+
+<p><pre class="sh_python">
+import fnmatch</p>
+
+<p>pattern = 'FNMATCH_*.PY'  #要匹配的字符串
+print 'Pattern :', pattern
+print</p>
+
+<p>for name in ['test.py','fnmatch_fn.py','FNMATCH_fn.PY']:
+    print 'Filename: %-25s %s' % (name, fnmatch.fnmatch(name, pattern))
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Pattern : FNMATCH_*.PY</p>
+
+<p>Filename: test.py                   False
+Filename: fnmatch_fn.py             False #大小写敏感，失败
+Filename: FNMATCH_fn.PY             True  #匹配成功</p>
+
+<p>注：要强制区分大小写的比较，无论文件系统和操作系统设置，使用<tt>fnmatchcas</tt>e</p>
+
+<p><pre class="sh_python">
+import fnmatch</p>
+
+<p>pattern = 'FNMATCH_*.PY'
+list = ['test.py','fnmatch_fn.py','FNMATCH_fn.PY']
+print 'Matches :', fnmatch.filter(list, pattern) #过滤，只留下匹配项
+</pre></p>
+
+<p><pre class="sh_python">
+import fnmatch</p>
+
+<p>pattern = 'FNMATCH_*.PY'
+print 'Pattern :', pattern
+print 'Regex   :', fnmatch.translate(pattern)  # 这事公共的API，用来转换glob模式到一个正则表达式
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Pattern : FNMATCH_*.PY
+Regex   : FNMATCH\_.*\.PY\Z(?ms)</p>

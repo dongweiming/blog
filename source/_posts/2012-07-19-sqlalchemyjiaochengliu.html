@@ -1,0 +1,123 @@
+---
+layout: post
+title: SQLAlchemy教程(六)
+categories:
+- linux基础
+- SQLAlchemy
+tags:
+- SQLAlchemy
+published: true
+comments: true
+indexer: true
+---
+<p><strong>本文主要是ORM的sission查询和更新</strong></p>
+
+<p>session负责执行内存中的对象和数据库表之间的同步工作,创建session可以这样:</p>
+
+<p>Session = sessionmaker(bind=engine) #sqlalchemy.orm.session.Session类有很多参数,使用sessionmaker是为了简化这个过程</p>
+
+<p>或者:
+Session = sessionmaker()
+Session.configure(bind=engine)</p>
+
+<p>注:sessionmaker的参数:
+autoflush=True  #为True时，session将在执行session的任何查询前自动调用flush()。这将确保返回的结果</p>
+
+<p>transactional=False #为True时，session将自动使用事务commit
+twophase=False #当处理多个数据库实例,当使用flush()但是没有提交事务commit时,给每个数据库一个标识,使整个事务回滚</p>
+
+<p>创建session,添加数据的例子(以前也出现过很多次了)
+dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17)
+[GCC 4.5.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; from sqlalchemy import *
+&gt;&gt;&gt; from sqlalchemy.orm import *
+&gt;&gt;&gt; engine = create_engine('sqlite://')
+&gt;&gt;&gt; metadata = MetaData(engine)
+&gt;&gt;&gt; account_table = Table(
+... 'account', metadata,
+... Column('id', Integer, primary_key=True),
+... Column('balance', Numeric))
+&gt;&gt;&gt; class Account(object): pass
+...
+&gt;&gt;&gt; mapper(Account, account_table)
+&lt;Mapper at 0x84e6f2c; Account&gt;
+&gt;&gt;&gt; account_table.create()
+&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session = sessionmaker(bind=engine)
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session.add(a)
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; session.delete(a) #自动删除 account_table相应条目,但是在1:N和M:N关系中不会自动删除它的级联关系
+&gt;&gt;&gt; session.flush()</p>
+
+<p><strong>注:session的对象状态:</strong></p>
+
+<p>Transient:短暂的,主要指内存中的对象</p>
+
+<p>Pending:挂起的,这样的对象准备插入数据库,等执行了flush就会插入</p>
+
+<p>Persistent:持久的</p>
+
+<p>Detached:对象在数据库里面有记录,但是不属于session</p>
+
+<p>&gt;&gt;&gt; make_transient(a)  #因为标识了已删除,恢复a的状态
+&gt;&gt;&gt; session.add(a) #重新添加
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; print query
+SELECT account.id AS account_id, account.balance AS account_balance
+FROM account
+&gt;&gt;&gt; for obj in query:
+...     print obj
+...
+&lt;__main__.Account object at 0x84eef0c&gt;</p>
+
+<p>&gt;&gt;&gt; query.all()  #查询所有
+[&lt;__main__.Account object at 0x84eef0c&gt;]
+&gt;&gt;&gt; query = query.filter(Account.balance &gt; 10.00)  #filter过滤
+&gt;&gt;&gt; for obj in query:
+...     print obj.balance
+...</p>
+
+<p>100.00</p>
+
+<p>&gt;&gt;&gt; for i in session.query(Account).filter_by(balance=100.00 ):  #通过条件过滤
+...     print i
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; query = query.from_statement('select *from account where balance=:bac') #通过带通配符的SQL语句其中:bac标识这个参数是bac
+&gt;&gt;&gt; query = query.params(bac='100.00') #根据bac指定值寻找
+&gt;&gt;&gt; print query.all()
+[&lt;__main__.Account object at 0x84eef0c&gt;]</p>
+
+<p><strong>本地session</strong></p>
+
+<p>&gt;&gt;&gt; Session = scoped_session(sessionmaker(  #设置一个本地的共享session
+...     bind=engine, autoflush=True))
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session2 = Session()
+&gt;&gt;&gt; session is session2  #他们是同一个
+True</p>
+
+<p>&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session.add(a) #注意 这是的'S'是大写
+&gt;&gt;&gt; Session.flush()
+&gt;&gt;&gt; b = Account()
+&gt;&gt;&gt; a.balance = 200.00
+&gt;&gt;&gt; session.add(a)  #其实他们是一个共享的session 名字都可以
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Account).all() #查询到了2个
+[&lt;__main__.Account object at 0x851be0c&gt;, &lt;__main__.Account object at 0x84f7d6c&gt;]</p>
+
+<p>注:这样的映射mapper也可以这样是用:</p>
+
+<p>mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref='products')))</p>
+
+<p>Session.mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref='products'))) #它的优点是可以初始化参数</p>

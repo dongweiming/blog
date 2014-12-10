@@ -1,0 +1,130 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>我的项目</title>
+    <meta name="author" content="Dong Weiming">
+    <link id="main-css" rel="stylesheet" type="text/css" media="all" href="media/main-inverted.css">
+    <link id="code-css" rel="stylesheet" type="text/css" media="all" href="media/solarized-dark.css">
+</head>
+
+<body style="background: none repeat scroll 0% 0% rgb(0, 0, 0);">
+<script type="text/javascript">
+var _gaq = _gaq || [];
+var main_css = document.getElementById("main-css");
+var code_css = document.getElementById("code-css");
+var styles = {
+  light: ["Light", "", "media/main.css", "media/solarized-light.css"],
+  dark: ["Dark", "#000", "media/main-inverted.css", "media/solarized-dark.css"]
+};
+function set_style(style) {
+  var date = new Date();
+  _gaq.push(["_setCustomVar", 1, "Color", style[0], 1]);
+  document.body.style.background = style[1];
+  main_css.attributes.href.value = style[2];
+  code_css.attributes.href.value = style[3];
+  date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
+  document.cookie = "main-css=" + main_css.attributes.href.value + "; expires=" + date.toGMTString() + "; path=/";
+  return style;
+}
+function set_colors() {
+  var i, cookies, key, value;
+  cookies = document.cookie.split("; ");
+  for (i = 0; i < cookies.length; i++) {
+    key = cookies[i].split("=")[0];
+    value = cookies[i].split("=")[1];
+    if (key === "main-css" && value === "media/main-inverted.css") {
+      set_style(styles.dark);
+    }
+  }
+  if (window.location.hash.slice(1) === "dark") {
+    set_style(styles.dark);
+  } else if (window.location.hash.slice(1) === "light") {
+    set_style(styles.light);
+  }
+}
+function invert_colors() {
+  var style = main_css.attributes.href.value === "media/main.css" ? set_style(styles.dark) : set_style(styles.light);
+  _gaq.push(["_trackEvent", "Color", "Set style", style[0]]);
+}
+set_colors();
+</script>
+
+<div id="wrapper">
+<div id="header">
+    <ul>
+        <li><a id="home-link" href="http://www.dongwm.com/">博客主页</a></li>
+        <li><a href="http://www.dongwm.com/projects/">我的项目</a></li>
+        <li><a href="http://dongweiming.github.io">Github博客</a></li>
+        <li><a href="http://www.dongwm.com/aboutme/">关于我</a></li>
+    </ul>
+</div>
+
+<div class="post-header">
+<div class="post-title">Projects</div>
+<hr>
+</div>
+<div class="post">
+<p>欢迎fork/follow me <a href="https://github.com/dongweiming">GitHub</a></p>
+
+<h2>我贡献代码的项目</h2>
+
+<ul>
+  <li><p><a href="https://github.com/gregmalcolm/python_koans">python_koans</a>:基于TDD的学习python</p></li>
+  <li><p><a href="https://github.com/celery/celery">celery</a>:分布式任务队列</p></li>
+  <li><p><a href="https://github.com/celery/py-amqp">py-amqp</a>:celery依赖的amqp库</p></li>
+  <li><p><a href="https://github.com/celery/kombu">kombu</a>:消息框架</p></li>
+  <li><p><a href="https://github.com/celery/django-celery">django-celery</a>:celery的django实现</p></li>
+  <li><p><a href="https://github.com/Supervisor/supervisor">supervisor</a>:python进程管理</p></li>
+  <li><p><a href="https://github.com/saltstack/salt">salt</a>:配置管理工具</p></li>
+  <li><p><a href="https://github.com/robbyrussell/oh-my-zsh">oh-my-zsh</a>:管理zsh配置的框架</p></li>
+  <li><p><a href="https://github.com/zsh-users/zsh-completions">zsh-completions</a>:zsh下命令自动补全</p></li>
+  <li><p><a href="https://github.com/nicolargo/glances">glances</a>:支持xml-rpc的系统监控工具</p></li>
+  <li><p><a href="https://github.com/omab/python-social-auth">python-social-auth</a>:python社交验证</p></li>
+  <li><p><a href="https://github.com/mongolab/dex">dex</a>发现mongodb索引问题提示工具</p></li>
+  <li><p><a href="https://github.com/erikw/tmux-powerline">tmux-powerline</a>:tmux的powerline插件</p></li>
+  <li><p><a href="https://github.com/mozilla-services/circus">circus</a>:基于zmq的进程和socket的管理工具</p></li>
+  <li><p><a href="https://github.com/douban/graph-index">graph-index</a>:豆瓣开源的Graphite索引</p></li>
+  <li><p><a href="https://github.com/nicolaiarocci/eve">eve</a>:基于flask的restapi</p></li>
+  <li><p><a href="https://github.com/douban/farmer">farmer</a>:豆瓣开源的基于ansible的异步任务执行应用</p></li>
+  <li><p><a href="https://github.com/pypa/pip">pip</a>:安装管理python包工具</p></li>
+  <li><p><a href="https://github.com/mongodb/mongo-python-driver">mongo-python-driver</a>Mongodb的python驱动</p></li>
+  <li><p><a href="https://github.com/BrightcoveOS/Diamond">Diamond</a>:搜集系统信息发送给Graphite的工具</p></li>
+  <li><p><a href="https://github.com/hhatto/autopep8">autopep8</a>:自动格式化代码符合成PEP标准工具</p></li>
+</ul>
+
+<br>
+
+<h2>我写的小玩意儿</h2>
+
+<ul>
+  <li><p><a href="https://github.com/dongweiming/django-linux-dash">django-linux-dash</a>:基于django展示linux/macos的系统信息的dashboard</p></li>
+  <li><p><a href="https://github.com/dongweiming/sed_and_awk">sed_and_awk</a>:基于reveal在线ppt分享sed和awk</p></li>
+  <li><p><a href="https://github.com/dongweiming/gentle">gentle</a>:自动提交代码并重启服务到测试/生产环境</p></li>
+  <li><p><a href="https://github.com/dongweiming/flask_reveal">flask_reveal</a>:基于flask和mongoengine的在线PPT网站</p></li>
+  <li><p><a href="https://github.com/dongweiming/data-analysis">data-analysis</a>:基于flask和mongoengine的数据展示网站</p></li>
+  <li><p><a href="https://github.com/dongweiming/octopress-douban_favorite_show">octopress-douban_favorite_show</a>:为octopress写的获取豆瓣阅读书籍插件</p></li>
+  <li><p><a href="https://github.com/dongweiming/octopress-wp_cumulus_for_tagcloud">octopress-wp_cumulus_for_tagcloud</a>:为octopress写的3d标签插件</p></li>
+  <li><p><a href="https://github.com/orzrd/laptop">laptop</a>:多操作系统(gentoo/ubuntu/opensuse)个人桌面初始化</p></li>
+  <li><p><a href="https://github.com/orzrd/mytools">mytools</a>:常用脚本集</p></li>
+</ul>
+
+<br>
+
+<h2>其他有意思的东西</h2>
+
+<ul>
+  <li><p>我给<a href="https://github.com/nojhan/colout">colout</a>维护了pypi, ubuntu's ppa, gentoo的包项目，经过申请,它已经被合并到gentoo主干了,你可以直接sudo emerge colout</p></li>
+  <li><p>我给python标准库中的logging模块打了个patch:关于代码优化</p></li>
+</ul>
+
+<br>
+
+</div>
+<hr>
+<div id="beast-mode" onclick="invert_colors()">
+    <span>转换页面颜色</span>
+</div>
+
+</div>
+</body>
+</html>

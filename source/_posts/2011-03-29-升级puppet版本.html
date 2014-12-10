@@ -1,0 +1,31 @@
+---
+layout: post
+title: 升级puppet版本
+categories:
+- linux基础
+- puppet
+tags:
+- 升级puppet
+published: true
+comments: true
+indexer: true
+---
+<p><p><strong>目前最新版puppet是2.6.7，我的版本是2.6.3，以下是升级过程（本例只适合编译安装puppet）：</strong></p>
+<p><strong>思路：</strong></p>
+<p><strong>1  先升级server端，后升级client端</strong></p>
+<p><strong>2  先删除就版本库文件和程序文件，再安装新版本文件，而默认的/var/lib/puppet和/etc/puppet目录不要动</strong></p>
+<p><strong>1 删除旧相关文件：</strong></p>
+<p><pre class="sh_bash">#rm /usr/local/sbin/puppet* –rf
+#rm /usr/local/lib/ruby/site_ruby/1.8/puppet –rf
+#rm /usr/local/bin/puppet* –rf</pre></p>
+<p><strong>2 安装新版本：
+</strong><pre class="sh_bash">#tar zxvf puppet-2.6.7.tar.gz
+#cd puppet-2.6.7
+#ruby install.rb</pre></p>
+<p><strong>3  测试：</strong></p>
+<p><pre class="sh_bash">[root@dongwm puppet-2.6.7]# puppet -V
+2.6.7</p>
+<p>使用debug模式启动puppet会出现下面的信息：</p>
+<p>&nbsp;</p>
+<p>notice: Starting Puppet client version 2.6.7</pre></p>
+</p>

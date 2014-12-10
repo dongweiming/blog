@@ -1,0 +1,67 @@
+---
+layout: post
+title: 使用可以带选项的perl发送中文邮件
+categories:
+- cep
+- perl
+- 其它
+tags:
+- perl邮件
+published: true
+comments: true
+indexer: true
+---
+<p>为了处理复杂事件处理的故障报警，需要使用perl语言实现邮件报警和短信报警</p>
+
+<p><pre class="sh_perl">
+#!/usr/bin/perl
+use strict;
+use Getopt::Long;
+use MIME::Lite;
+use MIME::Words qw(encode_mimewords);</p>
+
+<p>my ($title,$sendto,$cc,@data,$help);</p>
+
+<p>GetOptions(
+    'title|t=s'	    =&gt; \$title,
+    'sendto|s=s'    =&gt; \$sendto,
+    'cc|c=s'	    =&gt; \$cc,
+    'data|d=s{1,10}'=&gt; \@data,
+    'h|help'	    =&gt; \$help,
+);</p>
+
+<p>if ( $help ) {
+print &lt;&lt;EOF;
+    -t	--title	    标题
+    -s	--sendto    收件人
+    -c	--cc	    抄送人
+    -d	--data	    内容
+    -h	--help	    帮助
+EOF
+}
+my @ltime=localtime;
+my $today=sprintf("%04d%02d%02d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);
+open LOG,"&gt;&gt;/cepdata/notification.log.$today";</p>
+
+<p>my $data="@data";
+$data =~ s/=/:/g;
+my $subject = encode_mimewords("$title",'Charset','GB2312');
+$sendto =~ s/(?=,|$)/\@dongwm.com/g;
+$cc =~ s/(?=,|$)/\@dongwm.com/g if $cc;</p>
+
+<p>my $msg = MIME::Lite-&gt;new (
+        From =&gt; 'cep@dongwm.com',
+        To =&gt; $sendto,
+	Cc  =&gt; $cc,
+        Subject =&gt; $subject,
+        Type     =&gt; 'text/html',
+        Data     =&gt; $data,
+        Encoding =&gt; 'base64',
+    ) or die "create container failed: $!";</p>
+
+<p>$msg-&gt;attr('content-type.charset' =&gt; 'GB2312');
+$msg-&gt;send('smtp','localhost',Debug=&gt;0);
+my @time=localtime;
+my $currenttime=sprintf("%04d-%02d-%02d %02d:%02d:%02d",$time[5]+1900,$time[4]+1,$time[3],$time[2],$time[1],$time[0]);
+print LOG "$currenttime send mail to $sendto : \"$data\"\n";
+</pre></p>

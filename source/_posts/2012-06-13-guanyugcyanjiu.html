@@ -1,0 +1,232 @@
+---
+layout: post
+title: 关于gc研究
+categories:
+- python模块研究
+tags:
+- gc
+published: true
+comments: true
+indexer: true
+---
+<p>前言：gc主要是管理Python对象使用的内存,也就是垃圾回收</p>
+
+<p><pre class="sh_python">
+import gc
+import pprint</p>
+
+<p>class Graph(object):
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+    def set_next(self, next):
+        print 'Linking nodes %s.next = %s' % (self, next)
+        self.next = next
+    def __repr__(self):  #python元类，简单的理解就是控制你的对象在被<code>repr</code>函数调用的时候返回的内容
+        return '%s(%s)' % (self.__class__.__name__, self.name)</p>
+
+<p>one = Graph('one')
+two = Graph('two')
+three = Graph('three')
+one.set_next(two)
+two.set_next(three)
+three.set_next(one)</p>
+
+<p>print
+print 'three refers to:'
+for r in gc.get_referents(three): #跟踪参考，返回对象名单
+    pprint.pprint(r)
+one = two = three = None  #删除引用这个模块的命名空间
+for i in range(2):
+    print 'Collecting %d ...' % i
+    n = gc.collect() #
+    print 'Unreachable objects:', n
+    print 'Remaining Garbage:', 
+    pprint.pprint(gc.garbage) #剩余垃圾的列表
+    print
+
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Linking nodes Graph(one).next = Graph(two)  #根据__repr__显示效果：类名(实例.name)
+Linking nodes Graph(two).next = Graph(three)
+Linking nodes Graph(three).next = Graph(one)</p>
+
+<p>three refers to:
+{'name': 'three', 'next': Graph(one)}
+&lt;class '__main__.Graph'&gt;</p>
+
+<p>Collecting 0 ...
+Unreachable objects: 6  #因为有3个实例属性字典的对象
+Remaining Garbage:[]</p>
+
+<p>Collecting 1 ...
+Unreachable objects: 0
+Remaining Garbage:[]</p>
+
+<p>注：如果有<tt>__del__</tt>这个方法：</p>
+
+<p><pre class="sh_python">
+import gc
+import pprint</p>
+
+<p>class Graph(object):
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+    def set_next(self, next):
+        print 'Linking nodes %s.next = %s' % (self, next)
+        self.next = next
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, self.name)
+    def __del__(self):  #类似于析构函数，把对象销毁
+        print '%s.__del__()' % self</p>
+
+<p>one = Graph('one')
+two = Graph('two')
+three = Graph('three')
+one.set_next(two)
+two.set_next(three)
+three.set_next(one)</p>
+
+<p>one = two = three = None</p>
+
+<p>print
+print 'Collecting...'
+n = gc.collect()
+print 'Unreachable objects:', n
+print 'Remaining Garbage:', 
+pprint.pprint(gc.garbage)</p>
+
+<p>print
+print 'Breaking the cycle'
+gc.garbage[0].set_next(None)   #打破循环
+print 'Removing references in gc.garbage'
+del gc.garbage[:]  #删除这些垃圾</p>
+
+<p>print
+print 'Collecting...'
+n = gc.collect()
+print 'Unreachable objects:', n
+print 'Remaining Garbage:', 
+pprint.pprint(gc.garbage)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Linking nodes Graph(one).next = Graph(two)
+Linking nodes Graph(two).next = Graph(three)
+Linking nodes Graph(three).next = Graph(one)</p>
+
+<p>Collecting...
+Unreachable objects: 6
+Remaining Garbage:[Graph(one), Graph(two), Graph(three)]  #没有回收成功</p>
+
+<p>Breaking the cycle
+Linking nodes Graph(one).next = None
+Removing references in gc.garbage
+Graph(two).__del__()  #删除会触发__repr__
+Graph(three).__del__()
+Graph(one).__del__()</p>
+
+<p>Collecting...
+Unreachable objects: 0
+Remaining Garbage:[]</p>
+
+<p><pre class="sh_python">
+import gc
+import pprint
+import sys</p>
+
+<p>try:
+    threshold = int(sys.argv[1])
+except (IndexError, ValueError, TypeError):
+    print 'Missing or invalid threshold, using default'
+    threshold = 5</p>
+
+<p>class MyObj(object):
+    def __init__(self, name):
+        self.name = name
+        print 'Created', self.name</p>
+
+<p>gc.set_debug(gc.DEBUG_STATS) #设定debug方式</p>
+
+<p>gc.set_threshold(threshold, 1, 1) #默认的是(700,10,10)
+print 'Thresholds:', gc.get_threshold()</p>
+
+<p>print 'Clear the collector by forcing a run'
+gc.collect()
+print</p>
+
+<p>print 'Creating objects'
+objs = []
+for i in range(10):
+    objs.append(MyObj(i))  #在这个创建过程中根据阀值，比如sys.argv[1]＝5和sys.argv[1]＝2 后者频繁的多
+</pre></p>
+
+<p><pre class="sh_python">
+import gc</p>
+
+<p>flags = (gc.DEBUG_COLLECTABLE |
+         gc.DEBUG_UNCOLLECTABLE |
+         gc.DEBUG_OBJECTS
+         )  #暴露的内部运作，以上暴露其中的可达的属性，不可达的属性和对象属性的相关信息
+gc.set_debug(flags)</p>
+
+<p>class Graph(object):
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+        print 'Creating %s 0x%x (%s)' % (self.__class__.__name__, id(self), name)
+    def set_next(self, next):
+        print 'Linking nodes %s.next = %s' % (self, next)
+        self.next = next
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, self.name)</p>
+
+<p>class CleanupGraph(Graph):
+    def __del__(self):
+        print '%s.__del__()' % self</p>
+
+<p># Construct a graph cycle
+one = Graph('one')
+two = Graph('two')
+one.set_next(two)
+two.set_next(one)</p>
+
+<p>three = CleanupGraph('three')
+four = CleanupGraph('four')
+five = CleanupGraph('five')
+four.set_next(five)
+five.set_next(four)
+one = two = three = four = five = None
+print
+print 'Collecting'
+gc.collect()
+print 'Done'
+</pre>
+dongwm@linux-dongwm:~&gt; python test.py
+Creating Graph 0xb733522c (one)
+Creating Graph 0xb733524c (two)
+Linking nodes Graph(one).next = Graph(two)
+Linking nodes Graph(two).next = Graph(one)
+Creating CleanupGraph 0xb733526c (three)
+Creating CleanupGraph 0xb733528c (four)
+Creating CleanupGraph 0xb73352ac (five)
+Linking nodes CleanupGraph(four).next = CleanupGraph(five)
+Linking nodes CleanupGraph(five).next = CleanupGraph(four)
+CleanupGraph(three).__del__()</p>
+
+<p>Collecting
+gc: collectable &lt;Graph 0xb733522c&gt;
+gc: collectable &lt;Graph 0xb733524c&gt;
+gc: collectable &lt;dict 0xb733324c&gt;
+gc: collectable &lt;dict 0xb733357c&gt;
+gc: uncollectable &lt;CleanupGraph 0xb733528c&gt;
+gc: uncollectable &lt;CleanupGraph 0xb73352ac&gt;
+gc: uncollectable &lt;dict 0xb7333604&gt;
+gc: uncollectable &lt;dict 0xb733379c&gt;
+Done</p>

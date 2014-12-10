@@ -1,0 +1,113 @@
+---
+layout: post
+title: 关于grep命令的研究
+categories:
+- linux基础
+tags:
+- grep
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 单文件搜索特定字符串</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm # grep "dongwm" /etc/passwd</p>
+
+<p>dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash</p>
+
+<p></pre></p>
+
+<p><strong>2 多文件搜索特点字符串<!--more--></strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm # cp /etc/passwd /etc/passwd1</p>
+
+<p>linux-3qd1:/home/dongwm # grep "dongwm" /etc/passwd*</p>
+
+<p>/etc/passwd:dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash</p>
+
+<p>/etc/passwd1:dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash</pre></p>
+
+<p><strong>3 不区分大小写搜索字符串</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm #useradd DONGWM</p>
+
+<p>linux-3qd1:/home/dongwm # grep -i "dongwm" /etc/passwd</p>
+
+<p>dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash</p>
+
+<p>DONGWM:x:1001:100::/home/DONGWM:/bin/bash</pre>
+<strong>4 支持正则表达式的搜索</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm # grep "100.*wm" /etc/passwd</p>
+
+<p>dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash</p>
+
+<p>? 表示前面匹配一次或者零次</p>
+
+<p>* 表示前面匹配零次或者多次</p>
+
+<p>+ 表示前面匹配一次或者多次</p>
+
+<p>{n} 表示前面匹配n次</p>
+
+<p>{n,} 表示匹配n次或者更多</p>
+
+<p>{,m} 表示匹配最多m次</p>
+
+<p>{n,m} 表示匹配的次数是n-m次之间</pre></p>
+
+<p><strong>5 高亮显示匹配字符串：</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>export GREP_OPTIONS='--color=auto' GREP_COLOR='100;8'
+<img class="alignnone" title="grep" src="http://www.dongwm.com/wp-content/uploads/2011/01/sd.png" alt="" width="488" height="80" />
+</pre></p>
+
+<p><strong>6 对目录进行递归查询：</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm # grep "dongwm" /etc/ -r</p>
+
+<p>/etc/passwd:dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash</p>
+
+<p>/etc/group:vboxusers:!:114:dongwm,root </pre></p>
+
+<p><strong>7 搜索不匹配字符串的条目：</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm # grep -v "/bin/bash" /etc/passwd</p>
+
+<p>avahi:x:106:109:User for Avahi:/var/run/avahi-daemon:/bin/false</p>
+
+<p>dnsmasq:x:103:65534:dnsmasq:/var/lib/empty:/bin/false</p>
+
+<p>haldaemon:x:105:107:User for haldaemon:/var/run/hald:/bin/false</pre></p>
+
+<p><strong>8 搜索不匹配多字符串的条目：</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm # grep -v -e "/bin/bash" -e "avahi" /etc/passwd</p>
+
+<p>dnsmasq:x:103:65534:dnsmasq:/var/lib/empty:/bin/false</p>
+
+<p>haldaemon:x:105:107:User for haldaemon:/var/run/hald:/bin/false </pre></p>
+
+<p><strong>9 计算匹配的行数：</strong></p>
+
+<p><pre class="sh_bash"></p>
+
+<p>linux-3qd1:/home/dongwm # grep -c "/bin/bash" /etc/passwd</p>
+
+<p>14 </pre></p>

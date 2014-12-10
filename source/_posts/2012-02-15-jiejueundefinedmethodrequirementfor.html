@@ -1,0 +1,30 @@
+---
+layout: post
+title: 解决安装redmine“undefined method `requirement' ”报错
+categories:
+- ruby
+tags:
+- rails
+- 安装redmine
+published: true
+comments: true
+indexer: true
+---
+<p>前言：在opensuse安装redmine出现一个比较可爱的报错，puppet面板安装也可能遇见，当创建表时：</p>
+
+<p>dongwm@linux-b8lh:~/redmine/svn/branches/1.3-stable/config&gt; !rake
+rake db:migrate RAILS_ENV=production
+(in /home/dongwm/redmine/svn/branches/1.3-stable)</p>
+
+<p>rake aborted!
+undefined method `requirement' for #&lt;Rails::GemDependency:0xb71a2248&gt;</p>
+
+<p>Tasks: TOP =&gt; db:migrate =&gt; environment
+(See full trace by running task with --trace)</p>
+
+<p>解决：修改gem_dependency.rb，一般在你安装的rails库目录下，我的是/usr/lib/ruby/gems/1.8/gems/rails-2.3.14/lib/rails/gem_dependency.rb</p>
+
+<p>注释掉81行 #gem self.name, self.requirement # &lt;  1.8 unhappy way
+修改为：</p>
+
+<p>gem self.name, :version =&gt; (self.respond_to?(:requirement) ? self.requirement : self.version_requirements)</p>

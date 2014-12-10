@@ -1,0 +1,23 @@
+---
+layout: post
+title: gentoo笔记（十二）重新编译内核总结
+categories:
+- gentoo
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>前言：最初使用了genkernel配置的内核，因为默认不支持高内存支持，我的系统只识别了886M内存（本来是4G），那么需要修改内核重新编译，以下是总结的过程：</p>
+
+<p>1 切换到内核源码目录，其实这是一个真正地址的软连接地址
+cd /usr/src/linux
+2 配置内核
+genkernel --menuconfig  all #--bootloader=grub表示自动更新grub引导程序配置,个人不建议使用，因为他可能会改错grub
+注：其实还是genkernel自动配置内核，而不是make menuconfig+make &amp;&amp; make modules_install+cp arch/i386/boot/bzImage /boot/kernel-ＸＸ-gentoo，
+但是事实上--menuconfig在自动配置前也会弹出那个菜单，让你自定义选择。我尝试了make menuconfig手动配置，但是因为硬件等原因，
+出现了很多错误，还不如直接使用genkernel全部配置，再小范围修改，比如我这里修改了支持4Ｇ内存的选项等（默认是ＯＦＦ）</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

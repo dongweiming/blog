@@ -1,0 +1,31 @@
+---
+layout: post
+title: opnesuse sudo 支持tab自动补齐
+categories:
+- opensuse
+tags:
+- bash_completion
+published: true
+comments: true
+indexer: true
+---
+<p>前言：just 一个小技巧，一直依赖使用linux终端都习惯tab补全命令或者路径，但是在opensuse 使用sudo时候却不是这样，比如我想重启一个/etc/init.d目录下的服务：</p>
+
+<p>sudo  /etc&lt;TAB&gt; 直接 就把空格大出来 相当于 cat /etc 加入想要查看下以及目录，就得退格，然后输入“/”，再使用TAB</p>
+
+<p>解决方案：</p>
+
+<p>安装配置bash-completion</p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo zypper in bash-completion</p>
+
+<p>dongwm@linux-b8lh:~&gt; . /etc/bash_completion
+然后就OK了，方便了很多</p>
+
+<p>每次登录支持：</p>
+
+<p><code>在/etc/bash.bashrc文件加入</code>
+<code>
+if [ -f /etc/bash_completion ]; then
+. /etc/bash_completion
+fi</code></p>

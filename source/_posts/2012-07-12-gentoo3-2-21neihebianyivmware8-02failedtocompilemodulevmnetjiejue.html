@@ -1,0 +1,22 @@
+---
+layout: post
+title: gentoo3.2.21内核编译vmware8.02failed to compile module vmnet 解决
+categories:
+- gentoo
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>前言：我一直是vmware忠实使用者,最近重新编译gentoo内核后重新安装vmware并且升级到8.02,其它模块正常,但是唯独vmnet编译失败,报错日志如下:</p>
+
+<p>2012-07-12T10:33:01.401+08:00| vthread-3| I120: Building module with command: /usr/bin/make -j -C /tmp/vmware-root/modules/vmnet-only auto-build SUPPORT_SMP=1 HEADER_DIR=/lib/modules/3.2.21-gentoo/build/include CC=/usr/bin/gcc GREP=/usr/bin/make IS_GCC_3=no VMCCVER=4.5.3
+2012-07-12T10:33:02.088+08:00| vthread-3| I120: Failed to compile module vmnet!</p>
+
+<p>解决:这是vmware软件bug,官方已经提供补丁:</p>
+
+<p>http://communities.vmware.com/servlet/JiveServlet/download/2025997-86343/vmware802fixlinux320.tar.gz</p>
+
+<p>解压缩后2个文件,根据你的vmpalyer和vmware版本修改patch-modules_3.2.0.sh ,然后执行:</p>
+
+<p>dongwm@localhost ~/下载 $ sudo ./patch-modules_3.2.0.sh</p>

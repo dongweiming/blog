@@ -1,0 +1,23 @@
+---
+layout: post
+title: nagios日志格式转换问题
+categories:
+- nagios
+tags:
+- nagios日志格式
+published: true
+comments: true
+indexer: true
+---
+<p>默认的nagios的日志格式记录的是从1970年到发生事件的秒数,而不是直接告诉我们当前的时间.在分析日志时,我进行了转换:</p>
+
+<p><pre class="sh_bash">[root@log05 ~]# cat /home/dongwm/nagios-log.sh
+#!/bin/bash
+while read line
+do
+ec=`echo $line|grep -Po [0-9]\{10\}`
+ed=`date -d '1970-01-01 '$ec' sec' +%Y-%m-%d-%T`
+eval sed -i 's/'$ec'/'$ed'/g' nagios.log
+done&lt;YZ.nagios.log</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=8ae86720-8fa5-8f60-aa82-1ce730b156e2" alt="" /></div></p>

@@ -1,0 +1,95 @@
+---
+layout: post
+title: 关于cPickle研究
+categories:
+- python模块研究
+tags:
+- cPickle
+- Pickle
+published: true
+comments: true
+indexer: true
+---
+<p>前言：cPickle是一个让python对象序列化的模块，什么是序列化？比如内存里面有个数据结构想保存，重用甚至发送给别人（比如游戏保存配置，下次登录游戏还是在上次的那个场景的意思一样），为什么这里只说cPickle？它是Pickle在python中以C的形式实现，性能快很多倍（算法其实一样），但是假如在进程间通信或者存储，数据是不安全的</p>
+
+<p><pre class="sh_python">
+try:
+    import cPickle as pickle
+except:
+    import pickle
+import pprint #这个模块将数据格式化显示了</p>
+
+<p>data1 = [ { 'a':'A', 'b':2, 'c':3.0 } ]
+print 'BEFORE:',
+pprint.pprint(data1)</p>
+
+<p>data1_string = pickle.dumps(data1)  #使用dump编码 类似于json
+pprint.pprint(data1_string)
+data2 = pickle.loads(data1_string)  #使用load解码
+print 'AFTER:',
+pprint.pprint(data2)</p>
+
+<p>print 'SAME?:', (data1 is data2)
+print 'EQUAL?:', (data1 == data2)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+BEFORE:[{'a': 'A', 'b': 2, 'c': 3.0}]</p>
+
+<p>"(lp1\n(dp2\nS'a'\nS'A'\nsS'c'\nF3\nsS'b'\nI2\nsa."
+AFTER:[{'a': 'A', 'b': 2, 'c': 3.0}]
+SAME?: False  #前后数据相同，但是不占用同样的内存位置
+EQUAL?: True
+<pre class="sh_python">
+try:
+    import cPickle as pickle
+except:
+    import pickle
+import pprint
+from StringIO import StringIO</p>
+
+<p>class SimpleObject(object):</p>
+
+<p>    def __init__(self, name):
+        self.name = name
+        l = list(name)
+        l.reverse()
+        self.name_backwards = ''.join(l)
+        return</p>
+
+<p>data = []
+data.append(SimpleObject('pickle')) #添加多个对象  
+data.append(SimpleObject('cPickle'))
+data.append(SimpleObject('last'))</p>
+
+<p>out_s = StringIO() </p>
+
+<p>for o in data:
+    print 'WRITING: %s (%s)' % (o.name, o.name_backwards)
+    pickle.dump(o, out_s)
+    out_s.flush()</p>
+
+<p>in_s = StringIO(out_s.getvalue()) #写入流中多个对象</p>
+
+<p>while True:
+    try:
+        o = pickle.load(in_s) #从流中读取，而不需要事先知道对象多大多少
+    except EOFError:
+        break
+    else:
+        print 'READ: %s (%s)' % (o.name, o.name_backwards)
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+WRITING: pickle (elkcip)
+WRITING: cPickle (elkciPc)
+WRITING: last (tsal)
+READ: pickle (elkcip)
+READ: cPickle (elkciPc)
+READ: last (tsal)</p>

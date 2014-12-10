@@ -1,0 +1,312 @@
+---
+layout: post
+title: 关于threading研究（二）
+categories:
+- python模块研究
+tags:
+- threading
+published: true
+comments: true
+indexer: true
+---
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def lock_holder(lock):  #显示资源holding和not holding
+    logging.debug('Starting')
+    while True:
+        lock.acquire()
+        try:
+            logging.debug('Holding')
+            time.sleep(0.5)
+        finally:
+            logging.debug('Not holding')
+            lock.release()
+        time.sleep(0.5)
+    return</p>
+
+<p>def worker(lock):
+    logging.debug('Starting')
+    num_tries = 0
+    num_acquires = 0
+    while num_acquires &lt; 3: #迭代2次，这样就会尝试4次，二次holding，2次not holding
+        time.sleep(0.5)
+        logging.debug('Trying to acquire')
+        have_it = lock.acquire(0)  #找出另一个线程是否已取得当前线程持有锁
+        try:
+            num_tries += 1
+            if have_it:
+                logging.debug('Iteration %d: Acquired',  num_tries)
+                num_acquires += 1
+            else:
+                logging.debug('Iteration %d: Not acquired', num_tries)
+        finally:
+            if have_it:
+                lock.release()
+    logging.debug('Done after %d iterations', num_tries)</p>
+
+<p>lock = threading.Lock()</p>
+
+<p>holder = threading.Thread(target=lock_holder, args=(lock,), name='LockHolder')
+holder.setDaemon(True)
+holder.start()</p>
+
+<p>worker = threading.Thread(target=worker, args=(lock,), name='Worker')
+worker.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+(LockHolder) Starting
+(LockHolder) Holding
+(Worker    ) Starting  #在sleep(0.5)的时候资源被worker获取
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 1: Acquired
+(LockHolder) Holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 2: Not acquired
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 3: Acquired
+(LockHolder) Holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 4: Not acquired
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 5: Acquired  #第5次因为num_acquires＝3而不进入循环
+(Worker    ) Done after 5 iterations
+<pre class="sh_python">
+import threading</p>
+
+<p>lock = threading.Lock()</p>
+
+<p>print 'First try :', lock.acquire()  #返回true
+print 'Second try:', lock.acquire(0)  #资源自能被锁定一次，这里就返回false了</p>
+
+<p>lock = threading.RLock()  #这样可以重新获得锁</p>
+
+<p>print 'First try :', lock.acquire()  #返回true
+print 'Second try:', lock.acquire(0)  #返回1
+</pre></p>
+
+<p><pre class="sh_python">
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def worker_with(lock):
+    with lock:   #使用wit关键字，执行lock的上下文管理
+        logging.debug('Lock acquired via with')</p>
+
+<p>def worker_no_with(lock):
+    lock.acquire()
+    try:
+        logging.debug('Lock acquired directly')
+    finally:
+        lock.release()</p>
+
+<p>lock = threading.Lock()
+w = threading.Thread(target=worker_with, args=(lock,))
+nw = threading.Thread(target=worker_no_with, args=(lock,))</p>
+
+<p>w.start()
+nw.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s (%(threadName)-2s) %(message)s',  #当前时间
+                    )</p>
+
+<p>def consumer(cond):
+    logging.debug('Starting consumer thread')
+    t = threading.currentThread()
+    with cond:
+        cond.wait()  #释放内部所占用的琐，同时线程被挂起，直至接收到通知被唤醒或超时（如果提供了timeout参数的话）。 
+                     #当线程被唤醒并重新占有琐的时候，程序才会继续执行下去。
+        logging.debug('Resource is available to consumer')</p>
+
+<p>def producer(cond):
+    logging.debug('Starting producer thread')
+    with cond:
+        logging.debug('Making resource available')
+        cond.notifyAll()  #唤醒所有挂起的线程（如果存在挂起的线程），但是这些方法不会释放所占用的琐</p>
+
+<p>condition = threading.Condition()   #它提供了比Lock, RLock更高级的功能，允许我们能够控制复杂的线程同步问题
+c1 = threading.Thread(name='c1', target=consumer, args=(condition,))
+c2 = threading.Thread(name='c2', target=consumer, args=(condition,))
+p = threading.Thread(name='p', target=producer, args=(condition,))</p>
+
+<p>c1.start()
+time.sleep(2)
+c2.start()
+time.sleep(2)
+p.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-07-06 14:11:54,001 (c1) Starting consumer thread
+2012-07-06 14:11:56,001 (c2) Starting consumer thread
+2012-07-06 14:11:58,003 (p ) Starting producer thread
+2012-07-06 14:11:58,003 (p ) Making resource available  #producer唤起挂起的线程，触发consumer 线程继续执行
+2012-07-06 14:11:58,003 (c1) Resource is available to consumer
+2012-07-06 14:11:58,004 (c2) Resource is available to consumer
+<pre class="sh_python">
+import logging
+import random
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s (%(threadName)-2s) %(message)s',
+                    )</p>
+
+<p>class ActivePool(object):  #跟踪进程执行状态
+    def __init__(self):
+        super(ActivePool, self).__init__()   #保证公共父类仅被执行一次
+        self.active = []
+        self.lock = threading.Lock()
+    def makeActive(self, name):
+        with self.lock:
+            self.active.append(name)
+            logging.debug('Running: %s', self.active)
+    def makeInactive(self, name):
+        with self.lock:
+            self.active.remove(name)
+            logging.debug('Running: %s', self.active)</p>
+
+<p>def worker(s, pool):
+    logging.debug('Waiting to join the pool')
+    with s:
+        name = threading.currentThread().getName()
+        pool.makeActive(name)
+        time.sleep(0.1)
+        pool.makeInactive(name)</p>
+
+<p>pool = ActivePool()
+s = threading.Semaphore(4) ##Semaphore用来控制对共享资源的访问数量，例如池的最大连接数，这里只有4个活动进程同时运行
+for i in range(4):
+    t = threading.Thread(target=worker, name=str(i), args=(s, pool))
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-07-06 14:19:04,395 (0 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (0 ) Running: ['0']
+2012-07-06 14:19:04,395 (1 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (2 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (3 ) Waiting to join the pool
+2012-07-06 14:19:04,396 (1 ) Running: ['0', '1']
+2012-07-06 14:19:04,396 (2 ) Running: ['0', '1', '2']
+2012-07-06 14:19:04,396 (3 ) Running: ['0', '1', '2', '3']
+2012-07-06 14:19:04,496 (0 ) Running: ['1', '2', '3']
+2012-07-06 14:19:04,496 (1 ) Running: ['2', '3']
+2012-07-06 14:19:04,496 (2 ) Running: ['3']
+2012-07-06 14:19:04,496 (3 ) Running: []</p>
+
+<p><pre class="sh_python">
+import random
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def show_value(data):
+    try:
+        val = data.value
+    except AttributeError:
+        logging.debug('No value yet')
+    else:
+        logging.debug('value=%s', val)</p>
+
+<p>def worker(data):
+    show_value(data)
+    data.value = random.randint(1, 100)
+    show_value(data)</p>
+
+<p>local_data = threading.local()  #虽然有些资源需要被锁定，所以多个线程可以使用它们,这里创建一个能够隐藏在单独的线程的值对象
+show_value(local_data)
+local_data.value = 1000
+show_value(local_data)</p>
+
+<p>for i in range(2):
+    t = threading.Thread(target=worker, args=(local_data,))
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) No value yet   #第一次调用还没有设置
+(MainThread) value=1000
+(Thread-1  ) No value yet  #子线程1还没有设置
+(Thread-1  ) value=4 #子线程1设置，但是是本地的属性没有继承1000
+(Thread-2  ) No value yet
+(Thread-2  ) value=55
+<pre class="sh_python">
+import random
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def show_value(data):
+    try:
+        val = data.value
+    except AttributeError:
+        logging.debug('No value yet')
+    else:
+        logging.debug('value=%s', val)</p>
+
+<p>def worker(data):
+    show_value(data)
+    data.value = random.randint(1, 100)
+    show_value(data)</p>
+
+<p>class MyLocal(threading.local):
+    def __init__(self, value): #初始化设置，让所有的线程具有相同的value
+        logging.debug('Initializing %r', self)
+        self.value = value</p>
+
+<p>local_data = MyLocal(1000)
+show_value(local_data)</p>
+
+<p>for i in range(2):
+    t = threading.Thread(target=worker, args=(local_data,))
+    t.start()
+</pre>
+执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
+(MainThread) value=1000
+(Thread-1  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
+(Thread-1  ) value=1000
+(Thread-1  ) value=42
+(Thread-2  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;  #实例的对象id都是一样的
+(Thread-2  ) value=1000
+(Thread-2  ) value=64</p>

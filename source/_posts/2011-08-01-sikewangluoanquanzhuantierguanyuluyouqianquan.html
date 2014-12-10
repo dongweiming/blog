@@ -1,0 +1,81 @@
+---
+layout: post
+title: 思科网络安全专题（二）:关于路由器安全
+categories:
+- 安全
+- 思科
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>怎么说我也是ccsp出生，呵呵也看过很多IE级别的关于安全的书 ，所以最近准备做一个基于配置的关于安全的专题。</p>
+
+<p>1  vty访问</p>
+
+<p>虚拟终端访问当然需要一些安全</p>
+
+<p>3640_M(config)#aaa new-model
+3640_M(config)#aaa authentication login for-ssh local</p>
+
+<p>3640_M(config)#username dongwm password dongwmtest</p>
+
+<p>3640_M(config)#line vty 0 4
+3640_M(config-line)#transport input ssh
+3640_M(config-line)#exec-timeout 3 30  //超时时间为3分30秒
+3640_M(config-line)#login authentication for-ssh</p>
+
+<p>2 记录路由器事件</p>
+
+<p>3640_M(config)#service timestamps debug datetime msec localtime show-timezone
+3640_M(config)#service timestamps log datetime msec localtime show-timezone   //用Log信息和Debug信息的时间戳，格式为Datetime：，并且支持毫秒显示
+3640_M(config)#no logging console  //<span>禁止在控制台上打印日志报文</span>
+3640_M(config)#logging buffered 16384  //将日志信息记录到内存缓冲区的大小<!--more-->
+3640_M(config)#logging trap debugging   // //配置要发送到日志服务器的日志优先级，默认发送到日志服务器的优先级为Info
+3640_M(config)#logging facility local7  //配置日志存储的facility ，默认是local7
+3640_M(config)#logging 58.83.22.22
+3640_M(config)#logging source-interface loopback0  //日志发出用的源ip地址用回环</p>
+
+<p>3  snmp控制</p>
+
+<p>3640_M(config)# snmp-server community 5sffee RO 98  // 配置本路由器的只读字串为5sffee  符合acl98
+3640_M(config)#snmp-server trap-source loopback0 //将<span style="font-family: Times New Roman,serif;">loopback</span>接口的<span style="font-family: Times New Roman,serif;">IP</span>地址作为<span style="font-family: Times New Roman,serif;">SNMP Trap</span>的发送源地址
+3640_M(config)#snmp-server trap-authentication  //<span>如果共用字符串的验证失败，发送一个trap</span>
+3640_M(config)#snmp-server enable traps config  // 允许路由器将config类型<span style="font-family: Times New Roman,serif;">SNMP Trap</span>发送出去
+3640_M(config)#snmp-server host 192.168.8.23 5sffee  // 指定路由器<span style="font-family: Times New Roman,serif;">SNMP Trap</span>的接收者为 192.168.8.23，发送<span style="font-family: Times New Roman,serif;">Trap</span>时采用5sffee作为字串
+3640_M(config)#access-list 98 permit host 192.168.8.11</p>
+
+<p>4  控制http</p>
+
+<p>3640_M(config)# ip http port 20000  //将默认http端口改成20000
+3640_M(config)#ip http authentication aaa
+3640_M(config)#ip http access-class 12
+3640_M(config)#access-list 12 permit host 192.168.8.13</p>
+
+<p>4  开启ip cef</p>
+
+<p>syn泛洪和ddos会使用大量随机或者假冒的IP地址作为最终目标，这回对路由器的CPU强度增加很大负担，CEF特性会让新IP需要路由时候不需要每次都更新cache</p>
+
+<p>5  调度表</p>
+
+<p>上述攻击时会因为大量分组变得忙于响应，从而不能执行给他配置的其他任何需要执行的功能</p>
+
+<p>3640_M(config)#scheduler allocate 30000 2000/修改cpu花费在进程任务的时间为30000快速交换中的时间为2000</p>
+
+<p>6 登录标识</p>
+
+<p>3640_M(config)#banner motd #
+Enter TEXT message.  End with the character '#'.
+Please leave immediately, otherwise it will be held liable
+#</p>
+
+<p>3640_M(config)#aaa authentication banner  "this is dongwm.com"
+3640_M(config)#aaa authentication fail-message  "logging failed"</p>
+
+<p>7 在负载高时候启用nagle提高telnet访问性能</p>
+
+<p>当收到攻击telnet往往会很慢，并且telnet进一步影响路由器性能，nagle服务可以提高telnet性能</p>
+
+<p>3640_M(config)#service nagle</p>
+
+<p>&nbsp;</p>

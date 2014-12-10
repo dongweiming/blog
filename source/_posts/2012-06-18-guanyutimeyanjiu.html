@@ -1,0 +1,131 @@
+---
+layout: post
+title: 关于time研究
+categories:
+- python模块研究
+tags:
+- time
+published: true
+comments: true
+indexer: true
+---
+<p>前言：time模块提供了操作日期和时间的函数，它利用了c函数来处理日期和时间, 也就是说它绑定了c的实现, 一些特定的细节(比如纪元的开始时间、日期的最大值)是和平台相关的</p>
+
+<p><pre class="sh_python">
+import time
+import hashlib
+import os</p>
+
+<p>print 'The time is:', time.time() #返回一个自公元开始的总秒数(浮点型).精度是依赖于不同的系统平台的
+print '-'*30
+print 'The time is      :', time.ctime() 和上面的一样，但是输出的结果利于我们阅读
+later = time.time() + 15
+print '15 secs from now :', time.ctime(later)
+print '-'*30
+data = open(__file__, 'rt').read()
+for i in range(5):
+    h = hashlib.sha1()
+    print time.ctime(), ': %0.3f %0.3f' % (time.time(), time.clock()) #time()函数返回的是现实世界的时间, 而clock()函数返回的是cpu时钟. clock()函数返回值常用作性能测试
+    for i in range(100000):
+        h.update(data)
+    cksum = h.digest()
+for i in range(6, 1, -1):
+    print '%s %0.2f %0.2f' % (time.ctime(), time.time(), time.clock()) #如果程序没有做任何事情, 处理器时钟是不会计时.
+    print 'Sleeping', i
+    time.sleep(i) #控制当前的线程, 让它等待直到系统重新唤醒它, 如果应用中只有一个线程, 那么它会阻塞当前进程, 使其不做任何事情.
+print '-'*30
+print 'gmtime   :', time.gmtime() #返回当前的UTC时间
+print 'localtime:', time.localtime() #返回当前时间域的当前时间
+print 'mktime   :', time.mktime(time.localtime()) #接收struct_time参数并将其转化为浮点型来表示.</p>
+
+<p>print
+t = time.localtime()
+print 'Day of month:', t.tm_mday #当前时间的月份
+print ' Day of week:', t.tm_wday #当前时间的周数
+print ' Day of year:', t.tm_yday #当前时间的年份
+print '-'*30
+now = time.ctime()
+print now
+parsed = time.strptime(now) #strptime()和strftime()可以使struct_time和时间值字符串相互转化
+print parsed
+print time.strftime("%a %b %d %H:%M:%S %Y", parsed) #输出和输入字符串不是完全的一致, 主要表现在月份前加了一个0前缀.
+def show_zone_info():
+    print '\tTZ    :', os.environ.get('TZ', '(not set)')
+    print '\ttzname:', time.tzname
+    print '\tZone  : %d (%d)' % (time.timezone, (time.timezone / 3600))
+    print '\tDST   :', time.daylight
+    print '\tTime  :', time.ctime()
+    print</p>
+
+<p>print 'Default :'
+show_zone_info() #我们这里没有设置时区</p>
+
+<p>for zone in [ 'US/Eastern','GMT', 'Asia/Shanghai' ]:
+    os.environ['TZ'] = zone
+    time.tzset() #首先设置一个时区  改变时区设置是不会改变实际时间, 只会改变表示时间的方法
+    print zone, ':'
+    show_zone_info()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+The time is: 1340011050.99
+------------------------------
+The time is      : Mon Jun 18 17:17:30 2012
+15 secs from now : Mon Jun 18 17:17:45 2012
+------------------------------
+Mon Jun 18 17:17:30 2012 : 1340011050.989 0.010
+Mon Jun 18 17:17:31 2012 : 1340011051.483 0.500
+Mon Jun 18 17:17:31 2012 : 1340011051.958 0.980
+Mon Jun 18 17:17:32 2012 : 1340011052.431 1.450
+Mon Jun 18 17:17:32 2012 : 1340011052.907 1.920
+Mon Jun 18 17:17:33 2012 1340011053.38 2.40
+Sleeping 6
+Mon Jun 18 17:17:39 2012 1340011059.39 2.40
+Sleeping 5
+Mon Jun 18 17:17:44 2012 1340011064.39 2.40
+Sleeping 4
+Mon Jun 18 17:17:48 2012 1340011068.40 2.40
+Sleeping 3
+Mon Jun 18 17:17:51 2012 1340011071.40 2.40
+Sleeping 2
+------------------------------
+gmtime   : time.struct_time(tm_year=2012, tm_mon=6, tm_mday=18, tm_hour=9, tm_min=17, tm_sec=53, tm_wday=0, tm_yday=170, tm_isdst=0)
+localtime: time.struct_time(tm_year=2012, tm_mon=6, tm_mday=18, tm_hour=17, tm_min=17, tm_sec=53, tm_wday=0, tm_yday=170, tm_isdst=0)
+mktime   : 1340011073.0</p>
+
+<p>Day of month: 18
+Day of week: 0
+Day of year: 170
+------------------------------
+Mon Jun 18 17:17:53 2012
+time.struct_time(tm_year=2012, tm_mon=6, tm_mday=18, tm_hour=17, tm_min=17, tm_sec=53, tm_wday=0, tm_yday=170, tm_isdst=-1)
+Mon Jun 18 17:17:53 2012
+Default :
+TZ    : (not set)
+tzname: ('CST', 'CST')
+Zone  : -28800 (-8)
+DST   : 0
+Time  : Mon Jun 18 17:17:53 2012</p>
+
+<p>US/Eastern :
+TZ    : US/Eastern
+tzname: ('EST', 'EDT')
+Zone  : 18000 (5)
+DST   : 1
+Time  : Mon Jun 18 05:17:53 2012</p>
+
+<p>GMT :
+TZ    : GMT
+tzname: ('GMT', 'GMT')
+Zone  : 0 (0)
+DST   : 0
+Time  : Mon Jun 18 09:17:53 2012</p>
+
+<p>Asia/Shanghai :
+TZ    : Asia/Shanghai
+tzname: ('CST', 'CST')
+Zone  : -28800 (-8)
+DST   : 0
+Time  : Mon Jun 18 17:17:53 2012</p>

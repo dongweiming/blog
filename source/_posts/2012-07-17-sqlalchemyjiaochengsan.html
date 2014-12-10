@@ -1,0 +1,405 @@
+---
+layout: post
+title: SQLAlchemy教程(三)
+categories:
+- python
+- SQLAlchemy
+tags:
+- SQLAlchemy
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 自定义表结构类型:</strong></p>
+
+<p>from sqlalchemy import types</p>
+
+<p>class MyCustomEnum(types.TypeDecorator):  #自定义的类型继承至types.TypeDecorator</p>
+
+<p>impl=types.Integer  #实现指定的类型int</p>
+
+<p>def __init__(self, enum_values, *l, **kw):
+types.TypeDecorator.__init__(self, *l, **kw)
+self._enum_values = enum_values</p>
+
+<p>def convert_bind_param(self, value, engine):  #必须含有这个方法,转换python语言为SQL
+result = self.impl.convert_bind_param(value, engine)
+if result not in self._enum_values:
+raise TypeError, (
+"Value %s must be one of %s" % (result, self._enum_values))
+return result</p>
+
+<p>def convert_result_value(self, value, engine):  #必须含有这个方法,通过db的api把SQL转换成python语言
+'Do nothing here'
+return self.impl.convert_result_value(value, engine)</p>
+
+<p>看一个例子:</p>
+
+<p><pre class="sh_python">
+from sqlalchemy import types
+from sqlalchemy.databases import sqlite
+class MyCustomEnum(types.TypeDecorator):
+    impl = types.Integer
+    def __init__(self, enum_values, *l, **kw):
+        types.TypeDecorator.__init__(self, *l, **kw)
+        self._enum_values = enum_values
+    def bind_processor(self, dialect): #如果提供这个方法会替代convert_bind_param( )和convert_result_value( ) 
+        impl_processor = self.impl.bind_processor(dialect)
+        if impl_processor:
+            def processor(value):
+                result = impl_processor(value)
+                assert value in self._enum_values, \
+                    "Value %s must be one of %s" % (result,
+                    self._enum_values)
+                return result
+        else:
+            def processor(value):
+                assert value in self._enum_values, \
+                    "Value %s must be one of %s" % (value,
+                     self._enum_values)
+                return value
+        return processor
+mce=MyCustomEnum([1,2,3])
+processor = mce.bind_processor(sqlite.dialect())
+print processor(1) #返回1 
+print processor(5) #返回错误,因为不是1,2,3中的数据
+</pre>
+你甚至可以直接定义自定的TypeDecorator</p>
+
+<p>class NewType(types.TypeEngine): #TypeDecorator继承自types.TypeEngine</p>
+
+<p>def __init__(self, *args):
+self._args = args</p>
+
+<p>def get_col_spec(self):  #create_table( )会用到这个方法
+return 'NEWTYPE(%s)' % ','.join(self._args)</p>
+
+<p>def convert_bind_param(self, value, engine):  #这个必须设置
+return value</p>
+
+<p>def convert_result_value(self, value, engine):  #这个也必须设置
+return value</p>
+
+<p>2 SQL语句在交互模式下的例子:</p>
+
+<p>dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17)
+[GCC 4.5.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; from sqlalchemy import Table, MetaData, Column, ForeignKey, Integer, String, Unicode, DateTime
+&gt;&gt;&gt; metadata=MetaData()
+&gt;&gt;&gt; simple_table = Table(  #一个简单的表结构
+...     'simple', metadata,
+...     Column('id', Integer, primary_key=True),
+...     Column('col1', Unicode(20)))
+&gt;&gt;&gt;
+&gt;&gt;&gt; stmt = simple_table.insert()  #插入数据操作的实例
+&gt;&gt;&gt; print stmt #打印这个实例
+INSERT INTO simple (id, col1) VALUES (:id, :col1) #里面包含需要替换的变量
+&gt;&gt;&gt; compiled_stmt = stmt.compile()  #编译语句
+&gt;&gt;&gt; print compiled_stmt.params #转成了字典得方式
+{'id': None, 'col1': None}
+&gt;&gt;&gt; from sqlalchemy import create_engine
+&gt;&gt;&gt; engine = create_engine('sqlite://')
+&gt;&gt;&gt; simple_table.create(bind=engine)  #创建table
+&gt;&gt;&gt; engine.execute(stmt, col1="Foo") #给语句添加值
+/usr/lib/python2.7/site-packages/SQLAlchemy-0.7.8-py2.7-linux-i686.egg/sqlalchemy/engine/default.py:463: SAWarning: Unicode type received non-unicode bind param value.
+param.append(processors[key](compiled_params[key]))
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8376c8c&gt;
+&gt;&gt;&gt; metadata.bind = engine  #和上面效果一样,给语句添加值
+&gt;&gt;&gt; stmt.execute(col1="Bar")
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8376f4c&gt;
+&gt;&gt;&gt; stmt = simple_table.insert(values=dict(col1="Initial value")) #这次插入已经设置了值
+&gt;&gt;&gt; print stmt
+INSERT INTO simple (col1) VALUES (?)
+&gt;&gt;&gt; compiled_stmt = stmt.compile()
+&gt;&gt;&gt; print compiled_stmt.params
+{'col1': 'Initial value'}
+&gt;&gt;&gt; stmt = simple_table.insert()
+&gt;&gt;&gt; stmt.execute(col1="First value")
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x838832c&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt; stmt.execute(col1="Second value")
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x838844c&gt;
+&gt;&gt;&gt; stmt.execute(col1="Third value") #这样一行一行插入真是费劲
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x838856c&gt;
+&gt;&gt;&gt; stmt.execute([dict(col1="Fourth Value"), #可以一次插入多行
+...     dict(col1="Fifth Value"),
+...     dict(col1="Sixth Value")])
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x83886ac&gt;
+&gt;&gt;&gt; from sqlalchemy import text
+&gt;&gt;&gt; stmt = simple_table.update(
+...     whereclause=text("col1='First value'"),
+...     values=dict(col1='1st Value'))  #执行col1是First value的条目设置值为1st Value
+&gt;&gt;&gt; stmt.execute()
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x838878c&gt;
+&gt;&gt;&gt; stmt = simple_table.update(text("col1='Second value'")) #寻找col1是Second value的条目
+&gt;&gt;&gt; stmt.execute(col1='2nd Value') #执行更新时,设置其值,想过和上面的一样
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8376f4c&gt;
+&gt;&gt;&gt; stmt = simple_table.update(text("col1='Third value'"))
+&gt;&gt;&gt; print stmt
+UPDATE simple SET id=?, col1=? WHERE col1='Third value'
+&gt;&gt;&gt; engine.echo = True #设置打印调试日志
+&gt;&gt;&gt; stmt.execute(col1='3rd value')
+2012-07-17 15:16:59,231 INFO sqlalchemy.engine.base.Engine UPDATE simple SET col1=? WHERE col1='Third value'
+2012-07-17 15:16:59,245 INFO sqlalchemy.engine.base.Engine ('3rd value',)
+2012-07-17 15:16:59,245 INFO sqlalchemy.engine.base.Engine COMMIT
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x83767ec&gt;</p>
+
+<p>&gt;&gt;&gt; stmt = simple_table.delete(  #删除
+...     text("col1='Second value'"))
+&gt;&gt;&gt; stmt.execute()
+2012-07-17 15:21:03,806 INFO sqlalchemy.engine.base.Engine DELETE FROM simple WHERE col1='Second value'
+2012-07-17 15:21:03,806 INFO sqlalchemy.engine.base.Engine ()
+2012-07-17 15:21:03,806 INFO sqlalchemy.engine.base.Engine COMMIT
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8376a0c&gt;
+&gt;&gt;&gt; from sqlalchemy import select
+&gt;&gt;&gt; stmt = select([simple_table.c.col1])  #查询col1这个字段
+&gt;&gt;&gt; for row in stmt.execute():
+...     print row
+(u'Foo',)
+(u'Bar',)
+(u'1st Value',)
+(u'2nd Value',)
+(u'3rd value',)
+(u'Fourth Value',)
+(u'Fifth Value',)
+(u'Sixth Value',)</p>
+
+<p>&gt;&gt;&gt; stmt = simple_table.select() #和上面的区别是这是条目全部显示
+&gt;&gt;&gt; for row in stmt.execute():  #这2句也可以这样表示stmt = select( simple_table])
+...     print row
+...
+(1, u'Foo')
+(2, u'Bar')
+(3, u'1st Value')
+(4, u'2nd Value')
+(5, u'3rd value')
+(6, u'Fourth Value')
+(7, u'Fifth Value')
+(8, u'Sixth Value')
+&gt;&gt;&gt; x = simple_table.c.col1=="Foo"
+&gt;&gt;&gt; print type(x)
+&lt;class 'sqlalchemy.sql.expression._BinaryExpression'&gt;
+&gt;&gt;&gt; print x
+simple.col1 = :col1_1
+&gt;&gt;&gt; expr = simple_table.c.col1 + "-col1"  #它还支持运算符
+&gt;&gt;&gt; print expr
+simple.col1 || :col1_1
+&gt;&gt;&gt; from sqlalchemy.databases import mysql
+&gt;&gt;&gt; print expr.compile(dialect=mysql.MySQLDialect())
+concat(simple.col1, %s) #在不同的数据库软件,效果不同</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy import func
+&gt;&gt;&gt; print func.now()
+now()
+&gt;&gt;&gt; print func.current_timestamp
+&lt;sqlalchemy.sql.expression._FunctionGenerator object at 0x83888cc&gt;
+&gt;&gt;&gt; print func._(text('a=b'))
+(a=b)</p>
+
+<p>注:sqlalchemy支持in,op,startwith,endwith,between,like等运算</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy import bindparam  #自定义绑定的词
+&gt;&gt;&gt; stmt = select([simple_table.c.col1],
+...     whereclause=simple_table.c.col1==bindparam('test'))  #用test替换原来的col1
+&gt;&gt;&gt; print stmt
+SELECT simple.col1
+FROM simple
+WHERE simple.col1 = ? #这里依然是col1
+&gt;&gt;&gt; print stmt.execute(test='Foo').fetchall()
+[(u'Foo',)]</p>
+
+<p>&gt;&gt;&gt; stmt = simple_table.select(order_by=[simple_table.c.col1])  #更具col1,升序排序
+&gt;&gt;&gt; print stmt
+SELECT simple.id, simple.col1
+FROM simple ORDER BY simple.col1
+&gt;&gt;&gt; print stmt.execute().fetchall()
+[(3, u'1st Value'), (4, u'2nd Value'), (5, u'3rd value'), (2, u'Bar'), (7, u'Fifth Value'), (1, u'Foo'), (6, u'Fourth Value'), (8, u'Sixth Value')]
+&gt;&gt;&gt; from sqlalchemy import desc
+&gt;&gt;&gt; stmt = simple_table.select(order_by=[desc(simple_table.c.col1)]) #根据col1,降序排序
+&gt;&gt;&gt; print stmt
+SELECT simple.id, simple.col1
+FROM simple ORDER BY simple.col1 DESC
+&gt;&gt;&gt; print stmt.execute().fetchall()
+[(8, u'Sixth Value'), (6, u'Fourth Value'), (1, u'Foo'), (7, u'Fifth Value'), (2, u'Bar'), (5, u'3rd value'), (4, u'2nd Value'), (3, u'1st Value')]
+注:distinct=True去重复,效果类似于SELECT DISTINCT</p>
+
+<p>&gt;&gt;&gt; stmt = simple_table.select(offset=1, limit=1) #offset设置偏移,这里就是略过第一个,返回第二个.limit设置返回多少个条目
+&gt;&gt;&gt; print stmt
+SELECT simple.id, simple.col1
+FROM simple
+LIMIT ? OFFSET ?
+&gt;&gt;&gt; print stmt.execute().fetchall()
+[(2, u'Bar')]
+看下面的例子:</p>
+
+<p>"Persons" 表：
+<table class="dataintable">
+<tbody>
+<tr>
+<th>Id_P</th>
+<th>LastName</th>
+<th>FirstName</th>
+<th>Address</th>
+<th>City</th>
+</tr>
+<tr>
+<td>1</td>
+<td>Adams</td>
+<td>John</td>
+<td>Oxford Street</td>
+<td>London</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Bush</td>
+<td>George</td>
+<td>Fifth Avenue</td>
+<td>New York</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Carter</td>
+<td>Thomas</td>
+<td>Changan Street</td>
+<td>Beijing</td>
+</tr>
+</tbody>
+</table>
+"Orders" 表：
+<table class="dataintable">
+<tbody>
+<tr>
+<th>Id_O</th>
+<th>OrderNo</th>
+<th>Id_P</th>
+</tr>
+<tr>
+<td>1</td>
+<td>77895</td>
+<td>3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>44678</td>
+<td>3</td>
+</tr>
+<tr>
+<td>3</td>
+<td>22456</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>24562</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>34764</td>
+<td>65</td>
+</tr>
+</tbody>
+</table>
+现在，我们希望列出所有的人，以及他们的定购号码:
+SELECT Persons.LastName, Persons.FirstName, Orders.OrderNo
+FROM Persons
+LEFT JOIN Orders #将orders表join进来
+ON Persons.Id_P=Orders.Id_P #关系联系
+ORDER BY Persons.LastName #排序
+书中的例子是这样的:
+SELECT store.name
+FROM store
+JOIN product_price ON store.id=product_price.store_id
+JOIN product ON product_price.sku=product.sku
+WHERE product.msrp != product_price.price;
+转换成sqlalchemy语句:
+&gt;&gt;&gt;from_obj = store_table.join(product_price_table).join(product_table)
+&gt;&gt;&gt; query = store_table.select()
+&gt;&gt;&gt; query = query.select_from(from_obj)
+&gt;&gt;&gt; query = query.where(product_table.c.msrp != product_price_table.c.price)
+&gt;&gt;&gt; print query
+SELECT store.id, store.name
+FROM store JOIN product_price ON store.id = product_price.store_id JOIN product ON product.sku = product_price.sku
+WHERE product.msrp != product_price.price
+&gt;&gt;&gt; print query.column('product.sku')
+SELECT store.id, store.name, product.sku
+FROM store JOIN product_price ON store.id = product_price.store_id  JOIN product ON product.sku = product_price.sku
+WHERE product.msrp != product_price.price
+&gt;&gt;&gt; query2 = select([store_table, product_table.c.sku],from_obj=[from_obj],whereclause=(product_table.c.msrp !=product_price_table.c.price))
+&gt;&gt;&gt; print query2
+SELECT store.id, store.name, product.sku
+FROM store JOIN product_price ON store.id = product_price.store_id JOIN product ON product.sku = product_price.sku
+WHERE product.msrp != product_price.price
+&gt;&gt;&gt; query = product_table.select(and_(product_table.c.msrp &gt; 10.00 ,product_table.c.msrp &lt; 20.00)) #范围查询
+&gt;&gt;&gt; print query
+SELECT product.sku, product.msrp
+FROM product
+WHERE product.msrp &gt; ? AND product.msrp &lt; ?
+&gt;&gt;&gt; for r in query.execute():
+...print r
+(u'123', Decimal("12.34"))</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy import intersect</p>
+
+<p>&gt;&gt;&gt; query0 = product_table.select(product_table.c.msrp &gt; 10.00)
+&gt;&gt;&gt; query1 = product_table.select(product_table.c.msrp &lt; 20.00)
+&gt;&gt;&gt; query = intersect(query0, query1) #使用 intersect添加多query
+&gt;&gt;&gt; print query
+SELECT product.sku, product.msrp</p>
+
+<p>employee_table = Table(
+'employee', metadata,
+Column('id', Integer, primary_key=True),
+Column('manager', None, ForeignKey('employee.id')),
+Column('name', String(255)))</p>
+
+<p>给设定alias:</p>
+
+<p>比如想实现以下SQL</p>
+
+<p>SELECT employee.name
+FROM employee, employee AS manager
+WHERE employee.manager_id = manager.id
+AND manager.name = 'Fred'</p>
+
+<p>&gt;&gt;&gt; manager = employee_table.alias('mgr')
+&gt;&gt;&gt; stmt = select([employee_table.c.name],
+...
+and_(employee_table.c.manager_id==manager.c.id,
+...
+manager.c.name=='Fred'))
+&gt;&gt;&gt; print stmt
+SELECT employee.name
+FROM employee, employee AS mgr
+WHERE employee.manager_id = mgr.id AND mgr.name = ?</p>
+
+<p>&gt;&gt;&gt; manager = employee_table.alias()  #自动alias
+&gt;&gt;&gt; stmt = select([employee_table.c.name],
+...and_(employee_table.c.manager_id==manager.c.id,
+...manager.c.name=='Fred'))
+&gt;&gt;&gt; print stmt
+SELECT employee.name
+FROM employee, employee AS employee_1
+WHERE employee.manager_id = employee_1.id AND employee_1.name = ?</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>from sqlalchemy import types
+class MyCustomEnum(types.TypeDecorator):
+impl=types.Integer
+def __init__(self, enum_values, *l, **kw):
+types.TypeDecorator.__init__(self, *l, **kw)
+self._enum_values = enum_values
+def convert_bind_param(self, value, engine):
+result = self.impl.convert_bind_param(value, engine)
+if result not in self._enum_values:
+raise TypeError, (
+"Value %s must be one of %s" % (result, self._enum_values))
+Application-Specific Custom Types | 63return result
+def convert_result_value(self, value, engine):
+'Do nothing here'
+return self.impl.convert_result_value(value, engine)</p>

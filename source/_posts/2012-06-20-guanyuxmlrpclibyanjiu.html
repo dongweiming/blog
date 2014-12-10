@@ -1,0 +1,120 @@
+---
+layout: post
+title: 关于xmlrpclib研究
+categories:
+- python模块研究
+tags:
+- xmlrpclib
+published: true
+comments: true
+indexer: true
+---
+<p>&nbsp;</p>
+
+<p>前言：xmlrpclib是python中用于xmlrpc调用的模块</p>
+
+<p>以下例子的服务器端：</p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
+import cPickle as pickle
+import datetime</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True, allow_none=True)
+server.register_introspection_functions()
+server.register_multicall_functions()</p>
+
+<p>class ExampleService:</p>
+
+<p>    def ping(self):
+        return True </p>
+
+<p>    def now(self):
+        return datetime.datetime.now()  #返回当前时间</p>
+
+<p>    def show_type(self, arg):
+        return (str(arg), str(type(arg)), arg)</p>
+
+<p>    def raises_exception(self, msg):
+        raise RuntimeError(msg)</p>
+
+<p>    def send_back_binary(self, bin):
+        data = bin.data
+        response = Binary(data)
+        return response</p>
+
+<p>server.register_instance(ExampleService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p><pre class="sh_python">
+import xmlrpclib
+import datetime</p>
+
+<p>server = xmlrpclib.ServerProxy('http://localhost:9000', verbose=True) #返回一个连接服务器的实例,verbose=True显示调试信息，否则直接输出结果
+                                                #encoding='gbk':默认的编码是utf－8，这里可以修改成'gbk'。
+print 'Ping:', server.ping()   #上面定义 返回True  这里就会显示：True
+server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=True) #allow_none=True便表示容许把none自动转化成'nil'
+print 'Allowed:', server.show_type(None)</p>
+
+<p>server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=False) 
+print 'Not allowed:', server.show_type(None) #触发TypeError
+for t, v in [ ('boolean', True),   #XML-RPC协议识别有限的常见的数据类型
+              ('integer', 1),
+              ('floating-point number', 2.5),
+              ('string', 'some text'), 
+              ('datetime', datetime.datetime.now()),
+              ('array', ['a', 'list']),
+              ('array', ('a', 'tuple')),
+              ('structure', {'a':'dictionary'}),
+            ]:
+    print '%-22s:' % t, server.show_type(v)
+class MyObj:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+    def __repr__(self):
+        return 'MyObj(%s, %s)' % (repr(self.a), repr(self.b))
+o = MyObj(1, 'b goes here')
+print 'o=', o
+print server.show_type(o)
+o2 = MyObj(2, o)  #传递对象给o2 ，把{'a': 1, 'b': 'b goes here'} 传递给key：b的值
+print 'o2=', o2
+print server.show_type(o2)
+o = MyObj(1, 'b goes here')
+print 'Local:', o, id(o) 
+print 'As object:', server.show_type(o) 
+p = pickle.dumps(o) #数据持久化
+b = xmlrpclib.Binary(p)  #二进制模式传送
+r = server.send_back_binary(b) #返回数据
+o2 = pickle.loads(r.data)  #还原持久化
+print 'From pickle:', o2, id(o2)  #数据相同，但是id不同 因为是不一样的对象
+try:
+    server.raises_exception('A message')
+except Exception, err:
+    print 'Fault code:', err.faultCode  #触发异常的code
+    print 'Message   :', err.faultString #触发异常相应的内容
+s = 'This is a string with control characters' + '\0' #包含无效的XML字符
+print 'Local string:', s</p>
+
+<p>data = xmlrpclib.Binary(s) #需要传递二进制数据，最好是使用<tt>二进制</tt>类编码
+print 'As binary:', server.send_back_binary(data)  #正常打印</p>
+
+<p>print 'As string:', server.show_type(s) #但是xml不识别  触发异常
+multicall = xmlrpclib.MultiCall(server)  #同时查询某一个连接对象的返回
+multicall.ping()  #返回：  0：True   前面的数值自增长
+multicall.show_type(1)
+multicall.raises_exception('Next to last call stops execution') #这里一个触发，multicall就不再继续了
+multicall.show_type('string')</p>
+
+<p>for i, r in enumerate(multicall()):
+    print i, r
+</pre></p>
+
+<p>&nbsp;</p>

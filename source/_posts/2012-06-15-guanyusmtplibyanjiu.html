@@ -1,0 +1,51 @@
+---
+layout: post
+title: 关于smtplib研究
+categories:
+- python模块研究
+tags:
+- smtplib
+published: true
+comments: true
+indexer: true
+---
+<p>前言：smtplib是一个邮件传输协议的客户端模块，它与smtp服务器交互, 提供邮件发送</p>
+
+<p><pre class="sh_python">
+import smtplib
+import email.utils
+from email.mime.text import MIMEText
+import getpass</p>
+
+<p>to_email = raw_input('Recipient: ') #提示输入收件人
+servername = raw_input('Mail server name: ')  #输入服务器 比如 mail.dongwm.com
+username = raw_input('Mail user name: ') #用户名
+password = getpass.getpass("%s's password: " % username) #输入登录密码</p>
+
+<p>msg = MIMEText('Test message from dongwm.') #主体
+msg.set_unixfrom('author') 
+msg['To'] = email.utils.formataddr(('Recipient', to_email)) 
+msg['From'] = email.utils.formataddr(('Author', 'test@dongwm.com')) #设置发件人标识，和邮箱地址
+msg['Subject'] = 'Test from dongwm' #完成邮件内容</p>
+
+<p>server = smtplib.SMTP(servername)
+try:
+    server.set_debuglevel(True)</p>
+
+<p>    server.ehlo() #鉴定并询问服务器支持何种类型扩展</p>
+
+<p>    if server.has_extn('STARTTLS'):  #如果包含标识需要加密
+        server.starttls()
+        server.ehlo() # 重新确定自己的连接特性
+    server.login(username, password)
+    server.sendmail('author@example.com', [to_email], msg.as_string())
+finally:
+    server.quit()
+</pre></p>
+
+<p>注：可以使用一个命令'VRFY'验证邮箱地址，比如是否有这个用户，但是为了防止恶意的黑客扫描用户，一般是关闭的，假如打开这个功能：</p>
+
+<p>print server.verify('unknownuser')</p>
+
+<p>结果就是：
+unknownuser : (550, '5.1.1 &lt;unknownuser&gt;... User unknown')</p>

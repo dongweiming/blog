@@ -1,0 +1,189 @@
+---
+layout: post
+title: 关于rsync
+categories:
+- linux基础
+tags:
+- rsync
+published: true
+comments: true
+indexer: true
+---
+<p><strong>什么是rsync：
+它是一个linux系统下的文件同步传输工具，备份位置可以在本地也可以在远程服务器上
+rsync的优点：
+效率：除第一次是对目标目录全部内容复制外，下一次只传输变化的的文件到目标位置。
+安全：可以在SSH的加密传输数据中使用。
+用户体验：对安装执行没特殊要求。</strong></p>
+
+<p><strong>rsync的语法格式：</strong>
+rsync options source destination<!--more--></p>
+
+<p><strong>1  同步一个本地服务器上不同的目录：</strong>
+<pre class="sh_bash">[root@server ~]# rsync -zvr /root/localhost/www.dongwm.com/ /root/test/dongwm //其中-z表示开启压缩功能，-v表示打印详细信息，-r表示递归同步
+building file list ... done
+created directory /root/test/dongwm
+index.html
+robots.txt
+sent 10135 bytes  received 64 bytes  20398.00 bytes/sec
+total size is 47394  speedup is 4.65</pre>
+从下面内容可见，同步的文件没有同步时间戳：
+<pre class="sh_bash">[root@server ~]# ll /root/localhost/www.dongwm.com/index.html /root/test/dongwm/index.html
+-rw-r--r-- 1 root root 47332 Jan 21 20:19 /root/localhost/www.dongwm.com/index.html
+-rw-r--r-- 1 root root 47332 Mar 15 01:12 /root/test/dongwm/index.html</pre></p>
+
+<p><strong>2 同步时间戳：使用-a选项：</strong>
+<pre class="sh_bash">[root@server ~]# rsync -zva /root/localhost/www.dongwm.com/ /root/test/dongwm
+building file list ... done
+./
+index.html
+robots.txt</p>
+
+<p>sent 10149 bytes  received 70 bytes  20438.00 bytes/sec
+total size is 47394  speedup is 4.64
+[root@server ~]# ll /root/localhost/www.dongwm.com/index.html /root/test/dongwm/index.html
+-rw-r--r-- 1 root root 47332 Jan 21 20:19 /root/localhost/www.dongwm.com/index.html
+-rw-r--r-- 1 root root 47332 Jan 21 20:19 /root/test/dongwm/index.html</pre></p>
+
+<p><strong>3  从本地同步文件到远程：</strong>
+<pre class="sh_bash">[root@server test]# rsync -zva /root/test  root@192.168.9.104:/root
+root@192.168.9.104's password:
+building file list ... done
+test/
+test/1.txt
+test/2.txt
+test/3.txt
+注：同步后将在9.104端建立/root/test目录并且将本地test目录下文件拷贝到对端test目录</pre></p>
+
+<p><strong>4 从远端服务器同步文件到本地：</strong>
+<pre class="sh_bash">[root@client ~]# rsync -zva  root@192.168.9.100:/root/test   /root/
+root@192.168.9.100's password:
+receiving file list ... done
+test/
+test/1.txt
+test/2.txt
+test/3.txt</p>
+
+<p>sent 92 bytes  received 261 bytes  64.18 bytes/sec
+total size is 29  speedup is 0.08
+<span style="color: #ff0000;">注：注意要拷贝到的服务器的目录不要写全路径，要不然：
+[root@client ~]# rsync -zva  root@192.168.9.100:/root/test   /root/test
+就成了将三个txt文件拷贝到/root/test/test目录下了</span></pre></p>
+
+<p><strong>5 当被同步服务器上文件修改后不覆盖：</strong>
+<pre class="sh_bash">[root@server ~]# ls -lrt  /root/test/3.txt
+-rw-r--r-- 1 root root 38 03-16 09:29 /root/test/3.txt
+然后我修改这个文件
+<pre class="sh_bash">[root@client ~]# ls -lrt  /root/test/3.txt
+-rw-r--r-- 1 root root 42 03-16 09:31 /root/test/3.txt</p>
+
+<p>[root@server test]# rsync -zvau /root/test  root@192.168.9.104:/root
+root@192.168.9.104's password:
+building file list ... done
+test/</p>
+
+<p>查看文件未变：
+[root@client ~]# ls -lrt  /root/test/3.txt
+-rw-r--r-- 1 root root 42 03-16 09:31 /root/test/3.txt
+注：这里修改<span style="color: #ff0000;">客户端</span>的文件，同步后不覆盖此文件使用-u</pre></p>
+
+<p><strong>6 显示同步过程详细信息：</strong></p>
+
+<p><pre class="sh_bash">[root@server test]# rsync -zva --progress /root/test  root@192.168.9.104:/root
+root@192.168.9.104's password:
+building file list ...
+16 files to consider
+test/
+test/.autobench.conf
+1697 100%    0.00kB/s    0:00:00 (xfer#1, to-check=14/16)
+test/.bash_history
+30512 100%   29.10MB/s    0:00:00 (xfer#2, to-check=13/16)
+test/.bash_logout
+24 100%   23.44kB/s    0:00:00 (xfer#3, to-check=12/16)
+test/.bash_profile
+191 100%  186.52kB/s    0:00:00 (xfer#4, to-check=11/16)
+test/.bashrc
+190 100%   92.77kB/s    0:00:00 (xfer#5, to-check=10/16)
+test/.cshrc
+100 100%   48.83kB/s    0:00:00 (xfer#6, to-check=9/16)
+test/.e.swp
+12288 100%    5.86MB/s    0:00:00 (xfer#7, to-check=8/16)
+test/.mysql_history
+356 100%  115.89kB/s    0:00:00 (xfer#8, to-check=7/16)
+test/.rnd
+1024 100%  333.33kB/s    0:00:00 (xfer#9, to-check=6/16)
+test/.tcshrc
+129 100%   31.49kB/s    0:00:00 (xfer#10, to-check=5/16)
+test/.viminfo
+7594 100%    1.81MB/s    0:00:00 (xfer#11, to-check=4/16)
+test/.vimrc
+5476 100%    1.04MB/s    0:00:00 (xfer#12, to-check=3/16)
+test/3.txt
+32 100%    5.21kB/s    0:00:00 (xfer#13, to-check=0/16)</p>
+
+<p>sent 13678 bytes  received 318 bytes  3998.86 bytes/sec
+total size is 59629  speedup is 4.26
+</pre>
+<strong>7 删除源服务器上没有的，不需要同步的文件：
+当客户端添加了新文件，源服务器同步时为找到本文件，将删除之：</strong>
+<pre class="sh_bash">[root@client ~]# touch /root/test/new-file.txt
+[root@client ~]# rsync -zva  --delete root@192.168.9.100:/root/test   /root/
+root@192.168.9.100's password:
+receiving file list ... done
+deleting test/new-file.txt
+test/</p>
+
+<p>sent 26 bytes  received 332 bytes  79.56 bytes/sec
+total size is 59629  speedup is 166.56
+</pre>
+<strong>8 当源文件新增文件，客户端只想同步已有的文件使用--existing：</strong>
+<pre class="sh_bash">[root@server test]# touch /root/test/new-file.txt
+[root@client ~]# rsync -zva --existing root@192.168.9.100:/root/test   /root/
+root@192.168.9.100's password:
+receiving file list ... done
+test/</p>
+
+<p>sent 26 bytes  received 355 bytes  108.86 bytes/sec
+total size is 59629  speedup is 156.51
+看 客户端没有同步/root/test/new-file.txt文件！</pre>
+<strong>9 显示源和目的服务器的不同：</strong>
+<pre class="sh_bash">[root@server test]# ll /root/test
+total 12
+-rw-r--r-- 1 root root  8 Mar 15 18:11 1.txt
+-rw-r--r-- 1 root root  8 Mar 15 18:11 2.txt
+-rw-r--r-- 1 root root 32 Mar 15 18:28 3.txt
+[root@client ~]# ll /root/test
+总计 12
+-rw-r--r-- 1 test test  8 03-16 09:11 1.txt
+-rw-r--r-- 1 root root 20 03-16 10:12 2.txt
+-rw-r--r-- 1 root root 32 03-16 09:28 3.txt
+注意2点：
+第一 1.txt文件所有者权限
+第二 2.txt文件的大小
+[root@client ~]# rsync -zvai  root@192.168.9.100:/root/test   /root/
+root@192.168.9.100's password:
+receiving file list ... done
+.d..t.... test/
+.f....og. test/1.txt
+&gt;f.st.... test/2.txt</p>
+
+<p>sent 60 bytes  received 387 bytes  127.71 bytes/sec
+total size is 59629  speedup is 133.40
+其中：
+&lt;b&gt;f 这是一个文件
+s 文件大小改变
+t 时间戳改变
+o 使用者改变
+g 使用组改变&lt;/b&gt;</pre>
+
+<strong>10  只同步指定条件的文件：</strong>
+此例同步文件以”1“开头的文件--即1.txt
+<pre class="sh_bash">[root@server test]# rsync -zva --include '1*' --exclude '*'  /root/test/  root@192.168.9.104:/root
+root@192.168.9.104's password:
+building file list ... done
+./
+1.txt</p>
+
+<p>sent 118 bytes  received 48 bytes  47.43 bytes/sec
+total size is 8  speedup is 0.05
+注：本例我修改了一点：以前写源目录是/root/test  这次是/root/test/  多了一个下划线，要不然他会发现test不是1开头 ，而1.txt是其子目录，而不去同步</pre></p>

@@ -1,0 +1,78 @@
+---
+layout: post
+title: debian系dpkg和redhat系rpm命令总结
+categories:
+- linux基础
+tags:
+- dpkg
+published: true
+comments: true
+indexer: true
+---
+<p>前言：最近突然用ubuntu，发现好多包管理命令dpkg的用法很生疏了，在这里正好总结一下，以及和rpm作一些相似作用的列举</p>
+
+<p>1 软件包的信息  将会列出这个软件包的详细资料</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpi rubygem-capistrano-2.11.2-1.2.i586.rpm
+dongwm@dongwm-pc:~$ dpkg-deb -I capistrano_2.5.9-1_all.deb</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -s  capistrano
+或者</p>
+
+<p>dongwm@dongwm-pc:~$  dpkg-query -s capistrano
+2 软件包内文件内容  列出安装后的所有文件的全路径</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpl rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg-deb -c capistrano_2.5.9-1_all.deb |more</p>
+
+<p>或者</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg --contents capistrano_2.5.9-1_all.deb</p>
+
+<p>3 软件包的依赖关系</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpR rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg-deb -f capistrano_2.5.9-1_all.deb depends //depends
+Depends: ruby1.8, libnet-ssh2-ruby1.8, libnet-ssh-gateway-ruby1.8, libnet-sftp2-ruby1.8, libnet-scp-ruby1.8, libhighline-ruby1.8</p>
+
+<p>4 数据库查询 当每个软件包安装在Linux系统后，安装文件都会列到数据库</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -qa capistrano</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -l capistrano
+期望状态=未知(u)/安装(i)/删除(r)/清除(p)/保持(h)
+| 状态=未安装(n)/已安装(i)/仅存配置(c)/仅解压缩(U)/配置失败(F)/不完全安装(H)/触发器等待(W)/触发器未决(T)
+|/ 错误?=(无)/须重装(R) (状态，错误：大写=故障)
+||/ 名称         版本         描述
++++-==============-==============-============================================
+iU  capistrano     2.5.9-1        Executes commands in parallel on multiples s   #这里的 iu表示想安装，但是只是解压缩没有安装成功  debian系的查询显示比较复杂</p>
+
+<p>5 安装软件包</p>
+
+<p>dongwm@linux-dongwm:~&gt; sudo rpm -ivh rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg -i capistrano_2.5.9-1_all.deb</p>
+
+<p>6 软件卸载</p>
+
+<p>dongwm@linux-dongwm:~&gt; sudo rpm -e rubygem-capistrano-2.11.2-1.2</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg -r capistrano</p>
+
+<p>或者</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg --purge capistrano</p>
+
+<p>7 查询文件归属</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -qf /usr/bin/vim  查询 /usr/bin/vim  属于那个包</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg --search /usr/bin/mawk</p>
+
+<p>7 查询软件包都安装到了那里</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -ql gawk</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -S mawk</p>

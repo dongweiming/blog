@@ -1,0 +1,275 @@
+---
+layout: post
+title: 关于functools研究
+categories:
+- python模块研究
+tags:
+- cmp_to_key
+- Comparison
+- functools
+- partial
+- total_ordering
+- wraps
+published: true
+comments: true
+indexer: true
+---
+<p>前言：functools是一些操作功能公据的集合，需要python2.5或者以上版本</p>
+
+<p><strong>1 partial 我的理解是凝固函数的局部参数</strong></p>
+
+<p><pre class="sh_python">
+from functools import *</p>
+
+<p>def test_func(arg1, arg2):
+   return arg1+arg2
+partial_test_func = partial(test_func, 1) #给第一个参数设置默认值1 
+print test_func(1,2)  
+print partial_test_func(2) #其实效果和上面的一样
+print type(test_func)
+print type(partial_test_func)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+3
+3
+&lt;type 'function'&gt;
+&lt;type 'functools.partial'&gt;
+<strong>2 update_wrapper  把被封装函数的__name__、__module__、__doc__和 __dict__都复制到封装函数</strong></p>
+
+<p><pre class="sh_python">
+import functools</p>
+
+<p>def myfunc(a, b=2):
+    """Docstring for myfunc()."""
+    print '\tcalled myfunc with:', (a, b)
+    return</p>
+
+<p>def show_details(name, f):
+    """Show details of a callable object."""
+    print '%s:' % name
+    print '\tobject:', f
+    print '\t__name__:', 
+    try:
+        print f.__name__
+    except AttributeError:
+        print '(no __name__)'
+    print '\t__doc__', repr(f.__doc__)
+    print
+    return</p>
+
+<p>show_details('myfunc', myfunc)</p>
+
+<p>p1 = functools.partial(myfunc, b=4)
+show_details('raw wrapper', p1)</p>
+
+<p>print 'Updating wrapper:'
+print '\tassign:', functools.WRAPPER_ASSIGNMENTS
+print '\tupdate:', functools.WRAPPER_UPDATES
+print</p>
+
+<p>functools.update_wrapper(p1, myfunc)
+show_details('updated wrapper', p1)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行过程：</p>
+
+<p>myfunc:
+object: &lt;function myfunc at 0xb74ddae4&gt;
+__name__: myfunc
+__doc__ 'Docstring for myfunc().'</p>
+
+<p>raw wrapper:
+object: &lt;functools.partial object at 0xb74e14b4&gt;
+__name__: (no __name__)
+__doc__ 'partial(func, *args, **keywords) - new function with partial application\n    of the given arguments and keywords.\n'</p>
+
+<p>Updating wrapper:
+assign: ('__module__', '__name__', '__doc__')  #这些属性从myfunc继承
+update: ('__dict__',)   #因为继承属性内置__dice__更新了</p>
+
+<p>updated wrapper:
+object: &lt;functools.partial object at 0xb74e14b4&gt; #还是原来的属性
+__name__: myfunc #属性继承了
+__doc__ 'Docstring for myfunc().' #属性继承了<strong>
+3 wraps 其实也就是相当于在调用了<tt>partial，使用wraps可以把整个function的属性都带上</tt></strong></p>
+
+<p><strong><pre class="sh_python"></strong>
+import functools</p>
+
+<p>def show_details(name, f):
+    """Show details of a callable object."""
+    print '%s:' % name
+    print '\tobject:', f
+    print '\t__name__:', 
+    try:
+        print f.__name__
+    except AttributeError:
+        print '(no __name__)'
+    print '\t__doc__', repr(f.__doc__)
+    print
+    return</p>
+
+<p>def simple_decorator(f):
+    @functools.wraps(f)
+    def decorated(a='decorated defaults', b=1):
+        print '\tdecorated:', (a, b)
+        print '\t',
+        f(a, b=b)
+        return
+    return decorated</p>
+
+<p>def myfunc(a, b=2):
+    print '\tmyfunc:', (a,b)
+    return</p>
+
+<p>show_details('myfunc', myfunc)
+myfunc('unwrapped, default b')
+myfunc('unwrapped, passing b', 3)
+print</p>
+
+<p>wrapped_myfunc = simple_decorator(myfunc) #继承myfunc的属性
+show_details('wrapped_myfunc', wrapped_myfunc)
+wrapped_myfunc()
+wrapped_myfunc('args to decorated', 4)
+<strong></pre>
+</strong></p>
+
+<p>运行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+myfunc:
+object: &lt;function myfunc at 0xb72e4c6c&gt;
+__name__: myfunc
+__doc__ None</p>
+
+<p>myfunc: ('unwrapped, default b', 2)
+myfunc: ('unwrapped, passing b', 3)</p>
+
+<p>wrapped_myfunc:
+object: &lt;function myfunc at 0xb72e4ca4&gt;
+__name__: myfunc
+__doc__ None</p>
+
+<p>decorated: ('decorated defaults', 1) #包含参数设定a='decorated defaults', b=1，而不在是a,b=2
+myfunc: ('decorated defaults', 1) #默认参数都没有变
+decorated: ('args to decorated', 4)
+myfunc: ('args to decorated', 4) #参数都变了
+<strong>4 total_ordering使用内置的比较属性</strong></p>
+
+<p><pre class="sh_python">
+import functools
+import inspect  #主要用来模块，框架，函数等进行类型检查，获取类或函数的参数的信息，获取源码和获取类或函数的参数的信息
+from pprint import pprint</p>
+
+<p>@functools.total_ordering
+class MyObject(object):
+    def __init__(self, val):
+        self.val = val
+    def __eq__(self, other):
+        print '  testing __eq__(%s, %s)' % (self.val, other.val)
+        return self.val == other.val
+    def __gt__(self, other):
+        print '  testing __gt__(%s, %s)' % (self.val, other.val)
+        return self.val &gt; other.val</p>
+
+<p>print 'Methods:\n'
+pprint(inspect.getmembers(MyObject, inspect.ismethod))  #要是不加inspect.ismethod的话，会将对象的所有默认属性都列出来</p>
+
+<p>a = MyObject(1)
+b = MyObject(2)</p>
+
+<p>print '\nComparisons:'
+for expr in [ 'a &lt; b', 'a &lt;= b', 'a == b', 'a &gt;= b', 'a &gt; b' ]:
+    print '\n%-6s:' % expr
+    result = eval(expr)
+    print '  result of %s: %s' % (expr, result)
+</pre></p>
+
+<p>结果：</p>
+
+<p>Methods:</p>
+
+<p>[('__eq__', &lt;unbound method MyObject.__eq__&gt;),
+('__ge__', &lt;unbound method MyObject.__ge__&gt;),
+('__gt__', &lt;unbound method MyObject.__gt__&gt;),
+('__init__', &lt;unbound method MyObject.__init__&gt;),
+('__le__', &lt;unbound method MyObject.__le__&gt;),
+('__lt__', &lt;unbound method MyObject.__lt__&gt;)]</p>
+
+<p>Comparisons:</p>
+
+<p>a &lt; b :
+testing __gt__(2, 1)
+result of a &lt; b: True</p>
+
+<p>a &lt;= b:
+testing __gt__(1, 2)
+result of a &lt;= b: True</p>
+
+<p>a == b:
+testing __eq__(1, 2)
+result of a == b: False</p>
+
+<p>a &gt;= b:
+testing __gt__(2, 1)
+result of a &gt;= b: False</p>
+
+<p>a &gt; b :
+testing __gt__(1, 2)
+result of a &gt; b: False
+<strong>5 <tt>cmp_to_key</tt>排序</strong></p>
+
+<p><pre class="sh_python">
+import functools</p>
+
+<p>class MyObject(object):
+    def __init__(self, val):
+        self.val = val
+    def __str__(self):
+        return 'MyObject(%s)' % self.val</p>
+
+<p>def compare_obj(a, b):
+    print 'comparing %s and %s' % (a, b)
+    return cmp(a.val, b.val)</p>
+
+<p>get_key = functools.cmp_to_key(compare_obj)</p>
+
+<p>def get_key_wrapper(o):
+    """Wrapper function for get_key to allow for print statements.
+    """
+    new_key = get_key(o)
+    print 'key_wrapper(%s) -&gt; %s' % (o, new_key)
+    return new_key</p>
+
+<p>objs = [ MyObject(x) for x in xrange(5, 0, -1) ]</p>
+
+<p>for o in sorted(objs, key=get_key_wrapper):
+    print o
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+key_wrapper(MyObject(5)) -&gt; &lt;functools.K object at 0xb73c342c&gt;
+key_wrapper(MyObject(4)) -&gt; &lt;functools.K object at 0xb73c344c&gt;
+key_wrapper(MyObject(3)) -&gt; &lt;functools.K object at 0xb73c346c&gt;
+key_wrapper(MyObject(2)) -&gt; &lt;functools.K object at 0xb73c348c&gt;
+key_wrapper(MyObject(1)) -&gt; &lt;functools.K object at 0xb73c34ac&gt;
+comparing MyObject(4) and MyObject(5)
+comparing MyObject(3) and MyObject(4)
+comparing MyObject(2) and MyObject(3)
+comparing MyObject(1) and MyObject(2)
+MyObject(1)
+MyObject(2)
+MyObject(3)
+MyObject(4)
+MyObject(5)</p>
+
+<p>&nbsp;</p>

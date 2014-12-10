@@ -1,0 +1,187 @@
+---
+layout: post
+title: 关于awk研究（四）
+categories:
+- awk
+- linux基础
+tags:
+- awk
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 printf</strong></p>
+
+<p>"print format", variable1, variable2, etc.
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { printf "Field 1\t\tField 2\tField 3\tField 4\n" }'
+Field 1        Field 2    Field 3    Field 4  #格式化输出
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { printf "Field 1\vField 2\vField 3\vField 4\n" }'
+Field 1
+Field 2
+Field 3
+Field 4
+dongwm@linux-dongwm:~&gt; awk 'BEGIN \
+&gt; { printf "Field 1\bField 2\bField 3\bField 4\n" }'   #\b退格
+Field Field Field Field 4</p>
+
+<p>下面2个例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS=",";OFS=":";ORS="\n--\n";} {print $2,$3}' test.txt
+dongwm:dongwm.com
+--
+ailll:ailll.com
+--
+ccc:ccc.com
+--
+dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS=",";OFS=":";ORS="\n--\n";} {printf "%s:%s\n\n",$2,$3}' test.txt #这里就是格式化输出，%s就是字符串 ，前台2个%s,就是后面的$2 $3
+dongwm:dongwm.com</p>
+
+<p>ailll:ailll.com</p>
+
+<p>ccc:ccc.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN {FS=",";OFS=":";ORS="\n--\n";} {printf "%10s:%3s:%10s:%-7s\n\n",$1,$2,$3,$4}' test.txt
+112:dongwm:dongwm.com:1120   #固定列宽，正数是右对其，负数左对齐</p>
+
+<p>113:ailll: ailll.com:1130</p>
+
+<p>114:ccc:   ccc.com:1140
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { printf "%6s\n", "Good Boy!" }'
+Good Boy!
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { printf "%.6s\n", "Good Boy!" }'  #这个‘.’说明这里只保留6个字符
+Good B
+dongwm@linux-dongwm:~&gt; awk 'BEGIN { printf "%6s\n", substr("Good Boy!",1,6) }'  #效果是一样的
+Good B
+<strong>2 内置数值函数</strong>
+1 int</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN{print int(3.534);print int(4);print int(-5.223);print int(-5);}'
+3
+4
+-5
+-5
+<strong>2 log  #对数，不记得了可以翻翻高中数学课本^.^</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN{print log(13);print log(0);print log(1);print log(-5);}' #
+2.56495
+-inf
+0
+awk: 警告: log: 收到负数参数 -5
+nan
+<strong>3 sqrt #平方根</strong>
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{print sqrt(64);print sqrt(0);print sqrt(-5);}'
+8
+0
+awk: 警告: sqrt: 收到负数参数 -5
+-nan
+<strong>4 exp ＃e的N次方</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN{print exp(123456789);print exp(0);print exp(-12);}'
+awk: 警告: exp: 参数 1.23457e+08 超出范围
+inf
+1
+6.14421e-06
+<strong>3 随机数</strong></p>
+
+<p>1 rand #0-1之间的随机数</p>
+
+<p>cat test.awk
+BEGIN {
+while(i&lt;1000)
+{
+n = int(rand()*100);
+rnd[n]++;
+i++;
+}
+for(i=0;i&lt;=5;i++) {
+print i,"Occured", rnd[i], "times";
+}
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
+0 Occured 11 times
+1 Occured 8 times
+2 Occured 9 times
+3 Occured 15 times
+4 Occured 16 times
+5 Occured 5 times
+2  srand #初始化随机数的开始
+dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+srand(5);
+total=5;
+max=50;
+count=0;  #随机数从5－50
+while(count &lt; total) {
+rnd = int(rand() * max);
+if ( array[rnd] == 0 ) {
+count++;
+array[rnd]++;
+}
+}
+for ( i=5; i&lt;=max; i++) {
+if ( array[i] )
+print i;
+}
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
+14
+16
+23
+33
+35
+<strong>4 字符串函数</strong>
+<strong>1 index #字符串索引</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN {dongwm="dongwm.com";print "string start at",index(dongwm,"wm");}'  #找到‘wm’的索引
+string start at 5</p>
+
+<p><strong>2 length</strong> #字符串长度
+dongwm@linux-dongwm:~&gt; awk '{print length($0)}' test.txt
+26
+24
+20
+<strong>3 split  #分隔</strong></p>
+
+<p>语法：split(input-string,output-array,separator)
+dongwm@linux-dongwm:~&gt; awk '{split($0,qu,",");for (x in qu) print qu[x];}' test.txt
+1120
+112
+dongwm
+dongwm.com
+1130
+113
+ailll
+ailll.com
+1140
+114
+ccc
+ccc.com
+<strong>4 Substr</strong>
+语法：substr(input-string, location, length)
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{FS=","} {print substr($1,3)}' test.txt #
+2
+3
+4
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{FS=","} {print substr($1,1,3)}' test.txt  #第一个字段，从第一个字符开始打印3个字符
+112
+113
+114
+<strong>5 nawk和gwak特有字符串函数：</strong></p>
+
+<p>语法：sub(original-string,replacement-string,string-variable)
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{dongwm="dongwmDongmcom";sub("[Dd]o","CC",dongwm);print dongwm;}'  test.txt #用‘CC’替换‘Do‘或者’do‘
+CCngwmDongmcom  #只题换了第一个</p>
+
+<p>语法：gsub(original-string,replacement-string,string-variable)</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk 'BEGIN{dongwm="dongwmDongmcom";gsub("[Dd]o","CC",dongwm);print dongwm;}'  test.txt
+CCngwmCCngmcom  #替换了所有符合的
+语法：match(input-string,search-string)
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{dongwm="dongwmDongmcom";if(match(dongwm,"dongwm"));{print "match!"}}'  test.txt
+match! #搜索发现匹配
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{dongwm="dongwmDongmcom";print tolower(dongwm)}' #转化成小写
+dongwmdongmcom
+dongwm@linux-dongwm:~&gt; awk 'BEGIN{dongwm="dongwmDongmcom";print toupper(dongwm)}' #转化成大写
+DONGWMDONGMCOM</p>

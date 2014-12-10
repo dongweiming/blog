@@ -1,0 +1,2916 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/7">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pa-chong-lian-xi/">爬虫练习</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-23T11:01:00+08:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>20号参加pycon,发现有个招聘公司<a href="http://blog.knownsec.com/2012/02/knownsec-recruitment/">知道创宇</a>, 正好换工作,就去公司网站转了下,发现挺有意思:投简历需要一个网站爬虫程序,基本要求如下(可以直接点开上面网页去看):</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+使用python编写一个网站爬虫程序，支持参数如下：
+
+spider.py -u url -d deep -f logfile -l loglevel(1-5)  --testself -thread number --dbfile  filepath  --key=”HTML5”
+
+
+参数说明：
+
+-u 指定爬虫开始地址
+
+-d 指定爬虫深度
+
+--thread 指定线程池大小，多线程爬取页面，可选参数，默认10
+
+--dbfile 存放结果数据到指定的数据库（sqlite）文件中
+
+--key 页面内的关键词，获取满足该关键词的网页，可选参数，默认为所有页面
+
+-l 日志记录文件记录详细程度，数字越大记录越详细，可选参数，默认spider.log
+
+--testself 程序自测，可选参数
+ 
+功能描述：
+
+1、指定网站爬取指定深度的页面，将包含指定关键词的页面内容存放到sqlite3数据库文件中
+
+2、程序每隔10秒在屏幕上打印进度信息
+
+3、支持线程池机制，并发爬取网页
+
+4、代码需要详尽的注释，自己需要深刻理解该程序所涉及到的各类知识点
+
+5、需要自己实现线程池
+</pre></figure></notextile></div></notextile></div>
+
+<p>搞了2天,根据研究,弄了一个版本(友情提示,仅供学习参考,要是面试这个职位,建议大家用其它方法实现,因为我投递过了,不要拿来主义额^.^)
+#####代码如下(隐藏了个人信息用’XXX’代替)</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/env python
+#coding=utf-8
+
+import urllib2 
+import Queue
+import sys
+import traceback
+import threading
+import re
+import datetime
+import lxml
+import chardet
+import logging
+import logging.handlers
+from time import sleep
+from urlparse import urlparse
+from lxml import etree
+from optparse import OptionParser
+
+try:
+    from sqlite3 import dbapi2 as sqlite
+except:
+    from pysqlite2 import dbapi2 as sqlite 
+
+#__doc__注释  执行脚本 -h 或者 --help  打印输出的内容
+'''
+This script is used to crawl analyzing web!
+
+The Feature: 
+1 可以指定抓取的深度
+2 将抓取到的关键字数据存放在sqlite
+3 使用logging记录日志
+4 并发线程池
+
+Required dependencies: 
+1 chardet #分析抓取页面的字符集 
+sudo easy_install chardet
+
+Usage: 
+spider.py -u url -d deep -f logfile -l loglevel(1-5)  --testself -thread number --dbfile  filepath  --key=”HTML5”
+
+Writer: Dongweiming
+Date: 2012.10.22
+'''
+
+
+lock = threading.Lock() #设置线程锁
+LOGGER = logging.getLogger('Crawler') #设置logging模块的前缀
+LEVELS={   #日志级别
+        1:'CRITICAL',
+        2:'ERROR',
+        3:'WARNING',
+        4:'INFO',
+        5:'DEBUG',#数字越大记录越详细
+        }
+formatter = logging.Formatter('%(name)s %(asctime)s %(levelname)s %(message)s') #自定义日志格式
+
+class mySqlite(object):
+    
+    def __init__(self, path, logger, level):
+        '''初始化数据库连接.
+ 
+           &gt;&gt;&gt; from sqlite3 import dbapi2 as sqlite
+           &gt;&gt;&gt; conn = sqlite.connect('testdb')
+        '''
+        try:
+            self.conn = sqlite.connect(path) #连接sqlite
+            self.cur = self.conn.cursor()  #cursor是一个记录游标，用于一行一行迭代的访问查询返回的结果
+        except Exception, e:
+            myLogger(logger, self.loglevel, e, True)
+            return -1
+        
+        self.logger = logger
+        self.loglevel = level
+
+    def create(self, table): 
+        '''创建table，我这里创建包含2个段 ID（数字型，自增长），Data（char 128字符）'''
+        try:
+            self.cur.execute("CREATE TABLE IF NOT EXISTS %s(Id INTEGER PRIMARY KEY AUTOINCREMENT, Data VARCHAR(40))"% table)
+            self.done()
+        except sqlite.Error ,e: #异常记录日志并且做事务回滚,以下相同
+            myLogger(self.logger, self.loglevel, e, True) 
+            self.conn.rollback()
+        if self.loglevel &gt;3: #设置在日志级别较高才记录,这样级别高的详细
+                myLogger(self.logger, self.loglevel, '创建表%s' % table)
+
+    def insert(self, table, data):
+        '''插入数据，指定表名，设置data的数据'''
+        try:
+            self.cur.execute("INSERT INTO %s(Data) VALUES('%s')" % (table,data))
+            self.done()
+        except sqlite.Error ,e:
+            myLogger(self.logger, self.loglevel, e, True)
+            self.conn.rollback()
+        else:
+            if self.loglevel &gt;4:
+                myLogger(self.logger, self.loglevel, '插入数据成功')
+
+    def done(self):
+        '''事务提交'''
+        self.conn.commit()
+
+    def close(self):
+        '''关闭连接'''
+        self.cur.close()
+        self.conn.close()
+        if self.loglevel &gt;3:
+            myLogger(self.logger, self.loglevel, '关闭sqlite操作')
+
+
+class Crawler(object):
+
+    def __init__(self, args, app, table, logger):
+        self.deep = args.depth  #指定网页的抓取深度        
+        self.url = args.urlpth #指定网站地址
+        self.key = args.key #要搜索的关键字
+        self.logfile = args.logfile #日志文件路径和名字
+        self.loglevel = args.loglevel #日志级别
+        self.dbpth = args.dbpth #指定sqlite数据文件路径和名字
+        self.tp = app #连接池回调实例
+        self.table = table #每次请求的table不同 
+        self.logger = logger #logging模块实例
+        self.visitedUrl = [] #抓取的网页放入列表,防止重复抓取
+
+    def _hasCrawler(self, url): 
+        '''判断是否已经抓取过这个页面'''
+        return (True if url in self.visitedUrl else False)
+     
+    def getPageSource(self, url, key, deep): 
+        ''' 抓取页面,分析,入库.
+        '''
+        headers = {  #设计一个用户代理,更好防止被认为是爬虫
+            'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; \
+            rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6' }
+        #if  urlparse(url).scheme == 'https':
+           #pass
+        if self._hasCrawler(url): #发现重复直接return
+            return
+        else:
+            self.visitedUrl.append(url) #发现新地址假如到这个列表
+        try:
+            request = urllib2.Request(url = url, headers = headers) #创建一个访问请求,指定url,并且把访问请求保存在request 
+            result = urllib2.urlopen(request).read() #打开这个请求,并保存读取数据
+        except urllib2.HTTPError, e:  #触发http异常记录日志并返回
+            myLogger(self.logger, self.loglevel, e, True)
+            return -1
+        try:
+            encoding = chardet.detect(result)['encoding'] #判断页面的编码
+            if encoding.lower() == 'gb2312':
+                encoding = 'gbk'  #今天我抓取新浪是gb2312,但是其中有个'蔡旻佑'不能被识别,所以用gbk去解码gb2312的页面
+            if encoding.lower() != 'utf-8': #发现不是默认编码就用应该的类型解码
+                result = result.decode(encoding)
+        except Exception, e:
+            myLogger(self.logger, self.loglevel, e, True)
+            return -1
+        else:
+            if self.loglevel &gt;3:
+                myLogger(self.logger, self.loglevel, '抓取网页 %s 成功' % url)
+        try:
+            self._xpath(url, result, ['a'], unicode(key, 'utf8'), deep) #分析页面中<a>的连接地址,以及它的内容
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], unicode(key, "utf8"), deep) #分析这几个标签的内容
+        except TypeError: #对编码类型异常处理,有些深度页面和主页的编码不同
+            self._xpath(url, result, ['a'], key, deep)
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], key, deep)
+        except Exception, e:
+            myLogger(self.logger, self.loglevel, e, True)
+            return -1
+        else:
+            if self.loglevel &gt;3:
+                myLogger(self.logger, self.loglevel, '分析网页 %s 成功' % url)
+        return True
+
+    def _xpath(self, weburl, data, xpath, key, deep):
+
+        sq = mySqlite(self.dbpth, self.logger, self.loglevel)
+        page = etree.HTML(data)
+        for i in xpath:
+            hrefs = page.xpath(u"//%s" % i) #根据xpath标签
+            if deep &gt;1:
+                for href in hrefs:
+                    url = href.attrib.get('href','')
+                    if not url.startswith('java') and not  \
+                        url.startswith('mailto'):  #过滤javascript和发送邮件的链接
+                            self.tp.add_job(self.getPageSource,url, key, deep-1) #递归调用,直到符合的深度
+            for href in hrefs:
+                value = href.text  #抓取相应标签的内容
+                if value:
+                    m = re.compile(r'.*%s.*' % key).match(value) #根据key匹配相应内容
+                    if m:
+                        sq.insert(self.table, m.group().strip()) #将匹配的数据插入到sqlite
+        sq.close()
+
+    def work(self):
+        '''主方法调用.
+        
+        &gt;&gt;&gt; import datetime
+        &gt;&gt;&gt; logger = configLogger('test.log')
+        &gt;&gt;&gt; time = datetime.datetime.now().strftime("%m%d%H%M%S")
+        &gt;&gt;&gt; sq = mySqlite('test.db', logger, 1)
+        &gt;&gt;&gt; table = 'd' + str(time)
+        &gt;&gt;&gt; sq.create(table)
+        &gt;&gt;&gt; tp = ThreadPool(5)
+        &gt;&gt;&gt; def t():pass
+        &gt;&gt;&gt; t.depth=1
+        &gt;&gt;&gt; t.urlpth='http://www.baidu.com'
+        &gt;&gt;&gt; t.logfile = 'test.log'
+        &gt;&gt;&gt; t.loglevel = 1
+        &gt;&gt;&gt; t.dbpth = 'test.db'
+        &gt;&gt;&gt; t.key = 'test'
+        &gt;&gt;&gt; d = Crawler(t, tp, table, logger)
+        &gt;&gt;&gt; d.getPageSource(t.urlpth, t.key, t.depth)
+        True
+        '''
+        if not self.url.startswith('http://'): #支持用户直接写域名,当然也支持带前缀
+            self.url = 'http://' + self.url
+        self.tp.add_job(self.getPageSource, self.url, self.key, self.deep)
+        self.tp.wait_for_complete() #等待线程池完成
+
+
+class MyThread(threading.Thread):
+
+    def __init__(self, workQueue, timeout=30, **kwargs):
+        threading.Thread.__init__(self, kwargs=kwargs)
+        self.timeout = timeout #线程在结束前等待任务队列多长时间
+        self.setDaemon(True)  #设置deamon,表示主线程死掉,子线程不跟随死掉
+        self.workQueue = workQueue
+        self.start() #初始化直接启动线程
+ 
+    def run(self):
+        '''重载run方法'''
+        while True:
+            try:
+                lock.acquire()   #线程安全上锁
+                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
+                res = callable(*args)  #执行的任务
+                lock.release()  #执行完,释放锁
+            except Queue.Empty: #任务队列空的时候结束此线程
+                break
+            except Exception, e:
+                myLogger(self.logger, self.loglevel, e, True)
+                return -1
+
+
+class ThreadPool(object):
+
+    def __init__(self, num_of_threads):
+         self.workQueue = Queue.Queue()
+         self.threads = []
+         self.__createThreadPool(num_of_threads)
+ 
+    def __createThreadPool(self, num_of_threads):
+         for i in range(num_of_threads):
+             thread = MyThread(self.workQueue)
+             self.threads.append(thread)
+ 
+    def wait_for_complete(self):
+         '''等待所有线程完成'''
+         while len(self.threads):
+             thread = self.threads.pop()
+         if thread.isAlive():  #判断线程是否还存活来决定是否调用join
+             thread.join()
+     
+    def add_job( self, callable, *args):
+        '''增加任务,放到队列里面'''
+        self.workQueue.put((callable, args))
+   
+
+def configLogger(logfile):
+    '''配置日志文件和记录等级'''
+    try:
+        handler = logging.handlers.RotatingFileHandler(logfile, 
+                                                       maxBytes=10240000, #文件最大字节数
+                                                       backupCount=5, #会轮转5个文件，共6个
+                                                        )
+    except IOError, e:
+        print e
+        return -1
+    else:
+        handler.setFormatter(formatter)  #设置日志格式
+        LOGGER.addHandler(handler) #增加处理器
+        logging.basicConfig(level=logging.NOTSET) #设置,不打印小于4级别的日志
+    return LOGGER #返回logging实例
+
+def myLogger(logger, lv, mes, err=False):
+    '''记录日志函数'''
+    getattr(logger, LEVELS.get(lv, 'WARNING').lower())(mes)
+    if err: #当发现是错误日志,还会记录错误的堆栈信息
+        getattr(logger, LEVELS.get(lv, 'WARNING').lower())(traceback.format_exc())
+
+def parse():
+    parser = OptionParser(
+                  description="This script is used to crawl analyzing web!")
+    parser.add_option("-u", "--url", dest="urlpth", action="store",
+                  help="Path you want to fetch", metavar="www.sina.com.cn")
+    parser.add_option("-d", "--deep", dest="depth", action="store",type="int",
+                  help="Url path's deep, default 1", default=1)
+    parser.add_option("-k", "--key", dest="key", action="store",
+                  help="You want to query keywords, For example 'test'")
+    parser.add_option("-f", "--file", dest="logfile", action="store",
+                  help="Record log file path and name, default spider.log", 
+                  default='spider.log')
+    parser.add_option("-l", "--level", dest="loglevel", action = "store",
+                  type="int",help="Log file level, default 1(CRITICAL)", 
+                  default=1)
+    parser.add_option("-t", "--thread", dest="thread", action="store",
+                  type="int",help="Specify the thread pool, default 10", 
+                  default=10)
+    parser.add_option("-q", "--dbfile", dest="dbpth", action="store",
+                  help="Specify the the sqlite file directory and name, \
+                  default  test.db", metavar='test.db')
+    parser.add_option("-s", "--testself", dest="testself", action="store_true",
+                  help="Test myself", default=False)
+    (options, args) = parser.parse_args()  
+    return options
+
+def main():
+    '''主函数'''
+        
+    options = parse()
+    if options.testself: #如果testself,执行doctest
+        import doctest
+        print doctest.testmod()
+        return
+    if not options.urlpth or not options.key or not options.dbpth: #判断必选项是否存在
+        print 'Need to specify the parameters option "-u " or "-k" or "-q"!'
+        return
+    if '-h' in sys.argv  or '--help' in sys.argv:  #选择帮助信息,打印__doc__
+        print __doc__
+
+    logger = configLogger(options.logfile) #实例化日志调用
+    time = datetime.datetime.now().strftime("%m%d%H%M%S") #每次请求都会根据时间创建table
+    tp = ThreadPool(options.thread) 
+    sq = mySqlite(options.dbpth, logger, options.loglevel)
+    table = 'd' + str(time)
+    sq.create(table) #创建table
+    sq.close()
+    crawler = Crawler(options, tp, table, logger)
+    crawler.work()  #主方法
+ 
+if __name__ == '__main__':
+    main()
+
+</a></pre></figure></notextile></div></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pythonban-ge-ren-jian-li/">Python版个人简历</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-21T14:24:00+08:00" pubdate data-updated="true">Oct 21<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>最近换工作,无聊之下搞了个python版本的简历,包含我的相应信息,以及使用了一个装饰器用来显示颜色和相应块信息.并上传到gist.github.com</p>
+
+<h5 id="xxx">代码如下(隐藏了个人信息用’XXX’代替)</h5>
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import random
+import re
+
+
+def color(messages):
+    color = "\x1B[%d;%dm" % (1, random.randint(30,37))
+    return "%s %s\x1B[0m" % (color, messages)
+
+def colorprint(mes, flag=True):
+    def _mydecorator(func):
+        def _mydecorator(*args):
+            res = func(*args)
+            print color(mes+":"),"\n"
+            if flag:
+                for k1, v1 in res.items():
+                    if not isinstance(v1, dict):
+                        print "{0}: {1}".format(k1.rjust(16), v1)
+                    else:
+                        print "{0}:".format(k1.rjust(16))
+                        for k2, v2 in v1.items():
+                            print "{0}: {1}".format(k2.rjust(20), v2)
+            else:
+                for i in res:
+                    if not isinstance(i[1], dict):
+                        print i
+                    else:
+                        for k, v in i[1].items():
+                            print "{0}[{1}]: {2}".format(k.rjust(16), \
+                    i[0], v)
+            return res
+        return _mydecorator
+    return _mydecorator
+
+class ForJob(object):
+
+    def __str__(self):
+        return color("XXX的python简历".center(400))
+
+    @property
+    @colorprint("个人信息")
+    def personal_information(self):
+        return {
+          "Name" : "XXX",
+                  "Gender" : "Male",
+                  "Born" : ['19XX', 'X', 'X'],
+          "Education" : {
+              "School Name" : "保定科技职业学院",
+              "Major" : "烹饪工艺与营养",
+              "Degree" : "Three-year college",
+              "Graduation" : 2009},
+                  "QQ" : 61966225,
+          "Tel" : 13552651322,
+          "Email" : "ciici1234@hotmail.com",
+          "Target Positions" : re.compile("'Python Developer'|Architect|DevOps",re.I|re.M).pattern}
+        
+    @property
+    @colorprint("个人特点")
+    def characteristics(self):
+        return {
+            "心里承受能力强" : "从非计算机专业―思科方向\
+―linux运维―C/python开发",
+            "对计算机技术的热衷和喜爱" : "正是因为喜欢IT,\
+我才会放弃大学专业",
+            "自学能力强" : "没有大学的计算机基础除思科参加培训，\
+其它都为都是自学",
+            "毅力和耐性" : "从不放弃一个解决不了的难题，\
+看过的计算机专业技术多于700页的书籍&gt;30本",
+            "is_geek" : True}
+
+    @property
+    @colorprint("个人能力")
+    def skills(self):
+        return {
+            "Language" : {
+                "熟悉" : ["Python", "Ruby", "Bash", "c"],
+                "了解" : ["Haskell", "Lisp", "Erlang"]},
+            "OS" : ["Gentoo", "Debian", "Centos/Rhel", "Opensuse"],
+            "Tool" : ["Vim", "Mercurial", "Git"],
+            "Databaseandtools" : ["Mysql",
+                "Postgresql", "Mongodb", "Redis", "Memcached", "Sqlalchemy"],
+            "WebFramework" : {
+                "熟悉" : ["Tornado", "Django", "Gae"],
+                "了解" : ["Flask"]},
+            "OtherFramework" : ["Twisted", "gevent",
+               "stackless", "scrapy", "mechanize"],
+            "GUI" : "pyqt",
+            "Network" : "Cisco Certified Security Professional",
+"Other" : "给gentoo和centos提交过bug"}
+
+    @property
+    @colorprint("工作经验",False)
+    def work_experience(self):
+        return enumerate([
+            {
+                "Time period" : "2009.09-2011.08",
+                "Company Name" : "XXX（北京）科技股份有限公司",
+                "Position" : "高级运维工程师"},
+            {
+                "Time period" : "2011.09-2012.08",
+                "Company Name" : "北京XXX有限责任公司",
+                "Position" : "linux python研发工程师"}])
+
+    @property
+    @colorprint("项目经验",False)
+    def project_experience(self):
+        return enumerate([
+            {
+                "Project" : "kvm远程管理系统",
+"Description" : "前台(django)接手至其它同事并完成维护，\
+后台独立完成，用来创建，修改，删除kvm，查看状态信息等"},
+            {
+                "Project" : "postfix群发邮件系统",
+"Description" : "前台(tornado),为其它部门提供发送邮件的web端, \
+并作为数据收集服务端,前后台独立完成"},
+            {
+                "Project" : "windows个人安全终端系统",
+"Description" : "前后台和接收数据的socket服务器独立完成，\
+客户端图形编程使用qt"},
+            {
+                "Project" : "地推(一个分布在全国的各个办事处的称呼:地面推广) \
+IDC质量测试系统",
+                "Description": "还在代码实现中,前台flask, \
+数据接收服务准备使用twisted,客户端为windows进程"}])
+ 
+    @property
+    @colorprint("@Where",False)
+    def findme(self):
+        return enumerate([
+            {
+                "Link" : "http://www.dongwm.com",
+"Description" : "个人技术博客"},
+            {
+                "Link" : "http://www.zhihu.com/people/dongweiming",
+"Description" : "知乎"},
+            {
+                "Link" : "http://www.quora.com/Weiming-Dong",
+"Description" : "Quora"},
+            {
+                "Link" : r"https://twitter.com/#!/dongweiming",
+"Description" : "Twitter"},
+            {
+                "Link" : "http://www.ailll.com",
+"Description" : "音乐分享网站"},
+            {
+                "Link" : "http://dongwm.blog.51cto.com",
+"Description" : "51cto的推荐博客"},
+            {
+                "Link" : "http://youhouer.appspot.com",
+"Description" : "基于Google App Engine的前端网站"}])
+                
+    def show(self):
+        prolist = [i for i in dir(self) if not i.startswith("_") \
+            and not i.startswith("personal")]
+        self.personal_information
+        for pro in prolist:
+            getattr(self, pro)
+
+if __name__ == "__main__":
+    dongweiming = ForJob()
+    print dongweiming
+    dongweiming.show()
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="section-1">效果:</h5>
+<ol>
+  <li>直接保存文件,linux下终端执行,但是windows执行会有乱码</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>直接linux下终端执行:curl https://raw.github.com/gist/3496061/b63efdf0c1c8d0e12df4f5b905903128c951b282/My_Resume.py</td>
+          <td>python</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ol>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/qian-yi-octpressyi-ji-zi-ding-yi/">迁移octpress,Rakefile修改以及豆瓣推荐,豆瓣收藏秀,新浪微博分享按钮等实现</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-28T12:11:00+08:00" pubdate data-updated="true">Sep 28<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>首先感谢吴钊的<a href="http://www.neoease.com/inove">inove</a>,从博客建立就一直用它,昨天就开始研究迁移成octopress,以下是一些经验和总结</p>
+
+<h4 id="octopress">1. octopress目录结构说明</h4>
+
+<h5 id="gitoctopress">首先看git出来的octopress目录结构:</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">├─ config.rb  #指定额外的compass插件
+</span><span class="line">├─ config.ru  
+</span><span class="line">├─ Rakefile   #rake的配置文件,类似于makefile,这个我修改了一些内容
+</span><span class="line">├─ Gemfile    #bundle要下载需要的gem依赖关系的指定文件
+</span><span class="line">├─ Gemfile.lock  #这些gem依赖的对应关系,比如A的x本依赖于B的y版本,我也修改了
+</span><span class="line">├─ _config.yml  #站点的配置文件
+</span><span class="line">├─ public/  #在静态编译完成后的目录,网站只需要这个目录下的文件树
+</span><span class="line">├─ _deploy/  #deploy时候生成的缓存文件夹,和public目录一样
+</span><span class="line">├─ sass/  #css文件的源文件,过程中会compass成css
+</span><span class="line">├─ plugins/  #放置自带以及第三方插件的目录,ruby程序
+</span><span class="line">│  └── xxx.rb
+</span><span class="line">└─ source/  #这个是站点的源文件目录,public目录就是根据这个目录下数据生成的
+</span><span class="line">   └─ _includes/
+</span><span class="line">      └─ custom/  #自定义的模板目录,被相应上级html include
+</span><span class="line">         └─ asides/  #边栏模板自定义模板目录
+</span><span class="line">      └─ asides/  #边栏模板目录
+</span><span class="line">      └─ post/  #文章页面相应模板目录
+</span><span class="line">   └─ _layouts/  #默认网站html相关文件,最底层
+</span><span class="line">   └─ _posts/  #新增以及从其它程序迁移过来的数据都存在这里
+</span><span class="line">   └─ stylesheets/ #css文件目录
+</span><span class="line">   └─ javascripts/  #js文件目录</span></pre></figure></notextile></div>
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/qian-yi-octpressyi-ji-zi-ding-yi/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shiyongoctopresszuoweigithub-comwangzhandebokekuangjia/">使用octopress作为github.com网站的博客框架</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-26T00:00:00+08:00" pubdate data-updated="true">Sep 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言:使用ruby写的开源octopress越来越受到欢迎,并且因为github.com,很多作者把blog放在其二级域名上面,使用了它.国内也有很多人使用,比如mrzhang.me,其作者的主题还是不错滴,最近在华蟒python邮件组一封招聘邮件,里面竟然其中有一条:* 有github账号，开源项目和octpress的blog(但是职位是python的web开发,我很囧)</p>
+
+<p><strong>1 安装前准备:</strong></p>
+
+<p>假设你有github帐号,利用github提供的一个特性,使用key实现ssh信任链接</p>
+
+<p>ssh-keygen -t dsa
+cat ~/.ssh/id_dsa.pub#把其中的数据粘贴到github上面,这个就不说了</p>
+
+<p><strong>2 使用rvm:</strong>
+echo insecure &gt;&gt; ~/.curlrc
+curl -k https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer | bash -s stable #ruby版本管理,类似于python的pythonbrew
+export PATH=$PATH:/home/dongwm/.rvm/bin #或者直接写到profile
+rvm list known #列出已知的ruby #本来我使用的ruby是1.8的 但是这个框架需要1.9.2以上?
+ruby 1.8.7 (2011-06-30 patchlevel 352) [i686-linux]
+dongwm@dongwm ~ $ rvm install 1.9.3 #安装ruby1.9.3</p>
+
+<p>git clone git://github.com/imathis/octopress.git dongwm.github.com  #下载octopress源码
+dongwm@dongwm ~ $ rvm  &#8211;create use 1.9.3@dongwm.github.com #使用ruby1.9.3
+Using /home/dongwm/.rvm/gems/ruby-1.9.3-p194 with gemset dongwm.github.com
+Running /home/dongwm/.rvm/hooks/after_use</p>
+
+<p>dongwm@dongwm ~ $ cd dongweiming.github.com/  #第一次切换到这个放置octopress目录时会提示你以下信息
+Do you wish to trust this .rvmrc file? (/home/dongwm/dongwm.github.com/.rvmrc)
+y[es], n[o], v[iew], c[ancel]&gt; y  #选择 y  以后就不在问你了</p>
+
+<p><strong>3 使用bundle管理项目中所有gem依赖</strong></p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ gem install bundler</p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ bundle install #安装需要的gem依赖</p>
+
+<p><strong>4 安装主题,假如我们不想用默认的主题</strong></p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ git clone git://github.com/bkutil/bootstrap-theme.git .themes/bootstrap-theme
+#git clone git://github.com/sevenadrian/foxslide .themes/foxslide
+#git clone git://github.com/barmstrong/octopress-bootstrap.git .themes/octopress-bootstrap
+dongwm@dongwm ~/dongwm.github.com $ rake install[&#8216;foxslide&#8217;] #安装主题,默认主题rake install
+dongwm@dongwm ~/dongwm.github.com $ rake generate #生成模板文件</p>
+
+<p>注:每次换主题其实就是下载git源码+rake install + rake generate</p>
+
+<p><strong>5 可选 代码预览</strong></p>
+
+<p>假如测试环境想预览效果可以使用rake preview</p>
+
+<p><strong>6 部署代码到github</strong></p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ rake setup_github_pages  #设置链接
+Enter the read/write url for your repository
+(For example, &#8216;git@github.com:your_username/your_username.github.com)
+Repository url: git@github.com:dongweiming/dongweiming.github.com  这里的dongweiming是我的帐号名字,后面的dongweiming.github.com是我的源,也就是github创建的源的名字,需要你手动在github网站增加,其实也是最后项直接访问的网站名字 以后访问 http://dongweiming.github.com
+dongwm@dongwm ~/dongwm.github.com $ rake deploy #部署到github</p>
+
+<p>当你看到“Github Pages deploy complete”后，就表示done,可以访问了</p>
+
+<p><strong>7 版本控制</strong></p>
+
+<p>既然是github,不用git就搞笑了</p>
+
+<p>dongwm@dongwm ~/dongwm.github.com $ 832  cd source/_posts/ #因为在添加文章之类都会在source/_posts目录下面增加相应的文件,那么我要备份这个目录,也就是使用版本控制
+dongwm@dongwm ~/octopress/source/_posts $ git init #初始化
+dongwm@dongwm ~/octopress/source/_posts $ touch README.md
+dongwm@dongwm ~/octopress/source/_posts $  git add *
+dongwm@dongwm ~/octopress/source/_posts $ git commit -m &#8216;First version&#8217;</p>
+
+<p>dongwm@dongwm ~/octopress/source/_posts $ git remote add dongwm git@github.com:dongweiming/dongweiming.github.com.git</p>
+
+<p>这个意思就是 我添加了一个叫做&#8217;dongwm&#8217;的远程快捷方式,他链接到dongweiming帐号的dongweiming.github.com项目</p>
+
+<p>dongwm@dongwm ~/octopress/source/_posts $ git checkout -b backup #创建一个分支叫做backup
+Switched to a new branch &#8216;backup&#8217;
+dongwm@dongwm ~/octopress/source/_posts $ git push dongwm backup #将修改push到backup分支,这样就实现了对这个目录的控制
+Counting objects: 3, done.
+Writing objects: 100% (3/3), 213 bytes, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To git@github.com:dongweiming/dongweiming.github.com.git
+* [new branch]      backup -&gt; backup</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shiyongsphinxheapachedajianwikiwendangwangzhan/">使用sphinx和apache搭建wiki文档网站</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-13T00:00:00+08:00" pubdate data-updated="true">Sep 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：sphix是一个允许开发人员以纯文本格式使用reStructuredText 标记语法编写文档，自定义显示效果的文档工具。比较有代表性的网站有<a href="http://docs.python.org" target="_blank">python的docs官网</a>，<a href="http://book.42qu.com" target="_blank">张沈鹏的42区</a>等等，没事我在内网弄个记录一些工作文档。</p>
+
+<p>注：我这里使用了gentoo系统</p>
+
+<p><strong>1  安装sphinx和apache2</strong></p>
+
+<p>因为还有个同名的大名鼎鼎的sphinx搜索引擎，需要指定到类型：</p>
+
+<p>sudo emerge dev-python/sphinx apache2
+<strong>2 配置一个wiki站点</strong></p>
+
+<p>dongwm@localhost ~ $sphinx-quickstart  # 使用这个命令快速创建</p>
+
+<p>&gt; Root path for the documentation [.]:    test #过程中会有一些提示选项，根据你的需要定制，我对所有的疑问都是yes，注意这步，是问你这个配置的站点的root目录，我这里是一个新的test子目录目录，在家目录下
+完成后会出现test目录，包含这样的内容：</p>
+
+<p>dongwm@localhost ~/test $ ls -l
+total 24
+drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 build  #最后生成的html文件目录
+-rw-r&#8211;r&#8211; 1 dongwm dongwm 5113 Sep 14 13:37 make.bat #我想是windows下的make
+-rw-r&#8211;r&#8211; 1 dongwm dongwm 5589 Sep 14 13:37 Makefile #这个大家都熟悉
+drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 source  #源文件就是我们要编辑的wiki显示的代码的源文件目录</p>
+
+<p><strong>3 修改要显示的源文件</strong>
+原理：修改source下面的XXX.rst(或者你定义的其他后缀文件)，最后会生成同名的html文件，比如编辑index.rst会生成index.html，这个也就是默认的主显文件，通过他链接到其他文档处</p>
+
+<p><strong>4 生成html文件目录</strong>
+dongwm@localhost ~/test $  make html</p>
+
+<p>这样就会在build/html目录下生成html文件，当然你也自定义</p>
+
+<p><strong>5 设置apache以及htaccess</strong></p>
+
+<p>修改/etc/apache2/vhosts.d/default_vhost.include</p>
+
+<p>DocumentRoot &#8220;/home/dongwm/test/build/html&#8221;  12行 其中/home/dongwm/test/build/html就是生成html的目录，我就使用了默认的</p>
+
+<p>&lt;Directory &#8220;/home/dongwm/test/build/html&#8221;&gt;  15行</p>
+
+<p>在/home/dongwm/test/build/html目录，也就是网站根目录添加新文件.htaccess</p>
+
+<p>dongwm@localhost ~/test/build/html $ cat !$
+cat .htaccess
+&lt;Files ~ &#8220;^.(htaccess|htpasswd)$&#8221;&gt;
+deny from all
+&lt;/Files&gt;
+Options -Indexes
+&lt;FilesMatch &#8220;.(gif|jpg|jpeg|png|ico)$&#8221;&gt;
+Header set Cache-Control &#8220;max-age=86400&#8221;  #静态图片缓存24小时
+&lt;/FilesMatch&gt;
+AuthUserFile /home/dongwm/.htpasswd  #密码验证文件使用htpasswd生成
+AuthGroupFile /dev/null
+AuthName &#8220;Please enter your ID and password&#8221;
+AuthType Basic
+require valid-user
+order deny,allow
+allow from 10.28.101.1/24  #只容许这个段的人访问
+deny from all</p>
+
+<p>dongwm@localhost ~/test $ sudo /etc/init.d/apache2 restart  #重启apache2</p>
+
+<p><strong>6 显示中文</strong></p>
+
+<p>修改source/conf.py其中的language=&#8221;zh_CN&#8221; 重新make html即可</p>
+
+<p><strong>7 技巧</strong></p>
+
+<p>1 快速开发</p>
+
+<p>每次我们修改了rst的源文件还需要make html去生成html文件，操作很麻烦，我在使用sublime_text2编辑器，写一个自定义编译程序的build，然后在Tools-&gt;Build System里面选择这个程序，</p>
+
+<p>比如：dongwm@localhost ~ $ cat ~/.config/sublime-text-2/Packages/User/makehtml.sublime-build  #一定要保存在这个目录，这个命令就是makehtml（去掉文件的.sublime-build后缀）
+{
+&#8220;cmd&#8221;: [&#8220;make&#8221;, &#8220;html&#8221;], #我要执行make html  每个参数都要用引号隔开
+&#8220;working_dir&#8221;: &#8220;${project_path:${folder}}&#8221;  #他的语法大家可以去看官方文档，这里表示执行这个命令实在我当前的工作目录
+}</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyugeventdeyixielijieyi-2/">关于gevent的一些理解(一)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-26T00:00:00+08:00" pubdate data-updated="true">Jul 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言:gevent是python的一个并发框架,以微线程greenlet为核心，使用了epoll事件监听机制以及诸多其他优化而变得高效.而且其中有个monkey类,
+将现有基于Python线程直接转化为greenlet(类似于打patch).他和线程框架性能比高大概4倍(看下图,是gevent和paste的对比):</p>
+
+<p><img class="alignnone" title="性能" src="http://code.mixpanel.com/wp-content/uploads/2010/10/performance2.png" alt="" width="664" height="389" /></p>
+
+<p>工作暂时没有用gevent的地方,这里就简单的对http://sdiehl.github.com/gevent-tutorial的一些例子和内容翻译:</p>
+
+<p><strong>1 同步和异步</strong></p>
+
+<p><pre class="sh_python">
+import gevent</p>
+
+<p>def foo():
+    print('Running in foo')
+    gevent.sleep(0) #让当前的greenlet睡眠N秒,这0标识控制其它协程而不会让其它进程睡眠
+    print('Explicit context switch to foo again')</p>
+
+<p>def bar():
+    print('Explicit context to bar')
+    gevent.sleep(0)
+    print('Implicit context switch back to bar')</p>
+
+<p>gevent.joinall([  #<tt>gevent.Greenlet</tt>实例,直到这个greenlet完成或者超时
+    gevent.spawn(foo),  #spawn可以实现一个grennlet实例并且加到队列并且启动,效果类似于gevent.Greenlet(foo).start()
+    gevent.spawn(bar),
+])
+</pre></p>
+
+<p>执行结果的效果图:</p>
+
+<p><img class="alignnone" title="效果" src="http://sdiehl.github.com/gevent-tutorial/flow.gif" alt="" width="284" height="277" /></p>
+
+<p>dongwm@localhost ~ $ python test.py
+Explicit context to bar
+Running in foo
+Explicit context switch to foo again
+Implicit context switch back to bar</p>
+
+<p><pre class="sh_python">
+import time
+import gevent
+from gevent import select #类似于内置的<tt>select.select()</tt>实现(请关注http://www.dongwm.com/archives/guanyuselectyanjiu/),只是将线程操作改成了greenlet</p>
+
+<p>start = time.time()
+tic = lambda: 'at %1.1f seconds' % (time.time() - start)</p>
+
+<p>def gr1():
+    print('Started Polling: ', tic())
+    select.select([], [], [], 2)  #参数分别是,等待的可读列表,等待的可写列表,等待的可执行列表,超时时间(这里是2秒)
+    print('Ended Polling: ', tic())</p>
+
+<p>def gr2():
+    print('Started Polling: ', tic())
+    select.select([], [], [], 2)
+    print('Ended Polling: ', tic())</p>
+
+<p>def gr3():
+    print("Hey lets do some stuff while the greenlets poll, at", tic())
+    gevent.sleep(1)</p>
+
+<p>gevent.joinall([
+    gevent.spawn(gr1),
+    gevent.spawn(gr2),
+    gevent.spawn(gr3),
+])
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+(&#8216;Hey lets do some stuff while the greenlets poll, at&#8217;, &#8216;at 0.0 seconds&#8217;)  #因为gr1和gr2开始是阻塞的,gr3直接打印
+(&#8216;Started Polling: &#8216;, &#8216;at 0.0 seconds&#8217;)
+(&#8216;Started Polling: &#8216;, &#8216;at 0.0 seconds&#8217;)
+(&#8216;Ended Polling: &#8216;, &#8216;at 2.0 seconds&#8217;)
+(&#8216;Ended Polling: &#8216;, &#8216;at 2.0 seconds&#8217;)
+<pre class="sh_python">
+import gevent
+import random</p>
+
+<p>def task(pid):
+    gevent.sleep(random.randint(0,2)*0.001)
+    print('Task', pid, 'done')</p>
+
+<p>def synchronous():  #同步
+    for i in range(1,10):
+        task(i)</p>
+
+<p>def asynchronous(): #异步
+    threads = [gevent.spawn(task, i) for i in xrange(10)]
+    gevent.joinall(threads)</p>
+
+<p>print('Synchronous:')
+synchronous()</p>
+
+<p>print('Asynchronous:')
+asynchronous()
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+Synchronous:  #协程不会控制其它进程睡眠,所以挨个执行
+(&#8216;Task&#8217;, 1, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 2, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 3, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 4, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 5, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 6, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 7, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 8, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 9, &#8216;done&#8217;)
+Asynchronous:  #他们放在grennlet里面,sleep的时间是随机的,完成顺序也就不同了
+(&#8216;Task&#8217;, 2, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 3, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 5, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 7, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 9, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 6, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 1, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 0, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 8, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 4, &#8216;done&#8217;)
+<pre class="sh_python">
+import gevent
+from gevent import Greenlet</p>
+
+<p>def foo(message, n):
+    gevent.sleep(n)
+    print(message)</p>
+
+<p>thread1 = Greenlet.spawn(foo, "Hello", 1)  #实例化Greenlet
+thread2 = gevent.spawn(foo, "I live!", 2) #实例化gevent,其实也是创建Greenlet实例,只是包装了一下
+thread3 = gevent.spawn(lambda x: (x+1), 2)  #一个lambda表达式</p>
+
+<p>threads = [thread1, thread2, thread3]
+gevent.joinall(threads) #等待所有greenlet完成
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+Hello
+I live!  #打印出来效果不明显,事实上等待一秒打印第一行,再等待一秒打印第二行,然后马上完成(lambda没有显示)</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Greenlet</p>
+
+<p>class MyGreenlet(Greenlet):  #重载Greenlet类</p>
+
+<p>    def __init__(self, message, n):
+        Greenlet.__init__(self)
+        self.message = message
+        self.n = n</p>
+
+<p>    def _run(self): #重写_run方法
+        print(self.message)
+        gevent.sleep(self.n)</p>
+
+<p>g = MyGreenlet("Hi there!", 3)
+g.start()
+g.join()
+</pre></p>
+
+<p><pre class="sh_python">
+import gevent</p>
+
+<p>def win():
+    return 'You win!'</p>
+
+<p>def fail():
+    raise Exception('You fail at failing.')</p>
+
+<p>winner = gevent.spawn(win)
+loser = gevent.spawn(fail)</p>
+
+<p>print(winner.started) # started表示的Greenlet是否已经开始,返回布尔值
+print(loser.started)  # True</p>
+
+<p>try:
+    gevent.joinall([winner, loser])
+except Exception as e:
+    print('This will never be reached')</p>
+
+<p>print(winner.value) # value表示greenlet实例返回值:'You win!'
+print(loser.value)  # None</p>
+
+<p>print(winner.ready()) # 是否已停止Greenlet的布尔值,True
+print(loser.ready())  # True</p>
+
+<p>print(winner.successful()) # 表示的Greenlet是否已成功停止，而不是抛出异常,True
+print(loser.successful())  # False
+print(loser.exception) #打印异常的报错信息
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+True
+True
+Traceback (most recent call last):
+File &#8220;/usr/lib/python2.7/site-packages/gevent-1.0dev-py2.7-linux-i686.egg/gevent/greenlet.py&#8221;, line 328, in run
+result = self._run(*self.args, **self.kwargs)
+File &#8220;test.py&#8221;, line 7, in fail
+raise Exception(&#8216;You fail at failing.&#8217;)
+Exception: You fail at failing.
+&lt;Greenlet at 0xb73cd39cL: fail&gt; failed with Exception</p>
+
+<p>You win!
+None
+True
+True
+True
+False
+You fail at failing.
+<pre class="sh_python">
+import gevent
+from gevent import Timeout</p>
+
+<p>seconds = 10</p>
+
+<p>timeout = Timeout(seconds)
+timeout.start()</p>
+
+<p>def wait():
+    gevent.sleep(10)</p>
+
+<p>try:
+    gevent.spawn(wait).join()
+except Timeout:
+    print 'Could not complete'
+</pre></p>
+
+<p>上面的例子是可以执行完成的,但是假如修改seconds = 5,让数值少入sleep,那么就会有超时被捕捉到</p>
+
+<p>还可以使用with关键字处理上下文:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Timeout</p>
+
+<p>time_to_wait = 5 # seconds</p>
+
+<p>class TooLong(Exception):
+    pass</p>
+
+<p>with Timeout(time_to_wait, TooLong):
+    gevent.sleep(10)
+</pre></p>
+
+<p>以及其他的方式的:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Timeout</p>
+
+<p>def wait():
+    gevent.sleep(2)</p>
+
+<p>timer = Timeout(1).start()
+thread1 = gevent.spawn(wait)  #这种超时类型前面讲过</p>
+
+<p>try:
+    thread1.join(timeout=timer)
+except Timeout:
+    print('Thread 1 timed out')</p>
+
+<p>timer = Timeout.start_new(1) #start_new是一个快捷方式
+thread2 = gevent.spawn(wait)</p>
+
+<p>try:
+    thread2.get(timeout=timer) #get返回greenlet的结果,包含异常
+except Timeout:
+    print('Thread 2 timed out')</p>
+
+<p>try:
+    gevent.with_timeout(1, wait) #如果超时前返回异常,取消这个方法
+except Timeout:
+    print('Thread 3 timed out')
+</pre></p>
+
+<p><strong>2 数据结构</strong></p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.event import AsyncResult</p>
+
+<p>a = AsyncResult() #保存一个值或者一个异常的事件实例</p>
+
+<p>def setter():
+    gevent.sleep(3)  #3秒后唤起所有线程的a的值
+    a.set() #保存值,唤起等待线程</p>
+
+<p>def waiter():
+    a.get() # 3秒后get方法不再阻塞,返回存贮的值或者异常
+    print 'I live!'</p>
+
+<p>gevent.joinall([
+    gevent.spawn(setter),
+    gevent.spawn(waiter),
+])
+</pre></p>
+
+<p>更清晰的例子:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.event import AsyncResult
+a = AsyncResult()</p>
+
+<p>def setter():
+    gevent.sleep(3)
+    a.set('Hello!')</p>
+
+<p>def waiter():
+    print a.get()</p>
+
+<p>gevent.joinall([
+    gevent.spawn(setter),
+    gevent.spawn(waiter),
+])
+</pre>
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue  #类似于内置的Queue</p>
+
+<p>tasks = Queue() #队列实例</p>
+
+<p>def worker(n):
+    while not tasks.empty():
+        task = tasks.get()
+        print('Worker %s got task %s' % (n, task))
+        gevent.sleep(0)</p>
+
+<p>    print('Quitting time!')</p>
+
+<p>def boss():
+    for i in xrange(1,25):
+        tasks.put_nowait(i) #非阻塞的把数据放到队列里面</p>
+
+<p>gevent.spawn(boss).join()</p>
+
+<p>gevent.joinall([
+    gevent.spawn(worker, 'steve'),
+    gevent.spawn(worker, 'john'),
+    gevent.spawn(worker, 'nancy'),
+])
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python !$
+python test.py
+Worker steve got task 1 #3个用户循环的取出数据
+Worker john got task 2
+Worker nancy got task 3
+Worker steve got task 4
+Worker nancy got task 5
+Worker john got task 6
+Worker steve got task 7
+Worker john got task 8
+Worker nancy got task 9
+Worker steve got task 10
+Worker nancy got task 11
+Worker john got task 12
+Worker steve got task 13
+Worker john got task 14
+Worker nancy got task 15
+Worker steve got task 16
+Worker nancy got task 17
+Worker john got task 18
+Worker steve got task 19
+Worker john got task 20
+Worker nancy got task 21
+Worker steve got task 22
+Worker nancy got task 23
+Worker john got task 24
+Quitting time!
+Quitting time!
+Quitting time!</p>
+
+<p>一个更复杂的例子:
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue, Empty</p>
+
+<p>tasks = Queue(maxsize=3)  #限制队列的长度</p>
+
+<p>def worker(n):
+    try:
+        while True:
+            task = tasks.get(timeout=1) # 减少队列,超时为1秒
+            print('Worker %s got task %s' % (n, task))
+            gevent.sleep(0)
+    except Empty:
+        print('Quitting time!')</p>
+
+<p>def boss():
+    """
+    Boss will wait to hand out work until a individual worker is
+    free since the maxsize of the task queue is 3.
+    """</p>
+
+<p>    for i in xrange(1,10):
+        tasks.put(i)  #这里boss没有盲目的不停放入数据,而是在当最大三个队列数有空余才放入数据,事实上方法转换过程中,boss放入三个数据,worker取出三个数据,boss再放入数据....
+    print('Assigned all work in iteration 1')</p>
+
+<p>    for i in xrange(10,20):
+        tasks.put(i)
+    print('Assigned all work in iteration 2')</p>
+
+<p>gevent.joinall([
+    gevent.spawn(boss),
+    gevent.spawn(worker, 'steve'),
+    gevent.spawn(worker, 'john'),
+    gevent.spawn(worker, 'bob'),
+])
+</pre>
+<pre class="sh_python">
+import gevent
+from gevent.pool import Group 
+def talk(msg):
+    for i in xrange(3):
+        print(msg)</p>
+
+<p>g1 = gevent.spawn(talk, 'bar')
+g2 = gevent.spawn(talk, 'foo')
+g3 = gevent.spawn(talk, 'fizz')</p>
+
+<p>group = Group() #保持greenlet实例的组运行,连接到没个项目,在其完成后删除
+group.add(g1)
+group.add(g2)
+group.join()</p>
+
+<p>group.add(g3)
+group.join()
+</pre></p>
+
+<p>看更加明确的例子:
+<pre class="sh_python">
+import gevent
+from gevent import getcurrent
+from gevent.pool import Group</p>
+
+<p>group = Group()</p>
+
+<p>def hello_from(n):
+    print('Size of group', len(group))
+    print('Hello from Greenlet %s' % id(getcurrent()))  #获取当前gevent实例的id</p>
+
+<p>group.map(hello_from, xrange(3)) #map迭代方法,参数为方法和其参数</p>
+
+<p>def intensive(n):
+    gevent.sleep(3 - n)
+    return 'task', n</p>
+
+<p>print('Ordered')</p>
+
+<p>ogroup = Group()
+for i in ogroup.imap(intensive, xrange(3)):  #相当于 itertools.imap,返回一个迭代器, 它是调用了一个其值在输入迭代器上的函数, 返回结果. 它类似于函数 <tt>map()</tt> , 只是前者在
+#任意输入迭代器结束后就停止(而不是插入None值来补全所有的输入)
+    print(i)</p>
+
+<p>print('Unordered')</p>
+
+<p>igroup = Group()
+for i in igroup.imap_unordered(intensive, xrange(3)):
+    print(i)
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+(&#8216;Size of group&#8217;, 3)
+Hello from Greenlet 314818960
+(&#8216;Size of group&#8217;, 3)
+Hello from Greenlet 314819280
+(&#8216;Size of group&#8217;, 3)
+Hello from Greenlet 314819440
+Ordered
+(&#8216;task&#8217;, 0)
+(&#8216;task&#8217;, 1)
+(&#8216;task&#8217;, 2)
+Unordered
+(&#8216;task&#8217;, 2)
+(&#8216;task&#8217;, 1)
+(&#8216;task&#8217;, 0)</p>
+
+<p>还能限制pool池的大小
+<pre class="sh_python">
+import gevent
+from gevent import getcurrent
+from gevent.pool import Pool</p>
+
+<p>pool = Pool(2)</p>
+
+<p>def hello_from(n):
+    print('Size of pool', len(pool))</p>
+
+<p>pool.map(hello_from, xrange(3))
+</pre></p>
+
+<p>返回结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+(&#8216;Size of pool&#8217;, 2)
+(&#8216;Size of pool&#8217;, 2)
+(&#8216;Size of pool&#8217;, 1) #因为上面的pool容纳不了第三个,这是一个新的pool</p>
+
+<p>以下是作者写的一个pool操作类:</p>
+
+<p><pre class="sh_python">
+from gevent.pool import Pool</p>
+
+<p>class SocketPool(object):</p>
+
+<p>    def __init__(self):
+        self.pool = Pool(1000)  #设置池容量1000
+        self.pool.start()</p>
+
+<p>    def listen(self, socket):
+        while True:
+            socket.recv()</p>
+
+<p>    def add_handler(self, socket):
+        if self.pool.full(): #容量慢报错
+            raise Exception("At maximum pool size")
+        else: #否则执行在新的grenlet里面执行listen方法
+            self.pool.spawn(self.listen, socket)</p>
+
+<p>    def shutdown(self):
+        self.pool.kill() #关闭pool
+</pre></p>
+
+<p><pre class="sh_python">
+from gevent import sleep
+from gevent.pool import Pool
+from gevent.coros import BoundedSemaphore</p>
+
+<p>sem = BoundedSemaphore(2) #设定对共享资源的访问数量</p>
+
+<p>def worker1(n):
+    sem.acquire() #获取资源
+    print('Worker %i acquired semaphore' % n)
+    sleep(0)
+    sem.release()  #释放资源
+    print('Worker %i released semaphore' % n)</p>
+
+<p>def worker2(n):
+    with sem: #使用with关键字
+        print('Worker %i acquired semaphore' % n)
+        sleep(0)
+    print('Worker %i released semaphore' % n)</p>
+
+<p>pool = Pool()
+pool.map(worker1, xrange(0,2)) 
+pool.map(worker2, xrange(3,6))
+</pre>
+执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+Worker 0 acquired semaphore
+Worker 1 acquired semaphore  #因为pool能容纳这2个请求,所以同时获取,再释放
+Worker 0 released semaphore
+Worker 1 released semaphore
+Worker 3 acquired semaphore #因为只能接收2个,那么5就要到下一轮
+Worker 4 acquired semaphore
+Worker 3 released semaphore
+Worker 4 released semaphore
+Worker 5 acquired semaphore
+Worker 5 released semaphore</p>
+
+<p>一个gevent教材上面说过的ping pong的那个协程例子的另一个实现:
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue
+from gevent import Greenlet</p>
+
+<p>class Actor(gevent.Greenlet): #自定义actor类</p>
+
+<p>    def __init__(self):
+        self.inbox = Queue() #收件箱作为一个队列
+        Greenlet.__init__(self) </p>
+
+<p>    def receive(self, message): 
+        raise NotImplemented() #内置常量,表面意为没有实施</p>
+
+<p>    def _run(self): #
+        self.running = True</p>
+
+<p>        while self.running:
+            message = self.inbox.get() #获取队列数据
+            self.receive(message)</p>
+
+<p>class Pinger(Actor):
+    def receive(self, message): #重写方法
+        print message
+        pong.inbox.put('ping') #当获取收件箱有数据,获取数据,再放入数据(注意:是ping中放pong数据),其中pong是一个局部变量,它是Ponger的实例,以下的同理
+        gevent.sleep(0)</p>
+
+<p>class Ponger(Actor):
+    def receive(self, message):
+        print message
+        ping.inbox.put('pong')
+        gevent.sleep(0)</p>
+
+<p>ping = Pinger()
+pong = Ponger()</p>
+
+<p>ping.start()
+pong.start()</p>
+
+<p>ping.inbox.put('start') #最开始都是阻塞的,给一个触发
+gevent.joinall([ping, pong])
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><code data-result="[object Object]"></code></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyugeventdeyixielijieer/">关于gevent的一些理解(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-26T00:00:00+08:00" pubdate data-updated="true">Jul 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>3 实际应用</strong></p>
+
+<p>1 zeromq和gevent:</p>
+
+<p>zeromq的介绍请参看:http://www.infoq.com/cn/news/2010/09/introduction-zero-mq</p>
+
+<p>假设你已经安装了zeromq,gevent_zeromq(https://github.com/traviscline/gevent-zeromq.git)和pyzmq</p>
+
+<p>一个很基础的例子:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent_zeromq import zmq</p>
+
+<p># Global Context
+context = zmq.Context() #它是GreenContext的一个简写,确保greenlet化socket</p>
+
+<p>def server():
+    server_socket = context.socket(zmq.REQ) #创建一个socket,使用mq类型模式REQ/REP(请求/回复,服务器是请求),还有PUB/SUB(发布/订阅),push/pull等
+    server_socket.bind("tcp://127.0.0.1:5000") #绑定socket</p>
+
+<p>    for request in range(1,10):
+        server_socket.send("Hello")
+        print('Switched to Server for ', request)
+        server_socket.recv()  #这里发生上下文切换</p>
+
+<p>def client():
+    client_socket = context.socket(zmq.REP)  (客户端是回复)
+    client_socket.connect("tcp://127.0.0.1:5000")  #连接server的socket端口</p>
+
+<p>    for request in range(1,10):</p>
+
+<p>        client_socket.recv()
+        print('Switched to Client for ', request)
+        client_socket.send("World")</p>
+
+<p>publisher = gevent.spawn(server)
+client    = gevent.spawn(client)</p>
+
+<p>gevent.joinall([publisher, client])
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+(&#8216;Switched to Server for &#8216;, 1)
+(&#8216;Switched to Client for &#8216;, 1)
+(&#8216;Switched to Server for &#8216;, 2)
+(&#8216;Switched to Client for &#8216;, 2)
+(&#8216;Switched to Server for &#8216;, 3)
+(&#8216;Switched to Client for &#8216;, 3)
+(&#8216;Switched to Server for &#8216;, 4)
+(&#8216;Switched to Client for &#8216;, 4)
+(&#8216;Switched to Server for &#8216;, 5)
+(&#8216;Switched to Client for &#8216;, 5)
+(&#8216;Switched to Server for &#8216;, 6)
+(&#8216;Switched to Client for &#8216;, 6)
+(&#8216;Switched to Server for &#8216;, 7)
+(&#8216;Switched to Client for &#8216;, 7)
+(&#8216;Switched to Server for &#8216;, 8)
+(&#8216;Switched to Client for &#8216;, 8)
+(&#8216;Switched to Server for &#8216;, 9)
+(&#8216;Switched to Client for &#8216;, 9)</p>
+
+<p>&nbsp;</p>
+
+<p>2 telnet 服务器</p>
+
+<p><pre class="sh_python">
+from gevent.server import StreamServer #StreamServer是一个通用的TCP服务器</p>
+
+<p>def handle(socket, address):
+    socket.send("Hello from a telnet!\n")
+    for i in range(5):
+        socket.send(str(i) + '\n') #给socket客户端发送数据
+    socket.close() #关闭客户端连接</p>
+
+<p>server = StreamServer(('127.0.0.1', 5000), handle) #当出现连接调用定义的方法handle
+server.serve_forever()
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ nc 127.0.0.1 5000
+Hello from a telnet!
+0
+1
+2
+3
+4
+dongwm@localhost ~ $ telnet 127.0.0.1 5000
+Trying 127.0.0.1&#8230;
+Connected to 127.0.0.1.
+Escape character is &#8216;^]&#8217;.
+Hello from a telnet!
+0
+1
+2
+3
+4
+Connection closed by foreign host.
+<strong>3 wsgi服务器</strong></p>
+
+<p><pre class="sh_python">
+from gevent.wsgi import WSGIServer</p>
+
+<p>def application(environ, start_response):
+    status = '200 OK' #页面状态指定为200 ok
+    body = '&lt;p&gt;Hello World&lt;/p&gt;'</p>
+
+<p>    headers = [
+        ('Content-Type', 'text/html')
+    ]</p>
+
+<p>    start_response(status, headers)
+    return [body]</p>
+
+<p>WSGIServer(('', 8000), application).serve_forever() #启动一个占用8000端口的wsgi服务器
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+from gevent.pywsgi import WSGIServer #使用pywsgi可以我们自己定义产生结果的处理引擎</p>
+
+<p>def application(environ, start_response):
+    status = '200 OK'</p>
+
+<p>    headers = [
+        ('Content-Type', 'text/html')
+    ]</p>
+
+<p>    start_response(status, headers)
+    yield "&lt;p&gt;Hello" #yield出数据
+    yield "World&lt;/p&gt;"</p>
+
+<p>WSGIServer(('', 8000), application).serve_forever()
+</pre></p>
+
+<p>我们看一个用ab(Apache Benchmark)的性能测试(更多信息请查看http://nichol.as/benchmark-of-python-web-servers),我这里只</p>
+
+<p>对比了gevent和paste的性能比(没做系统优化,只是在同样条件下看性能差距):</p>
+
+<p>paste的wsgi程序:</p>
+
+<p><pre class="sh_python">
+from gevent.wsgi import WSGIServer</p>
+
+<p>def application(environ, start_response):
+    status = '200 OK'
+    body = '&lt;p&gt;Hello World&lt;/p&gt;'</p>
+
+<p>    headers = [
+        ('Content-Type', 'text/html')
+    ]</p>
+
+<p>    start_response(status, headers)
+    return [body]</p>
+
+<p>#WSGIServer(('', 8000), application).serve_forever()
+from paste import httpserver
+httpserver.serve(application, '0.0.0.0', request_queue_size=500)
+</pre></p>
+
+<p>dongwm@localhost ~ $ /usr/sbin/ab2 -n 10000 -c 100 http://127.0.0.1:8000/ #gevent的性能,条件是:并发100,请求1W
+This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/</p>
+
+<p>Benchmarking 127.0.0.1 (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests</p>
+
+<p>Server Software:
+Server Hostname:        127.0.0.1
+Server Port:            8000</p>
+
+<p>Document Path:          /
+Document Length:        18 bytes</p>
+
+<p>Concurrency Level:      100
+Time taken for tests:   2.805 seconds
+Complete requests:      10000
+Failed requests:        0
+Write errors:           0
+Total transferred:      1380000 bytes
+HTML transferred:       180000 bytes
+Requests per second:    3564.90 [#/sec] (mean)
+Time per request:       28.051 [ms] (mean)
+Time per request:       0.281 [ms] (mean, across all concurrent requests)
+Transfer rate:          480.43 [Kbytes/sec] received</p>
+
+<p>Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   28  15.1     27      69
+Waiting:        1   28  15.1     27      69
+Total:          2   28  15.1     27      69</p>
+
+<p>Percentage of the requests served within a certain time (ms)
+50%     27
+66%     35
+75%     40
+80%     42
+90%     48
+95%     54
+98%     59
+99%     62
+100%     69 (longest request)</p>
+
+<p>dongwm@localhost ~ $ /usr/sbin/ab2 -n 10000 -c 100 http://127.0.0.1:8080/  #paste的性能
+This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/</p>
+
+<p>Benchmarking 127.0.0.1 (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests</p>
+
+<p>Server Software:        PasteWSGIServer/0.5
+Server Hostname:        127.0.0.1
+Server Port:            8080</p>
+
+<p>Document Path:          /
+Document Length:        18 bytes</p>
+
+<p>Concurrency Level:      100
+Time taken for tests:   4.119 seconds
+Complete requests:      10000
+Failed requests:        0
+Write errors:           0
+Total transferred:      1600000 bytes
+HTML transferred:       180000 bytes
+Requests per second:    2427.52 [#/sec] (mean)
+Time per request:       41.194 [ms] (mean)
+Time per request:       0.412 [ms] (mean, across all concurrent requests)
+Transfer rate:          379.30 [Kbytes/sec] received</p>
+
+<p>Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   41   5.4     41     107
+Waiting:        1   41   5.2     40      97
+Total:          4   41   5.3     41     107</p>
+
+<p>Percentage of the requests served within a certain time (ms)
+50%     41
+66%     41
+75%     42
+80%     43
+90%     46
+95%     50
+98%     56
+99%     59
+100%    107 (longest request)</p>
+
+<p><strong>很不好理解吧,那我把数据直接整理下:</strong></p>
+
+<p>1 测试用时:</p>
+
+<p>Time taken for tests:   2.805 seconds #gevent</p>
+
+<p>Time taken for tests:   4.119 seconds #paste 花费时间更长
+2 每秒请求数:</p>
+
+<p>Requests per second:    3564.90 [#/sec] (mean) #gevent的嘛,每秒请求数大的多
+Requests per second:    2427.52 [#/sec] (mean) #paste</p>
+
+<p>3 每请求数耗时:</p>
+
+<p>Time per request:       28.051 [ms] (mean) #gevent耗时少
+Time per request:       0.281 [ms] (mean, across all concurrent requests) #gevent并发请求时耗时少
+Time per request:       41.194 [ms] (mean) #paste
+Time per request:       0.412 [ms] (mean, across all concurrent requests) #paste</p>
+
+<p>4 传输效率:</p>
+
+<p>Transfer rate:          448.26 [Kbytes/sec] received #gevent的效率更高
+Transfer rate:          379.30 [Kbytes/sec] received #paste</p>
+
+<p>5 连接消耗的时间的分解:</p>
+
+<p>Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   28  15.1     27      69
+Waiting:        1   28  15.1     27      69
+Total:          2   28  15.1     27      69</p>
+
+<p>Connection Times (ms) #paste
+min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       2
+Processing:     2   41   5.4     41     107
+Waiting:        1   41   5.2     40      97
+Total:          4   41   5.3     41     107 #明显其中最大用时107/97都大于gevent的69ms,最小用时gevent略强</p>
+
+<p>6 整个场景中所有请求的响应情况。在场景中每个请求都有一个响应时间</p>
+
+<p>Percentage of the requests served within a certain time (ms) #gevent
+50%     29
+66%     31
+75%     34
+80%     34
+90%     36
+95%     38
+98%     42
+99%     44
+100%     71 (longest request)</p>
+
+<p>可以这样理解:50%用户效应小于29ms,60%用户响应小于31ms,最长的访问响应为71ms
+Percentage of the requests served within a certain time (ms) #paste
+50%     41
+66%     41
+75%     42
+80%     43
+90%     46
+95%     50
+98%     56
+99%     59
+100%    107 (longest request)  #很明显,无论那个区间,paste性能都略差</p>
+
+<p><strong>4 长轮询</strong></p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.queue import Queue, Empty
+from gevent.pywsgi import WSGIServer
+import json</p>
+
+<p>data_source = Queue()</p>
+
+<p>def producer():
+    while True:
+        data_source.put_nowait('Hello World') #往队列非阻塞的放入数据
+        gevent.sleep(1)</p>
+
+<p>def ajax_endpoint(environ, start_response):
+    status = '200 OK'
+    headers = [
+        ('Content-Type', 'application/json') #设定<span>网络文件的类型</span>是json
+    ]
+    try:
+        datum = data_source.get(timeout=5)
+    except Empty:
+        datum = [] #假如gevent.sleep的时间设置的长一些(比如5s),在不停刷新过程中会获得空列表</p>
+
+<p>    start_response(status, headers)
+    return json.dumps(datum) #返回数据,打印出来的数据是一个带引号的字符串</p>
+
+<p>gevent.spawn(producer)</p>
+
+<p>WSGIServer(('', 8000), ajax_endpoint).serve_forever()
+</pre>
+<strong>4 聊天室</strong>(源码在这里https://github.com/sdiehl/minichat.git):</p>
+
+<p><pre class="sh_python">
+from gevent import monkey
+monkey.patch_all() #给模块打包
+from flask import Flask, render_template, request, json #作者在这里使用了flask框架,当然你也可以用其它比如django.tornado,bottle等</p>
+
+<p>from gevent import queue
+from gevent.pywsgi import WSGIServer</p>
+
+<p>app = Flask(__name__) 
+app.debug = True</p>
+
+<p>class Room(object):</p>
+
+<p>    def __init__(self):
+        self.users = set()
+        self.messages = []</p>
+
+<p>    def backlog(self, size=25):
+        return self.messages[-size:]</p>
+
+<p>    def subscribe(self, user):
+        self.users.add(user)</p>
+
+<p>    def add(self, message):
+        for user in self.users:
+            print user
+            user.queue.put_nowait(message)
+        self.messages.append(message)</p>
+
+<p>class User(object):</p>
+
+<p>    def __init__(self):
+        self.queue = queue.Queue()</p>
+
+<p>rooms = {
+    'python': Room(),
+    'django': Room(),
+}</p>
+
+<p>users = {}</p>
+
+<p>@app.route('/') #flask指定url的处理使用路由的方式,访问页面地址根目录就会执行choose_name
+def choose_name():
+    return render_template('choose.html') #然后调用模板choose.html,这个html文件最后使用了GET方法提交了一个uid页面(/&lt;uid&gt;)</p>
+
+<p>@app.route('/&lt;uid&gt;') #请求被转到了这里
+def main(uid):
+    return render_template('main.html', #调用模板提供几个room的连接
+        uid=uid,
+        rooms=rooms.keys() #格局选择的连接,通过GET方法转到那个相应url:/&lt;room&gt;/&lt;uid&gt;
+    )</p>
+
+<p>@app.route('/&lt;room&gt;/&lt;uid&gt;') #请求被转到了这里
+def join(room, uid):
+    user = users.get(uid, None)</p>
+
+<p>    if not user:
+        users[uid] = user = User()</p>
+
+<p>    active_room = rooms[room]
+    active_room.subscribe(user)
+    print 'subscribe', active_room, user</p>
+
+<p>    messages = active_room.backlog()</p>
+
+<p>    return render_template('room.html', #room.html包含一个POST提交方式,把你的聊天数据提交,并且更新页面(通过jquery的ajax调用url/poll/&lt;uid&gt;)
+        room=room, uid=uid, messages=messages)</p>
+
+<p>@app.route("/put/&lt;room&gt;/&lt;uid&gt;", methods=["POST"]) #通过这个url
+def put(room, uid):
+    user = users[uid]
+    room = rooms[room]</p>
+
+<p>    message = request.form['message']
+    room.add(':'.join([uid, message]))</p>
+
+<p>    return ''</p>
+
+<p>@app.route("/poll/&lt;uid&gt;", methods=["POST"])
+def poll(uid):
+    try:
+        msg = users[uid].queue.get(timeout=10)
+    except queue.Empty:
+        msg = []
+    return json.dumps(msg) #返回队列中包含的聊天记录</p>
+
+<p>if __name__ == "__main__":
+    http = WSGIServer(('', 5000), app)
+    http.serve_forever()
+</pre></p>
+
+<p>来一个更复杂带有前台后端的模型(例子来自http://blog.pythonisito.com/2011/07/gevent-zeromq-websockets-and-flot-ftw.html):</p>
+
+<p>源码在:http://dl.dropbox.com/u/24086834/blog/20110723/zmq_websocket.tar.gz</p>
+
+<p>其中需要修改graph.js第二行:</p>
+
+<p>var ws = new WebSocket(&#8220;ws://localhost:9999/test&#8221;);</p>
+
+<p>为:</p>
+
+<p>var ws = new MozWebSocket(&#8220;ws://localhost:9999/test&#8221;);  #因为我的火狐用的websocket不同</p>
+
+<p>这个demo.py,我来解析下:</p>
+
+<p><pre class="sh_python">
+import os
+import time
+import math
+import json
+import webbrowser</p>
+
+<p>import paste.urlparser #paste是一个WSGI工具包，在WSGI的基础上包装了几层，让应用管理和实现变得方便</p>
+
+<p>import gevent
+from gevent_zeromq import zmq
+from geventwebsocket.handler import WebSocketHandler #基于gevent的pywsgi的WebSocket的处理程序</p>
+
+<p>def main(): #主方法
+    context = zmq.Context()
+    gevent.spawn(zmq_server, context) #上个例子使用joinall,这个例子是spawn+start,context是参数,也就是实例化的GreenContext
+    ws_server = gevent.pywsgi.WSGIServer(
+        ('', 9999), WebSocketApp(context),
+        handler_class=WebSocketHandler)
+    http_server = gevent.pywsgi.WSGIServer(
+        ('', 8000),
+        paste.urlparser.StaticURLParser(os.path.dirname(__file__))) # paste.urlparser用来处理url和静态文件
+    http_server.start()  #启动grennlet实例
+    ws_server.start()
+    webbrowser.open('http://localhost:8000/graph.html') #启动浏览器看这个页面,当正常启动后js会画图
+    zmq_producer(context)</p>
+
+<p>def zmq_server(context):
+    sock_incoming = context.socket(zmq.SUB)
+    sock_outgoing = context.socket(zmq.PUB)
+    sock_incoming.bind('tcp://*:5000') #发布绑定
+    sock_outgoing.bind('inproc://queue') #订阅绑定,本地(通过内存)进程（线程间）通信传输
+    sock_incoming.setsockopt(zmq.SUBSCRIBE, "") #这里表示对发布的所有信息都订阅
+    while True:
+        msg = sock_incoming.recv()
+        sock_outgoing.send(msg)</p>
+
+<p>class WebSocketApp(object):</p>
+
+<p>    def __init__(self, context):
+        self.context = context</p>
+
+<p>    def __call__(self, environ, start_response): 
+        ws = environ['wsgi.websocket']
+        sock = self.context.socket(zmq.SUB) 
+        sock.setsockopt(zmq.SUBSCRIBE, "") #订阅所有信息
+        sock.connect('inproc://queue') #websocket连接到订阅的地址
+        while True:
+            msg = sock.recv()
+            ws.send(msg)</p>
+
+<p>def zmq_producer(context):  #发布的方法
+    socket = context.socket(zmq.PUB)
+    socket.connect('tcp://127.0.0.1:5000') #绑定到发布的socket</p>
+
+<p>    while True:
+        x = time.time() * 1000
+        y = 2.5 * (1 + math.sin(x / 500))
+        socket.send(json.dumps(dict(x=x, y=y))) #往发布socket发送数据,这样,数据会被inproc://queue订阅,而被websocket获取,根据数据展示
+        gevent.sleep(0.05)</p>
+
+<p>if __name__ == '__main__':
+    main()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengwu/">SQLAlchemy教程(五)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong> 本文主要说删除</strong></p>
+
+<p>metadata.drop_all(engine) #删除某引擎的全部表</p>
+
+<p>metadata.remove(test_table)  #删除某一个table</p>
+
+<p>clear_mappers() #取消所有的映射</p>
+
+<p>在relation中有一个参数cascade,它是基于session的操作,包括把对象放入session,从session删除对象等,如果指定cascade=&#8221;all&#8221;表示做的任何session操作给映射类都能很好的工作,默认包含save-update, merge
+mapper(ParentClass, parent, properties=dict(
+children=relation(ChildClass, backref=&#8217;parent&#8217;,
+cascade=&#8217;all,delete-orphan&#8217;) )) #delete-orphan表示如果曾经是子类(childclass)实例但是却没有和父类连接的情况下,假如要删除这个子类,而不想挂空父类引用了的实例,
+额看个例子就懂了:
+photo = Table(
+&#8230; &#8216;photo&#8217;, metadata,
+&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True))
+tag = Table(
+&#8230; &#8216;tag&#8217;, metadata,
+&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230; Column(&#8216;photo_id&#8217;, None, ForeignKey(&#8216;photo.id&#8217;)),
+&#8230; Column(&#8216;tag&#8217;, String(80)))
+class Photo(object):
+&#8230; pass
+&#8230;
+class Tag(object):
+&#8230; def __init__(self, tag):
+&#8230; self.tag = tag
+&#8230;
+mapper(Photo, photo, properties=dict(
+&#8230; tags=relation(Tag, backref=&#8217;photo&#8217;, cascade=&#8221;all&#8221;)))
+&lt;Mapper at 0x851504c; Photo&gt;
+&gt;&gt;&gt; mapper(Tag, tag)
+&lt;Mapper at 0x8515dac; Tag&gt;
+&gt;&gt;&gt; p1 = Photo()
+&gt;&gt;&gt; p2 = Photo()
+&gt;&gt;&gt; p1.tags = [Tag(tag=&#8217;foo&#8217;),Tag(tag=&#8217;bar&#8217;),Tag(tag=&#8217;baz&#8217;)]
+&gt;&gt;&gt; p2.tags = [Tag(tag=&#8217;foo&#8217;),Tag(tag=&#8217;bar&#8217;),Tag(tag=&#8217;baz&#8217;)]
+&gt;&gt;&gt; session.add(p1)
+&gt;&gt;&gt; session.add(p2)
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id,t.photo_id, t.tag
+&#8230;
+1 1 foo #出现以下关联数据
+2 1 bar
+3 1 baz
+4 2 foo
+5 2 bar
+6 2 baz
+&gt;&gt;&gt; session.delete(session.query(Photo).get(1)) #删除一个tag的数据
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id, t.photo_id, t.tag
+&#8230;
+4 2 foo #他会删除关联所有t.photo_id为1的数据,在这里relation(ChildClass, backref=&#8217;parent&#8217;, cascade=&#8217;all,delete-orphan&#8217;)<span class="fullpost">指定delete-orphan</span>没什么,关键看下面
+5 2 bar
+6 2 baz
+&gt;&gt;&gt; p3 = session.query(Photo).get(2)
+&gt;&gt;&gt; del p3.tags[0] #如果我只是删除关联点&#8230;
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id, t.photo_id, t.tag
+&#8230;
+4 None foo #关联点photo_id成了none,但是条目存在 &#8211;他不会影响其它关联表
+5 2 bar
+6 2 baz</p>
+
+<p>&gt;&gt;&gt; p3 = session.query(Photo).get(2) #假如没有设置delete-orphan
+&gt;&gt;&gt; del p3.tags[0]
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id, t.photo_id, t.tag
+5 2 bar #自动删除了关联的其它表的项
+6 2 baz
+<strong>注:可用的cascade参数包含:</strong>
+<ul>
+	<li><tt>save-update</tt> -我的理解是调用session.add()会自动将项目添加到相应级联关系上,也适用于已经从关系中删除的项目嗨没有来得及刷新的情况</li>
+	<li><tt>merge</tt> - 它是session.merge的实现,复制状态到具有相同标识符的持久化实例的实例,如果没有持久的实例和当前session相关联，返回的持久化实例。如果给定的实例未保存，他会保存一个副本，并返回这个副本作为一个新的持久化实例</li>
+	<li><tt>expunge</tt> - 从session中删除实例</li>
+	<li><tt>delete</tt> - 标记一个实例被删除,执行flush()会执行删除操作</li>
+	<li><tt>delete-orphan</tt>-如果子类从母类删除,标记之,但是不影响母类</li>
+	<li><tt>refresh-expire</tt> - 定期刷新在给定的实例的属性,查询并刷新数据库</li>
+	<li><tt>all</tt> - 以上全部属性的集合:“save-update,merge, refresh-expire, expunge, delete</li>
+</ul></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengqi/">SQLAlchemy教程(七)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>本文主要是面向对象的继承映射到关系数据库表的方法</strong></p>
+
+<p>&gt;&gt;&gt; class Product(object):
+&#8230;     def __init__(self, sku, msrp):
+&#8230;         self.sku = sku
+&#8230;         self.msrp = msrp
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;%s %s&gt;&#8217; % (
+&#8230;             self.__class__.__name__, self.sku)
+&#8230;
+&gt;&gt;&gt; class Clothing(Product):
+&#8230;     def __init__(self, sku, msrp, clothing_info):
+&#8230;         Product.__init__(self, sku, msrp) #继承了Product
+&#8230;         self.clothing_info = clothing_info
+&#8230;
+&gt;&gt;&gt; class Accessory(Product):
+&#8230;     def __init__(self, sku, msrp, accessory_info):
+&#8230;         Product.__init__(self, sku, msrp) #继承了Product
+&#8230;         self.accessory_info = accessory_info
+也就是这样的意思:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png"><img class="alignnone  wp-image-1267" title="Screenshot-1" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png" alt="" width="700" height="251" /></a></p>
+
+<p>这个单表继承中(如下图,黑色的表示没有被映射):</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png"><img class="alignnone  wp-image-1270" title="Screenshot-2" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png" alt="" width="683" height="316" /></a></p>
+
+<p>从创建表结构是这样:</p>
+
+<p>&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;clothing_info&#8217;, String),
+&#8230;     Column(&#8216;accessory_info&#8217;, String),
+&#8230;     Column(&#8216;product_type&#8217;, String(1), nullable=False)) #一个新的字段
+&gt;&gt;&gt; mapper(
+&#8230;     Product, product_table,
+&#8230;     polymorphic_on=product_table.c.product_type, #映射继承层次结构使用polymorphic_on表示继承在product_type字段,值是polymorphic_identity指定的标识
+&#8230;     polymorphic_identity=&#8217;P&#8217;) #标识继承 Product ,父类
+&lt;Mapper at 0x85833ec; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, inherits=Product,
+&#8230;        polymorphic_identity=&#8217;C&#8217;)   #标识继承Clothing product
+&lt;Mapper at 0x858362c; Clothing&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt; mapper(Accessory, inherits=Product, #继承至Product
+&#8230;        polymorphic_identity=&#8217;A&#8217;) #标识继承Accessory
+&lt;Mapper at 0x8587d8c; Accessory&gt;
+&gt;&gt;&gt; products = [  #创建一些产品
+&#8230;     Product(&#8216;123&#8217;, 11.22),
+&#8230;     Product(&#8216;456&#8217;, 33.44),
+&#8230;     Clothing(&#8216;789&#8217;, 123.45, &#8220;Nice Pants&#8221;),
+&#8230;     Clothing(&#8216;111&#8217;, 125.45, &#8220;Nicer Pants&#8221;),
+&#8230;     Accessory(&#8216;222&#8217;, 24.99, &#8220;Wallet&#8221;),
+&#8230;     Accessory(&#8216;333&#8217;, 14.99, &#8220;Belt&#8221;) ]
+&gt;&gt;&gt; Session = sessionmaker()
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; for p in products:
+&#8230;     session.add(p)
+&#8230;
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Product).all() #全部都有
+[&lt;Product 123&gt;, &lt;Product 456&gt;, &lt;Clothing 789&gt;, &lt;Clothing 111&gt;, &lt;Accessory 222&gt;, &lt;Accessory 333&gt;]
+&gt;&gt;&gt; print session.query(Clothing).all()  #只显示2个
+[&lt;Clothing 789&gt;, &lt;Clothing 111&gt;]
+&gt;&gt;&gt; print session.query(Accessory).all() #只显示2个,是不是上面的映射效果和创建3个类而分别orm好的多呢?
+[&lt;Accessory 222&gt;, &lt;Accessory 333&gt;]</p>
+
+<p>&gt;&gt;&gt; for row in product_table.select().execute(): #从父类库查询,所有数据都有,只是product_type不同
+&#8230;     print row
+&#8230;
+(u&#8217;123&#8217;, Decimal(&#8216;11.2200000000&#8217;), None, None, u&#8217;P&#8217;)
+(u&#8217;456&#8217;, Decimal(&#8216;33.4400000000&#8217;), None, None, u&#8217;P&#8217;)
+(u&#8217;789&#8217;, Decimal(&#8216;123.4500000000&#8217;), u&#8217;Nice Pants&#8217;, None, u&#8217;C&#8217;)
+(u&#8217;111&#8217;, Decimal(&#8216;125.4500000000&#8217;), u&#8217;Nicer Pants&#8217;, None, u&#8217;C&#8217;)
+(u&#8217;222&#8217;, Decimal(&#8216;24.9900000000&#8217;), None, u&#8217;Wallet&#8217;, u&#8217;A&#8217;)
+(u&#8217;333&#8217;, Decimal(&#8216;14.9900000000&#8217;), None, u&#8217;Belt&#8217;, u&#8217;A&#8217;)</p>
+
+<p>具体的映射见下图:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png"><img class="alignnone  wp-image-1271" title="Screenshot-3" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png" alt="" width="629" height="232" /></a></p>
+
+<p>查询一个没有的不存在的映射:</p>
+
+<p>&gt;&gt;&gt; print session.query(Accessory)[0].clothing_info
+None</p>
+
+<p><strong>具体表的继承</strong></p>
+
+<p><strong></strong>每个表包含的数据量,需要实现它的类;没有浪费的空间</p>
+
+<p>&gt;&gt;&gt; metadata.remove(product_table)
+&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric))
+&gt;&gt;&gt; clothing_table = Table(
+&#8230;     &#8216;clothing&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;clothing_info&#8217;, String))
+&gt;&gt;&gt;
+&gt;&gt;&gt; accessory_table = Table(
+&#8230;     &#8216;accessory&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;accessory_info&#8217;, String))
+&gt;&gt;&gt;
+摄像我们想要获取Product&#8217;sku&#8217;是222的数据(没有其他额外的工作),我们不得不层次型的查询每个类,请看这个例子:</p>
+
+<p>&gt;&gt;&gt; punion = polymorphic_union(
+&#8230;     dict(P=product_table,
+&#8230;     C=clothing_table,
+&#8230;     A=accessory_table),
+&#8230;     &#8216;type_&#8217;)
+&gt;&gt;&gt;
+&gt;&gt;&gt; print punion
+SELECT accessory.sku, accessory.msrp, accessory.accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;A&#8217; AS type_
+FROM accessory UNION ALL SELECT product.sku, product.msrp, CAST(NULL AS VARCHAR) AS accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;P&#8217; AS type_
+FROM product UNION ALL SELECT clothing.sku, clothing.msrp, CAST(NULL AS VARCHAR) AS accessory_info, clothing.clothing_info, &#8216;C&#8217; AS type_
+FROM clothing
+现在我们就有了一个很好的标记了(C,A,P)</p>
+
+<p>&gt;&gt;&gt; mapper(
+&#8230;     Product, product_table, with_polymorphic=(&#8216;*&#8217;, punion),  #使用with_polymorphic=(&#8216;*&#8217;, punion)的方式映射父类,指定不同表选择,实现多态,并且提高了性能(只select了一次)
+&#8230;     polymorphic_on=punion.c.type_,
+&#8230;     polymorphic_identity=&#8217;P&#8217;)
+&lt;Mapper at 0x8605b6c; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, clothing_table, inherits=Product,
+&#8230; polymorphic_identity=&#8217;C&#8217;,
+&#8230; concrete=True)
+&lt;Mapper at 0x84f1bac; Clothing&gt;
+&gt;&gt;&gt; mapper(Accessory, accessory_table, inherits=Product,
+&#8230; polymorphic_identity=&#8217;A&#8217;,
+&#8230; concrete=True)
+&lt;Mapper at 0x858770c; Accessory&gt;</p>
+
+<p>&gt;&gt;&gt; session.query(Product).get(&#8216;222&#8217;)
+&lt;Accessory 222&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengliu/">SQLAlchemy教程(六)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>本文主要是ORM的sission查询和更新</strong></p>
+
+<p>session负责执行内存中的对象和数据库表之间的同步工作,创建session可以这样:</p>
+
+<p>Session = sessionmaker(bind=engine) #sqlalchemy.orm.session.Session类有很多参数,使用sessionmaker是为了简化这个过程</p>
+
+<p>或者:
+Session = sessionmaker()
+Session.configure(bind=engine)</p>
+
+<p>注:sessionmaker的参数:
+autoflush=True  #为True时，session将在执行session的任何查询前自动调用flush()。这将确保返回的结果</p>
+
+<p>transactional=False #为True时，session将自动使用事务commit
+twophase=False #当处理多个数据库实例,当使用flush()但是没有提交事务commit时,给每个数据库一个标识,使整个事务回滚</p>
+
+<p>创建session,添加数据的例子(以前也出现过很多次了)
+dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17)
+[GCC 4.5.3] on linux2
+Type &#8220;help&#8221;, &#8220;copyright&#8221;, &#8220;credits&#8221; or &#8220;license&#8221; for more information.
+&gt;&gt;&gt; from sqlalchemy import *
+&gt;&gt;&gt; from sqlalchemy.orm import *
+&gt;&gt;&gt; engine = create_engine(&#8216;sqlite://&#8217;)
+&gt;&gt;&gt; metadata = MetaData(engine)
+&gt;&gt;&gt; account_table = Table(
+&#8230; &#8216;account&#8217;, metadata,
+&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230; Column(&#8216;balance&#8217;, Numeric))
+&gt;&gt;&gt; class Account(object): pass
+&#8230;
+&gt;&gt;&gt; mapper(Account, account_table)
+&lt;Mapper at 0x84e6f2c; Account&gt;
+&gt;&gt;&gt; account_table.create()
+&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session = sessionmaker(bind=engine)
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session.add(a)
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; session.delete(a) #自动删除 account_table相应条目,但是在1:N和M:N关系中不会自动删除它的级联关系
+&gt;&gt;&gt; session.flush()</p>
+
+<p><strong>注:session的对象状态:</strong></p>
+
+<p>Transient:短暂的,主要指内存中的对象</p>
+
+<p>Pending:挂起的,这样的对象准备插入数据库,等执行了flush就会插入</p>
+
+<p>Persistent:持久的</p>
+
+<p>Detached:对象在数据库里面有记录,但是不属于session</p>
+
+<p>&gt;&gt;&gt; make_transient(a)  #因为标识了已删除,恢复a的状态
+&gt;&gt;&gt; session.add(a) #重新添加
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; print query
+SELECT account.id AS account_id, account.balance AS account_balance
+FROM account
+&gt;&gt;&gt; for obj in query:
+&#8230;     print obj
+&#8230;
+&lt;__main__.Account object at 0x84eef0c&gt;</p>
+
+<p>&gt;&gt;&gt; query.all()  #查询所有
+[&lt;__main__.Account object at 0x84eef0c&gt;]
+&gt;&gt;&gt; query = query.filter(Account.balance &gt; 10.00)  #filter过滤
+&gt;&gt;&gt; for obj in query:
+&#8230;     print obj.balance
+&#8230;</p>
+
+<p>100.00</p>
+
+<p>&gt;&gt;&gt; for i in session.query(Account).filter_by(balance=100.00 ):  #通过条件过滤
+&#8230;     print i
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; query = query.from_statement(&#8216;select *from account where balance=:bac&#8217;) #通过带通配符的SQL语句其中:bac标识这个参数是bac
+&gt;&gt;&gt; query = query.params(bac=&#8217;100.00&#8217;) #根据bac指定值寻找
+&gt;&gt;&gt; print query.all()
+[&lt;__main__.Account object at 0x84eef0c&gt;]</p>
+
+<p><strong>本地session</strong></p>
+
+<p>&gt;&gt;&gt; Session = scoped_session(sessionmaker(  #设置一个本地的共享session
+&#8230;     bind=engine, autoflush=True))
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session2 = Session()
+&gt;&gt;&gt; session is session2  #他们是同一个
+True</p>
+
+<p>&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session.add(a) #注意 这是的&#8217;S&#8217;是大写
+&gt;&gt;&gt; Session.flush()
+&gt;&gt;&gt; b = Account()
+&gt;&gt;&gt; a.balance = 200.00
+&gt;&gt;&gt; session.add(a)  #其实他们是一个共享的session 名字都可以
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Account).all() #查询到了2个
+[&lt;__main__.Account object at 0x851be0c&gt;, &lt;__main__.Account object at 0x84f7d6c&gt;]</p>
+
+<p>注:这样的映射mapper也可以这样是用:</p>
+
+<p>mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref=&#8217;products&#8217;)))</p>
+
+<p>Session.mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref=&#8217;products&#8217;))) #它的优点是可以初始化参数</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/8/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/6/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

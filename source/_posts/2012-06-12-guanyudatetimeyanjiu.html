@@ -1,0 +1,130 @@
+---
+layout: post
+title: 关于datetime研究
+categories:
+- python模块研究
+tags:
+- datetime
+published: true
+comments: true
+indexer: true
+---
+<p>前言：datetime是一个日期/时间值操作的模块</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>t = datetime.time(1, 2, 3)  #这事一个关于时间的调用
+print t
+print 'hour  :', t.hour 
+print 'minute:', t.minute
+print 'second:', t.second
+print 'microsecond:', t.microsecond
+print 'tzinfo:', t.tzinfo
+</pre></p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>today = datetime.date.today()  #这是一个关于日期的调用
+print today
+print 'ctime:', today.ctime()
+print 'tuple:', today.timetuple()
+print 'ordinal:', today.toordinal()
+print 'Year:', today.year
+print 'Mon :', today.month
+print 'Day :', today.day
+d1 = datetime.date(2008, 3, 12)
+print 'd1:', d1
+d2 = d1.replace(year=2009)
+print 'd2:', d2
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-06-12
+ctime: Tue Jun 12 00:00:00 2012
+tuple: time.struct_time(tm_year=2012, tm_mon=6, tm_mday=12, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=1, tm_yday=164, tm_isdst=-1)
+ordinal: 734666
+Year: 2012
+Mon : 6
+Day : 12</p>
+
+<p>d1: 2008-03-12
+d2: 2009-03-12</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>today = datetime.date.today()  #计算今天
+print 'Today    :', today</p>
+
+<p>one_day = datetime.timedelta(days=1) #<tt>timedelta</tt>类通过的日期值进行基本的算术，这个步长是1天
+print 'One day  :', one_day</p>
+
+<p>yesterday = today - one_day
+print 'Yesterday:', yesterday</p>
+
+<p>tomorrow = today + one_day
+print 'Tomorrow :', tomorrow</p>
+
+<p>print 'tomorrow - yesterday:', tomorrow - yesterday   #日期计算，当然也可以使用比较计算
+print 'yesterday - tomorrow:', yesterday - tomorrow
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>Today    : 2012-06-12
+One day  : 1 day, 0:00:00
+Yesterday: 2012-06-11
+Tomorrow : 2012-06-13
+tomorrow - yesterday: 2 days, 0:00:00
+yesterday - tomorrow: -2 days, 0:00:00</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>print 'Now    :', datetime.datetime.now() #datetime.datetime结合了日期和时间,合并也可以这样：datetime.datetime.combine(datetime.date.today(), datetime.time(1, 2, 3))
+print 'Today  :', datetime.datetime.today()
+print 'UTC Now:', datetime.datetime.utcnow()</p>
+
+<p>d = datetime.datetime.now()
+for attr in [ 'year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond']:
+    print attr, ':', getattr(d, attr)
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Now    : 2012-06-12 15:31:49.960739  #精确到微秒
+Today  : 2012-06-12 15:31:49.961110
+UTC Now: 2012-06-12 07:31:49.961128
+year : 2012
+month : 6
+day : 12
+hour : 15
+minute : 31
+second : 49
+microsecond : 961134</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>format = "%a %b %d %H:%M:%S %Y" #想格式化成： 星期几的简称 月简称  一个月的第几天（01..31)  小时 分 秒 年</p>
+
+<p>today = datetime.datetime.today()
+print 'ISO     :', today</p>
+
+<p>s = today.strftime(format)
+print 'strftime:', s</p>
+
+<p>d = datetime.datetime.strptime(s, format)
+print 'strptime:', d.strftime(format)
+</pre>
+结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+ISO     : 2012-06-12 15:34:48.377180
+strftime: Tue Jun 12 15:34:48 2012
+strptime: Tue Jun 12 15:34:48 2012</p>

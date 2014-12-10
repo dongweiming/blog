@@ -1,0 +1,86 @@
+---
+layout: post
+title: 关于cookie研究
+categories:
+- python模块研究
+tags:
+- cookie
+published: true
+comments: true
+indexer: true
+---
+<p>前言：cookie主要用于解析和创建HTTP Cookie标头的模块，cookie通常是用来对站点管理，由服务器存储，客户端返回</p>
+
+<p><pre class="sh_python">
+import Cookie
+import datetime</p>
+
+<p>c = Cookie.SimpleCookie()  </p>
+
+<p>c['encoded_value_cookie'] = '"cookie_value"'
+c['encoded_value_cookie']['comment'] = 'Notice that this cookie value has escaped quotes'  #cookie 的目标用途,客户端可以检查此注释，并决定是否接受此 cookie</p>
+
+<p>c['restricted_cookie'] = 'cookie_value'
+c['restricted_cookie']['path'] = '/some/path' #<span style="font-family: 宋体,宋体,宋体;">则 cookie 将只发送到对该路径的请求中。如果未设置该属性，则使用应用程序的路径</span>
+c['restricted_cookie']['domain'] = 'dongwm'  #<span style="font-family: 宋体,宋体,宋体;">cookie 将被发送到对该域的请求中去</span>
+c['restricted_cookie']['secure'] = True #<span style="font-family: 宋体,宋体,宋体;">指定 cookie 是否安全</span> 为真时，cookie 只能通过安全通道传输（目前即SSL通道）。否则，浏览器将忽略此Cookie</p>
+
+<p>c['with_max_age'] = 'expires in 5 minutes'
+c['with_max_age']['max-age'] = 300  #用秒来设置cookie的生存期</p>
+
+<p>c['expires_at_time'] = 'cookie_value'
+expires = datetime.datetime(2013, 2, 14, 00, 30, 12) + datetime.timedelta(hours=1)
+c['expires_at_time']['expires'] = expires.strftime('%a, %d %b %Y %H:%M:%S') #<span style="font-family: 宋体,宋体,宋体;">cookie 的过期日期。为了在会话结束后将 cookie 存储在客户端磁盘上，必须设置该日期。
+ #若此项属性的设置未超过当前日期，则在任务结束后 cookie 将到期</span>
+</pre></p>
+
+<p><pre class="sh_python">
+import Cookie</p>
+
+<p>HTTP_COOKIE = r'integer=5; string_with_quotes="He said, \"Hello, World!\""'</p>
+
+<p>print 'From constructor:'
+c = Cookie.SimpleCookie(HTTP_COOKIE)
+print c</p>
+
+<p>print
+print 'From load():'
+c = Cookie.SimpleCookie()
+c.load(HTTP_COOKIE) #接受解析cookie
+print c
+</pre></p>
+
+<p>操作过程：</p>
+
+<p>From constructor:
+Set-Cookie: integer=5
+Set-Cookie: string_with_quotes="He said, \"Hello, World!\""</p>
+
+<p>From load():
+Set-Cookie: integer=5
+Set-Cookie: string_with_quotes="He said, \"Hello, World!\""</p>
+
+<p><pre class="sh_python">
+import Cookie
+c = Cookie.SimpleCookie()
+c['mycookie'] = 'cookie_value'
+c['another_cookie'] = 'second value'
+print c.js_output() #除了使用Set-Cookie头，它是可以使用JavaScript将Cookie添加到客户端
+</pre>
+结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py</p>
+
+<p>&lt;script type="text/javascript"&gt;
+&lt;!-- begin hiding
+document.cookie = "another_cookie=\"second value\"";
+// end hiding --&gt;
+&lt;/script&gt;</p>
+
+<p>&lt;script type="text/javascript"&gt;
+&lt;!-- begin hiding
+document.cookie = "mycookie=cookie_value";
+// end hiding --&gt;
+&lt;/script&gt;</p>
+
+<p>&nbsp;</p>

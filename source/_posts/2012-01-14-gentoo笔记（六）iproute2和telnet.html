@@ -1,0 +1,76 @@
+---
+layout: post
+title: gentoo笔记（六）iproute2和telnet
+categories:
+- gentoo
+tags:
+- ifstat
+- iproute2
+- lnstat
+- netkit-telnetd
+- nstat
+- rtmon
+published: true
+comments: true
+indexer: true
+---
+<p><strong>前言：习惯其他的linux用户的困惑：telnet 呢 route呢？</strong></p>
+
+<p><strong>gentoo的telnet：</strong></p>
+
+<p>sudo emerge net-misc/netkit-telnetd
+<strong>gentoo的route：</strong>
+sudo emerge sys-apps/iproute2</p>
+
+<p><strong>其中的有用的工具： 1 ifstat 网络接口监测工具</strong>
+dongwm@localhost ~ $/sbin/ifstat -a
+#kernel
+Interface        RX Pkts/Rate    TX Pkts/Rate    RX Data/Rate    TX Data/Rate
+RX Errs/Drop    TX Errs/Drop    RX Over/Rate    TX Coll/Rate
+lo                   420 0           420 0         19240 0         19240 0
+0 0             0 0             0 0             0 0
+eth1              104098 0         56629 0       107743K 0         5085K 0
+0 890           0 0             0 0             0 0
+<strong>2ip</strong></p>
+
+<p>主可执行程序，它包含以下几个功能：</p>
+
+<p>ip link <em><tt>[device]</tt></em> 查看和修改设备状态</p>
+
+<p>ip addr 查看地址的特性，添加新地址、删除旧地址。</p>
+
+<p>ip neighbor 查看邻居的特性，添加新邻居、删除旧邻居。</p>
+
+<p>ip rule 查看和修改路由规则</p>
+
+<p>ip route 查看路由表和修改路由表规则  也就是其它linux系统的route</p>
+
+<p>ip tunnel 查看和修改 IP 隧道及其特性</p>
+
+<p>ip maddr 查看和修改多播地址及其特性</p>
+
+<p>ip mroute 设置、修改、删除多播路由</p>
+
+<p>ip monitor 不间断的监视设备状态、地址、路由</p>
+
+<p><strong>3 ss类似于 netstat 命令，显示活动的连接。</strong></p>
+
+<p><strong>4 lnstat 提供 Linux 网络统计信息，用于替代旧的 rtstat 程序</strong></p>
+
+<p><strong>5 nstat 显示网络统计信息</strong></p>
+
+<p><strong>6 rtmon路由监视工具</strong></p>
+
+<p>rtmon file /var/log/rtmon.log
+ip monitor file /var/log/rtmon.log
+<strong>7  tc 流量控制，用于实现服务质量(QOS)和服务级别(COS)</strong></p>
+
+<p>tc qdisc 建立排队规则</p>
+
+<p>tc class 建立基于级别的队列调度</p>
+
+<p>tc estimator 估算网络流量</p>
+
+<p>tc filter 设置 QOS/COS 包过滤器</p>
+
+<p>tc policy 设置 QOS/COS 规则</p>

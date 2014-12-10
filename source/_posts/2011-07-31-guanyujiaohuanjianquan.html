@@ -1,0 +1,128 @@
+---
+layout: post
+title: 思科网络安全专题（一）:关于交换机安全
+categories:
+- 安全
+- 思科
+tags:
+- 交换机安全
+published: true
+comments: true
+indexer: true
+---
+<p>生产环境交换机比较多，以前的同事没有对其进行什么安全策略，就是简单配置一个登录密码而已。我接手后进行了一些改造！</p>
+
+<p>1 禁用DTP，中继</p>
+
+<p>因为一些交换机默认的中继为auto模式。可能在收到dtp协议帧后自动成为中继。</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#switchport mode access</p>
+
+<p>2 stp安全</p>
+
+<p>如果攻击者获得2个不同交换的2个端口，可将一个交换机引入网络，配置更高的桥优先级，使之比根桥的桥接优先级更低，这样stp重新收敛后就会被这个冒充交换机截取流量</p>
+
+<p>1 根保护： 收到bpdu后进入根保护不一致的状态，端口不再转发流量，bpdu停止后恢复</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#spanning-tree  guard root<!--more--></p>
+
+<p>2  BPDU保护：如果收到bpdu后次端口会被禁用</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#spanning-tree portfast bpduguard</p>
+
+<p>3 arp安全</p>
+
+<p>交换机可信端口容许arp回复，不可信端口的arp的回复内容会和绑定表对比验证正确性</p>
+
+<p>R1(config)#ip arp inspection vlan 13  //在lan启动此特性，arp回复内容不一致端口会被禁用</p>
+
+<p>或者：</p>
+
+<p>SW1(config)# int range fastEthernet 0/1  - 15</p>
+
+<p>SW1(config-if-range)#ip arp inspection  trust  //端口启用此特性</p>
+
+<p>4 vlan访问控制列表</p>
+
+<p>SW1(config)#access-list 17 permit tcp any host 192.168.8.127 eq telnet</p>
+
+<p>SW1(config)#vlan access-map ALLOWTELNET 10 //定义一个vlan access map，取名为ALLOWTELNET
+SW1(config-access-map)# match ip address 100 // 设置匹配规则为acl 1010
+SW1(config-access-map)# action forward // 匹配后，设置数据流转发（forward）</p>
+
+<p>SW1(config-access-map)#exit</p>
+
+<p>SW1(config)#vlan filter ALLOWTELNET vlan-list 1-45</p>
+
+<p>5 端口安全</p>
+
+<p>SW1(config)#int f0/12</p>
+
+<p>SW1(config-if)#switchport mode access</p>
+
+<p>SW1(config-if)#switchport port-security   //启用端口安全
+SW1(config-if)#switchport port-security violation protect  //针对非法接入计算机，端口处理模式丢弃数据包
+SW1(config-if)#switchport port-security mac-address sticky  //使已经学到的MAC地址动态的进入交换机配置</p>
+
+<p>SW1(config-if)#switchport port-security mac-address  XXXX.XXXX.XXXX  //为端口输入特定的允许通过的mac地址</p>
+
+<p>SW1(config-if)#switchport port-security maximum 5   //可以最大学习5个MAC地址
+6 其他</p>
+
+<p>no service finger
+no service pad
+no service udp-small-servers
+no service tcp-small-servers
+service password-encryption
+service tcp-keepalives-in
+service tcp-keepalives-out
+no cdp run
+no ip bootp server
+no ip http server
+no ip finger
+no ip source-route
+no ip gratuitous-arps
+no ip identd
+banner motd ^C
+Please leave immediately, otherwise it will be held liable
+^C
+security passwords min-length 6</p>
+
+<p>login block-for 15  attempts 3 within 60</p>
+
+<p>aaa new-model
+aaa authentication login local_auth local
+line con 0
+login authentication local_auth
+exec-timeout 5 0
+transport output telnet
+line aux 0
+login authentication local_auth
+exec-timeout 10 0
+transport output telnet
+line vty 0 15
+login authentication local_auth
+transport input ssh telnet</p>
+
+<p>ip tcp intercept list autosec_tcp_intercept_list
+ip tcp intercept drop-mode random
+ip tcp intercept watch-timeout 15
+ip tcp intercept connection-timeout 3600
+ip tcp intercept max-incomplete low 450
+ip tcp intercept max-incomplete high 550</p>
+
+<p>interface Vlan1
+no ip redirects
+no ip proxy-arp
+no ip unreachables
+no ip directed-broadcast
+no ip mask-reply
+no mop enabled</p>
+
+<p>&nbsp;</p>

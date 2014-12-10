@@ -1,0 +1,286 @@
+---
+layout: post
+title: shell  进度条
+categories:
+- Bash Shell
+tags:
+- 进度条
+published: true
+comments: true
+indexer: true
+---
+<p>我想要实现的是根据任务完成度实现进度条显示，但是以下前4种都是设定了循环时间，主要是产生一种进度的效果：</p>
+
+<p>1 以下格式：</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test1.sh</p>
+
+<p>progress:[##################################################]100% </pre></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test1.sh</p>
+
+<p>#!/bin/sh</p>
+
+<p>b=''</p>
+
+<p>for ((i=0;$i&lt;=100;i+=2))</p>
+
+<p>do</p>
+
+<p>printf "progress:[%-50s]%d%%\r" $b $i</p>
+
+<p>sleep 0.1</p>
+
+<p>b=#$b</p>
+
+<p>done</p>
+
+<p>echo '' </pre></p>
+
+<p><!--more--></p>
+
+<p>2  以下格式：</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test2.sh</p>
+
+<p>==============================================&gt;   92% </pre></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test2.sh</p>
+
+<p>#!/bin/bash</p>
+
+<p>i=0</p>
+
+<p>while [ $i -lt 50 ]</p>
+
+<p>do</p>
+
+<p>((i++))</p>
+
+<p>echo -ne "=&gt;\033[s"</p>
+
+<p>echo -ne "\033[40;55H"$((i*2*100/100))%"\033[u\033[1D"</p>
+
+<p>usleep 50000</p>
+
+<p>done</p>
+
+<p>echo '' </pre></p>
+
+<p>或者:</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test2.sh</p>
+
+<p>[========================================&gt;                                                           ]41%</pre></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test2.sh</p>
+
+<p>#!/bin/bash</p>
+
+<p>COUNTER=0</p>
+
+<p>_R=0</p>
+
+<p>_C=`tput cols`</p>
+
+<p>_PROCEC=`tput cols`</p>
+
+<p>tput cup $_C $_R</p>
+
+<p>printf "["</p>
+
+<p>while [ $COUNTER -lt 100 ]</p>
+
+<p>do</p>
+
+<p>COUNTER=`expr $COUNTER + 1`</p>
+
+<p>sleep 0.1</p>
+
+<p>printf "=&gt;"</p>
+
+<p>_R=`expr $_R + 1`</p>
+
+<p>_C=`expr $_C + 1`</p>
+
+<p>tput cup $_PROCEC 101</p>
+
+<p>printf "]%d%%" $COUNTER</p>
+
+<p>tput cup $_C $_R</p>
+
+<p>done</p>
+
+<p>printf "\n"</pre></p>
+
+<p>3  直线的原地旋转：</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test3.sh</p>
+
+<p>#!/bin/sh</p>
+
+<p>trap 'kill $BG_PID;echo;exit' 1 2 3 15</p>
+
+<p>function rotate</p>
+
+<p>{</p>
+
+<p>INTERVAL=0.1</p>
+
+<p>TCOUNT="0"</p>
+
+<p>stty -echo &gt;/dev/null 2&gt;&amp;1</p>
+
+<p>while :</p>
+
+<p>do</p>
+
+<p>TCOUNT=`expr $TCOUNT + 1`</p>
+
+<p>case $TCOUNT in</p>
+
+<p>"1") echo -e '-'"\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>"2") echo -e '\\'"\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>"3") echo -e "|\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>"4") echo -e "/\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>*) TCOUNT="0" ;;</p>
+
+<p>esac</p>
+
+<p>done</p>
+
+<p>stty echo</p>
+
+<p>}</p>
+
+<p>rotate &amp;</p>
+
+<p>ROTATE_PID=$!</p>
+
+<p>#</p>
+
+<p># #开始程序主体，本例中执行休眠10秒</p>
+
+<p># #注意必要时使用 &gt;/dev/null 2&gt;&amp;1关闭输出和错误回显，避免破坏显示</p>
+
+<p>sleep 10</p>
+
+<p>#</p>
+
+<p># #程序结尾注意kill dots，否则dots会一直执行；清除多余字符</p>
+
+<p>kill -9 $ROTATE_PID</p>
+
+<p>echo -e "\b\b"</pre></p>
+
+<p>4  以下格式：</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test5.sh</p>
+
+<p>35% .......</pre></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test5.sh</p>
+
+<p>#!/bin/sh</p>
+
+<p>echo</p>
+
+<p>for i in `seq 1 20`; do</p>
+
+<p>arrow="$arrow."</p>
+
+<p>echo -e "\e[A\e[0G$[i*5]% $arrow"</p>
+
+<p>echo -e "\e[A\e[50G"</p>
+
+<p>sleep 1</p>
+
+<p>done</pre></p>
+
+<p>5  外国一高手写得bar.sh：</p>
+
+<p><a href="http://www.dongwm.com/bar.sh" target="_blank">下载地址</a></p>
+
+<p><pre class="sh_bash">使用举例：</p>
+
+<p>cat file1 file2 file2 &gt; file3</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar file1 file2 file2 &gt; file3</p>
+
+<p>cp infile outfile</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -o outfile infile</p>
+
+<p>Copy several files to another directory (showing a common progress bar)</p>
+
+<p>Standard:</p>
+
+<p>cp file1 file2 file2 outdir/</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -c 'cat &gt; outdir/${bar_file}' file1 file2 file3</p>
+
+<p>Unpack each file individually, but have a common progress bar</p>
+
+<p>Standard:</p>
+
+<p>for i in *.tar.gz; do tar xzpf $i; done</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -c 'tar xzpf -' *.tar.gz</p>
+
+<p>Make a File Listing</p>
+
+<p>We don't want to mention ‘.tar.gz’ in the listing, so we use ‘-e’ to append an extension in each command.</p>
+
+<p>Standard:</p>
+
+<p>(for file in erwin-2.0.274 bar-1.0-src linux-2.4.21</p>
+
+<p>do</p>
+
+<p>echo ${file}:</p>
+
+<p>tar tzvpf ${file}.tar.gz</p>
+
+<p>done) &gt; package-list.txt</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -c 'echo ${bar_file}: ; tar tzvpf -' \</p>
+
+<p>-e .tar.gz                           \</p>
+
+<p>erwin-2.0.274                    \</p>
+
+<p>bar-1.0-src                      \</p>
+
+<p>linux-2.4.21                     \</p>
+
+<p>&gt; package-list.txt</pre></p>

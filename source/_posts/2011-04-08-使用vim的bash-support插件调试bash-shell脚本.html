@@ -1,0 +1,64 @@
+---
+layout: post
+title: 使用Vim的bash-Support插件调试bash shell脚本
+categories:
+- Bash Shell
+tags:
+- bash-Support
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1  下载安装并启用：</strong></p>
+
+<p><pre class="sh_bash">[root@server ~]# mkdir ~/.vim
+[root@server ~]# cd !$</p>
+
+<p>cd ~/.vim</p>
+
+<p>[root@server ~]# wget -O bash-support.zip <a href="http://www.vim.org/scripts/download_script.php?src_id=15125">http://www.vim.org/scripts/download_script.php?src_id=15125</a>
+[root@server .vim]# unzip bash-support.zip</p>
+
+<p>假如你没有自己设置的vimrc文件，建议使用他提供的一个自定义的vimrc</p>
+
+<p>[root@server ~]# cp .vim/bash-support/rc/customization.vimrc ~/.vimrc</pre></p>
+
+<p><strong>2  使用中的一些技巧：</strong></p>
+
+<p><strong>1 自动向sh文件中添加文件头部</strong></p>
+
+<p>当你打开一个以sh为后缀的文件时，文件中会包含以下文件头。然后进入插入状态，光标会移动到DESCRIPTION位置。</p>
+
+<p><pre class="sh_bash">#!/bin/bash -
+#===============================================================================
+#
+#          FILE:  ssss.sh
+#
+#         USAGE:  ./ssss.sh
+#
+#   DESCRIPTION:
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR: Dong Weiming (os), ciici1234@hotmail.com
+#       COMPANY: dongwm.com
+#       CREATED: 2011年02月14日 14时02分33秒 CST
+#      REVISION:  ---
+#===============================================================================</p>
+
+<p>set -o nounset                              # Treat unset variables as an error</pre></p>
+
+<p>这是因为我修改了模版文件.vim/bash-support/templates/Templates</p>
+
+<p><pre class="sh_bash">=============================================================
+========== USER MACROS ========================================
+=============================================================
+|AUTHOR|    = Dong Weiming
+|AUTHORREF| = os
+|EMAIL|     = ciici1234@hotmail.com
+|COMPANY|   = dongwm.com
+|COPYRIGHT| = Copyright (c) |YEAR|, |AUTHOR|</pre></p>
+
+<p><strong>2 </strong><a href="http://lug.fh-swf.de/vim/vim-bash/bash-hot-keys.pdf" target="_blank"><strong>程序的一些命令(注：(i) insert mode, (n) normal mode, (v) visual mode下同)</strong></a></p>

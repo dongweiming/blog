@@ -1,0 +1,218 @@
+---
+layout: post
+title: SQLAlchemy教程(二)
+categories:
+- python
+- SQLAlchemy
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>对于SQLAlchemy的一些总结:</p>
+
+<p><strong>1 metadata.create_all()</strong></p>
+
+<p>创建多个table可以这样使用,但是他还有个功能,它添加了"IF NOT EXISTS",就是在数据库存在的时候,他还是安全的</p>
+
+<p><strong>2 交互模式下的一个全过程:</strong></p>
+
+<p><pre class="sh_python">
+dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17) 
+[GCC 4.5.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; from sqlalchemy import create_engine
+&gt;&gt;&gt; from sqlalchemy import Table, MetaData, Column, ForeignKey, Integer, String, Unicode, DateTime
+&gt;&gt;&gt; from datetime import datetime
+&gt;&gt;&gt; metadata = MetaData('sqlite:///tutorial.db')
+&gt;&gt;&gt; user_table = Table(
+...     'tf_user', metadata,
+...     Column('id', Integer, primary_key=True),
+...     Column('user_name', Unicode(16),
+...            unique=True, nullable=False),
+...     Column('password', Unicode(40), nullable=False),
+...     Column('display_name', Unicode(255), default=''),
+...     Column('created', DateTime, default=datetime.now))
+__main__:7: SAWarning: Unicode column received non-unicode default value.
+&gt;&gt;&gt; stmt = user_table.insert()  #插入数据
+&gt;&gt;&gt; stmt.execute(user_name='dongwm1', password='secret',display_name='testdongwm1')
+/usr/lib/python2.7/site-packages/SQLAlchemy-0.7.8-py2.7-linux-i686.egg/sqlalchemy/engine/default.py:463: SAWarning: Unicode type received non-unicode bind param value.
+  param.append(processors[key](compiled_params[key]))
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8377fcc&gt;
+&gt;&gt;&gt; stmt.execute(user_name='dongwm2', password='secret',display_name='testdongwm2') #这个实例可以多次插入,和sql区别很大
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x837e4ec&gt;
+&gt;&gt;&gt; stmt = user_table.select() #select查询
+&gt;&gt;&gt; result = stmt.execute()
+&gt;&gt;&gt; for row in result:
+...     print row 
+... 
+(1, u'dongwm1', u'secret', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))
+(2, u'dongwm2', u'secret', u'testdongwm2', datetime.datetime(2012, 7, 17, 11, 58, 5, 226977))
+&gt;&gt;&gt; result = stmt.execute()
+&gt;&gt;&gt; row =result.fetchone() #只获取符合要求的第一项
+&gt;&gt;&gt; print  row['user_name']
+dongwm1
+&gt;&gt;&gt; print row.password
+secret
+&gt;&gt;&gt; print row.items()
+[(u'id', 1), (u'user_name', u'dongwm1'), (u'password', u'secret'), (u'display_name', u'testdongwm1'), (u'created', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
+&gt;&gt;&gt; stmt = user_table.select(user_table.c.user_name=='dongwm1') #过滤留下user_name=='dongwm1的项
+&gt;&gt;&gt; print stmt.execute().fetchall() #获取所有符合项
+[(1, u'dongwm1', u'secret', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
+&gt;&gt;&gt; stmt = user_table.update(user_table.c.user_name=='dongwm1') #更新数据
+&gt;&gt;&gt; stmt.execute(password='secret123') #修改密码
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8377f6c&gt;
+&gt;&gt;&gt; stmt = user_table.delete(user_table.c.user_name != 'dongwm1')  #删除user_name不是dongwm1的条目
+&gt;&gt;&gt; stmt.execute()
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x837f3ac&gt;
+&gt;&gt;&gt; user_table.select().execute().fetchall() #查询发现就剩一条了
+[(1, u'dongwm1', u'secret123', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
+</pre></p>
+
+<p><strong>3 sission上面已经说过了,补充一些:</strong></p>
+
+<p>session.delete(u) #把映射类从会话中删除</p>
+
+<p><strong>4 关于引擎</strong></p>
+
+<p>引擎就是根据不同的数据库方言连接数据库的方法</p>
+
+<p>以下是一些例子(方法 driver://username:password@host:port/database):
+engine = create_engine('sqlite://')  #连接基于内存的sqlite
+engine = create_engine('sqlite:///data.sqlite')  #连接基于硬盘文件的sqlite
+engine = create_engine('postgres://dongwm:foo@localhost:5432/pg_db')  #连接postgresql
+engine = create_engine('mysql://localhost/mysql_db')  #连接mysql
+engine = create_engine('oracle://dongwm:foo@oracle_tns') #连接基于TNS协议的Oracle
+engine =create_engine('oracle://dongwm:foo@localhost:1521/oracle_sid') #连接没有TNS名字的Oracle</p>
+
+<p>也可以带一些参数:</p>
+
+<p>url='postgres://dongwm:foo@localhost/pg_db?arg1=foo&amp;arg2=bar'
+engine = create_engine(url)</p>
+
+<p>或者:</p>
+
+<p>engine = create_engine('postgres://dongwm:foo@localhost/pg_db',
+connect_args=dict(arg1='foo', arg2='bar'))</p>
+
+<p>还可以通过函数完全控制连接:</p>
+
+<p>import psycopg
+def connect_pg():
+return psycopg.connect(user='rick', host='localhost')
+engine = create_engine('postgres://', creator=connect_pg)</p>
+
+<p>import logging
+handler = logging.FileHandler('sqlalchemy.engine.log')  #可以给它添加一个日志文件处理类
+handler.level = logging.DEBUG
+logging.getLogger('sqlalchemy.engine').addHandler(handler)</p>
+
+<p>上面说的操作表,也可以直接操作数据库:</p>
+
+<p>conn = engine.connect()
+result = conn.execute('select user_name, email_address from tf_user') #结果是一个sqlalchemy.engine.ResultProxy的实例
+for row in result:
+print 'User name: %s Email address: %s' % (
+row['user_name'], row['email_address'])
+conn.close()</p>
+
+<p>from sqlalchemy import pool #本来它已经自动通过数据库连接管理数据池,但是也可以手动管理
+import psycopg2
+psycopg = pool.manage(psycopg2) #结果是一个sqlalchemy.pool.DBProxy实例
+connection = psycopg.connect(database='mydb',
+username='rick', password='foo')</p>
+
+<p><strong>5 关于元数据metadata</strong></p>
+
+<p>它收集了描述table对象等的元数据类,当使用ORM等时必须使用metadata</p>
+
+<p>如果他被绑定了,那么使用table.create()就会生成表,没有绑定需要:table.create(bind=some_engine_or_connection),其中table.create</p>
+
+<p>包含一些函数:</p>
+
+<p>autoload:默认是false,当数据库已经存在这个table会自动加载覆盖</p>
+
+<p>autoload_with:默认是false,是否自动加载引擎的字段结构</p>
+
+<p>reflect:默认是false,是否体现源表结构</p>
+
+<p>brand_table = Table('brand', metadata,
+Column('name', Unicode(255)), # 覆盖类型
+autoload=True)</p>
+
+<p><strong>6 关于表结构:</strong></p>
+
+<p>设置表主键可以这样:</p>
+
+<p>Column('brand_id', Integer, ForeignKey('brand.id'),primary_key=True), #通过primary_key=True
+Column('sku', Unicode(80), primary_key=True))
+也可以这样:
+product_table = Table(
+'product', metadata,
+Column('brand_id', Integer, ForeignKey('brand.id')),
+Column('sku', Unicode(80)),
+PrimaryKeyConstraint('brand_id', 'sku', name='prikey'))  #通过PrimaryKeyConstraint</p>
+
+<p>style_table = Table(
+'style', metadata,
+Column('brand_id', Integer, primary_key=True),
+Column('sku', Unicode(80), primary_key=True),
+Column('code', Unicode(80), primary_key=True),
+ForeignKeyConstraint(  #使用复合键,关联外部表的字段
+['brand_id', 'sku'],
+['product.brand_id', 'product.sku']))</p>
+
+<p>product_table = Table(
+'product', metadata,
+Column('id', Integer, primary_key=True),
+Column('brand_id', Integer, ForeignKey('brand.id')), #他的brand_id关联brand的让id
+Column('sku', Unicode(80)),
+UniqueConstraint('brand_id', 'sku')) #约束唯一标识数据库表中的每条记录</p>
+
+<p>payment_table = Table(
+'payment', metadata,
+Column('amount', Numeric(10,2), CheckConstraint('amount &gt; 0'))) #验证amount大于0
+user_table = Table(
+'tf_user', MetaData(),
+Column('id', Integer, primary_key=True),
+Column('user_name', Unicode(16), unique=True, nullable=False),
+Column('password', Unicode(40), nullable=False),
+Column('first_name', Unicode(255), default=''),
+Column('last_name', Unicode(255), default=''),
+Column('created_apptime', DateTime, default=datetime.now), #default表示当不舍定具体值时设定一个默认值
+Column('created_dbtime', DateTime, PassiveDefault('sysdate')), # PassiveDefault是数据库级别的默认值,
+Column('modified', DateTime, onupdate=datetime.now)) #单设置onupdate这个属性，这是不应用到数据库的设计中的.只是存在于映射类中.</p>
+
+<p>#它是活跃更新的,因为每次执行的时间都不同</p>
+
+<p>user_table = Table(
+'tf_user', MetaData(),
+Column('id', Integer, primary_key=True),
+Column('user_name', Unicode(16), unique=True, nullable=False, index=True), #一旦数据库增长到一定规模时，可能需要考虑增加表的索引，以加快某些操作
+Column('password', Unicode(40), nullable=False),
+Column('first_name', Unicode(255), default=''),
+Column('last_name', Unicode(255), default='', index=True))</p>
+
+<p>其中指定索引也可以这样:</p>
+
+<p>i = Index('idx_name', user_table.c.first_name,user_table.c.last_name,unique=True)
+i.create(bind=e)</p>
+
+<p>brand_table = Table(
+'brand', metadata,
+Column('id', Integer, Sequence('brand_id_seq'), primary_key=True),  #需要通过序列化方式来创建新主键标识符的数据库，</p>
+
+<p>#SQLAlchemy 并不会自动为其生成。可以指定Sequence 生成
+Column('name', Unicode(255), unique=True, nullable=False))</p>
+
+<p><strong>7 元数据操作</strong></p>
+
+<p>meta1 = MetaData('postgres://postgres:password@localhost/test',
+... reflect=True)
+meta2 = MetaData('sqlite://')
+for table in meta1.table_iterator():
+table.tometadata(meta2) #通过这个方法让meta1的元数据被meta2使用
+meta2.create_all()</p>
+
+<p>2 假如想放弃绑定使用drop_all( )或者drop(e)</p>

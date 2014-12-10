@@ -1,0 +1,34 @@
+---
+layout: post
+title: ! '解决/usr/bin/ld: cannot find -lxxx错误'
+categories:
+- linux基础
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p>编译安装时候可能会出现类似于以下的这样报错，简单地说是可能是在安装系统中选择的包的问题：
+<pre class="bbcodeblock" style="margin: 0px -99999px 0px 0px; padding: 3px; border: 1px inset; width: 98%; height: 50px; text-align: left; overflow: auto;" dir="ltr">/usr/bin/ld: cannot find -lltdl
+collect2: ld returned 1 exit status
+解决办法是：
+<pre class="sh_bash">[root@9-104 php-5.2.8]# updatedb
+[root@9-104 php-5.2.8]# locate libltdl  //提示/usr/bin/ld: cannot find -lxxx ，查找时候前面加lib：libxxx  住一 第一个l去掉
+/usr/lib64/libltdl.so.3
+/usr/lib64/libltdl.so.3.1.4
+/usr/share/libtool/libltdl
+/usr/share/libtool/libltdl/COPYING.LIB
+/usr/share/libtool/libltdl/Makefile.am
+/usr/share/libtool/libltdl/Makefile.in
+/usr/share/libtool/libltdl/README
+/usr/share/libtool/libltdl/acinclude.m4
+/usr/share/libtool/libltdl/aclocal.m4
+/usr/share/libtool/libltdl/config-h.in
+/usr/share/libtool/libltdl/config.guess
+...
+注意拉：
+[root@9-104 php-5.2.8]# ln -s /usr/lib64/libltdl.so.3 /usr/lib64/libltdl.so
+原理：给查找到的libxxx文件做软链接
+ln -s /usr/lib64/libxxx.so.X（X代表数字） /usr/lib64/lxxx.so</pre></p>
+
+<p>&nbsp;</p>

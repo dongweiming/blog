@@ -1,0 +1,145 @@
+---
+layout: post
+title: 关于tarfile研究
+categories:
+- python模块研究
+tags:
+- tarfile
+published: true
+comments: true
+indexer: true
+---
+<p>前言：使用tarfile模块来实现文件归档压缩与解压</p>
+
+<p><pre class="sh_python">
+import tarfile</p>
+
+<p>print 'creating archive'
+out = tarfile.open('tarfile_add.tar', mode='w')  #创建一个tar文件
+try:
+    print 'adding README.txt'
+    out.add('README.txt')  #望这个tar添加一个文件
+finally:
+    print 'closing'
+    out.close()</p>
+
+<p>print
+print 'Contents:'
+t = tarfile.open('tarfile_add.tar', 'r')
+print t.getnames() #存档内容的名称列表
+for member_info in t.getmembers():  #遍历tar包含的文件
+    print member_info
+    print member_info.name
+    print '\tModified:\t', time.ctime(member_info.mtime)  #文件修改时间
+    print '\tMode    :\t', oct(member_info.mode) #文件的权限
+    print '\tType    :\t', member_info.type 
+    print '\tSize    :\t', member_info.size, 'bytes'  #文件大小
+    print
+print
+for filename in [ 'README.txt', 'tarfile_add.tar', 
+                  'bad.tar', 'notthere.tar' ]:
+    try:
+        print '%20s  %s' % (filename, tarfile.is_tarfile(filename))  #测试tar文件是否有效
+    except IOError, err:
+        print '%20s  %s' % (filename, err)
+</pre></p>
+
+<p>直接过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+creating archive
+adding README.txt
+closing</p>
+
+<p>Contents:</p>
+
+<p>['README.txt']
+README.txt
+Modified:    Mon Jun 18 15:28:10 2012
+Mode    :    0644
+Type    :    0
+Size    :    0 bytes</p>
+
+<p>README.txt  False  #存在文件 但他不是tar文件
+tarfile_add.tar  True #上面创建的tar文件
+bad.tar  False  #值是touch了这个名字的文件
+notthere.tar  [Errno 2] No such file or directory: 'notthere.tar'  #不存在这个文件</p>
+
+<p><pre class="sh_python">
+import tarfile
+import os
+t = tarfile.open('tarfile_add.tar', 'r')
+for filename in [ 'README.txt', 'notthere.txt' ]:
+    try:
+        f = t.extractfile(filename)  #从tar中解压出某文件
+    except KeyError:
+        print 'ERROR: Did not find %s in tar archive' % filename
+    else:
+        print filename, ':', f.read() #读取解压出来的文件内容
+os.mkdir('outdir')
+t.extract('README.txt', 'outdir')  #解压tar中的这个文件到outdir目录
+t.extractall('outdir')  #将tar全部文件解压到outdir目录
+t.extractall('outdir', members=[t.getmember('README.txt')]) #解压tar中的README.txt到outdir目录
+print os.listdir('outdir')
+</pre></p>
+
+<p><pre class="sh_python">
+import tarfile</p>
+
+<p>data = 'This is the data to write to the archive.'
+out = tarfile.open('tarfile_addfile.tar', mode='w')
+try:
+    print 'adding README.txt as RENAMED.txt'
+    info = out.gettarinfo('README.txt', arcname='RENAMED.txt')  #将tar中的README.txt修改成RENAMED.txt
+    out.addfile(info)
+    info = tarfile.TarInfo('made_up_file.txt') #准备修改的文件
+    info.size = len(data)  
+    out.addfile(info, StringIO(data)) #将数据流写道文件里面</p>
+
+<p>finally:
+    print 'closing'
+    out.close()</p>
+
+<p>t = tarfile.open('tarfile_addfile.tar', 'r')
+for member_info in t.getmembers():
+    print member_info.name
+    f = t.extractfile(member_info)
+    print f.read()
+out = tarfile.open('tarfile_addfile.tar', mode='a') 
+try: 
+    out.add('index.rst')  #往tar再加入一个文件  上面的模式是‘a’
+finally: 
+    out.close()~
+</pre></p>
+
+<p><pre class="sh_python">
+import tarfile
+import os</p>
+
+<p>fmt = '%-30s %-10s'
+print fmt % ('FILENAME', 'SIZE')
+print fmt % ('README.txt', os.stat('README.txt').st_size)  #文件的字节数</p>
+
+<p>for filename, write_mode in [
+    ('tarfile_compression.tar', 'w'),  #默认的.tar后缀
+    ('tarfile_compression.tar.gz', 'w:gz'), #修改成.tar.gz
+    ('tarfile_compression.tar.bz2', 'w:bz2'), #修改成.tar.bz2
+    ]:
+    out = tarfile.open(filename, mode=write_mode)
+    try:
+        out.add('README.txt')
+    finally:
+        out.close()</p>
+
+<p>    print fmt % (filename, os.stat(filename).st_size),
+    print [m.name for m in tarfile.open(filename, 'r:*').getmembers()]
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+FILENAME                       SIZE
+README.txt                     9
+tarfile_compression.tar        10240      ['README.txt']
+tarfile_compression.tar.gz     165        ['README.txt']
+tarfile_compression.tar.bz2    150        ['README.txt']</p>

@@ -1,0 +1,59 @@
+---
+layout: post
+title: (pyqt4)python程序启动画面淡入淡出效果
+categories:
+- linux基础
+tags:
+- QSplashScreen
+- 淡入淡出效果
+- 程序启动画面
+published: true
+comments: true
+indexer: true
+---
+<p>前言：见过很多软件启动程序后会有个启动画面，并且还有个淡入淡出效果。研究了很久终于实现了：</p>
+
+<p><pre class="sh_python">
+class SplashScreen(QSplashScreen):</p>
+
+<p>    def __init__(self):
+        super(SplashScreen, self).__init__(QPixmap("../image/app.jpg"))   ＃启动程序的图片
+        self.setWindowModality(Qt.ApplicationModal)
+    def fadeTicker(self):
+        self.setWindowOpacity(0) 
+        t =0
+        while t &lt;=50:
+            newOpacity = self.windowOpacity() + 0.02     ＃设置淡入
+            if newOpacity &gt; 1:
+           #     self.close()
+                break</p>
+
+<p>            self.setWindowOpacity(newOpacity)
+            self.show()
+            t -= 1
+            time.sleep(0.04)
+        self.show()
+        time.sleep(1)
+        t =0
+        while t &lt;=50:
+            newOpacity = self.windowOpacity() - 0.02         ＃设置淡出
+            if newOpacity &lt; 0:
+                self.close()
+                break</p>
+
+<p>            self.setWindowOpacity(newOpacity)
+            self.show()
+            t += 1
+            time.sleep(0.04)</p>
+
+<p>if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    splash = SplashScreen()
+    splash.fadeTicker()
+    app.processEvents()   ＃设置启动画面不影响其他效果
+    QtGui.QApplication.setQuitOnLastWindowClosed(False)          
+    window = Window(confdict)       ＃这是qt程序的主类 每个人的这个不同
+    window.st()
+    splash.finish(window)            ＃启动画面完成启动qt主类
+    sys.exit(app.exec_())
+</pre></p>

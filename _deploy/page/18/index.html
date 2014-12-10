@@ -1,0 +1,1936 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/18">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusedyanjiuyi/">关于sed研究（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-16T00:00:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 sed语法和命令结构</strong></p>
+
+<p>sed [options] {sed-commands} {input-file}</p>
+
+<p>或者：</p>
+
+<p>sed [options] -f {sed-commands-in-a-file} {input-file}
+注：这里的sed-commands-in-a-file 其实就是把要执行的语句写在一个文件(这里是test.sed)中：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.sed
+/^dongwm/ p
+/^icinga/ p</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -f test.sed /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p>或者：</p>
+
+<p>sed [options] -e {sed-command-1} -e {sed-command-2}  #这里使用 &#8216;-e&#8217; 也就是执行相对应的语句,每个‘-e’执行结果都要返回，而不是符合全部&#8217;-e&#8217;的结果
+{input-file}
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/^dongwm/ p&#8217; -e &#8216;/^icinga/ p&#8217; /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p>或者：</p>
+
+<p>sed [options] &#8216;{sed-command-1 sed-command-2}&#8217;  {input-file}  #使用多个执行语句用&#8221;{}&#8221;括起来,每个执行语句用&#8217;;&#8217;隔开</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;{/^dongwm/ p;/^icinga/ p}&#8217; /etc/passwd  #&#8221;-n&#8221;表示打印时候去重复（我的理解）
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p><strong>2 打印输出文件</strong></p>
+
+<p>这里有个文件：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+例子:</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;2 p&#8217; !$  #打印第二行
+sed -n &#8216;2 p&#8217; test.txt
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;1,2 p&#8217; test.txt  #打印某几行这里是start（1）－end（2）行
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;2,$ p&#8217; test.txt  #打印某行到最后一行 这里是第二行
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;1~2 p&#8217; test.txt  #这里‘~’修改了打印间隔，比如：1~2 匹配第一行，第三行（间隔为2）&#8230;；比如1~3 匹配第一行，第四行&#8230;
+112,dongwm,dongwm.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/ p&#8217; test.txt  #模式匹配，匹配包含‘dongwm’的行
+112,dongwm,dongwm.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,3 p&#8217; test.txt #模式匹配，匹配包含‘dongwm’的行，直到某一行的数据（这里是第3行）
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,/ailll/ p&#8217; test.txt #模式匹配，匹配包含‘dongwm’的行，直到包含‘ailll’的行
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,+1 p&#8217; test.txt  #模式匹配，匹配包含‘dongwm’的行 然后再加某数值的行数（这里是1行）
+112,dongwm,dongwm.com
+113,ailll,ailll.com</p>
+
+<p><strong>3 删除行</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed &#8216;2 d&#8217; test.txt  #删除指定行，只是输出 源文件没有被操作
+112,dongwm,dongwm.com
+114,test,test.com</p>
+
+<p>删除的语句和上面打印的相同</p>
+
+<p>例子：</p>
+
+<p>sed &#8216;/^$/ d&#8217; test.txt  #删除所有行</p>
+
+<p>sed &#8216;/^#/ d&#8217; employee.txt  #删除所有注释行</p>
+
+<p><strong>4 将执行语句结果写入其他文件</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;w test2.txt&#8217; test.txt
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+写入的语句和上面打印的相同，比如：</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,2 w test2.txt&#8217; test.txt   #写入匹配行到第二行数据到text2.txt
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+<strong>5 替换</strong></p>
+
+<p>语法：sed &#8216;[address-range|pattern-range] s/original-
+string/replacement-string/[substitute-flags]&#8217; inputfile
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/dongwm/dongwm2/&#8217; test.txt  #s 表示是要替换，这里只是替换第一个dongwm,如果sed  &#8216;s/dongwm/dongwm2/g&#8217; test.txt 表示全文替换
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  &#8216;/com/s/dongwm/dongwm2/&#8217; test.txt  #喜爱指定匹配的行执行替换，这里是匹配行包括‘com’
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/dongwm/dongwm2/2&#8217; test.txt #替换全文中第几个符合匹配条件的匹配项，这里文件有2个，只替换第2个
+112,dongwm,dongwm2.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/com/com2/1&#8217; test.txt  #这里其实是匹配每行否和要求的匹配项
+112,dongwm,dongwm.com2
+113,ailll,ailll.com2
+114,test,test.com2
+dongwm@linux-dongwm:~&gt; sed  -n &#8216;s/dongwm/dongwm2/1p&#8217; test.txt  打印匹配行  －n 去重复
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; sed  -n &#8216;s/dongwm/dongwm2/1w test2.txt&#8217; test.txt  #匹配替换后写入文件
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/dongwm/dongwm2/i&#8217; test.txt #替换被匹配字符串忽略大小写，比如 Dongwm</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt   #这个文件记录了2个创建的文件的名字
+test1
+test2
+dongwm@linux-dongwm:~&gt; !sed
+sed &#8216;s/^/ls -l /e&#8217; test.txt   #e 主要是替换后直接执行
+-rw-r&#8211;r&#8211; 1 dongwm users 2763  4月 16 13:53 test1
+-rw-r&#8211;r&#8211; 1 dongwm users 0  4月 16 13:53 test2
+dongwm@linux-dongwm:~&gt; sed -n &#8216;s/dongwm/dongwm2/gipw text2.txt&#8217; test.txt  #多操作g i p w
+112,dongwm2,dongwm2.com
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; cat test.txt
+reading /usr/local/bin directory</p>
+
+<p>除了使用反斜杠外 行可以使用一下字串进行快捷操作：
+dongwm@linux-dongwm:~&gt; sed &#8216;s^/usr/local/bin^/usr/bin^&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;s@/usr/local/bin@/usr/bin@&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;s!/usr/local/bin!/usr/bin!&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;s|/usr/local/bin|/usr/bin|&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;{s/dongwm/dongwm2/;s/ailll/ailll2/}&#8217; test.txt  多条件替换，之间用‘；’
+112,dongwm2,dongwm.com
+113,ailll2,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;s/^[0-9][0-9][0-9]/[&amp;]/g&#8217; test.txt #替换文件中数字，在数字外面加&#8217;[]&#8217;
+[112],dongwm,dongwm.com
+[113],ailll,ailll.com
+[114],test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;s/^.*/&lt;&amp;&gt;/&#8217; test.txt #替换每行，在每行内容外加&#8217;&lt;&gt;&#8217;
+&lt;112,dongwm,dongwm.com&gt;
+&lt;113,ailll,ailll.com&gt;
+&lt;114,test,test.com&gt;</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed &#8216;s/\([^,]*\).*/\1/g&#8217; test.txt #匹配组，这里匹配的是 第一个‘，’前的内容 \1表示第一个匹配组
+112
+113
+114
+dongwm@linux-dongwm:~&gt; echo &#8216;Dong Wei Ming&#8217; |sed &#8216;s/\(\b[A-Z]\)/\(\1\)/g&#8217;  #匹配每个词的大写字母，给他加个括号
+(D)ong (W)ei (M)ing</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+1
+12
+123
+1234
+12345
+123456
+dongwm@linux-dongwm:~&gt; sed &#8216;s/\(^\|[^0-9.]\)\([0-9]\+\)\([0-9]\{3\}\)/\1\2,\3/g&#8217; test.txt  #这里有三个匹配组，所以有 \1,\2\3
+1
+12
+123
+1,234
+12,345
+123,456
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;s/\([^,]*\),\([^,]*\),\([^,]*\).*/\1,\3/g&#8217; test.txt  #这里根据‘，’分割出三个匹配组，然后替换把1，2，3组替换为1，3组
+112,dongwm.com
+113,ailll.com
+114,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;s/dongwm/\udongwm/p&#8217; test.txt  #\u会让挨着他后面的那个字母（这里是d）变成大写
+112,Dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;s/dongwm/\Udongwm/p&#8217; test.txt  #\U会让挨着他后面的所有字母都变成大写</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusedyanjiuer/">关于sed研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-16T00:00:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 正则表达式</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/^112/ p&#8217; test.txt  #&#8217;^&#8217;表示开头匹配，这里是开头是‘112’
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/com$/ p&#8217; test.txt #&#8217;$&#8217;表示结尾匹配 这里是匹配结尾是‘com’
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/do..wm&#46;com/ p&#8217; test.txt  #使用‘.’匹配单个字符，&#46;表示还是匹配‘.’
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.*/ p&#8217; test.txt  #使用‘*’匹配零个或者更多的字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.\+/ p&#8217; test.txt  #使用‘\+’匹配一个或者多个字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.\?gwm/ p&#8217; test.txt  #使用‘\?’匹配零个或者一个字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/[2-3]/ p&#8217; test.txt  #数字匹配使用[0-9]
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/112\|113/ p&#8217; test.txt  #这里有个选择(or) 使用‘\|’
+112,dongwm,dongwm.com
+113,ailll,ailll.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test2.txt
+1
+12
+123
+1234
+12345
+123456
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/^[0-9]\{3,5\}$/ p&#8217; test2.txt  #匹配符合匹配的书两，这里匹配行包含3－5个数字
+123
+1234
+12345
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/112,\b/ p&#8217; test.txt  #\b表示单词（单词间距范围内）
+112,dongwm,dongwm.com
+<strong>2 直接修改文件</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -i &#8216;s/dongwm/dongwm2/&#8217; test.txt  #使用‘-i’直接修改源文件
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -i.`date +%m%d%H%M` &#8216;s/dongwm/dongwm2/&#8217; test.txt  #姐姐修改源文件，但是会保存一个自定义命名的文件为源文件 ，这里使用‘.+时间（月日小时分）’的后缀
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; cat test.txt.04161504
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+<strong>3 增加行</strong></p>
+
+<p>语法：</p>
+
+<p>sed &#8216;[address] a the-line-to-append&#8217; input-file
+dongwm@linux-dongwm:~&gt; sed &#8216;2 a 110,ccc,ccc.com&#8217; test.txt  #在指定行（这里是第二行后加一行）
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+110,ccc,ccc.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;$ a 115,ddd,ddd.com&#8217; test.txt #在文件最后加一行
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+115,ddd,ddd.com
+dongwm@linux-dongwm:~&gt; sed &#8216;/dongwm/ a 115,ddd,ddd.com&#8217; test.txt #在匹配行后面加一行
+112,dongwm2,dongwm.com
+115,ddd,ddd.com
+113,ailll,ailll.com
+114,test,test.com
+<strong>4 插入行</strong>
+语法：sed &#8216;[address] i the-line-to-insert&#8217; input-file
+这个和‘增加’语法一样，但是是在匹配行‘前’增加
+<strong>5 改变行</strong>
+语法：sed &#8216;[address] c the-line-to-insert&#8217; input-file
+dongwm@linux-dongwm:~&gt; sed &#8216;$ c 115,ccc,ccc.com&#8217; test.txt #把最后一行修改为，语法和增加一样，但是这个匹配行就没有了
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+115,ccc,ccc.com
+<strong>6 打印隐藏字符，比如\t  $等</strong>
+dongwm@linux-dongwm:~&gt; sed -n l test.txt
+112,dongwm2,dongwm.com$
+113,ailll,ailll.com$
+114,test,test.com$
+<strong>7 打印行号</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed = test.txt
+1
+112,dongwm2,dongwm.com
+2
+113,ailll,ailll.com
+3
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/ =&#8217; test.txt  #打印匹配行的行号
+1</p>
+
+<p><strong>8 字符翻译 比如将匹配字符转换成大写字母</strong>
+dongwm@linux-dongwm:~&gt; sed  &#8216;y/dongwm/DONGWM/&#8217; test.txt  #这里只有d，o，n，g，w，m这6个字母其他字母不变
+112,DONGWM2,DONGWM.cOM
+113,ailll,ailll.cOM
+114,test,test.cOM
+<strong>9 quit</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  &#8216;2 q&#8217; test.txt  #打印每行，直到特定行退出 这里是2行
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+<strong>10 sed里面的grep</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  -n &#8216;s/dongwm/&amp;/p&#8217; test.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; grep dongwm !$
+grep dongwm test.txt
+112,dongwm2,dongwm.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  -n &#8216;/dongwm/ !p&#8217; test.txt  #取不匹配
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; grep -v dongwm !$
+grep -v dongwm test.txt
+113,ailll,ailll.com
+114,test,test.com
+<strong>11 sed里面的head
+</strong>sed -n &#8216;1,10 p&#8217; /etc/passwd
+sed &#8216;10 q&#8217; /etc/passwd
+sed &#8216;11,$ d&#8217; /etc/passwd
+或者</p>
+
+<p>head -10<strong>
+12
+</strong></p>
+
+<p>11</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shiyonggooglecaptchazuotornadowangzhandeyanzhengma/">使用Google Captcha作tornado网站的验证码</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-13T00:00:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：为了防止恶意尝试破解密码，在用户注册和登录的时候都需要一个验证码，但是简单的验证码图片实在太好破解了，还是不安全，正好发现类似于google，yahoo等大网站的图片验证使用了这样的方式：</p>
+
+<p><img class="alignnone" title="recaptcha" src="https://developers.google.com/recaptcha/images/reCAPTCHA_Sample_White.png" alt="" width="322" height="132" /></p>
+
+<p>我不知道安全性怎么样，但是至少这样的网站在使用就能说明问题。</p>
+
+<p>，而且省去了自己研究复杂算法，自己画图，然后根据数据确定是不是正确验证，也省去了Captcha服务器，感谢google！</p>
+
+<p>网站上有一个例子,而且也有一个python模块：http://recaptcha.googlecode.com/svn/trunk/recaptcha-plugins/python ，和我的实现差不多</p>
+
+<p>1 captcha.py #recaptcha检查模块</p>
+
+<p><pre class="sh_python">
+import urllib,urllib2
+import os
+GOOGLE_CAPTCHA_API = 'http://www.google.com/recaptcha/api/verify'
+class RecaptchaResponse:
+    def __init__(self, is_valid, error_code=None):
+        self.is_valid = is_valid
+        self.error_code = error_code
+def check_google_captcha(request,remote_ip,recaptcha_challenge_field,recaptcha_response_field):
+    if not (recaptcha_challenge_field and recaptcha_response_field):
+        return RecaptchaResponse (is_valid = False, error_code = 'incorrect-captcha-sol')
+    def encode_if_necessary(s):
+        if isinstance(s, unicode):
+            return s.encode('utf-8')
+        return s
+    params = urllib.urlencode ({
+            'privatekey': encode_if_necessary('6LfyINASAAcxzdUXc_f_kJ1ADSA6NfkU8ZoNgw_jl'),  #这里是我的私钥
+            'remoteip' :  encode_if_necessary(remote_ip), #远程主机ip
+            'challenge':  encode_if_necessary(recaptcha_challenge_field),
+            'response' :  encode_if_necessary(recaptcha_response_field),  #填入的数据
+            })
+    request = urllib2.Request(
+        url = GOOGLE_CAPTCHA_API,
+        data = params,
+        headers = {
+            "Content-type": "application/x-www-form-urlencoded",
+            "User-agent": "reCAPTCHA Python"
+            }
+        )
+    httpresp = urllib2.urlopen(request)
+    return_values = httpresp.read().splitlines();
+    httpresp.close();
+    return_code = return_values[0]
+    if (return_code == "true"):
+        return RecaptchaResponse(is_valid=True)
+    else:
+        return RecaptchaResponse(is_valid=False, error_code = return_values[1])
+</pre></p>
+
+<p>2 后台相关代码：</p>
+
+<p><pre class="sh_python"></p>
+
+<p>import captcha
+remote_ip = self.request.remote_ip  #获取远程ip  这个和django，gae获取方式都不同
+challenge = self.get_argument('recaptcha_challenge_field',None)
+response =  self.get_argument('recaptcha_response_field',None)
+rsp = captcha.check_google_captcha(self,remote_ip,challenge,response)
+if not rsp.is_valid:
+self.write('Verification code error!')
+             return -1
+</pre></p>
+
+<p>3 前台网页代码：</p>
+
+<p><pre class="sh_html4strict">
+&lt;!DOCTYPE html&gt;
+&lt;head&gt;
+&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"/&gt;&lt;/script&gt;  #引用google的js
+&lt;script type="text/javascript" src="static/jquery.cookies.2.2.0.min.js"&gt;&lt;/script&gt; 
+&lt;script type="text/javascript"&gt;</p>
+
+<p>$(document).ready(function(){
+    google_captcha('gcaptcha');
+});
+function google_captcha(element){
+    Recaptcha.create('6LfyINASAAsdddJhhV-ofP8nQ-sRsddup8AHSQHl',element,{   #输入公钥
+        theme: "clean",  #主题 一共四种
+        callback: Recaptcha.focus_response_field 
+    });
+}
+$(function()
+        {
+$("#lg").click(function(event)
+            {
+    var xsrf = $.cookies.get("_xsrf");
+    var name = $("#zh").val();
+    var loginElement = encodeURI(encodeURI($("#zh").val()));
+    var passElement = encodeURI(encodeURI($("#ps").val()));
+    var response = $("#recaptcha_response_field").val();  #因为这里使用jquery的ajax，post的数据需要指定都取什么
+    var challenge = $("#recaptcha_challenge_field").val(); 
+    $.ajax({
+   type: "POST",
+   url: "/login",
+   data: {'login':loginElement,'passwd':passElement,'_xsrf':xsrf,'recaptcha_response_field':response,'recaptcha_challenge_field':challenge}, #数据包含这五种
+   success: function(data){
+   if (/Login Success/.exec(decodeURI(data)) == null)
+   {
+   alert(decodeURI(data));
+   Recaptcha.reload();   #假如有输入错误会弹窗警告，然后会重置验证码图片
+}
+   else {  window.location="/home";
+   }}
+	});    
+   $.cookies.set("name",name);
+});
+})
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="login"&gt;
+&lt;form class="login" action="/login" method="post"&gt;
+{ % module xsrf_form_html() % } <!-- 这里我把%和{/}分开了-->
+&lt;input class="text" type="text" name="login" id="zh" spellcheck="false" placeholder="帐 号" autofocus tabindex="1"&gt;
+&lt;input class="text" type="password" name="passwd" id ="ps" placeholder="密 码" tabindex="2"&gt;
+&lt;div id="gcaptcha"&gt;&lt;/div&gt;  #验证码图片在这里
+&lt;input class="button" id="lg" value="登 录" tabindex="3"&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/tornadoduihttp403405zhongdingxiang/">Tornado对http403，405重定向</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-11T00:00:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：http403表示禁止访问，比如没有相应权限，比如它不是一个可以读的文件（目录）;http405表示资源被禁止，比如一个url要求你使用post方式访问，你直接打开网页用get方式就不可以</p>
+
+<p>修改 tornado源码web.py</p>
+
+<p><pre class="sh_python">
+if not (abspath + os.path.sep).startswith(self.root): #大概1479行
+    #raise HTTPError(403, "%s is not in root static directory", path)
+    self.render("error403.html")
+    return -1      </p>
+
+<p>if not os.path.isfile(abspath):   #大概1492
+    #raise HTTPError(403, "%s is not a file", path)
+    self.render("error403.html")
+    return -1</p>
+
+<p>def get(self, *args, **kwargs):  #大概158行
+    self.render("error405.html")
+    #raise HTTPError(405)</p>
+
+<p>注：不能在self.set_status根据code标识重定向（self._finished已经被设置了，会重复2次）
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/tornado404shixianzhongdingxiangyemian/">Tornado 404实现重定向页面</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-10T00:00:00+08:00" pubdate data-updated="true">Apr 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：不喜欢默认的404报错：404:Not Found，本来我可以在我程序里面对RequestHandler重定义，但是需要修改的比较多，因为我的服务器上面只跑我这一个程序，那么我直接去修改源码（/usr/local/lib/python2.6/site-packages/tornado-2.2-py2.6.egg/tornado）的ErrorHandler类（个人方法仅供参考，要是有更好的方法，欢迎留言<pre class="sh_python">
+class ErrorHandler(RequestHandler):  #大约1413行  这里主要是‘文件url的404’
+    """Generates an error response with status_code for all requests."""
+    def initialize(self, status_code):
+        self.set_status(status_code)</p>
+
+<p>    def prepare(self):
+#        raise HTTPError(self._status_code)   注释掉了这句
+        self.render("error.html")   改成重定向到一个页面</p>
+
+<p> if not os.path.exists(abspath):   #大约1490行 这里主要是‘文件的404’
+            #raise HTTPError(404)
+            self.render("error.html")
+            return -1</p>
+
+<p> </pre>
+error.html内容  #这个文件放在tornado模块的路径下
+<pre class="sh_html4strict">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8" /&gt;
+&lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
+&lt;title&gt;dongwm.com 404报错页面&lt;/title&gt;
+&lt;meta name="robots" content="noindex, nofollow" /&gt;
+&lt;link href="" rel="stylesheet" type="text/css" /&gt;	  #这里指定css放在网站程序的静态页面路径，而不是
+&lt;/head&gt;                                                 #在tornado源码目录下，使用这样的路径是为了无论在网站那一级目录都能找到这个css，要不然在跟目录下可以，其他子目录下就没有了
+	&lt;body&gt;                                           #或者直接指定url 比如 http://127.0.0.1/static/dict.css
+		&lt;div id="header" class='headerPadding'&gt;
+		&lt;/div&gt;
+		&lt;div id="allframe" class="width950"&gt;
+			&lt;div class="div404"&gt;
+				&lt;div class="div404wording"&gt;
+					&lt;a href="https://127.0.0.1"&gt;首页&lt;/a&gt;
+					&lt;br&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div id="bottom"&gt;
+			&lt;div class="width950" align="center"&gt;
+				&lt;div class="copyright"&gt;
+					Copyright © 2012 dongwm.com&lt;/br&gt;
+					&lt;br /&gt;版权所有
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/tornadoyingyongliziershiyongajaxjquerytongguoqiantaihehoutaijiaohu/">Tornado应用例子(二)：使用ajax（jquery）通过前台和后台交互</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-31T00:00:00+08:00" pubdate data-updated="true">Mar 31<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：在实际使用中肯定出现在web页面输入一些数据然后把数据传送到后台（tornado），执行完毕后再从后台把结果返回到web前台，其中也安排一些异常处理，比如数据在后台不存在，会进行提示（异步），上一个例子主要把html文件写到了python脚本，本例子是一个html＋tornado类</p>
+
+<p><pre class="sh_html4strict">
+&lt;html&gt;
+&lt;head&gt;
+&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;   #我这里使用了jquery封装
+&lt;script type="text/javascript"&gt;
+preAllow = true;   #定义一个变量，主要是为了防止恶刷，也是为了防止重复提交，在返回结果之前是不能点击的
+$(function()
+        {
+$("#AjaxGet").click(function(event)   #使用jquery封装js
+            {
+    if(preAllow){   
+    preAllow=false;
+    var flag =1  #定义一个变量，当下面的一些检查发现问题会置0，这样就不会发送post请求了
+    var htmlElement = encodeURI(encodeURI($("#myhtml").val()));  #使用jquery获取DOM 
+    if (/(\w+)\.html/.exec(htmlElement) == null||htmlElement=="")  #使用js的正则匹配判断格式不符合  或者  为空  都会alert
+    {
+    alert("请输入正确的html文件");
+    flag=0;
+    }
+    var tableElement = encodeURI(encodeURI($("#mytable").val()));
+    if (tableElement=="")
+    {
+    alert("请输入数据库表名");
+    flag=0;
+    }
+    var senderElement = encodeURI(encodeURI($("#sender").val()));
+    if (/(\w+)\@(.*)/.exec(senderElement) == null||senderElement=="")
+    {
+    alert("请输入正确的Email地址");
+    flag=0;
+    }
+    var headElement = $("#myhead").val();   #这里的jquery获取DOM，但是为了解析方便我没有编码url
+    if (headElement=="")
+    {
+    alert("请输入发送邮件的head");
+    flag=0;
+    }
+    var senderidElement = $("#sender_id").val();
+    if (senderidElement=="")
+    {
+    alert("请输入发送邮件标识");
+    flag=0;
+    }
+    if(flag){
+    $.ajax({   #使用了jquery的ajax，因为我需要回调没有使用$.get
+   type: "POST",  #调用类型
+   url: "/path",  #调用的url地址
+   data: {"html":htmlElement,"table":tableElement,"sender":senderElement,"head":headElement,"senderid":senderidElement},  #传送的dict数据
+   success: function(data){  #回调函数，alert返回结果
+   alert(decodeURI(data));
+   preAllow = true;
+}</p>
+
+<p>	});    
+}}
+else {alert("已经发送了!");}   #执行中再点击，弹出警告！
+});
+})
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;    
+    &lt;form&gt;
+    &lt;label for=filename&gt;调用的html文件名&lt;/label&gt;   #充分使用html5
+    &lt;input id=myhtml type=text required /&gt;&lt;/br&gt;
+    &lt;label for=tablename&gt;调用数据库表名&lt;/label&gt;
+    &lt;input id=mytable  type=text required /&gt;&lt;/br&gt;
+    &lt;label for=email&gt;发送者邮件地址&lt;/label&gt;
+    &lt;input id=sender  type=email required /&gt;&lt;/br&gt;
+    &lt;label for=emailhead&gt;邮件标题&lt;/label&gt;
+    &lt;input id=myhead  type=text required /&gt;&lt;/br&gt;
+    &lt;label for=emailid&gt;邮件发送人标识&lt;/label&gt;
+    &lt;input id=sender_id  type=text required /&gt;&lt;/br&gt;
+    &lt;/form&gt;
+    &lt;button id="AjaxGet"&gt;使用执行&lt;/button&gt;&lt;br /&gt;
+    &lt;div id="serverResponse"&gt;&lt;/div&gt;  #暂时没用
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></p>
+
+<p><pre class="sh_python">
+class SendPostHandler(MyRequestHandler):
+    def post(self):
+        uri = self.request.body
+        sql = MysqlHander()
+        mydict = {}
+        for i in uri.split('&amp;'):
+            data = i.split('=')
+            mydict[data[0]]=data[1]
+        htmlpath = 'uphtml/' + mydict['html']
+        if not os.path.exists(htmlpath):
+            self.write('This html file does not exist!')
+            return -1
+        import Main
+        d = Main.Send()
+        d.General('mail',mydict['table'],sender,head,senderid,mydict['html']) 
+        time.sleep(10)
+        self.write('Sender Done!')
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/tornadoyingyonglizi/">Tornado应用例子</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-23T00:00:00+08:00" pubdate data-updated="true">Mar 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：网上有的tornado的例子基本都是来源于其官网，下面是一个我以前弄得一个例子，包含基本tornado所有常用功能 ：</p>
+
+<p>1 mysql数据库相关功能</p>
+
+<p>2 StaticFileHandler 静态文件处理</p>
+
+<p>3 为自己的应用自定义tornado源码实现不一样的功能（get_current_user，check_xsrf_cookie，RequestHandler）</p>
+
+<p>4 地址重定向和地址render</p>
+
+<p>5 上传文件及目标服务器保存</p>
+
+<p>6 相关html，js，get，post效果，以及将tornado数据存放到html模板以及js文件变量中</p>
+
+<p>7 xsrf策略</p>
+
+<p>8 cookies策略</p>
+
+<p>9 ssl 加密</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+#coding = utf-8</p>
+
+<p>from __future__ import division  #因为有个计算比率的除法
+import os
+import sys
+import time
+import re
+import captcha
+import base
+import urllib2
+from subprocess import call
+import tornado.ioloop
+import tornado.httpserver
+from tornado.web import StaticFileHandler,authenticated,HTTPError,asynchronous,RequestHandler,Application
+from tornado import escape  #因为我定义了很多操作，其中html文件都在本脚本实现，隐藏属性_xsrf 需要自定义获取 所以根据源码修改了获取方式
+from tornado.options import define, options
+import tornado.autoreload
+import tornado.database
+from  parse import Parse
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+from sql import gymysql</p>
+
+<p>#define("debug", default=True, type=bool)</p>
+
+<p>def err(app, log): #定义一个跳转到错误页面的函数，app表示那个RequestHandler类
+    app.render("static/jump.html", mylog=log, myclass='outageCent', mes='Error')</p>
+
+<p>def log(app,log):  #其实可以把这个和上面的函数合并成一个函数
+    app.render("static/jump.html", mylog=log, myclass='outageTitle', mes='Message')</p>
+
+<p>def view(app,data,op): #定义跳转到view.html页面的函数，这里是为了减少重复代码
+    app.render("static/view.html", data=data, op=op)</p>
+
+<p>def createt(app,src): 
+    d = Parse(src)
+    table = os.path.splitext(os.path.basename(src))[0]
+    if not d.work():  #当返回不为0，跳转到错误页面
+        err(app, "Possible format problems, the database operation fails")
+        return -1
+    else:  #当执行成功跳转到view页面，其中DBbutton是一个js调用的按键
+        view(app, table, 'DBButton')  </p>
+
+<p>class BaseHandler(RequestHandler): #继承至RequestHandler</p>
+
+<p>    def get_current_user(self):  #获取cookie用户
+        return self.get_secure_cookie("user")</p>
+
+<p>    def check_user(self):
+        if not self.current_user: #当用户不存在，自动跳转到根目录：为了防止用户直接在不登陆情况访问某页面
+            self.redirect("/")
+            return</p>
+
+<p>class LogoutHandler(RequestHandler): #这个类主要是在退出登录触发</p>
+
+<p>    @asynchronous #加上异步装饰器请求就不会被等待阻塞，可以并发请求了
+    def get(self):
+        self.clear_cookie("user") #清除用户cookie
+        #self.db.redis.rpop("saved_names")
+        self.redirect("/")</p>
+
+<p>class MyRequestHandler(RequestHandler): #主要是去掉了xsrf的验证，因为我有一些url是给客户端post数据回来用的，如果需要xsrf验证很麻烦（只是post数据，没有登录）</p>
+
+<p>    def check_xsrf_cookie(self):
+        pass</p>
+
+<p>class RootHandler(RequestHandler): #当访问根目录触发</p>
+
+<p>    @asynchronous
+    def get(self):  #访问根目录的请求会被引导至login.html文件，上面包含需要登录的帐号，密码以及验证框，输入完成点击登录
+        self.render("static/login.html")</p>
+
+<p>class HomeHandler(BaseHandler): #当用户登录被验证通过跳转到url的http://xxx/home</p>
+
+<p>    @asynchronous
+    def get(self):
+        self.check_user() #跳转到home前还是要验证用户
+        self.render("static/home.html")</p>
+
+<p>class MysqlHander:  #处理数据库操作，使用tornado自带的database，当然也可以使用其他的，比如sqlalchemy</p>
+
+<p>    def __init__(self):
+        self.db = tornado.database.Connection("localhost", \
+                  "mail", "testuser", "test623")  </p>
+
+<p>    def delete(self, table):
+        self.db.execute("drop table %s" % table)</p>
+
+<p>   def login(self, name): #验证登录用户是否在数据库中记录
+        if self.db.execute_rowcount("select * from user where User = '%s'" % name) == 1:
+            return 1
+        else:
+            return 0
+    def passwd(self,passwd): #验证用户输入的密码是否正确
+        if self.db.execute_rowcount("select * from user where Passwd = '%s'" % passwd) == 1:
+            return 1
+        else:
+            return 0</p>
+
+<p>    def update(self, table, dict): #修改table的数据
+        for i in dict.keys():
+            self.db.execute("UPDATE %s SET Sended = %d WHERE Email = '%s'" % (table,dict[i],i)) 
+    def taprint(self,table,flag=1,send=6):  #返回一个字符串，包含符合要求的条目结果，这个会传给js格式化
+        str = ''
+        for i in self.db.query("select * from %s where Flag = %d and Sended !=%d" % (table,flag,send)):
+            str+='%s,%s,' % (i['Email'],i['Sended'])
+        return str[:-1] 
+    def gettotal(self,table,flag=0):
+        count = self.db.execute_rowcount("select * from %s" % table)
+        if not flag:
+            flagcount = self.db.execute_rowcount("select * from %s where Flag =1" % table)
+            send={}
+            for i in range(6):
+                data = self.db.execute_rowcount("select * from %s where Flag =1 and Sended =%d" % (table,i))
+                send[i]=data
+            return count,flagcount,send
+        else:
+            return count</p>
+
+<p>    def getdb(self,table):
+        str = ''
+        for i in self.db.query("select Email from %s" % table):
+            str+=i['Email']+','
+        return str[:-1]</p>
+
+<p>    def check(self,table):
+        flag =0
+        for i in self.db.query("check table %s" % table):
+            if i['Msg_type']=='status' and i['Msg_text']=='OK':
+                flag =1
+        return flag 
+    def domain(self,table,domain):
+        return self.db.execute_rowcount("select * from %s where Email REGEXP '^.*@%s$'" %(table,domain)) #正则匹配</p>
+
+<p>class UploadDbCheckHandler(BaseHandler):  #提供数据库的table检查和页面显示
+    @asynchronous
+    def get(self, id): #id表示数据库table的名字
+        self.check_user()
+        if id == '':
+            err(self,"Please use the correct address") #当没有输入的时候 触发报错
+            return -1
+        try:
+            db = MysqlHander()
+            data = db.getdb(id) 
+            self.render("static/print.html", num='1', str=data)  #通过print页面展示
+        except:
+           log(self, "Database Error!") </p>
+
+<p>class WebgetHandler(BaseHandler): 
+    @asynchronous
+    def get(self, id):
+        self.check_user()
+        try:
+            db = MysqlHander()
+            str = db.taprint(id)
+            self.render("static/print.html", num='2', str=str)
+        except:
+            self.write("Don't have this table!") </p>
+
+<p>class PostHandler(MyRequestHandler): #post方法的处理 
+    @asynchronous
+    def post(self):
+        sql = gymysql()
+        uri = self.request.body
+        try:
+            mydict= eval(base.decode(uri, 'fmT0,magsqne31t')) #在这里我把数据进行了加密（使用自定义base模块），这里解密
+        except SyntaxError:
+            return -1
+        for key in mydict.keys():
+            for i in mydict[key].keys():
+                sql.update(key, i, mydict[key][i])
+        self.write("chenggong")  #告诉客户端post数据完成 </p>
+
+<p>class DomainHandler(BaseHandler): 
+    @asynchronous
+    def get(self, id):
+        self.check_user()
+        db = MysqlHander()
+        item = []
+        item2 = ''
+        try:
+            total = db.gettotal(id, flag=1)
+            for i in ['qq.com', '126.com', '163.com', '163.net', 'sina.com',\
+                  'sina.com.cn', 'sohu.com', 'gmail.com', 'yahoo.com',\
+                  'yahoo.com.cn', 'live.com', 'hotmail.com']:
+                num = int(db.domain(id, i))
+                item.append('%s rate:%6.2f%s' % (i, num/total*100, '%'))
+                t = total - num
+                dat = i + '@' + str(num)
+                item2 += dat + ','
+            dat = 'Other'+'@'+str(t)
+            item2 += dat
+            call('python chart2.py %s' % item2, shell=True)
+            title = '%s Table Statistics' % id
+            self.render("static/total.html", title=title, ontitle=title, items=item)
+        except:
+            raise
+            self.write("Don't have this table!")</p>
+
+<p>class WebHandler(BaseHandler): 
+    @asynchronous
+    def get(self, id):
+        self.check_user()
+        try:
+            db = MysqlHander()
+            total = db.gettotal(id)
+            totalmail = total[0]
+            sendedmail = total[1]
+            if sendedmail==0:
+                sendedmail=1
+            items = [] 
+            item2 = ''
+            items.append("Total Mails:%d" % totalmail)
+            items.append("Process Mails:%d" % sendedmail)
+            items.append("Success Send Mails:%d  Send success rate:%6.2f" \
+                         % (total[2][1],total[2][1]/sendedmail))
+            item2+='Success@'+str(total[2][1]) + ','
+            items.append("Deferred Send Mails:%d  Send deferred rate:%6.2f" \
+                         % (total[2][2],total[2][2]/sendedmail))
+            item2+='Deferred@'+str(total[2][2]) + ','
+            items.append("Bounced Send Mails:%d  Send bounced rate:%6.2f" \
+                         % (total[2][3],total[2][3]/sendedmail))
+            item2+='Bounced@'+str(total[2][3]) + ','
+            items.append("Deferral Send Mails:%d  Send deferral rate:%6.2f"\
+                         % (total[2][4],total[2][4]/sendedmail))
+            item2+='Deferral@'+str(total[2][4]) + ',' 
+            items.append("Reject Send Mails:%d  Send reject rate:%6.2f"\
+                         % (total[2][5],total[2][5]/sendedmail))
+            item2+='Reject@' + str(total[2][5])
+            title = '%s Mail Statistics' % id
+            call('python chart2.py %s' % item2, shell=True) #这个chart.py是pychat模块，画图类，生成一个图表 可能更加直观。
+                                                         #但是我使用import chart时候没有起效果，所以将数据作为命令参数方式直接执行脚本以
+                                                         #实现每次先更新图像，再展示展示html
+            self.render("static/total.html", title=title, ontitle=title, items=items)
+        except:
+            raise
+            self.write("Don't have this table!")</p>
+
+<p>class DeleteHandler(MyRequestHandler): #一个删除的处理</p>
+
+<p>    def get_argument(self, name, strip=True): 
+        default =[]
+        args = self.get_arguments(name, strip=strip)
+        if not args:
+            return default
+        return args[-1] 
+    @asynchronous
+    def post(self):
+        try:
+            data = self.get_argument("delete")
+        except:
+            err(self, "Please enter the information you want to delete !")
+            return -1
+        if self.get_argument("opert"):  #当post返回的参数包含opert，删掉数据库table
+            d =MysqlHander()
+            if not d.check(data):  #验证是否存在这个table
+                err(self, "Don't have this table!")
+                return -1
+            try:
+                d.delete(data)
+            except:
+                err(self, "Database Error!")
+            log(self,"Table has been deleted!") #跳转到成功页面</p>
+
+<p>        if self.get_argument("operf"):
+            try:
+                os.remove("uphtml/"+ data)  #参数包含operf，删除这个文件
+            except:
+                err(self, "Error!")
+                return -1
+            log(self, "Html File has been deleted!") </p>
+
+<p>class LoginHandler(BaseHandler): #登录处理
+    @asynchronous
+    def post(self):
+        if not self.request.headers.get("Cookie"): #验证浏览器是否支持cookie
+            self.write("Does not support Cookie!")
+        uri = self.request.body
+        mydict = {}
+        for i in uri.split('&amp;'):
+            data = i.split('=')
+            if data[0] =='login':
+                data[1] = urllib2.unquote(urllib2.unquote(urllib2.unquote(data[1])))  #这个一直没修改，就是把页面url解码
+            mydict[data[0]] = data[1]
+        db = MysqlHander()
+        for i in ['login', 'passwd']:  #根据用户名和密码双重验证，和一起验证比，输出的警告不同：会明确的告诉你是用户名错误还是密码错误
+            flag = getattr(db, i)(mydict[i])
+            if not flag:
+                self.write("%s error!" % i)
+                return -1
+        remote_ip = self.request.remote_ip
+        challenge = self.get_argument('recaptcha_challenge_field', None)
+        response =  self.get_argument('recaptcha_response_field', None)
+        rsp = captcha.check_google_captcha(self,remote_ip,challenge,response)
+        if not rsp.is_valid:  #以上的这些都是验证图片来验证输入字符是不是图片上面的字符
+             self.write('Verification code error!')
+             return -1
+        self.set_secure_cookie("user", mydict['login'])
+        self.write("Login Success") </p>
+
+<p>class CatchHandler(MyRequestHandler):  #这是一个远程操作的处理，根据参数，对一些可以直接ssh信任登陆的机器执行一些操作（使用paramiko）
+    @asynchronous
+    def post(self):
+        import ConfigParser
+        uri = self.request.body
+        num =  int(uri.split('=')[1])
+        conf = ConfigParser.ConfigParser()
+        conf.read('config.interval') 
+        cur_num = conf.getint("config","SendInterval")
+        if cur_num == num:
+            self.write('The current interval has been %d' % num)
+            return -1
+        else:
+            conf.set("config", "SendInterval",num)
+        conf.write(open("config.interval", "w")) 
+        data = call('sh deploy.sh config.interval &gt; /dev/null 2&gt;&amp;1', shell=True)
+        if data:
+            self.write('ssh Connect to the server error!')
+        import paramiko
+        for i in range(12,26):
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            try:
+                ssh.connect('mta%d' % i, 61012, timeout=10)
+            except:
+                continue
+            ssh.exec_command("kill -9 `ps -ef |grep Re|grep -v grep |awk '{print $2}'`")
+            ssh.exec_command("kill -9 `ps -ef |grep eventhandler|grep -v grep |awk '{print $2}'`")
+            ssh.exec_command("python /home/dongwm/RevSocket.py")
+            #ssh.exec_command("if [ `ps -ef |grep -v grep |grep RevS|wc -l` == 0 ]; then python /home/dongwm/RevSocket.py ;fi")
+            ssh.close()
+        for i in range(1,6):
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            try:
+                ssh.connect('cmta%d' % i, 22, timeout=10)
+            except:
+                continue
+            ssh.exec_command("kill -9 `ps -ef |grep Re|grep -v grep |awk '{print $2}'`")
+            ssh.exec_command("kill -9 `ps -ef |grep eventhandler|grep -v grep |awk '{print $2}'`")</p>
+
+<p>            ssh.exec_command("python /home/dongwm/RevSocket.py")
+            #ssh.exec_command("if [ `ps -ef |grep -v grep |grep RevS|wc -l` == 0 ]; then python /home/dongwm/RevSocket.py ;fi")
+            ssh.close()
+        self.write('Operation is complete!')  #这里是ajax的，操作完成，前台弹出alert框</p>
+
+<p>class UploadHtmlHandler(MyRequestHandler): #上传文件处理
+    @asynchronous
+    def post(self):
+        try:
+            try:
+                myfile = self.request.files['myfile']
+            except:
+                err(self, "Please enter the file's address!")
+                return -1
+            for f in myfile:
+                hz = os.path.splitext(f['filename'])[1][1:]
+                if  hz != 'html':
+                    err(self,"Temporarily only to receive the  formats of the html file!")
+                    return -1
+                src = "uphtml/" + f['filename']
+                with open(src, 'w+') as c:
+                    c.write(f['body'])
+                view(self, f['filename'], 'HTMLButton')
+        except:
+            err(self, "file upload ERROR! try again")
+            return -1 </p>
+
+<p>class SendPostHandler(MyRequestHandler): 
+    @asynchronous
+    def post(self):
+        uri = self.request.body
+        sql = MysqlHander()
+        mydict = {}
+        for i in uri.split('&amp;'):
+            data = i.split('=')
+            mydict[data[0]]=data[1]
+        htmlpath = 'uphtml/' + mydict['html']
+        if not os.path.exists(htmlpath):
+            self.write('This html file does not exist!')
+            return -1
+        #if int(sql.gettotal(mydict['table'], flag=1)) &lt; int(mydict['sendnum']):
+        #    mydict['sendnum'] = sql.gettotal(mydict['table'], flag=1)
+        #elif int(mydict['sendnum']) == 0:
+        #    mydict['sendnum'] = sql.gettotal(mydict['table'], flag=1)
+        if not sql.check(mydict['table']):
+            self.write('This table does not exist!')
+            return -1
+        m = re.compile('^\w+([-+.]\w+)*@(ailll|dongwm).com') 
+        sender = urllib2.unquote(mydict['sender'])
+        if not m.match(sender):
+            self.write('E-mail address only to support ailll.com or dongwm.com')
+            return -1
+        senderid = urllib2.unquote(mydict['senderid'])
+        head = urllib2.unquote(mydict['head']) 
+        import Main
+        d = Main.Send()
+        d.General('mail', mydict['table'], sender, head, senderid, mydict['html']) 
+        self.write('Sender Done!') </p>
+
+<p>class ChoosetHandler(MyRequestHandler): #一个包含选择的处理 
+    @asynchronous
+    def post(self):
+        try:
+            ch = int(self.get_argument("ch"))
+        except:
+            err(self, "Please choose how!")
+            return -1
+        try:
+            src = self.get_argument("src")
+        except:
+            err(self, "error!")
+            return -1
+        if ch == 2:  #选择2  直接创建table
+           createt(self, src) 
+        elif ch == 1:  #选择1 删除table，在重新创建：相当于覆盖
+            d = MysqlHander()
+            d.delete(os.path.splitext(os.path.basename(src))[0])
+            createt(self, src)
+        else:
+           err(self, "Cancel!")  </p>
+
+<p>class RadomDbHandler(MyRequestHandler):  
+    @asynchronous
+    def post(self):
+        num = int(self.get_argument("num")) 
+        import rt
+        rt.work(self, num) </p>
+
+<p>class UploadDbHandler(MyRequestHandler):  
+    def choose(self,flag,table):
+       if flag ==1:
+           d = MysqlHander()
+           d.delete(table)  
+    @asynchronous
+    def post(self):
+        try:
+            choose = int(self.get_argument("choose"))  #这里是radio方式的选择，单选。但是不选会异常处理
+        except:
+            err(self, "Please choose whether or not to create a database!") 
+            return -1
+        try:
+            myfile = self.request.files['myfile']
+        except:
+            err(self, "Please enter the file's address!")
+            return -1
+        if choose:
+            try:
+                for f in myfile:
+                    hz = os.path.splitext(f['filename'])[1][1:]
+                    if  (hz != 'txt') and (hz != 'xls') and (hz !='csv'): 
+                        err(self,"Temporarily only to receive the three \
+                        formats of the csv / txt / xls file!")
+                        return -1
+                    src = "upload/" + f['filename'] 
+                    with open(src, 'w+') as c:
+                        c.write(f['body'])
+            except:
+                err(self, "file upload ERROR! try again")
+                return -1
+            sql = MysqlHander()
+            table = os.path.splitext(os.path.basename(src))[0]
+            check = sql.check(table)
+            if check:
+                self.render("static/choose.html", src=src)
+            else:
+                createt(self, src)
+        else:
+            log(self,"no create!")  
+    def data(self):
+       log(self,"Has been uploaded files:")
+       for root, dirs, files in os.walk('./upload'):
+            log(self, "%s" % files) </p>
+
+<p>class Application(tornado.web.Application): #子类化Application 
+    def __init__(self):
+        settings = {
+        "static_path": os.path.join(os.path.dirname(__file__), "static"),
+        "upload_path": os.path.join(os.path.dirname(__file__), "uphtml"),
+        "cookie_secret":"24oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=", 
+        "login_url": "/login",
+        "xsrf_cookies": True,
+       # "autoescape":None,
+         }
+        handlers = [
+        (r"/post_path", PostHandler),
+        (r"/sendinterval", CatchHandler),
+        (r"/uploadt", UploadDbHandler),
+        (r"/uploadrt", RadomDbHandler),
+        (r"/uploadh", UploadHtmlHandler),
+        (r"/chooset", ChoosetHandler),
+        (r"/del", DeleteHandler),
+        (r"/mail/(.*)", WebHandler),
+        (r"/domain/(.*)", DomainHandler),
+        (r"/check/(.*)", WebgetHandler),
+        (r"/home",HomeHandler),
+        (r"/",RootHandler),
+        (r"/login", LoginHandler),
+        (r"/logout", LogoutHandler),
+        (r"/path", SendPostHandler),
+        (r"/db/(.*)", UploadDbCheckHandler),
+        (r"/uphtml/(.*)", StaticFileHandler,dict(path=settings['upload_path'])),
+         ]
+        tornado.web.Application.__init__(self, handlers, **settings) </p>
+
+<p>if __name__ == "__main__":
+    http_server = tornado.httpserver.HTTPServer(Application(), ssl_options={ #指定使用ssl加密，具体加密方法以及自己的参考其他资料
+           "certfile": os.path.join(os.path.abspath("."), "server.crt"),
+           "keyfile": os.path.join(os.path.abspath("."), "server.key"),
+       })
+    http_server.listen(443)
+    loop = tornado.ioloop.IOLoop.instance()
+ #   tornado.autoreload.start(loop)
+    loop.start()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/debianxidpkgheredhatxirpmminglingzongjie/">Debian系dpkg和redhat系rpm命令总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-13T00:00:00+08:00" pubdate data-updated="true">Mar 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：最近突然用ubuntu，发现好多包管理命令dpkg的用法很生疏了，在这里正好总结一下，以及和rpm作一些相似作用的列举</p>
+
+<p>1 软件包的信息  将会列出这个软件包的详细资料</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpi rubygem-capistrano-2.11.2-1.2.i586.rpm
+dongwm@dongwm-pc:~$ dpkg-deb -I capistrano_2.5.9-1_all.deb</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -s  capistrano
+或者</p>
+
+<p>dongwm@dongwm-pc:~$  dpkg-query -s capistrano
+2 软件包内文件内容  列出安装后的所有文件的全路径</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpl rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg-deb -c capistrano_2.5.9-1_all.deb |more</p>
+
+<p>或者</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg &#8211;contents capistrano_2.5.9-1_all.deb</p>
+
+<p>3 软件包的依赖关系</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpR rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg-deb -f capistrano_2.5.9-1_all.deb depends //depends
+Depends: ruby1.8, libnet-ssh2-ruby1.8, libnet-ssh-gateway-ruby1.8, libnet-sftp2-ruby1.8, libnet-scp-ruby1.8, libhighline-ruby1.8</p>
+
+<p>4 数据库查询 当每个软件包安装在Linux系统后，安装文件都会列到数据库</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -qa capistrano</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -l capistrano
+期望状态=未知(u)/安装(i)/删除(r)/清除(p)/保持(h)
+| 状态=未安装(n)/已安装(i)/仅存配置(c)/仅解压缩(U)/配置失败(F)/不完全安装(H)/触发器等待(W)/触发器未决(T)
+|/ 错误?=(无)/须重装(R) (状态，错误：大写=故障)
+||/ 名称         版本         描述
++++-==============-==============-============================================
+iU  capistrano     2.5.9-1        Executes commands in parallel on multiples s   #这里的 iu表示想安装，但是只是解压缩没有安装成功  debian系的查询显示比较复杂</p>
+
+<p>5 安装软件包</p>
+
+<p>dongwm@linux-dongwm:~&gt; sudo rpm -ivh rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg -i capistrano_2.5.9-1_all.deb</p>
+
+<p>6 软件卸载</p>
+
+<p>dongwm@linux-dongwm:~&gt; sudo rpm -e rubygem-capistrano-2.11.2-1.2</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg -r capistrano</p>
+
+<p>或者</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg &#8211;purge capistrano</p>
+
+<p>7 查询文件归属</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -qf /usr/bin/vim  查询 /usr/bin/vim  属于那个包</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg &#8211;search /usr/bin/mawk</p>
+
+<p>7 查询软件包都安装到了那里</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -ql gawk</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -S mawk</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/jiejuelinuxxiadakaideyingyongchengxubuzaignomezhuomianmianbanshangmianxianshi/">解决Linux下打开的应用程序不在gnome桌面面板上面显示</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-08T00:00:00+08:00" pubdate data-updated="true">Mar 8<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：最近把我的opensuse的软件更新了一下，后来发现现在打开的程序没有在底部的面板上显示，当我打开多个程序的时候只能使用compiz特效‘alt’＋‘tab’键去找我想要让目前窗口显示的程序，很不方便（包括安装了Cairo-Dock，当程序最小化了在dock界面也不会有这个程序的图标，也不方便）</p>
+
+<p>解决办法：</p>
+
+<p>中文系统：在下面的gnome面板上，鼠标右键点开－》选择‘添加到面板’ －》‘窗口列表’</p>
+
+<p>英文系统：在下面的gnome面板上，鼠标右键点开－》选择“Add to Panel” －》 &#8220;Window List&#8221;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoobijishiyioverlayhelayman/">gentoo笔记（十一）Overlay和layman</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：Overlay是包含额外的Gentoo的ebuild的Portage包树，类似于“第三方源”，使用它的原因我以为就是让那些不在Portage包树的软件包，当你修改，开发，测试的时候，不会影响主干包树，直到它稳定到加到主干包树里面。当修改主干包树时候，下一次同步你的修改就没有了，但是Overlay能保存你的自定义修改。layman（英语意为‘门外汉’，意思很明显了把）使用它安装和更新这样的Overlay。他会有自己的一套portage包树，和emerge平齐</p>
+
+<p>1 安装layman</p>
+
+<p>dongwm@localhost ~ $sudo emerge layman
+2 指定layman的Portage库</p>
+
+<p>dongwm@localhost ~ $sudo echo &#8220;source /var/lib/layman/make.conf&#8221; &gt;&gt; /etc/make.conf
+3 列出可用的Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -L
+其中有一行</p>
+
+<p>* gentoo-china              [Subversion] (http://gentoo-china-overlay.google&#8230;)</p>
+
+<p>4 安装Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -a gentoo-china
+5 从Overlay源安装一个软件包</p>
+
+<p>因为gentoo-china的软件包目录在/var/lib/layman/gentoo-china  可以去找你想要安装的软件包名称 我这里是/var/lib/layman/gentoo-china/app-editors/uex</p>
+
+<p>dongwm@localhost ~ $sudo emerge uex # emerge会自动找到
+6 更新Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -S</p>
+
+<p>7 删除Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -d desktop-effects  删除desktop-effects</p>
+
+<p>&nbsp;
+
+&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/19/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/17/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

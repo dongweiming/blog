@@ -1,0 +1,33 @@
+---
+layout: post
+title: 关于bisect研究
+categories:
+- python模块研究
+tags:
+- bisect
+published: true
+comments: true
+indexer: true
+---
+<p>前言：bisect模块会让列表保持排序顺序列出,可以在向一个数组插入数据的同时进行排序</p>
+
+<p>例子：</p>
+
+<p><pre class="sh_python">
+import bisect
+l = [ 20, 34, 35, 65, 78 ]
+print bisect.bisect(l, 25) #显示在什么位置插入25
+bisect.insort(l,25)  #插入数据
+print l  #新列表
+print bisect.bisect_left(l,35) #如果待查找元素在列表中存在，则返回左侧插入位置
+print bisect.bisect_right(l,35) #如果待查找元素在列表中存在，则返回右侧插入位置
+</pre></p>
+
+<p>结果：</p>
+
+<p>1
+[20, 25, 34, 35, 65, 78]
+3
+4</p>
+
+<p>&nbsp;</p>

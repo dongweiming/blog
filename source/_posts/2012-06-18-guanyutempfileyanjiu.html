@@ -1,0 +1,81 @@
+---
+layout: post
+title: 关于tempfile研究
+categories:
+- python模块研究
+tags:
+- tempfile
+published: true
+comments: true
+indexer: true
+---
+<p>前言：tempfile可以安全的生成临时文件和目录.许多程序需要将产生的中间数据保存在文件中. 安全地创建一些具有唯一名字的文件, 使得想要中断应用的人无法猜测到这些文件的名字，tempfile就是为了这样产生的模块</p>
+
+<p><pre class="sh_python">
+import os
+import tempfile</p>
+
+<p>print 'Building a file name yourself:'
+filename = '/tmp/guess_my_name.%s.txt' % os.getpid()  #创建一个文件 文件名包含此次进程pid
+temp = open(filename, 'w+b') #创建文件
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close()
+    os.remove(filename)     #删除文件，需要手动</p>
+
+<p>print
+print 'TemporaryFile:'
+temp = tempfile.TemporaryFile() #创建一个临时文件
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close() #关闭的时候自动删除文件
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Building a file name yourself:
+temp: &lt;open file '/tmp/guess_my_name.20571.txt', mode 'w+b' at 0xb72f62e0&gt;
+temp.name: /tmp/guess_my_name.20571.txt</p>
+
+<p>TemporaryFile:
+temp: &lt;open file '&lt;fdopen&gt;', mode 'w+b' at 0xb72f6338&gt;  #TemporaryFile()返回的文件不含有名字,因为在文件系统表中没有它的引用
+temp.name: &lt;fdopen&gt;
+<pre class="sh_python">
+import tempfile</p>
+
+<p>f = tempfile.TemporaryFile(mode='w+t') #文件以模式’w+b’方式被创建,这里是文本模式的临时文件
+try:
+    f.writelines(['first\n', 'second\n']) #接受一个列表，按行写入
+    f.seek(0) #将当前文件指针文件最开始以便能够读取所有的数据</p>
+
+<p>    for line in f:
+        print line.rstrip()
+finally:
+    f.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import tempfile</p>
+
+<p>temp = tempfile.NamedTemporaryFile() #创建了一个有名字的, 即可以按名访问的文件，可以设置一下参数：suffix='_suffix'（设置文件结尾内容）,
+                                    # prefix='prefix_'(设置文件开头内容), dir='/tmp' （设置文件所在目录）
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close()
+    print 'Exists after close:', os.path.exists(temp.name) #这里肯定是false  因为关闭句柄文件就会删掉
+directory_name = tempfile.mkdtemp()  #需要多个临时文件, 可以创建一个临时目录然后把所有文件放在这个目录中. 使用mkdtemp()函数来创建一个临时目录.
+print directory_name
+os.removedirs(directory_name) #删掉临时目录需要手动
+print
+</pre></p>
+
+<p>&nbsp;</p>

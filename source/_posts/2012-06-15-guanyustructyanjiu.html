@@ -1,0 +1,85 @@
+---
+layout: post
+title: 关于struct研究
+categories:
+- python模块研究
+tags:
+- struct
+published: true
+comments: true
+indexer: true
+---
+<p>前言：struct是一个实现字符串和二进制数据之间的相互转换的模块，它包含了实现字符串字节和Python本地数据类型(如数字和字符串)间的相互转换的函数.</p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>values = (1, 'ab', 2.7)
+s = struct.Struct('I 2s f')
+packed_data = s.pack(*values)
+data = binascii.hexlify(packed_data) #封装后的值被转换成16进制字节流输出
+print 'Original values:', values
+print 'Format string  :', s.format
+print 'Uses           :', s.size, 'bytes'
+print 'Packed Value   :', data
+print
+packed_data = binascii.unhexlify(data)
+s = struct.Struct('I 2s f')
+unpacked_data = s.unpack(packed_data)
+print 'Unpacked Values:', unpacked_data
+</pre></p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>values = (1, 'ab', 2.7)
+print 'Original values:', values</p>
+
+<p>endianness = [
+    ('@', 'native, native'),
+    ('=', 'native, standard'),
+    ('&lt;', 'little-endian'),
+    ('&gt;', 'big-endian'),
+    ('!', 'network'),
+]</p>
+
+<p>for code, name in endianness:
+    s = struct.Struct(code + ' I 2s f')  #默认情况下, 使用标准C库中”字节序”的概念将数值编码. 通过在字符串格式中直接指定一个明确的字节序可以简单的覆盖这个选项
+    packed_data = s.pack(*values)
+    print
+    print 'Format string  :', s.format, 'for', name
+    print 'Uses           :', s.size, 'bytes'
+    print 'Packed Value   :', binascii.hexlify(packed_data)
+    print 'Unpacked Value :', s.unpack(packed_data)
+</pre></p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>s = struct.Struct('I 2s f')
+values = (1, 'ab', 2.7)
+print 'Original:', values</p>
+
+<p>print
+print 'ctypes string buffer'</p>
+
+<p>import ctypes
+b = ctypes.create_string_buffer(s.size)  #在高性能的敏感情况或者通过通过第三方模块来传递数据经常会要求对二进制数据进行封装
+print 'Before  :', binascii.hexlify(b.raw)
+s.pack_into(b, 0, *values) #一种优化的方式是避免为每一个封装结构分配新的缓冲区. 函数pack_into()和unpack_from()支持直接写入到预分配的缓冲区中.
+print 'After   :', binascii.hexlify(b.raw)
+print 'Unpacked:', s.unpack_from(b, 0)</p>
+
+<p>print
+print 'array'</p>
+
+<p>import array
+a = array.array('c', '\0' *s.size)
+print 'Before  :', binascii.hexlify(a)
+s.pack_into(a, 0, *values)
+print 'After   :', binascii.hexlify(a)
+print 'Unpacked:', s.unpack_from(a, 0)
+</pre></p>

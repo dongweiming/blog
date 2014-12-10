@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: cacti | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/cacti/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[配置Cherokee下的cacti]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E9%85%8D%E7%BD%AEcherokee%E4%B8%8B%E7%9A%84cacti/"/>
+    <updated>2010-12-23T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/配置cherokee下的cacti</id>
+    <content type="html"><![CDATA[<p><strong>LCMP</strong><strong>是指</strong><em><strong>Linux.Cherokee.MySQL.PHP/Perl/Python</strong></em><em><strong>。</strong></em><em><strong> </strong></em></p>
+
+<p><em><strong>其中</strong></em><em><strong>Cherokee</strong></em>号称是目前最快的 Web 服务器软件，在性能上，甚至比  Nginx 还略胜一筹。Cherokee 的功能包括支持 FastCGI、SCGI、PHP、CGI、TLS 及 SSL  加密连接，虚拟主机，授权认证，实时编码，载入均衡，与 Apache 兼容的 log 文件等等。Cherokee 内含一个名为  cherokee-admin 的工具，执行后，允许管理员直接通过浏览器进入 http://localhost:9090/ 对其进行管理和配置<!--more--><img title="更多..." src="../wp-includes/js/tinymce/plugins/wordpress/img/trans.gif" alt="" /><strong> </strong></p>
+
+<p><strong>安装</strong><strong>yum-priorities</strong><strong>插件</strong><strong> </strong></p>
+
+<p>#yum install yum-priorities</p>
+
+<p>设置yum在调用软件源时的顺序的。因为官方提供的软件源，都是比较稳定和被推荐使用的。因此，官方源的顺序要高于第三方源的顺序。为保证这个顺序，安装yum-priorities。</p>
+
+<p><strong>配置epel 软件源</strong></p>
+
+<p>#rpm -Uvh <a href="http://download.fedora.redhat.com/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm">http://download.fedora.redhat.com/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm</a></p>
+
+<p><strong>配置ius软件源</strong></p>
+
+<p>注：IUS(<a href="http://iuscommunity.org/">http://iuscommunity.org</a>)是php.net推荐的yum源</p>
+
+<p>#Rpm –Uvh <a href="http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/x86_64/ius-release-1.0-6.ius.el5.noarch.rpm">http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/x86_64/ius-release-1.0-6.ius.el5.noarch.rpm</a></p>
+
+<p><strong>安装 Cherokee</strong></p>
+
+<p>#yum install Cherokee</p>
+
+<p><strong>安装 rrdtool</strong></p>
+
+<p>#yum install rrdtool</p>
+
+<p><strong>安装mysql</strong></p>
+
+<p>#yum install mysql mysql-server</p>
+
+<p><strong>安装PHP, Perl and Python.</strong></p>
+
+<p>注：如果想升级版本，需要卸载之前安装的php</p>
+
+<p>#yum install php53-pear php53 php53-cli php53-common php53-devel  php53-gd php53-mbstring php53-mcrypt php53-mysql php53-pdo php53-soap  php53-xml php53-xmlrpc php53-bcmath php53-pecl-apc php53-pecl-memcache</p>
+
+<p># yum update perl python</p>
+
+<p><strong>设置开机启动：</strong></p>
+
+<p># chkconfig cherokee on
+# chkconfig mysqld on</p>
+
+<p><strong>启动服务：</strong></p>
+
+<p># service mysqld start
+# service cherokee start</p>
+
+<p><strong>到cherokee 管理界面配置虚拟主机：</strong></p>
+
+<p>启动web界面：</p>
+
+<p># cherokee-admin –b
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">Login:
+User:              admin
+One-time Password: MdTESIfkMdSmwUj2</td></tr></tbody></table></p>
+
+<p>Web Interface:
+URL:               <a href="http://localhost:9090/">http://localhost:9090/</a></p>
+
+<p>Cherokee Web Server 1.0.6 (Aug  6 2010): Listening on port ALL:9090, TLS
+disabled, IPv6 enabled, using epoll, 4096 fds system limit, max. 2041
+connections, caching I/O, single thread
+
+
+
+它会自动生成一个一次性的随机密码。</p>
+
+<p>登陆后的界面：</p>
+
+<p><img title="chreokee" src="http://farm6.static.flickr.com/5167/5289412171_325d69b391.jpg" alt="" width="500" height="203" /></p>
+
+<p>首先启动服务器</p>
+
+<p>选择 右上角的 vservers</p>
+
+<p><img title="cherokee" src="http://farm6.static.flickr.com/5046/5290015692_289460c8c5.jpg" alt="" width="360" height="73" /></p>
+
+<p>添加一个新的虚拟主机。</p>
+
+<p><img title="cherokee" src="http://farm6.static.flickr.com/5284/5290015614_646d500b02.jpg" alt="" width="360" height="217" /></p>
+
+<p>昵称自定，路径为/var/www/cacti</p>
+
+<p>配置好默认已经支持fastCGI：</p>
+
+<p><img title="cherokee4" src="http://farm6.static.flickr.com/5283/5289412343_c5a1eebb0f.jpg" alt="" width="500" height="449" /></p>
+
+<p>然后点击右上角的save  会提示重载。</p>
+
+<p><strong>安装snmp</strong></p>
+
+<p># yum install net-snmp net-snmp-utils</p>
+
+<p><strong>安装cacti</strong></p>
+
+<p># yum install cacti</p>
+
+<p>设置snmp开机启动</p>
+
+<p><strong>启动snmp</strong></p>
+
+<p># chkconfig snmpd on</p>
+
+<p>创建一个cacti的mysql数据库</p>
+
+<p># mysql
+Welcome to the MySQL monitor. Commands end with ; or \g.
+Your MySQL connection id is 14323
+Server version: 5.0.77 Source distribution
+<blockquote>Type ‘help;’ or ‘\h’ for help. Type ‘\c’ to clear the buffer.</blockquote></p>
+
+<p>mysql&gt;create database cacti;
+mysql&gt;GRANT ALL ON cacti.* TO cactiuser@localhost IDENTIFIED BY 'Rubocyz8wM1=';
+mysql&gt;quit
+<strong>导入cacti的mysql数据库架构</strong></p>
+
+<p># mysql -ucactiuser -pcactipassword cacti &lt; /var/www/cacti/cacti.sql</p>
+
+<p><strong>配置cacti，引用刚才在mysql创建的数据</strong></p>
+
+<p># vi /var/www/cacti/include/config.php</p>
+
+<p>$database_type = "mysql";
+$database_default = "cacti";
+$database_hostname = "localhost";
+$database_username = "cactiuser";
+$database_password = "Rubocyz8wM1=";
+$database_port = "3306";</p>
+
+<p>登陆<a href="../">www.dongwm.com</a></p>
+
+<p>出现了cacti的“Cacti Installation Guide”</p>
+
+<p>过程请见其他教程的配置。</p>
+]]></content>
+  </entry>
+  
+</feed>

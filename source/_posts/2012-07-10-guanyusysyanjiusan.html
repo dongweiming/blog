@@ -1,0 +1,453 @@
+---
+layout: post
+title: 关于sys研究（三）
+categories:
+- python模块研究
+tags:
+- sys
+published: true
+comments: true
+indexer: true
+---
+<p><pre class="sh_python">
+import sys</p>
+
+<p>def my_excepthook(type, value, traceback): #三个参数包含：错误类型，错误值和错误的回调
+    print 'Unhandled error:', type, value</p>
+
+<p>sys.excepthook = my_excepthook #设置一个异常处理方法的通用处理</p>
+
+<p>print 'Before exception'</p>
+
+<p>raise RuntimeError('This is the error message')</p>
+
+<p>print 'After exception'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Before exception
+Unhandled error: &lt;type 'exceptions.RuntimeError'&gt; This is the error message  #由这个异常做的处理，因为异常，不再执行后面的print</p>
+
+<p><pre class="sh_python">
+import sys
+import threading
+import time</p>
+
+<p>def do_something_with_exception():
+exc_type, exc_value = sys.exc_info()[:2] #当出现异常，通过sys.exc_info捕获当前异常，返回元组包含错误类型，错误值
+    print 'Handling %s exception with message "%s" in %s' % \
+        (exc_type.__name__, exc_value, threading.current_thread().name)</p>
+
+<p>def cause_exception(delay):
+    time.sleep(delay)
+    raise RuntimeError('This is the error message')</p>
+
+<p>def thread_target(delay):
+    try:
+        cause_exception(delay)
+    except:
+        do_something_with_exception()</p>
+
+<p>threads = [ threading.Thread(target=thread_target, args=(0.3,)),
+            threading.Thread(target=thread_target, args=(0.1,)),
+            ]
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Handling RuntimeError exception with message "This is the error message" in Thread-2 #因为第2个线程time.sleep时间短，先完成
+Handling RuntimeError exception with message "This is the error message" in Thread-1</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>def trace_calls(frame, event, arg): #调用跟踪函数需要三个参数：正在运行的代码 的堆栈帧，事件通知类型，事件参数
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        return #放弃write
+    func_line_no = frame.f_lineno
+    func_filename = co.co_filename
+    caller = frame.f_back
+    caller_line_no = caller.f_lineno
+    caller_filename = caller.f_code.co_filename
+    print 'Call to %s on line %s of %s from line %s of %s' % \
+        (func_name, func_line_no, func_filename,
+         caller_line_no, caller_filename)
+    return</p>
+
+<p>def b():
+    print 'in b()'</p>
+
+<p>def a():
+    print 'in a()'
+    b()</p>
+
+<p>sys.settrace(trace_calls) #settrace用来跟踪程序运行
+a()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Call to a on line 24 of test.py from line 29 of test.py #先运行到24行的def a()
+in a()
+Call to b on line 21 of test.py from line 26 of test.py #函数a调用了21行的b()
+in b()</p>
+
+<p>注：正在执行的事件类型：
+<table border="1">
+<thead valign="bottom">
+<tr>
+<th>事件</th>
+<th>时间点</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+<td><tt>'call'</tt></td>
+<td>方法执行前</td>
+<td><tt>None</tt></td>
+</tr>
+<tr>
+<td><tt>'line'</tt></td>
+<td>某行被执行前</td>
+<td><tt>None</tt></td>
+</tr>
+<tr>
+<td><tt>'return'</tt></td>
+<td>方法返回前</td>
+<td>返回值</td>
+</tr>
+<tr>
+<td><tt>'exception'</tt></td>
+<td>异常发生</td>
+<td>包含类型，值，回调的元组</td>
+</tr>
+<tr>
+<td><tt>'c_call'</tt></td>
+<td>c方法call前</td>
+<td>c方法对象</td>
+</tr>
+<tr>
+<td><tt>'c_return'</tt></td>
+<td>c方法返回后</td>
+<td><tt>None</tt></td>
+</tr>
+<tr>
+<td><tt>'c_exception'</tt></td>
+<td>c方法出现错误后</td>
+<td><tt>None</tt></td>
+</tr>
+</tbody>
+</table>
+<pre class="sh_python">
+import sys</p>
+
+<p>def trace_lines(frame, event, arg):
+    if event != 'line':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    print '  %s line %s' % (func_name, line_no)</p>
+
+<p>def trace_calls(frame, event, arg):
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        return
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
+    if func_name in TRACE_INTO: #跟踪到新的方法里面，使用一个本地跟踪
+        return trace_lines
+    return</p>
+
+<p>def c(input):
+    print 'input =', input
+    print 'Leaving c()'</p>
+
+<p>def b(arg):
+    val = arg * 5
+    c(val)
+    print 'Leaving b()'</p>
+
+<p>def a():
+    b(2)
+    print 'Leaving a()'</p>
+
+<p>TRACE_INTO = ['b'] #保存在变量函数的全局列表</p>
+
+<p>sys.settrace(trace_calls)
+a()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Call to a on line 37 of test.py
+Call to b on line 32 of test.py
+b line 33
+b line 34
+Call to c on line 28 of test.py
+input = 10
+Leaving c()
+b line 35
+Leaving b()
+Leaving a()
+<pre class="sh_python">
+import sys</p>
+
+<p>def trace_calls_and_returns(frame, event, arg):
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        return
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    if event == 'call':
+        print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
+        return trace_calls_and_returns #返回值可以监测 到自身的引用    
+    elif event == 'return':
+        print '%s =&gt; %s' % (func_name, arg)
+    return</p>
+
+<p>def b():
+    print 'in b()'
+    return 'response_from_b '</p>
+
+<p>def a():
+    print 'in a()'
+    val = b()
+    return val * 2</p>
+
+<p>sys.settrace(trace_calls_and_returns)
+a()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Call to a on line 22 of test.py
+in a()
+Call to b on line 18 of test.py
+in b()
+b =&gt; response_from_b
+a =&gt; response_from_b response_from_b</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>def trace_exceptions(frame, event, arg): #通过寻找一个本地跟踪功能的<tt>异常</tt>事件监控异常，异常发生会返回错误类型，值和回调数据
+    if event != 'exception':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    exc_type, exc_value, exc_traceback = arg
+    print 'Tracing exception: %s "%s" on line %s of %s' % \
+        (exc_type.__name__, exc_value, line_no, func_name)</p>
+
+<p>def trace_calls(frame, event, arg):
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name in TRACE_INTO:
+        return trace_exceptions</p>
+
+<p>def c():
+    raise RuntimeError('generating exception in c()')</p>
+
+<p>def b():
+    c()
+    print 'Leaving b()'</p>
+
+<p>def a():
+    b()
+    print 'Leaving a()'</p>
+
+<p>TRACE_INTO = ['a', 'b', 'c']</p>
+
+<p>sys.settrace(trace_calls)
+try:
+    a()
+except Exception, e:
+    print 'Exception handler:', e
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Tracing exception: RuntimeError "generating exception in c()" on line 23 of c
+Tracing exception: RuntimeError "generating exception in c()" on line 26 of b
+Tracing exception: RuntimeError "generating exception in c()" on line 30 of a
+Exception handler: generating exception in c()
+<pre class="sh_python">
+import sys
+import threading
+from Queue import Queue
+import time</p>
+
+<p>def show_thread(q, extraByteCodes):
+    for i in range(5):
+        for j in range(extraByteCodes):
+            pass
+        q.put(threading.current_thread().name)
+    return</p>
+
+<p>def run_threads(prefix, interval, extraByteCodes):
+    print '%(prefix)s interval = %(interval)s with %(extraByteCodes)s extra operations' % locals()
+    sys.setcheckinterval(interval) #线程执行多任务。在一个固定的时间间隔，暂停字节码执行和解释检查是否需要执行任何信号处理。在相同的时间间隔检查，全局解释器锁释放当前线程，
+#然后获取，给其他线程一个机会执行，setcheckinterval修改这个间隔，但是可能影响性能
+    q = Queue()
+    threads = [ threading.Thread(target=show_thread, name='%s T%s' % (prefix, i), 
+                                 args=(q, extraByteCodes)
+                                 )
+                for i in range(3)
+              ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    while not q.empty():
+        print q.get()
+    print
+    return</p>
+
+<p>run_threads('Default', interval=10, extraByteCodes=1000)
+run_threads('Custom', interval=10, extraByteCodes=0)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Default interval = 10 with 1000 extra operations #当检查间隔是小于线程字节码的数量，解释可能给另一个线程控制，以便它运行一段时间
+Default T0
+Default T2
+Default T1
+Default T0
+Default T2
+Default T1
+Default T0
+Default T2
+Default T1
+Default T0
+Default T0
+Default T2
+Default T1
+Default T2
+Default T1</p>
+
+<p>Custom interval = 10 with 0 extra operations #当检查间隔是大 于由一个线程正在执行的字节码数时不会释放控制，该线程将在时间间隔出现前完成其工作
+Custom T0
+Custom T0
+Custom T0
+Custom T0
+Custom T0
+Custom T1
+Custom T1
+Custom T2
+Custom T1
+Custom T2
+Custom T1
+Custom T1
+Custom T2
+Custom T2
+Custom T2
+<pre class="sh_python">
+import sys
+import threading
+from Queue import Queue
+import time</p>
+
+<p>def show_thread(q, extraByteCodes):
+    for i in range(5):
+        for j in range(extraByteCodes):
+            pass
+        #q.put(threading.current_thread().name)
+        print threading.current_thread().name ##使该线程打印直接追加到队列中，而不是<tt>sys.stdout</tt>修改。输出是可预测的要少得多
+     return</p>
+
+<p>def run_threads(prefix, interval, extraByteCodes):
+    print '%(prefix)s interval = %(interval)s with %(extraByteCodes)s extra operations' % locals()
+    sys.setcheckinterval(interval)
+    q = Queue()
+    threads = [ threading.Thread(target=show_thread, name='%s T%s' % (prefix, i), 
+                                 args=(q, extraByteCodes)
+                                 )
+                for i in range(3)
+              ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    while not q.empty():
+        print q.get()
+    print
+    return</p>
+
+<p>run_threads('Default', interval=100, extraByteCodes=1000)
+run_threads('Custom', interval=10, extraByteCodes=0)
+</pre></p>
+
+<p><pre class="sh_python">
+import sys
+import threading
+import time</p>
+
+<p>io_lock = threading.Lock()
+blocker = threading.Lock()</p>
+
+<p>def block(i):
+    t = threading.current_thread()
+    with io_lock:
+        print '%s with ident %s going to sleep' % (t.name, t.ident)
+    if i:
+        blocker.acquire() # 获取但不释放
+        time.sleep(0.2)
+    with io_lock:
+        print t.name, 'finishing'
+    return</p>
+
+<p>threads = [ threading.Thread(target=block, args=(i,)) for i in range(3) ]
+for t in threads:
+    t.setDaemon(True)
+    t.start()</p>
+
+<p>threads_by_ident = dict((t.ident, t) for t in threads) #映射对象和标识</p>
+
+<p>time.sleep(0.01)
+with io_lock:
+    for ident, frame in sys._current_frames().items(): #识别死锁线程工作<tt>很难，sys._current_frames（）</tt>可以帮助准确显示
+        t = threads_by_ident.get(ident)
+        if not t: #主线程忽略
+            continue
+        print t.name, 'stopped in', frame.f_code.co_name, 
+        print 'at line', frame.f_lineno, 'of', frame.f_code.co_filename
+</pre></p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Thread-1 with ident -1221342352 going to sleep
+Thread-1 finishing #线程一没有sleep，完成了
+Thread-2 with ident -1221342352 going to sleep #线程2获取block
+Thread-3 with ident -1229735056 going to sleep
+Thread-3 stopped in block at line 13 of test.py #线程3想获取block，但是被线程2占用
+Thread-2 stopped in block at line 14 of test.py</p>
+
+<p>&nbsp;</p>

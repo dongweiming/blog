@@ -1,0 +1,44 @@
+---
+layout: post
+title: 关于argparse研究
+categories:
+- python模块研究
+tags:
+- argparse
+published: true
+comments: true
+indexer: true
+---
+<p>前言：argparse模块存在于python2.7和以上版本，它<span>用来解析命令行参数</span>，用来更换<a title="optparse: Command line option parser to replace :mod:`getopt`." href="http://www.doughellmann.com/PyMOTW/optparse/index.html#module-optparse"><tt>optparse</tt></a>模块。</p>
+
+<p>以下是一些例子：</p>
+
+<p><pre class="sh_python">
+import argparse
+parser = argparse.ArgumentParser(prog='PROG',   #设置一个分析器，prog默认是sys.argv[0],这里修改成PRDG 这四个字母表示
+                    description='Process some integers.',  #打印help时候 描述信息
+                    epilog="Just a text.",  #再执行完后的打印信息
+                    formatter_class=argparse.ArgumentDefaultsHelpFormatter,#修改默认格式，把每个默认值都打印出来，还可以用<tt>RawDescriptionHelpFormatter</tt>和<tt>RawTextHelpFormatter</tt>
+                    conflict_handler='resolve', #假如不设置这个，不能使用相同参数，比如一个叫'-foo',还有一个叫做'-foo'，那么这样可以都用：'-foo xx -foo newxx'
+                    usage='%(prog)s [options]', #默认是列出所有参数，每个参数用列表列出来，这里修改成 只列出来[options]
+                     ) 
+parser.add_argument('ng','--noarg', action="store_true", default=False,help='noarg')#help打印信息‘noarg’，action指定布尔值默认是false，可以用'-ng'和'--noatg'，
+parser.add_argument('--witharg', action="store", dest="witharg",nargs=2,required=True,metavar=('y','z'))  #action指定参数值可以存储成任何类型,narg表示参数是2个，并且这个是必须的参数
+                                                                                                 #打印信息时会提示这2个参数的一个参考值'y'和'z'
+parser.add_argument('--witharg2', action="store", dest="witharg2", type=int,choices=[1,2])  #action指定成int类型,可选值是1和2，在help时候会用{}打印出来
+parser.add_argument('-c', action='store_const', dest='constant_value', #假如指定'-c'，那么value＝value-to-store，并且设定一个自定义的属性名字constant_value
+                    const='value-to-store',
+                    help='Store a constant value')
+parser.add_argument('-a', action='append', dest='collection', #如果参数重复，参数值的列表叠加，比如'-a 1 -a 2'，那么值就是[1,2]
+                    default=[],
+                    help='Add repeated values to a list',
+                    )
+parser.add_argument('-A', action='append_const', dest='const_collection',  #包含这个'-A',那么值就是['value-1-to-append']
+                    const='value-1-to-append',
+                    default=[],
+                    help='Add different values to list')
+parser.add_argument('--version', action='version', version='%(prog)s 1.0') # 使用'--version' 那么输出：PROG 1.0
+results = parser.parse_args()
+</pre></p>
+
+<p>其他更多使用例子请参看：http://docs.python.org/library/argparse.html</p>

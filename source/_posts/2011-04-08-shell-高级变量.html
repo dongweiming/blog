@@ -1,0 +1,158 @@
+---
+layout: post
+title: Shell 高级变量
+categories:
+- Bash Shell
+tags:
+- shell
+- 高级变量
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1 测试变量存在与否:</strong>
+语法 ${变量-默认值}
+若变量不存在换回-后面的默认值,要存在传回变量值
+<pre class="sh_bash">[root@server ~]# unset dongwm
+[root@server ~]# r=${dongwm-'not exist'}
+[root@server ~]# echo $r
+not exist
+[root@server ~]# dongwm=hello
+[root@server ~]# r=${dongwm-'not exist'}
+[root@server ~]# echo $r
+hello</pre>
+<strong>2  测试变量不存在或者为空值:</strong>
+r=${变量:-默认值}
+<pre class="sh_bash">[root@server ~]# unset dongwm
+[root@server ~]# r=${dongwm:-'not exist'}
+[root@server ~]# echo $r
+not exist
+[root@server ~]# dongwm=
+[root@server ~]# r=${dongwm:-'not exist'}
+[root@server ~]# echo $r
+not exist</pre>
+<strong>3  测试变量不存在或者其值为空 提示错误信息</strong>
+<pre class="sh_bash">[root@server test]# cat test.sh
+#!/bin/bash
+ra=${1:?'错误,请提供要删除目录的名称'}
+echo  '你要执行的命令是'
+echo  "rm -rf ./$ra"
+rm -rf ./$ra
+[root@server test]# ls
+test  test.sh
+[root@server test]# sh test.sh
+test.sh: line 2: 1: 错误,请提供要删除目录的名称
+[root@server test]# ls
+test  test.sh
+[root@server test]# sh test.sh test
+你要执行的命令是
+rm -rf ./test
+[root@server test]# ls
+test.sh  //test目录被删除了</pre><!--more-->
+<strong>4  判断变量存在性 并返回特定值:</strong>
+<pre class="sh_bash">[root@server test]# dongwm=hello
+[root@server test]# r=${dongwm:+'true'}
+[root@server test]# echo $r
+true
+[root@server test]# dongwm=
+[root@server test]# r=${dongwm:+'true'}
+[root@server test]# echo $r</p>
+
+<p>//变量不存在 所以是空值</pre></p>
+
+<p><strong>5 取字符串切片</strong>
+<pre class="sh_bash">语法1 ${变量:位置起点}
+从指定位置开始一直到字符串结尾
+[root@server test]# dongwm="You are welcome"
+[root@server test]# eval echo ${dongwm:5}
+re welcome
+//从位置起点+1个字符开始
+语法2 ${变量:位置起点:长度}
+从之定位置开始取特定长度字符串
+[root@server test]# eval echo ${dongwm:5:7}
+re welc  //空格也算字符</pre>
+<strong>6  取位置参数:</strong>
+<pre class="sh_bash">语法1 ${@:起点}
+有起点开始 取得后面所有参数
+[root@server test]# cat test.sh
+#!/bin/bash
+echo $0
+echo ${@:2}
+[root@server test]# sh test.sh 1 2 3 4 5
+test.sh
+2 3 4 5
+语法2 ${@:起点:个数}
+由起点开始取得特定个数数量的位置参数:
+<pre class="sh_bash">[root@server test]# cat test.sh
+#!/bin/bash
+echo $0
+echo ${@:2:2}
+[root@server test]# sh test.sh 1 2 3 4 5
+test.sh
+2 3</pre>
+<strong>7 计算字符串长度:</strong>
+语法 ${#变量名称}
+<pre class="sh_bash">[root@server test]# dongwm='You are welcome'
+[root@server test]# echo ${#dongwm}
+15
+语法拓展
+1 语法expr length "字符串"
+[root@server test]# expr length "You are welcome"
+15
+2 语法 expr "字符串" :'.*'
+[root@server test]# expr "You are welcome" : '.*'
+15</pre>
+<strong>8  有字符串对比,删除相符者:</strong>
+语法1 ${变量#样式}  //从前开始对比 最短相符
+<pre class="sh_bash">[root@server test]# dongwm="/etc/sysconfig/network-scripts/ifdown-eth"
+[root@server test]# eval echo ${dongwm#/*/}
+sysconfig/network-scripts/ifdown-eth  // 删除了最开始的"/etc/"
+语法2 ${变量##样式} //从前开始对比 最长相符
+[root@server test]# dongwm="/etc/sysconfig/network-scripts/ifdown-eth"
+[root@server test]# eval echo ${dongwm##/*/}
+ifdown-eth
+语法3 ${dongwm%/*/}  //从后开始对比 最短相符
+[root@server test]# dongwm="/etc/sysconfig/network-scripts/ifdown-eth"
+[root@server test]# eval echo ${dongwm%/*}
+/etc/sysconfig/network-scripts
+语法4 ${变量%%样式}   //从后开始对比 最长相符
+[root@server test]# dongwm="www.dongwm.com"
+[root@server test]# eval echo ${dongwm%%.*}
+www</pre>
+<strong>9  取代或者删除字符串</strong>
+语法1 ${变量/样式/替换的字符串}
+<pre class="sh_bash">[root@server test]# dongwm="sync:x:5:0:sync:/sbin:/bin/sync"
+[root@server test]# eval echo ${dongwm/:/,}
+sync,x:5:0:sync:/sbin:/bin/sync  //只替换了第一个相符
+语法2 ${变量//样式/替换的字符串}
+[root@server test]# dongwm="sync:x:5:0:sync:/sbin:/bin/sync"
+[root@server test]# eval echo ${dongwm//:/,}
+sync,x,5,0,sync,/sbin,/bin/sync
+注 不提换只删除 没有最后一个"替换的字符串"选项
+[root@server test]# eval echo ${dongwm//:/}
+syncx50sync/sbin/bin/sync
+[root@server test]# eval echo ${dongwm/:/}
+syncx:5:0:sync:/sbin:/bin/sync</pre></p>
+
+<p><strong>10 命令替换</strong>
+语法 $(命令)
+<pre class="sh_bash">[root@server test]# dongwm=$(ls)
+[root@server test]# for f in $dongwm
+&gt; do
+&gt; echo $f
+&gt; done
+test
+test.sh</p>
+
+<p>[root@server test]# dongwm="/etc/passwd"
+[root@server test]# IFS=" "
+[root@server test]# f=$(&lt; $dongwm)
+[root@server test]# echo $f
+注 IFS标示分割字符变量 它的内容包含:空格符,\t,\n</pre></p>
+
+<p><strong>11 算数运算</strong>
+语法 $((算数式))
+<pre class="sh_bash">[root@server test]# eval echo $((1+3))
+4</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=96a78524-c46f-816f-a821-e23986f21990" alt="" /></div></p>

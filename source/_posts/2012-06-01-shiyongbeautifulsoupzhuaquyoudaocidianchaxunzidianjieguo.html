@@ -1,0 +1,72 @@
+---
+layout: post
+title: 使用BeautifulSoup抓取有道词典查询字典结果
+categories:
+- python
+tags:
+- BeautifulSoup
+- 爬虫
+- 网页代理
+published: true
+comments: true
+indexer: true
+---
+<p>前言：BeautifulSoup是python第三方类库，用于解析和修改html和xml文件。有时候不会一个英语单词想查询还要登录网站输入单词然后搜索，不如写个抓取程序玩玩</p>
+
+<p>首先将一下运行过程：</p>
+
+<p>1 登录网站http://dict.youdao.com 2 在 form区域输入要输入的英语词 3 点击‘搜索’ 4 页面返回结果 5解析html文件 6 找到相关翻译项 7 打印出来</p>
+
+<p>1  分析form（我只截取了一部分）：</p>
+
+<p><pre class="sh_html4strict">
+&lt;form method="<a>get</a>" action="<a href="view-source:http://dict.youdao.com/search">/search</a>" class="<a>c-fm-w</a>" id="<a>f</a>"&gt;    #使用‘get’方法，地址是http://dict.youdao.com/search（程序会用到）
+    &lt;!--Begin 搜索框 --&gt;
+    &lt;span class="<a>s-inpt-w</a>"&gt;
+        &lt;input type="<a>text</a>" class="<a>s-inpt</a>" autocomplete="<a>off</a>" name="<a>q</a>" id="<a>query</a>" onmouseover="<a>this.focus()</a>" onfocus="<a>this.select()</a>" maxlength="<a>256</a>"/&gt; #'name'是'q'，程序会用
+        &lt;span id="<a>hnwBtn</a>" class="<a>hand-write</a>"&gt;&lt;/span&gt;
+        &lt;!-- Begin 这两个SPAN 尽量写一行 --&gt;
+    &lt;/span&gt;&lt;span class="<a>s-btn-w</a>"&gt;
+        &lt;!-- #End 这两个SPAN 尽量写一行 --&gt;
+        &lt;input type="<a>submit</a>" class="<a>s-btn</a>" id="<a>qb</a>" value="<a>搜 索</a>"/&gt;
+        &lt;input type="<a>hidden</a>" name="<a>keyfrom</a>" value="<a>dict.index</a>"/&gt; &lt;/span&gt;
+&lt;/form &gt;
+</pre></p>
+
+<p>当提交后，看我的firebug的分析图：<!--more--></p>
+
+<p><img class="alignnone" title=" " src="http://pic.yupoo.com/dongweiming/C0ZeWohB/medium.jpg" alt="" width="500" height="390" /></p>
+
+<p>如图用红线划取部分：</p>
+
+<p>查询结果在'class':'trans-container'的这个‘div’下面，然后解析之，看我的程序</p>
+
+<p><pre class="sh_python">
+#coding=utf-8
+import urllib
+import urllib2
+import string
+import sys
+from BeautifulSoup import BeautifulSoup
+user_agent = 'Mozilla/5.0 (X11; Linux i686; rv:12.0) Gecko/20100101 Firefox/12.0'  #自己描述的一个用户代理
+headers = { 'User-Agent' : user_agent }
+values = {'q' : sys.argv[1] }   #这个'q'就是get方法的那个input的‘name’，上面已经指出
+data = urllib.urlencode(values)
+request = urllib2.Request("http://dict.youdao.com/search", data, headers)  #这是搜索的ation的页面，上面已经指出
+response = urllib2.urlopen(request)
+the_page = response.read()
+pool = BeautifulSoup(the_page)
+results = pool.find('div', attrs={'class':'trans-wrapper clearfix','id':'phrsListTab'}) #看图，因为直接寻找'class':'trans-container'
+                                                     #内容太多，多层过滤了一下
+results = results.find('div', attrs={'class':'trans-container'}).find('ul').findAll('li') #根据网站设计的标签 找到所有符合项
+translations = []
+for result in results:
+    data=result.getText().split('.')
+    data[0]=data[0]+'.'
+    translations.append((data[0],data[1]))
+print u'查询词－&gt;'+sys.argv[1]+u'的结果:'
+for translation in translations:
+    print "%s =&gt; %s" % (translation[0], translation[1])
+</pre></p>
+
+<p>&nbsp;</p>

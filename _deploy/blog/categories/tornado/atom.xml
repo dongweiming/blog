@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: tornado | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/tornado/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[speakerdeck]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/speakerdeck/"/>
+    <updated>2014-04-18T16:49:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/speakerdeck</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>今天是在Ad的最后一天,本来准备了一个分享.关于业务中一些吐槽和我一些trick的用法, 有兴趣的可以下载<a href="https://github.com/dongweiming/speakerdeck">speakerdeck</a></p>
+
+<h4 id="section-1">主题</h4>
+
+<ol>
+  <li>celery celery2/celery3, py-amqp, kombu的用法, celery和djangocelery的集合</li>
+  <li>expect 使用expect自动登录复杂的服务器</li>
+  <li>mapreduce 一个并行处理文件的例子,说明使用python跑mapreduce多么厉害</li>
+  <li>portforward 端口转发</li>
+  <li>restapi 我眼中的restapi(pdf)</li>
+  <li>tornado 使用tornado一部非阻塞</li>
+</ol>
+
+<p>演示的tmux脚本:</p>
+
+<p>```
+#!/bin/bash
+SESSION=$USER
+COMMAND=’http Space http://localhost:8000/sleep’</p>
+
+<p>tmux new-session -d -s $SESSION</p>
+
+<p>tmux new-window -t $SESSION -n ‘Logs’
+tmux split-window -h
+tmux select-pane -t 0
+tmux send-keys $COMMAND C-m
+tmux select-pane -t 1
+tmux send-keys $COMMAND C-m
+tmux split-window -v
+tmux send-keys $COMMAND C-m
+tmux select-pane -t 0
+tmux split-window -v
+tmux send-keys $COMMAND C-m
+# Attach to session
+tmux attach-session -t $SESSION
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用tornado让你的请求异步非阻塞]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shi-yong-tornadorang-ni-de-qing-qiu-yi-bu-fei-zu-sai/"/>
+    <updated>2013-08-14T12:08:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shi-yong-tornadorang-ni-de-qing-qiu-yi-bu-fei-zu-sai</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>也许有同学很迷惑:tornado不是标榜异步非阻塞解决10K问题的嘛?但是我却发现不是torando不好，而是你用错了.比如最近发现一个事情:某网站打开页面很慢,服务器cpu/内存都正常.网络状态也良好.
+后来发现，打开页面会有很多请求后端数据库的访问，有一个mongodb的数据库业务api的rest服务.但是它的tornado却用错了,一步步的来研究问题:</p>
+
+<h4 id="section-1">说明</h4>
+
+<p>以下的例子都有2个url,一个是耗时的请求，一个是可以或者说需要立刻返回的请求,我想就算一个对技术不熟，从道理上来说的用户，
+他希望的是他访问的请求不会影响也不会被其他人的请求影响</p>
+
+<p>```python
+#!/bin/env python</p>
+
+<p>import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+import tornado.httpclient</p>
+
+<p>import time</p>
+
+<p>from tornado.options import define, options
+define(“port”, default=8000, help=”run on the given port”, type=int)</p>
+
+<p>class SleepHandler(tornado.web.RequestHandler):
+    def get(self):
+        time.sleep(5)
+        self.write(“when i sleep 5s”)</p>
+
+<p>class JustNowHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write(“i hope just now see you”)</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+    tornado.options.parse_command_line()
+    app = tornado.web.Application(handlers=[
+            (r”/sleep”, SleepHandler), (r”/justnow”, JustNowHandler)])
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.instance().start()
+```</p>
+
+<p>假如你使用页面请求或者使用哪个httpie,curl等工具先访问http://localhost:8000/sleep,再访问http://localhost:8000/justnow.你会发现本来可以立刻返回的/jsutnow的请求会一直阻塞到/sleep请求完才返回.</p>
+
+<p>这是为啥?为啥我的请求被/sleep请求阻塞了？如果平时我们的web请求足够快我们可能不会意识到这个问题，但是事实上经常会有一些耗时的进程，意味着应用程序被有效的锁定直至处理结束.</p>
+
+<p>这是时候你有没有想起@tornado.web.asynchronous这个装饰器？但是使用这个装饰器有个前提就是你要耗时的执行需要执行异步,比如上面的time.sleep,你只是加装饰器是没有作用的，而且需要注意的是
+Tornado默认在函数处理返回时关闭客户端的连接,但是当你使用@tornado.web.asynchonous装饰器时，Tornado永远不会自己关闭连接，需要显式的self.finish()关闭</p>
+
+<p>我们大部分的函数都是阻塞的, 比如上面的time.sleep其实tornado有个异步的实现:</p>
+
+<p>```python
+#!/bin/env python</p>
+
+<p>import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+import tornado.gen
+import tornado.httpclient
+import tornado.concurrent
+import tornado.ioloop</p>
+
+<p>import time</p>
+
+<p>from tornado.options import define, options
+define(“port”, default=8000, help=”run on the given port”, type=int)</p>
+
+<p>class SleepHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        yield tornado.gen.Task(tornado.ioloop.IOLoop.instance().add_timeout, time.time() + 5)
+        self.write(“when i sleep 5s”)</p>
+
+<p>class JustNowHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write(“i hope just now see you”)</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+    tornado.options.parse_command_line()
+    app = tornado.web.Application(handlers=[
+            (r”/sleep”, SleepHandler), (r”/justnow”, JustNowHandler)])
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.instance().start()
+```</p>
+
+<p>这里有个新的tornado.gen.coroutine装饰器, coroutine是3.0之后新增的装饰器.以前的办法是用回调，还是看我这个例子:</p>
+
+<p><code>python
+class SleepHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    def get(self):
+        tornado.ioloop.IOLoop.instance().add_timeout(time.time() + 5, callback=self.on_response)
+    def on_response(self):
+        self.write("when i sleep 5s")
+        self.finish()
+</code></p>
+
+<p>使用了callback, 但是新的装饰器让我们通过yield实现同样的效果:你在打开/sleep之后再点击/justnow，
+justnow的请求都是立刻返回不受影响.但是用了asynchronous的装饰器你的耗时的函数也需要执行异步</p>
+
+<p>刚才说的都是没有意义的例子，下面写个有点用的:读取mongodb数据库数据，然后再前端按行write出来</p>
+
+<p>```python
+#!/bin/env python</p>
+
+<p>import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+import tornado.gen
+import tornado.httpclient
+import tornado.concurrent
+import tornado.ioloop</p>
+
+<p>import time
+# 一个mongodb出品的支持异步的数据库的python驱动
+import motor
+from tornado.options import define, options
+define(“port”, default=8000, help=”run on the given port”, type=int)
+# db其实就是test数据库的游标
+db = motor.MotorClient().open_sync().test</p>
+
+<p>class SleepHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        # 这一行执行还是阻塞需要时间的，我的tt集合有一些数据并且没有索引
+        cursor = db.tt.find().sort([(‘a’, -1)])
+        # 这部分会异步非阻塞的执行二不影响其他页面请求
+        while (yield cursor.fetch_next):
+            message = cursor.next_object()
+            self.write(‘&lt;li&gt;%s&lt;/li&gt;’ % message[‘a’])
+        self.write(‘&lt;/ul&gt;’)
+        self.finish()</p>
+
+<pre><code>def _on_response(self, message, error):
+    if error:
+        raise tornado.web.HTTPError(500, error)
+    elif message:
+        for i in message:
+            self.write('&lt;li&gt;%s&lt;/li&gt;' % i['a'])
+    else:
+        self.write('&lt;/ul&gt;')
+        self.finish()
+</code></pre>
+
+<p>class JustNowHandler(BaseHandler):
+    def get(self):
+        self.write(“i hope just now see you”)</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+    tornado.options.parse_command_line()
+    app = tornado.web.Application(handlers=[
+            (r”/sleep”, SleepHandler), (r”/justnow”, JustNowHandler)])
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.instance().start()
+```</p>
+
+<p>一个同事提示为什么这个耗时的东西不能异步的丢给某工具去执行而不阻塞我的请求呢?好吧，我也想到了:celery，正好github有这个东西:<a href="https://github.com/mher/tornado-celery">tornado-celery</a></p>
+
+<p>执行下面的程序首先你要安装rabbitmq和celery:</p>
+
+<p>```python
+#!/bin/env python</p>
+
+<p>import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+import tornado.gen
+import tornado.httpclient
+import tcelery, tasks</p>
+
+<p>import time</p>
+
+<p>from tornado.options import define, options
+define(“port”, default=8000, help=”run on the given port”, type=int)</p>
+
+<p>tcelery.setup_nonblocking_producer()</p>
+
+<p>class SleepHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        # tornado.gen.Task的参数是:要执行的函数, 参数
+        yield tornado.gen.Task(tasks.sleep.apply_async, args=[5])
+        self.write(“when i sleep 5s”)
+        self.finish()</p>
+
+<p>class JustNowHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write(“i hope just now see you”)</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+    tornado.options.parse_command_line()
+    app = tornado.web.Application(handlers=[
+            (r”/sleep”, SleepHandler), (r”/justnow”, JustNowHandler)])
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.instance().start()
+```</p>
+
+<p>task是celery的任务定义的文件，包含我们说的time.sleep的函数</p>
+
+<p>```python
+import time
+from celery import Celery</p>
+
+<p>celery = Celery(“tasks”, broker=”amqp://guest:guest@localhost:5672”)
+celery.conf.CELERY_RESULT_BACKEND = “amqp”</p>
+
+<p>@celery.task
+def sleep(seconds):
+    time.sleep(float(seconds))
+    return seconds</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+    celery.start()
+```</p>
+
+<p>然后启动celelry  worker(要不然你的任务怎么执行呢?肯定需要一个消费者取走):</p>
+
+<p><code>python
+celery -A tasks worker --loglevel=info
+</code></p>
+
+<p>但是这里的问题也可能很严重:我们的异步非阻塞依赖于celery,还是这个队列的长度,假如任务很多那么就需要等待,效率很低.有没有一种办法把我的同步阻塞函数变为异步(或者说被tornado的装饰器理解和识别)呢?</p>
+
+<p>```python
+#!/bin/env python</p>
+
+<p>import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+import tornado.httpclient
+import tornado.gen
+from tornado.concurrent import run_on_executor
+# 这个并发库在python3自带在python2需要安装sudo pip install futures
+from concurrent.futures import ThreadPoolExecutor</p>
+
+<p>import time</p>
+
+<p>from tornado.options import define, options
+define(“port”, default=8000, help=”run on the given port”, type=int)</p>
+
+<p>class SleepHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(2)
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        # 假如你执行的异步会返回值被继续调用可以这样(只是为了演示),否则直接yield就行
+        res = yield self.sleep()
+        self.write(“when i sleep”)
+        self.finish()</p>
+
+<pre><code>@run_on_executor
+def sleep(self):
+    time.sleep(5)
+    return 5
+</code></pre>
+
+<p>class JustNowHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write(“i hope just now see you”)</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+    tornado.options.parse_command_line()
+    app = tornado.web.Application(handlers=[
+            (r”/sleep”, SleepHandler), (r”/justnow”, JustNowHandler)])
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.instance().start()
+```</p>
+
+<p>但是有朋友留言和我说为什么在浏览器打开多个url请求还是会阻塞一个个的响应呢?</p>
+
+<p>这个事浏览器自身实现的可能是缓存把,当请求的资源相同就会出现这个问题,可以使用多浏览器(多人)或者命令行下的curl登都不会有这个问题,还有个比较恶的解决方法:</p>
+
+<p>给你的请求添加一些无用参数，比如: http://localhost:8000/sleep/?a=1 也可以是个时间戳</p>
+
+<h5 id="blocking-tasks-in-tornadohttplbollainfoblog20130122blocking-tornado">2014.4.1更新,发现了2种新的写法,请参照<a href="http://lbolla.info/blog/2013/01/22/blocking-tornado">Blocking tasks in Tornado</a></h5>
+
+<p>```python
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial, wraps
+import time</p>
+
+<p>import tornado.ioloop
+import tornado.web</p>
+
+<p>from tornado.options import define, options
+define(“port”, default=8000, help=”run on the given port”, type=int)</p>
+
+<p>EXECUTOR = ThreadPoolExecutor(max_workers=4)</p>
+
+<p>def unblock(f):</p>
+
+<pre><code>@tornado.web.asynchronous
+@wraps(f)
+def wrapper(*args, **kwargs):
+    self = args[0]
+
+    def callback(future):
+        self.write(future.result())
+        self.finish()
+
+    EXECUTOR.submit(
+        partial(f, *args, **kwargs)
+    ).add_done_callback(
+        lambda future: tornado.ioloop.IOLoop.instance().add_callback(
+            partial(callback, future)))
+
+return wrapper
+</code></pre>
+
+<p>class JustNowHandler(tornado.web.RequestHandler):</p>
+
+<pre><code>def get(self):
+    self.write("i hope just now see you")
+</code></pre>
+
+<p>class SleepHandler(tornado.web.RequestHandler):</p>
+
+<pre><code>@unblock
+def get(self, n):
+    time.sleep(float(n))
+    return "Awake! %s" % time.time()
+</code></pre>
+
+<p>class SleepAsyncHandler(tornado.web.RequestHandler):</p>
+
+<pre><code>@tornado.web.asynchronous
+def get(self, n):
+
+    def callback(future):
+        self.write(future.result())
+        self.finish()
+
+    EXECUTOR.submit(
+        partial(self.get_, n)
+    ).add_done_callback(
+        lambda future: tornado.ioloop.IOLoop.instance().add_callback(
+            partial(callback, future)))
+
+def get_(self, n):
+    time.sleep(float(n))
+    return "Awake! %s" % time.time()
+</code></pre>
+
+<p>application = tornado.web.Application([
+    (r”/justnow”, JustNowHandler),
+    (r”/sleep/(\d+)”, SleepHandler),
+    (r”/sleep_async/(\d+)”, SleepAsyncHandler),
+])</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+   application.listen(options.port)
+   tornado.ioloop.IOLoop.instance().start()
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用Google Captcha作tornado网站的验证码]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shiyonggooglecaptchazuotornadowangzhandeyanzhengma/"/>
+    <updated>2012-04-13T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shiyonggooglecaptchazuotornadowangzhandeyanzhengma</id>
+    <content type="html"><![CDATA[<p>前言：为了防止恶意尝试破解密码，在用户注册和登录的时候都需要一个验证码，但是简单的验证码图片实在太好破解了，还是不安全，正好发现类似于google，yahoo等大网站的图片验证使用了这样的方式：</p>
+
+<p><img class="alignnone" title="recaptcha" src="https://developers.google.com/recaptcha/images/reCAPTCHA_Sample_White.png" alt="" width="322" height="132" /></p>
+
+<p>我不知道安全性怎么样，但是至少这样的网站在使用就能说明问题。</p>
+
+<p>，而且省去了自己研究复杂算法，自己画图，然后根据数据确定是不是正确验证，也省去了Captcha服务器，感谢google！</p>
+
+<p>网站上有一个例子,而且也有一个python模块：http://recaptcha.googlecode.com/svn/trunk/recaptcha-plugins/python ，和我的实现差不多</p>
+
+<p>1 captcha.py #recaptcha检查模块</p>
+
+<p><pre class="sh_python">
+import urllib,urllib2
+import os
+GOOGLE_CAPTCHA_API = 'http://www.google.com/recaptcha/api/verify'
+class RecaptchaResponse:
+    def __init__(self, is_valid, error_code=None):
+        self.is_valid = is_valid
+        self.error_code = error_code
+def check_google_captcha(request,remote_ip,recaptcha_challenge_field,recaptcha_response_field):
+    if not (recaptcha_challenge_field and recaptcha_response_field):
+        return RecaptchaResponse (is_valid = False, error_code = 'incorrect-captcha-sol')
+    def encode_if_necessary(s):
+        if isinstance(s, unicode):
+            return s.encode('utf-8')
+        return s
+    params = urllib.urlencode ({
+            'privatekey': encode_if_necessary('6LfyINASAAcxzdUXc_f_kJ1ADSA6NfkU8ZoNgw_jl'),  #这里是我的私钥
+            'remoteip' :  encode_if_necessary(remote_ip), #远程主机ip
+            'challenge':  encode_if_necessary(recaptcha_challenge_field),
+            'response' :  encode_if_necessary(recaptcha_response_field),  #填入的数据
+            })
+    request = urllib2.Request(
+        url = GOOGLE_CAPTCHA_API,
+        data = params,
+        headers = {
+            "Content-type": "application/x-www-form-urlencoded",
+            "User-agent": "reCAPTCHA Python"
+            }
+        )
+    httpresp = urllib2.urlopen(request)
+    return_values = httpresp.read().splitlines();
+    httpresp.close();
+    return_code = return_values[0]
+    if (return_code == "true"):
+        return RecaptchaResponse(is_valid=True)
+    else:
+        return RecaptchaResponse(is_valid=False, error_code = return_values[1])
+</pre></p>
+
+<p>2 后台相关代码：</p>
+
+<p><pre class="sh_python">
+
+<p>import captcha
+remote_ip = self.request.remote_ip  #获取远程ip  这个和django，gae获取方式都不同
+challenge = self.get_argument('recaptcha_challenge_field',None)
+response =  self.get_argument('recaptcha_response_field',None)
+rsp = captcha.check_google_captcha(self,remote_ip,challenge,response)
+if not rsp.is_valid:
+self.write('Verification code error!')
+             return -1
+</p>
+
+<p>3 前台网页代码：</p>
+
+<p><pre class="sh_html4strict">
+&lt;!DOCTYPE html&gt;
+&lt;head&gt;
+&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"/&gt;&lt;/script&gt;  #引用google的js
+&lt;script type="text/javascript" src="static/jquery.cookies.2.2.0.min.js"&gt;&lt;/script&gt; 
+&lt;script type="text/javascript"&gt;
+
+<p>$(document).ready(function(){
+    google_captcha('gcaptcha');
+});
+function google_captcha(element){
+    Recaptcha.create('6LfyINASAAsdddJhhV-ofP8nQ-sRsddup8AHSQHl',element,{   #输入公钥
+        theme: "clean",  #主题 一共四种
+        callback: Recaptcha.focus_response_field 
+    });
+}
+$(function()
+        {
+$("#lg").click(function(event)
+            {
+    var xsrf = $.cookies.get("_xsrf");
+    var name = $("#zh").val();
+    var loginElement = encodeURI(encodeURI($("#zh").val()));
+    var passElement = encodeURI(encodeURI($("#ps").val()));
+    var response = $("#recaptcha_response_field").val();  #因为这里使用jquery的ajax，post的数据需要指定都取什么
+    var challenge = $("#recaptcha_challenge_field").val(); 
+    $.ajax({
+   type: "POST",
+   url: "/login",
+   data: {'login':loginElement,'passwd':passElement,'_xsrf':xsrf,'recaptcha_response_field':response,'recaptcha_challenge_field':challenge}, #数据包含这五种
+   success: function(data){
+   if (/Login Success/.exec(decodeURI(data)) == null)
+   {
+   alert(decodeURI(data));
+   Recaptcha.reload();   #假如有输入错误会弹窗警告，然后会重置验证码图片
+}
+   else {  window.location="/home";
+   }}
+	});    
+   $.cookies.set("name",name);
+});
+})
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="login"&gt;
+&lt;form class="login" action="/login" method="post"&gt;
+{ % module xsrf_form_html() % } <!-- 这里我把%和{/}分开了-->
+&lt;input class="text" type="text" name="login" id="zh" spellcheck="false" placeholder="帐 号" autofocus tabindex="1"&gt;
+&lt;input class="text" type="password" name="passwd" id ="ps" placeholder="密 码" tabindex="2"&gt;
+&lt;div id="gcaptcha"&gt;&lt;/div&gt;  #验证码图片在这里
+&lt;input class="button" id="lg" value="登 录" tabindex="3"&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</p>
+</pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[tornado对http403，405重定向]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/tornadoduihttp403405zhongdingxiang/"/>
+    <updated>2012-04-11T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/tornadoduihttp403405zhongdingxiang</id>
+    <content type="html"><![CDATA[<p>前言：http403表示禁止访问，比如没有相应权限，比如它不是一个可以读的文件（目录）;http405表示资源被禁止，比如一个url要求你使用post方式访问，你直接打开网页用get方式就不可以</p>
+
+<p>修改 tornado源码web.py</p>
+
+<p><pre class="sh_python">
+if not (abspath + os.path.sep).startswith(self.root): #大概1479行
+    #raise HTTPError(403, "%s is not in root static directory", path)
+    self.render("error403.html")
+    return -1      
+
+<p>if not os.path.isfile(abspath):   #大概1492
+    #raise HTTPError(403, "%s is not a file", path)
+    self.render("error403.html")
+    return -1</p>
+
+<p>def get(self, *args, **kwargs):  #大概158行
+    self.render("error405.html")
+    #raise HTTPError(405)</p>
+
+<p>注：不能在self.set_status根据code标识重定向（self._finished已经被设置了，会重复2次）
+</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[tornado 404实现重定向页面]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/tornado404shixianzhongdingxiangyemian/"/>
+    <updated>2012-04-10T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/tornado404shixianzhongdingxiangyemian</id>
+    <content type="html"><![CDATA[<p>前言：不喜欢默认的404报错：404:Not Found，本来我可以在我程序里面对RequestHandler重定义，但是需要修改的比较多，因为我的服务器上面只跑我这一个程序，那么我直接去修改源码（/usr/local/lib/python2.6/site-packages/tornado-2.2-py2.6.egg/tornado）的ErrorHandler类（个人方法仅供参考，要是有更好的方法，欢迎留言<pre class="sh_python">
+class ErrorHandler(RequestHandler):  #大约1413行  这里主要是‘文件url的404’
+    """Generates an error response with status_code for all requests."""
+    def initialize(self, status_code):
+        self.set_status(status_code)
+
+<p>    def prepare(self):
+#        raise HTTPError(self._status_code)   注释掉了这句
+        self.render("error.html")   改成重定向到一个页面</p>
+
+<p> if not os.path.exists(abspath):   #大约1490行 这里主要是‘文件的404’
+            #raise HTTPError(404)
+            self.render("error.html")
+            return -1</p>
+
+<p> 
+error.html内容  #这个文件放在tornado模块的路径下
+<pre class="sh_html4strict">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8" /&gt;
+&lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
+&lt;title&gt;dongwm.com 404报错页面&lt;/title&gt;
+&lt;meta name="robots" content="noindex, nofollow" /&gt;
+&lt;link href="" rel="stylesheet" type="text/css" /&gt;	  #这里指定css放在网站程序的静态页面路径，而不是
+&lt;/head&gt;                                                 #在tornado源码目录下，使用这样的路径是为了无论在网站那一级目录都能找到这个css，要不然在跟目录下可以，其他子目录下就没有了
+	&lt;body&gt;                                           #或者直接指定url 比如 http://127.0.0.1/static/dict.css
+		&lt;div id="header" class='headerPadding'&gt;
+		&lt;/div&gt;
+		&lt;div id="allframe" class="width950"&gt;
+			&lt;div class="div404"&gt;
+				&lt;div class="div404wording"&gt;
+					&lt;a href="https://127.0.0.1"&gt;首页&lt;/a&gt;
+					&lt;br&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div id="bottom"&gt;
+			&lt;div class="width950" align="center"&gt;
+				&lt;div class="copyright"&gt;
+					Copyright © 2012 dongwm.com&lt;/br&gt;
+					&lt;br /&gt;版权所有
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+&nbsp;</p>
+
+<p>&nbsp;</p>
+</pre></p>
+]]></content>
+  </entry>
+  
+</feed>

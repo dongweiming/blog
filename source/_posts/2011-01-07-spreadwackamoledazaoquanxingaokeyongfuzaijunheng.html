@@ -1,0 +1,304 @@
+---
+layout: post
+title: spread+wackamole打造全新高可用＋负载均衡
+categories:
+- 负载均衡
+tags:
+- HA
+- spread
+- wackamole
+- 负载均衡
+published: true
+comments: true
+indexer: true
+---
+<p><strong>土豆运营团队称之为：穷人的劳斯莱斯。呵呵！我这里一直使用ZXTM，但是因为一些特殊的业务需要，新尝试了这种架构。我参考了土豆网站运维的文章，但是网上相关内容极少，并且含糊其词，所以写了本文。</strong><!--more-->
+<strong>1 这2款软件的功能以及和ZXTM，LVS等对比请参看土豆团队博文：http://blog.ops.tudou.com/wp/?p=188</strong>
+<strong>2 安装前准备：</strong>
+注：我也强调/etc/hosts文件内容的重要性，在安装前务必配置好想使用的IP和主机名，因为启动spread需要指定主机名，但是和土豆团队文章不同，我认为非根据`uname －n`，下面会提到。
+<strong>3 安装spread：</strong>
+我也选择了4.0.0版本，原因是最初使用4.1.0时出现了很多问题，但是欢迎大家去体验4.1.0版本，并留言给我
+<pre class="sh_bash">
+wget http://www.spread.org/download/spread-src-4.0.0.tar.gz
+tar zxvf spread-src-4.0.0.tar.gz  &amp;&amp; cd spread-src-4.0.0 &amp;&amp; ./configure &amp;&amp; make &amp;&amp; make install</pre>
+<strong>4 安装wackamole：</strong>
+下载地址为http://www.cnds.jhu.edu/download/download_wackamole.cgi 需要输入一下信息 点击下载
+<pre class="sh_bash">
+tar zxvf wackamole-2.1.4.tar.gz &amp;&amp; cd wackamole-2.1.4 &amp;&amp; ./configure --with-perl &amp;&amp; make &amp;&amp; make install</pre>
+<strong>注：这个过程中可能会出现三个问题：</strong>
+1 Invalid configuration `x86_64-unknown-linux-gnu': machine `x86_64-unknown' not recognized
+<strong>解决办法</strong>：需要将2个文件拷贝过来覆盖此目录下文件：
+<pre class="sh_bash">
+cp /usr/share/libtool/config.guess .
+cp /usr/share/libtool/config.sub .</pre>
+2 checking size of char... configure: error: cannot compute sizeof (char)
+<strong>解决办法</strong>：将安装的spread的lib目录定义在LD_LIBRARY_PATH里面，我的是空，所以直接赋值：
+<pre class="sh_bash">#export LD_LIBRARY_PATH=/usr/local/lib（这个目录是默认安装的lib目录）</pre>
+3  后话了，在开启wackamole时可能出现：Starting wackamole.../usr/local/sbin/wackamole: error while loading shared libraries: libspread.so: cannot <pre class="sh_bash">open shared object file: No such file or directory   [FAILED]</pre>
+<strong>解决办法</strong>：这个可能是因为在安装spread后没有执行ldconfig，如果还是不行，可以locate出来lib文件的目录地址放在/etc/ld.so.conf中，再执行ldconfig
+启动脚本大家可以参考一下土豆原博客，但是有写html码，并且spread的脚本有问题，启动和杀掉进程都有一些问题，不知道别人有没有这样的问题，但是我在最后会粘贴一下我改善过的脚本。
+<strong>
+5  配置原理：</strong>
+我的实验环境：
+centos5.5
+想要达到的实验目的：
+对三个真实IP：192.168.9.160，192.168.9.161，192.168.9.162虚拟成三个虚拟IP（正常情况下每个真实IP使用一个虚拟IP）：192.168.9.109,192.168.9.112，192.168.9.113
+当出现故障时，虚拟IP自动“飘”到其他机器上。
+<strong>1 配置spread：</strong>
+他的spread.conf主要配置的是想要虚拟的组的设备上真实的IP和主机明的对应关系，以下是我的配置：
+首先看一下我的host文件：
+#vi /etc/hosts
+<pre class="sh_bash">
+127.0.0.1               CentOS localhost.localdomain localhost
+192.168.9.160  test00.dongwm.com
+192.168.9.161  test01.dongwm.com
+192.168.9.162  test02.dongwm.com</pre>
+<pre class="sh_bash">#vi spread.conf
+DaemonGroup = spread
+DaemonUser = spread
+EventLogFile = /usr/local/etc/spreadlog_%h.log
+EventPriority =  ERROR
+Spread_Segment  192.168.255.255:4803 {
+test00.dongwm.com   192.168.9.160
+test01.dongwm.com   192.168.9.161
+test02.dongwm.com   192.168.9.162
+} #这是一种广播方式，还有一种多播配置方式</pre>
+注：每台机器都要开启此进程
+<strong>2 配置wackamole</strong>
+#vi wackamole.conf
+<pre class="sh_bash">
+Spread = 4803@127.0.0.1 #表示监听的端口和地址，一般都不用修改，但是我认为可以只在一个机器上（假设server.dongwm.com）启动wackamole进程，
+然后其他节点的监听方式为： Spread = 4803@server.dongwm.com
+SpreadRetryInterval = 5s
+Group = test   #这个类似于分布式消息系统，当你参加到这个组，就可以监听所有人，此程序进入此模式的命令是spuser 其中 j表示参加，l表示离开，有兴趣的可以研究下
+Control = /var/run/wack.it
+Prefer None   #这个就是提供一个优先选择的手段，我们这里的业务不需要，所以没有设置，设置方式参考官网的pdf文档
+VirtualInterfaces {
+{ eth0:192.168.9.109/32 }
+{ eth0:192.168.9.112/32 }
+{ eth0:192.168.9.113/32 }
+}               #这里就是想要虚拟的IP
+Arp-Cache = 90s
+Notify {
+eth0:192.168.8.1/32   #这是你路由器的地址，很重要的
+arp-cache
+}
+balance {
+AcquisitionsPerRound = all
+interval = 4s
+}
+mature = 5s</pre>
+注：我也是每个机器都启动这个进程
+<strong>6 启动服务，查看日志：</strong>
+根据经验，最好先做以下2步：
+1  创建spread用户，加入你设定了其他用户，这步略过
+2  需要创建/var/run/spread/目录
+<strong>启动spread：</strong>
+<pre class="sh_bash">/usr/local/sbin/spread -c  /usr/local/etc/spread.conf -n 你本机的主机名 （其中文件路径在编译时候./configure时候会告诉你具体地址，请注意）</pre>
+查看端口监听：
+<pre class="sh_bash">#netstat -tunlp |grep 48
+tcp	0	0 0.0.0.0:4803	0.0.0.0:*	LISTEN	18318/spread
+udp	0	0 0.0.0.0:4803	0.0.0.0:*	18318/spread
+udp	0	0 0.0.0.0:4804	0.0.0.0:*	18318/spread
+</pre>
+启动wacka mole：
+<pre class="sh_bash">/etc/init.d/wackamole start</pre>
+查看日志：
+<pre class="sh_bash">tail -f /var/log/messages</pre>
+会提示虚拟IP网卡启动了
+当三台服务器都启动后：
+执行ifconfig
+会发现每个服务器上飘了一个VIP：
+<pre class="sh_bash">root@test02:~$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:50:56:91:00:1B
+inet addr:192.168.9.162  Bcast:192.168.255.255  Mask:255.255.0.0
+inet6 addr: fe80::250:56ff:fe91:1b/64 Scope:Link
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+RX packets:1054714 errors:0 dropped:0 overruns:0 frame:0
+TX packets:356497 errors:0 dropped:0 overruns:0 carrier:0
+collisions:0 txqueuelen:1000
+RX bytes:123799512 (118.0 MiB)  TX bytes:94783259 (90.3 MiB)
+eth0:1    Link encap:Ethernet  HWaddr 00:50:56:91:00:1B
+inet addr:192.168.9.112  Bcast:192.168.9.112  Mask:255.255.255.255
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</pre>
+root@test00:~$ ifconfig
+[cc lang='bash'  width="99%" height="100%"]eth0      Link encap:Ethernet  HWaddr 00:50:56:91:00:13
+inet addr:192.168.9.160  Bcast:192.168.255.255  Mask:255.255.0.0
+inet6 addr: fe80::250:56ff:fe91:13/64 Scope:Link
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+RX packets:966721 errors:0 dropped:0 overruns:0 frame:0
+TX packets:343226 errors:0 dropped:0 overruns:0 carrier:0
+collisions:0 txqueuelen:1000
+RX bytes:182954295 (174.4 MiB)  TX bytes:67258649 (64.1 MiB)
+eth0:3    Link encap:Ethernet  HWaddr 00:50:56:91:00:13
+inet addr:192.168.9.113  Bcast:192.168.9.113  Mask:255.255.255.255
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1[/cc]
+[cc lang='bash'  width="99%" height="100%"]root@test01:~$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:50:56:91:00:15
+inet addr:192.168.9.161  Bcast:192.168.255.255  Mask:255.255.0.0
+inet6 addr: fe80::250:56ff:fe91:15/64 Scope:Link
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+RX packets:869456 errors:0 dropped:0 overruns:0 frame:0
+TX packets:162884 errors:0 dropped:0 overruns:0 carrier:0
+collisions:0 txqueuelen:1000
+RX bytes:161753343 (154.2 MiB)  TX bytes:40910624 (39.0 MiB)
+eth0:1    Link encap:Ethernet  HWaddr 00:50:56:91:00:15
+inet addr:192.168.9.109  Bcast:192.168.9.109  Mask:255.255.255.255
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</pre>
+<strong>7 实验（）</strong>
+原理：我自己写了脚本，去检测本机的一些进程和服务是否异常。假如异常，就执行脚本命令，停止这个机器上的wackamole进程；当进程和服务恢复，我又执行脚本命令，开启wackamole进程
+这里模拟出现异常，脚本杀掉进程：
+<pre class="sh_bash">root@test02:~$ /etc/init.d/wackamole stop
+Stopping wackamole...                                      [确定]
+</pre>
+执行ifconfig:
+<pre class="sh_bash">root@test02:~$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:50:56:91:00:1B
+inet addr:192.168.9.162  Bcast:192.168.255.255  Mask:255.255.0.0
+inet6 addr: fe80::250:56ff:fe91:1b/64 Scope:Link
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+RX packets:1059629 errors:0 dropped:0 overruns:0 frame:0
+TX packets:359237 errors:0 dropped:0 overruns:0 carrier:0
+collisions:0 txqueuelen:1000
+RX bytes:124517323 (118.7 MiB)  TX bytes:95293463 (90.8 MiB)[/cc]
+执行其他2台服务器,发现：
+<pre class="sh_bash">root@yfs00:~$  ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:50:56:91:00:13
+inet addr:192.168.9.160  Bcast:192.168.255.255  Mask:255.255.0.0
+inet6 addr: fe80::250:56ff:fe91:13/64 Scope:Link
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+RX packets:972018 errors:0 dropped:0 overruns:0 frame:0
+TX packets:345715 errors:0 dropped:0 overruns:0 carrier:0
+collisions:0 txqueuelen:1000
+RX bytes:184164965 (175.6 MiB)  TX bytes:67683923 (64.5 MiB)
+eth0:1    Link encap:Ethernet  HWaddr 00:50:56:91:00:13
+inet addr:192.168.9.112  Bcast:192.168.9.112  Mask:255.255.255.255
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+eth0:3    Link encap:Ethernet  HWaddr 00:50:56:91:00:13
+inet addr:192.168.9.113  Bcast:192.168.9.113  Mask:255.255.255.255
+UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</pre>
+^.^  成功了，飘过来了
+再看一下HA延迟，刚才我一直在另外一个服务器上执行 ping 192.168.9.112
+<pre class="sh_bash">64 bytes from 192.168.9.112: icmp_seq=144 ttl=64 time=0.314 ms
+64 bytes from 192.168.9.112: icmp_seq=145 ttl=64 time=0.333 ms
+64 bytes from 192.168.9.112: icmp_seq=146 ttl=64 time=0.414 ms
+64 bytes from 192.168.9.112: icmp_seq=147 ttl=64 time=0.346 ms
+64 bytes from 192.168.9.112: icmp_seq=148 ttl=64 time=0.373 ms
+64 bytes from 192.168.9.112: icmp_seq=149 ttl=64 time=0.333 ms
+64 bytes from 192.168.9.112: icmp_seq=150 ttl=64 time=0.313 ms
+64 bytes from 192.168.9.112: icmp_seq=151 ttl=64 time=0.323 ms
+64 bytes from 192.168.9.112: icmp_seq=152 ttl=64 time=0.324 ms
+64 bytes from 192.168.9.112: icmp_seq=153 ttl=64 time=0.432 ms
+64 bytes from 192.168.9.112: icmp_seq=154 ttl=64 time=0.510 ms
+64 bytes from 192.168.9.112: icmp_seq=155 ttl=64 time=0.348 ms
+64 bytes from 192.168.9.112: icmp_seq=156 ttl=64 time=0.303 ms
+64 bytes from 192.168.9.112: icmp_seq=157 ttl=64 time=0.383 ms
+64 bytes from 192.168.9.112: icmp_seq=158 ttl=64 time=0.365 ms</pre>
+看，没有停顿！
+注：我们可以使用 spmonitor命令，进去选择0，查看个节点情况
+<strong>8 发布我改善后的启动脚本（尊重原创，我这里只是修改）：</strong>
+1  spread：
+<pre class="sh_bash">#!/bin/bash
+#
+# spread        This starts and stops spread
+#
+# chkconfig: 345 90 10
+# description: This starts the spread daemon
+#
+# processname: spread
+# config: /etc/spread.conf
+# pidfile:/var/run/spread.pid
+DAEMON=/usr/sbin/spread
+CONFIG=/etc/spread.conf
+LOG=/your/path/spread.log
+HOST=`uname -n`
+NAME="spread"
+RETVAL=0
+#Source function library.
+. /etc/rc.d/init.d/functions
+start() {
+echo -n "Starting $NAME..."
+daemon $($DAEMON -c $CONFIG -n $HOST 2&gt;&amp;1 &gt;$LOG ＆;)＆;
+RETVAL=$?
+[ "$RETVAL" = 0 ] &amp;&amp; touch /var/lock/subsys/$NAME
+echo
+}
+stop() {
+echo -n "Stopping $NAME..."
+killproc $DAEMON
+[ "$RETVAL" = 0 ] &amp;&amp; rm -f /var/lock/subsys/$NAME
+echo
+}
+case "$1" in
+start)
+start
+;;
+stop)
+stop
+;;
+restart)
+stop
+start
+;;
+status)
+status $NAME
+RETVAL=$?
+;;
+*)
+echo $"Usage: $0 {start|stop|restart|status}"
+RETVAL=1
+esac
+exit $RETVAL
+</pre></p>
+
+<p>2 wackamole
+<pre class="sh_bash">#!/bin/bash
+#
+# wackamole       This starts and stops wackamole
+#
+# chkconfig: 345 95 05
+# description: This starts the wackamole daemon
+#
+# requires: spread
+# processname: wackamole
+# config: /etc/wackamole.conf
+# pidfile:/var/run/wackamole.pid
+DAEMON=/usr/sbin/wackamole
+CONFIG=/etc/wackamole.conf
+NAME="wackamole"
+RETVAL=0
+#Source function library.
+. /etc/rc.d/init.d/functions
+start() {
+echo -n "Starting $NAME..."
+daemon $DAEMON -c $CONFIG
+RETVAL=$?
+[ "$RETVAL" = 0 ] &amp;&amp; touch /var/lock/subsys/$NAME
+echo
+}
+stop() {
+echo -n "Stopping $NAME..."
+killproc $DAEMON
+[ "$RETVAL" = 0 ] &amp;&amp; rm -f /var/lock/subsys/$NAME
+echo
+}
+case "$1" in
+start)
+start
+;;
+stop)
+stop
+;;
+restart)
+stop
+start
+;;
+status)
+status $NAME
+RETVAL=$?
+;;
+*)
+cho $"Usage: $0 {start|stop|restart|status}"
+RETVAL=1
+esac
+exit $RETVAL</pre></p>

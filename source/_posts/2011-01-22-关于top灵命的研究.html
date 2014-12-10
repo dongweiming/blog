@@ -1,0 +1,94 @@
+---
+layout: post
+title: 关于top命令的研究
+categories:
+- linux基础
+tags:
+- top
+published: true
+comments: true
+indexer: true
+---
+<p><strong>1  根据一些参数将性能排序</strong></p>
+
+<p>使用-O选项进入选择菜单，选择相关字母即可根据参数排序：</p>
+
+<p><pre class="sh_bash"></p>
+
+<p>Current Sort Field:  K  for window 1:Def
+Select sort field via field letter, type any other key to return</p>
+
+<p>a: PID        = Process Id                  y: WCHAN      = Sleeping in Function
+b: PPID       = Parent Process Pid          z: Flags      = Task Flags &lt;sched.h&gt;
+c: RUSER      = Real user name
+d: UID        = User Id                   Note1:
+e: USER       = User Name                   If a selected sort field can't be
+f: GROUP      = Group Name                  shown due to screen width or your
+g: TTY        = Controlling Tty             field order, the '&lt;' and '&gt;' keys
+h: PR         = Priority                    will be unavailable until a field
+i: NI         = Nice value                  within viewable range is chosen.
+j: P          = Last used cpu (SMP)
+* K: %CPU       = CPU usage                 Note2:
+l: TIME       = CPU Time                    Field sorting uses internal values,
+m: TIME+      = CPU Time, hundredths        not those in column display.  Thus,
+n: %MEM       = Memory usage (RES)          the TTY &amp; WCHAN fields will violate
+o: VIRT       = Virtual Image (kb)          strict ASCII collating sequence.
+p: SWAP       = Swapped size (kb)           (shame on you if WCHAN is chosen)
+q: RES        = Resident size (kb)
+r: CODE       = Code size (kb)
+s: DATA       = Data+Stack size (kb)
+t: SHR        = Shared Mem size (kb)
+u: nFLT       = Page Fault count
+v: nDRT       = Dirty Pages count
+w: S          = Process Status
+x: COMMAND    = Command name/line</p>
+
+<p>本例选择K，这样就会进行CPU占用率的排序：</p>
+
+<p>28520 okooo     15   0  268m  39m  22m S  4.0  0.2   0:01.31 httpd
+top - 22:10:20 up 58 days,  8:34,  1 user,  load average: 3.22, 3.48, 3.76
+Tasks: 192 total,   6 running, 185 sleeping,   0 stopped,   1 zombie
+Cpu(s): 29.0%us,  3.2%sy,  0.0%ni, 65.1%id,  0.1%wa,  0.5%hi,  2.2%si,  0.0%st
+Mem:  16433032k total,  7796168k used,  8636864k free,   625372k buffers
+Swap:        0k total,        0k used,        0k free,  3845252k cached</p>
+
+<p>PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+28536 dongwm     16   0  276m  57m  32m S 27.3  0.4   0:21.60 httpd
+32401 dongwm    16   0  238m  38m  18m S 18.0  0.2   0:00.70 httpd
+29848 dongwm    16   0  278m  55m  29m S 16.6  0.3   0:11.11 httpd
+27389 dongwm     15   0  279m  61m  33m R 16.0  0.4   0:25.40 httpd
+26694 dongwm     15   0  272m  54m  34m S 15.6  0.3   0:30.51 httpd
+26356 dongwm     16   0  280m  65m  37m S 13.0  0.4   0:31.55 httpd
+27445 dongwm     16   0  289m  70m  33m S 12.3  0.4   0:24.50 httpd
+29531 dongwm     16   0  281m  61m  31m S 12.0  0.4   0:12.74 httpd
+9418  dongwm     15   0  338m  91m  42m R 10.0  0.6   1:44.67 httpd    </pre>
+<strong>2  高亮显示：按z或者b：</strong></p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2011/01/image.png"><img style="display: inline; border: 0px;" title="image" src="http://www.dongwm.com/wp-content/uploads/2011/01/image_thumb.png" border="0" alt="image" width="420" height="203" /></a></p>
+
+<p><strong>3  改变刷新top命令的时间间隔（默认是3s）:</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">delay from 3.0 to: 5</pre></td>
+</tr>
+</tbody>
+</table>
+4  <strong>显示/隐藏进程的路径-按c键：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="408">
+<tbody>
+<tr>
+<td width="406" valign="top"><pre class="sh_bash">26371 dongwm     22   0 2444m 384m 8648 S  3.0  1.2   1:42.50 /opt/apps/java6/bin/java -Xms1024m -Xmx2048m -jar /home/okooo/apps/cepServer_zyq/EsperServer.jar ap
+28985 dongwm    15   0 13032 1468  812 R  0.7  0.0   0:00.11 top
+2068 ossec     15   0  8064 2736  724 S  0.3  0.0   0:13.53 /var/ossec/bin/ossec-analysisd   </pre></td>
+</tr>
+</tbody>
+</table>
+<strong>5  设定top查看性能次数-当刷新指定次数后自动退出：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">top -n 你想要的次数</pre></td>
+</tr>
+</tbody>
+</table></p>

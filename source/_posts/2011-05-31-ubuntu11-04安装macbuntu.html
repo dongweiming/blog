@@ -1,0 +1,37 @@
+---
+layout: post
+title: ubuntu11.04安装Macbuntu
+categories:
+- ubuntu
+tags:
+- macbuntu
+published: true
+comments: true
+indexer: true
+---
+<p><strong>Macbuntu是什么呢？从名字就可以看出来和苹果的Mac OS有关，是滴，他就是让ubuntu变成Mac，并且保留了ubuntu所有的3D特效：</strong>
+<img style="max-width: 800px;" src="http://farm3.static.flickr.com/2699/5779619664_10bb87a0c5_b.jpg" alt="" />它的官方下载地址是：https://sourceforge.net/projects/macbuntu/ 但是目前还没出11.04版本 只能使用10.10版本，需要修改install.sh文件，否则因为版本问题会报错：
+将这一段：</p>
+
+<p>chk_system()
+{
+echo ""
+echo "Checking Ubuntu version..."
+#       s=`cat /etc/issue | grep -i "$UBUNTU"`
+#       if [ ! -n "$s" ]; then
+#               echo "Failed. System not supported, script will end here"
+#               echo "To ignore their compatibility with current OS try ./install.sh force"
+#               echo "Exiting..."
+#               exit 1;
+#       fi
+echo "Passed"
+}
+去掉其中的判断修改为：
+chk_system()
+{
+echo ""
+echo "Checking Ubuntu version..."
+echo "Passed"
+}
+然后按照提示安装
+<img style="max-width: 800px;" src="http://www.flickr.com/photos/63483712@N05/5779619664/" alt="" /></p>

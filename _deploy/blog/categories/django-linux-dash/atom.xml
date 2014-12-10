@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: django-linux-dash | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/django-linux-dash/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[搜集系统信息的dashboard]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/sou-ji-xi-tong-xin-xi-de-dashboard/"/>
+    <updated>2014-02-09T22:21:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/sou-ji-xi-tong-xin-xi-de-dashboard</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>过年在家无聊, 发现个挺有意思的项目: <a href="https://github.com/afaqurk/linux-dash">linux-dash</a>,就是使用Twitter的Bootstrap做的管理模板,可以显示服务器信息, 负载, 内存,进程,硬盘,用户,安装/未安装的软件信息,网卡IP,网速,以及网络状态,在线用户等. 但是有2个问题:</p>
+
+<ol>
+  <li>它是php的…</li>
+  <li>它获取信息都是通过shell下得系统命令</li>
+</ol>
+
+<p>我就用django写了一个python版的<a href="https://github.com/dongweiming/django-linux-dash">django-linux-dash</a>:本来想用flask,结果被人用了,但是问题也是通过subprocess调用命令获取数据,这个轮子有以下优点:</p>
+
+<ol>
+  <li>不仅支持linux,也支持OS X</li>
+  <li>使用<a href="http://code.google.com/p/psutil/">psutil</a>, 项目完全不调用shell命令</li>
+</ol>
+
+<h4 id="section-1">安装和使用</h4>
+
+<p>需要django&gt;=1.4以及psutils模块</p>
+
+<p><code>
+$pip install/easy_install django
+$pip install/easy_install psutil
+</code></p>
+
+<p>PS: OS X 还需要<a href="https://pypi.python.org/pypi/netifaces">netifaces</a>模块用于获取网卡ip</p>
+
+<p><code>
+$pip install/easy_install netifaces
+</code></p>
+
+<p>启动:</p>
+
+<p><code>
+$cd /You/install/path
+$git clone https://github.com/dongweiming/django-linux-dash &amp;&amp; cd django-linux-dash
+$python manage.py runserver 0.0.0.0:8000
+</code></p>
+
+<p>打开浏览器输入 http://localhost:8000 就可以看见了…</p>
+
+<p>TODO:</p>
+
+<ol>
+  <li>目前还没有添加测速功能,因为我希望不要一直傻瓜式的下载某文件,根据用时计算平均值,因为第一它需要时间才会显示个速度,其次是不实时不能循环实时</li>
+  <li>添加更多信息模块</li>
+  <li>增加用户登陆和权限控制
+…</li>
+</ol>
+]]></content>
+  </entry>
+  
+</feed>

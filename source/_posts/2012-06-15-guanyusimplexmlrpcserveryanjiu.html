@@ -1,0 +1,162 @@
+---
+layout: post
+title: 关于SimpleXMLRPCServer研究
+categories:
+- python模块研究
+tags:
+- SimpleXMLRPCServer
+published: true
+comments: true
+indexer: true
+---
+<p>前言：SimpleXMLRPCServer顾名思义就是实现XML-RPC的远程调用服务器</p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer  #服务器端
+import logging
+import os</p>
+
+<p>logging.basicConfig(level=logging.DEBUG)  #记录日志级别为DEBUG</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)  #绑定到9000端口 假如指定allow_none=True，接受返回值是none</p>
+
+<p>def list_contents(dir_name):  #一个响应操作方法  
+    logging.debug('list_contents(%s)', dir_name)  #记录日志
+    return os.listdir(dir_name)  #给客户端返回结果，这个例子返回当前目录的所有文件名
+def my_function(a, b): #这个响应方法含有参数
+    return a * b
+class DirectoryService: #一个响应类
+    def list(self, dir_name):
+        return os.listdir(dir_name)
+class ServiceRoot:  #添加一个空类
+    pass</p>
+
+<p>class DirectoryService:  #这个类是定义响应方法的类
+    def list(self, dir_name):
+        return os.listdir(dir_name)</p>
+
+<p>root = ServiceRoot()
+root.dir = DirectoryService()  #就是为了在使用ServiceRoot.dir的时候找到DirectoryService()
+ server.register_function(list_contents,'dir')  #在服务器注册这个方法 会表示把这个方法重定义成'dir'，客户端使用proxy.dir而不是proxy.list_contents
+server.register_function(os.mkdir, 'dir.create')  #注册的方法别名也支持'.'，这里这个方法是proxy.dir.create
+server.register_function(my_function, 'multiply args')  #这个在调用时是getattr(proxy, 'multiply args')(5, 5) 使用getattr是因为这个注册的方法名字'multiply args'含有空格
+server.register_instance(DirectoryService())  #用类的方法注册  只在在客户端使用proxy.list （list是这个类中定义的方法）
+server.register_instance(root, allow_dotted_names=True) #指定容许类中的'.' 这样调用：proxy.dir.list
+try: 
+    print 'Use Control-C to exit'
+    server.serve_forever()  #loop运行
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p><pre class="sh_python">
+import xmlrpclib  #客户端</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')  
+print proxy.list_contents('/tmp') #使用上面注册的这个方法找到'/tmp'下的所有文件名
+</pre></p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+import os
+import inspect</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)</p>
+
+<p>def expose(f):  #自定义一个装饰器，返回的方法的exposed属性为真
+    f.exposed = True
+    return f
+def is_exposed(f): #测试方法是否公开exposed
+    return getattr(f, 'exposed', False)</p>
+
+<p>class MyService:
+    PREFIX = 'prefix'
+    def _dispatch(self, method, params): #设置自己的调度方式，因为默认不会调度以'_'开始的方法，而且有些方法可能是不愿意公开的 比如下面的private（私有）
+        if not method.startswith(self.PREFIX + '.'): #设置不能直接以proxy.+方法的方式调用，而需要proxy.prefix.+方法的方式
+            raise Exception('method "%s" is not supported' % method)</p>
+
+<p>        method_name = method.partition('.')[2]  #获取第三个参数，也就是类的方法名字
+        func = getattr(self, method_name)            
+        if not is_exposed(func):  #判断这个方法是不是能公开，使用其中的exposed属性值判断
+            raise Exception('method "%s" is not supported' % method)</p>
+
+<p>        return func(*params)  #执行这个方法</p>
+
+<p>    @expose
+    def public(self):
+        return 'This is public'</p>
+
+<p>    def private(self):
+        return 'This is private'</p>
+
+<p>server.register_instance(MyService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p>客户端：</p>
+
+<p><pre class="sh_python">
+import xmlrpclib</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')
+print 'public():', proxy.prefix.public()  #因为服务器的装饰器让这个方法的exposed永远为真，可以公开
+try:
+    print 'private():', proxy.prefix.private() #因为没有设置exposed的bool值，默认是假  
+except Exception, err:
+    print 'ERROR:', err
+try:
+    print 'public() without prefix:', proxy.public() #因为没有使用proxy.prefix.+方法的方式
+except Exception, err:
+    print 'ERROR:', err
+</pre></p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer, list_public_methods
+import os
+import inspect</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)
+server.register_introspection_functions() #开启方法检查，如检查支持什么方法等作用</p>
+
+<p>class DirectoryService:</p>
+
+<p>    def _listMethods(self):
+        return list_public_methods(self) #返回方法列表</p>
+
+<p>    def _methodHelp(self, method):
+        f = getattr(self, method)
+        return inspect.getdoc(f)  #返回方法是否有doc文档</p>
+
+<p>    def list(self, dir_name):
+        """list(dir_name) =&gt; [&lt;filenames&gt;] 
+            Returns a list containing the contents of the named directory. 
+        """
+         return os.listdir(dir_name)</p>
+
+<p>server.register_instance(DirectoryService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p>客户端：</p>
+
+<p><pre class="sh_python">
+import xmlrpclib</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')
+for method_name in proxy.system.listMethods():  #返回支持的方法列表
+    print '=' * 60
+    print method_name
+    print '-' * 60
+    print proxy.system.methodHelp(method_name)  #返回方法帮助类定义的功能，因为服务器端设置这个方法是打印文档，这里就会打印文档
+    print
+</pre></p>

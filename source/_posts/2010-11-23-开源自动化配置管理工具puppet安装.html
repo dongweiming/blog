@@ -1,0 +1,121 @@
+---
+layout: post
+title: 开源自动化配置管理工具Puppet安装
+categories:
+- puppet
+tags:
+- puppet
+- 安装
+- 证书
+published: true
+comments: true
+indexer: true
+---
+<p><p>Puppet是一款开源的工具，使用自有的puppet描述语言，可管理配置文件、用户、cron任务、软件包、系统服务等。可以被其他人利用，而忽略公司差异，实现了自动化部署。<!--more--><strong>环境：</strong></p>
+<p>系统：centos5.5 </p>
+<p>
+	<!--more--><strong>1 首先安装企业Linux（EPEL）yum的仓库的额外的软件包：</strong></p>
+<p>#rpm &ndash;Uvh http://download.fedora.redhat.com/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm</p>
+<p><strong>2 安装centos需要的软件包：</strong></p>
+<p>#yum install -y mysql mysql-devel mysql-server ruby ruby-devel ruby-irb ruby-mysql ruby-rdoc ruby-ri</p>
+<p>我安装的版本是ruby1.8.5 ，不要安装1.87以上的版本，puppet还不支持。</p>
+<p>mysql可以使用自己编译安装的</p>
+<p><strong>3 启动mysql：</strong></p>
+<p>#service mysqld start</p>
+<p>#chkconfig mysqld on</p>
+<p><strong>4 下载最近版本的puppet，我用的是编译安装，所以需要先安装facter：</strong></p>
+<p><span style="background-color: rgb(255, 0, 0);">注</span>：它的作用是收集主机的一些资料，比如CPU，主机IP等，facter把收集到值发送给puppet服务器端,服务器端就可以根据不同的条件来对不同的节点机器生成不同的puppet配置文件</p>
+<p>#wget http://puppetlabs.com/downloads/facter/facter-latest.tgz</p>
+<p># tar zxvf facter-latest.tgz</p>
+<p># cd facter-1.5.8</p>
+<p># /usr/local/bin/ruby install.rb</p>
+<p><strong>5 下载安装puppet主程序
+	</strong></p>
+<p># wget http://puppetlabs.com/downloads/puppet/puppet-2.6.3.tar.gz</p>
+<p># tar zxvf puppet-2.6.3.tar.gz</p>
+<p># cd puppet-2.6.3</p>
+<p># /usr/local/bin/ruby install.rb</p>
+<p><strong>6 修改hosts文件</strong></p>
+<p>server端</p>
+<p>127.0.0.1 localhost.localdomain localhost<span style="background-color: rgb(255, 255, 0);"> puppet</span></p>
+<p>192.168.8.56&nbsp;&nbsp;&nbsp; client.dongwm.com</p>
+<p>client端</p>
+<p>192.168.8.200&nbsp;&nbsp; puppet</p>
+<p><strong>7 Server端安装与配置</strong></p>
+<p><strong>1 拷贝源文件</strong></p>
+<p>#mkdir /etc/puppet
+	#cp conf/auth.conf /etc/puppet/
+	#cp conf/redhat/fileserver.conf /etc/puppet/
+	#cp conf/redhat/puppet.conf /etc/puppet/
+	#cp conf/redhat/server.init /etc/init.d/puppetmaster
+	#chmod +x /etc/init.d/puppetmaster
+	#chkconfig &ndash;add puppetmaster
+	#chkconfig puppetmaster on
+	#mkdir -p /etc/puppet/manifests</p>
+<p><strong>2 创建puppet帐号</strong>
+	# puppetmasterd &ndash;mkusers（执行中可能会出一些错误，基本上以前安装或创建过puppet用户的原因，执行就是让它自动去 /var/lib/puppet下创建一些目录）</p>
+<p>#mkdir /var/lib/puppet/rrd &amp;&amp; chown puppet.puppet /var/lib/puppet/rrd</p>
+<p>
+	<strong>3修改主机名（需要fqdn格式）</strong></p>
+<p>#hostname master.dongwm.com</p>
+<p># vi /etc/sysconfig/network</p>
+<p>修改为：HOSTNAME=master.dongwm.com</p>
+<p><strong>4启动服务</strong></p>
+<p>*第一次启动时puppet会自动创建所需的文件，包括一系列证书文件等</p>
+<p>我建议使用DEBUG模式，可以看见启动过程：</p>
+<p>puppetmasterd -d &ndash;no-daemonize -v &ndash;trace</p>
+<p><strong>8 Client端配置</strong></p>
+<p>编译安装同server端</p>
+<p><strong>1 复制配置文件</strong>
+	#mkdir /etc/puppet
+	#cp conf/auth.conf /etc/puppet/
+	#cp conf/namespaceauth.conf /etc/puppet/
+	#cp conf/redhat/puppet.conf /etc/puppet/
+	#cp conf/redhat/client.init /etc/init.d/puppet
+	#chmod +x /etc/init.d/puppet
+	#chkconfig &ndash;add puppet
+	#chkconfig puppet on</p>
+<p><strong>2 创建puppet帐号</strong>
+	# puppetd &ndash;mkusers</p>
+<p>#mkdir &ndash;r /var/lib/puppet/rrd &amp;&amp;chown puppet.puppet /var/lib/puppet/rrd</p>
+<p><strong>3 修改主机名</strong>
+	# hostname client.dongwm.com
+	# vi /etc/sysconfig/network
+	修改
+	HOSTNAME=client.dongwm.com</p>
+<p><strong>4 启动服务</strong></p>
+<p>/etc/init.d/puppet start</p>
+<p>注：当启动puppet时，程序会根据puppet.conf中的配置自动向服务端发起证书验证请求。</p>
+<p>puppet.conf的详细完整内容可以使用&ldquo;puppet &ndash;genconfig | less&rdquo;(master端使用puppetmasterd &ndash;genconfig | less)
+	命令详细查看</p>
+<p>签名证书</p>
+<p>我们在server端查看等待确认的证书：</p>
+<p>#puppetca &ndash;list</p>
+<p>client.okooo.com</p>
+<p><strong>5 全部认证：</strong></p>
+<p>#puppetca -s -a
+	<span style="background-color: rgb(255, 0, 0);">注</span>：也可以在master端的puppet.conf加这样一行：</p>
+<p>autosign = true</p>
+<p>这样就会自动签证书了。</p>
+<p><strong>
+	客户端再请求一次：</strong></p>
+<p>#puppetd &ndash;test &ndash;server master.dongwm.com</p>
+<p>err: Could not retrieve catalog from remote server: certificate verify failed</p>
+<p>这是时间不同步的问题：</p>
+<p>同步一下时间（两端都执行）：</p>
+<p>#/usr/sbin/ntpdate time.nist.gov</p>
+<p>删除/var/lib/puppet/ssl目录下的文件（或者在/etc/puppet/ssl），重新请求。</p>
+<p>OK这次出现的正确的：</p>
+<p>info: Caching certificate for client.dongwm.com</p>
+<p>info: Caching certificate_revocation_list for ca</p>
+<p>info: Caching catalog for client.dongwm.com</p>
+<p>info: Applying configuration version &rsquo;1290862961&prime;</p>
+<p>info: Creating state file /var/lib/puppet/state/state.yaml</p>
+<p>安装成功！</p>
+<p><strong>FAQ：
+	</strong></p>
+<p>&nbsp;安装过程中能够成功签收证书需要注意的是一定要修改一下配置：</p>
+<p>1 # hostname client.dongwm.com</p>
+<p>2 # vi /etc/sysconfig/network</p>
+<p>3#&nbsp; vi /etc/hosts</p>
+</p>

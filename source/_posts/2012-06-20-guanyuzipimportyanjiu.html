@@ -1,0 +1,109 @@
+---
+layout: post
+title: 关于zipimport研究
+categories:
+- python模块研究
+tags:
+- zipimport
+published: true
+comments: true
+indexer: true
+---
+<p>前言：zipimport模块实现如果sys.path中的任何项引用了 ZIP 格式的存档，则 Python 会把该存档视为目录。存档包含一个或多个模块的.py 源文件</p>
+
+<p><pre class="sh_python">
+import sys
+import zipfile
+import zipimport
+import os</p>
+
+<p>zf = zipfile.PyZipFile('zipimport_example.zip', mode='w')  #创建一个zip
+try:
+    zf.write('.')  #添加当前目录
+    zf.write('test1.py') #添加这个文件
+    zf.write('txt/README.txt')  #添加这个文件
+finally:
+    zf.close()
+for name in zf.namelist():
+    print name #打印zip档案文件
+importer = zipimport.zipimporter('zipimport_example.zip')  #导入这个zip分析</p>
+
+<p>for module_name in [ 'test1', 'not_there' ]:
+    print module_name, ':', importer.find_module(module_name) #当找到这个模块返回，没有返回none</p>
+
+<p>print importer.get_code('test1') #获取test1.py源码
+module = importer.load_module('test1')  #import导入test1.py  
+print 'Name   :', module.__name__ #模块的名字
+print 'Loader :', module.__loader__  #返回zipimporter对象
+print 'Code   :', module.datetime #返回模块的datetime方法(或者类)的引用
+source = importer.get_source('test1')  #获取test1.py源码
+print '=' * 80
+print module_name
+print '=' * 80
+print source
+print
+print importer.is_package('txt')  #我们把readme.txt 放入了txt  txt就类似于一个包
+import txt #导入txt这个包 
+data_filename = os.path.join(os.path.dirname(txt.__file__), 
+                             'README.txt')
+print data_filename, ':'
+print open(data_filename, 'rt').read()  #读取README.txt内容
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~/test&gt; python test.py
+./
+test1.py
+txt/README.txt
+test1 : &lt;zipimporter object "zipimport_example.zip"&gt;
+not_there : None
+&lt;code object &lt;module&gt; at 0xb73800f8, file "zipimport_example.zip/test1.py", line 1&gt;
+Name   : test1
+Loader : &lt;zipimporter object "zipimport_example.zip"&gt;
+Code   : &lt;module 'datetime' from '/usr/lib/python2.7/lib-dynload/datetime.so'&gt;
+================================================================================
+not_there
+================================================================================
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
+import datetime</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True, allow_none=True)
+server.register_introspection_functions()
+server.register_multicall_functions()</p>
+
+<p>class ExampleService:</p>
+
+<p>def ping(self):
+"""Simple function to respond when called to demonstrate connectivity."""
+return True</p>
+
+<p>def now(self):
+"""Returns the server current date and time."""
+return datetime.datetime.now()</p>
+
+<p>def show_type(self, arg):
+"""Illustrates how types are passed in and out of server methods.</p>
+
+<p>Accepts one argument of any type.
+Returns a tuple with string representation of the value,
+the name of the type, and the value itself.
+"""
+return (str(arg), str(type(arg)), arg)</p>
+
+<p>def raises_exception(self, msg):
+"Always raises a RuntimeError with the message passed in"
+raise RuntimeError(msg)</p>
+
+<p>def send_back_binary(self, bin):
+"Accepts single Binary argument, unpacks and repacks it to return it"
+data = bin.data
+response = Binary(data)
+return response
+<pre class="sh_python">
+import sys
+sys.path.insert(0, 'zipimport_example.zip')
+print txt.__file__
+print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获取数据，而不能只是 open(os.path.join(os.path.dirname(txt.__file__), 'README.txt'), 'rt').read()
+</pre></p>

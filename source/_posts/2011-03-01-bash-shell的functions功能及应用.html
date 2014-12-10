@@ -1,0 +1,95 @@
+---
+layout: post
+title: Bash Shell的Functions功能及应用
+categories:
+- Bash Shell
+tags: []
+published: true
+comments: true
+indexer: true
+---
+<p><strong>Bash Shell的functions和aliases可以定义一些快捷方式和复杂的命令，但是aliases不支持控制流和带参数的命令。
+</strong><strong>functions的语法：
+</strong></p>
+
+<p><pre class="sh_bash">function functionname()
+{
+commands
+.
+.
+}</pre></p>
+
+<p><strong>执行functions也可以带位置参数：
+</strong></p>
+
+<p>#functionname $ARG1 $ARG2<!--more--><!--more-->
+1 寻找当前目录下符合特定需要的文件列表--类似与find+ls的组合
+<pre class="sh_bash">linux-3qd1:/home/dongwm # touch test.hello
+linux-3qd1:/home/dongwm # function lstype()
+{
+find . -type f -iname '*.'${1}'' -exec ls -l {} \;;
+}
+linux-3qd1:/home/dongwm # lstype hello //寻找后缀是hello的文件
+-rw-r--r-- 1 root root 0 03-01 15:43 ./test.hello</pre></p>
+
+<p>2 查找符合要求的文件并将这些文件都执行一些命令操作：
+<pre class="sh_bash">linux-3qd1:/home/dongwm # function superexec()
+&gt; {
+&gt; find  . -type f -iname '*.'${1}'' -exec ${@:2}  {} \; ;
+&gt; }
+linux-3qd1:/home/dongwm # ll test.hello
+-rw-r--r-- 1 root root 0 03-01 15:43 test.hello
+linux-3qd1:/home/dongwm # superexec hello chmod 755
+linux-3qd1:/home/dongwm # ll test.hello //将符合要求的文件修改权限为755，本例只有一个符合要求文件
+-rwxr-xr-x 1 root root 0 03-01 15:43 test.hello</pre>
+3  得到指定接口的IP地址：
+<pre class="sh_bash">#  function getip(
+&gt; {
+&gt; /sbin/ifconfig ${1:-eth0} | awk '/inet addr/ {print $2}' | awk -F: '{print $2}';
+&gt; }
+[root@sys00 ~]# getip
+58.81.202.10
+[root@sys00 ~]# getip  eth0
+58.81.202.10
+[root@sys00 ~]# getip  eth1
+192.168.30.13</pre>
+4  输出服务器一些细节信息：
+<pre class="sh_bash"># function machine()
+&gt; {
+&gt;     echo -e "\nMachine information:" ; uname -a
+&gt;     echo -e "\nUsers logged on:" ; w -h
+&gt;     echo -e "\nCurrent date :" ; date
+&gt;     echo -e "\nMachine status :" ; uptime
+&gt;     echo -e "\nMemory status :" ; free
+&gt;     echo -e "\nFilesystem status :"; df -h
+&gt; }
+linux-3qd1:/home/dongwm # machine</p>
+
+<p>Machine information:
+Linux linux-3qd1 2.6.34.7-0.7-desktop #1 SMP PREEMPT 2010-12-13 11:13:53 +0100 i686 athlon i386 GNU/Linux</p>
+
+<p>Users logged on:
+dongwm   :0        09:08   ?xdm?  55:54   0.69s /usr/bin/gnome-session</p>
+
+<p>Current date :
+2011年 03月 01日 星期二 16:08:58 CST</p>
+
+<p>Machine status :
+16:08下午  up   7:00,  1 个用户，平均负载：0.18, 0.53, 0.58</p>
+
+<p>Memory status :
+total       used       free     shared    buffers     cached
+Mem:       1921828    1865884      55944          0     275136    1010768
+-/+ buffers/cache:     579980    1341848
+Swap:      1436668        872    1435796</p>
+
+<p>Filesystem status :
+文件系统              容量  已用 可用 已用% 挂载点
+/dev/sda9              45G   25G   18G  59% /
+devtmpfs              939M  456K  938M   1% /dev
+tmpfs                 939M  840K  938M   1% /dev/shm
+/dev/sda7             198M  109M   80M  58% /boot
+/dev/sda1              19G   12G  7.6G  60% /media/C
+/dev/sda5              38G   35G  3.1G  92% /media/d
+/dev/sda6              47G   39G  8.0G  83% /media/e</pre>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=0c1edaba-a0e9-8031-8651-4ea672f9545b" alt="" /></div></p>

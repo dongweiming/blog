@@ -1,0 +1,212 @@
+---
+layout: post
+title: 关于readline研究
+categories:
+- python模块研究
+tags:
+- readline
+published: true
+comments: true
+indexer: true
+---
+<p>前言：readline是一个GNU readline库的API</p>
+
+<p><pre class="sh_python">
+import readline</p>
+
+<p>readline.parse_and_bind('tab: complete')  #按tab自动补全
+readline.parse_and_bind('set editing-mode vi')  #设置对某行数据假如按‘ESC’，进入vi模式  这2行也可以写道一个文件里面int.rc ,导入配置：readline.read_init_file('int.rc')</p>
+
+<p>while True:
+    line = raw_input('Prompt ("stop" to quit): ')
+    if line == 'stop':
+        break
+    print 'ENTERED: "%s"' % line
+</pre></p>
+
+<p><pre class="sh_python">
+import readline
+import logging</p>
+
+<p>LOG_FILENAME = '/tmp/completer.log'
+logging.basicConfig(filename=LOG_FILENAME,
+                    level=logging.DEBUG,
+                    )   #记录日志</p>
+
+<p>class SimpleCompleter(object):</p>
+
+<p>    def __init__(self, options):
+        self.options = sorted(options)
+        return</p>
+
+<p>    def complete(self, text, state):
+        response = None
+        if state == 0:
+            if text:
+                self.matches = [s 
+                                for s in self.options
+                                if s and s.startswith(text)]
+                logging.debug('%s matches: %s', repr(text), self.matches)
+            else:
+                self.matches = self.options[:]
+                logging.debug('(empty input) matches: %s', self.matches)
+        try:
+            response = self.matches[state]
+        except IndexError:
+            response = None
+        logging.debug('complete(%s, %s) =&gt; %s', 
+                      repr(text), state, repr(response))
+        return response</p>
+
+<p>def input_loop():
+    line = ''
+    while line != 'stop':
+        line = raw_input('Prompt ("stop" to quit): ')
+        print 'Dispatch %s' % line</p>
+
+<p>readline.set_completer(SimpleCompleter(['start', 'stop', 'list', 'print']).complete)  #注册列表里面几个命令
+readline.parse_and_bind('tab: complete')  #绑定tab自动补全
+input_loop()
+</pre></p>
+
+<p><pre class="sh_python">
+import readline
+import logging</p>
+
+<p>LOG_FILENAME = 'completer.log'
+logging.basicConfig(filename=LOG_FILENAME,
+                    level=logging.DEBUG,
+                    )</p>
+
+<p>class BufferAwareCompleter(object):</p>
+
+<p>    def __init__(self, options):
+        self.options = options  #可选的黎明和2级命令
+        self.current_candidates = [] 
+        return</p>
+
+<p>    def complete(self, text, state):
+        response = None
+        if state == 0:    
+            origline = readline.get_line_buffer() #返回行缓冲区的当前内容
+            begin = readline.get_begidx() #返回行自动补全的范围的开始
+            end = readline.get_endidx() #返回行自动补全的范围的结束
+            being_completed = origline[begin:end]  #返回行数据
+            words = origline.split() #因为有2级命令  分割出那级命令</p>
+
+<p>            logging.debug('origline=%s', repr(origline))
+            logging.debug('begin=%s', begin)
+            logging.debug('end=%s', end)
+            logging.debug('being_completed=%s', being_completed)
+            logging.debug('words=%s', words)</p>
+
+<p>            if not words: #弱国使用tab是空 ，返回所有一级命令
+                self.current_candidates = sorted(self.options.keys()) 
+            else:
+                try:
+                    if begin == 0: #如果是第一个命令
+                        candidates = self.options.keys()
+                    else:
+                        first = words[0] #2级命令 
+                        candidates = self.options[first] 取第一级命令作为键  取子键</p>
+
+<p>                    if being_completed: #如果有字母
+                        self.current_candidates = [ w for w in candidates
+                                                    if w.startswith(being_completed) ]  #对比是不是注册的命令是不是以这个或这些字母开头
+                    else:
+                        self.current_candidates = candidates  #返回所有</p>
+
+<p>                    logging.debug('candidates=%s', self.current_candidates)</p>
+
+<p>                except (KeyError, IndexError), err:
+                    logging.error('completion error: %s', err)
+                    self.current_candidates = []</p>
+
+<p>        try:
+            response = self.current_candidates[state]
+        except IndexError:
+            response = None
+        logging.debug('complete(%s, %s) =&gt; %s', repr(text), state, response)
+        return response</p>
+
+<p>def input_loop():
+    line = ''
+    while line != 'stop':
+        line = raw_input('Prompt ("stop" to quit): ')
+        print 'Dispatch %s' % line</p>
+
+<p>readline.set_completer(BufferAwareCompleter(
+    {'list':['files', 'directories'],
+     'print':['byname', 'bysize'],
+     'stop':[],
+    }).complete)</p>
+
+<p>readline.parse_and_bind('tab: complete')</p>
+
+<p># Prompt the user for text
+input_loop()
+</pre></p>
+
+<p><pre class="sh_python">
+import readline
+import logging
+import os</p>
+
+<p>LOG_FILENAME = 'completer.log'
+HISTORY_FILENAME = 'completer.hist'</p>
+
+<p>logging.basicConfig(filename=LOG_FILENAME,
+                    level=logging.DEBUG,
+                    )
+def get_history_items():
+    return [ readline.get_history_item(i) #返回历史记录中的这条
+             for i in xrange(1, readline.get_current_history_length() + 1)
+             ]</p>
+
+<p>class HistoryCompleter(object):</p>
+
+<p>    def __init__(self):
+        self.matches = []
+        return
+    def complete(self, text, state):
+        response = None
+        if state == 0:
+            history_values = get_history_items()
+            logging.debug('history: %s', history_values)
+            if text:
+                self.matches = sorted(h 
+                                      for h in history_values 
+                                      if h and h.startswith(text))
+            else:
+                self.matches = []
+            logging.debug('matches: %s', self.matches)
+        try:
+            response = self.matches[state]
+        except IndexError:
+            response = None
+        logging.debug('complete(%s, %s) =&gt; %s', 
+                      repr(text), state, repr(response))
+        return response</p>
+
+<p>def input_loop():
+    if os.path.exists(HISTORY_FILENAME):
+        readline.read_history_file(HISTORY_FILENAME)
+    print 'Max history file length:', readline.get_history_length()
+    print 'Startup history:', get_history_items()
+    try:
+        while True:
+            line = raw_input('Prompt ("stop" to quit): ')
+            if line == 'stop':
+                break
+            if line:
+                print 'Adding "%s" to the history' % line
+    finally:
+        print 'Final history:', get_history_items()
+        readline.write_history_file(HISTORY_FILENAME)   #记录历史记录到文件</p>
+
+<p>readline.set_completer(HistoryCompleter().complete)</p>
+
+<p>readline.parse_and_bind('tab: complete')</p>
+
+<p>input_loop()
+</pre></p>

@@ -1,0 +1,46 @@
+---
+layout: post
+title: gentoo笔记（十一）Overlay和layman
+categories:
+- gentoo
+tags:
+- layman
+- Overlay
+published: true
+comments: true
+indexer: true
+---
+<p>前言：Overlay是包含额外的Gentoo的ebuild的Portage包树，类似于“第三方源”，使用它的原因我以为就是让那些不在Portage包树的软件包，当你修改，开发，测试的时候，不会影响主干包树，直到它稳定到加到主干包树里面。当修改主干包树时候，下一次同步你的修改就没有了，但是Overlay能保存你的自定义修改。layman（英语意为‘门外汉’，意思很明显了把）使用它安装和更新这样的Overlay。他会有自己的一套portage包树，和emerge平齐</p>
+
+<p>1 安装layman</p>
+
+<p>dongwm@localhost ~ $sudo emerge layman
+2 指定layman的Portage库</p>
+
+<p>dongwm@localhost ~ $sudo echo "source /var/lib/layman/make.conf" &gt;&gt; /etc/make.conf
+3 列出可用的Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -L
+其中有一行</p>
+
+<p>* gentoo-china              [Subversion] (http://gentoo-china-overlay.google...)</p>
+
+<p>4 安装Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -a gentoo-china
+5 从Overlay源安装一个软件包</p>
+
+<p>因为gentoo-china的软件包目录在/var/lib/layman/gentoo-china  可以去找你想要安装的软件包名称 我这里是/var/lib/layman/gentoo-china/app-editors/uex</p>
+
+<p>dongwm@localhost ~ $sudo emerge uex # emerge会自动找到
+6 更新Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -S</p>
+
+<p>7 删除Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -d desktop-effects  删除desktop-effects</p>
+
+<p>&nbsp;
+
+&nbsp;</p>

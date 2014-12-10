@@ -1,0 +1,680 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>grep, ack, ag的搜索效率对比 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/ack">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Grep, Ack, Ag的搜索效率对比</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-14T22:19:00+08:00" pubdate data-updated="true">Mar 14<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我经常看到很多程序员, 运维在代码搜索上使用ack, 甚至ag(the_silver_searcher
+), 而我工作中95%都是用grep,剩下的是ag. 我觉得很有必要聊一聊这个话题.
+我以前也是一个运维, 我当时也希望找到最好的最快的工具用在工作的方方面面. 但是我很好奇为什么ag和ack没有作为linux发行版的内置部分.
+内置的一直是grep. 我当初的理解是受各种开源协议的限制, 或者发行版的boss个人喜好. 后来我就做了实验, 研究了下他们到底谁快. 当时的做法也无非跑几个真实地线上log看看用时. 然后我也有了我的一个认识: 大部分时候用grep也无妨, 日志很大的时候用ag.</p>
+
+<p>ack原来的域名是betterthangrep.com, 现在是beyondgrep.com. 好吧. 其实我理解使用ack的同学, 也理解ack产生的原因. 这里就有个故事.</p>
+
+<p>最开始我做运维使用shell, 经常做一些分析日志的工作. 那时候经常写比较复杂的shell代码实现一些特定的需求. 后来来了一位会perl的同学. 原来我写shell做一个事情, 写了20多行shell代码, 跑一次大概5分钟, 这位同学来了用perl改写, 4行, 一分钟就能跑完. 亮瞎我们的眼, 从那时候开始, 我就觉得需要学perl,以至于后来的python.</p>
+
+<p>perl是天生用来文本解析的语言, ack的效率确实很高. 我想着可能是大家认为ack要更快更合适的理由吧. 其实这件事要看场景. 我为什么还用比较’土’的grep呢? 看一下这篇文章, 希望给大家点启示</p>
+
+<h4 id="section-1">实验条件</h4>
+
+<p>PS: 严重声明, 本实验经个人实践, 我尽量做到合理. 大家看完觉得有异议可以试着其他的角度来做. 并和我讨论.</p>
+
+<ul>
+  <li>
+    <p>我使用了公司的一台开发机(gentoo)</p>
+  </li>
+  <li>
+    <p>我测试了纯英文和汉语2种， 汉语使用了<a href="https://github.com/fxsjy/jieba">结巴分词</a>的字典, 英语使用了<code>miscfiles</code>中提供的词典</p>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># 假如你是ubuntu: sudo apt-get install miscfiles</span>
+</span><span class="line"><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">fxsjy</span><span class="o">/</span><span class="n">jieba</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">extra_dict</span><span class="o">/</span><span class="nb">dict</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">big</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-2">实验前的准备</h4>
+
+<p>我会分成英语和汉语2种文件, 文件大小为1MB, 10MB, 100MB, 500MB, 1GB, 5GB. 没有更多是我觉得在实际业务里面不会单个日志文件过大的. 也就没有必要测试了(就算有, 可以看下面结果的趋势)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cat</span> <span class="n">make_words</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="c"># coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">random</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">cStringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+</span><span class="line">
+</span><span class="line"><span class="n">EN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;/usr/share/dict/words&#39;</span>
+</span><span class="line"><span class="n">CN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;dict.txt.big&#39;</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">EN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">EN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">CN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">CN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="n">MB</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">SIZE_LIST</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]</span>
+</span><span class="line"><span class="n">EN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_en_MB.txt&#39;</span>
+</span><span class="line"><span class="n">CN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_cn_MB.txt&#39;</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">write_data</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</span><span class="line">    <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class="line">        <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+</span><span class="line">            <span class="n">cho</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class="line">            <span class="n">cho</span> <span class="o">=</span> <span class="n">cho</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cn</span> <span class="k">else</span> <span class="n">cho</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class="line">            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cho</span><span class="p">)</span>
+</span><span class="line">        <span class="n">s</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span>
+</span><span class="line">        <span class="n">total_size</span> <span class="o">+=</span> <span class="n">s</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span class="line">        <span class="n">contents</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class="line">        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">total_size</span> <span class="o">&gt;</span> <span class="n">size</span><span class="p">:</span>
+</span><span class="line">            <span class="k">break</span>
+</span><span class="line">    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span>
+</span><span class="line">        <span class="n">MB</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">500</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]):</span>
+</span><span class="line">    <span class="n">size_name</span> <span class="o">=</span> <span class="n">SIZE_LIST</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+</span><span class="line">    <span class="n">en_f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">EN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="s">&#39;a+&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cn_f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">CN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="s">&#39;a+&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="n">write_data</span><span class="p">(</span><span class="n">en_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">EN_DATA</span><span class="p">)</span>
+</span><span class="line">    <span class="n">write_data</span><span class="p">(</span><span class="n">cn_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">CN_DATA</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>好吧, 效率比较低是吧? 我自己没有vps, 公司服务器我不能没事把全部内核的cpu都占满(不是运维好几年了). 假如你不介意htop的多核cpu飘红, 可以这样，耗时就是各文件生成的时间短板:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"> <span class="c"># coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">random</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">multiprocessing</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">cStringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+</span><span class="line">
+</span><span class="line"><span class="n">EN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;/usr/share/dict/words&#39;</span>
+</span><span class="line"><span class="n">CN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;dict.txt.big&#39;</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">EN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">EN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">CN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">CN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="n">MB</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">SIZE_LIST</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]</span>
+</span><span class="line"><span class="n">EN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_en_MB.txt&#39;</span>
+</span><span class="line"><span class="n">CN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_cn_MB.txt&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">map_func</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">write_data</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</span><span class="line">        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;a+&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class="line">            <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+</span><span class="line">                <span class="n">cho</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class="line">                <span class="n">cho</span> <span class="o">=</span> <span class="n">cho</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cn</span> <span class="k">else</span> <span class="n">cho</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class="line">                <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cho</span><span class="p">)</span>
+</span><span class="line">            <span class="n">s</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span>
+</span><span class="line">            <span class="n">total_size</span> <span class="o">+=</span> <span class="n">s</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span class="line">            <span class="n">contents</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class="line">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class="line">            <span class="k">if</span> <span class="n">total_size</span> <span class="o">&gt;</span> <span class="n">size</span><span class="p">:</span>
+</span><span class="line">                <span class="k">break</span>
+</span><span class="line">        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span> <span class="o">=</span> <span class="n">args</span>
+</span><span class="line">    <span class="n">write_data</span><span class="p">(</span><span class="n">_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span>
+</span><span class="line">        <span class="n">MB</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">500</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]):</span>
+</span><span class="line">    <span class="n">size_name</span> <span class="o">=</span> <span class="n">SIZE_LIST</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+</span><span class="line">    <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">EN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="n">size</span><span class="p">,</span> <span class="n">EN_DATA</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+</span><span class="line">    <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">CN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="n">size</span><span class="p">,</span> <span class="n">CN_DATA</span><span class="p">,</span> <span class="bp">True</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line"><span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">()</span>
+</span><span class="line"><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_func</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>等待一段时间后,目录下是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">ls</span> <span class="o">-</span><span class="n">lh</span>
+</span><span class="line"><span class="n">total</span> <span class="mi">14</span><span class="n">G</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">2.2</span><span class="n">K</span> <span class="n">Mar</span> <span class="mi">14</span> <span class="mo">05</span><span class="p">:</span><span class="mi">25</span> <span class="n">benchmarks</span><span class="o">.</span><span class="n">ipynb</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">8.2</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">43</span> <span class="nb">dict</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">big</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.2</span><span class="n">K</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">46</span> <span class="n">make_words</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">101</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_100_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">101</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_100_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">54</span> <span class="n">text_1024_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">51</span> <span class="n">text_1024_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span>  <span class="mi">11</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_10_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span>  <span class="mi">11</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_10_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_1_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_1_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">501</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">49</span> <span class="n">text_500_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">501</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">48</span> <span class="n">text_500_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">5.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">16</span><span class="p">:</span><span class="mi">16</span> <span class="n">text_5120_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">5.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">16</span><span class="p">:</span><span class="mo">04</span> <span class="n">text_5120_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-3">确认版本</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">➜</span>  <span class="n">test</span>  <span class="n">ack</span> <span class="o">--</span><span class="n">version</span> <span class="c"># ack在ubuntu下叫`ack-grep`</span>
+</span><span class="line"><span class="n">ack</span> <span class="mf">2.12</span>
+</span><span class="line"><span class="n">Running</span> <span class="n">under</span> <span class="n">Perl</span> <span class="mf">5.16</span><span class="o">.</span><span class="mi">3</span> <span class="n">at</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">perl</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Copyright</span> <span class="mi">2005</span><span class="o">-</span><span class="mi">2013</span> <span class="n">Andy</span> <span class="n">Lester</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="o">.</span>  <span class="n">You</span> <span class="n">may</span> <span class="n">modify</span> <span class="ow">or</span> <span class="n">distribute</span> <span class="n">it</span>
+</span><span class="line"><span class="n">under</span> <span class="n">the</span> <span class="n">terms</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Artistic</span> <span class="n">License</span> <span class="n">v2</span><span class="o">.</span><span class="mf">0.</span>
+</span><span class="line"><span class="err">➜</span>  <span class="n">test</span>  <span class="n">ag</span> <span class="o">--</span><span class="n">version</span>
+</span><span class="line"><span class="n">ag</span> <span class="n">version</span> <span class="mf">0.21</span><span class="o">.</span><span class="mi">0</span>
+</span><span class="line"><span class="err">➜</span>  <span class="n">test</span>  <span class="n">grep</span> <span class="o">--</span><span class="n">version</span>
+</span><span class="line"><span class="n">grep</span> <span class="p">(</span><span class="n">GNU</span> <span class="n">grep</span><span class="p">)</span> <span class="mf">2.14</span>
+</span><span class="line"><span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2012</span> <span class="n">Free</span> <span class="n">Software</span> <span class="n">Foundation</span><span class="p">,</span> <span class="n">Inc</span><span class="o">.</span>
+</span><span class="line"><span class="n">License</span> <span class="n">GPLv3</span><span class="o">+</span><span class="p">:</span> <span class="n">GNU</span> <span class="n">GPL</span> <span class="n">version</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">later</span> <span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">gnu</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">licenses</span><span class="o">/</span><span class="n">gpl</span><span class="o">.</span><span class="n">html</span><span class="o">&gt;.</span>
+</span><span class="line"><span class="n">This</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="p">:</span> <span class="n">you</span> <span class="n">are</span> <span class="n">free</span> <span class="n">to</span> <span class="n">change</span> <span class="ow">and</span> <span class="n">redistribute</span> <span class="n">it</span><span class="o">.</span>
+</span><span class="line"><span class="n">There</span> <span class="ow">is</span> <span class="n">NO</span> <span class="n">WARRANTY</span><span class="p">,</span> <span class="n">to</span> <span class="n">the</span> <span class="n">extent</span> <span class="n">permitted</span> <span class="n">by</span> <span class="n">law</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Written</span> <span class="n">by</span> <span class="n">Mike</span> <span class="n">Haertel</span> <span class="ow">and</span> <span class="n">others</span><span class="p">,</span> <span class="n">see</span> <span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">sv</span><span class="o">.</span><span class="n">gnu</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">cgit</span><span class="o">/</span><span class="n">grep</span><span class="o">.</span><span class="n">git</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">AUTHORS</span><span class="o">&gt;.</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-4">实验设计</h4>
+
+<p>为了不产生并行执行的相互响应, 我还是选择了效率很差的同步执行, 我使用了ipython提供的%timeit. 上代码</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">re</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">glob</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">subprocess</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">cPickle</span> <span class="kn">as</span> <span class="nn">pickle</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+</span><span class="line">
+</span><span class="line"><span class="n">IMAP</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="s">&#39;cn&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;豆瓣&#39;</span><span class="p">,</span> <span class="s">&#39;小明明&#39;</span><span class="p">),</span>
+</span><span class="line">    <span class="s">&#39;en&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;four&#39;</span><span class="p">,</span> <span class="s">&#39;python&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="n">OPTIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;-v&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">FILES</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;text_*_MB.txt&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">EN_RES</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span class="line"><span class="n">CN_RES</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span class="line"><span class="n">RES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">        <span class="s">&#39;en&#39;</span><span class="p">:</span> <span class="n">EN_RES</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&#39;cn&#39;</span><span class="p">:</span> <span class="n">CN_RES</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="n">REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;text_(\d+)_(\w+)_MB.txt&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">CALL_STR</span> <span class="o">=</span> <span class="s">&#39;{command} {option} {word} {filename} &gt; /dev/null 2&gt;&amp;1&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">FILES</span><span class="p">:</span>
+</span><span class="line">    <span class="n">size</span><span class="p">,</span> <span class="n">xn</span> <span class="o">=</span> <span class="n">REGEX</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">IMAP</span><span class="p">[</span><span class="n">xn</span><span class="p">]:</span>
+</span><span class="line">        <span class="n">_r</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;ack&#39;</span><span class="p">,</span> <span class="s">&#39;ag&#39;</span><span class="p">]:</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">OPTIONS</span><span class="p">:</span>
+</span><span class="line">                <span class="n">rs</span> <span class="o">=</span> <span class="o">%</span><span class="n">timeit</span> <span class="o">-</span><span class="n">o</span> <span class="o">-</span><span class="n">n10</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">CALL_STR</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">option</span><span class="p">,</span> <span class="n">word</span><span class="o">=</span><span class="n">word</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class="line">                <span class="n">best</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">best</span>
+</span><span class="line">                <span class="n">_r</span><span class="p">[</span><span class="n">command</span><span class="p">][</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">best</span>
+</span><span class="line">        <span class="n">RES</span><span class="p">[</span><span class="n">xn</span><span class="p">][</span><span class="n">word</span><span class="p">][</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">_r</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 存起来</span>
+</span><span class="line">
+</span><span class="line"><span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">RES</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;result.db&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>温馨提示, 这是一个灰常耗时的测试. 开始执行后 要喝很久的茶…</p>
+
+<p>我来秦皇岛办事完毕(耗时超过1一天), 继续我们的实验.</p>
+
+<h4 id="section-5">我想要的效果</h4>
+
+<p>我想工作的时候一般都是用到不带参数/带-i(忽略大小写)/-v(查找不匹配项)这三种. 所以这里测试了:</p>
+
+<ol>
+  <li>英文搜索/中文搜索</li>
+  <li>选择了2个搜索词(效率太低, 否则可能选择多个)</li>
+  <li>分别测试’’/’-i’/’-v’三种参数的执行</li>
+  <li>使用%timeit, 每种条件执行10遍, 选择效率最好的一次的结果</li>
+  <li><strong>每个图代码一个搜索词, 3搜索命令, 一个选项在搜索不同大小文件时的效率对比</strong></li>
+</ol>
+
+<h4 id="section-6">多图预警, 我先说结论</h4>
+
+<ol>
+  <li><strong>在搜索的总数据量较小的情况下, 使用grep, ack甚至ag在感官上区别不大</strong></li>
+  <li><strong>搜索的总数据量较大时, grep效率下滑的很多, 完全不要选</strong></li>
+  <li><strong>ack在某些场景下没有grep效果高(比如使用-v索索中文的时候)</strong></li>
+  <li><strong>在不使用ag没有实现的选项功能的前提下, ag完全可以替代ack/grep</strong></li>
+</ol>
+
+<p>渲染图片的gist可以看这里<a href="http://nbviewer.ipython.org/gist/dongweiming/6732731444b1e2687c47/benchmarks.ipynb">benchmarks.ipynb</a>. 他的数据来自上面跑的结果在序列化之后存入的文件</p>
+
+<h4 id="section-7">附图(共12张)</h4>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/6660016/8326d7b0-cbcb-11e4-8f2a-cfa5fe27c810.png" alt="chart" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660017/832c12ac-cbcb-11e4-9295-cfdd6d421423.png" alt="chart-1" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660018/832c3034-cbcb-11e4-9a2c-5604bf2bb0c6.png" alt="chart-2" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660019/832df4a0-cbcb-11e4-8d75-538ad527cb4f.png" alt="chart-3" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660020/833372d6-cbcb-11e4-8b96-54ae9ae68f57.png" alt="chart-4" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660021/8335c04a-cbcb-11e4-8401-0c54aa4eb783.png" alt="chart-5" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660022/8362bf96-cbcb-11e4-9ec5-94686e603e3a.png" alt="chart-6" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6690232/488e9af4-ccfa-11e4-8a1f-1fa3667dd74f.png" alt="chart-7" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660024/836b307c-cbcb-11e4-942d-8a395a28984f.png" alt="chart-8" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660025/836f4f5e-cbcb-11e4-8807-d6f561018254.png" alt="chart-9" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660043/fbd42cee-cbcb-11e4-9c1d-b2237194db90.png" alt="chart-10" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660044/fc5424f8-cbcb-11e4-9bf0-1666cd467239.png" alt="chart-11" /></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-14T22:19:00+08:00" pubdate data-updated="true">Mar 14<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>linux</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/ack/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/ipython3shi-dai-dao-lai/" title="Previous Post:
+        IPython3时代到来">&laquo; IPython3时代到来</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/"
+        title="Next Post: 豆瓣条目组招聘">豆瓣条目组招聘
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/ack/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/ack/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

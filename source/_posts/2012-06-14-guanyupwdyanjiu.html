@@ -1,0 +1,133 @@
+---
+layout: post
+title: 关于pwd 研究
+categories:
+- python模块研究
+tags:
+- pwd
+published: true
+comments: true
+indexer: true
+---
+<p>前言：pwd是UNIX口令数据库模块，一般分析的是/etc/passwd的用户信息，
+<table border="1">
+<thead valign="bottom">
+<tr>
+<th>索引</th>
+<th>属性</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+<td>0</td>
+<td>pw_name</td>
+<td>用户登录名</td>
+</tr>
+<tr>
+<td>1</td>
+<td>pw_passwd</td>
+<td>（可选）加密的密码</td>
+</tr>
+<tr>
+<td>2</td>
+<td>pw_uid</td>
+<td>User id</td>
+</tr>
+<tr>
+<td>3</td>
+<td>pw_gid</td>
+<td>Group id</td>
+</tr>
+<tr>
+<td>4</td>
+<td>pw_gecos</td>
+<td>用户的描述信息</td>
+</tr>
+<tr>
+<td>5</td>
+<td>pw_dir</td>
+<td>家目录</td>
+</tr>
+<tr>
+<td>6</td>
+<td>pw_shell</td>
+<td>登录的shell，默认/bin/bash</td>
+</tr>
+</tbody>
+</table>
+<pre class="sh_python">
+import pwd  #类似于组数据模块grp
+import operator</p>
+
+<p>all_user_data = pwd.getpwall()  #获取所有用户信息
+interesting_users = sorted((u 
+                            for u in all_user_data 
+                            if not u.pw_name.startswith('_')), 
+                            key=operator.attrgetter('pw_name')) #这个排序根据用户名的数据 比如 dongwm在daliu的后面，dongwm在dongwn的前面</p>
+
+<p># Find the longest lengths for a few fields
+username_length = max(len(u.pw_name) for u in interesting_users) + 1
+home_length = max(len(u.pw_dir) for u in interesting_users) + 1 #算某个字段的长度</p>
+
+<p># Print report headers
+fmt = '%-*s %4s %-*s %s'
+print fmt % (username_length, 'User', 
+             'UID', 
+             home_length, 'Home Dir', 
+             'Description')
+print '-' * username_length, '----', '-' * home_length, '-' * 30  #根据字段最大长度 格式化</p>
+
+<p>for u in interesting_users:
+    print fmt % (username_length, u.pw_name, 
+                 u.pw_uid, 
+                 home_length, u.pw_dir, 
+                 u.pw_gecos)
+</pre></p>
+
+<p><pre class="sh_python">
+import pwd
+import sys</p>
+
+<p>username = sys.argv[1]
+user_info = pwd.getpwnam(username)  #查询用户数据信息</p>
+
+<p>print 'Username:', user_info.pw_name
+print 'Password:', user_info.pw_passwd
+print 'Comment :', user_info.pw_gecos
+print 'UID/GID :', user_info.pw_uid, '/', user_info.pw_gid
+print 'Home    :', user_info.pw_dir
+print 'Shell   :', user_info.pw_shell
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py dongwm
+Username: dongwm
+Password: x
+Comment : dongwm
+UID/GID : 1000 / 100
+Home    : /home/dongwm
+Shell   : /bin/bash
+<pre class="sh_python">
+import pwd
+import os
+import sys</p>
+
+<p>filename = os.path.basename(__file__)
+stat_info = os.stat(filename)
+owner = pwd.getpwuid(stat_info.st_uid).pw_name</p>
+
+<p>print '%s is owned by %s (%s)' % (filename, owner, stat_info.st_uid)</p>
+
+<p>uid = os.getuid()
+user_info = pwd.getpwuid(uid)
+print 'Currently running with UID=%s username=%s' % (uid, user_info.pw_name)</p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python test.py 
+test.py is owned by dongwm (1000)
+Currently running with UID=1000 username=dongwm</p>
+
+<p> ~
+</pre></p>

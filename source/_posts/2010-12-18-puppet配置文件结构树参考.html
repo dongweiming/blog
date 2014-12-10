@@ -1,0 +1,91 @@
+---
+layout: post
+title: puppet配置文件结构树参考
+categories:
+- puppet
+tags:
+- .pp
+- puppet
+- 结构树
+published: true
+comments: true
+indexer: true
+---
+<p>我想大多数人开始学习puppet都会对它的结构化有些迷惑，本文仅供初学puppet，以及希望对puppet更好结构化管理的同学们。很少见的一种思路：</p>
+
+<p><img class="alignnone" title="puppet" src="http://farm6.static.flickr.com/5243/5288063660_0a1ecac877.jpg" alt="" width="500" height="479" /><!--more--></p>
+
+<p><strong>我的整体思路是：</strong></p>
+
+<p><strong>1  所有的配置文件最后都要被主site.pp引用。</strong></p>
+
+<p>主线是：1 class目录下的类.pp=&gt;服务的主配置文件init.pp=&gt;引用模块的mudule.pp</p>
+
+<p>2  node文件夹下服务器分组node节点.pp（例如C.pp）=&gt;node文件夹下site.pp</p>
+
+<p>3  主配置site.pp把1的mudule.pp  和2的node文件夹下site.pp 去“ import”。</p>
+
+<p><strong>2  但是site.pp，不是唯一的，我们可以建无数的site.pp，需要在/etc/puppet/manifests目录下</strong></p>
+
+<p><strong>3   维护方法：</strong></p>
+
+<p>1  增加服务为模块，在/etc/puppet/module目录下新建文件夹。</p>
+
+<p>2  只需要维护此模块下的class下的文件，配置文件全部引用变量，在对应的node里面“ include”类，并且申明变量值。</p>
+
+<p>其中重要文件配置：</p>
+
+<p>vi manifests/node/site.pp ：
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">import "java.pp"
+import "c.pp"</td>
+</tr>
+</tbody>
+</table>
+vi modules/revfsserver/manifests/init.pp ：
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">import "class/*.pp"</td>
+</tr>
+</tbody>
+</table>
+vi manifests/node/c.pp
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">node 'client.dongwm.com' {
+$group="dongwm"
+$owner="dongwm"
+$tar="X.tar.gz"
+$homedir="/opt/newfs/bin"
+$tardir="/opt/src"
+$path="/usr/bin:/usr/sbin:/bin"
+include revfsserver::base
+include revfsserver::update
+include revfsserver::rollback</td></tr></tbody></table></p>
+
+<p>}
+
+
+
+vi manifests/site.pp
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="406" valign="top">import "node/site.pp"</td></tr></tbody></table></p>
+
+<p>import "node/module.pp "
+
+
+
+vi manifests/module.pp
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">import "revfsserver"</td>
+</tr>
+</tbody>
+</table></p>

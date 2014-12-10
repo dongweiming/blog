@@ -1,0 +1,281 @@
+---
+layout: post
+title: "OSX下使用vagrant和docker管理创建虚拟环境"
+date: 2013-07-09 10:41
+comments: true
+categories:
+- osx
+tags:
+- osx
+- docker
+- vagrant
+
+---
+
+####前言
+
+乍一看题目出现了好多名词，根据我的理解一一说来
+
+虚拟化: 其实就是因为云计算的催生的技术，目的是让运行在上面的应用程序觉得自己独占所有的资源。说白了就是资源管理/隔离和namspace的隔离.
+
+Hypervisor: 这是虚拟化的一种,也就是操作系统上面在运行一个或者多个操作系统，这个底层的操作系统系统就是hypervisor.它来管理和分配那些创建的操作系统
+所需要的资源.这种虚拟化也可以分成2种:原生(直接将虚拟的操作系统运行在裸机上，比如kvm和xen,确定是需要特定的硬件支持)和宿生(软件层面的，比如我这里
+会用到的Virtualbox). 但是有个问题：运行了多个操作系统实例，开销很大，而且启动一个系统就要拿走一部分资源
+
+LXC(LinuX Containers):是一种操作系统层面的虚拟化技术.它只运行**一个内核**，一个虚拟的执行环境就是一个容器。可以为容器绑定特定的cpu和memory节点，
+分配特定比例的cpu时间、IO时间，限制可以使用的内存大小等.遗憾的是LXC只支持linux，不支持BSD，OSX，WINDOWS，所以我下面在我的Mac里面是通过
+Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之外，就是方便快速的部署
+
+[Docker](http://www.docker.io): 是一种增加了高级API的LinuX Container（LXC）技术，来至[dotcloud](https://www.dotcloud.com), 官网这样描述:提供了能够独立运行Unix进程的
+轻量级虚拟化解决方案。它提供了一种在安全、可重复的环境中自动部署软件的方式.在[Infoq](http://www.infoq.com/cn/news/2013/04/Docker)你能找到主要特性，当然，3个月过去了，它肯定成长了很多
+
+[Vagrant](https://github.com/mitchellh/vagrant): 是一个ruby语言的工具. 用于创建和部署虚拟化开发环境. 我们使用Vagrant在VirtualBox的虚拟机里安装docker
+
+####什么系统来使用docker的一些想法
+
+用OSX本来就有点...额，太绕. 其实docker已经被ubuntu官方支持，添加docker的PPA然后安装.
+
+还可以把安装流程封装成Dockfile，用git做版本控制
+
+####谁需要学习本文
+
+我想运维同学会更需要一些.或者硬件资源缺乏的程序员们
+
+程序员倒是可以学习把开发的应用放在虚拟机里面做成模板，可以使用vagrant管理
+
+为什么这么说？要是为了不污染开发环境，我们python已经有个virtualenv+virtualenvwrapper.
+
+对我这种程序员来说，我不需要那么多虚拟机,其次是我还有物理机的测试环境，并且我们线上的操作系统相当一致. 这篇文章就是为了了解docker
+
+####安装Vagrant和Virtualbox
+
+vagrant就是基于[Virtualbox](https://www.virtualbox.org)的，你可以使用gem安装
+
+```
+gem install vagrant
+```
+
+我喜欢最新版，手动安装的
+
+```
+wget https://github.com/mitchellh/vagrant/archive/v1.2.2.tar.gz
+tar zxvf v1.2.2.tar.gz
+cd vagrant-1.2.2
+sudo gem install bundler
+bundle install
+rake install
+```
+
+####从github克隆docker
+
+```
+git clone https://github.com/dotcloud/docker.git
+cd docker
+vagrant up
+```
+'vagrant up'其实就是调用了virtualbox的终端接口打开你的虚拟机，类似下面的命令， 而不是你在界面点击'开始'
+
+
+```
+/Applications/VirtualBox.app/Contents/MacOS/VBoxHeadless --comment docker_1373340358 --startvm 6e4ea638-77b2-400d-9fbe-3b4e8d4fba21 --vrde config
+```
+
+这时候你在virtualbox的界面可以看见启动的虚拟机,名字就是上面的docker_1373340358
+
+在docker目录下已经有个一个Vagrantfile文件，你想想Makefile，意思很类似，其实为什么要这个docker源，
+很大原因就是要用这个文件，因为它已经配置好了默认你要是用的box文件,类似执行了下面的命令
+
+```
+vagrant init ubuntu http://files.vagrantup.com/http://files.vagrantup.com/precise64.box
+.... #一些配置
+vagrant up
+```
+
+首先说这里可能会报错,类似这个网页粘贴的[内容](http://wklej.org/id/836076/txt)， 内容有类似提示
+
+```
+INFO interface: error: There was an error executing the following command with
+VBoxManage:
+
+["import", "C:/Users/kwladyka/Desktop/My Dropbox/Vagrant/vagrant.d/boxes/base/bo
+x.ovf"]
+
+For more information on the failure, enable detailed logging with
+VAGRANT_LOG.
+```
+
+解决办法是:
+
+```
+cd /Users/dongwm/.vagrant.d/boxes/ubuntu/virtualbox/
+openssl sha1 *.vmdk *.ovf > box.mf
+cd -
+```
+
+但是官网说这样会自动帮我们增加docker的PPA，更新源再安装lxc-docker，可是没有出现，我后来都是自己去执行的,如下
+
+为什么用这个box？当然了其它系统都可以，你可以下载其它的虚拟机镜像，再安装其系统下的lxc-docker(我会准备一篇gentoo版本的文章)
+
+####登录虚拟机
+
+```
+vagrant ssh
+```
+
+其实通过2222的端口转发登录了虚拟机的22端口，实际命令类似这样:
+
+```
+ssh vagrant@127.0.0.1 -p 2222 -o LogLevel=FATAL -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o 
+IdentitiesOnly=yes -i /Users/dongwm/.vagrant.d/insecure_private_key
+```
+
+####我自己安装lxc-docker的方法
+
+```
+sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:dotcloud/lxc-docker
+sudo apt-get update
+sudo apt-get install lxc-docker
+```
+
+####生成容器(虚拟机)并且创建一个sshd进程，以便使用者链接这个虚拟机
+
+官网说的下载dhrp/sshd这个容器，但是我费了半天劲下载后报神奇的404...后来我在换了另外一个,这个pull其实就是去下载一个已经
+被别人做好的实现某种功能的虚拟机，然后你使用这个实现基本功能的虚拟机，提交你的修改就变成你定制的版本了,当然你可以自己做一个容器
+
+```
+docker pull base  #pull基本的ubuntu镜像 
+docker run -i -t base /bin/bash #-i表示进入交互模式，-t为启动一个终端，其实就是根据base镜像进入一个容器
+root@4a61c288be0f:/# apt-get update && apt-get install openssh-server #注意前面的PS，root权限，进入了这个容器，需要先安装sshd
+root@4a61c288be0f:/# mkdir /var/run/sshd #要不然启动不了sshd
+root@4a61c288be0f:/# /usr/sbin/sshd #启动sshd进程，不同的系统可能位置不同
+root@4a61c288be0f:/# passwd #设置root密码,以后要ssh登录滴
+root@4a61c288be0f:/# exit #退出容器 但是记住前面PS的一排随机号码 这里是4a61c288be0f
+docker ps -a |less #查看都有那些容器,也能看见上面的
+docker commit 4a61c288be0f dongweiming/sshd #这里的commit号码就是刚才记住的. 这样状态保存到dongwm/sshd,以后就不用下载openssh-server,设置root密码了
+```
+
+想要简单的话直接这样嘛....
+
+```
+docker pull johnfuller/sshd
+docker run -i -t johnfuller/sshd /bin/bash
+root@2fd1aabac314:/# /usr/sbin/sshd
+root@2fd1aabac314:/# passwd
+root@2fd1aabac314:/# exit
+docker commit 2fd1aabac314 dongweiming/sshd
+```
+
+这里有个STATUS列，退出码有0，1，2，127等,验证你的容器正常运行,后面还有PORTS列，要是sshd启动了就会显示的
+
+####启动容器,用我自己的sshd容器
+
+```
+rst=$(docker run -d dongwm/sshd -p 22 /usr/sbin/sshd -D) #执行这个会返回类似的字符数字串
+docker ps #你会发现它启动了
+port=$(docker port $rst 22) #这会显示在实际的虚拟机的这个容器专用的端口
+```
+
+####ssh链接这个容器
+
+```
+ifconfig #找你本机的ip
+ssh root@192.168.33.10 -p $port #port 好像默认从49153开始 这样输入root密码就登录进去了
+```
+
+OK了 就是这样，然后当然你可以为这个虚拟机和你本机(注意三个关键词:本机(我的Mac),虚拟机(vagrant创建的vbox),容器(在vbox中创建的虚拟机，虚拟机中的虚拟机))
+
+####把你的源push到docker,需要你注册. 可以被别人用，当然了 目前来说没啥用
+
+```
+docker login
+docker push dongweiming/sshd  #要确保这个源没有被用,我这里是dongweiming和 dongweiming/sshd
+```
+
+这样你以后想找个sshd的源,就可以这样
+
+```
+docker pull dongweiming/sshd
+```
+
+但是这里面还是有很多其他的东西,往下看
+
+####端口转发
+
+你想，你这是在虚拟机里面创建了一堆容器，他可以连接本机，甚至上网，但是你不能直连到它，那么这时候就需要神奇的端口转发,
+将你本机的端口的数据转发到这个vbox的端口，然后就可以看起来直连了,其实人家已经实现了
+
+回到最上面的Vagrantfile，就是docker的根目录下.最后面
+
+```
+if !FORWARD_DOCKER_PORTS.nil?                                                  
+    Vagrant::VERSION < "1.1.0" and Vagrant::Config.run do |config|             
+        (49000..49900).each do |port|                                          
+            config.vm.forward_port port, port                                  
+        end                                                                    
+    end                                                                        
+                                                                               
+    Vagrant::VERSION >= "1.1.0" and Vagrant.configure("2") do |config|         
+        (49000..49900).each do |port|                                          
+            config.vm.network :forwarded_port, :host => port, :guest => port   
+        end                                                                    
+    end          
+```
+
+什么意思呢?其实你在本机的环境变量设置了FORWARD_DOCKER_PORTS，默认就会把49000..49900端口转发开启
+
+```
+export FORWARD_DOCKER_PORTS=True，然后再vagrant up
+```
+
+####其他系统镜像
+
+不知道你有没有注意,我们在OSX上面安装的虚拟机是ubuntu的，在里面使用docker管理的容器也是ubuntu的，假如想用其他的操作系统容器呢?
+
+比如找debian的,你可以使用
+
+```
+docker search debian
+```
+
+或者在docker的索引网站搜索
+
+```
+https://index.docker.io
+```
+
+我选择了 tianon/debian
+
+```
+docker pull tianon/debian
+```
+
+比如还是刚才的ssh, -t 就不指base 而是tianon/debian
+
+```
+docker run -i -t tianon/debian  /bin/bash
+```
+
+####使用docker创建一个python的web环境，这里用我写的[flask_reveal](https://github.com/dongweiming/flask_reveal)
+
+上面说的是一个容器,当你有了root权限想要安装什么都可以，对我来说还可以设置一个专为某应用设置的环境,根据官网的说明
+
+```
+docker pull dongweiming/sshd #一个构建python的web环境的镜像,根据上面的sshd我加的一些脚本在里面,然后下载了curl,python-pip等构建了一个环境
+URL=https://github.com/dongweiming/flask_reveal/archive/v1.0.tar.gz #这是我提供的release版本
+BUILD_JOB=$(docker run -d -t dongweiming/sshd:latest /usr/local/bin/buildapp $URL) #其实就是创建一个容器,下载这个tar.gz安装包
+# 解压，进入目录下 格局需要安装依赖pip install -r requirements.txt
+docker attach $BUILD_JOB #因为刚才的任务就是下载解压你可以这样去查看这个任务的执行过程
+BUILD_IMG=$(docker commit $BUILD_JOB reveal) #把刚才的下载提交后commit到新的镜像 取名reveal.这里请注意[commit](http://docs.docker.io/en/latest/commandline/command/commit)的用法,
+# 加'-run'可以运行你想的某种/些服务,设置内存，主机名，端口转发，dns，环境变量等
+WEB_WORKER=$(docker run -d -p 5000 $BUILD_IMG /usr/local/bin/runapp) #应用跑起来,这个runapp是我自己写的,启动mongodb, 根据我的reveal启动的流程
+docker logs $WEB_WORKER #可以查看manage.py已经启动了
+WEB_PORT=$(docker port $WEB_WORKER 5000) #使用虚拟机的一个端口映射到这个容器的5000端口
+http://127.0.0.1:$WEB_PORT #好吧 你可以通过本机访问了
+```
+
+
+
+
+
+

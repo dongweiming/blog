@@ -1,0 +1,31 @@
+---
+layout: post
+title: opensuse rpm数据库损坏的解决方法
+categories:
+- linux基础
+- opensuse
+tags:
+- rpm数据库
+published: true
+comments: true
+indexer: true
+---
+<p>opensuse后来使用不知道为什么，安装更新软件以及我最近做的从11。4升级到12。1的操作，都会报类似的错误：</p>
+
+<p>rpmdb: PANIC: fatal region error detected; run recovery
+error: db3 error(-30977) from db-&gt;sync: DB_RUNRECOVERY: Fatal error, run database recovery
+rpmdb: PANIC: fatal region error detected; run recovery
+下列软件包在安装期间或安装后或移除时出现问题：
+Installation aborted by user
+研究发现：这是因为rpm数据库损坏了，解决办法</p>
+
+<p>使用 <span style="color: navy;"># rpm --rebuilddb</span> 或者 <span style="color: navy;"># rpm -initdb</span> 、（重新建立了rpm库里的记录）</p>
+
+<p>但是 加入还是不行，那只能这样：</p>
+
+<p>rm /var/lib/rpm/__db*</p>
+
+<p>rpm --rebuilddb
+yum clean all  会删除之前的缓存，例如刚下载国12。1的那些更新包，就不能使用 ，需要重新下载安装了</p>
+
+<p>&nbsp;</p>

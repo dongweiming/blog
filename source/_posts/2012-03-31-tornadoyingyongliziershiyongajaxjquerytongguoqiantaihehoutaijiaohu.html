@@ -1,0 +1,115 @@
+---
+layout: post
+title: tornado应用例子(二)：使用ajax（jquery）通过前台和后台交互
+categories:
+- ajax
+- jquery
+- tornado
+- web框架
+tags:
+- ajax
+- jquery
+published: true
+comments: true
+indexer: true
+---
+<p>前言：在实际使用中肯定出现在web页面输入一些数据然后把数据传送到后台（tornado），执行完毕后再从后台把结果返回到web前台，其中也安排一些异常处理，比如数据在后台不存在，会进行提示（异步），上一个例子主要把html文件写到了python脚本，本例子是一个html＋tornado类</p>
+
+<p><pre class="sh_html4strict">
+&lt;html&gt;
+&lt;head&gt;
+&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;   #我这里使用了jquery封装
+&lt;script type="text/javascript"&gt;
+preAllow = true;   #定义一个变量，主要是为了防止恶刷，也是为了防止重复提交，在返回结果之前是不能点击的
+$(function()
+        {
+$("#AjaxGet").click(function(event)   #使用jquery封装js
+            {
+    if(preAllow){   
+    preAllow=false;
+    var flag =1  #定义一个变量，当下面的一些检查发现问题会置0，这样就不会发送post请求了
+    var htmlElement = encodeURI(encodeURI($("#myhtml").val()));  #使用jquery获取DOM 
+    if (/(\w+)\.html/.exec(htmlElement) == null||htmlElement=="")  #使用js的正则匹配判断格式不符合  或者  为空  都会alert
+    {
+    alert("请输入正确的html文件");
+    flag=0;
+    }
+    var tableElement = encodeURI(encodeURI($("#mytable").val()));
+    if (tableElement=="")
+    {
+    alert("请输入数据库表名");
+    flag=0;
+    }
+    var senderElement = encodeURI(encodeURI($("#sender").val()));
+    if (/(\w+)\@(.*)/.exec(senderElement) == null||senderElement=="")
+    {
+    alert("请输入正确的Email地址");
+    flag=0;
+    }
+    var headElement = $("#myhead").val();   #这里的jquery获取DOM，但是为了解析方便我没有编码url
+    if (headElement=="")
+    {
+    alert("请输入发送邮件的head");
+    flag=0;
+    }
+    var senderidElement = $("#sender_id").val();
+    if (senderidElement=="")
+    {
+    alert("请输入发送邮件标识");
+    flag=0;
+    }
+    if(flag){
+    $.ajax({   #使用了jquery的ajax，因为我需要回调没有使用$.get
+   type: "POST",  #调用类型
+   url: "/path",  #调用的url地址
+   data: {"html":htmlElement,"table":tableElement,"sender":senderElement,"head":headElement,"senderid":senderidElement},  #传送的dict数据
+   success: function(data){  #回调函数，alert返回结果
+   alert(decodeURI(data));
+   preAllow = true;
+}</p>
+
+<p>	});    
+}}
+else {alert("已经发送了!");}   #执行中再点击，弹出警告！
+});
+})
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;    
+    &lt;form&gt;
+    &lt;label for=filename&gt;调用的html文件名&lt;/label&gt;   #充分使用html5
+    &lt;input id=myhtml type=text required /&gt;&lt;/br&gt;
+    &lt;label for=tablename&gt;调用数据库表名&lt;/label&gt;
+    &lt;input id=mytable  type=text required /&gt;&lt;/br&gt;
+    &lt;label for=email&gt;发送者邮件地址&lt;/label&gt;
+    &lt;input id=sender  type=email required /&gt;&lt;/br&gt;
+    &lt;label for=emailhead&gt;邮件标题&lt;/label&gt;
+    &lt;input id=myhead  type=text required /&gt;&lt;/br&gt;
+    &lt;label for=emailid&gt;邮件发送人标识&lt;/label&gt;
+    &lt;input id=sender_id  type=text required /&gt;&lt;/br&gt;
+    &lt;/form&gt;
+    &lt;button id="AjaxGet"&gt;使用执行&lt;/button&gt;&lt;br /&gt;
+    &lt;div id="serverResponse"&gt;&lt;/div&gt;  #暂时没用
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></p>
+
+<p><pre class="sh_python">
+class SendPostHandler(MyRequestHandler):
+    def post(self):
+        uri = self.request.body
+        sql = MysqlHander()
+        mydict = {}
+        for i in uri.split('&amp;'):
+            data = i.split('=')
+            mydict[data[0]]=data[1]
+        htmlpath = 'uphtml/' + mydict['html']
+        if not os.path.exists(htmlpath):
+            self.write('This html file does not exist!')
+            return -1
+        import Main
+        d = Main.Send()
+        d.General('mail',mydict['table'],sender,head,senderid,mydict['html']) 
+        time.sleep(10)
+        self.write('Sender Done!')
+</pre></p>

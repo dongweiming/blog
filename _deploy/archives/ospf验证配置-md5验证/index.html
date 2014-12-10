@@ -1,0 +1,630 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>OSPF验证配置 (MD5验证) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">OSPF验证配置 (MD5验证)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-30T00:00:00+08:00" pubdate data-updated="true">Mar 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>实验要求</strong></p>
+
+<p><strong>1. 完成路由器的基本配置和连通性配置</strong>
+<strong> 2．根据拓扑图的示意，分成两个区域 area 0和area 100 OSPF的进程号为100</strong>
+<strong> 3. 完成OSPF路由协议的MD5验证功能</strong>
+<strong> 4．完成以上配置后进行测试，从R1 ping通 R3上的S1、loopback0以及loopback1；反之，R3 ping 通 R1上的S0、loopback0以及loopback1</strong></p>
+
+<p><strong>R1 配置</strong></p>
+
+<p><pre class="sh_bash">Router&gt;enable
+Router#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname 01r1
+01r1(config)#line console 0
+01r1(config-line)#logging synchronous
+01r1(config-line)#exit
+01r1(config)#no ip domain-lookup
+01r1(config)#int s0/0
+01r1(config-if)#no shutdown
+01r1(config-if)#ip address 210.1.12.1 255.255.255.0
+01r1(config-if)#clock rate 64000
+01r1(config-if)#int loopback 0
+01r1(config-if)#ip address 1.1.1.1 255.255.255.255
+01r1(config-if)#int loopback 1
+01r1(config-if)#ip address 11.11.11.11 255.255.255.255
+01r1(config-if)#exit
+01r1(config)#router ospf 100
+01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
+01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
+01r1(config-router)#network 1.1.1.1 0.0.0.0 area 0
+01r1(config-router)#network 11.11.11.11 0.0.0.0 area 0
+01r1(config-router)#end
+01r1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+01r1(config)#int s0/0
+01r1(config-if)#ip ospf authentication message-digest
+*Mar  1 00:06:46.503: %SYS-5-CONFIG_I: Configured from console by console
+01r1(config-if)#ip ospf message-digest-key 1 md5 cisco123
+OSPF: Key 1 already exists
+01r1(config-if)#
+*Mar  1 00:07:25.543: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/0, changed state to up
+*Mar  1 00:07:26.003: %OSPF-5-ADJCHG: Process 100, Nbr 22.22.22.22 on Serial0/0 from LOADING to FULL, Loading Done</pre><!--more--></p>
+
+<p><strong>R2配置</strong></p>
+
+<p><pre class="sh_bash">Router&gt;enable
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname 01r2
+01r2(config)#line console 0
+01r2(config-line)#logging synchronous
+01r2(config-line)#exit
+01r2(config)#no ip domain-lookup
+01r2(config)#interface serial 0/0
+01r2(config-if)#no shutdown
+01r2(config-if)#ip address 210.1.12.2 255.255.255.0
+01r2(config-if)#int s0/1
+01r2(config-if)#no shutdown
+01r2(config-if)#ip address 210.1.23.2 255.255.255.0
+01r2(config-if)#clock rate 64000
+01r2(config-if)#int loopback 0
+01r2(config-if)#ip address 2.2.2.2 255.255.255.255
+01r2(config-if)#int loopback 1
+01r2(config-if)#ip address 22.22.22.22 255.255.255.255
+01r2(config-if)#exit
+01r2(config)#router ospf 100
+01r2(config-router)#network 210.1.12.2 0.0.0.255 area 0
+01r2(config-router)#network 210.1.23.2 0.0.0.255 area 100
+01r2(config-router)#network 2.2.2.2 0.0.0.0 area 100
+01r2(config-router)#network 22.22.22.22 0.0.0.0 area 100
+01r2(config-router)#end
+01r2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+01r2(config)#int s0/0
+01r2(config-if)#ip ospf authentication message-digest
+01r2(config-if)#
+*Mar  1 00:07:35.967: %SYS-5-CONFIG_I: Configured from console by console
+*Mar  1 00:07:35.971: %LINEPROTO-5-UPDOWN: Line protocol on Interface Loopback0, changed state to upip ospf message-digest-key 1 md5 cisco123
+01r2(config-if)#int s0/1
+01r2(config-if)#ip ospf authentication message-digest
+*Mar  1 00:07:35.971: %LINK-3-UPDOWN: Interface Serial0/0, changed state to up
+*Mar  1 00:07:36.203: %LINEPROTO-5-UPDOWN: Line protocol on Interface Loopback1, changed state to up
+*Mar  1 00:07:36.511: %LINK-3-UPDOWN: Interface Serial0/1, changed state to up
+*Mar  1 00:07:36.975: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/0, changed state to up
+*Mar  1 00:07:37.515: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/1, changed state to up
+*Mar  1 00:07:39.711: %OSPF-5-ADJCHG: Process 100, Nbr 11.11.11.11 on Serial0/0 from LOADING to FULL, Loading Done
+01r2(config-if)#
+*Mar  1 00:08:05.659: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/1, changed state to down
+01r2(config-if)#
+*Mar  1 00:08:45.643: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/1, changed state to up
+01r2(config-if)#
+*Mar  1 00:09:26.059: %OSPF-5-ADJCHG: Process 100, Nbr 33.33.33.33 on Serial0/1 from LOADING to FULL, Loading Done</pre></p>
+
+<p><strong>R3配置</strong></p>
+
+<p><pre class="sh_bash">Router&gt;enable
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname 01r3
+01r3(config)#line console 0
+01r3(config-line)#logging synchronous
+01r3(config-line)#exit
+01r3(config)#no ip domain-lookup
+01r3(config)#int s0/0
+01r3(config-if)#no shut
+01r3(config-if)#ip add 210.1.23.3 255.255.255.0
+01r3(config-if)#int loopback 0
+01r3(config-if)#ip address 3.3.3.3 255.255.255.255
+01r3(config-if)#int loopback 1
+01r3(config-if)#ip add 33.33.33.33 255.255.255.255
+01r3(config-if)#exit
+01r3(config)#router ospf  100
+01r3(config-router)#network 210.1.23.3 0.0.0.255 area 100
+01r3(config-router)#network 3.3.3.3 0.0.0.0 area 100
+01r3(config-router)#network 33.33.33.33 0.0.0.0 area 100
+01r3(config-router)#end
+01r3#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+01r3(config)#int s0/0
+01r3(config-if)#ip ospf authentication message-digest
+*Mar  1 00:08:12.867: %SYS-5-CONFIG_I: Configured from console by console
+*Mar  1 00:08:14.335: %LINK-3-UPDOWN: Interface Serial0/0, changed state to up
+01r3(config-if)#ip ospf message-digest-key 1 md5 cisco12345
+01r3(config-if)#
+*Mar  1 00:09:04.499: %OSPF-5-ADJCHG: Process 100, Nbr 22.22.22.22 on Serial0/0 from LOADING to FULL, Loading Done</pre></p>
+
+<p><strong>测试：R1</strong></p>
+
+<p><pre class="sh_bash">01r1(config-if)#do ping 210.1.23.3</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 210.1.23.3, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 28/94/140 ms
+01r1#do ping 3.3.3.3
+*Mar  1 00:09:34.071: %SYS-5-CONFIG_I: Configured from console by console</p>
+
+<p>01r1#ping 3.3.3.3</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 3.3.3.3, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 52/133/372 ms
+01r1#ping 33.33.33.33</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 33.33.33.33, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 24/82/184 ms
+01r1#sh ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+E1 - OSPF external type 1, E2 - OSPF external type 2
+i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+ia - IS-IS inter area, * - candidate default, U - per-user static route
+o - ODR, P - periodic downloaded static route</p>
+
+<p>Gateway of last resort is not set</p>
+
+<p>1.0.0.0/32 is subnetted, 1 subnets
+C       1.1.1.1 is directly connected, Loopback0
+2.0.0.0/32 is subnetted, 1 subnets
+O IA    2.2.2.2 [110/65] via 210.1.12.2, 00:02:29, Serial0/0
+33.0.0.0/32 is subnetted, 1 subnets
+O IA    33.33.33.33 [110/129] via 210.1.12.2, 00:00:52, Serial0/0
+3.0.0.0/32 is subnetted, 1 subnets
+O IA    3.3.3.3 [110/129] via 210.1.12.2, 00:00:52, Serial0/0
+C    210.1.12.0/24 is directly connected, Serial0/0
+22.0.0.0/32 is subnetted, 1 subnets
+O IA    22.22.22.22 [110/65] via 210.1.12.2, 00:02:29, Serial0/0
+O IA 210.1.23.0/24 [110/128] via 210.1.12.2, 00:01:32, Serial0/0
+11.0.0.0/32 is subnetted, 1 subnets
+C       11.11.11.11 is directly connected, Loopback1</pre></p>
+
+<p><strong>测试：R3</strong></p>
+
+<p><pre class="sh_bash">01r3(config-if)#do ping 210.1.12.1</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 210.1.12.1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 40/99/148 ms
+01r3(config-if)#do ping 1.1.1.1</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 1.1.1.1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 16/95/252 ms
+01r3(config-if)#do ping 11.11.11.11</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 11.11.11.11, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 36/104/240 ms</p>
+
+<p>01r3(config-if)#do sh ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+E1 - OSPF external type 1, E2 - OSPF external type 2
+i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+ia - IS-IS inter area, * - candidate default, U - per-user static route
+o - ODR, P - periodic downloaded static route</p>
+
+<p>Gateway of last resort is not set</p>
+
+<p>1.0.0.0/32 is subnetted, 1 subnets
+O IA    1.1.1.1 [110/129] via 210.1.23.2, 00:01:28, Serial0/0
+2.0.0.0/32 is subnetted, 1 subnets
+O       2.2.2.2 [110/65] via 210.1.23.2, 00:01:28, Serial0/0
+33.0.0.0/32 is subnetted, 1 subnets
+C       33.33.33.33 is directly connected, Loopback1
+3.0.0.0/32 is subnetted, 1 subnets
+C       3.3.3.3 is directly connected, Loopback0
+O IA 210.1.12.0/24 [110/128] via 210.1.23.2, 00:01:28, Serial0/0
+22.0.0.0/32 is subnetted, 1 subnets
+O       22.22.22.22 [110/65] via 210.1.23.2, 00:01:28, Serial0/0
+C    210.1.23.0/24 is directly connected, Serial0/0
+11.0.0.0/32 is subnetted, 1 subnets
+O IA    11.11.11.11 [110/129] via 210.1.23.2, 00:01:28, Serial0/0</pre></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-30T00:00:00+08:00" pubdate data-updated="true">Mar 30<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ospf/'>ospf</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/%E5%8D%87%E7%BA%A7puppet%E7%89%88%E6%9C%AC/" title="Previous Post:
+        升级puppet版本">&laquo; 升级puppet版本</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/shell-%E8%BF%9B%E5%BA%A6%E6%9D%A1/"
+        title="Next Post: shell  进度条">shell  进度条
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

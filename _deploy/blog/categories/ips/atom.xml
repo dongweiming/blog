@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: ips | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/ips/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[VMWARE下IPS实现web连接(IDM)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/vmware%E4%B8%8Bips%E5%AE%9E%E7%8E%B0web%E8%BF%9E%E6%8E%A5idm/"/>
+    <updated>2011-03-25T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/vmware下ips实现web连接idm</id>
+    <content type="html"><![CDATA[<p><strong>1  设置IPS初始化</strong></p>
+
+<p>sensor# conf t
+sensor(config)# service host
+sensor(config-hos)# network-settings
+sensor(config-hos-net)#host-ip 192.168.1.144/24,192.168.1.1 //定义IPS地址 掩码 网关
+sensor(config-hos-net)# telnet-option enabled //支持telnet管理
+sensor(config-hos-net)# access-list 192.168.1.144/32 //定义管理IP
+sensor(config-hos-net)# exit
+sensor(config-hos)# time-zone-settings //设置时区
+sensor(config-hos-tim)# offset 8
+sensor(config-hos-tim)# standard-time-zone-name
+sensor(config-hos-tim)# standard-time-zone-name beijing
+sensor(config-hos-tim)# exit
+sensor(config-hos)# exit Apply C
+hanges:?[yes]: yes
+sensor(config)# service web-server // 启动GUI管理
+sensor(config-web)# enable-tls true
+sensor(config-web)# port 443<!--more--></p>
+
+<p><strong>2 设置java虚拟机Applet Memory Limit</strong></p>
+
+<p>在最开始的版本里面，设置在“高级”中，在java1.5和其以后版本都在“java”选项</p>
+
+<p>我的操作系统win7，控制面板--程序--java--“java”选项--查看--修改Runtime参数为-Xmx300m</p>
+
+<p>注：1.5版本256M即可，但是java1.6需要更高</p>
+
+<p><strong>3  web登录</strong></p>
+
+<p><a href="https://192.168.1.144">https://192.168.1.144</a></p>
+]]></content>
+  </entry>
+  
+</feed>

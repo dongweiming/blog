@@ -1,0 +1,37 @@
+---
+layout: post
+title: tornado对http403，405重定向
+categories:
+- tornado
+tags:
+- tornado403
+- tornado405
+published: true
+comments: true
+indexer: true
+---
+<p>前言：http403表示禁止访问，比如没有相应权限，比如它不是一个可以读的文件（目录）;http405表示资源被禁止，比如一个url要求你使用post方式访问，你直接打开网页用get方式就不可以</p>
+
+<p>修改 tornado源码web.py</p>
+
+<p><pre class="sh_python">
+if not (abspath + os.path.sep).startswith(self.root): #大概1479行
+    #raise HTTPError(403, "%s is not in root static directory", path)
+    self.render("error403.html")
+    return -1      </p>
+
+<p>if not os.path.isfile(abspath):   #大概1492
+    #raise HTTPError(403, "%s is not a file", path)
+    self.render("error403.html")
+    return -1</p>
+
+<p>def get(self, *args, **kwargs):  #大概158行
+    self.render("error405.html")
+    #raise HTTPError(405)</p>
+
+<p>注：不能在self.set_status根据code标识重定向（self._finished已经被设置了，会重复2次）
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

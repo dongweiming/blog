@@ -1,0 +1,713 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>最新方式安装配置smokeping - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/zuixinfangshianzhuangpeizhismokeping">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">最新方式安装配置smokeping</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-28T00:00:00+08:00" pubdate data-updated="true">Dec 28<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>smokeping是对IDC网络质量，稳定性等最好的检测工具，包括常规的 ping，dig，echoping，curl等，可以 监视 www 服务器性能，监视 dns 查询性能，监视 ssh 性能等。选择smokeping我觉得有以下原因：
+<strong>1，最佳的画图功能，延迟和丢包用颜色和阴影表示很直观。
+2，免费和开源，作者是MRTG和RRDtool作者。
+3，支持主从的分布式模式。
+4，可以自定义报警功能。<!--more--></strong>
+前言：
+本文使用YUM安装其他资源包，编译安装smokeping方式。apt.sw.be这个第三方软件仓库，我觉得很不错，更新很快，资源很全。但是这个源很不稳定。
+<strong>1 使用apt.sw.be源（安装前的准备）：</strong>
+#yum update
+#rpm -Uvh http://apt.sw.be/redhat/el5/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
+<span style="color: #00ff00;">探讨一个工作中经常出现的yum报错：Metadata file does not match checksum</span>
+可能会出现：http://www.mirrorservice.org/sites/apt.sw.be/redhat/el4/en/i386/dag/repodata/primary.xml.gz（不是本文原来的那个报错路径）:
+[Errno -1] Metadata file does not match checksum 这样的错误，原理是当生成metadata数据的时候，会一同产生校验数据。而传输的时候，会用该校验数据判断metadata是否完整。在这里会下载 other.xml.gz filelists.xml.gz primary.xml.gz,repomd.xml四个文件，其中repomd.xml包含其他三个文件的校检内容，如下是检查效果：
+# sha1sum other.xml.gz filelists.xml.gz primary.xml.gz
+497fbed7cddb2f60265c482331af6ac36b7f2720  other.xml.gz
+e7fb32d7e1e683a57b3391e949cc98d9afec1e50  filelists.xml.gz
+70ba2a3faf75b8db9a15a01efafbc1b36ffbc1a9   primary.xml.gz
+和repomd.xml的内容对比：
+# cat repomd.xml |grep -w &#8216;checksum&#8217;|grep -v &#8216;open-checksum&#8217;
+&lt;checksum type=&#8221;sha&#8221;&gt;497fbed7cddb2f60265c482331af6ac36b7f2720&lt;/checksum&gt;
+&lt;checksum type=&#8221;sha&#8221;&gt;e7fb32d7e1e683a57b3391e949cc98d9afec1e50&lt;/checksum&gt;
+&lt;checksum type=&#8221;sha&#8221;&gt;78a5ab04536a34f691606ebd1244fd63c548610c&lt;/checksum&gt;
+发现primary.xml.gz的校检有问题。
+我用了以下办法：
+<strong>1 使用&#8211;cache=off 用于清除缓存，这个方法其他还是有些作用的，有些时候会成功,就是将文件下载到本地，然后yum时候就不会去下载它了</strong>
+#wget &#8211;cache=off  http://www.mirrorservice.org/sites/apt.sw.be/redhat/el4/en/i386/dag/repodata/primary.xml.gz
+<strong>2 使用多线程工具下载到/var/cache/yum/，我使用的是myget</strong>
+3 使用&#8211;no-cache参数并修改/etc/yum.conf，添加http_caching=none
+wget &#8211;no-cache http://www.mirrorservice.org/sites/apt.sw.be/redhat/el4/en/i386/dag/repodata/primary.xml.gz
+但是都没有成功，后来我发现：当我wget下载primary.xml.gz时候，下载的地址被重定向了
+<span style="color: #ff0000;">最后一个强烈建议，使用yum makecache ，将服务器上的软件包信息 现在本地缓存,以提高 搜索 安装软件的速度，可以做成定时任务。</span>
+最后在我的不懈尝试下，终于成功更新了。
+<strong>2 安装smokeping</strong>
+# yum install httpd
+# yum install rrdtool
+# yum install fping
+# yum install echoping
+# yum install curl
+# yum install perl perl-Net-Telnet perl-Net-DNS perl-LDAP  perl-libwww-perl perl-RadiusPerl perl-IO-Socket-SSL perl-Socket6  perl-CGI-SpeedyCGI
+# wget http://oss.oetiker.ch/smokeping/pub/smokeping-2.4.2.tar.gz
+# tar zxvf smokeping-2.4.2.tar.gz
+# mv smokeping-2.4.1 /opt/smokeping
+# cd /opt/smokeping/bin
+# cp smokeping.dist smokeping
+# cd ../htdocs/
+# cp smokeping.cgi.dist smokeping.cgi
+# cp tr.cgi.dist tr.cgi
+# cd ../etc/
+# cp config.dist config
+# cp basepage.html.dist basepage.html
+# cp smokemail.dist smokemail
+# cp tmail.dist tmail
+# cp smokeping_secrets.dist smokeping_secrets
+# chmod 600 /opt/smokeping/etc/smokeping_secrets
+<strong>3 配置smokeping</strong>
+<strong>编辑/opt/smokeping/bin/smokeping</strong>
+修改一下内容：
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+#!/usr/sepp/bin/perl-5.8.4 -w
+# -*-perl-*-
+use lib qw(/usr/pack/rrdtool-1.2.23-mo/lib/perl);
+use lib qw(lib);
+use Smokeping 2.004002;
+Smokeping::main(&#8220;etc/config.dist&#8221;);
+[/ccine_perl]
+为
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+#!/usr/bin/perl -w
+# -*-perl-*-
+use lib qw(/usr/lib/perl5/vendor_perl/5.8.8/i386-linux-thread-multi/auto/RRDs/);（这个和编译安装的路径不同，注意）
+use lib qw(/opt/smokeping/lib);
+use Smokeping 2.004002;
+Smokeping::main(&#8220;/opt/smokeping/etc/config&#8221;);
+[/ccine_perl]
+<strong>编辑/opt/smokeping/htdocs/smokeping.cgi</strong>
+修改以下内容：
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+#!/usr/sepp/bin/speedy -w
+# -*-perl-*-
+use lib qw(/usr/pack/rrdtool-1.0.33-to/lib/perl);
+use lib qw(/home/oetiker/data/projects/AADJ-smokeping/dist/lib);
+use CGI::Carp qw(fatalsToBrowser);
+use Smokeping 2.004002;
+smokeping::cgi(&#8220;/home/oetiker/data/projects/AADJ-smokeping/dist/etc/config&#8221;);
+[/ccine_perl]
+为
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+#!/usr/bin/speedy -w
+# -*-perl-*-
+use lib qw(/usr/lib/perl5/vendor_perl/5.8.8/i386-linux-thread-multi/auto/RRDs);
+use lib qw(/opt/smokeping/lib);
+use CGI::Carp qw(fatalsToBrowser);
+use Smokeping 2.004002;
+Smokeping::cgi(&#8220;/opt/smokeping/etc/config&#8221;);
+[/ccine_perl]
+<strong>编辑/opt/smokeping/htdocs/tr.cgi</strong>
+修改以下内容：
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+#!/usr/sepp/bin/speedy-5.8.8 -w
+use strict;
+use lib qw(/home/oposs/smokeping/software/lib);
+use lib qw(perl);[/ccine_perl]
+为
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+#!/usr/bin/speedy -w
+use strict;
+use lib qw(/opt/smokeping/lib);
+use lib qw(perl);[/ccine_perl]
+<strong>编辑/opt/smokeping/etc/basepage.html</strong>
+修改以下内容
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+&lt;script src=&#8221;cropper/lib/prototype.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;cropper/lib/scriptaculous.js?load=builder,dragdrop&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;cropper/cropper.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;cropper/smokeping-zoom.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+[/ccine_perl]
+<strong>修改traceroute权限</strong>
+chmod 4775 /bin/traceroute
+<strong>编辑apache配置：</strong>
+去掉AddHandler cgi-script .cgi前面的注释
+修改一下内容：[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+&lt;script src=&#8221;cropper/lib/prototype.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;cropper/lib/scriptaculous.js?load=builder,dragdrop&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;cropper/cropper.js&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;cropper/smokeping-zoom.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;[/ccine_perl]
+为
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+&lt;script src=&#8221;/smokeping/cropper/lib/prototype.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;/smokeping/cropper/lib/scriptaculous.js?load=builder,dragdrop&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;/smokeping/cropper/cropper.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;/smokeping/cropper/smokeping-zoom.js&#8221; type=&#8221;text/javascript&#8221;&gt;&lt;/script&gt;[/ccine_perl]
+编辑/opt/smokeping/htdocs/tr.html
+修改为：
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&#8221;Content-Type&#8221; content=&#8221;text/html; charset=utf-8&#8221; /&gt;
+&lt;title&gt;SmokeTrace&lt;/title&gt;
+&lt;script src=&#8221;/script/Tr.js&#8221;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;/html&gt;[/ccine_perl]
+<strong>编辑/opt/smokeping/etc/config</strong>
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+*** General ***
+owner    = DONGWM
+contact  = dongwm@dongwm.com
+mailhost = dongwm.com
+sendmail = /usr/sbin/sendmail
+imgcache = /opt/smokeping/htdocs/cache
+imgurl   = http://192.168.9.100/cache
+datadir  = /opt/smokeping/data
+piddir  = /opt/smokeping/var
+cgiurl   = http://192.168.9.100/smokeping/smokeping.cgi
+smokemail = /opt/smokeping/etc/smokemail
+tmail = /opt/smokeping/etc/tmail
+# specify this to get syslog logging
+syslogfacility = local0
+# each probe is now run in its own process
+# disable this to revert to the old behaviour
+# concurrentprobes = no
+*** Alerts ***
+to = alertee@address.somewhere
+from = autopost@dongwm.com
++someloss
+type = loss
+# in percent
+pattern = &gt;0%,*12*,&gt;0%,*12*,&gt;0%
+comment = loss 3 times  in a row
+*** Database ***
+step     = 300
+pings    = 20
+# consfn mrhb steps total
+AVERAGE  0.5   1  1008
+AVERAGE  0.5  12  4320
+MIN  0.5  12  4320
+MAX  0.5  12  4320
+AVERAGE  0.5 144   720
+MAX  0.5 144   720
+MIN  0.5 144   720
+*** Presentation ***
+template = /opt/smokeping/etc/basepage.html
++ charts
+menu = Charts
+title = The most interesting destinations
+++ stddev
+sorter = StdDev(entries=&gt;4)
+title = Top Standard Deviation
+menu = Std Deviation
+format = Standard Deviation %f
+++ max
+sorter = Max(entries=&gt;5)
+title = Top Max Roundtrip Time
+menu = by Max
+format = Max Roundtrip Time %f seconds
+++ loss
+sorter = Loss(entries=&gt;5)
+title = Top Packet Loss
+menu = Loss
+format = Packets Lost %f
+++ median
+sorter = Median(entries=&gt;5)
+title = Top Median Roundtrip Time
+menu = by Median
+format = Median RTT %f seconds
++ overview
+width = 600
+height = 50
+range = 10h
++ detail
+width = 600
+height = 200
+unison_tolerance = 2
+&#8220;Last 3 Hours&#8221;    3h
+&#8220;Last 30 Hours&#8221;   30h
+&#8220;Last 10 Days&#8221;    10d
+&#8220;Last 400 Days&#8221;   400d
+#+ hierarchies
+#++ owner
+#title = Host Owner
+#++ location
+#title = Location
+*** Probes ***
++ FPing
+binary = /usr/sbin/fping
+*** Targets ***
+menuextra = &lt;a target=&#8217;_blank&#8217; href=&#8217;/smokeping/tr.html{HOST}&#8217; class=&#8217;{CLASS}&#8217; \
+onclick=&#8221;window.open(this.href,this.target, \
+&#8216;width=800,height=500,toolbar=no,location=no,status=no,scrollbars=no&#8217;); \
+return false;&#8221;&gt;(TR)&lt;/a&gt;
+probe = FPing
+menu = Top
+title = Dongwm.com
+remark = Welcome to dongwm.com
++ hosts
+menu= Targets
+++ dongwm.com
+menu = dongwm.com
+title = dongwm.com
+alerts = someloss
+host = dongwm.com
+++ salogs.com
+menu = salogs.cm
+title = salogs.com
+alerts = someloss
+host = salogs.com[/ccine_perl]
+<strong>创建一个启动脚本：</strong>
+#vi /etc/init.d/smokeping
+添加为以下内容：
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]
+#!/bin/bash
+#
+# chkconfig: 2345 80 05
+# Description: Smokeping init.d script
+# Hacked by : How2CentOS - http://www.how2centos.com
+# Get function from functions library
+. /etc/init.d/functions
+# Start the service Smokeping
+start() {
+echo -n &#8220;Starting Smokeping: &#8221;
+/opt/smokeping/bin/smokeping &gt;/dev/null 2&gt;&amp;1
+### Create the lock file ###
+touch /var/lock/subsys/smokeping
+success $&#8221;Smokeping startup&#8221;
+echo
+}
+# Restart the service Smokeping
+stop() {
+echo -n &#8220;Stopping Smokeping: &#8221;
+kill -9 `ps ax | grep &#8220;/opt/smokeping/bin/smokeping&#8221; | grep -v grep | awk &#8216;{ print $1 }&#8217;` &gt;/dev/null 2&gt;&amp;1
+### Now, delete the lock file ###
+rm -f /var/lock/subsys/smokeping
+success $&#8221;Smokeping shutdown&#8221;
+echo
+}
+### main logic ###
+case &#8220;$1&#8221; in
+start)
+start
+;;
+stop)
+stop
+;;
+status)
+status Smokeping
+;;
+restart|reload|condrestart)
+stop
+start
+;;
+*)
+echo $&#8221;Usage: $0 {start|stop|restart|reload|status}&#8221;
+exit 1
+esac
+exit 0
+[/ccine_perl]
+# chmod 755 /etc/init.d/smokeping
+<strong>最后启动服务：</strong>
+# chkconfig smokeping on
+# chkconfig httpd on
+# service smokeping start
+Starting Smokeping: [ OK ]
+# service httpd start
+Starting httpd: [ OK ]
+网页访问：http://192.168.9.100/smokeping/smokeping.cgi</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-28T00:00:00+08:00" pubdate data-updated="true">Dec 28<span>th</span>, 2010</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/smokeping/'>smokeping</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/zuixinfangshianzhuangpeizhismokeping/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/rangpuppetdaimazhichivimgaoliangxianshi/" title="Previous Post:
+        让puppet代码支持vim高亮显示">&laquo; 让puppet代码支持vim高亮显示</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/%E5%85%B3%E4%BA%8Ehistory%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6/"
+        title="Next Post: 关于history命令研究">关于history命令研究
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/zuixinfangshianzhuangpeizhismokeping/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/zuixinfangshianzhuangpeizhismokeping/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

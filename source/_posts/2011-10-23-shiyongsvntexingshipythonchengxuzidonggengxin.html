@@ -1,0 +1,53 @@
+---
+layout: post
+title: 使用svn特性使python程序自动更新
+categories:
+- linux基础
+tags:
+- pysvn
+- python 程序自动更新
+- svn自动更新
+published: true
+comments: true
+indexer: true
+---
+<p>前言：本例借用pysvn这个第三方模块实现。原理是对比某2个svn版本的不同的文件列表，根据增加，删除和修改的不同座不同的操作，达到程序的自动更新</p>
+
+<p><pre class="sh_python">
+class Svnup:
+    def __init__(self,minv,maxv):
+        import pysvn
+        import getopt, sys, time, string
+        import os, urllib
+        from urlparse import urlparse
+        client = pysvn.Client()
+        revision_min = pysvn.Revision( pysvn.opt_revision_kind.number,minv)
+        revision_max = pysvn.Revision( pysvn.opt_revision_kind.number,maxv)
+        urlObject = urlparse('http://172.16.180.129/project/svnup')
+        url = urlObject.scheme+"://"+urlObject.netloc+urllib.quote(urlObject.path.decode(sys.stdin.encoding).encode('utf8'))
+    def get_login(self,realm, user, may_save ):
+        return True,'dongwm','password', False
+    def run(self):
+        client.callback_get_login = get_login
+        summary = client.diff_summarize(url, revision_min, url, revision_max)
+        for changed in summary:
+            print changed['summarize_kind']
+            if pysvn.diff_summarize_kind.delete == changed['summarize_kind']:
+              fullPath = "../"+changed['path']
+              if os.path.exists(fullPath):
+                os.remove(fullPath)</p>
+
+<p>            if pysvn.diff_summarize_kind.added == changed['summarize_kind'] or pysvn.diff_summarize_kind.modified == changed['summarize_kind']:
+                print changed['summarize_kind'], changed['path']
+                if changed['node_kind'] == pysvn.node_kind.file:
+                    file_text = client.cat(url+urllib.quote(changed['path'].encode('utf8')), revision_max)
+                    fullPath = "../"+changed['path']
+                    dirPath = fullPath[0:fullPath.rfind("/")]
+                    if not os.path.exists(dirPath):
+                        os.makedirs(dirPath)
+                    f = open(fullPath,'wb')
+                    f.write(file_text)
+                    f.close
+svnup =Svnup(svn-min,svn-max)
+svnup.run()
+</pre></p>

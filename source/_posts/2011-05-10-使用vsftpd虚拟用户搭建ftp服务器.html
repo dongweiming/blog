@@ -1,0 +1,108 @@
+---
+layout: post
+title: 使用vsftpd虚拟用户搭建FTP服务器
+categories:
+- linux基础
+tags:
+- vsftpd
+- 虚拟用户
+published: true
+comments: true
+indexer: true
+---
+<p><strong>需求：</strong>
+<strong> 用户：dongwm，ftpuser1,ftpuser2</strong>
+<strong> 用户dongwm可以有本用户和其他2个用户的文件相关权限，ftpuser1和ftpuser2只有对本用户的相关权限，不能查看其他用户信息</strong></p>
+
+<p><strong>思路：用户dongwm使用本地用户，但是不能登录服务器，ftpuser使用虚拟用户，并chroot。</strong></p>
+
+<p><strong>前期准备：</strong></p>
+
+<p><strong>1 安装vsftp</strong>
+yum install vsftpd -y
+<strong>2  安装db4 //虚拟用户数据库相关</strong>
+yum install db4-utils db4 db4-devel db4 -y
+<strong>3  创建相关用户信息文本文件：</strong>
+root@client ~&gt;  cat /etc/vsftpd/virtualuser.txt
+ftpuser1  //用户1
+e5bm0Nw}Bj  //用户1密码
+ftpuser2
+e5bm0sf4ss
+<strong>4 生成数据库文件：</strong>
+db_load -T -t hash -f /etc/vsftpd/virtualuser.txt /etc/vsftpd/virtualuser.db
+chmod 600 /etc/vsftpd/vsftpd_virtualuser.db
+<strong>5 删除用户信息文本文件</strong>
+rm -rf  /etc/vsftpd/virtualuser.txt  //很重要的一步 要不然多恐怖阿？
+<strong>6 修改pam.d验证：</strong>
+root@client ~&gt;  vi /etc/pam.d/vsftpd
+将里面的所有行都注释掉，添加以下2行：
+auth required /lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_virtualuser
+account required /lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_virtualuser
+注：里面使用lib64是因为我的是64位系统  指定的db文件后面没有后缀.db
+<strong>7 创建用户：</strong>
+useradd -s /sbin/nologin -d /var/ftp/dongwm -G ftp dongwm //设置shell不能登录，家目录为/var/ftp/dongwm
+chown 755 /var/ftp/dongwm -R</p>
+
+<p><strong>配置vsftpd：</strong>
+<strong>cd /etc/vsftpd</strong>
+<strong>1 vsftpd.conf  //本地用户使用了这个配置文件的配置</strong>
+anonymous_enable=NO  //因为我们使用了虚拟用户登录 这个选项不需要
+local_enable=YES  //容许本地登录
+write_enable=YES
+local_umask=022
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+xferlog_std_format=YES
+chroot_list_enable=YES  //使用chroot
+chroot_list_file=/etc/vsftpd/chroot_list //这个文件里面列出来的用户是chroot环境
+listen=YES
+pam_service_name=vsftpd  //虚拟用户需要有这个配置
+userlist_enable=YES
+tcp_wrappers=YES
+userlist_deny=NO  //只容许userlist这个文件里面的用户访问ftp
+user_config_dir=/etc/vsftpd/vuserconfig  //虚拟用户的配置文件的主目录
+guest_enable=YES //虚拟用户使用本地用户
+guest_username=dongwm  //指定本地用户dongwm
+virtual_use_local_privs=YES
+chmod_enable=YES
+anon_other_write_enable=YES
+download_enable=YES
+anon_world_readable_only=NO</p>
+
+<p><strong>2 cat chroot_list</strong>
+ftpuser1
+ftpuser2  //这2个用户只能在它的家目录下相关权限
+<strong>3 root@client /etc/vsftpd&gt; cat user_list </strong>
+ftpuser1
+ftpuser2
+dongwm  //只有这三个用户能登录ftp</p>
+
+<p><strong>4 ftpuser1的配置文件，注意文件地址：</strong>
+root@client /etc/vsftpd&gt; cat vuserconfig/ftpuser1
+local_root=/var/ftp/dongwm/ftpuser1 //指定这个用户的家目录地址，在dongwm的家目录的子目录下
+write_enable=YES
+download_enable=YES
+anon_world_readable_only=NO
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+local_umask=022
+ftpuser2的配置文件类似于ftpuser1,只是家目录不同：
+root@client /etc/vsftpd&gt; cat vuserconfig/ftpuser2
+local_root=/var/ftp/dongwm/ftpuser2
+write_enable=YES
+download_enable=YES
+anon_world_readable_only=NO
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+local_umask=022</p>
+
+<p><strong>5 启动服务</strong>
+root@client /etc/vsftpd&gt; /etc/init.d/vsftpd start
+root@client /etc/vsftpd&gt; chkconfig vsftpd on</p>
+
+<p>&nbsp;</p>

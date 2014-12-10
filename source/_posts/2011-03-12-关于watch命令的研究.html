@@ -1,0 +1,36 @@
+---
+layout: post
+title: 关于watch命令的研究
+categories:
+- linux基础
+tags:
+- watch
+published: true
+comments: true
+indexer: true
+---
+<p><strong>当想重复一个命令或者shell脚本（只间隔几秒），可以使用watch：</strong>
+<strong>1 方便查看日志文件以及其他增长型文件的速度</strong><!--more-->
+<pre class="sh_bash"># watch ls
+Every 2.0s: ls                                                                   Sat Mar 12 17:18:56 2011
+tesT.log
+bin
+line-1.txt
+line-2.txt</pre></p>
+
+<p><strong>2  -d选项高亮，对变化的数值突出显示：</strong>
+<pre class="sh_bash"># watch -d free -m
+Every 2.0s: free -m                                                              Sat Mar 12 17:30:35 2011
+total     used       free     shared    buffers     cached
+Mem:         16047    13182       2865          0        672       8452
+-/+ buffers/cache:     4058       11989
+Swap:        20002          0       20002</pre></p>
+
+<p><strong>3   -n 选项指定watch间隔， -t选项去掉第一行多余信息：</strong>
+<pre class="sh_bash"># watch -n 10 -t free -m
+total     used       free     shared    buffers     cached
+Mem:         16047    11971       4076          0        672       8457
+-/+ buffers/cache:     2841       13206
+Swap:        20002          0       20002</pre></p>
+
+<p>&nbsp;</p>

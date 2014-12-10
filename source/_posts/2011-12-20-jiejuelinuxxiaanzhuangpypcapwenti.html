@@ -1,0 +1,45 @@
+---
+layout: post
+title: 解决linux下安装pypcap问题
+categories:
+- python
+tags:
+- pypcap
+- python-pypcap
+published: true
+comments: true
+indexer: true
+---
+<p>前言：libpcap的python接口pypcap的安装我想很多编译安装者都很头疼，因为可能出现很多报错，类似于下面：</p>
+
+<p>在包含自 /usr/local/include/python2.6/Python.h：58 的文件中，
+从 pcap.c：3:
+/usr/local/include/python2.6/pyport.h:685:2: 错误：#error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."</p>
+
+<p>......</p>
+
+<p>pcap.c:1719: 警告：未使用的变量 ‘p’
+pcap.c: In function ‘__pyx_tp_dealloc_4pcap_pcap’:
+pcap.c:1724: 警告：未使用的变量 ‘p’
+pcap.c: In function ‘__pyx_tp_traverse_4pcap_pcap’:
+pcap.c:1739: 警告：未使用的变量 ‘p’
+pcap.c:1738: 警告：未使用的变量 ‘e’
+pcap.c: In function ‘__pyx_tp_clear_4pcap_pcap’:
+pcap.c:1744: 警告：未使用的变量 ‘p’
+pcap.c: In function ‘__Pyx_GetStarArgs’:
+pcap.c:2253: 警告：建议显式地使用花括号以避免出现有歧义的 ‘else’
+pcap.c:2255: 警告：建议显式地使用花括号以避免出现有歧义的 ‘else’
+error: command 'gcc' failed with exit status 1</p>
+
+<p><strong> 首先确定环境：</strong></p>
+
+<p><strong>1 安装python-devel（需要Python.h）</strong></p>
+
+<p><address><strong>2 安装libpcap，libpcap-devel （需要pcap.h）</strong></address><strong>3 安装pypcap：</strong>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">tar zxvf pypcap-1.1.tar.gz </span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">cd pypcap-1.1</span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">CFLAGS=-m32 python setup.py config </span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">CFLAGS=-m32 python setup.py build </span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">CFLAGS=-m32 python setup.py install </span></span></p>
+<p align="LEFT"></p>
+&nbsp;</p>

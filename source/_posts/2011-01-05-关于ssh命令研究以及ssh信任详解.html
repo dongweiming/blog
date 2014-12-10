@@ -1,0 +1,143 @@
+---
+layout: post
+title: 关于ssh命令研究以及SSH信任详解
+categories:
+- linux基础
+tags:
+- ssh信任，ssh
+published: true
+comments: true
+indexer: true
+---
+<p><strong>本文主要介绍一下几个要点内容：</strong></p>
+
+<p><strong>1  ssh客户端的DEBUG调试</strong></p>
+
+<p><strong>2  ssh的转义符用法（比如切换ssh会话）</strong></p>
+
+<p><strong>3  ssh的信任登陆（即登陆不需要手动输入密码）<!--more--></strong></p>
+
+<p><strong>1  ssh客户端的DEBUG调试</strong></p>
+
+<p>有时候我们有必要对于一些ssh连接故障通过调试信息确定问题和解决，选项-v即实现此功能。</p>
+
+<p><strong>例如没有使用debug信息：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="579">
+<tbody>
+<tr>
+<td width="577" valign="top">[root@server ~]#  ssh -l root 192.168.9.104
+ssh: connect to host 192.168.9.104 port 22: Connection refused</td>
+</tr>
+</tbody>
+</table>
+<strong>包含debug信息：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="578">
+<tbody>
+<tr>
+<td width="576" valign="top">[root@server ~]#  ssh -v -l root 192.168.9.104
+OpenSSH_4.3p2, OpenSSL 0.9.8e-fips-rhel5 01 Jul 2008
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: Applying options for *
+debug1: Connecting to 192.168.9.104 [192.168.9.104] port 22.
+debug1: connect to address 192.168.9.104 port 22: Connection refused
+ssh: connect to host 192.168.9.104 port 22: Connection refused</td>
+</tr>
+</tbody>
+</table>
+这个信息说明，配置文件里面已经修改了默认的端口号</p>
+
+<p><strong>2  ssh的转义符用法</strong></p>
+
+<p>1  <strong>切换SSH会话：</strong>当你登录到本地主机使用SSH从远程主机，你可能要回来执行一些活动，然后再返回到远程主机了。在这种情况下，不需要断开SSH会话到远程主机。 而是按照下列步骤：</p>
+
+<p>1  远程登录到某台机器：server#ssh -l 用户名 主机名（或者IP）</p>
+
+<p><strong> </strong>2  现在已经在远程机器上：client#</p>
+
+<p><strong> </strong>3  回到localhost：先输入转义符“~”，然后输入ctrl+z，回车：
+<table border="0" cellspacing="0" cellpadding="2" width="502">
+<tbody>
+<tr>
+<td width="500" valign="top">[root@client ~]# ~^Z [suspend ssh]</td></tr></tbody></table></p>
+
+<p>[1]+  Stopped                 ssh -l root 192.168.9.104 -p 9922
+[root@server ~]#
+
+
+
+4   现在又回到了本地主机，远程主机的SSH客户端会话作为后台运行的进程工作，检查运行如下所示：
+<table border="0" cellspacing="0" cellpadding="2" width="504">
+<tbody>
+<tr>
+<td width="502" valign="top">[root@server ~]# jobs
+[1]+  Stopped                 ssh -l root 192.168.9.104 -p 9922</td>
+</tr>
+</tbody>
+</table>
+5    现在回到远程主机：
+<table border="0" cellspacing="0" cellpadding="2" width="504">
+<tbody>
+<tr>
+<td width="502" valign="top">[root@server ~]# fg %1
+ssh -l root 192.168.9.104 -p 9922
+[root@client ~]#</td>
+</tr>
+</tbody>
+</table>
+<strong> </strong></p>
+
+<p><strong> 2  ssh信任登陆：</strong></p>
+
+<p>在远程登陆主机的事情，都会要求你输入密码，这样很麻烦，尤其是在密码复杂不好记忆的时候。所以可以设置ssh信任，这样可以直接登陆而不需要输入账号密码信息。</p>
+
+<p><strong>实验要求：</strong></p>
+
+<p><strong>建立SSH信任
+将server主机做为客户端（发起SSH请求）
+将client主机作为服务器端（接收ssh请求）</strong></p>
+
+<p><strong>1.server主机生成公，私钥证书</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="534">
+<tbody>
+<tr>
+<td width="532" valign="top">[root@server ~]# ssh-keygen -t dsa  #生成dsa算法的证书，rsa算法在-t后 加  rsa
+Generating public/private dsa key pair.
+Enter file in which to save the key (/root/.ssh/id_dsa): #这一步询问私钥和公钥存放的地址，一般我们要将它放在这个默认的目录下，因此直接敲回车
+Enter passphrase (empty for no passphrase): #-这一步询问这个信任有关系是否需要密码，我们本来就是为了简化输入密码这个步骤的，当然这里就不需要密码了，因此直接回车
+Enter same passphrase again: #这一步是密码确认，直接回车
+Your identification has been saved in /root/.ssh/id_dsa.
+Your public key has been saved in /root/.ssh/id_dsa.pub.
+The key fingerprint is:
+2e:f6:1b:00:23:9e:27:3f:19:48:83:89:e9:ee:d4:5e <a href="mailto:root@server.dongwm.com">root@server.<span style="color: #000000;">dongwm</span>.com</a></td>
+</tr>
+</tbody>
+</table>
+这步之后，生成2个文件：id_dsa和id_dsa.pub，其中id_dsa文件是私钥文件，而id_dsa.pub文件是公钥文件，接下来的步骤中我们就需要将id_dsa.pub里的内容添加到client的信任关系中</p>
+
+<p><strong>2. 在client机器上的用户XXX帐号下（我这里是root）的~/.ssh/authorized_keys或者~/.ssh/authorized_keys2中添加一行文件，即 id_dsa.pub里的内容，注意这个内容是一行，不要因为拷贝而带了额外的回车符。其中authorized_keys2表示采用ssh2登陆。</strong>
+<table style="height: 40px;" border="0" cellspacing="0" cellpadding="2" width="526">
+<tbody>
+<tr>
+<td width="524" valign="top">[root@server ~]# scp -P 9922 ~/.ssh/id_dsa.pub root@client.okooo.com:/root/.ssh/authorized_keys</td>
+</tr>
+</tbody>
+</table>
+注：引入“ssh-copy-id ”这个命令</p>
+
+<p>ssh-copy-id 其实是一个自带的脚本，因为authorized_keys不容易记住，可以用如下格式：</p>
+
+<p># ssh-copy-id -i ~/.ssh/id_rsa.pub user@server效果和上面的一样。</p>
+
+<p>当不使用默认的22端口，使用这样的命令：</p>
+
+<p>#ssh-copy-id -i ~/.ssh/id_rsa.pub "-p <span style="color: #ff0000;">端口号码</span> user@server"</p>
+
+<p>至此我们已经建立了机器server上root到机器client上用户root之间单向信任关系，即可以直接让机器server上的root直接登陆机器client上用户root，但是不能反过来操作，也不能用户其他用户。</p>
+
+<p>具体的原因实际上是基于PKI的非对称式加密的，在id_dsa是私钥文件，每次登陆的时候由它来生成一个签名文件，将这个签名文件发送给服务器client，服务器client从它的authorized_keys文件里找到登陆机器的公钥，利用这个公钥来验证签名是否合法，如果合法则登陆。</p>
+
+<p><strong>3.修改.ssh目录以及authorized_keys文件的可访问性</strong></p>
+
+<p>.ssh文件的访问性修改为700就可以了，authorized_keys要644</p>
+
+<p><strong>4.连接信息在/var/log/secure中</strong></p>

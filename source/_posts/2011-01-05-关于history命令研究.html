@@ -1,0 +1,161 @@
+---
+layout: post
+title: 关于history命令研究
+categories:
+- linux基础
+tags:
+- history
+published: true
+comments: true
+indexer: true
+---
+<p><strong>本文主要介绍一下几个要点内容：</strong></p>
+
+<p><strong>1 显示时间戳</strong></p>
+
+<p><strong>2 快速执行以前的命令</strong></p>
+
+<p><strong>3 去掉连续执行的重复命令</strong></p>
+
+<p><strong>4 一些技巧<!--more--></strong></p>
+
+<p><strong>1 显示时间戳</strong></p>
+
+<p>时间戳的功能还是很明显的，能够帮助我们根据操作时间排错等。
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">[root@server ~]# export HISTTIMEFORMAT='%F %T '</td>
+</tr>
+</tbody>
+</table>
+重新执行后：
+<table border="0" cellspacing="0" cellpadding="2" width="609">
+<tbody>
+<tr>
+<td width="607" valign="top">[root@server ~]# history |more
+5  2011-01-05 21:44:15 rake puppet:import:hosts_and_facts RAILS_ENV=production
+6  2011-01-05 21:44:15 rake puppet:migrate:populate_hosts RAILS_ENV=production
+7  2011-01-05 21:44:15 vi /etc/sysconfig/foreman
+8  2011-01-05 21:44:15 vi /etc/init.d/foreman</td>
+</tr>
+</tbody>
+</table>
+<strong>2 快速执行以前的命令</strong></p>
+
+<p>我们可以使用！，然后加上以前曾经使用过的一个命令其中的一些字母（假如输入的关键字执行过多次，会执行最近一次的命令去执行），回车执行：
+<table border="0" cellspacing="0" cellpadding="2" width="539">
+<tbody>
+<tr>
+<td width="537" valign="top">这是我最近执行的一些命令：
+115  wget <a href="http://mirror.bjtu.edu.cn/gnu/bash/bash-4.1.tar.gz">http://mirror.bjtu.edu.cn/gnu/bash/bash-4.1.tar.gz</a>
+116  vi /etc/passwd
+117  service iptables stop
+118  history
+119  service iptables stop
+120  history
+121  ifconfig
+122  updatedb
+123  locate ifenslave
+124  rpm -qf /sbin/ifup
+125  grep ifenslave /sbin/ifup
+126  history</td></tr></tbody></table></p>
+
+<p>[root@bogon ~]# !wg
+wget <a href="http://mirror.bjtu.edu.cn/gnu/bash/bash-4.1.tar.gz">http://mirror.bjtu.edu.cn/gnu/bash/bash-4.1.tar.gz</a>（当我想执行第115行命令之输入了关键字“wg”）
+--2011-01-02 18:10:59--  <a href="http://mirror.bjtu.edu.cn/gnu/bash/bash-4.1.tar.gz">http://mirror.bjtu.edu.cn/gnu/bash/bash-4.1.tar.gz</a>
+Resolving mirror.bjtu.edu.cn...
+
+
+
+<strong>3 去掉连续执行的重复命令</strong></p>
+
+<p>日常使用中可能连续输入了一些命令，可以设置t HISTCONTROL，将去掉相同的记录，比如我下面执行三次passwd：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">[root@bogon ~]# passwd test
+[root@bogon ~]# passwd test
+[root@bogon ~]# passwd test
+[root@bogon ~]#history | tail –4
+77 passwd test
+78 passwd test
+79 passwd test
+80 history | tail –4</td>
+</tr>
+</tbody>
+</table>
+修改配置及以后：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">[root@bogon ~]# export HISTCONTROL=ignoredups
+[root@bogon ~]# passwd test
+[root@bogon ~]# passwd test
+[root@bogon ~]# passwd test
+[root@bogon ~]#history | tail –3
+81 export HISTCONTROL=ignoredups
+82 passwd test
+83 history | tail –3
+看到了吧：“passwd test”只显示了一次</td>
+</tr>
+</tbody>
+</table>
+<strong>4 一些技巧：</strong></p>
+
+<p><strong>1 工作可能会发生先去cat一个文件然后vi这个文件。但是我们却需要重新来写这个文件名，</strong></p>
+
+<p><strong>有没有简要办法？答案是利用一些技巧：</strong></p>
+
+<p><strong>重复前面的内容使用”!!:$”</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="424">
+<tbody>
+<tr>
+<td width="422" valign="top">[root@bogon ~]# ls install.log
+install.log
+[root@bogon ~]# ll !!:$
+ll install.log
+-rw-r--r-- 1 root root 32032 Aug 28 21:34 install.log</td>
+</tr>
+</tbody>
+</table>
+<strong>2 工作也会遇见同时操作几个文件，怎么快速的执行最开始的那个文件呢？答案是“!^”</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">[root@bogon ~]# cp install.log install.log.bak
+[root@bogon ~]# ll !^
+ll install.log
+-rw-r--r-- 1 root root 32032 Aug 28 21:34 install.log</td>
+</tr>
+</tbody>
+</table>
+<strong>3  刚执行一个操作其中一个文件的名字很长，我不想打那么长，快捷方式：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="453">
+<tbody>
+<tr>
+<td width="451" valign="top">[root@bogon ~]# cp a b c /home/test
+[root@bogon ~]# cat !cp:2
+cat b
+i am b ^.^
+[root@bogon ~]# （在其中我假设b有很长的文件名或者路径很深，cp后的2代表位置，“$”表示最后一个位置）</td>
+</tr>
+</tbody>
+</table>
+<strong>4 忽略一些不重要的历史记录</strong></p>
+
+<p>可能由于工作需要，可能由于历史记录太多需要，所以我想过滤一些不重要的histroy记录:
+<table border="0" cellspacing="0" cellpadding="2" width="475">
+<tbody>
+<tr>
+<td width="473" valign="top">[root@bogon ~]# export HISTIGNORE="ls -F"(
+多个命令用冒号分隔，如果想不使用过滤执行{export HISTIGNORE=""}
+[root@bogon ~]# ls –F
+[root@bogon ~]# history
+163  ls
+164  history
+165  export HISTIGNORE="ls -F"
+166  history （看见了吧，没有出现“ls -F”）</td>
+</tr>
+</tbody>
+</table></p>

@@ -1,0 +1,1815 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/3">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/speakerdeck/">Speakerdeck</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-18T16:49:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>今天是在Ad的最后一天,本来准备了一个分享.关于业务中一些吐槽和我一些trick的用法, 有兴趣的可以下载<a href="https://github.com/dongweiming/speakerdeck">speakerdeck</a></p>
+
+<h4 id="section-1">主题</h4>
+
+<ol>
+  <li>celery celery2/celery3, py-amqp, kombu的用法, celery和djangocelery的集合</li>
+  <li>expect 使用expect自动登录复杂的服务器</li>
+  <li>mapreduce 一个并行处理文件的例子,说明使用python跑mapreduce多么厉害</li>
+  <li>portforward 端口转发</li>
+  <li>restapi 我眼中的restapi(pdf)</li>
+  <li>tornado 使用tornado一部非阻塞</li>
+</ol>
+
+<p>演示的tmux脚本:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">#!/bin/bash
+</span><span class="line">SESSION=$USER
+</span><span class="line">COMMAND='http Space http://localhost:8000/sleep'
+</span><span class="line">
+</span><span class="line">tmux new-session -d -s $SESSION
+</span><span class="line">
+</span><span class="line">tmux new-window -t $SESSION -n 'Logs'
+</span><span class="line">tmux split-window -h
+</span><span class="line">tmux select-pane -t 0
+</span><span class="line">tmux send-keys $COMMAND C-m
+</span><span class="line">tmux select-pane -t 1
+</span><span class="line">tmux send-keys $COMMAND C-m
+</span><span class="line">tmux split-window -v
+</span><span class="line">tmux send-keys $COMMAND C-m
+</span><span class="line">tmux select-pane -t 0
+</span><span class="line">tmux split-window -v
+</span><span class="line">tmux send-keys $COMMAND C-m
+</span><span class="line"># Attach to session
+</span><span class="line">tmux attach-session -t $SESSION</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/fen-xiang-%5B%3F%5D-ge-zhun-bei-gei-gong-si-jiang-pythongao-ji-bian-cheng-de-slide/">分享一个准备给公司讲python高级编程的slide</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-04T11:07:00+08:00" pubdate data-updated="true">Apr 4<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我以前在学习python模块的时候,曾经翻译<a href="http://pymotw.com/2/py-modindex.html#">pymotw</a>的文章,其实还是有抄袭的嫌疑,从最近开始逐渐直接阅读python标准库源码, 收获颇多. 我现在不愿意教一些从网上或者书里提到的知识点,而更愿意根据我工作中常见的需求去挖掘对应的python的解法.也是在过程中对一些东西有了比较深的理解. 这个ppt是从<a href="https://linuxtoy.org/archives/using-cli-like-a-hacker.html">像黑客一样使用 Linux 命令行</a>获得的灵感. 然后角度为<python高级编程>, 还用到了webfonts娃娃体^.^</python高级编程></p>
+
+<p><img src="https://dl.dropboxusercontent.com/u/95512723/images/expert_python.png" alt="" /></p>
+
+<p>PS: 特别推荐github上看到的”雨痕”的<a href="https://github.com/qyuhen/book">学习笔记</a>. 建议大家都好好看看.</p>
+
+<h4 id="section-1">找到它</h4>
+
+<p><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a>
+或者直接下载代码: <a href="https://github.com/dongweiming/Expert-Python">github</a></p>
+
+<p>但是注意我的字体内嵌项目里面, 请注意流量,避免移动设备直接访问或者强制刷新</p>
+
+<h5 id="update-2015-02-02">UPDATE: 2015-02-02</h5>
+
+<p>我已经把视频放到youtube上了: https://www.youtube.com/watch?v=bf5qpFFxo9g 大家可以选择在线看</p>
+
+<h4 id="section-2">目录</h4>
+
+<ol>
+  <li>XX不理解python竟然没有end….</li>
+  <li>设置全局变量</li>
+  <li>字符串格式化</li>
+  <li>操作列表</li>
+  <li>操作字典</li>
+  <li>字典视图</li>
+  <li>vars</li>
+  <li>from <strong>future</strong> import unicode_literals</li>
+  <li>from <strong>future</strong> import absolute_import</li>
+  <li>不是支持了绝对引入,而是拒绝隐式引入</li>
+  <li>我靠,我的需求呢? – 在很多开源项目是拒绝你第一次的隐式用法的,</li>
+  <li>一个关于编码的问题</li>
+  <li>原因是: encoding_example里面没有对文字自动转化为unicode,默认是ascii编码</li>
+  <li>super 当子类调用父类属性时一般的做法是这样</li>
+  <li>super的一种用法</li>
+  <li>假如不用super会这么惨</li>
+  <li>手写一个迭代器</li>
+  <li>标准迭代器</li>
+  <li>生成器</li>
+  <li>斐波那契数列</li>
+  <li>其实yield和协程关系很密切</li>
+  <li>来个回调(阻塞的)</li>
+  <li>来个回调(异步的)</li>
+  <li>看到这里, 就得说说contextmanager</li>
+  <li>包导入</li>
+  <li>包构建__all__</li>
+  <li>包构建__path__</li>
+  <li>静态方法和类方法的区别</li>
+  <li>静态方法和类方法的区别其实是在这里</li>
+  <li>__slots__</li>
+  <li>Packaging Tools的未来</li>
+  <li>wheel(即将替代Eggs的二进制包格式)的优点</li>
+  <li>装饰器</li>
+  <li>给函数的类装饰器</li>
+  <li>给类的函数装饰器</li>
+  <li>带参数的装饰器</li>
+  <li>@property</li>
+  <li>@property的另外使用方法</li>
+  <li>元类是什么</li>
+  <li>模拟生成一个类</li>
+  <li>元类: __metaclass__(实现前面的Hello类)</li>
+  <li>一个难懂的元类</li>
+  <li>描述符</li>
+  <li>模块: itertools</li>
+  <li>模块: collections(一)</li>
+  <li>模块: collections(二)</li>
+  <li>模块: collections(三)</li>
+  <li>模块: collections(四)</li>
+  <li>operator模块(一)</li>
+  <li>operator模块(二)</li>
+  <li>operator模块(三)</li>
+  <li>functools模块之partial</li>
+  <li>functools模块之wraps</li>
+  <li>functools模块之cmp_to_key</li>
+  <li>functools模块之total_ordering</li>
+  <li>开发陷阱(一) 可变默认参数</li>
+  <li>开发陷阱(二) 闭包变量绑定</li>
+  <li>开发陷阱(二) 闭包应该的用法</li>
+  <li>在合适的地方用合适的技巧</li>
+  <li>不是它不好,而是你没有用好</li>
+  <li>ipython的技巧(一)</li>
+  <li>ipython的技巧(二)</li>
+  <li>联系方式</li>
+</ol>
+
+<h4 id="update-20140411">UPDATE 2014.04.11</h4>
+
+<p>今天下午分享了这个ppt. 并且用quicktime录像. 想听的可以从<a href="http://pan.baidu.com/s/1bnnaJaZ">百度网盘</a>下载或者在线看(793.6M). 时长2小时零一分.</p>
+
+<p>中间有个列表去重. 有同学说去重后无法保证第一次出现重复数据位置的顺序.</p>
+
+<p>刚才想起来试了一下:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+</span><span class="line">    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="p">{}</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</span><span class="line">    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>  <span class="c"># 注意这个和上面结果是一样的,也就是内部实现的去重原理相同</span>
+</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">]</span>
+</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+</span><span class="line">    <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">]</span>
+</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="p">{}</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</span><span class="line">    <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">]</span>
+</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="n">OrderedDict</span><span class="p">()</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c"># 只能使用这样的方法实现保证顺序的实现</span>
+</span><span class="line">    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>                                 <span class="c"># 感谢@杨博的提醒</span>
+</span></pre></figure></notextile></div>
+<p>新的PYPI的DEMO: <a href="http://pypi-preview.a.ssl.fastly.net">http://pypi-preview.a.ssl.fastly.net</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shi-yong-grafanahe-diamondgou-jian-graphitejian-kong-xi-tong/">使用grafana和Diamond构建Graphite监控系统</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-01T13:56:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>在豆瓣开源项目里面有个<a href="https://github.com/douban/graph-index">graph-index</a>, 提供监控服务器的状态的目录索引,基于<a href="https://github.com/vimeo/graph-explorer">graph-explorer</a>. 类似衍生物很多,就包括我要说的本文用到的项目.先看看我的测试环境的几个截图</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/9101045/7a64742a-3c14-11e5-92e7-012c713596e3.png" alt="" />
+<img src="https://cloud.githubusercontent.com/assets/841395/9101046/7a6a2ec4-3c14-11e5-8aeb-0158c20e8c6b.png" alt="" /></p>
+
+<h4 id="section-1">一些关键词说明</h4>
+
+<ol>
+  <li>graphite-web # graphite组件之一, 提供一个django的可以高度扩展的实时画图系统</li>
+  <li>Whisper # graphite组件之一, 实现数据库存储. 它比rrdtool要慢，因为whisper是使用python写的，而rrdtool是使用C写的。然而速度之间的差异很小</li>
+  <li>Carbon # 数据收集的结果会传给它, 它会解析数据让它可用于实时绘图. 它默认可会提示一些类型的数据,监听2003和2004端口</li>
+  <li><a href="https://github.com/BrightcoveOS/Diamond">Diamond</a> # 他是一个提供了大部分数据收集结果功能的结合,类似cpu, load, memory以及mongodb,rabbitmq,nginx等指标.这样就不需要我大量的写各种类型,因为它都已经提供,并且它提供了可扩展的自定义类型(最后我会展示一个我自己定义的类型)</li>
+  <li><a href="https://github.com/torkelo/grafana">grafana</a> # 这个面板是基于node, <a href="https://github.com/elasticsearch/kibana">kibana</a>,并且可以在线编辑. 因为是kibana,所以也用到了开元搜索框架<a href="https://github.com/elasticsearch/elasticsearch">elasticsearch</a></li>
+</ol>
+
+<p>PS: 其他工具可以参考这里<a href="http://graphite.readthedocs.org/en/1.0/tools.html">Tools That Work With Graphite</a></p>
+
+<h4 id="section-2">原理解析</h4>
+
+<p>我没有看实际全部代码,大概的流程是这样的:</p>
+
+<ol>
+  <li>启动Carbon-cache等待接收数据(carbon用的是twisted)</li>
+  <li>启动graphite-web给grafana提供实时绘图数据api</li>
+  <li>启动grafana,调用graphite-web接口获取数据展示出来</li>
+  <li>Diamond定期获取各类要监测的类型数据发给carbon(默认是5分钟,默认一小时自动重载一次配置)</li>
+</ol>
+
+<h4 id="section-3">实现我这个系统需要做的事情</h4>
+
+<h5 id="graphitecentos">安装graphite相关组件(我这里用的是centos)</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">yum --enablerepo=epel install graphite-web python-carbon -y</span></pre></figure></notextile></div>
+
+<h6 id="grafana">安装grafana需要的组件</h6>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># 增加elasticsearch的repo:
+</span><span class="line">sudo  rpm --import http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+</span><span class="line">$cat /etc/yum.repos.d/elasticsearch.repo
+</span><span class="line">[elasticsearch-1.0]
+</span><span class="line">name=Elasticsearch repository for 1.0.x packages
+</span><span class="line">baseurl=http://packages.elasticsearch.org/elasticsearch/1.0/centos
+</span><span class="line">gpgcheck=1
+</span><span class="line">gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+</span><span class="line">enabled=1
+</span><span class="line">sudo yum install nginx nodejs npm java-1.7.0-openjdk elasticsearch -y</span></pre></figure></notextile></div>
+
+<h5 id="diamondgrafana">下载Diamond和grafana</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git clone https://github.com/torkelo/grafana
+</span><span class="line">cd grafana
+</span><span class="line">sudo npm install
+</span><span class="line">sudo pip install django-cors-headers configobj # 这可能因为我环境中已经有了一些模块，看缺什么安装什么
+</span><span class="line">git clone https://github.com/BrightcoveOS/Diamond
+</span><span class="line">cd Diamond</span></pre></figure></notextile></div>
+<p>##### 开始修改配置</p>
+
+<ol>
+  <li>添加cors支持</li>
+</ol>
+
+<p>在/usr/lib/python2.6/site-packages/graphite/app_settings.py:</p>
+
+<p>INSTALLED_APPS里面添加corsheaders, MIDDLEWARE_CLASSES里面添加’corsheaders.middleware.CorsMiddleware’</p>
+
+<ol>
+  <li>使用nginx使用grafana</li>
+</ol>
+
+<p>在nginx.conf 添加类型的一段配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">server {
+</span><span class="line">  listen                *:80 ;
+</span><span class="line">
+</span><span class="line">  server_name           monitor.dongwm.com; # 我用了虚拟主机
+</span><span class="line">  access_log            /var/log/nginx/kibana.myhost.org.access.log;
+</span><span class="line">
+</span><span class="line">  location / {
+</span><span class="line">    add_header 'Access-Control-Allow-Origin' "$http_origin";
+</span><span class="line">    add_header 'Access-Control-Allow-Credentials' 'true';
+</span><span class="line">    root  /home/operation/dongwm/grafana/src;
+</span><span class="line">    index  index.html  index.htm;
+</span><span class="line">  }
+</span><span class="line">
+</span><span class="line">  location ~ ^/_aliases$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/_nodes$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/.*/_search$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/.*/_mapping$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">
+</span><span class="line">  # Password protected end points
+</span><span class="line">  location ~ ^/kibana-int/dashboard/.*$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">    limit_except GET {
+</span><span class="line">      proxy_pass http://127.0.0.1:9200;
+</span><span class="line">      auth_basic "Restricted";
+</span><span class="line">      auth_basic_user_file /etc/nginx/conf.d/dongwm.htpasswd;
+</span><span class="line">    }
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/kibana-int/temp.*$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">    limit_except GET {
+</span><span class="line">      proxy_pass http://127.0.0.1:9200;
+</span><span class="line">      auth_basic "Restricted";
+</span><span class="line">      auth_basic_user_file /etc/nginx/conf.d/dongwm.htpasswd;
+</span><span class="line">    }
+</span><span class="line">  }</span></pre></figure></notextile></div>
+
+<ol>
+  <li>修改grafana的src/config.js:</li>
+</ol>
+
+<p>graphiteUrl: “http://”+window.location.hostname+”:8020”, # 下面会定义graphite-web启动在8020端口</p>
+
+<ol>
+  <li>修改Diamond的配置conf/diamond.conf</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cp conf/diamond.conf.example conf/diamond.conf</span></pre></figure></notextile></div>
+
+<p>主要修改监听的carbon服务器和端口,以及要监控什么类型的数据,看我的一个全文配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">################################################################################
+</span><span class="line"># Diamond Configuration File
+</span><span class="line">################################################################################
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for the server
+</span><span class="line">[server]
+</span><span class="line">
+</span><span class="line"># Handlers for published metrics.
+</span><span class="line">handlers = diamond.handler.graphite.GraphiteHandler, diamond.handler.archive.ArchiveHandler
+</span><span class="line">
+</span><span class="line"># User diamond will run as
+</span><span class="line"># Leave empty to use the current user
+</span><span class="line">user =
+</span><span class="line">
+</span><span class="line"># Group diamond will run as
+</span><span class="line"># Leave empty to use the current group
+</span><span class="line">group =
+</span><span class="line">
+</span><span class="line"># Pid file
+</span><span class="line">pid_file = /home/dongwm/logs/diamond.pid # 换了pid的地址,因为我的服务都不会root启动
+</span><span class="line">
+</span><span class="line"># Directory to load collector modules from
+</span><span class="line">collectors_path = /home/dongwm/Diamond/src/collectors # 收集器的目录,这个/home/dongwm/Diamond就是克隆代码的地址
+</span><span class="line">
+</span><span class="line"># Directory to load collector configs from
+</span><span class="line">collectors_config_path = /home/dongwm/Diamond/src/collectors
+</span><span class="line">
+</span><span class="line"># Directory to load handler configs from
+</span><span class="line">handlers_config_path = /home/dongwm/Diamond/src/diamond/handler
+</span><span class="line">
+</span><span class="line">handlers_path = /home/dongwm/Diamond/src/diamond/handler
+</span><span class="line">
+</span><span class="line"># Interval to reload collectors
+</span><span class="line">collectors_reload_interval = 3600 # 收集器定期会重载看有没有配置更新
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for handlers
+</span><span class="line">[handlers]
+</span><span class="line">
+</span><span class="line"># daemon logging handler(s)
+</span><span class="line">keys = rotated_file
+</span><span class="line">
+</span><span class="line">### Defaults options for all Handlers
+</span><span class="line">[[default]]
+</span><span class="line">
+</span><span class="line">[[ArchiveHandler]]
+</span><span class="line">
+</span><span class="line"># File to write archive log files
+</span><span class="line">log_file = /home/dongwm/logs/diamond_archive.log
+</span><span class="line">
+</span><span class="line"># Number of days to keep archive log files
+</span><span class="line">days = 7
+</span><span class="line">
+</span><span class="line">[[GraphiteHandler]]
+</span><span class="line">### Options for GraphiteHandler
+</span><span class="line">
+</span><span class="line"># Graphite server host
+</span><span class="line">host = 123.126.1.11
+</span><span class="line">
+</span><span class="line"># Port to send metrics to
+</span><span class="line">port = 2003
+</span><span class="line">
+</span><span class="line"># Socket timeout (seconds)
+</span><span class="line">timeout = 15
+</span><span class="line">
+</span><span class="line"># Batch size for metrics
+</span><span class="line">batch = 1
+</span><span class="line">
+</span><span class="line">[[GraphitePickleHandler]]
+</span><span class="line">### Options for GraphitePickleHandler
+</span><span class="line">
+</span><span class="line"># Graphite server host
+</span><span class="line">host = 123.126.1.11
+</span><span class="line">
+</span><span class="line"># Port to send metrics to
+</span><span class="line">port = 2004
+</span><span class="line">
+</span><span class="line"># Socket timeout (seconds)
+</span><span class="line">timeout = 15
+</span><span class="line">
+</span><span class="line"># Batch size for pickled metrics
+</span><span class="line">batch = 256
+</span><span class="line">
+</span><span class="line">[[MySQLHandler]]
+</span><span class="line">### Options for MySQLHandler
+</span><span class="line">
+</span><span class="line"># MySQL Connection Info 这个可以你的会不同
+</span><span class="line">hostname    = 127.0.0.1
+</span><span class="line">port        = 3306
+</span><span class="line">username    = root
+</span><span class="line">password    =
+</span><span class="line">database    = diamond
+</span><span class="line">table       = metrics
+</span><span class="line"># INT UNSIGNED NOT NULL
+</span><span class="line">col_time    = timestamp
+</span><span class="line"># VARCHAR(255) NOT NULL
+</span><span class="line">col_metric  = metric
+</span><span class="line"># VARCHAR(255) NOT NULL
+</span><span class="line">col_value   = value
+</span><span class="line">
+</span><span class="line">[[StatsdHandler]]
+</span><span class="line">host = 127.0.0.1
+</span><span class="line">port = 8125
+</span><span class="line">
+</span><span class="line">[[TSDBHandler]]
+</span><span class="line">host = 127.0.0.1
+</span><span class="line">port = 4242
+</span><span class="line">timeout = 15
+</span><span class="line">
+</span><span class="line">[[LibratoHandler]]
+</span><span class="line">user = user@example.com
+</span><span class="line">apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
+</span><span class="line">
+</span><span class="line">[[HostedGraphiteHandler]]
+</span><span class="line">apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
+</span><span class="line">timeout = 15
+</span><span class="line">batch = 1
+</span><span class="line">
+</span><span class="line"># And any other config settings from GraphiteHandler are valid here
+</span><span class="line">
+</span><span class="line">[[HttpPostHandler]]
+</span><span class="line">
+</span><span class="line">### Urp to post the metrics
+</span><span class="line">url = http://localhost:8888/
+</span><span class="line">### Metrics batch size
+</span><span class="line">batch = 100
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for collectors
+</span><span class="line">[collectors]
+</span><span class="line">[[TencentCollector]] # 本来[collectors]下试没有东西的,这个是我定制的一个类型
+</span><span class="line">ttype = server
+</span><span class="line">[[MongoDBCollector]] # 一般情况,有一些类型是默认enabled = True,也就是启动的,但是大部分是默认不启动《需要显示指定True
+</span><span class="line">enabled = True
+</span><span class="line">host = 127.0.0.1 # 每种类型的参数不同
+</span><span class="line">[[TCPCollector]]
+</span><span class="line">enabled = True
+</span><span class="line">[[NetworkCollector]]
+</span><span class="line">enabled = True
+</span><span class="line">[[NginxCollector]]
+</span><span class="line">enabled = False # 没开启nginx_status 开启了也没用
+</span><span class="line">[[ SockstatCollector]]
+</span><span class="line">enabled = True
+</span><span class="line">[[default]]
+</span><span class="line">### Defaults options for all Collectors
+</span><span class="line">
+</span><span class="line"># Uncomment and set to hardcode a hostname for the collector path
+</span><span class="line"># Keep in mind, periods are seperators in graphite
+</span><span class="line"># hostname = my_custom_hostname
+</span><span class="line">
+</span><span class="line"># If you prefer to just use a different way of calculating the hostname
+</span><span class="line"># Uncomment and set this to one of these values:
+</span><span class="line">
+</span><span class="line"># smart             = Default. Tries fqdn_short. If that's localhost, uses hostname_short
+</span><span class="line">
+</span><span class="line"># fqdn_short        = Default. Similar to hostname -s
+</span><span class="line"># fqdn              = hostname output
+</span><span class="line"># fqdn_rev          = hostname in reverse (com.example.www)
+</span><span class="line">
+</span><span class="line"># uname_short       = Similar to uname -n, but only the first part
+</span><span class="line"># uname_rev         = uname -r in reverse (com.example.www)
+</span><span class="line">
+</span><span class="line"># hostname_short    = `hostname -s`
+</span><span class="line"># hostname          = `hostname`
+</span><span class="line"># hostname_rev      = `hostname` in reverse (com.example.www)
+</span><span class="line">
+</span><span class="line"># hostname_method = smart
+</span><span class="line">
+</span><span class="line"># Path Prefix and Suffix
+</span><span class="line"># you can use one or both to craft the path where you want to put metrics
+</span><span class="line"># such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
+</span><span class="line"># path_prefix = servers
+</span><span class="line"># path_suffix =
+</span><span class="line">
+</span><span class="line"># Path Prefix for Virtual Machines
+</span><span class="line"># If the host supports virtual machines, collectors may report per
+</span><span class="line"># VM metrics. Following OpenStack nomenclature, the prefix for
+</span><span class="line"># reporting per VM metrics is "instances", and metric foo for VM
+</span><span class="line"># bar will be reported as: instances.bar.foo...
+</span><span class="line"># instance_prefix = instances
+</span><span class="line">
+</span><span class="line"># Default Poll Interval (seconds)
+</span><span class="line"># interval = 300
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for logging
+</span><span class="line"># for more information on file format syntax:
+</span><span class="line"># http://docs.python.org/library/logging.config.html#configuration-file-format
+</span><span class="line">
+</span><span class="line">[loggers]
+</span><span class="line">
+</span><span class="line">keys = root
+</span><span class="line">
+</span><span class="line"># handlers are higher in this config file, in:
+</span><span class="line"># [handlers]
+</span><span class="line"># keys = ...
+</span><span class="line">
+</span><span class="line">[formatters]
+</span><span class="line">
+</span><span class="line">keys = default
+</span><span class="line">
+</span><span class="line">[logger_root]
+</span><span class="line">
+</span><span class="line"># to increase verbosity, set DEBUG
+</span><span class="line">level = INFO
+</span><span class="line">handlers = rotated_file
+</span><span class="line">propagate = 1
+</span><span class="line">
+</span><span class="line">[handler_rotated_file]
+</span><span class="line">
+</span><span class="line">class = handlers.TimedRotatingFileHandler
+</span><span class="line">level = DEBUG
+</span><span class="line">formatter = default
+</span><span class="line"># rotate at midnight, each day and keep 7 days
+</span><span class="line">args = ('/home/dongwm/logs/diamond.log', 'midnight', 1, 7)
+</span><span class="line">
+</span><span class="line">[formatter_default]
+</span><span class="line">
+</span><span class="line">format = [%(asctime)s] [%(threadName)s] %(message)s
+</span><span class="line">datefmt =</span></pre></figure></notextile></div>
+
+<h5 id="section-4">启动相关服务</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo /etc/init.d/nginx reload
+</span><span class="line">sudo /sbin/chkconfig --add elasticsearch
+</span><span class="line">sudo service elasticsearch start
+</span><span class="line">sudo service carbon-cache restart
+</span><span class="line">sudo python /usr/lib/python2.6/site-packages/graphite/manage.py runserver 0.0.0.0:8020 # 启动graphite-web到8020端口</span></pre></figure></notextile></div>
+
+<h6 id="agentdiamond">在每个要搜集信息的agent上面安装Diamond,并启动:</h6>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cd /home/dongm/Diamond
+</span><span class="line">python ./bin/diamond --configfile=conf/diamond.conf
+</span><span class="line">
+</span><span class="line"># PS: 也可以添加 -l -f在前台显示</span></pre></figure></notextile></div>
+
+<h5 id="tencentcollector">自定义数据搜集类型，也就是上面的TencentCollector</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># coding=utf-8
+</span><span class="line">
+</span><span class="line">"""
+</span><span class="line">获取腾讯微博爬虫的业务指标
+</span><span class="line">"""
+</span><span class="line">
+</span><span class="line">import diamond.collector
+</span><span class="line">import pymongo
+</span><span class="line">from pymongo.errors import ConnectionFailure
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">class TencentCollector(diamond.collector.Collector): # 需要继承至diamond.collector.Collector
+</span><span class="line">    PATH = '/home/dongwm/tencent_data'
+</span><span class="line">
+</span><span class="line">    def get_default_config(self):
+</span><span class="line">        config = super(TencentCollector, self).get_default_config()
+</span><span class="line">        config.update({
+</span><span class="line">            'enabled':  'True',
+</span><span class="line">            'path':     'tencent',
+</span><span class="line">            'method':   'Threaded',
+</span><span class="line">            'ttype':    'agent' # 服务类型 包含agent和server
+</span><span class="line">        })
+</span><span class="line">        return config
+</span><span class="line">
+</span><span class="line">    def collect(self):
+</span><span class="line">        ttype = self.config['ttype']
+</span><span class="line">        if ttype == 'server':
+</span><span class="line">            try:
+</span><span class="line">                db = pymongo.MongoClient()['tmp']
+</span><span class="line">            except ConnectionFailure:
+</span><span class="line">                return
+</span><span class="line">            now_count = db.data.count()
+</span><span class="line">            try:
+</span><span class="line">                last_count = db.diamond.find_and_modify(
+</span><span class="line">                    {}, {'$set': {'last': now_count}}, upsert=True)['last']
+</span><span class="line">            except TypeError:
+</span><span class="line">                last_count = 0
+</span><span class="line">            self.publish('count', now_count)
+</span><span class="line">            self.publish('update', abs(last_count - now_count))
+</span><span class="line">        if ttype == 'agent':
+</span><span class="line">            # somethings..........</span></pre></figure></notextile></div>
+
+<h5 id="grafana-rowpanelmetric">添加你要绘图的类型. 这个就是打开grafana, 添加不同的row.给每个添加panel.选择metric的类型就好了</h5>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/sou-ji-xi-tong-xin-xi-de-dashboard/">搜集系统信息的dashboard</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-09T22:21:00+08:00" pubdate data-updated="true">Feb 9<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>过年在家无聊, 发现个挺有意思的项目: <a href="https://github.com/afaqurk/linux-dash">linux-dash</a>,就是使用Twitter的Bootstrap做的管理模板,可以显示服务器信息, 负载, 内存,进程,硬盘,用户,安装/未安装的软件信息,网卡IP,网速,以及网络状态,在线用户等. 但是有2个问题:</p>
+
+<ol>
+  <li>它是php的…</li>
+  <li>它获取信息都是通过shell下得系统命令</li>
+</ol>
+
+<p>我就用django写了一个python版的<a href="https://github.com/dongweiming/django-linux-dash">django-linux-dash</a>:本来想用flask,结果被人用了,但是问题也是通过subprocess调用命令获取数据,这个轮子有以下优点:</p>
+
+<ol>
+  <li>不仅支持linux,也支持OS X</li>
+  <li>使用<a href="http://code.google.com/p/psutil/">psutil</a>, 项目完全不调用shell命令</li>
+</ol>
+
+<h4 id="section-1">安装和使用</h4>
+
+<p>需要django&gt;=1.4以及psutils模块</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$pip install/easy_install django
+</span><span class="line">$pip install/easy_install psutil</span></pre></figure></notextile></div>
+
+<p>PS: OS X 还需要<a href="https://pypi.python.org/pypi/netifaces">netifaces</a>模块用于获取网卡ip</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$pip install/easy_install netifaces</span></pre></figure></notextile></div>
+
+<p>启动:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cd /You/install/path
+</span><span class="line">$git clone https://github.com/dongweiming/django-linux-dash &amp;&amp; cd django-linux-dash
+</span><span class="line">$python manage.py runserver 0.0.0.0:8000</span></pre></figure></notextile></div>
+
+<p>打开浏览器输入 http://localhost:8000 就可以看见了…</p>
+
+<p>TODO:</p>
+
+<ol>
+  <li>目前还没有添加测速功能,因为我希望不要一直傻瓜式的下载某文件,根据用时计算平均值,因为第一它需要时间才会显示个速度,其次是不实时不能循环实时</li>
+  <li>添加更多信息模块</li>
+  <li>增加用户登陆和权限控制
+…</li>
+</ol>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/yong-pythonpao-mapreduce/">用python跑mapreduce</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-09T23:04:00+08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>mapreduce在我的理解里一直都是java等语言的专利,介于python乃至于pypy的性能局限，
+一直没想过用python写分布式任务,最多就是多workers从消息队列取任务执行这样,但是最近一件事真的颠覆
+了我对python的认识.</p>
+
+<h4 id="section-1">先说说起因</h4>
+
+<p>某天分享<a href="http://www.dongwm.com/archives/sed-and-awk/">sed和awk</a>,领导突发奇想让我用一些顾问的实际工作需要去我们的大量数据里面获取想要的数据的需求作为一些演示的例子.其中有这样一个需求(我去掉实际一些专业晦涩的用语,用实际的内容来表达):</p>
+
+<h5 id="section-2">需求</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="mf">1.</span> <span class="err">有大量的</span><span class="n">gz</span><span class="err">压缩文件</span><span class="p">,</span> <span class="err">找到其中某</span><span class="mi">2</span><span class="err">天的数据</span><span class="p">,</span> <span class="err">每一行都是一条实际数据</span>
+</span><span class="line"><span class="mf">2.</span> <span class="err">需要解压缩每个文件</span><span class="p">,</span><span class="err">遍历每行找到用逗号隔开的第</span><span class="mi">21</span><span class="err">列为</span><span class="mi">16233</span><span class="p">,</span><span class="err">第</span><span class="mi">23</span><span class="err">列为</span><span class="mi">27188</span><span class="err">的行</span><span class="o">.</span> <span class="err">以第</span><span class="mi">2</span><span class="err">列为键计算符合的数量</span>
+</span><span class="line"><span class="mf">3.</span> <span class="err">在全部统计结果里面根据值计算符合的键的数量</span><span class="p">:</span> <span class="err">比如</span><span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="err">结果就是</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="err">也就是</span><span class="mi">2</span><span class="err">次的有</span><span class="mi">2</span><span class="err">个</span><span class="p">,</span><span class="mi">1</span><span class="err">次的只有一个</span>
+</span></pre></figure></notextile></div>
+
+<h6 id="section-3">分析</h6>
+
+<p>一上来真的想用awk来搞.但是和其他同事一聊,有几个难点:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="mf">1.</span> <span class="mi">2</span><span class="err">天数据总量在</span><span class="mi">400</span><span class="n">G</span><span class="err">以上</span><span class="p">,</span><span class="err">用</span><span class="n">awk</span><span class="err">还要保留</span><span class="mi">2</span><span class="err">次哈希结果</span><span class="o">-</span><span class="err">不可能用</span><span class="n">awk</span>
+</span><span class="line"><span class="mf">2.</span> <span class="err">用</span><span class="n">python</span><span class="p">,</span><span class="err">据同事经验说</span><span class="p">:</span><span class="err">只是解压缩这些小文件后读取什么都不做也大概</span><span class="mi">1</span><span class="err">天多的时间</span><span class="p">,</span><span class="err">完全不能忍</span>
+</span><span class="line"><span class="mf">3.</span> <span class="err">数据还没有放到</span><span class="n">hadoop</span><span class="p">,</span> <span class="err">没有其他更好更快的方法</span>
+</span></pre></figure></notextile></div>
+
+<h5 id="section-4">解题思路:</h5>
+
+<ol>
+  <li>
+    <p>最初我想做成这样:</p>
+
+    <ol>
+      <li>把需要处理的这些压缩文件放到队列里面</li>
+      <li>启动多进程出队列里面获取要处理的文件,执行,把符合的结果放到共享变量叠加</li>
+      <li>计算完成后从共享变量里面或者数据在生成上面第三条的结果</li>
+    </ol>
+  </li>
+</ol>
+
+<p>但是今天讲的是python得mapreduce,也就是我后续的版本,它源于伟大的Doug Hellmann的<a href="http://pymotw.com/2/multiprocessing/mapreduce.html">Implementing MapReduce with multiprocessing</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/usr/bin/env python</span>
+</span><span class="line"><span class="c">#coding=utf-8</span>
+</span><span class="line"><span class="c"># python mapreduce 跑数实现</span>
+</span><span class="line"><span class="c"># Author: Dongweiming</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">gzip</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">glob</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">collections</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">itertools</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">operator</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">multiprocessing</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">AdMapReduce</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_func</span><span class="p">,</span> <span class="n">reduce_func</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&#39;&#39;&#39;</span>
+</span><span class="line"><span class="sd">        num_workers: 不指定就是默认可用cpu的核数</span>
+</span><span class="line"><span class="sd">        map_func: map函数: 要求返回格式类似:[(a, 1), (b, 3)]</span>
+</span><span class="line"><span class="sd">        reduce_func: reduce函数: 要求返回格式类似: (c, 10)</span>
+</span><span class="line"><span class="sd">        &#39;&#39;&#39;</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">map_func</span> <span class="o">=</span> <span class="n">map_func</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">reduce_func</span> <span class="o">=</span> <span class="n">reduce_func</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">partition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapped_values</span><span class="p">):</span>
+</span><span class="line">        <span class="n">partitioned_data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mapped_values</span><span class="p">:</span>
+</span><span class="line">            <span class="n">partitioned_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">partitioned_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&#39;&#39;&#39;调用类的时候被触发&#39;&#39;&#39;</span>
+</span><span class="line">        <span class="c"># 其实都是借用multiprocessing.Pool.map这个函数, inputs是一个需要处理的列表,想想map函数</span>
+</span><span class="line">        <span class="c"># chunksize表示每次给mapper的量, 这个根据需求调整效率</span>
+</span><span class="line">        <span class="n">map_responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">map_func</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># itertools.chain是把mapper的结果链接起来为一个可迭代的对象</span>
+</span><span class="line">        <span class="n">partitioned_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">map_responses</span><span class="p">))</span>
+</span><span class="line">        <span class="c"># 大家想,上面的就是[(a, [1,2]), (b, [2,3]),列表中的数就是当时符合的次数,reduce就是吧列表符合项sum</span>
+</span><span class="line">        <span class="n">reduced_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reduce_func</span><span class="p">,</span> <span class="n">partitioned_data</span><span class="p">)</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">reduced_values</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">mapper_match</span><span class="p">(</span><span class="n">one_file</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第一次的map函数,从每个文件里面获取符合的条目&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">one_file</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+</span><span class="line">        <span class="n">l</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">20</span><span class="p">])</span> <span class="o">==</span> <span class="mi">16309</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">22</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2656</span><span class="p">:</span>
+</span><span class="line">            <span class="n">cookie</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class="line">            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cookie</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">output</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">reduce_match</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第一次的reduce函数,给相同的key做统计&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">cookie</span><span class="p">,</span> <span class="n">occurances</span> <span class="o">=</span> <span class="n">item</span>
+</span><span class="line">    <span class="k">return</span> <span class="p">(</span><span class="n">cookie</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occurances</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">mapper_count</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第二次mapper函数,其实就是把某key的总数做键,但是值标1&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">_</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">item</span>
+</span><span class="line">    <span class="k">return</span> <span class="p">[(</span><span class="n">count</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">reduce_count</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第二次reduce函数&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">freq</span><span class="p">,</span> <span class="n">occurances</span> <span class="o">=</span> <span class="n">item</span>
+</span><span class="line">    <span class="k">return</span> <span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occurances</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">    <span class="n">input_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;/datacenter/input/2013-12-1[01]/*&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="n">mapper</span> <span class="o">=</span> <span class="n">AdMapReduce</span><span class="p">(</span><span class="n">mapper_match</span><span class="p">,</span> <span class="n">reduce_match</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cookie_feq</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+</span><span class="line">    <span class="n">mapper</span> <span class="o">=</span> <span class="n">AdMapReduce</span><span class="p">(</span><span class="n">mapper_count</span><span class="p">,</span> <span class="n">reduce_count</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cookie_feq</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">(</span><span class="n">cookie_feq</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cookie_feq</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">freq</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">cookie_feq</span><span class="p">:</span>
+</span><span class="line">        <span class="k">print</span> <span class="s">&#39;{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">freq</span><span class="o">*</span><span class="n">count</span><span class="p">)</span>
+</span><span class="line">    <span class="c">#cookie_feq.reverse()</span>
+</span><span class="line">    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;cost:&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-5">后话</h4>
+
+<p>哇,看python做mapreduce也是可以这样优雅的, 我是用pypy跑下来,竟然只有了61分钟….</p>
+
+<p>但是其实他只是借助mapreduce思想和多核的硬件基础,其实pool做的还是文件级别的处理.假如是少量的大文件,就未必有这样好的效果了.</p>
+
+<p>我想很多时候这样的工作都可以交给这个Admapreduce类来做</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/sed-and-awk/">Sed and Awk</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-24T08:16:00+08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>最近做一个关于sed和awk的分享,这里把源码开源:<a href="https://github.com/dongweiming/sed_and_awk">sed_and_awk</a>,或者直接访问<a href="http://dongweiming.github.io/sed_and_awk">http://dongweiming.github.io/sed_and_awk</a>. 我这个ppt基本覆盖90%以上的知识点.</p>
+
+<h4 id="section-1">一些说明</h4>
+
+<p>我测试例子都是在osx下,freebsd的sed和awk和gnu的都略有不同.甚至osx下得版本都不能使用,我会在注释中说明.</p>
+
+<ul>
+  <li>
+    <p>sed</p>
+
+    <ol>
+      <li>sed 通用</li>
+      <li>/usr/local/bin/sed osx下编译的gnu sed</li>
+    </ol>
+  </li>
+  <li>
+    <p>awk</p>
+
+    <ol>
+      <li>awk 通用</li>
+      <li>gawk  osx编译的gnu awk</li>
+    </ol>
+  </li>
+</ul>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentle-quickly-submit-code-to-the-test-environment-tools/">Gentle - 帮助你快速部署代码到测试环境</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-02T21:58:00+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我想很多开发的同学都经历过这样的开发流程:</p>
+
+<ul>
+  <li>本地修改代码</li>
+  <li>把代码推到测试环境</li>
+  <li>重启测试环境需要的服务</li>
+  <li>本地看效果,改bug重复1-3</li>
+  <li>功能稳定后上线</li>
+</ul>
+
+<p>这个过程有什问题呢?</p>
+
+<ul>
+  <li>
+    <p>假设你是一个做过运维或者能力很强的人,比如我这种,本地跑测试环境,但是假如一个新人,或者对测试环境中的某些
+部分不是很了解的人, 甚至需要和生产环境完全一样的条件下, 本地可能就不好使了. 那么这需要一个测试服务器</p>
+  </li>
+  <li>首先你每次修改代码, push ,重启环境都需要你登陆测试环境,至少不够自动化.然后退回本地看效果,这个过程有点浪费时间和经理</li>
+  <li>其次是你可能有好几个项目,他们之间可能都没什么共通点. 你需要多个测试环境</li>
+  <li>当然你可以写几个脚本,为你每个测试环境写一个东西去自动化这些，未尝不可. 只是需要重复造很多轮子</li>
+  <li>假如为了安全有跳板机,你需要登陆跳板机才能跳到你的测试服务器,你可能要写很复杂的expect脚本</li>
+</ul>
+
+<p>然后是我认为最重要的:</p>
+
+<p><strong>凡是屁大点事就放个deamon的运维都是耍流氓, 就拿小屁几台服务器还搞神马salt, ansible之类的事情,真是太无聊了.</strong></p>
+
+<p>这些东西帮助你做了很多事情,但是会让你变得更懒.而且重要的是-它们写的并不一定只符合你的需要或者就不符合你的需要. 我喜欢简单粗暴的实现,最近在看<a href="https://github.com/fabric/fabric">fabric</a>的代码, 作为做过op,也给<a href="https://github.com/saltstack/salt">salt</a>贡献过代码的我,写了这个东西: <a href="https://github.com/dongweiming/gentle">gentle</a>, 帮助我自动化提交代码到我的测试环境. 这个东西是我认为符合我需要，或者大部分开发同学需要的小东西,基于fabric, <a href="https://github.com/docopt/docopt">docopt</a> 和yaml.</p>
+
+<h4 id="section-1">我的工作的一些特点</h4>
+
+<p>我负责几个项目, 它们有以下特点</p>
+
+<ul>
+  <li>项目在不同的机房, 有完整的测试环境和相关数据</li>
+  <li>项目依赖的服务基本不同,比如有的使用了supervisor, 有的是程序fork后退出了父进程;有的使用了nginx+uwsgi,有的就是nginx+服务等.</li>
+  <li>项目之间需要的依赖应用不同,且启动顺序有区别. 这个很好理解, 启动需要先启动A,再启动B,才能启动C</li>
+  <li>项目有的需要登陆跳板机</li>
+</ul>
+
+<h4 id="section-2">我以前的个人的开发习惯和流程</h4>
+
+<ul>
+  <li>我有一个专门的存放服务配置的目录, 后缀是ip或者项目的名字. git版本库, 每次更新后上传到测试环境</li>
+  <li>我有专门的op PATH, 做了很多alias, 都是一些python或者shell的脚本,用来同步测试环境,登陆测试环境撑起服务的脚本</li>
+</ul>
+
+<p>看起来以前用的也不错. 但是gentle能怎么样提高呢?</p>
+
+<h4 id="gentle">gentle的开发流程</h4>
+
+<ul>
+  <li>切换到你要开发的目录</li>
+  <li>初始化这个目录,其实就是在当前目录增加一个.gentle.yaml</li>
+  <li>根据你的需要配置测试环境账号ip密码, 想要同步的目录, 需要重启的服务和优先级已经命令</li>
+  <li>以后每次只需在这个目录下,使用<code>gt publish</code> 或者更懒 <code>gt p</code>, 他就会帮你自动rsync然后重启相关服务.</li>
+</ul>
+
+<p>具体使用可以去我的github或者<a href="http://gentle.readthedocs.org/en/latest/">readthedocs.org</a></p>
+
+<h4 id="section-3">安装和依赖</h4>
+
+<p>我已经放到了pypi, 你可以使用pip或者easy_install</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">gentle</span>
+</span></pre></figure></notextile></div>
+
+<p>这样在系统环境下会有一个<code>gt</code>命令</p>
+
+<p>fabric有2个对于项目更新的函数,一个是rsync_project,一个是upload_project, upload是把项目压缩在服务器上解压缩,实际上很浪费时间,但是rsync_project不能使用env.password,需要手动输入一次密码,都很不爽,我找到一个解决办法就是<code>sshpass</code>, 帮助自动输入rsync的密码, 我也给fabric提了PR. 我的项目使用了我个人的改进版的rsync_project</p>
+
+<p>如果你是ubuntu 直接:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">sshpass</span>
+</span></pre></figure></notextile></div>
+
+<p>其他操作系统可以在这里下载 http://sourceforge.net/projects/sshpass/ 然后编译</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">sshpass</span><span class="o">-</span><span class="mf">1.05</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">sshpass</span><span class="o">-</span><span class="mf">1.05</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">configure</span> <span class="o">&amp;&amp;</span>
+</span><span class="line"><span class="n">make</span> <span class="o">&amp;&amp;</span> <span class="n">sudo</span> <span class="n">make</span> <span class="n">install</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-4">一个我的测试环境的例子, 我加注释说明</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">host</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">3.11</span> <span class="c">#测试服务器, 格式是user@host:port</span>
+</span><span class="line"><span class="n">password</span><span class="p">:</span> <span class="n">dongwmspassword</span> <span class="c">#登录服务器需要的密码</span>
+</span><span class="line"><span class="n">gateway</span><span class="p">:</span> <span class="c">#可以不存在,中间服务器,格式是user@host:port</span>
+</span><span class="line"><span class="n">gatewaypassword</span><span class="p">:</span> <span class="c">#中间服务器(jump跳板机)的密码</span>
+</span><span class="line"><span class="n">rsync</span><span class="p">:</span> <span class="c">#这个操作是rsync</span>
+</span><span class="line">  <span class="n">lpath</span><span class="p">:</span> <span class="err">$</span><span class="n">ROOT</span> <span class="c">#你可以使用全路径, $ROOT表示当前路径,本地目录</span>
+</span><span class="line">  <span class="n">rpath</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">tornado</span> <span class="c"># 测试环境的目录</span>
+</span><span class="line"><span class="n">services</span><span class="p">:</span> <span class="c"># 每个段落就是一个服务,这里有nginx和supervisor</span>
+</span><span class="line">  <span class="n">nginx</span><span class="p">:</span>
+</span><span class="line">    <span class="n">command</span><span class="p">:</span> <span class="n">kill</span> <span class="o">-</span><span class="mi">9</span> <span class="sb">`ps -ef |grep nginx|grep -v grep|awk &#39;{print $2}&#39;`</span> <span class="o">&amp;&amp;</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nginx</span> <span class="c">#启动的命令</span>
+</span><span class="line">    <span class="n">lpath</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="c">#nginx.conf的本地地址</span>
+</span><span class="line">    <span class="n">priority</span><span class="p">:</span> <span class="mi">1</span> <span class="c">#优先级越高越先执行</span>
+</span><span class="line">    <span class="n">rpath</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="c">#测试环境的nginx.conf路径</span>
+</span><span class="line">    <span class="n">sudo</span><span class="p">:</span> <span class="n">false</span> <span class="c"># 因为这个环境很宽松 不需要sudo</span>
+</span><span class="line">    <span class="n">user</span><span class="p">:</span> <span class="c">#sudo使用的用户,默认是登陆的用户</span>
+</span><span class="line">  <span class="n">supervisor</span><span class="p">:</span>
+</span><span class="line">    <span class="n">command</span><span class="p">:</span> <span class="n">supervisorctl</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">supervisor</span><span class="o">/</span><span class="n">supervisord</span><span class="o">.</span><span class="n">conf</span> <span class="nb">reload</span>
+</span><span class="line">    <span class="n">lpath</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">settings</span><span class="o">/</span><span class="n">supervisord</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="mi">31</span>
+</span><span class="line">    <span class="n">priority</span><span class="p">:</span> <span class="mi">2</span>
+</span><span class="line">    <span class="n">rpath</span><span class="p">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">supervisor</span><span class="o">/</span><span class="n">supervisord</span><span class="o">.</span><span class="n">conf</span>
+</span><span class="line">    <span class="n">sudo</span><span class="p">:</span> <span class="n">false</span>
+</span><span class="line">    <span class="n">user</span><span class="p">:</span>
+</span><span class="line"><span class="n">username</span><span class="p">:</span> <span class="n">root</span> <span class="c">#登陆服务器的默认用户, 你可以在使用host的时候指定用户</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="issuepr">欢迎给我issue和PR</h4>
+
+<h4 id="todo">TODO</h4>
+
+<ul>
+  <li>因为很多人会用到跳板机,我想加入跳板机的用法, 看起来就像直接在本地操作远程一样 # 更新2013-12-03 完成</li>
+  <li>设置输出是否隐藏,目前保留就是为了让我看到执行的过程</li>
+  <li>设置支持多测试环境一起部署,或者说让生成环境的部署一样方便</li>
+</ul>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoo-use-stumpwm/">Gentoo使用stumpwm做桌面管理器</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-25T23:52:00+08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>以前一直使用gentoo+gnome的方法使用,说实话,gentoo做个人桌面是在很一般, 尤其是跑起来
+firefox, 虽然依然性能要比其他linux桌面发行版要好,可是我自己清楚.
+尤其是gnome的很多功能对我个人完全没有用处,还浪费了内存. 最近神奇的同事@刘喆告诉我原来还有个神奇的
+<a href="git://github.com/sabetts/stumpwm.git">stumpwm</a>, 基于common lisp的桌面管理.
+我想很多人听过awesome,但是是lua的版本. 我当然希望用我熟悉的语言.这是一篇安装配置过程的博客</p>
+
+<h4 id="section-1">安装遇到了一些问题</h4>
+
+<p>本来一般的软件都是包管理emerge stumpwm 就好啦,但是我安装后依然找不到stumpwm,
+在手动编译stumpwm的过程发现很多奇葩报错. 所以连sbcl也编译了一个</p>
+
+<h4 id="section-2">安装过程</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># 安装sbcl到/usr/local</span>
+</span><span class="line"><span class="n">wget</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">downloads</span><span class="o">.</span><span class="n">sourceforge</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">sbcl</span><span class="o">/</span><span class="n">sbcl</span><span class="o">/</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span><span class="o">/</span><span class="n">sbcl</span><span class="o">-</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span><span class="o">-</span><span class="n">source</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
+</span><span class="line"><span class="n">tar</span> <span class="n">jxvf</span> <span class="n">sbcl</span><span class="o">-</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span><span class="o">-</span><span class="n">source</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
+</span><span class="line"><span class="n">cd</span> <span class="n">sbcl</span><span class="o">-</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span>
+</span><span class="line"><span class="n">sh</span> <span class="n">make</span><span class="o">.</span><span class="n">sh</span>
+</span><span class="line"><span class="n">unset</span> <span class="n">SBCL_HOME</span>
+</span><span class="line"><span class="n">unset</span> <span class="n">INSTALL_ROOT</span>
+</span><span class="line"><span class="n">sudo</span> <span class="n">sh</span> <span class="n">install</span><span class="o">.</span><span class="n">sh</span>
+</span><span class="line">
+</span><span class="line"><span class="c">#使用commonlisp的包管理工具quicklisp.lisp</span>
+</span><span class="line">
+</span><span class="line"><span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">beta</span><span class="o">.</span><span class="n">quicklisp</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">quicklisp</span><span class="o">.</span><span class="n">lisp</span>
+</span><span class="line"><span class="n">sbcl</span> <span class="o">--</span><span class="n">load</span> <span class="n">quicklisp</span><span class="o">.</span><span class="n">lisp</span>
+</span><span class="line"><span class="p">(</span><span class="n">quicklisp</span><span class="o">-</span><span class="n">quickstart</span><span class="p">:</span><span class="n">install</span><span class="p">)</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">add</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">init</span><span class="o">-</span><span class="nb">file</span><span class="p">)</span>
+</span><span class="line"><span class="c"># 还需要以下2个依赖</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;clx&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;cl-ppcre&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 可选安装swank</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;swank&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;quicklisp-slime-helper&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 退出</span>
+</span><span class="line"><span class="p">(</span><span class="n">quit</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 下载stumpwm</span>
+</span><span class="line">
+</span><span class="line"><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">savannah</span><span class="o">.</span><span class="n">nongnu</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">stumpwm</span><span class="o">.</span><span class="n">git</span>
+</span><span class="line"><span class="n">cd</span> <span class="n">stumpwm</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">autogen</span><span class="o">.</span><span class="n">sh</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">configure</span> <span class="o">&amp;&amp;</span> <span class="n">make</span>
+</span><span class="line"><span class="n">PS</span><span class="p">:</span> <span class="err">这个</span><span class="n">make</span><span class="err">时候就算报错</span><span class="p">,</span><span class="err">也没有太大关系</span>
+</span><span class="line">
+</span><span class="line"><span class="c">#生成2进制文件 再次进入sbcl交互模式</span>
+</span><span class="line">
+</span><span class="line"><span class="p">(</span><span class="n">asdf</span><span class="p">:</span><span class="n">oos</span> <span class="s">&#39;asdf:load-op :stumpwm)</span>
+</span><span class="line"><span class="p">(</span><span class="n">sb</span><span class="o">-</span><span class="n">ext</span><span class="p">:</span><span class="n">save</span><span class="o">-</span><span class="n">lisp</span><span class="o">-</span><span class="ow">and</span><span class="o">-</span><span class="n">die</span> <span class="s">&quot;stumpwm&quot;</span> <span class="p">:</span><span class="n">executable</span> <span class="n">t</span>
+</span><span class="line">    <span class="p">:</span><span class="n">toplevel</span> <span class="c">#&#39;(lambda () (stumpwm:stumpwm &quot;:0&quot;)))</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 拷贝文件到PATH</span>
+</span><span class="line">
+</span><span class="line"><span class="n">sudo</span> <span class="n">cp</span> <span class="o">-</span><span class="n">rp</span> <span class="n">stumpwm</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 设置启动 注意是你的普通用户</span>
+</span><span class="line">
+</span><span class="line"><span class="err">$</span> <span class="n">echo</span> <span class="s">&quot;exec stumpwm&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">~/.</span><span class="n">xinitrc</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 这样你就可以使用startx启动啦</span>
+</span><span class="line">
+</span><span class="line"><span class="n">stumpwm</span><span class="err">的命令都是</span><span class="n">ctrl</span><span class="o">+</span><span class="n">t</span> <span class="err">开头的</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/how-to-use-celery/">使用celery之怎么让celery跑起来</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-24T16:46:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>自从发了上次的文章<a href="http://www.dongwm.com/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi/">使用celery之深入celery配置</a>,
+有一些网友再问我怎么让celery跑起来. 其实说来也是,celery在新手眼里真的是比较重量级,不好懂,今天先让他跑起来吧
+本文大部分代码和使用方法都可以在celery官网看到</p>
+
+<h4 id="section-1">我想要的效果</h4>
+
+<p>我想实现一个定时任务, 每3个小时的12分启动,假如是定时任务大概是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">12 */3 * * * python /where/is/the/path/that.py</span></pre></figure></notextile></div>
+
+<h4 id="mq">选择MQ</h4>
+
+<p>使用消息队列其实就是为了给任务一个时序,保证任务消息不丢失,想想你的一个任务是关乎公司核心业务,犹豫某种原因失败或者丢失怎么办?
+celery就需要这个消息的存储,我这里还是选择rabbitmq  mongodb,redis都无所谓 只是存储的位置的问题.
+选择其他的工具没有远程控制和监控</p>
+
+<p>写法就是:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">BROKER_URL = 'amqp://myuser:mypassword@localhost:5672/vhost'</span></pre></figure></notextile></div>
+
+<p>其中可以这样解析</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">amqp://user:password@hostname:port/vhost</span></pre></figure></notextile></div>
+
+<p>vhost是命名空间,就像网站的子域名,在这里由于权限控制我们需要先创建账号和密码</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$ rabbitmqctl add_user myuser mypassword
+</span><span class="line">$ rabbitmqctl add_vhost myvhost
+</span><span class="line">$ rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"</span></pre></figure></notextile></div>
+
+<h4 id="taskspy">编写tasks.py脚本</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from celery import Celery
+</span><span class="line">
+</span><span class="line">app = Celery('tasks', broker='amqp://myuser:mypassword@localhost:5672/vhost')
+</span><span class="line">
+</span><span class="line">@app.task
+</span><span class="line">def add(x, y):
+</span><span class="line">    return x + y</span></pre></figure></notextile></div>
+<p>#### 简单的使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$celery -A tasks worker --loglevel=debug</span></pre></figure></notextile></div>
+
+<p>-A指定的就是任务的程序 tasks.py  worker表示他是一个执行任务角色. 后面的记录日志类型,默认是info</p>
+
+<p>这个时候,你可以在当前目录下使用python交互模式生成一个任务</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">&gt;&gt;&gt; from tasks import add
+</span><span class="line">&gt;&gt;&gt; add.delay(4, 4)</span></pre></figure></notextile></div>
+
+<p>这个时候可以看见上面的日志里面多了一些消息,然后里面多了这个任务的信息,比如下面这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">[2013-11-24 17:11:59,369: INFO/MainProcess] Received task: tasks.add[f27994b0-3628-43a1-b136-540a360e3d64]
+</span><span class="line">[2013-11-24 17:11:59,371: INFO/MainProcess] Task tasks.add[f27994b0-3628-43a1-b136-540a360e3d64] succeeded in 0.00102571400021s: 8</span></pre></figure></notextile></div>
+
+<p>可以看见你的任务被执行了</p>
+
+<h4 id="python-">假如我使用python的包, 就像一个应用,让代码结构化一些</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$tree proj
+</span><span class="line">proj
+</span><span class="line">├── __init__.py
+</span><span class="line">├── celery.py
+</span><span class="line">└── tasks.py</span></pre></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat proj/celery.py
+</span><span class="line">from __future__ import absolute_import
+</span><span class="line">from celery import Celery
+</span><span class="line">app = Celery('proj',
+</span><span class="line">              broker='amqp://myuser:mypassword@localhost:5672/vhost',
+</span><span class="line">              backend='amqp://',
+</span><span class="line">              include=['proj.tasks'])
+</span><span class="line">app.conf.update(CELERY_TASK_RESULT_EXPIRES=3600,)
+</span><span class="line">if __name__ == '__main__':
+</span><span class="line">    app.start()</span></pre></figure></notextile></div>
+
+<p>上面的broker就是消息存储的地址
+backend是存储任务执行情况的,比如正在执行，执行失败, 已经执行结果.
+include表示执行的任务的代码都放在哪个程序里面,比如这里的proj.tasks就是proj/tasks.py</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat proj/tasks.py
+</span><span class="line">from __future__ import absolute_import
+</span><span class="line">
+</span><span class="line">from proj.celery import app
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">@app.task
+</span><span class="line">def add(x, y):
+</span><span class="line">    return x + y</span></pre></figure></notextile></div>
+
+<p>其中的app.task是一个装饰器, 你可以在tasks.py里面加很多函数,但是celery只会找带这个装饰器的函数当成一种任务去执行
+你可以有多个这样的脚本,只要在上面的celery.py的include的列表中指定</p>
+
+<p>好吧 我们可以这样启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$celery worker --app=proj -l info</span></pre></figure></notextile></div>
+
+<p>proj 就是我们刚才应用的项目目录</p>
+
+<h4 id="section-2">给我们的项目任务放到特定的队列</h4>
+
+<p>可能你有很多的任务,但是你希望某些机器跑某些任务, 你可以希望有些任务优先级比较高,而不希望
+先进先出的等待. 那么需要引入一个队列的问题. 也就是说在你的broker的消息存储里面有一些队列，他们并行运行，但是worker只从对应
+的队列里面取任务.</p>
+
+<p>我们要修改配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat proj/celery.py
+</span><span class="line">from __future__ import absolute_import
+</span><span class="line">from celery import Celery
+</span><span class="line">app = Celery('proj',
+</span><span class="line">              broker='amqp://myuser:mypassword@localhost:5672/vhost',
+</span><span class="line">              backend='amqp://',
+</span><span class="line">              include=['proj.tasks'])
+</span><span class="line">app.conf.update(
+</span><span class="line">    CELERY_ROUTES = {
+</span><span class="line">            'proj.tasks.add': {'queue': 'hipri'},
+</span><span class="line">                },
+</span><span class="line">                )
+</span><span class="line">if __name__ == '__main__':
+</span><span class="line">    app.start()</span></pre></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">celery -A proj worker -Q hipri #这个worker只处理hipri这个队列的任务</span></pre></figure></notextile></div>
+
+<p>你会发现add这个函数任务被放在一个叫做’hipri’的队列里面，想要执行那么也需要改:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from proj.tasks import add
+</span><span class="line">add.apply_async((2, 2), queue='hipri')</span></pre></figure></notextile></div>
+
+<h4 id="beat">使用beat自动调度</h4>
+
+<p>想想吧. 目前还是交互模式去手动执行, 我们要是想crontab的定时生成和执行,那么就是celery beat干的事情</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from __future__ import absolute_import
+</span><span class="line">
+</span><span class="line">from datetime import timedelta
+</span><span class="line">from celery import Celery
+</span><span class="line">
+</span><span class="line">app = Celery('proj',
+</span><span class="line">             broker='amqp://myuser:mypassword@localhost:5672/vhost',
+</span><span class="line">             backend='amqp://',
+</span><span class="line">              include=['proj.tasks'])
+</span><span class="line">
+</span><span class="line">app.conf.update(
+</span><span class="line">    CELERY_ROUTES = {
+</span><span class="line">        'proj.tasks.add': {'queue': 'hipri'},
+</span><span class="line">    },
+</span><span class="line">
+</span><span class="line">    CELERYBEAT_SCHEDULE = {
+</span><span class="line">        "add": {
+</span><span class="line">                "task": "proj.tasks.add",
+</span><span class="line">                "schedule": timedelta(seconds=10),
+</span><span class="line">                "args": (16, 16)
+</span><span class="line">                }, },
+</span><span class="line">                )
+</span><span class="line">
+</span><span class="line">if __name__ == '__main__':
+</span><span class="line">    app.start()
+</span></pre></figure></notextile></div>
+
+<p>注意发现了一个CELERYBEAT_SCHEDULE,里面的调度其实就是表示10秒生成一次,worker启动方法一样,
+这里启动beat,他就是按时生成任务发到MQ里面,让worker取走去执行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">celery -A proj beat</span></pre></figure></notextile></div>
+
+<p>其实也可以在worker命令中加-B</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">celery -A proj worker -B -Q hipri -l debug</span></pre></figure></notextile></div>
+
+<p>刚才的CELERYBEAT_SCHEDULE也可以使用crontab的风格，比如我说的没3小时的12分就可以这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from celery.schedules import crontab
+</span><span class="line">
+</span><span class="line">CELERYBEAT_SCHEDULE = {
+</span><span class="line">        "add": {
+</span><span class="line">                "task": "tasks.add",
+</span><span class="line">                "schedule": crontab(hour="*/3", minute=12),
+</span><span class="line">                "args": (16, 16),
+</span><span class="line">                },
+</span><span class="line">            }</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/a-data-analysis-site-by-flask-and-mongoengine/">一个flask+mongoengine的site</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-20T17:39:00+08:00" pubdate data-updated="true">Nov 20<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>最近一直学习emacs和elisp, 也在做关于mongodb相关的研究,闲来无事就做了个网站,后端使用了flask, mongoengine, 前端css框架用的是
+雅虎的<a href="https://github.com/yui/pure">pure</a>, 还是用了神奇的<a href="https://github.com/gruntjs/grunt">grunt</a>做页面修改的livereload, 然后有d3,
+jquery, amchart和一个最近发现的页面消息弹出<a href="https://github.com/CodeSeven/toastr">toastr</a>.想学习flask和mongoengine的童鞋可直接拿去,开源地址是
+<a href="https://github.com/dongweiming/data-analysis">data-analysis</a></p>
+
+<h4 id="section-1">下载依赖和启动</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">data</span><span class="o">-</span><span class="n">analysis</span>
+</span><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="c"># 安装grunt</span>
+</span><span class="line"><span class="n">npm</span> <span class="n">install</span>
+</span><span class="line"><span class="c"># 我的后端样例数据</span>
+</span><span class="line"><span class="n">mongorestore</span> <span class="o">-</span><span class="n">d</span> <span class="n">fetch_data</span> <span class="o">--</span><span class="n">directoryperdb</span> <span class="n">dump</span><span class="o">/</span><span class="n">fetch_data</span>
+</span><span class="line"><span class="n">cd</span> <span class="n">data_analysis</span>
+</span><span class="line"><span class="c"># 启动Grunt</span>
+</span><span class="line"><span class="n">grunt</span>
+</span><span class="line"><span class="c"># 启动</span>
+</span><span class="line"><span class="n">python</span> <span class="n">run</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="c"># 然后打开 http://Youip:5000</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/4/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/2/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

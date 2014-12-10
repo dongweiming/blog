@@ -1,0 +1,27 @@
+---
+layout: post
+title: 关于webbrowser研究
+categories:
+- python模块研究
+tags:
+- webbrowser
+published: true
+comments: true
+indexer: true
+---
+<p>前言：利用webbrowser模块可以向用户显示web页面，在一个交互式的浏览程序中, webbrowser模块提供了一些用于打开URL链接的函数. 在系统中安装的浏览器, 通过模块的许多选项可以来获取利用他们. 也可通过环境变量BROWSER来控制.</p>
+
+<p><pre class="sh_python">
+import webbrowser</p>
+
+<p>webbrowser.open('http://www.dongwm.com') #浏览器中打开一个页面,如果当前已经有一个浏览器窗口, 那么会做为一个新标签打开.
+webbrowser.open_new('http://www.dongwm.com') #在新窗口中打开页面,
+webbrowser.open_new_tab('http://www.dongwm.com') #新的标签中打开页面</p>
+
+<p>b = webbrowser.get('lynx') #通过get(),使用特定的浏览器  也可以用BROWSER=lynx python test.py 的方式指定lynx
+b.open('http://www.dongwm.com') #也提供了open()、open_new()和open_new_tab()函数
+</pre></p>
+
+<p>注：可以直接命令行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python -m webbrowser -n http://www.dongwm.com</p>

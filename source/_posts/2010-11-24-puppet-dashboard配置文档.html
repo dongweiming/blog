@@ -1,0 +1,153 @@
+---
+layout: post
+title: Puppet Dashboard配置文档
+categories:
+- puppet
+tags:
+- Dashboard
+- puppet
+- report
+published: true
+comments: true
+indexer: true
+---
+<p>前言：为了在webGUI上面管理puppet，查看report信息，可以使用puppet项目组推出的dashboard面板。<!--more-->
+配置前准备：
+1 确认ruby版本（官方要求的版本1.8.4到1.8.7）：
+#ruby -v
+ruby 1.8.5 (2006-08-25) [x86_64-linux]
+注：后面会安装rake，它会提示我们的ruby版本要&gt;1.8.6（本文主要针对编译安装，对于yum安装直接yum  install rubygems即可）
+如果不升级，安装的rubygem的版本要低于1.3.1.
+<code>#rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
+#rpm -Uvh http://download.elff.bravenet.com/5/x86_64/elff-release-5-3.noarch.rpm
+#yum install ruby ruby-shadow ruby-ri ruby-rdoc gcc gcc-c++ ruby-devel -y</code>
+现在：
+# ruby -v
+ruby 1.8.6 (2010-02-05 patchlevel 399) [x86_64-linux]
+3 安装 mysql-devel和 ruby-mysql（ruby-masql也可以 使用gem install mysql安装）
+#yum install ruby-mysql mysql-devel mysql mysql-server
+3 启动mysql：
+#service mysqld start
+#chkconfig mysqld on
+4 安装GEM软件包安装器
+#wget http://production.cf.rubygems.org/rubygems/rubygems-1.3.5.tgz
+注：1.3.5版本以上和centos5.5不兼容。
+# tar zxvf rubygems-1.3.5.tgz
+# cd rubygems-1.3.5
+# ruby setup.rb
+5 安装rake
+#gem install rake
+显示如下：
+Successfully installed rake-0.8.7
+1 gem installed
+Installing ri documentation for rake-0.8.7...
+Installing RDoc documentation for rake-0.8.7...
+下载安装Dashboard：
+#wget <a href="http://puppetlabs.com/downloads/dashboard/puppet-dashboard-1.0.4.tgz">http://puppetlabs.com/downloads/dashboard/puppet-dashboard-1.0.4.tgz</a>
+#tar zxvf puppet-dashboard-1.0.4.tgz –C  /usr/local/puppet-dashboard
+给mysql创建一个mysql数据库，并且指定用户给puppet
+创建一个软连接（根据个人配置）：
+#ln -s /tmp/mysql.sock /var/lib/mysql/mysql.sock
+[ccine_perl]#mysql
+mysql&gt; create database dashboard default charset utf8;
+Query OK, 1 row affected (0.00 sec)
+mysql&gt; use dashboard
+Database changed
+mysql&gt; grant all on dashboard.* to dashboard@localhost identified by 'dashboard' ;
+Query OK, 0 rows affected (0.02 sec)
+mysql&gt; flush privileges;
+Query OK, 0 rows affected (0.00 sec)[/ccine_perl]
+下面的重点：先进入面板的安装目录，在进行下面的操作：
+#cd /usr/local/puppet-dashboard
+给面板建立一个数据库的Yml文件，因为有默认的database.yml.example 复制一下。
+# cp config/database.yml.example config/database.yml
+修改database.yml，我们使用生产环境，所以在以下位置修改：
+[ccine_perl]production:
+database: dashboard
+username: dashboard
+password: dashboard
+encoding: utf8
+adapter: mysql[/ccine_perl]
+使用rake任务创建刚从在config / database.yml文件设置的数据库
+# rake RAILS_ENV=production db:create
+出现如下：
+(in /usr/local/puppet-dashboard)
+!!! The bundled mysql.rb driver has been removed from Rails 2.2. Please install the mysql gem and try again: gem install mysql.
+rake aborted!
+no such file to load – mysql（没有安装mysql的问题，下面执行前确保先安装mysql－devel）
+# gem install mysql
+# rake RAILS_ENV=production db:migrate（为典型的生产环境配置）</p>
+
+<p>Ok 可以启动了！
+这个面板是自带web的，所以不需要apache支持（和apache结合看后来的文章）
+# script/server -p 3100 －d （“－d”表示后台运行）
+假设我们使用3100端口（默认3000）</p>
+
+<p>Web报告功能：</p>
+
+<p>1  首先在master端新增一个配置文件：
+# vi /etc/puppet/manifests/site.pp
+添加以下内容：
+[ccine_perl]# Create /tmp/testfile
+class test_class {
+file {
+"/tmp/testfile":
+name =&gt; "/tmp/testfile",
+mode =&gt; 666,
+owner =&gt; root,
+group =&gt; root;
+}
+}
+# tell puppet on which client to run the class
+node 'client.dongwm.com' {
+include test_class
+}[/ccine_perl]</p>
+
+<p>Server端配置：</p>
+
+<p>注：yum安装puppet的版本号是0.25.X，编译安装的版本号是2.6.X，配置略有不同请注意
+# puppetmasterd --configprint libdir</p>
+
+<p># vi /etc/puppet/puppet.conf
+在【main】添加以下内容：
+reports = http, store
+启动puppetmaster
+/etc/init.d/puppetmaster restart</p>
+
+<p>client端配置：
+# vi /etc/puppet/puppet.conf
+在【agent】添加以下内容：
+report = true</p>
+
+<p>启动puppet：
+/etc/init.d/puppet restart</p>
+
+<p>在web面板里面添加我们配置的node</p>
+
+<p>点击 左中的add class
+添加test_class（上面的site.pp已定义）
+<img title="puppet1" src="http://farm6.static.flickr.com/5042/5212915089_2187bed67c_m.jpg" alt="" width="240" height="131" /></p>
+
+<p>点击创建！
+点击左中的add group</p>
+
+<p>添加root组：
+<img title="puppet2" src="http://farm6.static.flickr.com/5126/5213511620_41564e529e_m.jpg" alt="" width="240" height="204" />
+点击创建</p>
+
+<p>最后增加node，点开左中的add node</p>
+
+<p>增加client.dongwm.com 这个node
+<img title="puppet3" src="http://farm6.static.flickr.com/5287/5213512034_3067298e97_m.jpg" alt="" width="240" height="192" /></p>
+
+<p>找到puppetmaster的lib目录
+#puppetmasterd --configprint libdir
+/var/lib/puppet/lib</p>
+
+<p>#mkdir –p  /var/lib/puppet/lib/puppet/reports/
+#cp ext/puppet/puppet_dashboard.rb /var/lib/puppet/lib/puppet/reports/
+#/var/lib/puppet/lib/puppet/reports/puppet_dashboard.rb
+导入现有的报告
+#rake RAILS_ENV=production reports:import /var/lib/puppet/lib/puppet/reports/
+以下是成功后的界面：
+<img title="puppet4" src="http://farm6.static.flickr.com/5283/5212916269_66c26dc268_m.jpg" alt="" width="240" height="122" /></p>

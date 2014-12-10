@@ -1,0 +1,127 @@
+---
+layout: post
+title: 关于contextlib研究
+categories:
+- python模块研究
+tags:
+- contextlib
+- contextlib.nested
+published: true
+comments: true
+indexer: true
+---
+<p>前言：本模块在python2.5及以上版本可用，主要用来上下文管理</p>
+
+<p>看一个其他的例子：</p>
+
+<p><pre class="sh_python">
+class WithinContext(object):</p>
+
+<p>    def __init__(self, context):
+        print 'WithinContext.__init__(%s)' % context</p>
+
+<p>    def do_something(self):
+        print 'WithinContext.do_something()'</p>
+
+<p>    def __del__(self):
+        print 'WithinContext.__del__'</p>
+
+<p>class Context(object):</p>
+
+<p>    def __init__(self):
+        print 'Context.__init__()'</p>
+
+<p>    def __enter__(self):   #返回一个上下文内使用的对象
+        print 'Context.__enter__()'
+        return WithinContext(self)</p>
+
+<p>    def __exit__(self, exc_type, exc_val, exc_tb):  #清理正在用的资源
+        print 'Context.__exit__()'</p>
+
+<p>with Context() as c:
+    c.do_something()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Context.__init__()
+Context.__enter__()
+WithinContext.__init__(&lt;__main__.Context object at 0xb749c94c&gt;)
+WithinContext.do_something()
+Context.__exit__()
+WithinContext.__del__</p>
+
+<p><strong>1 使用contextlib：</strong></p>
+
+<p><pre class="sh_python">
+import contextlib</p>
+
+<p>@contextlib.contextmanager #使用装饰器自动写一个带 <tt>__enter__()</tt> <tt>和 __exit__()</tt> 的类
+def make_context():
+    print 'entering'
+    try:
+        yield {}
+    finally:
+        print 'exiting'
+with make_context() as value:
+    print 'inside with statement:', value
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+entering
+inside with statement: {}
+exiting</p>
+
+<p><strong>2嵌套上下文</strong></p>
+
+<p><pre class="sh_python">
+import contextlib</p>
+
+<p>@contextlib.contextmanager
+def make_context(name):
+    print 'entering',name
+    yield name
+    print 'exiting',name
+with contextlib.nested(make_context('A'), make_context('B'), make_context('C')) as (A, B, C):  #同时管理三个上下文
+    print 'inside with statement:', A,B,C
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+entering A
+entering B
+entering C
+inside with statement: A B C
+exiting C
+exiting B
+exiting A
+注python2.7及更高，with关键字已经支持嵌套可以这样：
+with make_context('A') as A, make_context('B') as B, make_context('C') as C:
+    print 'inside with statement:', A, B, C
+<strong>3 关闭打开的句柄</strong>
+为了确保一个句柄被关闭，使用<tt>closing()</tt>
+<pre class="sh_python">
+cat test.py
+import contextlib</p>
+
+<p>class Door(object):
+    def __init__(self):
+        print '__init__()'
+    def close(self):
+        print 'close()'</p>
+
+<p>with contextlib.closing(Door()) as door:
+    print 'inside with statement'
+</pre>
+执行过程：
+dongwm@linux-dongwm:~&gt; python test.py
+__init__()
+inside with statement
+close()</p>
+
+<p></p>

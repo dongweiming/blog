@@ -1,0 +1,2630 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/10">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuosyanjiu/">关于os研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：os可谓python模块最常用模块之一了，也称作：操作系统混合接口，包含的大部分函数用于创建和管理活动进程和文件系统(文件和目录)，但是有些函数在windows上无法使用</p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>TEST_GID=501
+TEST_UID=527</p>
+
+<p>def show_user_info():
+     print 'Effective User  :', os.geteuid()
+     print 'Effective Group :', os.getegid()
+     print 'Actual User    :', os.getuid(), os.getlogin()
+     print 'Actual Group  :', os.getgid()
+     print 'Actual Groups   :', os.getgroups()
+     return</p>
+
+<p>print 'BEFORE CHANGE:'
+show_user_info()
+print
+try:
+     os.setegid(TEST_GID)  #改变这个进程的用户和组属性. 需要root权限，否则改不了
+except OSError:
+     print 'ERROR: Could not change effective group.  Re-run as root.'
+else:
+     print 'CHANGED GROUP:'
+     show_user_info()
+     print</p>
+
+<p>try:
+     os.seteuid(TEST_UID)
+except OSError:
+     print 'ERROR: Could not change effective user.  Re-run as root.'
+else:
+     print 'CHANGE USER:'
+     show_user_info()
+     print
+print 'Initial value:', os.environ.get('TESTVAR', None) #访问在环境中设置的环境变量
+print 'Child process:'
+os.system('echo $TESTVAR')  #os.system通过一个shell中的子进程执行系统命令，但是现在不推荐这个函数.它可以包含shell语法, 比如通配符或环境变量:</p>
+
+<p>os.environ['TESTVAR'] = 'THIS VALUE WAS CHANGED'</p>
+
+<p>print
+print 'Changed value:', os.environ['TESTVAR']
+print 'Child process:'
+os.system('echo $TESTVAR')</p>
+
+<p>del os.environ['TESTVAR']</p>
+
+<p>print
+print 'Removed value:', os.environ.get('TESTVAR', None)
+print 'Child process:'
+os.system('echo $TESTVAR')
+print 'Starting:', os.getcwd()  #类似于执行命令pwd，获取当前目录
+print os.listdir(os.curdir)  #列出当前目录下所有文件和文件夹</p>
+
+<p>print 'Moving up one:', os.pardir  
+os.chdir(os.pardir) #改变目录到当前目录的上一级目录，想过类似于： cd .. </p>
+
+<p>print 'After move:', os.getcwd()
+print os.listdir(os.curdir)
+</pre></p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>print '\npopen, read:'
+pipe_stdout = os.popen('echo "to stdout"', 'r')  #os.popen是管道函数
+try:
+    stdout_value = pipe_stdout.read() #标准输出流
+finally:
+    pipe_stdout.close()
+print '\tstdout:', repr(stdout_value)</p>
+
+<p>print '\npopen, write:'
+pipe_stdin = os.popen('cat -', 'w')
+try:
+    pipe_stdin.write('\tstdin: to stdin\n') #标准输入流
+finally:
+    pipe_stdin.close()
+print '\npopen2:'
+pipe_stdin, pipe_stdout = os.popen2('cat -')  #popen2()函数返回一个与子进程标准输入绑定的只写流和一个与子进程标准输出绑定的只读流
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()</p>
+
+<p>try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+print '\npopen3:'
+pipe_stdin, pipe_stdout, pipe_stderr = os.popen3('cat -; echo ";to stderr" 1&gt;&amp;2') #popen3函数返回一个新进程的3个流stdin、stdout、stderr
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+try:
+    stderr_value = pipe_stderr.read()
+finally:
+    pipe_stderr.close()
+print '\tstderr:', repr(stderr_value)
+print '\npopen4:'
+pipe_stdin, pipe_stdout_and_stderr = os.popen4('cat -; echo ";to stderr" 1&gt;&amp;2') # popen4()返回两个流, stdin和stdout/stderr的组合,
+                                                # 这对于命令的结果需要被记录, 但不需要解析是很有用的.
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout_and_stderr.read()
+finally:
+    pipe_stdout.close()
+print '\tcombined output:', repr(stdout_value)
+print '\npopen2, cmd as sequence:'
+pipe_stdin, pipe_stdout = os.popen2(['cat', '-']) #popen2()、popen3()、popen4()函数同样接收字符串序列(命令, 加参数)
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+</pre></p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>print 'Testing:', __file__
+print 'Exists:', os.access(__file__, os.F_OK) #os.access()可以测试一个进程对一个文件是否有可访问权限.os.F_OK测试存在,返回布尔值
+print 'Readable:', os.access(__file__, os.R_OK) #os.R_OK测试可读,返回布尔值
+print 'Writable:', os.access(__file__, os.W_OK) #os.W_OK测试可写,返回布尔值
+print 'Executable:', os.access(__file__, os.X_OK) #os.X_OK测试可读,返回布尔值
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Testing: test.py
+Exists: True
+Readable: True
+Writable: True
+Executable: False
+<pre class="sh_python">
+import os
+import sys
+import time</p>
+
+<p>if len(sys.argv) == 1:
+    filename = __file__
+else:
+    filename = sys.argv[1]</p>
+
+<p>stat_info = os.stat(filename)</p>
+
+<p>print 'os.stat(%s):' % filename
+print '\tSize:', stat_info.st_size  #字节数
+print '\tPermissions:', oct(stat_info.st_mode) #文件权限
+print '\tOwner:', stat_info.st_uid  #文件uid（拥有者）
+print '\tDevice:', stat_info.st_dev #文件所在文件设备
+print '\tLast modified:', time.ctime(stat_info.st_mtime)  #文件修改时间（最近一次）
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+os.stat(test.py):
+Size: 388
+Permissions: 0100644
+Owner: 1000
+Device: 2055
+Last modified: Thu Jul  5 11:19:28 2012
+<pre class="sh_python">
+import os
+import stat</p>
+
+<p>existing_permissions = stat.S_IMODE(os.stat(__file__).st_mode)  #确定哪些权限已设置使用</p>
+
+<p>if not os.access(__file__, os.X_OK):
+    print 'Adding execute permission'
+    new_permissions = existing_permissions | stat.S_IXUSR #添加权限
+else:
+    print 'Removing execute permission'
+    new_permissions = existing_permissions ^ stat.S_IXUSR   #去掉权限</p>
+
+<p>os.chmod(__file__, new_permissions)
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import sys
+import tempfile dir_name = 'os_directories_example'</p>
+
+<p>print 'Creating', dir_name
+os.makedirs(dir_name)  #创建文件夹</p>
+
+<p>file_name = os.path.join(dir_name, 'example.txt')
+print 'Creating', file_name
+f = open(file_name, 'wt')  #添加文件
+try:
+    f.write('example file')
+finally:
+    f.close()</p>
+
+<p>print 'Listing', dir_name
+print os.listdir(dir_name)</p>
+
+<p>print 'Cleaning up'
+os.unlink(file_name)  #相当于删掉文件
+os.rmdir(dir_name)  #删除文件夹
+link_name = tempfile.mktemp()</p>
+
+<p>print 'Creating link %s-&gt;%s' % (link_name, __file__)
+os.symlink(__file__, link_name)  #创建符号链接 ，类似于ln -s</p>
+
+<p>stat_info = os.lstat(link_name) #链接文件的状态
+print 'Permissions:', oct(stat_info.st_mode)</p>
+
+<p>print 'Points to:', os.readlink(link_name)  #链接文件源文件
+os.unlink(link_name)
+if len(sys.argv) == 1:
+    root = '/tmp'
+else:
+    root = sys.argv[1]</p>
+
+<p>for dir_name, sub_dirs, files in os.walk(root):  #os.walk()可以递归遍历一个目录
+    print '\n', dir_name
+    sub_dirs = [ '%s/' % n for n in sub_dirs ]
+    contents = sub_dirs + files
+    contents.sort()
+    for c in contents:
+        print '\t%s' % c
+</pre></p>
+
+<p><pre class="sh_python">
+pid = os.fork() #创建一个新进程作为当前进程的一个复本,当fork之后, 你结束这两个运行着相同代码的进程. 可以检查返回值来直到你在哪个进程中. 
+                #如果它是0, 表示你在子进程中, 如果不是0, 则表示你在父进程中, 它返回的值是其子进程的进程id.</p>
+
+<p>if pid:
+    print 'Child process id:', pid
+else:
+    print 'I am the child'
+</pre></p>
+
+<p><pre class="sh_python"></p>
+
+<p>import os
+import signal
+import time</p>
+
+<p>def signal_usr1(signum, frame):
+    pid = os.getpid()
+    print 'Received USR1 in process %s' % pid
+print 'Forking...'
+child_pid = os.fork()
+if child_pid: ## 这个是父进程执行的代码
+    print 'PARENT: Pausing before sending signal...'
+    time.sleep(1)
+    print 'PARENT: Signaling %s' % child_pid
+    os.kill(child_pid, signal.SIGUSR1) #父进程中, 通过 <tt>os.kill()</tt> 发送一个USR1信号之前暂停一段时间. 这短的暂停让子进程有时间去设置信号处理句柄
+else: #在子进程中, 我们设置信号处理句柄后睡眠一段时间来让父进程有时间去发送信号给我们
+    print 'CHILD: Setting up signal handler'
+    signal.signal(signal.SIGUSR1, signal_usr1)
+    print 'CHILD: Pausing to wait for signal'
+    time.sleep(5)
+</pre></p>
+
+<p>执行分析：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Forking&#8230;
+PARENT: Pausing before sending signal&#8230;
+CHILD: Setting up signal handler
+CHILD: Pausing to wait for signal
+PARENT: Signaling 1946
+Received USR1 in process 1946
+<pre class="sh_python">
+child_pid = os.fork()
+if child_pid:
+    os.waitpid(child_pid, 0) #指示父进程等候一个指定的子进程终止
+else:
+    os.execlp('ls', 'ls', '-l', '/tmp/') ## 执行多个子进程.有很多 <tt>exec*()</tt> 的变种, 它们依赖于你可能使用的参数, 如, 你是否想要路径和父进程的环境变量都被复制到子进程中
+os.spawnlp(os.P_WAIT, 'ls', 'ls', '-l', '/tmp/') #方便起见, <tt>os.spawn*()</tt> 系列函数将 <tt>fork()</tt> 和 <tt>exec*()</tt> 调用写在一条语句中
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+import os
+import sys
+import time</p>
+
+<p>for i in range(3):
+    print 'PARENT: Forking %s' % i
+    worker_pid = os.fork()
+    if not worker_pid:
+        print 'WORKER %s: Starting' % i
+        time.sleep(2 + i)
+        print 'WORKER %s: Finishing' % i
+        sys.exit(i)</p>
+
+<p>for i in range(3):
+    print 'PARENT: Waiting for %s' % i
+    done = os.wait() #多个进程来运行各自的任务, 你希望在开始新的进程之前等待其中一个或多个的结束, 以此来避免服务器的超载.
+                     #返回值是包含进程号和退出状态(一个16位的数字, 它的低字节是一个杀死该进程的信号数字, 它的高字节是退出状态)的一个元组.
+    print 'PARENT:', done
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuos-pathyanjiu/">关于os.path研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：os.path子库主要更容易地在跨平台上对文件名和路径进行解析, 创建, 测试和其他操作.</p>
+
+<p><pre class="sh_python">
+import os.path</p>
+
+<p>for path in [ '/one/two/three','/one/two/three/','/',',']:
+    print '"%s" : "%s"' % (path, os.path.split(path)) #<tt>split()</tt> 函数将路径切分成两个两部分并返回一个元组, 它的第二个元素是路径的最后一部份, 第一个元素是路径的前面部分.
+    print '"%s" : "%s"' % (path, os.path.basename(path)) #basename() 返回的值和 <tt>split()</tt> 返回的第二个值相同.
+    print '"%s" : "%s"' % (path, os.path.dirname(path)) #dirname() 返回的值是和 <tt>split()</tt> 返回的第一个值相同.
+    print '"%s" :' % path, os.path.splitext(path) #splitext() 和 <tt>split()</tt> 类似但是分隔路径的扩展名, 而不是目录名.
+paths = ['/one/two/three/four','/one/two/threefold','/one/two/three/',] # 取一个路径列表作为参数, 返回一个单一的字符串表示这些路径公共的前缀. 这个值可能是一个实际上不存在的路径. 路径分割符是被忽略的
+print os.path.commonprefix(paths)
+</pre></p>
+
+<p><pre class="sh_python">
+import os.path
+import os
+for parts in [ ('one', 'two', 'three'),('/', 'one', 'two', 'three'),('/one', '/two', '/three'),]:
+    print parts, ':', os.path.join(*parts)  #可以使用 <tt>join()</tt> 将多个路径部分组合成一个单个值
+for user in [ '', 'dongwm', 'postgres' ]:
+    lookup = '~' + user
+    print lookup, ':', os.path.expanduser(lookup)  # <tt>expanduser()</tt> 可以将波浪线(~)扩展成用户的主目录.
+os.environ['MYVAR'] = 'VALUE'
+print os.path.expandvars('/path/to/$MYVAR')  #获取出现在路径中的环境变量.
+for path in [ '.', '..', './one/two/three', '../one/two/three']:
+    print '"%s" : "%s"' % (path, os.path.abspath(path))  #使用 abspath() 将一个相对路径转换成绝对路径.
+</pre>
+<pre class="sh_python">
+import os.path
+import time</p>
+
+<p>print 'File :', __file__
+print 'Access time :', time.ctime(os.path.getatime(__file__)) #最后一次访问文件或目录的时间
+print 'Modified time:', time.ctime(os.path.getmtime(__file__)) #最后一次修改文件或目录的时间
+print 'Change time :', time.ctime(os.path.getctime(__file__)) #最后一次改变文件或目录(改变的是原数据即:属性)的时间
+print 'Size :', os.path.getsize(__file__)
+</pre>
+<pre class="sh_python">
+for file in [ __file__, os.path.dirname(__file__), '/', './broken_link']:
+    print 'File :', file
+    print 'Absolute :', os.path.isabs(file)  #判断是否是绝对路径，返回布尔值
+    print 'Is File? :', os.path.isfile(file)#判断是否是文件，返回布尔值
+    print 'Is Dir? :', os.path.isdir(file)  #判断是否是目录，返回布尔值
+    print 'Is Link? :', os.path.islink(file) #判断是否是链接文件，返回布尔值
+    print 'Mountpoint? :', os.path.ismount(file)#判断是否是挂载文件，返回布尔值
+    print 'Exists? :', os.path.exists(file) #判断是否存在，返回布尔值
+    print 'Link Exists?:', os.path.lexists(file) #判断是否符号链接存在，返回布尔值
+    print
+def visit(arg, dirname, names):
+    print dirname, arg
+    for name in names:
+        subname = os.path.join(dirname, name)
+        if os.path.isdir(subname):
+            print ' %s/' % name
+        else:
+            print ' %s' % name
+    if '.svn' in names:
+        names.remove('.svn')  #假如是.svn 去掉
+    print</p>
+
+<p>os.path.walk('..', visit, '(User data)') #遍历树中的所有目录, 并调用一个你提供的函数, 同时将目录名和目录中包含内容的名字传递给这个函数
+
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyumultiprocessingyanjiuyi/">关于multiprocessing研究(一)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：multiprocessing是一个使用方法类似threading模块的进程模块，允许程序员做并行开发，从python2.6开始内置</p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import logging,sys
+def worker():
+    print 'Worker'
+    sys.stdout.flush() 
+    return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        multiprocessing.log_to_stderr(logging.DEBUG)  #记录日志,也可以使用一下注释的三句
+        #multiprocessing.log_to_stderr() 
+        #logger = multiprocessing.get_logger() 
+        #logger.setLevel(logging.INFO)
+        p = multiprocessing.Process(target=worker)  #实例化Process
+        jobs.append(p)
+        p.start() #调用start()开始，类似于threading.Thread
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>def worker(num): #带参数的函数
+    print 'Worker:', num
+    return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = multiprocessing.Process(target=worker, args=(i,)) #带参数的目标
+        jobs.append(p)
+        p.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def worker():
+    name = multiprocessing.current_process().name  #当前进程名字
+    print name, 'Starting'
+    time.sleep(2)
+    print name, 'Exiting'</p>
+
+<p>def my_service():
+    name = multiprocessing.current_process().name
+    print name, 'Starting'
+    time.sleep(3)
+    print name, 'Exiting'</p>
+
+<p>if __name__ == '__main__':
+    service = multiprocessing.Process(name='my_service', target=my_service) #使用自定义的函数名
+    worker_1 = multiprocessing.Process(name='worker 1', target=worker)
+    worker_2 = multiprocessing.Process(target=worker) # use default name  #使用默认的函数名，即Process-3</p>
+
+<p>    worker_1.start()
+    worker_2.start()
+    service.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time
+import sys</p>
+
+<p>def daemon():
+    p = multiprocessing.current_process()
+    print 'Starting:', p.name, p.pid
+    sys.stdout.flush()
+    time.sleep(2)
+    print 'Exiting :', p.name, p.pid
+    sys.stdout.flush()</p>
+
+<p>def non_daemon():  #默认情况下，主程序将不会退出，直到所有的孩子都已经退出
+    p = multiprocessing.current_process()
+    print 'Starting:', p.name, p.pid
+    sys.stdout.flush()
+    print 'Exiting :', p.name, p.pid
+    sys.stdout.flush()</p>
+
+<p>if __name__ == '__main__':
+    d = multiprocessing.Process(name='daemon', target=daemon)
+    d.daemon = True</p>
+
+<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
+    n.daemon = False   #默认是不是守护进程，以便通过真正轮流守护模式</p>
+
+<p>    d.start()
+    time.sleep(1)
+    n.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time
+import sys</p>
+
+<p>def daemon():
+    print 'Starting:', multiprocessing.current_process().name
+    time.sleep(2)
+    print 'Exiting :', multiprocessing.current_process().name</p>
+
+<p>def non_daemon():
+    print 'Starting:', multiprocessing.current_process().name
+    print 'Exiting :', multiprocessing.current_process().name</p>
+
+<p>if __name__ == '__main__':
+    d = multiprocessing.Process(name='daemon', target=daemon)
+    d.daemon = True</p>
+
+<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
+    n.daemon = False</p>
+
+<p>    d.start()
+    time.sleep(1)
+    n.start()</p>
+
+<p>    d.join() #会使主调线程堵塞，直到被调用线程运行结束或超时,join函数可以设置超时， 如果进程在超时期限内没有完成就返回 比如join(1)，可以通过d.is_alive()查看进程是否存活
+    n.join()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def slow_worker():
+    print 'Starting worker'
+    time.sleep(0.1)
+    print 'Finished worker'</p>
+
+<p>if __name__ == '__main__':
+    p = multiprocessing.Process(target=slow_worker)
+    print 'BEFORE:', p, p.is_alive()</p>
+
+<p>    p.start()
+    print 'DURING:', p, p.is_alive()</p>
+
+<p>    p.terminate()  #发送结束进程信号
+    print 'TERMINATED:', p, p.is_alive()</p>
+
+<p>    p.join()  #更新状态以反应终止后的状态
+    print 'JOINED:', p, p.is_alive()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import sys
+import time</p>
+
+<p>def exit_error():
+    sys.exit(1)</p>
+
+<p>def exit_ok():
+    return</p>
+
+<p>def return_value():
+    return 1</p>
+
+<p>def raises():
+    raise RuntimeError('There was an error!')</p>
+
+<p>def terminated():
+    time.sleep(3)</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for f in [exit_error, exit_ok, return_value, raises, terminated]:
+        print 'Starting process for', f.func_name
+        j = multiprocessing.Process(target=f, name=f.func_name)
+        jobs.append(j)
+        j.start()</p>
+
+<p>    jobs[-1].terminate()</p>
+
+<p>    for j in jobs:
+        j.join()
+        print '%s.exitcode = %s' % (j.name, j.exitcode)  #exitcode返回退出的代码，0表示没有错误，&gt;0表示程序有错误，&lt;0表示被code为-1的信号杀死了
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Starting process for exit_error
+Starting process for exit_ok
+Starting process for return_value
+Starting process for raises
+Starting process for terminated
+Process raises:
+Traceback (most recent call last):
+exit_error.exitcode = 1
+exit_ok.exitcode = 0
+return_value.exitcode = 0
+File &#8220;/usr/lib/python2.7/multiprocessing/process.py&#8221;, line 232, in _bootstrap
+self.run()
+File &#8220;/usr/lib/python2.7/multiprocessing/process.py&#8221;, line 88, in run
+self._target(*self._args, **self._kwargs)
+File &#8220;test.py&#8221;, line 15, in raises
+raise RuntimeError(&#8216;There was an error!&#8217;)
+RuntimeError: There was an error!
+raises.exitcode = 1
+terminated.exitcode = -15
+<pre class="sh_python">
+import multiprocessing</p>
+
+<p>class Worker(multiprocessing.Process):   #最开始的例子也可以使用继承类的方式</p>
+
+<p>    def run(self):
+        print 'In %s' % self.name
+        return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = Worker()
+        jobs.append(p)
+        p.start()
+    for j in jobs:
+        j.join()
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyumultiprocessingyanjiuer/">关于multiprocessing研究(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>class MyFancyClass(object):</p>
+
+<p>    def __init__(self, name):
+        self.name = name</p>
+
+<p>    def do_something(self):
+        proc_name = multiprocessing.current_process().name
+        print 'Doing something fancy in %s for %s!' % (proc_name, self.name)</p>
+
+<p>def worker(q):
+    obj = q.get()   #获取队列
+    obj.do_something()</p>
+
+<p>if __name__ == '__main__':
+    queue = multiprocessing.Queue() #Queue基本属于Queue.Queue模块的复制,他主要用来做进程间的通信</p>
+
+<p>    p = multiprocessing.Process(target=worker, args=(queue,))
+    p.start()</p>
+
+<p>    queue.put(MyFancyClass('Fancy Dan'))</p>
+
+<p>    queue.close()
+    queue.join_thread()  #
+    p.join()   #阻塞直到queue中的所有的task都被处理（即task_done方法被调用）
+</pre></p>
+
+<p>注：Queue建构在系统的Pipe之上，但是实际上进程并不是直接将对象写入到Pipe里面，而是先写入一个本地的buffer，</p>
+
+<p>再由一个专门 的feed线程将其放入Pipe当中。读取端则是直接从Pipe当中读出对象。之所以有这样一个feed线程，</p>
+
+<p>是为了能够提供Queue接口函数所需要的 put的超时控制。但是由于这个feed线程的存在，mp.Queue提供了几个额外的函数来控制它，</p>
+
+<p>一个函数close来停止该线程，以及 join_thread来join该线程。close同时负责把所有在buffer当中的对象刷新到Pipe当中</p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>class Consumer(multiprocessing.Process):</p>
+
+<p>    def __init__(self, task_queue, result_queue):
+        multiprocessing.Process.__init__(self)
+        self.task_queue = task_queue
+        self.result_queue = result_queue</p>
+
+<p>    def run(self):
+        proc_name = self.name
+        while True:
+            next_task = self.task_queue.get()  #获取队列
+            if next_task is None:
+                print '%s: Exiting' % proc_name
+                self.task_queue.task_done()  #向任务已经完成的队列发送一个信号
+                break
+            print '%s: %s' % (proc_name, next_task)
+            answer = next_task() #执行队列的那个类
+            self.task_queue.task_done()
+            self.result_queue.put(answer)
+        return</p>
+
+<p>class Task(object):
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+    def __call__(self):
+        time.sleep(0.1) # 保证这部分正常执行
+        return '%s * %s = %s' % (self.a, self.b, self.a * self.b)
+    def __str__(self):
+        return '%s * %s' % (self.a, self.b)  #元类计算结果</p>
+
+<p>if __name__ == '__main__':
+    tasks = multiprocessing.JoinableQueue()  #JoinableQueue 是 Queue的子类，增加了task_done()和join()方法
+    results = multiprocessing.Queue()</p>
+
+<p>    num_consumers = multiprocessing.cpu_count() * 2  #创建消费者，cpu个数的2倍
+    print 'Creating %d consumers' % num_consumers  
+    consumers = [ Consumer(tasks, results)
+                  for i in xrange(num_consumers) ]
+    for w in consumers:
+        w.start()</p>
+
+<p>    num_jobs = 10
+    for i in xrange(num_jobs):
+        tasks.put(Task(i, i))  #创建10个job</p>
+
+<p>    for i in xrange(num_consumers):  #为每个消费者添加队列结束标记
+        tasks.put(None)
+    tasks.join()  #等待所有tasks完成</p>
+
+<p>    while num_jobs:
+        result = results.get()
+        print 'Result:', result  #打印结果
+        num_jobs -= 1
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def wait_for_event(e):
+    print 'wait_for_event: starting'
+    e.wait()   #<span>主线程将被阻塞，它将不会 再被分配时间片 直到现有的一些线程退出运行</span>
+    print 'wait_for_event: e.is_set()-&gt;', e.is_set()  #返回事件是否设置的布尔值</p>
+
+<p>def wait_for_event_timeout(e, t):
+    print 'wait_for_event_timeout: starting'
+    e.wait(t)  #设置等待超时
+    print 'wait_for_event_timeout: e.is_set()-&gt;', e.is_set()</p>
+
+<p>if __name__ == '__main__':
+    e = multiprocessing.Event()  #类似<tt>threading.Event</tt>,替代time.sleep(),用wait()和set()来精确控制线程
+    w1 = multiprocessing.Process(name='block', 
+                                 target=wait_for_event,
+                                 args=(e,))
+    w1.start()</p>
+
+<p>    w2 = multiprocessing.Process(name='non-block', 
+                                 target=wait_for_event_timeout, 
+                                 args=(e, 2))
+    w2.start()</p>
+
+<p>    print 'main: waiting before calling Event.set()'
+    time.sleep(3)
+    e.set()
+    print 'main: event is set'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+main: waiting before calling Event.set()
+wait_for_event: starting
+wait_for_event_timeout: starting
+wait_for_event_timeout: e.is_set()-&gt; False
+main: event is set
+wait_for_event: e.is_set()-&gt; True
+<pre class="sh_python">
+import multiprocessing
+import sys</p>
+
+<p>def worker_with(lock, stream):
+    with lock:
+        stream.write('Lock acquired via with\n') #lock资源</p>
+
+<p>def worker_no_with(lock, stream):
+    lock.acquire() #获得资源
+    try:
+        stream.write('Lock acquired directly\n')
+    finally:
+        lock.release()  #释放资源</p>
+
+<p>lock = multiprocessing.Lock() #需要多个进程之间共享一个单一的资源的情况下，可以使用Lock，以避免冲突的访问
+w = multiprocessing.Process(target=worker_with, args=(lock, sys.stdout))
+nw = multiprocessing.Process(target=worker_no_with, args=(lock, sys.stdout))</p>
+
+<p>w.start()
+nw.start()</p>
+
+<p>w.join()
+nw.join()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def stage_1(cond):  #执行工作的第一阶段，然后通知继续阶段2”
+    name = multiprocessing.current_process().name
+    print 'Starting', name
+    with cond:
+        print '%s done and ready for stage 2' % name
+        cond.notify_all()   #唤醒所有挂起的线程（如果存在挂起的线程），但是这些方法不会释放所占用的琐</p>
+
+<p>def stage_2(cond):  #告诉我们阶段1完成的情况下等待
+    name = multiprocessing.current_process().name
+    print 'Starting', name
+    with cond:
+        cond.wait()  #释放内部所占用的琐，同时线程被挂起，直至接收到通知被唤醒或超时（如果提供了timeout参数的话）。
+                     #当线程被唤醒并重新占有琐的时候，程序才会继续执行下去。
+        print '%s running' % name</p>
+
+<p>if __name__ == '__main__':
+    condition = multiprocessing.Condition() #它提供了比Lock, RLock更高级的功能，允许我们能够控制复杂的线程同步问题
+    s1 = multiprocessing.Process(name='s1', target=stage_1, args=(condition,))
+    s2_clients = [
+        multiprocessing.Process(name='stage_2[%d]' % i, target=stage_2, args=(condition,))
+        for i in range(1, 3)
+        ]</p>
+
+<p>    for c in s2_clients:
+        c.start()
+        time.sleep(1)
+    s1.start()</p>
+
+<p>    s1.join()
+    for c in s2_clients:
+        c.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Starting stage_2[1]
+Starting stage_2[2]
+Starting s1
+s1 done and ready for stage 2
+stage_2[2] running
+stage_2[1] running
+<pre class="sh_python">
+import random
+import multiprocessing
+import time</p>
+
+<p>class ActivePool(object):   #跟踪进程执行状态
+    def __init__(self):
+        super(ActivePool, self).__init__()  #保证公共父类仅被执行一次
+        self.mgr = multiprocessing.Manager()  #进程间共享数据,支持的类型有list,dict,Namespace,Lock,RLock,Semaphore,BoundedSemaphore,Condition,Event,Queue,Value和Array
+        self.active = self.mgr.list()
+        self.lock = multiprocessing.Lock()
+    def makeActive(self, name):
+        with self.lock:
+            self.active.append(name)
+    def makeInactive(self, name):
+        with self.lock:
+            self.active.remove(name)
+    def __str__(self):
+        with self.lock:
+            return str(self.active)</p>
+
+<p>def worker(s, pool):
+    name = multiprocessing.current_process().name
+    with s:
+        pool.makeActive(name)
+        print 'Now running: %s' % str(pool)
+        time.sleep(random.random())
+        pool.makeInactive(name)</p>
+
+<p>if __name__ == '__main__':
+    pool = ActivePool()
+    s = multiprocessing.Semaphore(3) #Semaphore用来控制对共享资源的访问数量，例如池的最大连接数，这里只有三个活动进程同时运行
+    jobs = [
+        multiprocessing.Process(target=worker, name=str(i), args=(s, pool))
+        for i in range(10)
+        ]</p>
+
+<p>    for j in jobs:
+        j.start()</p>
+
+<p>    for j in jobs:
+        j.join()
+        print 'Now running: %s' % str(pool)
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>def producer(ns, event):
+    ns.value = 'This is the value'
+    event.set()</p>
+
+<p>def consumer(ns, event):
+    try:
+        value = ns.value
+    except Exception, err:
+        print 'Before event, consumer got:', str(err)
+    event.wait()
+    print 'After event, consumer got:', ns.value</p>
+
+<p>if __name__ == '__main__':
+    mgr = multiprocessing.Manager()
+    namespace = mgr.Namespace()  #通过Manager管理共享命名空间
+    event = multiprocessing.Event()
+    p = multiprocessing.Process(target=producer, args=(namespace, event))
+    c = multiprocessing.Process(target=consumer, args=(namespace, event))</p>
+
+<p>    c.start()
+    p.start()</p>
+
+<p>    c.join()
+    p.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before event, consumer got: &#8216;Namespace&#8217; object has no attribute &#8216;value&#8217;
+After event, consumer got: This is the value
+<pre class="sh_python">
+import multiprocessing</p>
+
+<p>def producer(ns, event):
+    ns.my_list.append('This is the value') # DOES NOT UPDATE GLOBAL VALUE!
+    event.set()</p>
+
+<p>def consumer(ns, event):
+    print 'Before event, consumer got:', ns.my_list
+    event.wait()
+    print 'After event, consumer got:', ns.my_list</p>
+
+<p>if __name__ == '__main__':
+    mgr = multiprocessing.Manager()
+    namespace = mgr.Namespace()
+    namespace.my_list = []</p>
+
+<p>    event = multiprocessing.Event()  
+    p = multiprocessing.Process(target=producer, args=(namespace, event))
+    c = multiprocessing.Process(target=consumer, args=(namespace, event))</p>
+
+<p>    c.start()
+    p.start()</p>
+
+<p>    c.join()
+    p.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before event, consumer got: []
+After event, consumer got: []
+注意：其中程序的producer已经设置了一个列表值,可变值中的命名空间的内容<em>更新不</em>自动传播。所以consumer事件更新后还是空列表</p>
+
+<p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>def do_calculation(data):
+    return data * 2</p>
+
+<p>def start_process():
+    print 'Starting', multiprocessing.current_process().name</p>
+
+<p>if __name__ == '__main__':
+    inputs = list(range(10))
+    print 'Input   :', inputs</p>
+
+<p>    builtin_outputs = map(do_calculation, inputs)  #返回一个隐射，lambda x:x*2
+    print 'Built-in:', builtin_outputs</p>
+
+<p>    pool_size = multiprocessing.cpu_count() * 2
+    pool = multiprocessing.Pool(processes=pool_size, #进程池管理固定数量的进程，还能设定一个maxtasksperchild（从添加python2.7），任务可以完成之前
+                                initializer=start_process,  #它会退出和更换一个新的工作进程，使闲置的资源被释放。
+                                )
+    pool_outputs = pool.map(do_calculation, inputs)  #   map方法与内置的map函数行为基本一致，在它会使进程阻塞与此直到结果返回。
+    pool.close()  #关闭pool，使其不在接受新的任务。
+    pool.join()  #结束当前任务,主进程阻塞等待子进程的退出， join方法要在close或terminate之后使用。</p>
+
+<p>    print 'Pool    :', pool_outputs
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Input   : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Built-in: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+Starting PoolWorker-1
+Starting PoolWorker-2
+Starting PoolWorker-3
+Starting PoolWorker-4
+Starting PoolWorker-5
+Starting PoolWorker-6
+Starting PoolWorker-7
+Starting PoolWorker-8
+Pool    : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+<pre class="sh_python">
+import multiprocessing 
+import string
+import collections
+import itertools
+import multiprocessing</p>
+
+<p>class SimpleMapReduce(object):</p>
+
+<p>    def __init__(self, map_func, reduce_func, num_workers=None): 
+        """
+        map_func是一个用实现映射（对一些独立元素组成的概念上的列表（例如，一个测试成绩的列表）的每一个元素进行指定的操作（
+        有人发现所有学生的成绩都被高估了一分，他可以定义一个“减一”的映射函数，用来修正这个错误。）。事实上，每个元素都是被独立操作的，
+        而原始列表没有被更改，因为这里创建了一个新的列表来保存新的答案）的函数</p>
+
+<p>        reduce_func是一个用于化简（对一个列表的元素进行适当的合并（如果有人想知道班级的平均分该怎么做？他可以定义一个化简函数，
+        通过让列表中的元素跟自己的相邻的元素相加的方式把列表减半，如此递归运算直到列表只剩下一个元素，然后用这个元素除以人数，
+        就得到了平均分。）。虽然他不如映射函数那么并行，但是因为化简 总是有一个简单的答案，大规模的运算相对独立）的函数
+        num_workers是进程池的数量这里默认就是cpu数目
+        self.map_func = map_func
+        self.reduce_func = reduce_func
+        self.pool = multiprocessing.Pool(num_workers)</p>
+
+<p>    def partition(self, mapped_values):  #组织k-v映射，返回一个键和一个值序列元组的无序序列
+        partitioned_data = collections.defaultdict(list)
+        for key, value in mapped_values:
+            partitioned_data[key].append(value)
+        return partitioned_data.items()</p>
+
+<p>    def __call__(self, inputs, chunksize=1):  #inputs是一个包含输入的数据进行处理的迭代器 chunksize用来调整映射效果
+        map_responses = self.pool.map(self.map_func, inputs, chunksize=chunksize)
+        partitioned_data = self.partition(itertools.chain(*map_responses))
+        reduced_values = self.pool.map(self.reduce_func, partitioned_data)
+        return reduced_values
+def file_to_words(filename):  
+    STOP_WORDS = set([
+            'a', 'an', 'and', 'are', 'as', 'be', 'by', 'for', 'if', 'in', 
+            'is', 'it', 'of', 'or', 'py', 'rst', 'that', 'the', 'to', 'with',
+            ])
+    TR = string.maketrans(string.punctuation, ' ' * len(string.punctuation))</p>
+
+<p>    print multiprocessing.current_process().name, 'reading', filename
+    output = []</p>
+
+<p>    with open(filename, 'rt') as f:
+        for line in f:
+            if line.lstrip().startswith('..'): # Skip rst comment lines
+                continue
+            line = line.translate(TR) # Strip punctuation
+            for word in line.split():
+                word = word.lower()
+                if word.isalpha() and word not in STOP_WORDS:
+                    output.append( (word, 1) )
+    return output   #读取文件并返回一个值（词，字符串）序列</p>
+
+<p>def count_words(item):
+    word, occurances = item
+    return (word, sum(occurances))  #转换成包含单词和其数量的元组</p>
+
+<p>if __name__ == '__main__':
+    import operator
+    import glob</p>
+
+<p>    input_files = glob.glob('*.rst')</p>
+
+<p>    mapper = SimpleMapReduce(file_to_words, count_words)
+    word_counts = mapper(input_files)
+    word_counts.sort(key=operator.itemgetter(1))
+    word_counts.reverse()</p>
+
+<p>    print '\nTOP 20 WORDS BY FREQUENCY\n'
+    top20 = word_counts[:20]
+    longest = max(len(word) for word, count in top20)
+    for word, count in top20:
+        print '%-*s: %5s' % (longest+1, word, count)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuzipimportyanjiu/">关于zipimport研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：zipimport模块实现如果sys.path中的任何项引用了 ZIP 格式的存档，则 Python 会把该存档视为目录。存档包含一个或多个模块的.py 源文件</p>
+
+<p><pre class="sh_python">
+import sys
+import zipfile
+import zipimport
+import os</p>
+
+<p>zf = zipfile.PyZipFile('zipimport_example.zip', mode='w')  #创建一个zip
+try:
+    zf.write('.')  #添加当前目录
+    zf.write('test1.py') #添加这个文件
+    zf.write('txt/README.txt')  #添加这个文件
+finally:
+    zf.close()
+for name in zf.namelist():
+    print name #打印zip档案文件
+importer = zipimport.zipimporter('zipimport_example.zip')  #导入这个zip分析</p>
+
+<p>for module_name in [ 'test1', 'not_there' ]:
+    print module_name, ':', importer.find_module(module_name) #当找到这个模块返回，没有返回none</p>
+
+<p>print importer.get_code('test1') #获取test1.py源码
+module = importer.load_module('test1')  #import导入test1.py  
+print 'Name   :', module.__name__ #模块的名字
+print 'Loader :', module.__loader__  #返回zipimporter对象
+print 'Code   :', module.datetime #返回模块的datetime方法(或者类)的引用
+source = importer.get_source('test1')  #获取test1.py源码
+print '=' * 80
+print module_name
+print '=' * 80
+print source
+print
+print importer.is_package('txt')  #我们把readme.txt 放入了txt  txt就类似于一个包
+import txt #导入txt这个包 
+data_filename = os.path.join(os.path.dirname(txt.__file__), 
+                             'README.txt')
+print data_filename, ':'
+print open(data_filename, 'rt').read()  #读取README.txt内容
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~/test&gt; python test.py
+./
+test1.py
+txt/README.txt
+test1 : &lt;zipimporter object &#8220;zipimport_example.zip&#8221;&gt;
+not_there : None
+&lt;code object &lt;module&gt; at 0xb73800f8, file &#8220;zipimport_example.zip/test1.py&#8221;, line 1&gt;
+Name   : test1
+Loader : &lt;zipimporter object &#8220;zipimport_example.zip&#8221;&gt;
+Code   : &lt;module &#8216;datetime&#8217; from &#8216;/usr/lib/python2.7/lib-dynload/datetime.so&#8217;&gt;
+================================================================================
+not_there
+================================================================================
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
+import datetime</p>
+
+<p>server = SimpleXMLRPCServer((&#8216;localhost&#8217;, 9000), logRequests=True, allow_none=True)
+server.register_introspection_functions()
+server.register_multicall_functions()</p>
+
+<p>class ExampleService:</p>
+
+<p>def ping(self):
+&#8221;&#8221;&#8220;Simple function to respond when called to demonstrate connectivity.&#8221;&#8220;&#8221;
+return True</p>
+
+<p>def now(self):
+&#8221;&#8221;&#8220;Returns the server current date and time.&#8221;&#8220;&#8221;
+return datetime.datetime.now()</p>
+
+<p>def show_type(self, arg):
+&#8221;&#8221;&#8220;Illustrates how types are passed in and out of server methods.</p>
+
+<p>Accepts one argument of any type.
+Returns a tuple with string representation of the value,
+the name of the type, and the value itself.
+&#8221;&#8221;&#8221;
+return (str(arg), str(type(arg)), arg)</p>
+
+<p>def raises_exception(self, msg):
+&#8220;Always raises a RuntimeError with the message passed in&#8221;
+raise RuntimeError(msg)</p>
+
+<p>def send_back_binary(self, bin):
+&#8220;Accepts single Binary argument, unpacks and repacks it to return it&#8221;
+data = bin.data
+response = Binary(data)
+return response
+<pre class="sh_python">
+import sys
+sys.path.insert(0, 'zipimport_example.zip')
+print txt.__file__
+print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获取数据，而不能只是 open(os.path.join(os.path.dirname(txt.__file__), 'README.txt'), 'rt').read()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuzipfileyanjiu/">关于zipfile研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：zipfile是一个读写ZIP档案文件的模块</p>
+
+<p><pre class="sh_python">
+import zipfile
+import datetime</p>
+
+<p>for filename in [ 'README.txt', 'example.zip', 'bad_example.zip', 'notthere.zip' ]:
+    print '%20s %s' % (filename, zipfile.is_zipfile(filename))  #返回一个布尔值, 判断给定的文件是否是一个有效的ZIP文件.
+zf = zipfile.ZipFile('example.zip', 'r')  
+print zf.namelist() #读取现有存档中所有文件的名字  返回一个列表
+def print_info(archive_name):
+    zf = zipfile.ZipFile(archive_name)
+    for info in zf.infolist(): #访问存档内容的所有元数据
+        print info.filename
+        print '\tComment:\t', info.comment  #注释信息
+        print '\tModified:\t', datetime.datetime(*info.date_time) #修改时间
+        print '\tSystem:\t\t', info.create_system, '(0 = Windows, 3 = Unix)' #系统  3便是linux
+        print '\tZIP version:\t', info.create_version
+        print '\tCompressed:\t', info.compress_size, 'bytes' #压缩后的大小
+        print '\tUncompressed:\t', info.file_size, 'bytes' #压缩前大小
+        print
+print_info('example.zip')
+zf = zipfile.ZipFile('example.zip') 
+for filename in [ 'README.txt', 'notthere.txt' ]:
+    try:
+        info = zf.getinfo(filename) #通过文件名获取ZipInfo对象
+    except KeyError:
+        print 'ERROR: Did not find %s in zip file' % filename
+    else:
+        print '%s is %d bytes' % (info.filename, info.file_size)</p>
+
+<p>    try:
+        data = zf.read(filename) #读取访问存档文件的数据，必要时, 数据会自动解压缩.
+    except KeyError:
+        print 'ERROR: Did not find %s in zip file' % filename
+    else:
+        print filename, ':'
+        print repr(data)
+        print
+print 'creating archive'
+zf = zipfile.ZipFile('zipfile_write.zip', mode='w')  #创建zip存档文件，档案中任何现有文件会被清空, 开始新档案
+try:
+    print 'adding README.txt'
+    zf.write('README.txt')  #增加文件
+finally:
+    print 'closing'
+    zf.close()</p>
+
+<p>print
+</pre></p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python test.py
+README.txt False
+example.zip True
+bad_example.zip False
+notthere.zip False
+[&#8216;README.txt&#8217;]
+README.txt
+Comment:
+Modified:    2012-06-18 15:40:00
+System:        3 (0 = Windows, 3 = Unix)
+ZIP version:    20
+Compressed:    9 bytes
+Uncompressed:    9 bytes</p>
+
+<p>README.txt is 9 bytes
+README.txt :
+&#8216;test mes\n&#8217;</p>
+
+<p>ERROR: Did not find notthere.txt in zip file
+ERROR: Did not find notthere.txt in zip file
+creating archive
+adding README.txt
+closing
+<pre class="sh_python">
+import zipfile
+import sys 
+try:
+    import zlib
+    compression = zipfile.ZIP_DEFLATED #zlib模块提供压缩功能. 如果zlib是可用的, 你能使用zipfile.ZIP_DEFLATED对个人文件或者整个档案设置压缩模式.
+except:
+    compression = zipfile.ZIP_STORED #默认压缩模式为zipfile.ZIP_STORED.</p>
+
+<p>modes = { zipfile.ZIP_DEFLATED: 'deflated',
+    zipfile.ZIP_STORED: 'stored',
+}</p>
+
+<p>print 'creating archive'
+zf = zipfile.ZipFile('zipfile_write_compression.zip', mode='w')
+try:
+    print 'adding README.txt with compression mode', modes[compression]
+    zf.write('README.txt', compress_type=compression)
+finally:
+    print 'closing'
+    zf.close()</p>
+
+<p>print
+zf = zipfile.ZipFile('zipfile_write_arcname.zip', mode='w')
+try:
+    zf.write('README.txt', arcname='NOT_README.txt') #将一个文件添加到存档中, 但命名不能是原始文件名,而是重命名为'NOT_README.txt'
+finally:
+    zf.close()
+msg = 'This data did not exist in a file before being added to the ZIP file'
+zf = zipfile.ZipFile('zipfile_writestr.zip',
+ mode='w',
+ compression=zipfile.ZIP_DEFLATED,
+)
+try:
+    zf.writestr('from_string.txt', msg)  #将数据直接写到存档zip的这个文件里
+finally:
+    zf.close()
+msg = 'This data did not exist in a file before being added to the ZIP file'
+zf = zipfile.ZipFile('zipfile_writestr_zipinfo.zip', mode='w',)
+try:
+    info = zipfile.ZipInfo('from_string.txt', date_time=time.localtime(time.time()),) #创建一个ZipInfo实例，修改时间
+    info.compress_type=zipfile.ZIP_DEFLATED #修改压缩方式
+    info.comment='Remarks go here' #添加文件注释
+    info.create_system=0 #修改文件的系统信息 这里变成了windows系统
+    zf.writestr(info, msg) #将数据写道这个ZipInfo实例 也就是把from_string.txt的属性和内容都修改了
+finally:
+    zf.close()
+zf = zipfile.ZipFile('zipfile_append.zip', mode='a')  #模式'a'是追加模式，追加一个文件或在一个现有文件的末尾增加一个档案文件
+try:
+    zf.write('README.txt', arcname='README2.txt')
+finally:
+    zf.close()
+zf = zipfile.PyZipFile('zipfile_pyzipfile.zip', mode='w') #直接将当前目录压缩打包，还能编译py脚本
+    try:
+        zf.debug = 3
+        print 'Adding python files'
+        zf.writepy('.') #PyZipFile浏览目录寻找.py文件, 并且将关联文件 <tt>.pyo</tt> 或 <tt>.pyc</tt> 加入到档案中. 如果两者都不存在, 则生成一个.pyc文件, 并将其加入到档案中.
+    finally:
+        zf.close()
+        for name in zf.namelist():
+            print name</p>
+
+<p>    print
+    sys.path.insert(0, 'zipfile_pyzipfile.zip')
+    import zipfile_pyzipfile
+    print 'Imported from:', zipfile_pyzipfile.__file__
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuxmlrpclibyanjiu/">关于xmlrpclib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>&nbsp;</p>
+
+<p>前言：xmlrpclib是python中用于xmlrpc调用的模块</p>
+
+<p>以下例子的服务器端：</p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
+import cPickle as pickle
+import datetime</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True, allow_none=True)
+server.register_introspection_functions()
+server.register_multicall_functions()</p>
+
+<p>class ExampleService:</p>
+
+<p>    def ping(self):
+        return True </p>
+
+<p>    def now(self):
+        return datetime.datetime.now()  #返回当前时间</p>
+
+<p>    def show_type(self, arg):
+        return (str(arg), str(type(arg)), arg)</p>
+
+<p>    def raises_exception(self, msg):
+        raise RuntimeError(msg)</p>
+
+<p>    def send_back_binary(self, bin):
+        data = bin.data
+        response = Binary(data)
+        return response</p>
+
+<p>server.register_instance(ExampleService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p><pre class="sh_python">
+import xmlrpclib
+import datetime</p>
+
+<p>server = xmlrpclib.ServerProxy('http://localhost:9000', verbose=True) #返回一个连接服务器的实例,verbose=True显示调试信息，否则直接输出结果
+                                                #encoding='gbk':默认的编码是utf－8，这里可以修改成'gbk'。
+print 'Ping:', server.ping()   #上面定义 返回True  这里就会显示：True
+server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=True) #allow_none=True便表示容许把none自动转化成'nil'
+print 'Allowed:', server.show_type(None)</p>
+
+<p>server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=False) 
+print 'Not allowed:', server.show_type(None) #触发TypeError
+for t, v in [ ('boolean', True),   #XML-RPC协议识别有限的常见的数据类型
+              ('integer', 1),
+              ('floating-point number', 2.5),
+              ('string', 'some text'), 
+              ('datetime', datetime.datetime.now()),
+              ('array', ['a', 'list']),
+              ('array', ('a', 'tuple')),
+              ('structure', {'a':'dictionary'}),
+            ]:
+    print '%-22s:' % t, server.show_type(v)
+class MyObj:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+    def __repr__(self):
+        return 'MyObj(%s, %s)' % (repr(self.a), repr(self.b))
+o = MyObj(1, 'b goes here')
+print 'o=', o
+print server.show_type(o)
+o2 = MyObj(2, o)  #传递对象给o2 ，把{'a': 1, 'b': 'b goes here'} 传递给key：b的值
+print 'o2=', o2
+print server.show_type(o2)
+o = MyObj(1, 'b goes here')
+print 'Local:', o, id(o) 
+print 'As object:', server.show_type(o) 
+p = pickle.dumps(o) #数据持久化
+b = xmlrpclib.Binary(p)  #二进制模式传送
+r = server.send_back_binary(b) #返回数据
+o2 = pickle.loads(r.data)  #还原持久化
+print 'From pickle:', o2, id(o2)  #数据相同，但是id不同 因为是不一样的对象
+try:
+    server.raises_exception('A message')
+except Exception, err:
+    print 'Fault code:', err.faultCode  #触发异常的code
+    print 'Message   :', err.faultString #触发异常相应的内容
+s = 'This is a string with control characters' + '\0' #包含无效的XML字符
+print 'Local string:', s</p>
+
+<p>data = xmlrpclib.Binary(s) #需要传递二进制数据，最好是使用<tt>二进制</tt>类编码
+print 'As binary:', server.send_back_binary(data)  #正常打印</p>
+
+<p>print 'As string:', server.show_type(s) #但是xml不识别  触发异常
+multicall = xmlrpclib.MultiCall(server)  #同时查询某一个连接对象的返回
+multicall.ping()  #返回：  0：True   前面的数值自增长
+multicall.show_type(1)
+multicall.raises_exception('Next to last call stops execution') #这里一个触发，multicall就不再继续了
+multicall.show_type('string')</p>
+
+<p>for i, r in enumerate(multicall()):
+    print i, r
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuxml-etree-elementtreeyanjiujiexipian/">关于xml.etree.ElementTree研究(解析篇)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>&nbsp;</p>
+
+<p>前言：xml.etree.ElementTree是xml模块中的一部分，从python2.5开始添加，是一个处理xml的接口模块</p>
+
+<p>这里有一个需要解析的opml文件（<a href="http://www.opml.org/">OPML</a>(Outline Processor Markup Language)是建立在XML基础上的“大纲处理标记语言”，</p>
+
+<p>主要用于描述一份资料的结构。它的优势是订阅集中及分享）：</p>
+
+<p><pre class="sh_xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是podcasts.opml
+&lt;opml version="1.0"&gt;
+&lt;head&gt;
+	&lt;title&gt;My Podcasts&lt;/title&gt;
+	&lt;dateCreated&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateCreated&gt;
+	&lt;dateModified&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateModified&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;outline text="Science and Tech"&gt;
+    &lt;outline text="APM: Future Tense" type="rss" 
+             xmlUrl="http://www.publicradio.org/columns/futuretense/podcast.xml" 
+             htmlUrl="http://www.publicradio.org/columns/futuretense/" /&gt;
+	&lt;outline text="Engines Of Our Ingenuity Podcast" type="rss" 
+             xmlUrl="http://www.npr.org/rss/podcast.php?id=510030" 
+             htmlUrl="http://www.uh.edu/engines/engines.htm" /&gt;
+	&lt;outline text="Science &amp;#38; the City" type="rss" 
+             xmlUrl="http://www.nyas.org/Podcasts/Atom.axd" 
+             htmlUrl="http://www.nyas.org/WhatWeDo/SciencetheCity.aspx" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Books and Fiction"&gt;
+	&lt;outline text="Podiobooker" type="rss" 
+             xmlUrl="http://feeds.feedburner.com/podiobooks" 
+             htmlUrl="http://www.podiobooks.com/blog" /&gt;
+	&lt;outline text="The Drabblecast" type="rss" 
+             xmlUrl="http://web.me.com/normsherman/Site/Podcast/rss.xml" 
+             htmlUrl="http://web.me.com/normsherman/Site/Podcast/Podcast.html" /&gt;
+	&lt;outline text="tor.com / category / tordotstories" type="rss" 
+             xmlUrl="http://www.tor.com/rss/category/TorDotStories" 
+             htmlUrl="http://www.tor.com/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Computers and Programming"&gt;
+	&lt;outline text="MacBreak Weekly" type="rss" 
+             xmlUrl="http://leo.am/podcasts/mbw" 
+             htmlUrl="http://twit.tv/mbw" /&gt;
+	&lt;outline text="FLOSS Weekly" type="rss" 
+             xmlUrl="http://leo.am/podcasts/floss" 
+             htmlUrl="http://twit.tv" /&gt;
+	&lt;outline text="Core Intuition" type="rss" 
+             xmlUrl="http://www.coreint.org/podcast.xml" 
+             htmlUrl="http://www.coreint.org/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Python"&gt;
+    &lt;outline text="PyCon Podcast" type="rss" 
+             xmlUrl="http://advocacy.python.org/podcasts/pycon.rss" 
+             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
+	&lt;outline text="A Little Bit of Python" type="rss" 
+             xmlUrl="http://advocacy.python.org/podcasts/littlebit.rss" 
+             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
+	&lt;outline text="Django Dose Everything Feed" type="rss" 
+             xmlUrl="http://djangodose.com/everything/feed/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Miscelaneous"&gt;
+	&lt;outline text="dhellmann's CastSampler Feed" type="rss" 
+             xmlUrl="http://www.castsampler.com/cast/feed/rss/dhellmann/" 
+             htmlUrl="http://www.castsampler.com/users/dhellmann/" /&gt;
+  &lt;/outline&gt;
+&lt;/body&gt;
+&lt;/opml&gt;
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是data.xml
+&lt;top&gt;
+  &lt;child&gt;This child contains text.&lt;/child&gt;
+  &lt;child_with_tail&gt;This child has regular text.&lt;/child_with_tail&gt;And "tail" text.
+  &lt;with_attributes name="value" foo="bar" /&gt;
+  &lt;entity_expansion attribute="This &amp;#38; That"&gt;That &amp;#38; This&lt;/entity_expansion&gt;
+&lt;/top&gt;
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+from xml.etree import ElementTree</p>
+
+<p>with open('podcasts.opml', 'rt') as f:
+    tree = ElementTree.parse(f)  #返回一个ElementTree的对象</p>
+
+<p>print tree</p>
+
+<p>for node in tree.iter():  #遍历解析树
+    print node.tag, node.attrib #标签和值 </p>
+
+<p>for node in tree.iter('outline'): #遍历outline部分
+    name = node.attrib.get('text') 
+    url = node.attrib.get('xmlUrl')
+    if name and url:
+        print '  %s :: %s' % (name, url)
+    else:
+        print name</p>
+
+<p>for node in tree.findall('.//outline'): #没有用getiterator()，而是findall出一个列表迭代 outline是node的名字
+    url = node.attrib.get('xmlUrl')
+    if url:
+        print url
+for node in tree.findall('.//outline/outline'): #寻找2级层次的node 就是node'outline'的子node是'outline'的过滤
+    url = node.attrib.get('xmlUrl')
+    print url
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+&lt;xml.etree.ElementTree.ElementTree object at 0xb748e58c&gt;
+opml {&#8216;version&#8217;: &#8216;1.0&#8217;}
+head {}
+title {}
+dateCreated {}
+dateModified {}
+body {}
+outline {&#8216;text&#8217;: &#8216;Science and Tech&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.publicradio.org/columns/futuretense/podcast.xml&#8217;, &#8216;text&#8217;: &#8216;APM: Future Tense&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.publicradio.org/columns/futuretense/&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.npr.org/rss/podcast.php?id=510030&#8217;, &#8216;text&#8217;: &#8216;Engines Of Our Ingenuity Podcast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.uh.edu/engines/engines.htm&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.nyas.org/Podcasts/Atom.axd&#8217;, &#8216;text&#8217;: &#8216;Science &amp; the City&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8217;}
+outline {&#8216;text&#8217;: &#8216;Books and Fiction&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://feeds.feedburner.com/podiobooks&#8217;, &#8216;text&#8217;: &#8216;Podiobooker&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.podiobooks.com/blog&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8217;, &#8216;text&#8217;: &#8216;The Drabblecast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.tor.com/rss/category/TorDotStories&#8217;, &#8216;text&#8217;: &#8216;tor.com / category / tordotstories&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.tor.com/&#8217;}
+outline {&#8216;text&#8217;: &#8216;Computers and Programming&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://leo.am/podcasts/mbw&#8217;, &#8216;text&#8217;: &#8216;MacBreak Weekly&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://twit.tv/mbw&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://leo.am/podcasts/floss&#8217;, &#8216;text&#8217;: &#8216;FLOSS Weekly&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://twit.tv&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.coreint.org/podcast.xml&#8217;, &#8216;text&#8217;: &#8216;Core Intuition&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.coreint.org/&#8217;}
+outline {&#8216;text&#8217;: &#8216;Python&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/pycon.rss&#8217;, &#8216;text&#8217;: &#8216;PyCon Podcast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/littlebit.rss&#8217;, &#8216;text&#8217;: &#8216;A Little Bit of Python&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://djangodose.com/everything/feed/&#8217;, &#8216;text&#8217;: &#8216;Django Dose Everything Feed&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;}
+outline {&#8216;text&#8217;: &#8216;Miscelaneous&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8217;, &#8216;text&#8217;: &#8220;dhellmann&#8217;s CastSampler Feed&#8221;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.castsampler.com/users/dhellmann/&#8217;}
+Science and Tech
+APM: Future Tense :: http://www.publicradio.org/columns/futuretense/podcast.xml
+Engines Of Our Ingenuity Podcast :: http://www.npr.org/rss/podcast.php?id=510030
+Science &amp; the City :: http://www.nyas.org/Podcasts/Atom.axd
+Books and Fiction
+Podiobooker :: http://feeds.feedburner.com/podiobooks
+The Drabblecast :: http://web.me.com/normsherman/Site/Podcast/rss.xml
+tor.com / category / tordotstories :: http://www.tor.com/rss/category/TorDotStories
+Computers and Programming
+MacBreak Weekly :: http://leo.am/podcasts/mbw
+FLOSS Weekly :: http://leo.am/podcasts/floss
+Core Intuition :: http://www.coreint.org/podcast.xml
+Python
+PyCon Podcast :: http://advocacy.python.org/podcasts/pycon.rss
+A Little Bit of Python :: http://advocacy.python.org/podcasts/littlebit.rss
+Django Dose Everything Feed :: http://djangodose.com/everything/feed/
+Miscelaneous
+dhellmann&#8217;s CastSampler Feed :: http://www.castsampler.com/cast/feed/rss/dhellmann/
+http://www.publicradio.org/columns/futuretense/podcast.xml
+http://www.npr.org/rss/podcast.php?id=510030
+http://www.nyas.org/Podcasts/Atom.axd
+http://feeds.feedburner.com/podiobooks
+http://web.me.com/normsherman/Site/Podcast/rss.xml
+http://www.tor.com/rss/category/TorDotStories
+http://leo.am/podcasts/mbw
+http://leo.am/podcasts/floss
+http://www.coreint.org/podcast.xml
+http://advocacy.python.org/podcasts/pycon.rss
+http://advocacy.python.org/podcasts/littlebit.rss
+http://djangodose.com/everything/feed/
+http://www.castsampler.com/cast/feed/rss/dhellmann/
+http://www.publicradio.org/columns/futuretense/podcast.xml
+http://www.npr.org/rss/podcast.php?id=510030
+http://www.nyas.org/Podcasts/Atom.axd
+http://feeds.feedburner.com/podiobooks
+http://web.me.com/normsherman/Site/Podcast/rss.xml
+http://www.tor.com/rss/category/TorDotStories
+http://leo.am/podcasts/mbw
+http://leo.am/podcasts/floss
+http://www.coreint.org/podcast.xml
+http://advocacy.python.org/podcasts/pycon.rss
+http://advocacy.python.org/podcasts/littlebit.rss
+http://djangodose.com/everything/feed/
+http://www.castsampler.com/cast/feed/rss/dhellmann/
+<pre class="sh_python">
+from xml.etree import ElementTree</p>
+
+<p>with open('data.xml', 'rt') as f:
+    tree = ElementTree.parse(f)</p>
+
+<p>node = tree.find('./with_attributes') #找到这个节点
+print node.tag #打印这个节点的值
+for name, value in sorted(node.attrib.items()): #
+    print '  %-4s = "%s"' % (name, value)</p>
+
+<p>for path in [ './child', './child_with_tail' ]:
+    node = tree.find(path)
+    print node.tag
+    print '  child node text:', node.text  #标签中间部分
+    print '  and tail text  :', node.tail  #标签结束后的那部分</p>
+
+<p>node = tree.find('entity_expansion')
+print node.tag
+print '  in attribute:', node.attrib['attribute']  #获取这个标签的属性
+print '  in text     :', node.text #获取这个标签的值
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>with_attributes
+foo  = &#8220;bar&#8221;
+name = &#8220;value&#8221;
+child
+child node text: This child contains text.
+and tail text  :</p>
+
+<p>child_with_tail
+child node text: This child has regular text.
+and tail text  : And &#8220;tail&#8221; text.</p>
+
+<p>entity_expansion
+in attribute: This &amp; That  #转换为适当的字符值返回
+in text     : That &amp; This</p>
+
+<p><pre class="sh_python">
+from xml.etree.ElementTree import iterparse</p>
+
+<p>depth = 0
+prefix_width = 8
+prefix_dots = '.' * prefix_width
+line_template = '{prefix:&lt;0.{prefix_len}}{event:&lt;8}{suffix:&lt;{suffix_len}} {node.tag:&lt;12} {node_id}'  #模式匹配</p>
+
+<p>for (event, node) in iterparse('podcasts.opml', ['start', 'end', 'start-ns', 'end-ns']): #iterparse返回一个迭代产生的元组
+                                   #包含事件的名称和触发事件的节点，这些事件：包含在参数第二个参数的列表
+    if event == 'end':
+        depth -= 1  #当事件结束深度－1</p>
+
+<p>    prefix_len = depth * 2</p>
+
+<p>    print line_template.format(prefix=prefix_dots,  #解析格式化  前缀使用设定的一定位数的'.'
+                               prefix_len=prefix_len,
+                               suffix='',
+                               suffix_len=(prefix_width - prefix_len),
+                               node=node,
+                               node_id=id(node),
+                               event=event,
+                               )</p>
+
+<p>    if event == 'start':
+        depth += 1
+
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+start            opml         3074976588
+..start          head         3074976748
+&#8230;.start        title        3074976908
+&#8230;.end          title        3074976908
+&#8230;.start        dateCreated  3074977228
+&#8230;.end          dateCreated  3074977228
+&#8230;.start        dateModified 3074977292
+&#8230;.end          dateModified 3074977292
+..end            head         3074976748
+..start          body         3074977324
+&#8230;.start        outline      3074977420
+&#8230;&#8230;start      outline      3074977644
+&#8230;&#8230;end        outline      3074977644
+&#8230;&#8230;start      outline      3074977676
+&#8230;&#8230;end        outline      3074977676
+&#8230;&#8230;start      outline      3074990124
+&#8230;&#8230;end        outline      3074990124
+&#8230;.end          outline      3074977420
+&#8230;.start        outline      3074990188
+&#8230;&#8230;start      outline      3074990220
+&#8230;&#8230;end        outline      3074990220
+&#8230;&#8230;start      outline      3074990156
+&#8230;&#8230;end        outline      3074990156
+&#8230;&#8230;start      outline      3074990284
+&#8230;&#8230;end        outline      3074990284
+&#8230;.end          outline      3074990188
+&#8230;.start        outline      3074990348
+&#8230;&#8230;start      outline      3074990380
+&#8230;&#8230;end        outline      3074990380
+&#8230;&#8230;start      outline      3074990316
+&#8230;&#8230;end        outline      3074990316
+&#8230;&#8230;start      outline      3074990412
+&#8230;&#8230;end        outline      3074990412
+&#8230;.end          outline      3074990348
+&#8230;.start        outline      3074990508
+&#8230;&#8230;start      outline      3074990444
+&#8230;&#8230;end        outline      3074990444
+&#8230;&#8230;start      outline      3074990476
+&#8230;&#8230;end        outline      3074990476
+&#8230;&#8230;start      outline      3074990636
+&#8230;&#8230;end        outline      3074990636
+&#8230;.end          outline      3074990508
+&#8230;.start        outline      3074990700
+&#8230;&#8230;start      outline      3074990604
+&#8230;&#8230;end        outline      3074990604
+&#8230;.end          outline      3074990700
+..end            body         3074977324
+end              opml         3074976588</p>
+
+<p><pre class="sh_python">
+import csv
+from xml.etree.ElementTree import iterparse
+import sys</p>
+
+<p>writer = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)  #将xml解析成csv文件格式</p>
+
+<p>group_name = ''</p>
+
+<p>for (event, node) in iterparse('podcasts.opml', events=['start']):  
+    if node.tag != 'outline':
+        continue
+    if not node.attrib.get('xmlUrl'):
+        group_name = node.attrib['text']
+    else:
+        # Output a podcast entry
+        writer.writerow( (group_name, node.attrib['text'],
+                          node.attrib['xmlUrl'],
+                          node.attrib.get('htmlUrl', ''),
+                          )
+                         )
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+&#8220;Science and Tech&#8221;,&#8221;APM: Future Tense&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/podcast.xml&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Engines Of Our Ingenuity Podcast&#8221;,&#8221;http://www.npr.org/rss/podcast.php?id=510030&#8221;,&#8221;http://www.uh.edu/engines/engines.htm&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Science &amp; the City&#8221;,&#8221;http://www.nyas.org/Podcasts/Atom.axd&#8221;,&#8221;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;Podiobooker&#8221;,&#8221;http://feeds.feedburner.com/podiobooks&#8221;,&#8221;http://www.podiobooks.com/blog&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;The Drabblecast&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;tor.com / category / tordotstories&#8221;,&#8221;http://www.tor.com/rss/category/TorDotStories&#8221;,&#8221;http://www.tor.com/&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;MacBreak Weekly&#8221;,&#8221;http://leo.am/podcasts/mbw&#8221;,&#8221;http://twit.tv/mbw&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;FLOSS Weekly&#8221;,&#8221;http://leo.am/podcasts/floss&#8221;,&#8221;http://twit.tv&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;Core Intuition&#8221;,&#8221;http://www.coreint.org/podcast.xml&#8221;,&#8221;http://www.coreint.org/&#8221;
+&#8220;Python&#8221;,&#8221;PyCon Podcast&#8221;,&#8221;http://advocacy.python.org/podcasts/pycon.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;A Little Bit of Python&#8221;,&#8221;http://advocacy.python.org/podcasts/littlebit.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;Django Dose Everything Feed&#8221;,&#8221;http://djangodose.com/everything/feed/&#8221;,&#8221;&#8221;
+&#8220;Miscelaneous&#8221;,&#8221;dhellmann&#8217;s CastSampler Feed&#8221;,&#8221;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8221;,&#8221;http://www.castsampler.com/users/dhellmann/&#8221;
+<pre class="sh_python">
+import csv
+from xml.etree.ElementTree import XMLTreeBuilder  #创建一个自定义的xml数建构
+import sys</p>
+
+<p>class PodcastListToCSV(object):</p>
+
+<p>    def __init__(self, outputFile):
+        self.writer = csv.writer(outputFile, quoting=csv.QUOTE_NONNUMERIC)
+        self.group_name = ''
+        return</p>
+
+<p>    def start(self, tag, attrib):
+        if tag != 'outline':
+            return
+        if not attrib.get('xmlUrl'):
+            self.group_name = attrib['text']
+        else:
+            self.writer.writerow( (self.group_name, attrib['text'],
+                                   attrib['xmlUrl'],
+                                   attrib.get('htmlUrl', ''),
+                                   )
+                                  )</p>
+
+<p>    def end(self, tag):
+        pass  #放弃关闭标签
+    def data(self, data):
+        pass  #放弃node数据
+    def close(self):
+        return #什么都不做</p>
+
+<p>target = PodcastListToCSV(sys.stdout)
+parser = XMLTreeBuilder(target=target)
+with open('podcasts.opml', 'rt') as f:
+    for line in f:
+        parser.feed(line)
+parser.close()
+</pre>
+执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+&#8220;Science and Tech&#8221;,&#8221;APM: Future Tense&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/podcast.xml&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Engines Of Our Ingenuity Podcast&#8221;,&#8221;http://www.npr.org/rss/podcast.php?id=510030&#8221;,&#8221;http://www.uh.edu/engines/engines.htm&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Science &amp; the City&#8221;,&#8221;http://www.nyas.org/Podcasts/Atom.axd&#8221;,&#8221;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;Podiobooker&#8221;,&#8221;http://feeds.feedburner.com/podiobooks&#8221;,&#8221;http://www.podiobooks.com/blog&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;The Drabblecast&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;tor.com / category / tordotstories&#8221;,&#8221;http://www.tor.com/rss/category/TorDotStories&#8221;,&#8221;http://www.tor.com/&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;MacBreak Weekly&#8221;,&#8221;http://leo.am/podcasts/mbw&#8221;,&#8221;http://twit.tv/mbw&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;FLOSS Weekly&#8221;,&#8221;http://leo.am/podcasts/floss&#8221;,&#8221;http://twit.tv&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;Core Intuition&#8221;,&#8221;http://www.coreint.org/podcast.xml&#8221;,&#8221;http://www.coreint.org/&#8221;
+&#8220;Python&#8221;,&#8221;PyCon Podcast&#8221;,&#8221;http://advocacy.python.org/podcasts/pycon.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;A Little Bit of Python&#8221;,&#8221;http://advocacy.python.org/podcasts/littlebit.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;Django Dose Everything Feed&#8221;,&#8221;http://djangodose.com/everything/feed/&#8221;,&#8221;&#8221;
+&#8220;Miscelaneous&#8221;,&#8221;dhellmann&#8217;s CastSampler Feed&#8221;,&#8221;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8221;,&#8221;http://www.castsampler.com/users/dhellmann/&#8221;
+<pre class="sh_python">
+from xml.etree.ElementTree import XML,XMLID</p>
+
+<p>parsed = XML('''  参数是一段xml文本
+&lt;root&gt;
+  &lt;group&gt;
+    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
+    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
+  &lt;/group&gt;
+  &lt;group&gt;
+    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
+  &lt;/group&gt;
+&lt;/root&gt;
+''')</p>
+
+<p>print 'parsed =', parsed</p>
+
+<p>for elem in parsed:
+    print elem.tag
+    if elem.text is not None and elem.text.strip():
+        print '  text: "%s"' % elem.text
+    if elem.tail is not None and elem.tail.strip():
+        print '  tail: "%s"' % elem.tail
+    for name, value in sorted(elem.attrib.items()):
+        print '  %-4s = "%s"' % (name, value)
+    print
+tree, id_map = XMLID('''  #使用<tt>id</tt>属性分析xml文本
+&lt;root&gt;
+  &lt;group&gt;
+    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
+    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
+  &lt;/group&gt;
+  &lt;group&gt;
+    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
+  &lt;/group&gt;
+&lt;/root&gt;
+''')</p>
+
+<p>for key, value in sorted(id_map.items()):
+    print '%s = %s' % (key, value)
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+parsed = &lt;Element &#8216;root&#8217; at 0xb738fa2c&gt;
+group</p>
+
+<p>group</p>
+
+<p>a = &lt;Element &#8216;child&#8217; at 0xb738fdcc&gt;
+b = &lt;Element &#8216;child&#8217; at 0xb738fcec&gt;
+c = &lt;Element &#8216;child&#8217; at 0xb738fe2c&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuxml-etree-elementtreeyanjiuchuangjianpian/">关于xml.etree.ElementTree研究(创建篇)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+from xml.etree.ElementTree import Element, SubElement, Comment, tostring, ElementTree
+
+from xml.dom import minidom
+import sys
+import csv
+import datetime
+top = Element('top')  #创建一个root节点</p>
+
+<p>comment = Comment('Generated for dongwm')  #设置一个注释信息
+top.append(comment)  #添加到节点中</p>
+
+<p>child = SubElement(top, 'child')  #船舰一个子节点名字叫'child'  父节点是'top'
+child.text = 'This child contains text.'  #设置子节点的值</p>
+
+<p>child_with_tail = SubElement(top, 'child_with_tail')
+child_with_tail.text = 'This child has regular text.'  #设置借点标签间的值
+child_with_tail.tail = 'And "tail" text.' #设置节点标签结束后的值</p>
+
+<p>child_with_entity_ref = SubElement(top, 'child_with_entity_ref')
+child_with_entity_ref.text = 'This &amp; that'  #这个值会在显示的时候转化成合适的内容
+print tostring(top)
+ElementTree(top).write(sys.stdout)  #将xml数据导入流（这里是sys.stdout）
+def prettify(elem):
+    rough_string = tostring(elem, 'utf-8') #要转化的xml文件
+    reparsed = minidom.parseString(rough_string) 
+    return reparsed.toprettyxml(indent="  ") #美化显示xml
+print prettify(top)
+generated_on = str(datetime.datetime.now())
+root = Element('opml')  #设置root节点opml
+root.set('version', '1.0')  #设置xml的版本</p>
+
+<p>root.append(Comment('Generated by ElementTree_csv_to_xml.py for dongwm')) #增加注释</p>
+
+<p>head = SubElement(root, 'head') #根节点的head子节点
+title = SubElement(head, 'title')
+title.text = 'My Podcasts' #tittle子节点的值
+dc = SubElement(head, 'dateCreated')  #head的子节点
+dc.text = generated_on  #上面抓取的时间
+dm = SubElement(head, 'dateModified')
+dm.text = generated_on
+body = SubElement(root, 'body')
+with open('podcasts.csv', 'rt') as f:  #这是在解析篇生成的csv文件 
+    current_group = None
+    reader = csv.reader(f) #读取csv文件
+    for row in reader:
+        group_name, podcast_name, xml_url, html_url = row
+        if current_group is None or group_name != current_group.text:
+            current_group = SubElement(body, 'outline', {'text':group_name})
+        podcast = SubElement(current_group, 'outline',
+                             {'text':podcast_name,
+                              'xmlUrl':xml_url,
+                              'htmlUrl':html_url,
+                              })</p>
+
+<p>print prettify(root)
+print
+top = Element('top') #重新设置根节点
+children = [
+    Element('child', num=str(i))
+    for i in xrange(3)
+    ]
+top.extend(children)  #设置延长，加上上面的迭代列表的三个子节点
+top = Element('top')
+parent = SubElement(top, 'parent') #设置根节点的子节点
+children = XML('''&lt;root&gt;&lt;child num="0" /&gt;&lt;child num="1" /&gt;&lt;child num="2" /&gt;&lt;/root&gt; ''')  #直接使用xml内容添加
+parent.extend(children)
+print prettify(top)
+top = Element('top')
+parent_a = SubElement(top, 'parent', id='A') #设置id不同的2个子节点
+parent_b = SubElement(top, 'parent', id='B')
+children = XML('''&lt;root&gt;&lt;child num="0" /&gt;&lt;child num="1" /&gt;&lt;child num="2" /&gt;&lt;/root&gt; ''') 
+for c in children:
+    c.set('id', str(id(c)))  #准备要添加的子节点
+parent_a.extend(children)  #增加字节点
+print 'A:'
+print prettify(top)  #含有id为A的子节点
+print
+parent_b.extend(children)  #继续添加ID为B的字节点 但是A的字节点还在
+print 'B:'
+print prettify(top)
+print
+top = Element('top')
+child = SubElement(top, 'child')
+child.text = 'This child contains text.'
+empty_child = SubElement(top, 'empty_child')
+for method in [ 'xml', 'html', 'text' ]:
+    print method
+    ElementTree(top).write(sys.stdout, method=method) #xml是默认的method，只有<tt>&lt;empty_child /&gt;</tt>，text包含的text内容，html包含<tt>&lt;empty_child&gt;&lt;/empty_child&gt;</tt>
+    print '\n'
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuwebbrowseryanjiu/">关于webbrowser研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：利用webbrowser模块可以向用户显示web页面，在一个交互式的浏览程序中, webbrowser模块提供了一些用于打开URL链接的函数. 在系统中安装的浏览器, 通过模块的许多选项可以来获取利用他们. 也可通过环境变量BROWSER来控制.</p>
+
+<p><pre class="sh_python">
+import webbrowser</p>
+
+<p>webbrowser.open('http://www.dongwm.com') #浏览器中打开一个页面,如果当前已经有一个浏览器窗口, 那么会做为一个新标签打开.
+webbrowser.open_new('http://www.dongwm.com') #在新窗口中打开页面,
+webbrowser.open_new_tab('http://www.dongwm.com') #新的标签中打开页面</p>
+
+<p>b = webbrowser.get('lynx') #通过get(),使用特定的浏览器  也可以用BROWSER=lynx python test.py 的方式指定lynx
+b.open('http://www.dongwm.com') #也提供了open()、open_new()和open_new_tab()函数
+</pre></p>
+
+<p>注：可以直接命令行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python -m webbrowser -n http://www.dongwm.com</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/11/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/9/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
