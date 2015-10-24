@@ -249,17 +249,16 @@
 </span><span class="line">    <span class="k">print</span> <span class="s">&#39;Critical section 2&#39;</span>
 </span><span class="line"><span class="k">finally</span><span class="p">:</span>
 </span><span class="line">    <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-</span><span class="line">    <span class="sb">``</span><span class="err">`</span>
-</span><span class="line">
-</span><span class="line"><span class="err">其实是这样的</span><span class="p">:</span>
 </span></pre></figure></notextile></div>
-<p>python
-lock = threading.Lock()</p>
 
-<p>with lock:
-    print ‘Critical section 1’
-    print ‘Critical section 2’
-    &#8220;`</p>
+<p>其实是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;Critical section 1&#39;</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;Critical section 2&#39;</span>
+</span></pre></figure></notextile></div>
 
 <h4 id="section-4">忽略抛出的异常</h4>
 
@@ -267,12 +266,11 @@ lock = threading.Lock()</p>
 </span><span class="line">    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;somefile.tmp&#39;</span><span class="p">)</span>
 </span><span class="line"><span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
 </span><span class="line">    <span class="k">pass</span>
-</span><span class="line">    <span class="sb">``</span><span class="err">`</span>
 </span></pre></figure></notextile></div>
-<p>python
-with ignored(OSError):
-    os.remove(‘somefile.tmp’)
-    &#8220;`</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">with</span> <span class="n">ignored</span><span class="p">(</span><span class="ne">OSError</span><span class="p">):</span>
+</span><span class="line">    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;somefile.tmp&#39;</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
 
 <p>就算用python2, 我也强烈建议把这样的函数放在项目里</p>
 
@@ -282,74 +280,78 @@ with ignored(OSError):
 </span><span class="line">        <span class="k">yield</span>
 </span><span class="line">    <span class="k">except</span> <span class="n">exceptions</span><span class="p">:</span>
 </span><span class="line">        <span class="k">pass</span>
-</span><span class="line">        <span class="sb">``</span><span class="err">`</span>
-</span><span class="line">
-</span><span class="line"><span class="err">如果你使用</span><span class="n">python3</span><span class="o">.</span><span class="mi">4</span><span class="err">或以上可以使用标准库的</span> <span class="sb">`contextlib.suppress`</span>
 </span></pre></figure></notextile></div>
-<p>python
-class suppress:
-    def <strong>init</strong>(self, *exceptions):
-        self._exceptions = exceptions
-    def <strong>enter</strong>(self):
-        pass
-    def <strong>exit</strong>(self, exctype, excinst, exctb):
-        return exctype is not None and issubclass(exctype, self._exceptions)
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;pre class=&#8217;sh_python&#8217;&gt;<span class="line"><span class="c">#### 直接把输出存进文件中</span>
-</span>&lt;/pre&gt;</figure></notextile>&lt;/div&gt;python
-with open(‘help.txt’, ‘w’) as f:
-    oldstdout = sys.stdout
-    sys.stdout = f
-    try:
-        help(pow)
-    finally:
-        sys.stdout = oldstdout
-        &#8220;`</p>
+
+<p>如果你使用python3.4或以上可以使用标准库的 <code>contextlib.suppress</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">class</span> <span class="nc">suppress</span><span class="p">:</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exceptions</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">_exceptions</span> <span class="o">=</span> <span class="n">exceptions</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="k">pass</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exctype</span><span class="p">,</span> <span class="n">excinst</span><span class="p">,</span> <span class="n">exctb</span><span class="p">):</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">exctype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exctype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exceptions</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-5">直接把输出存进文件中</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;help.txt&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">oldstdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+</span><span class="line">    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="n">help</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
+</span><span class="line">    <span class="k">finally</span><span class="p">:</span>
+</span><span class="line">        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">oldstdout</span>
+</span></pre></figure></notextile></div>
 
 <p>同样使用python3.4以上可以使用</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;help.txt&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 </span><span class="line">    <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 </span><span class="line">        <span class="n">help</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
-</span><span class="line">        <span class="sb">``</span><span class="err">`</span>
-</span><span class="line">
-</span><span class="line"><span class="n">redirect_stdout</span><span class="err">是这样的</span><span class="p">:</span>
 </span></pre></figure></notextile></div>
-<p>python
-@contextmanager
-def redirect_stdout(fileobj):
-    oldstdout = sys.stdout
-    sys.stdout = fileobj
-    try:
-        yield fieldobj
-    finally:
-        sys.stdout = oldstdout
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;pre class=&#8217;sh_python&#8217;&gt;<span class="line"><span class="c">#### 最简单的缓存</span>
-</span><span class="line">
-</span><span class="line"><span class="err">通常这样实现缓存</span><span class="p">:</span>
-</span>&lt;/pre&gt;</figure></notextile>&lt;/div&gt;python
-def web_lookup(url, saved={}):
-    if url in saved:
-        return saved[url]
-    page = urllib.urlopen(url).read()
-    saved[url] = page
-    return page
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;pre class=&#8217;sh_python&#8217;&gt;<span class="line"><span class="err">可以这样写</span>
-</span>&lt;/pre&gt;</figure></notextile>&lt;/div&gt;python
-@cache
-def web_lookup(url):
-    return urllib.urlopen(url).read()</p>
 
-<p>def cache(func):
-    saved = {}
-    @wraps(func)
-    def newfunc(<em>args):
-        if args in saved:
-            return newfunc(</em>args)
-        result = func(*args)
-        saved[args] = result
-        return result
-    return newfunc
-&#8220;`</p>
+<p>redirect_stdout是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@contextmanager</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">redirect_stdout</span><span class="p">(</span><span class="n">fileobj</span><span class="p">):</span>
+</span><span class="line">    <span class="n">oldstdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+</span><span class="line">    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">fileobj</span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">fieldobj</span>
+</span><span class="line">    <span class="k">finally</span><span class="p">:</span>
+</span><span class="line">        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">oldstdout</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-6">最简单的缓存</h4>
+
+<p>通常这样实现缓存:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">web_lookup</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">saved</span><span class="o">=</span><span class="p">{}):</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">saved</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">saved</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+</span><span class="line">    <span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class="line">    <span class="n">saved</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="n">page</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">page</span>
+</span></pre></figure></notextile></div>
+
+<p>可以这样写</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@cache</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">web_lookup</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">    <span class="n">saved</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">saved</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class="line">        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class="line">        <span class="n">saved</span><span class="p">[</span><span class="n">args</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">result</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">newfunc</span>
+</span></pre></figure></notextile></div>
 </div>
   
   
