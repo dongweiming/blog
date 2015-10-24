@@ -1,0 +1,558 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用svn和hook（钩子）对puppet进行版本控制 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/%E4%BD%BF%E7%94%A8svn%E5%92%8Chook%EF%BC%88%E9%92%A9%E5%AD%90%EF%BC%89%E5%AF%B9puppet%E8%BF%9B%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">使用svn和hook（钩子）对puppet进行版本控制</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-30T00:00:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>puppet默认没有使用版本控制。可以在puppet.conf文件中添加一下一行：
+<code>config_version = /usr/local/bin/return_version</code>
+其中“/usr/local/bin/return_version” 是我自定义的脚本：<!--more--></p>
+
+<p>[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]#!/bin/bash</p>
+
+<p>date +%Y%m%d%H[/ccine_perl]</p>
+
+<p>so 简单 ^.^</p>
+
+<p>puppet的这个版本号是用于与client端通信的信息，可以使用tagmail或者puppet的report功能，在基于webUI的dashboard或者foreman方便查阅自动化情况，通过时间判断是一个不错的办法。</p>
+
+<p>svn的版本控制主要是对puppet部署的配置文件的控制，对于传送文件，使用exec执行客户端命令等操作不能进行回滚操作，需要自定义回滚方法（svn只负责svn服务器本地版本库内的文件系统）</p>
+
+<p>1 安装svn</p>
+
+<p>我使用yum安装：</p>
+
+<p>#yum  install subversion mod_dav_svn mod_auth_mysql –y</p>
+
+<p>2 确认是否已安装一下安装包：</p>
+
+<p>openssl-XXX</p>
+
+<p>openssl-devel-XXX</p>
+
+<p>mod_ssl-XXX</p>
+
+<p>mod_auth_mysql-XXX</p>
+
+<p>subversion-XXX</p>
+
+<p>mod_dav_svn-XXX</p>
+
+<p>3 确认模块：</p>
+
+<p>在/etc/httpd/modules（根据你的apache安装目录）</p>
+
+<p>mod_authz_svn.so</p>
+
+<p>mod_dav_svn.so</p>
+
+<p>mod_auth_mysql.so</p>
+
+<p>4 建立并创建svn版本库</p>
+
+<p>#mkdir –p /opt/svn/puppet</p>
+
+<p>#svnadmin create /opt/svn/puppet</p>
+
+<p>5 修改SVN配置文件</p>
+
+<p>#vi /opt/svn/puppet/conf/svnserve.conf(操作权限文件指定)</p>
+
+<p>[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;][general]</p>
+
+<p>auth-access = write</p>
+
+<p>password-db = passwd</p>
+
+<p>authz-db = authz</p>
+
+<p>realm = puppet[/ccine_perl]</p>
+
+<p>#vi /opt/svn/puppet/conf/password（容许访问SVN的用户及密码）</p>
+
+<p>[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;][users]</p>
+
+<p>puppet = <a href="mailto:Ry0va@g4zPbn">testpassword</a>[/ccine_perl]</p>
+
+<p>#vi /opt/svn/puppet/conf/authz(用户对某目录及自动目录的访问权限，下面表示admin组对svn所有目录都有读写权限)</p>
+
+<p>[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;][groups]</p>
+
+<p>admin = puppet</p>
+
+<p>[/]</p>
+
+<p>@admin = rw[/ccine_perl]</p>
+
+<p>6 启动svn</p>
+
+<p>#svnserve -d –r /opt/svn/</p>
+
+<p>7向版本库提交资源，我设置的路径是puppet模块的主目录(原因见下面的说明，默认为/etc/puppet,我指定到了其他路径,puppet.conf中指定）</p>
+
+<p>#svn import –m “test” /usr/share/svn/modules  <a>file:///opt/svn/puppet</a></p>
+
+<p>8 svn还是需要系统学习的，这里只是一个开端，，为了让大家尽快懂得svn，下面介绍一些会用到的命令包括：</p>
+
+<p>svn add * （将新修改的配置以及新添加的文件纳入版本控制，这是在修改量大的情况下，最简单快速的办法）</p>
+
+<p>svn commit -m &#8220;一些更新信息&#8221; （将新修改的配置提交到版本库）</p>
+
+<p>svn co file:///home/okooo/apps/svn/puppet tmp（将版本库的内容拷贝一个副本到这次操作的目录下的tmp目录-这个都可以定义，默认就是版本库的名字，本例中是puppet）</p>
+
+<p>svn up （下载一份完整的版本库内容到操作的目录下）</p>
+
+<p>svn cleanup （有些时候在别人修改时候文件被锁定等原因，运行这个命令可以解除锁定）</p>
+
+<p>svn del manifests/node/java.pp（将版本库的某些内容删除，这里是删除java.pp，然后svn commit就会成功删除）</p>
+
+<p>svn diff manifests/node/java.pp （将修改后的java.pp文件和版本库的同名文件对比不同的内容）</p>
+
+<p>svn log （查看更新内容的日志，这个log显示出来的就是上面执行“svn commit -m” 后的内容）</p>
+
+<p>&#8230;.</p>
+
+<p>因为我们不涉及开发维护，所以svn不需要太熟，但是还是建议掌握所有内容</p>
+
+<p><strong>SVN的hooks</strong></p>
+
+<p><strong> </strong></p>
+
+<p>钩子的功能其实我也迷糊了很久，我的理解就是在版本库出现修改时被触发的自定义脚本，这样可以确定很多属性：比如Pre-Commit钩子的作用是代码提交前是否有写messages，是否有tab，是否有不允许上传的文件，是否有超过限制大小的文件等等，这样可以控制一些不合适的提交。</p>
+
+<p>以下是一个Pre-Commit钩子，用于检查语法错误：</p>
+
+<p>检查puppet的.pp配置文件是否有问题，也可以执行：</p>
+
+<p>puppet －v  你的主要配置文件site.pp
+[ccine_perl height=&#8221;100%&#8221; width=&#8221;99%&#8221;]<code>#!/bin/sh
+# SVN pre-commit hook to check Puppet syntax for .pp files
+# Modified from http://mail.madstop.com/pipermail/puppet-users/2007-March/002034.html
+REPOS="$1"
+TXN="$2"
+tmpfile=`mktemp`
+export HOME=/
+SVNLOOK=/usr/bin/svnlook
+$SVNLOOK changed -t "$TXN" "$REPOS" | awk '/^[^D].*\.pp$/ {print $2}' | while read line
+do
+    $SVNLOOK cat -t "$TXN" "$REPOS" "$line" &gt; $tmpfile
+    if [ $? -ne 0 ]
+    then
+        echo "Warning: Failed to checkout $line" &gt;&amp;2
+    fi
+    puppet --color=false --confdir=/etc/puppet --vardir=/var/lib/puppet --parseonly --ignoreimport $tmpfile &gt;&amp;2
+    if [ $? -ne 0 ]
+    then
+        echo "Puppet syntax error in $line." &gt;&amp;2
+        exit 2
+    fi
+done
+res=$?
+rm -f $tmpfile
+if [ $res -ne 0 ]
+then
+    exit $res
+fi</code>[/ccine_perl]</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-30T00:00:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2010</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/puppet/'>puppet</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/%E4%BD%BF%E7%94%A8svn%E5%92%8Chook%EF%BC%88%E9%92%A9%E5%AD%90%EF%BC%89%E5%AF%B9puppet%E8%BF%9B%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/puppet-dashboard%E7%9A%84%E5%9F%BA%E4%BA%8E-htaccess%E9%AA%8C%E8%AF%81/" title="Previous Post:
+        puppet-dashboard的基于.htaccess验证">&laquo; puppet-dashboard的基于.htaccess验证</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/nagios%E6%B7%B1%E5%85%A5%E8%BF%9B%E9%98%B6%E4%B9%8B%E4%B8%80%EF%BC%9A%E8%A2%AB%E5%8A%A8%E6%A3%80%E6%9F%A5/"
+        title="Next Post: Nagios深入进阶之一：被动检查">Nagios深入进阶之一：被动检查
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/%E4%BD%BF%E7%94%A8svn%E5%92%8Chook%EF%BC%88%E9%92%A9%E5%AD%90%EF%BC%89%E5%AF%B9puppet%E8%BF%9B%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/%E4%BD%BF%E7%94%A8svn%E5%92%8Chook%EF%BC%88%E9%92%A9%E5%AD%90%EF%BC%89%E5%AF%B9puppet%E8%BF%9B%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

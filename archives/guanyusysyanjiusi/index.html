@@ -1,0 +1,916 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>关于sys研究（四） - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/guanyusysyanjiusi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">关于sys研究（四）</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><pre class="sh_python">
+import sys
+import textwrap</p>
+
+<p>names = sorted(sys.modules.keys()) #sys.modules是模块名和模块路径信息的字典集合
+name_text = ', '.join(names)</p>
+
+<p>print textwrap.fill(name_text)
+for name in sys.builtin_module_names: #内建模块就是不用import进来就能使用的模块，这些模块不再上面的sys.modules里面
+    print name
+for d in sys.path: # sys.path是管理模块的搜索路径的列表集合，包含当前目录，<tt>site-packages</tt>目录列在最后
+    print d    #注：当在执行程序时前面设置：PYTHONPATH=XXX:xxx，则首先输出它指定的目录
+</pre></p>
+
+<p><pre class="sh_python">
+import sys
+import os</p>
+
+<p>base_dir = os.path.dirname(__file__) or '.' #dirname(__file__)表示当前程序文件所在目录
+print 'Base directory:', base_dir</p>
+
+<p>package_dir_a = os.path.join(base_dir, 'package_dir_a')
+sys.path.insert(0, package_dir_a)  #在当前目录插入一个python目录路径</p>
+
+<p>import example
+print 'Imported example from:', example.__file__
+print '\t', example.DATA  #比如这里是的数据是A</p>
+
+<p>package_dir_b = os.path.join(base_dir, 'package_dir_b')
+sys.path.insert(0, package_dir_b) #在当前目录再插入一个python目录路径
+reload(example) #reload这个模块，但是首先搜索的是package_dir_b下的这个模块数据
+print 'Reloaded example from:', example.__file__
+print '\t', example.DATA #这里的数据就是B了
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class NoisyImportFinder(object):</p>
+
+<p>    PATH_TRIGGER = 'NoisyImportFinder_PATH_TRIGGER' #设定一个数据，方便识别
+    def __init__(self, path_entry):
+        print 'Checking NoisyImportFinder support for %s' % path_entry
+        if path_entry != self.PATH_TRIGGER:
+            print 'NoisyImportFinder does not work for %s' % path_entry
+            raise ImportError()
+        return</p>
+
+<p>    def find_module(self, fullname, path=None):
+        print 'NoisyImportFinder looking for "%s"' % fullname
+        return None</p>
+
+<p>sys.path_hooks.append(NoisyImportFinder) #添加自定义的import的发现者</p>
+
+<p>sys.path.insert(0, NoisyImportFinder.PATH_TRIGGER) #将数据路径插入到python路径</p>
+
+<p>try:
+    import target_module
+except Exception, e:
+    print 'Import failed:', e
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Checking NoisyImportFinder support for NoisyImportFinder_PATH_TRIGGER #首先import使用我们自定义的import发现类
+NoisyImportFinder looking for &#8220;target_module&#8221;
+Checking NoisyImportFinder support for /home/dongwm #使用下一个python路径（当前目录）搜索
+NoisyImportFinder does not work for /home/dongwm #不工作
+Import failed: No module named target_module #使用系统的import发现</p>
+
+<p><pre class="sh_python">
+import sys #这事一个脚本,用来生成shelve对象
+import shelve
+import os</p>
+
+<p>filename = './import_example.shelve'
+if os.path.exists(filename):
+    os.unlink(filename)
+db = shelve.open(filename)
+try:
+    db['data:README'] = """
+==============
+package README
+==============</p>
+
+<p>This is the README for ``package``.
+"""
+    db['package.__init__'] = """
+print 'package imported'
+message = 'This message is in package.__init__'
+"""
+    db['package.module1'] = """
+print 'package.module1 imported'
+message = 'This message is in package.module1'
+"""
+    db['package.subpackage.__init__'] = """
+print 'package.subpackage imported'
+message = 'This message is in package.subpackage.__init__'
+"""
+    db['package.subpackage.module2'] = """
+print 'package.subpackage.module2 imported'
+message = 'This message is in package.subpackage.module2'
+"""
+    db['package.with_error'] = """
+print 'package.with_error being imported'
+raise ValueError('raising exception to break import')
+"""
+    print 'Created %s with:' % filename
+    for key in sorted(db.keys()):
+        print '\t', key
+finally:
+    db.close()
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Created ./import_example.shelve with:
+data:README
+package.__init__
+package.module1
+package.subpackage.__init__
+package.subpackage.module2
+package.with_error
+<pre class="sh_python">
+import contextlib
+import imp
+import os
+import shelve
+import sys</p>
+
+<p>@contextlib.contextmanager
+def shelve_context(filename, flag='r'): #创建上下文管理方法，让shelves使用with
+    db = shelve.open(filename, flag)
+    try:
+        yield db
+    finally:
+        db.close()</p>
+
+<p>def _mk_init_name(fullname): #返回被定义了包名字的__init__ module的名字
+    if fullname.endswith('.__init__'):
+        return fullname
+    return fullname + '.__init__'</p>
+
+<p>def _get_key_name(fullname, db): #在shelves里面寻找fullname或者fullname.__init__，返回名字
+    if fullname in db:
+        return fullname
+    init_name = _mk_init_name(fullname)
+    if init_name in db:
+        return init_name
+    return None</p>
+
+<p>class ShelveFinder(object): #shelve归档里面寻找模块
+    def __init__(self, path_entry):
+        if not os.path.isfile(path_entry):
+            raise ImportError
+        try:
+            with shelve_context(path_entry): 
+                pass
+        except Exception, e:
+            raise ImportError(str(e))
+        else:
+            print 'new shelf added to import path:', path_entry
+            self.path_entry = path_entry
+        return</p>
+
+<p>    def __str__(self):
+        return '&lt;%s for "%s"&gt;' % (self.__class__.__name__, self.path_entry)</p>
+
+<p>    def find_module(self, fullname, path=None):
+        path = path or self.path_entry
+        print 'looking for "%s" in %s ...' % (fullname, path),
+        with shelve_context(path) as db:
+            key_name = _get_key_name(fullname, db)
+            if key_name:
+                print 'found it as %s' % key_name
+                return ShelveLoader(path)
+        print 'not found'
+        return None</p>
+
+<p>class ShelveLoader(object): #从shelve数据里面为模块加载源</p>
+
+<p>    def __init__(self, path_entry):
+        self.path_entry = path_entry
+        return</p>
+
+<p>    def _get_filename(self, fullname):
+        # Make up a fake filename that starts with the path entry
+        # so pkgutil.get_data() works correctly.
+return os.path.join(self.path_entry, fullname) #设置假文件，pkgutil.get_data()正常
+    def get_source(self, fullname):
+        print 'loading source for "%s" from shelf' % fullname
+        try:
+            with shelve_context(self.path_entry) as db:
+                key_name = _get_key_name(fullname, db)
+                if key_name:
+                    return db[key_name]
+                raise ImportError('could not find source for %s' % fullname)
+        except Exception, e:
+            print 'could not load source:', e
+            raise ImportError(str(e))</p>
+
+<p>    def get_code(self, fullname):
+        source = self.get_source(fullname)
+        print 'compiling code for "%s"' % fullname
+        return compile(source, self._get_filename(fullname), 'exec', dont_inherit=True)</p>
+
+<p>    def get_data(self, path):
+        print 'looking for data in %s for "%s"' % (self.path_entry, path)
+        if not path.startswith(self.path_entry):
+            raise IOError
+        path = path[len(self.path_entry)+1:]
+        key_name = 'data:' + path
+        try:
+            with shelve_context(self.path_entry) as db:
+                return db[key_name]
+        except Exception, e:
+            # Convert all errors to IOError
+            raise IOError</p>
+
+<p>    def is_package(self, fullname):
+        init_name = _mk_init_name(fullname)
+        with shelve_context(self.path_entry) as db:
+            return init_name in db</p>
+
+<p>    def load_module(self, fullname):
+        source = self.get_source(fullname)</p>
+
+<p>        if fullname in sys.modules:
+            print 'reusing existing module from previous import of "%s"' % fullname
+            mod = sys.modules[fullname]
+        else:
+            print 'creating a new module object for "%s"' % fullname
+            mod = sys.modules.setdefault(fullname, imp.new_module(fullname))
+        mod.__file__ = self._get_filename(fullname)
+        mod.__name__ = fullname
+        mod.__path__ = self.path_entry
+        mod.__loader__ = self
+        mod.__package__ = '.'.join(fullname.split('.')[:-1])</p>
+
+<p>        if self.is_package(fullname):
+            print 'adding path for package'
+            # Set __path__ for packages
+            # so we can find the sub-modules.
+            mod.__path__ = [ self.path_entry ]
+        else:
+            print 'imported as regular module'</p>
+
+<p>        print 'execing source...'
+        exec source in mod.__dict__
+        print 'done'
+        return mod
+</pre></p>
+
+<p><pre class="sh_python">
+import sys
+import sys_shelve_importer</p>
+
+<p>def show_module_details(module):
+    print '  message    :', module.message
+    print '  __name__   :', module.__name__
+    print '  __package__:', module.__package__
+    print '  __file__   :', module.__file__
+    print '  __path__   :', module.__path__
+    print '  __loader__ :', module.__loader__</p>
+
+<p>filename = '/tmp/pymotw_import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename) #导入shelve文件</p>
+
+<p>print 'Import of "package":'
+import package #import这个包</p>
+
+<p>print
+print 'Examine package details:'
+show_module_details(package)</p>
+
+<p>print
+print 'Global settings:'
+print 'sys.modules entry:', sys.modules['package']
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Import of &#8220;package&#8221;:
+new shelf added to import path: import_example.shelve
+looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
+loading source for &#8220;package&#8221; from shelf
+creating a new module object for &#8220;package&#8221;
+adding path for package
+execing source&#8230;
+package imported
+done</p>
+
+<p>Examine package details:
+message    : This message is in package.__init__
+__name__   : package
+__package__:
+__file__   : import_example.shelve/package
+__path__   : [&#8216;import_example.shelve&#8217;]
+__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x80aed0c&gt;</p>
+
+<p>Global settings:
+sys.modules entry: &lt;module &#8216;package&#8217; from &#8216;import_example.shelve/package&#8217;&gt;
+<pre class="sh_python">
+import sys
+import sys_shelve_importer</p>
+
+<p>def show_module_details(module):
+    print '  message    :', module.message
+    print '  __name__   :', module.__name__
+    print '  __package__:', module.__package__
+    print '  __file__   :', module.__file__
+    print '  __path__   :', module.__path__
+    print '  __loader__ :', module.__loader__</p>
+
+<p>filename = 'import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>print
+print 'Import of "package.module1":'
+import package.module1 #import子模块</p>
+
+<p>print
+print 'Examine package.module1 details:'
+show_module_details(package.module1)</p>
+
+<p>print
+print 'Import of "package.subpackage.module2":'
+import package.subpackage.module2</p>
+
+<p>print
+print 'Examine package.subpackage.module2 details:'
+show_module_details(package.subpackage.module2)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py</p>
+
+<p>Import of &#8220;package.module1&#8221;:
+new shelf added to import path: import_example.shelve
+looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
+loading source for &#8220;package&#8221; from shelf
+creating a new module object for &#8220;package&#8221;
+adding path for package
+execing source&#8230;
+package imported
+done
+looking for &#8220;package.module1&#8221; in import_example.shelve &#8230; found it as package.module1
+loading source for &#8220;package.module1&#8221; from shelf
+creating a new module object for &#8220;package.module1&#8221;
+imported as regular module
+execing source&#8230;
+package.module1 imported
+done</p>
+
+<p>Examine package.module1 details:
+message    : This message is in package.module1
+__name__   : package.module1
+__package__: package
+__file__   : import_example.shelve/package.module1
+__path__   : import_example.shelve
+__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x8119d6c&gt;</p>
+
+<p>Import of &#8220;package.subpackage.module2&#8221;:
+looking for &#8220;package.subpackage&#8221; in import_example.shelve &#8230; found it as package.subpackage.__init__
+loading source for &#8220;package.subpackage&#8221; from shelf
+creating a new module object for &#8220;package.subpackage&#8221;
+adding path for package
+execing source&#8230;
+package.subpackage imported
+done
+looking for &#8220;package.subpackage.module2&#8221; in import_example.shelve &#8230; found it as package.subpackage.module2
+loading source for &#8220;package.subpackage.module2&#8221; from shelf
+creating a new module object for &#8220;package.subpackage.module2&#8221;
+imported as regular module
+execing source&#8230;
+package.subpackage.module2 imported
+done</p>
+
+<p>Examine package.subpackage.module2 details:
+message    : This message is in package.subpackage.module2
+__name__   : package.subpackage.module2
+__package__: package.subpackage
+__file__   : import_example.shelve/package.subpackage.module2
+__path__   : import_example.shelve
+__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x8119e0c&gt;
+<pre class="sh_python">
+import sys
+import sys_shelve_importer</p>
+
+<p>filename = 'import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>print 'First import of "package":'
+import package</p>
+
+<p>print
+print 'Reloading "package":'
+reload(package) #创建一个新的模块对象，而不是现有的模块被重新使用
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+First import of &#8220;package&#8221;:
+new shelf added to import path: import_example.shelve
+looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
+loading source for &#8220;package&#8221; from shelf
+creating a new module object for &#8220;package&#8221;
+adding path for package
+execing source&#8230;
+package imported
+done</p>
+
+<p>Reloading &#8220;package&#8221;:
+looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
+loading source for &#8220;package&#8221; from shelf
+reusing existing module from previous import of &#8220;package&#8221;
+adding path for package
+execing source&#8230;
+package imported
+done
+<pre class="sh_python">
+import sys
+import sys_shelve_importer</p>
+
+<p>filename = 'import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>try:
+    import package.module3
+except ImportError, e:
+    print 'Failed to import:', e
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+new shelf added to import path: import_example.shelve
+looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
+loading source for &#8220;package&#8221; from shelf
+creating a new module object for &#8220;package&#8221;
+adding path for package
+execing source&#8230;
+package imported
+done
+looking for &#8220;package.module3&#8221; in import_example.shelve &#8230; not found
+Failed to import: No module named module3
+<pre class="sh_python">
+import sys
+import sys_shelve_importer
+import os
+import pkgutil</p>
+
+<p>filename = '/tmp/pymotw_import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>import package</p>
+
+<p>readme_path = os.path.join(package.__path__[0], 'README')</p>
+
+<p>#readme = package.__loader__.get_data(readme_path)
+readme = pkgutil.get_data('package', 'README') #返回文件内容
+print readme</p>
+
+<p>foo_path = os.path.join(package.__path__[0], 'foo')
+#foo = package.__loader__.get_data(foo_path)
+foo = pkgutil.get_data('package', 'foo')
+print foo
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+new shelf added to import path: import_example.shelve
+looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
+loading source for &#8220;package&#8221; from shelf
+creating a new module object for &#8220;package&#8221;
+adding path for package
+execing source&#8230;
+package imported
+done
+looking for data in import_example.shelve for &#8220;import_example.shelve/README&#8221;</p>
+
+<p>==============
+package README
+==============</p>
+
+<p>This is the README for &#8220;package&#8220;.</p>
+
+<p>looking for data in import_example.shelve for &#8220;import_example.shelve/foo&#8221;
+Traceback (most recent call last):
+File &#8220;test.py&#8221;, line 20, in &lt;module&gt;
+foo = pkgutil.get_data(&#8216;package&#8217;, &#8216;foo&#8217;)
+File &#8220;/usr/lib/python2.6/pkgutil.py&#8221;, line 583, in get_data
+return loader.get_data(resource_name)
+File &#8220;/home/dongwm/sys_shelve_importer.py&#8221;, line 107, in get_data
+raise IOError
+IOError</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/pythonmo-kuai-yan-jiu/'>python模块研究</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/guanyusysyanjiusi/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/guanyusysyanjiusan/" title="Previous Post:
+        关于sys研究（三）">&laquo; 关于sys研究（三）</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/guanyusysyanjiuyi/"
+        title="Next Post: 关于sys研究（一）">关于sys研究（一）
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/guanyusysyanjiusi/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/guanyusysyanjiusi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,788 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>关于threading研究（一） - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/guanyuthreadingyanjiuer">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">关于threading研究（一）</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前言：threading是python的管理多线程模块，实际工作中很常用，很多功能类似于multiprocessing（多进程模块）</p>
+
+<p><pre class="sh_python">
+import threading</p>
+
+<p>def worker(num):   #带参数的函数
+    print 'Worker: %s' % num
+    return</p>
+
+<p>threads = []
+for i in range(5):
+    t = threading.Thread(target=worker, args=(i,))  #实例化，多线程操作
+    threads.append(t)
+    t.start()  #启动多线程，还可以继承threading.Thread类，重写run()函数为worker函数内容，实现一样的效果
+</pre></p>
+
+<p><pre class="sh_python">
+import threading
+import time</p>
+
+<p>def worker():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(2)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>def my_service():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(3)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)  #设置实现的线程函数的名字
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) # 使用线程函数的默认的名字，这里就是Thread-1，Thread-2，这样的累加</p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,   #打印日志使用logging模块
+                    format='[%(levelname)s] (%(threadName)-10s) %(message)s',  #格式格式，前面是logging的级别，因为上面指定DEBUG模式，threadName表示线程的名字
+                    )</p>
+
+<p>def worker():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>def my_service():
+    logging.debug('Starting')
+    time.sleep(3)
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) </p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+[DEBUG] (worker    ) Starting
+[DEBUG] (Thread-1  ) Starting
+[DEBUG] (my_service) Starting
+[DEBUG] (worker    ) Exiting
+[DEBUG] (Thread-1  ) Exiting
+[DEBUG] (my_service) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)  #设置daemon模式，主程序结束，这个子线程依然存在</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)  #默认deamon是false，也就是不使用守护模式，子线程跟随主程序结束</p>
+
+<p>d.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)</p>
+
+<p>d.start()
+t.start()</p>
+
+<p>d.join()  #表示等待子线程死掉再退出，也可以设置超时，超时会返回，不等待子线程结束 d.join(1) 这样sleep的2秒还不够， d.isAlive()得出线程还是存在的
+t.join()  #，但是程序也结束。
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+(daemon    ) Exiting  #等待那个deamon的子线程结束才结束</p>
+
+<p><pre class="sh_python">
+import random
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def worker():
+    t = threading.currentThread()
+    pause = random.randint(1,5)
+    logging.debug('sleeping %s', pause)
+    time.sleep(pause)  #sleep一个随机值
+    logging.debug('ending')
+    return</p>
+
+<p>for i in range(3):
+    t = threading.Thread(target=worker)
+    t.setDaemon(True)  
+    t.start()</p>
+
+<p>main_thread = threading.currentThread()  #获取当前线程
+for t in threading.enumerate():  #enumerate返回线程实例的列表
+    if t is main_thread:  #因为join当前线程会引起死锁，需要过滤
+        continue
+    logging.debug('joining %s', t.getName())
+    t.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) sleeping 3
+(Thread-2  ) sleeping 5
+(Thread-3  ) sleeping 1
+(MainThread) joining Thread-1
+(Thread-3  ) ending
+(Thread-1  ) ending
+(MainThread) joining Thread-3
+(MainThread) joining Thread-2
+(Thread-2  ) ending
+<pre class="sh_python">
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class MyThreadWithArgs(threading.Thread):  #和第一个例子说的继承threading.Thread类，实例化，重写run，然后调用start()启动</p>
+
+<p>    def __init__(self, group=None, target=None, name=None,  #初始化
+                 args=(), kwargs=None, verbose=None):
+        threading.Thread.__init__(self, group=group, target=target, name=name,  #初始化threading.Thread类，因为这个类初始化有很多参数需要设定
+                                  verbose=verbose)
+        self.args = args
+        self.kwargs = kwargs
+        return</p>
+
+<p>    def run(self):
+        logging.debug('running with %s and %s', self.args, self.kwargs)
+        return</p>
+
+<p>for i in range(5):
+    t = MyThreadWithArgs(args=(i,), kwargs={'a':'A', 'b':'B'}) #kwargs被初始化
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) running with (0,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-2  ) running with (1,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-3  ) running with (2,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-4  ) running with (3,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-5  ) running with (4,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def delayed():
+    logging.debug('worker running')
+    return</p>
+
+<p>t1 = threading.Timer(3, delayed)   #Timer主要是计时器用来延迟
+t1.setName('t1')
+t2 = threading.Timer(3, delayed)
+t2.setName('t2')</p>
+
+<p>logging.debug('starting timers')
+t1.start()
+t2.start()</p>
+
+<p>logging.debug('waiting before canceling %s', t2.getName())
+time.sleep(2)
+logging.debug('canceling %s', t2.getName())
+t2.cancel()  #取消线程
+logging.debug('done')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) starting timers
+(MainThread) waiting before canceling t2
+(MainThread) canceling t2
+(MainThread) done
+(t1        ) worker running
+<pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def wait_for_event(e):
+    logging.debug('wait_for_event starting')
+    event_is_set = e.wait()  #主线程将被阻塞，它将不会 再被分配时间片 直到现有的一些线程退出运行
+    logging.debug('event set: %s', event_is_set)  ##返回事件是否设置的布尔值</p>
+
+<p>def wait_for_event_timeout(e, t):
+    while not e.isSet():
+        logging.debug('wait_for_event_timeout starting')
+        event_is_set = e.wait(t)  #设置等待超时
+        logging.debug('event set: %s', event_is_set)
+        if event_is_set:
+            logging.debug('processing event')
+        else:
+            logging.debug('doing other work')</p>
+
+<p>e = threading.Event()  #替代time.sleep(),用wait()和set()来精确控制线程，2个或者多个线程同步操作
+t1 = threading.Thread(name='block', 
+                      target=wait_for_event,
+                      args=(e,))
+t1.start()</p>
+
+<p>t2 = threading.Thread(name='non-block', 
+                      target=wait_for_event_timeout, 
+                      args=(e, 2))
+t2.start()</p>
+
+<p>logging.debug('Waiting before calling Event.set()')
+time.sleep(3)
+e.set()
+logging.debug('Event is set')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(block     ) wait_for_event starting
+(MainThread) Waiting before calling Event.set()
+(non-block ) wait_for_event_timeout starting
+(non-block ) event set: False
+(non-block ) doing other work
+(non-block ) wait_for_event_timeout starting
+(MainThread) Event is set
+(block     ) event set: True
+(non-block ) event set: True
+(non-block ) processing event
+<pre class="sh_python">
+import logging
+import random
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class Counter(object):
+    def __init__(self, start=0):
+        self.lock = threading.Lock()  #锁资源，防止同时访问对象
+        self.value = start
+    def increment(self):
+        logging.debug('Waiting for lock')
+        self.lock.acquire()  #获得资源
+        try:
+            logging.debug('Acquired lock')
+            self.value = self.value + 1
+        finally:
+            self.lock.release()  #释放资源</p>
+
+<p>def worker(c):
+    for i in range(2):
+        pause = random.random()
+        logging.debug('Sleeping %0.02f', pause)
+        time.sleep(pause)
+        c.increment()
+    logging.debug('Done')</p>
+
+<p>counter = Counter()
+for i in range(2):
+    t = threading.Thread(target=worker, args=(counter,))
+    t.start()</p>
+
+<p>logging.debug('Waiting for worker threads')
+main_thread = threading.currentThread()
+for t in threading.enumerate():
+    if t is not main_thread:
+        t.join()
+logging.debug('Counter: %d', counter.value)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) Sleeping 0.85
+(Thread-2  ) Sleeping 0.12
+(MainThread) Waiting for worker threads
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Sleeping 0.04
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Done
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Sleeping 0.47
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Done
+(MainThread) Counter: 4</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/pythonmo-kuai-yan-jiu/'>python模块研究</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/guanyuthreadingyanjiuer/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/guanyusocketyanjiuyi/" title="Previous Post:
+        关于socket研究(一)">&laquo; 关于socket研究(一)</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/guanyuthreadingyanjiuer-2/"
+        title="Next Post: 关于threading研究（二）">关于threading研究（二）
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/guanyuthreadingyanjiuer/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/guanyuthreadingyanjiuer/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

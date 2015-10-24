@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: mongoengine | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/mongoengine/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[一个flask+mongoengine的site]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/a-data-analysis-site-by-flask-and-mongoengine/"/>
+    <updated>2013-11-20T17:39:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/a-data-analysis-site-by-flask-and-mongoengine</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>最近一直学习emacs和elisp, 也在做关于mongodb相关的研究,闲来无事就做了个网站,后端使用了flask, mongoengine, 前端css框架用的是
+雅虎的<a href="https://github.com/yui/pure">pure</a>, 还是用了神奇的<a href="https://github.com/gruntjs/grunt">grunt</a>做页面修改的livereload, 然后有d3,
+jquery, amchart和一个最近发现的页面消息弹出<a href="https://github.com/CodeSeven/toastr">toastr</a>.想学习flask和mongoengine的童鞋可直接拿去,开源地址是
+<a href="https://github.com/dongweiming/data-analysis">data-analysis</a></p>
+
+<h4 id="section-1">下载依赖和启动</h4>
+
+<p><code>python
+cd /path/to/data-analysis
+pip install -r requirements.txt
+# 安装grunt
+npm install
+# 我的后端样例数据
+mongorestore -d fetch_data --directoryperdb dump/fetch_data
+cd data_analysis
+# 启动Grunt
+grunt
+# 启动
+python run.py
+# 然后打开 http://Youip:5000
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[仿slid.es的在线PPT编辑网站]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/a-web-based-reveal.js-online-PPT/"/>
+    <updated>2013-05-25T12:22:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/a-web-based-reveal.js-online-PPT</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p><a href="https://slid.es">slid.es</a>是我最喜欢的前端之一<a href="https://github.com/hakimel">hakimel</a>的作品，前身叫做rvl.io, 网站已经改版。源于去年年底在上家公司做年终总结PPT，对我这种不搞office，没有美感的小程序员太痛苦了，然后就找到了<a href="https://github.com/hakimel/reveal.js">reveal.js</a>, 后来萌发做个基于它的网站, 其实也是为了练手学习mongoengine和oauth</p>
+
+<p>项目地址 <a href="https://github.com/dongweiming/flask_reveal">flask_reveal</a></p>
+
+<h4 id="section-1">它能做什么</h4>
+
+<ul>
+  <li>保存漂亮的在线PPT(我认为的)</li>
+  <li>记录浏览次数</li>
+  <li>多种主题和字体</li>
+  <li>可以把PPT私有化(默认是公开的)</li>
+  <li>自动保存修改</li>
+  <li>支持Bitbucket/Google/Github/Instagram/Linkdln/Trello/Tumblr/Stackoverflow oauth/oauth2登陆</li>
+  <li>PPT预览</li>
+</ul>
+
+<h4 id="section-2">使用了什么</h4>
+
+<ul>
+  <li>flask</li>
+  <li>mongoengine (忍不了非orm)</li>
+  <li>flask-script (像django那样的命令行启动)</li>
+  <li>前端js借用我做喜欢的原作者的90%，然后根据我的需要改动，css基本没动</li>
+  <li><a href="https://github.com/omab/python-social-auth">python-social-auth</a>的oauth后端，但是它使用的是flask+sqlalchemy，不支持flask+mongoengine，我改写了这部分</li>
+</ul>
+
+<h4 id="usage">Usage</h4>
+
+<p>设置hosts文件</p>
+
+<p>唉，本来申请了很多oauth想放在sae上面，但是遗憾的是新浪不支持，所以只能本地加hosts，让验证后的回调正确返回 linux 在你的/etc/hosts 文件里面添加一行</p>
+
+<p><code>
+YOURIP   YOURDOMAIN
+</code></p>
+
+<p>复制配置文件然后把你注册的ouauth放进去</p>
+
+<p><code>
+cp settings.py.example settings.py
+</code></p>
+
+<p>象django那样启动</p>
+
+<p><code>
+python manage.py runserver -t 0.0.0.0 -p 80
+</code></p>
+
+<p>And 访问主页<code>http://revealcn.sinaapp.com</code></p>
+
+<h4 id="nginxuwsgi">使用nginx+uwsgi</h4>
+
+<p>这里是我的配置nginx的这段（假设你git clone 后在/home/dongwm/flask_reveal）</p>
+
+<p>```
+server {
+		listen 80;
+		server_name revealcn.sinaapp.com;</p>
+
+<pre><code>	access_log /var/log/nginx/revealcn.access_log main;
+	error_log /var/log/nginx/revealcn.error_log info;
+	location / {
+            include uwsgi_params;
+            uwsgi_pass unix:///tmp/uwsgi.sock;
+    	}
+	location /zongjie {
+	root   /home/dongwm/flask_reveal;
+	index index.html;
+	}
+}
+</code></pre>
+
+<p>```</p>
+
+<p>uwsgi的xml配置</p>
+
+<p>```</p>
+<uwsgi>
+     <pythonpath>/home/dongwm/flask_reveal</pythonpath>
+     <module>manage</module>
+     <socket>/tmp/uwsgi.sock</socket>    
+    <callable>manager</callable>
+     <master />
+     <processes>4</processes>       
+     <memory-report />
+</uwsgi>
+<p>```</p>
+
+<p>这里有个坑，我的gentoo的uwsgi安装后是有插件的，你需要这样启动</p>
+
+<p><code>
+uwsgi_python27 -x uwsgi.xml 
+</code></p>
+
+]]></content>
+  </entry>
+  
+</feed>

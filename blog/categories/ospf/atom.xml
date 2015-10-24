@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: ospf | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/ospf/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[OSPF验证配置 (MD5验证)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/"/>
+    <updated>2011-03-30T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ospf验证配置-md5验证</id>
+    <content type="html"><![CDATA[<p><strong>实验要求</strong></p>
+
+<p><strong>1. 完成路由器的基本配置和连通性配置</strong>
+<strong> 2．根据拓扑图的示意，分成两个区域 area 0和area 100 OSPF的进程号为100</strong>
+<strong> 3. 完成OSPF路由协议的MD5验证功能</strong>
+<strong> 4．完成以上配置后进行测试，从R1 ping通 R3上的S1、loopback0以及loopback1；反之，R3 ping 通 R1上的S0、loopback0以及loopback1</strong></p>
+
+<p><strong>R1 配置</strong></p>
+
+<p><pre class="sh_bash">Router&gt;enable
+Router#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname 01r1
+01r1(config)#line console 0
+01r1(config-line)#logging synchronous
+01r1(config-line)#exit
+01r1(config)#no ip domain-lookup
+01r1(config)#int s0/0
+01r1(config-if)#no shutdown
+01r1(config-if)#ip address 210.1.12.1 255.255.255.0
+01r1(config-if)#clock rate 64000
+01r1(config-if)#int loopback 0
+01r1(config-if)#ip address 1.1.1.1 255.255.255.255
+01r1(config-if)#int loopback 1
+01r1(config-if)#ip address 11.11.11.11 255.255.255.255
+01r1(config-if)#exit
+01r1(config)#router ospf 100
+01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
+01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
+01r1(config-router)#network 1.1.1.1 0.0.0.0 area 0
+01r1(config-router)#network 11.11.11.11 0.0.0.0 area 0
+01r1(config-router)#end
+01r1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+01r1(config)#int s0/0
+01r1(config-if)#ip ospf authentication message-digest
+*Mar  1 00:06:46.503: %SYS-5-CONFIG_I: Configured from console by console
+01r1(config-if)#ip ospf message-digest-key 1 md5 cisco123
+OSPF: Key 1 already exists
+01r1(config-if)#
+*Mar  1 00:07:25.543: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/0, changed state to up
+*Mar  1 00:07:26.003: %OSPF-5-ADJCHG: Process 100, Nbr 22.22.22.22 on Serial0/0 from LOADING to FULL, Loading Done</pre><!--more--></p>
+
+<p><strong>R2配置</strong></p>
+
+<p><pre class="sh_bash">Router&gt;enable
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname 01r2
+01r2(config)#line console 0
+01r2(config-line)#logging synchronous
+01r2(config-line)#exit
+01r2(config)#no ip domain-lookup
+01r2(config)#interface serial 0/0
+01r2(config-if)#no shutdown
+01r2(config-if)#ip address 210.1.12.2 255.255.255.0
+01r2(config-if)#int s0/1
+01r2(config-if)#no shutdown
+01r2(config-if)#ip address 210.1.23.2 255.255.255.0
+01r2(config-if)#clock rate 64000
+01r2(config-if)#int loopback 0
+01r2(config-if)#ip address 2.2.2.2 255.255.255.255
+01r2(config-if)#int loopback 1
+01r2(config-if)#ip address 22.22.22.22 255.255.255.255
+01r2(config-if)#exit
+01r2(config)#router ospf 100
+01r2(config-router)#network 210.1.12.2 0.0.0.255 area 0
+01r2(config-router)#network 210.1.23.2 0.0.0.255 area 100
+01r2(config-router)#network 2.2.2.2 0.0.0.0 area 100
+01r2(config-router)#network 22.22.22.22 0.0.0.0 area 100
+01r2(config-router)#end
+01r2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+01r2(config)#int s0/0
+01r2(config-if)#ip ospf authentication message-digest
+01r2(config-if)#
+*Mar  1 00:07:35.967: %SYS-5-CONFIG_I: Configured from console by console
+*Mar  1 00:07:35.971: %LINEPROTO-5-UPDOWN: Line protocol on Interface Loopback0, changed state to upip ospf message-digest-key 1 md5 cisco123
+01r2(config-if)#int s0/1
+01r2(config-if)#ip ospf authentication message-digest
+*Mar  1 00:07:35.971: %LINK-3-UPDOWN: Interface Serial0/0, changed state to up
+*Mar  1 00:07:36.203: %LINEPROTO-5-UPDOWN: Line protocol on Interface Loopback1, changed state to up
+*Mar  1 00:07:36.511: %LINK-3-UPDOWN: Interface Serial0/1, changed state to up
+*Mar  1 00:07:36.975: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/0, changed state to up
+*Mar  1 00:07:37.515: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/1, changed state to up
+*Mar  1 00:07:39.711: %OSPF-5-ADJCHG: Process 100, Nbr 11.11.11.11 on Serial0/0 from LOADING to FULL, Loading Done
+01r2(config-if)#
+*Mar  1 00:08:05.659: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/1, changed state to down
+01r2(config-if)#
+*Mar  1 00:08:45.643: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/1, changed state to up
+01r2(config-if)#
+*Mar  1 00:09:26.059: %OSPF-5-ADJCHG: Process 100, Nbr 33.33.33.33 on Serial0/1 from LOADING to FULL, Loading Done</pre></p>
+
+<p><strong>R3配置</strong></p>
+
+<p><pre class="sh_bash">Router&gt;enable
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname 01r3
+01r3(config)#line console 0
+01r3(config-line)#logging synchronous
+01r3(config-line)#exit
+01r3(config)#no ip domain-lookup
+01r3(config)#int s0/0
+01r3(config-if)#no shut
+01r3(config-if)#ip add 210.1.23.3 255.255.255.0
+01r3(config-if)#int loopback 0
+01r3(config-if)#ip address 3.3.3.3 255.255.255.255
+01r3(config-if)#int loopback 1
+01r3(config-if)#ip add 33.33.33.33 255.255.255.255
+01r3(config-if)#exit
+01r3(config)#router ospf  100
+01r3(config-router)#network 210.1.23.3 0.0.0.255 area 100
+01r3(config-router)#network 3.3.3.3 0.0.0.0 area 100
+01r3(config-router)#network 33.33.33.33 0.0.0.0 area 100
+01r3(config-router)#end
+01r3#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+01r3(config)#int s0/0
+01r3(config-if)#ip ospf authentication message-digest
+*Mar  1 00:08:12.867: %SYS-5-CONFIG_I: Configured from console by console
+*Mar  1 00:08:14.335: %LINK-3-UPDOWN: Interface Serial0/0, changed state to up
+01r3(config-if)#ip ospf message-digest-key 1 md5 cisco12345
+01r3(config-if)#
+*Mar  1 00:09:04.499: %OSPF-5-ADJCHG: Process 100, Nbr 22.22.22.22 on Serial0/0 from LOADING to FULL, Loading Done</pre></p>
+
+<p><strong>测试：R1</strong></p>
+
+<p><pre class="sh_bash">01r1(config-if)#do ping 210.1.23.3
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 210.1.23.3, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 28/94/140 ms
+01r1#do ping 3.3.3.3
+*Mar  1 00:09:34.071: %SYS-5-CONFIG_I: Configured from console by console</p>
+
+<p>01r1#ping 3.3.3.3</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 3.3.3.3, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 52/133/372 ms
+01r1#ping 33.33.33.33</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 33.33.33.33, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 24/82/184 ms
+01r1#sh ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+E1 - OSPF external type 1, E2 - OSPF external type 2
+i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+ia - IS-IS inter area, * - candidate default, U - per-user static route
+o - ODR, P - periodic downloaded static route</p>
+
+<p>Gateway of last resort is not set</p>
+
+<p>1.0.0.0/32 is subnetted, 1 subnets
+C       1.1.1.1 is directly connected, Loopback0
+2.0.0.0/32 is subnetted, 1 subnets
+O IA    2.2.2.2 [110/65] via 210.1.12.2, 00:02:29, Serial0/0
+33.0.0.0/32 is subnetted, 1 subnets
+O IA    33.33.33.33 [110/129] via 210.1.12.2, 00:00:52, Serial0/0
+3.0.0.0/32 is subnetted, 1 subnets
+O IA    3.3.3.3 [110/129] via 210.1.12.2, 00:00:52, Serial0/0
+C    210.1.12.0/24 is directly connected, Serial0/0
+22.0.0.0/32 is subnetted, 1 subnets
+O IA    22.22.22.22 [110/65] via 210.1.12.2, 00:02:29, Serial0/0
+O IA 210.1.23.0/24 [110/128] via 210.1.12.2, 00:01:32, Serial0/0
+11.0.0.0/32 is subnetted, 1 subnets
+C       11.11.11.11 is directly connected, Loopback1</p>
+
+<p><strong>测试：R3</strong></p>
+
+<p><pre class="sh_bash">01r3(config-if)#do ping 210.1.12.1
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 210.1.12.1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 40/99/148 ms
+01r3(config-if)#do ping 1.1.1.1</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 1.1.1.1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 16/95/252 ms
+01r3(config-if)#do ping 11.11.11.11</p>
+
+<p>Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 11.11.11.11, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 36/104/240 ms</p>
+
+<p>01r3(config-if)#do sh ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+E1 - OSPF external type 1, E2 - OSPF external type 2
+i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+ia - IS-IS inter area, * - candidate default, U - per-user static route
+o - ODR, P - periodic downloaded static route</p>
+
+<p>Gateway of last resort is not set</p>
+
+<p>1.0.0.0/32 is subnetted, 1 subnets
+O IA    1.1.1.1 [110/129] via 210.1.23.2, 00:01:28, Serial0/0
+2.0.0.0/32 is subnetted, 1 subnets
+O       2.2.2.2 [110/65] via 210.1.23.2, 00:01:28, Serial0/0
+33.0.0.0/32 is subnetted, 1 subnets
+C       33.33.33.33 is directly connected, Loopback1
+3.0.0.0/32 is subnetted, 1 subnets
+C       3.3.3.3 is directly connected, Loopback0
+O IA 210.1.12.0/24 [110/128] via 210.1.23.2, 00:01:28, Serial0/0
+22.0.0.0/32 is subnetted, 1 subnets
+O       22.22.22.22 [110/65] via 210.1.23.2, 00:01:28, Serial0/0
+C    210.1.23.0/24 is directly connected, Serial0/0
+11.0.0.0/32 is subnetted, 1 subnets
+O IA    11.11.11.11 [110/129] via 210.1.23.2, 00:01:28, Serial0/0</p>
+</pre></p></pre></p>
+]]></content>
+  </entry>
+  
+</feed>

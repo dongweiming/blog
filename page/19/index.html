@@ -1,0 +1,1320 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/19">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/opensuseanzhuanganjuta/">Opensuse安装anjuta</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-27T00:00:00+08:00" pubdate data-updated="true">Feb 27<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>问题：以前使用anjuta在gentoo下调试c/c++程序，最近在opensuse11.4想使用anjuta，发现yast/zypper安装的anjuta不能新建项目，直接卡住，然后杀掉进程后再启动anjuta会停止在&#8221;加载调试器&#8221;这一步。</p>
+
+<p>解决：1 使用源码安装：http://ftp.gnome.org/pub/GNOME/sources/anjuta</p>
+
+<p>发现各个版本（从2.1.0到3.3）都有一些依赖关系，重新编译安装会对现在的系统造成影响，比如我安装了一个新版本的glib，造成xwindows启动不了，最后在修复模式卸载了才恢复</p>
+
+<p>2  使用jhbuild</p>
+
+<p>提示 在autogen的过程中： gtkdocize: command not found  失败</p>
+
+<p>3 根据anjuta官网wiki https://live.gnome.org/DeveloperTools/Installation 文档安装 还是同样的问题，不能新建项目</p>
+
+<p>最终解决办法：</p>
+
+<p>从github上面找了一个anjuta源码版本：</p>
+
+<p>https://github.com/abderrahim/anjuta.git
+过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; git clone https://github.com/abderrahim/anjuta.git
+cd anjuta/
+./autogen.sh</p>
+
+<p>make</p>
+
+<p>sudo make install</p>
+
+<p>因为默认安装在/use/local下，需要</p>
+
+<p>sudo vi /etc/ld.so.conf
+添加一行： /usr/local/lib</p>
+
+<p>sudo /sbin/ldconfig</p>
+
+<p>这个anjuta正常了</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoobijishigentooguanliruanjianzongjie/">Gentoo笔记（十）gentoo管理软件总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-24T00:00:00+08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 gentoolkit</strong></p>
+
+<p>dongwm@localhost ~ $sudo sudo emerge gentoolkit
+<strong> 1 revdep-rebuild 比如如果发现 /bin/ls 需要的 /lib/libacl.so.1 缺失，就会重新编译相关文件所在的包，以及所用到该文件的所在文件的包。</strong></p>
+
+<p>dongwm@localhost ~ $sudo revdep-rebuild <span style="color: #000102;"><span style="font-family: 宋体;">修复一些被破坏的lib</span></span>
+* Configuring search environment for revdep-rebuild</p>
+
+<p>* Checking reverse dependencies
+* Packages containing binaries and libraries broken by a package update
+* will be emerged.</p>
+
+<p>* Collecting system binaries and libraries
+* Generated new 1_files.rr
+* Collecting complete LD_LIBRARY_PATH
+* Generated new 2_ldpath.rr
+* Checking dynamic linking consistency
+[ 100% ]
+<strong> 2 equery</strong></p>
+
+<p>equery b  xxx 查询文件是由那个软件包安装带来的
+dongwm@localhost ~ $sudo  equery b  anjuta
+* Searching for anjuta &#8230;</p>
+
+<p>dev-util/anjuta-2.32.1.1 (/usr/share/pixmaps/anjuta)
+dev-util/anjuta-2.32.1.1 (/usr/bin/anjuta)
+dev-util/anjuta-2.32.1.1 (/usr/share/anjuta)
+dev-util/anjuta-2.32.1.1 (/usr/lib/anjuta)
+equery d XXX，查询哪些软件包是依赖于pkg的
+[ Searching for packages depending on vmware-modules&#8230; ] app-emulation/vmware-workstation-5.5.5.56455 (~app-emulation/vmware-modules-1.0.0.15)</p>
+
+<p><strong> 3 eclean distfiles 只删除过期的包</strong>
+<strong>2 module-rebuild</strong>
+dongwm@localhost ~ $sudo emerge module-rebuild</p>
+
+<p>重新编译外部内核模块</p>
+
+<p>dongwm@localhost ~ $sudo module-rebuild rebuild</p>
+
+<p>就可以重新编译所有内核的 外部 模块。比如 nvidia/vbox 这类软件用到的模块。当然，你要先装过 nvidia包和 vbox模块包，这样 portage 才有记录。
+<strong>3 portage-utils</strong>
+dongwm@localhost ~ $sudo portage-utils</p>
+
+<p>dongwm@localhost ~ $sudo qfile anjuta 类似于 equery b
+dev-util/anjuta (/usr/lib/anjuta)
+dev-util/anjuta (/usr/share/anjuta)
+dev-util/anjuta (/usr/share/pixmaps/anjuta)
+dev-util/anjuta (/usr/bin/anjuta)</p>
+
+<p>root@localhost ~ #equery depends  autogen 查看哪些包依赖于antogen
+* These packages depend on autogen:
+dev-util/anjuta-2.32.1.1 (sys-devel/autogen)
+sys-devel/gcc-4.5.3-r1 (test ? &gt;=sys-devel/autogen-5.5.4)</p>
+
+<p>root@localhost ~ #equery u anjuta 查看已安装包abc用了哪些USE
+[ Legend : U - final flag setting for installation]
+[        : I - package is installed with flag     ]
+[ Colors : set, unset                             ]
+* Found these USE flags for dev-util/anjuta-2.32.1.1:
+U I
+- - debug         : Enable extra debug codepaths, like asserts and extra
+output. If you want to get meaningful backtraces see
+http://www.gentoo.org/proj/en/qa/backtraces.xml
+- - devhelp       : Enable devhelp integration
+- - doc           : Adds extra documentation (API, Javadoc, etc). It is
+recommended to enable per package instead of globally
+- - glade         : Build glade plugin for anjuta
+- - graphviz      : Adds support for the Graphviz library
+- - introspection : Use dev-libs/gobject-introspection for introspection
++ + sourceview    : Build sourceview editing plugin for anjuta
+- - subversion    : Enable subversion (version control system) support
+- - test          : Workaround to pull in packages needed to run with
+FEATURES=test. Portage-2.1.2 handles this internally, so
+don&#8217;t set it in make.conf/package.use anymore
+- - vala          : Enable support for the Vala programming language</p>
+
+<p>dongwm@localhost ~ $sudo qlist anjuta 列出软件包安装后都带来的文件列表</p>
+
+<p><strong>4 genlop</strong>
+dongwm@localhost ~ $sudo emerge genlop</p>
+
+<p>genlop -t anjuta 列出安装anjuta的具体时间，时间长短等
+dongwm@localhost ~ $sudo genlop -t anjuta
+* dev-util/anjuta</p>
+
+<p>Tue Feb 21 17:57:35 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
+merge time: 2 minutes and 54 seconds.</p>
+
+<p>Wed Feb 22 10:55:30 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
+merge time: 4 minutes and 6 seconds.</p>
+
+<p>Wed Feb 22 11:25:57 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
+merge time: 4 minutes and 5 seconds.</p>
+
+<p>Fri Feb 24 13:22:43 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
+merge time: 3 minutes and 57 seconds.</p>
+
+<p>root@localhost ~ #genlop -l|grep compiz 类似于rpm -qa 列出安装的软件包列表 这里grep过滤了一下
+Tue Dec 27 22:44:27 2011 &gt;&gt;&gt; x11-libs/compiz-bcop-0.8.4
+Tue Dec 27 22:49:00 2011 &gt;&gt;&gt; x11-wm/compiz-0.8.6-r3
+Tue Dec 27 22:56:27 2011 &gt;&gt;&gt; x11-libs/libcompizconfig-0.8.4-r2
+Tue Dec 27 22:57:00 2011 &gt;&gt;&gt; x11-plugins/compiz-plugins-main-0.8.6-r1
+Tue Dec 27 22:57:08 2011 &gt;&gt;&gt; dev-python/compizconfig-python-0.8.4-r3
+Tue Dec 27 22:57:13 2011 &gt;&gt;&gt; x11-libs/compizconfig-backend-gconf-0.8.4-r2
+Tue Dec 27 22:57:44 2011 &gt;&gt;&gt; x11-plugins/compiz-plugins-extra-0.8.6-r1
+Tue Dec 27 22:58:10 2011 &gt;&gt;&gt; x11-wm/compiz-fusion-0.8.6
+<strong>5 eix</strong>
+dongwm@localhost ~ $sudo emerge eix
+软件包搜索：
+dongwm@localhost ~ $sudo eix anjuta
+[I] dev-util/anjuta
+Available versions:  2.32.1.1 ~3.2.1 ~3.2.2 {debug devhelp doc glade graphviz +introspection packagekit +sourceview subversion test vala}
+Installed versions:  2.32.1.1(13时21分50秒 2012年02月24日)(sourceview -debug -devhelp -doc -glade -graphviz -introspection -subversion -test -vala)
+Homepage:            http://www.anjuta.org
+Description:         A versatile IDE for GNOME</p>
+
+<p>将本地软件列表与最新的portage树同步
+dongwm@localhost ~ $sudo eix-sync</p>
+
+<p>注：需要每次 emerge &#8211;sync 后运行 update-eix 才会更新索引。推荐使用 eix-sync 命令取代上面的2个命令
+<strong>6 euses</strong></p>
+
+<p>dongwm@localhost ~ $sudo emerge euses</p>
+
+<p>查询哪个包用了YYY这个USE</p>
+
+<p>euse -i YYY
+<strong>7 ufed</strong></p>
+
+<p>所有USE都可以在这里修改，不用手动修改 make.conf 了，很方便
+dongwm@localhost ~ $sudo ufed
+<strong>8 elogv</strong></p>
+
+<p>emerge 大量软件的时候，很多提示的消息都一闪而过，现在给查看他们的方法。</p>
+
+<p>dongwm@localhost ~ $sudo emerge elogv</p>
+
+<p>emerge elogviewer # GTK
+emerge kelogviewer # KDE</p>
+
+<p>修改 /etc/make.conf</p>
+
+<p>PORTAGE_ELOG_SYSTEM=&#8221;save&#8221;
+PORTAGE_ELOG_CLASSES=&#8221;warn error info log qa&#8221;</p>
+
+<p>你可以根据需求去掉一些信息，比如 qa(质量保证) 你不需要，就可以去掉。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoobijijiuportageyuruanjianbao/">gentoo笔记（九）Portage 与软件包</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-24T00:00:00+08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：Portage 工具中用户用得最多的便是 emerge，它 是一个用以安装, 卸载, 查询以及维护软件的命令. 它是 ebuild 的一个前端，而且它有ebuild缺少的功能（比如解决依赖性、搜索Portage树等。</p>
+
+<p><strong>1 查看 Portage 树</strong>
+lls /usr/portage &#8211;classify
+注，也能切换到更深的目录查看类别，软件包等
+<strong>2 搜寻软件包</strong></p>
+
+<p>emerge &#8211;search mozilla 或者emerge -s mozilla # 搜寻和anjuta有关的软件信息</p>
+
+<p>Searching&#8230;
+[ Results for search key : anjuta ]
+[ Applications found : 1 ]</p>
+
+<p>*  dev-util/anjuta
+Latest version available: 2.32.1.1
+Latest version installed: 2.32.1.1
+Size of files: 9,934 kB
+Homepage:      http://www.anjuta.org
+Description:   A versatile IDE for GNOME
+License:       GPL-2
+<strong>3 搜寻相关描述信息</strong>
+dongwm@localhost ~ $sudo emerge &#8211;searchdesc mozilla
+<strong>4 更新portage</strong>
+dongwm@localhost ~ $sudo emerge &#8211;sync #要以 rsync 更新 Portage,因为不更新portage树的话 gentoo软件会停留在一些版本上，系统会很快变得过时
+<strong>5 预编译 也就是假装编译，其实并没有编译安装</strong>
+dongwm@localhost ~ $sudo emerge &#8211;pretend anjuta （不编译安装，可以用来查看这个软件包将安装的依赖性软件，简写: -p）
+<strong>6 只获取软件的源码</strong>
+dongwm@localhost ~ $sudo emerge &#8211;fetchonly anjuta  [不编译安装，下载这个软件的源代码以及他的依赖性软件，简写：-f]
+<strong>7 安装指定版本的</strong>
+dongwm@localhost ~ $sudo emerge &#8220;&lt;anjuta-2.22&#8221;
+<strong>8 显示安装软件所有的依赖性</strong>
+dongwm@localhost ~ $sudo emerge &#8211;emptytree &#8211;pretend anjuta
+<strong>9 查看软件所需源代码的网址</strong>
+dongwm@localhost ~ $sudo emerge &#8211;fetchonly &#8211;pretend anjuta
+<strong>10 不理会依赖关系而安装</strong>
+dongwm@localhost ~ $sudo emerge &#8211;nodeps anjuta
+<strong>11 安装软件的依赖关系</strong>
+dongwm@localhost ~ $sudo emerge &#8211;onlydeps anjuta
+<strong>12 列出与删除已不需要的 (orphaned) 依赖关系</strong></p>
+
+<p>dongwm@localhost ~ $sudo emerge -p depclean
+(在认真检查过输出的列表之后, 开始卸载不用的依赖关系包)
+dongwm@localhost ~ $sudo emerge depclean</p>
+
+<p>注：使用 depclean 很有可能严重地损坏gentoo系统 ，需要小心谨慎, 并在实际删除前反复检查依赖关系包列表.
+<strong>13 更新系统软件包</strong>
+dongwm@localhost ~ $sudo emerge &#8211;update system
+<strong>14 更新整个系统</strong>
+dongwm@localhost ~ $sudo emerge &#8211;update world
+<strong>15 预更新整个系统</strong></p>
+
+<p>dongwm@localhost ~ $sudo emerge &#8211;pretend &#8211;update world</p>
+
+<p>在单词 &#8220;ebuild&#8221; 旁边您可以看到一个字母 (或字母的组合)：<em></em></p>
+
+<p><em>B</em> (blocks) 左边列出来的软件因为冲突原因将阻碍右边列出来的软件的安装<em></em></p>
+
+<p><em>N</em> (new) 对于您的系统来说这是一个新软件, 且为第一次安装<em></em></p>
+
+<p><em>R</em> (replace) 不是新软件, 不过会被重新 emerge (reemerged)<em></em></p>
+
+<p><em>F</em> (fetch) 该软件要求您先把源码手工地下载回来 (例如因为许可 (licencing issues) 的缘故)<em></em></p>
+
+<p><em>U</em> (update) 软件包已安装, 不过将被升级<em></em></p>
+
+<p><em>UD</em> (downgrade) 软件包已安装, 不过将被降级
+<strong>注：</strong>
+1 可能更新后重启登录到login界面出现键盘无响应的问题，需要使用安装光盘那chroot到系统重新安装xf86-input-evdev（热插拔）问题，或者在更新系统旧重新安装，防止重启出现无响应
+sudo emerge xf86-input-evdev
+2 当更新时出现某软件包 404 not found 你可以去找一个其它的源下载这个软件包到/usr/portage/distfiles/目录下（如果你没有修改Portage对存放软件包位置的配置）</p>
+
+<p><strong>16 更新整个系统, 且包括所有依赖关系</strong></p>
+
+<p>dongwm@localhost ~ $sudo  emerge &#8211;update &#8211;deep world <em> 注：world</em> 文件不包含依赖关系. 当您
+运行 emerge &#8211;update world 时, 仅有 world 文件中列出的那些软件包及其直接的 (immediate)
+依赖包会被检查或, 必要的话, 会被更新. 如果您想让 emerge 检查<em>所有的</em>依赖关系
+(包括依赖包的依赖包), 则请加多一个 &#8211;deep 参数:</p>
+
+<p><strong>17 卸载软件</strong>
+emerge -C anjuta</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/opensuserpmshujukusunhuaidejiejuefangfa/">Opensuse Rpm数据库损坏的解决方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-23T00:00:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>opensuse后来使用不知道为什么，安装更新软件以及我最近做的从11。4升级到12。1的操作，都会报类似的错误：</p>
+
+<p>rpmdb: PANIC: fatal region error detected; run recovery
+error: db3 error(-30977) from db-&gt;sync: DB_RUNRECOVERY: Fatal error, run database recovery
+rpmdb: PANIC: fatal region error detected; run recovery
+下列软件包在安装期间或安装后或移除时出现问题：
+Installation aborted by user
+研究发现：这是因为rpm数据库损坏了，解决办法</p>
+
+<p>使用 <span style="color: navy;"># rpm &#8211;rebuilddb</span> 或者 <span style="color: navy;"># rpm -initdb</span> 、（重新建立了rpm库里的记录）</p>
+
+<p>但是 加入还是不行，那只能这样：</p>
+
+<p>rm /var/lib/rpm/__db*</p>
+
+<p>rpm &#8211;rebuilddb
+yum clean all  会删除之前的缓存，例如刚下载国12。1的那些更新包，就不能使用 ，需要重新下载安装了</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/jiejueundefinedmethodrequirementfor/">解决安装redmine“undefined Method `requirement&#8217; ”报错</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-15T00:00:00+08:00" pubdate data-updated="true">Feb 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：在opensuse安装redmine出现一个比较可爱的报错，puppet面板安装也可能遇见，当创建表时：</p>
+
+<p>dongwm@linux-b8lh:~/redmine/svn/branches/1.3-stable/config&gt; !rake
+rake db:migrate RAILS_ENV=production
+(in /home/dongwm/redmine/svn/branches/1.3-stable)</p>
+
+<p>rake aborted!
+undefined method `requirement&#8217; for #&lt;Rails::GemDependency:0xb71a2248&gt;</p>
+
+<p>Tasks: TOP =&gt; db:migrate =&gt; environment
+(See full trace by running task with &#8211;trace)</p>
+
+<p>解决：修改gem_dependency.rb，一般在你安装的rails库目录下，我的是/usr/lib/ruby/gems/1.8/gems/rails-2.3.14/lib/rails/gem_dependency.rb</p>
+
+<p>注释掉81行 #gem self.name, self.requirement # &lt;  1.8 unhappy way
+修改为：</p>
+
+<p>gem self.name, :version =&gt; (self.respond_to?(:requirement) ? self.requirement : self.version_requirements)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%BA%8C%EF%BC%89/">Pymongo教程（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-06T00:00:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1  移除子文档：</p>
+
+<p>user_doc = {
+&#8220;username&#8221;:&#8221;foouser&#8221;,
+&#8220;emails&#8221;:[
+{
+&#8220;email&#8221;:&#8221;foouser1@dongwm.com&#8221;,
+&#8220;primary&#8221;:True
+},
+{
+&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+},
+{
+&#8220;email&#8221;:&#8221;foouser3@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+}
+]
+}
+dbh.users.insert(user_doc, safe=True)
+dbh.users.update({&#8220;username&#8221;:&#8221;foouser&#8221;},
+{&#8220;$pull&#8221;:{&#8220;emails&#8221;:{&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;}}}, safe=True)   #移除 &#8220;foouser2@dongwm.com&#8221;子文档</p>
+
+<p>2 增加子文档</p>
+
+<p>new_email = {&#8220;email&#8221;:&#8221;fooemail4@dongwm.com&#8221;, &#8220;primary&#8221;:False}
+dbh.users.update({&#8220;username&#8221;:&#8221;foouser&#8221;},
+{&#8220;$push&#8221;:{&#8220;emails&#8221;:new_email}}, safe=True)   #使用$push增加</p>
+
+<p>3 修改子文档</p>
+
+<p>user_doc = {
+&#8220;username&#8221;:&#8221;foouser&#8221;,
+&#8220;emails&#8221;:[
+{
+&#8220;email&#8221;:&#8221;foouser1@dongwm.com&#8221;,
+&#8220;primary&#8221;:True
+},
+{
+&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+},
+{
+&#8220;email&#8221;:&#8221;foouser3@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+}
+]
+}
+dbh.users.insert(user_doc, safe=True)
+dbh.users.update({&#8220;emails.email&#8221;:&#8221;foouser2@dongwm.com&#8221;},
+{&#8220;$set&#8221;:{&#8220;emails.$.primary&#8221;:True}}, safe=True)   #设置子文档属性 &#8220;primary&#8221;为真</p>
+
+<p>4 使用索引加快查找</p>
+
+<p>这里有个文档</p>
+
+<p>user_doc = {
+&#8220;username&#8221;:&#8221;foouser&#8221;,
+&#8220;emails&#8221;:[
+{
+&#8220;email&#8221;:&#8221;foouser1@dongwm.com&#8221;,
+&#8220;primary&#8221;:True
+},
+{
+&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+},
+{
+&#8220;email&#8221;:&#8221;foouser3@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+}
+]
+}</p>
+
+<p>dbh.users.insert(user_doc)</p>
+
+<p>正常查找使用：</p>
+
+<p>user = dbh.users.find_one({&#8220;emails.email&#8221;:&#8221;foouser2@dongwm.com&#8221;})</p>
+
+<p>使用索引（根据mail.mail）：</p>
+
+<p>dbh.users.create_index(&#8220;emails.email&#8221;)</p>
+
+<p>注：简历索引比较耗时也增加系统负荷可以使用将其放在后台：dbh.users.create_index(&#8220;emails.email&#8221;, background=True)</p>
+
+<p>5 删除索引</p>
+
+<p>dbh.users.create_index(&#8220;username&#8221;, name=&#8221;username_idx&#8221;)
+dbh.users.drop_index(&#8220;username_idx&#8221;)
+6 复合索引（简单的理解就是在where条件中字段用索引，如果用多字段就用复合索引）</p>
+
+<p>dbh.users.create_index([(&#8220;first_name&#8221;, pymongo.ASCENDING), (&#8220;last_name&#8221;, pymongo.ASCENDING)])</p>
+
+<p>注：删除索引方法：dbh.users.drop_index([(&#8220;first_name&#8221;, pymongo.ASCENDING), (&#8220;last_name&#8221;, pymongo.ASCENDING)])</p>
+
+<p>或者：</p>
+
+<p>dbh.users.create_index([
+(&#8220;first_name&#8221;, pymongo.ASCENDING),
+(&#8220;last_name&#8221;, pymongo.ASCENDING)
+],
+name=&#8221;name_idx&#8221;)  #给索引使用一个名字</p>
+
+<p>7 geospatial（<span>地理位置</span>）索引</p>
+
+<p>这个说来比较复杂：可以关注http://blog.nosqlfan.com/html/1811.html以及mongodbCTO的个人博客http://www.snailinaturtleneck.com/blog/</p>
+
+<p>dbh.users.create_index([(&#8220;user_location&#8221;, pymongo.GEO2D), (&#8220;username&#8221;, pymongo.ASCENDING)])</p>
+
+<p>8 例子（在点（40,40）最大距离为5的最近的10个用户）</p>
+
+<p>nearest_users = dbh.users.find(
+{&#8220;user_location&#8221;:
+{&#8220;$near&#8221; : [40, 40],
+&#8220;$maxDistance&#8221;:5}}).limit(10)   #关键字：$near
+for user in nearest_users:
+print &#8220;User %s is at location %s,%s&#8221; %(user[&#8220;username&#8221;], user[&#8220;user_location&#8221;][0],user[&#8220;user_location&#8221;[1])</p>
+
+<p>9 例子2（相关区域内的查找）</p>
+
+<p>box = [[50.73083, -83.99756], [50.741404,  -83.988135]]
+users_in_boundary = dbh.users.find({&#8220;user_location&#8221;:{&#8220;$within&#8221;: {&#8220;$box&#8221;:box}}})</p>
+
+<p>10 例子3（一个圆区域的查询，提供中心点和半径）</p>
+
+<p>users_in_circle = dbh.users.find({&#8220;user_location&#8221;:{&#8220;$within&#8221;:{&#8220;$center&#8221;:[40, 40, 5]}}}).limit(10)  （点（40,40）,半径为5内的区域查询，只要前10个数据）</p>
+
+<p>11 例子4（球形区域查询）：</p>
+
+<p>earth_radius_km = 6371.0
+max_distance_km = 5.0
+max_distance_radians = max_distance_km / earth_radius_km
+nearest_users = dbh.users.find(
+{&#8220;user_location&#8221;:
+{&#8220;$nearSphere&#8221; : [40, 40],
+&#8220;$maxDistance&#8221;:max_distance_radians}}).limit(10)   #还是点（40,40）,半径为5内的区域查询，只要前10个数据</p>
+
+<p>12 避免KeyErrors和其他错误，使用默认值</p>
+
+<p>比如计算分数，假如因为某些原因出现错误，为了不影响正常使用，例如将出现问题的那一次运算设计成0：</p>
+
+<p>total_score = 0
+for username in (&#8220;jill&#8221;, &#8220;sam&#8221;, &#8220;cathy&#8221;):
+user_doc = dbh.users.find_one({&#8220;username&#8221;:username})
+total_score += user_doc.get(&#8220;score&#8221;, 0)  #这样的话 有数据的就加数据 没有数据就是0</p>
+
+<p>注：也可能存在不是空值而是空列表</p>
+
+<p>for supplier in product_doc.get(&#8220;suppliers&#8221;, []):
+email_supplier(supplier)
+13 插入或者更新的选择：</p>
+
+<p>先查询是否已经存在的文档，没有选择插入，有的话就是更新</p>
+
+<p>def edit_or_add_session(description, session_id):
+dbh.sessions.update({&#8220;session_id&#8221;:session_id},
+{&#8220;$set&#8221;:{&#8220;session_description&#8221;:description}}, safe=True, upsert=True)</p>
+
+<p>14 自动增加文档属性值</p>
+
+<p>ret = dbh.users.find_and_modify({&#8220;username&#8221;:username},
+{&#8220;$inc&#8221;:{&#8220;account_balance&#8221;:20}}, safe=True, new=True)
+new_account_balance = ret[&#8220;account_balance&#8221;]  #&#8221;account_balance&#8221;自动加了20</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%89%EF%BC%89/">Pymongo教程（三）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-06T00:00:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1 MongoDB 队列查询
+$gt 大于 例子：“score”:{&#8220;$gt”:0}
+$lt小于 例子：“score”:{&#8220;$lt”:0}
+$gte 大于等于例子： “score”:{&#8220;$gte”:0}
+$lte 小于等于 例子：“score”:{&#8220;$lte”:0} ⇐
+$all all  例子：“skills”:{&#8220;$all”:[&#8220;mongodb”,&#8221;python&#8221;]}
+$exists 属性必须存在 例子：“email”:{&#8220;$exists”:True}
+$mod 模块X等于Y 例子： “seconds”:{&#8220;$mod”:[60,0]}
+$ne 不等于 例子：“seconds”:{&#8220;$ne”:60}
+$in In 例子： “skills”:{&#8220;$in”:[&#8220;c”,&#8221;c++&#8221;]}
+$nin Not In 例子：“skills”:{&#8220;$nin”:[&#8220;php”,&#8221;ruby”,&#8221;perl&#8221;]}
+$nor Nor例子： “$nor”:[{&#8220;language”:&#8221;english&#8221;},{&#8220;coun- N/A
+try”:&#8221;usa&#8221;}]
+$or Or 例子：“$or”:[{&#8220;language”:&#8221;english&#8221;},{&#8220;coun- OR
+try”:&#8221;usa&#8221;}]
+$size 数组个数 例子： “skills”:{&#8220;$size”:3}</p>
+
+<p>2 MongoDB更新修改</p>
+
+<p>$inc 子增长 “$inc”:{&#8220;score”:1}
+$set 设置属性值 “$set”:{&#8220;username”:&#8221;niall&#8221;}
+$unset 取消（删除）属性值 “$unset”:{&#8220;username”:1}
+$push 增加  “$push”:{&#8220;emails”:&#8221;foo@example.com&#8221;}
+$pushAll 增加多个 “$pushall”:{&#8220;emails”:[&#8220;foo@example.com”,&#8221;foo2@ex-
+ample.com&#8221;]}
+$addToSet 不存在增加 “$addToSet”:{&#8220;emails”:&#8221;foo@example.com&#8221;}
+$pop 数组尾部去除 “$pop”:{&#8220;emails”:1}
+$pull  数组删除项 “$pull”:{&#8220;emails”:&#8221;foo@example.com&#8221;}
+$pullAll 删除数组all项 “$pullAll”:{&#8220;emails”:[&#8220;foo@example.com”, “foo2@ex-
+moval ample.com&#8221;]}
+$rename 属性重命名 “$rename”:{&#8220;emails”:&#8221;old_emails&#8221;}</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89%E5%AE%89%E8%A3%85%E4%BA%A6%E6%AD%8C%E5%9C%A8%E7%BA%BF%E5%90%AC%E6%AD%8C%E8%BD%AF%E4%BB%B6%EF%BC%881g1g%EF%BC%89/">Gentoo笔记（八）安装亦歌在线听歌软件（1g1g）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-02T00:00:00+08:00" pubdate data-updated="true">Feb 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以下是简要过程</p>
+
+<p>tar jxvf linux1g1g-0.9-2-src.tar.bz2
+cd linux1g1g
+sudo emerge xbindkeys
+qmake -o Makefile
+make
+./bindkeys.sh</p>
+
+<p>sudo cp linux1g1g /usr/bin/
+然后执行：</p>
+
+<p>dongwm@localhost ~ $linux1g1g
+就能打开了</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%80%EF%BC%89/">Pymongo教程（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-01T00:00:00+08:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：本文是一些简单的使用python模块的例子，主旨是帮助使用本模块的朋友找到使用方法</p>
+
+<p>1 一个MongoDB的文档</p>
+
+<p>本质上是附带了一些额外功能一个JSON文件</p>
+
+<p><pre class="sh_python">
+from datetime import datetime
+user_doc = {
+    "username" : "weiming",
+    "firstname" : "dong",
+    "surname" : "Chris",
+    "dateofbirth" : datetime(1985, 4, 18),
+    "email" : "ciici1234@.hotmail.com",
+    "score" : 0
+}
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>2   使用python连接mongodb</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>from pymongo import Connection
+from pymongo.errors import ConnectionFailure</p>
+
+<p>def main():
+    """ Connect to MongoDB """
+    try:
+        c = Connection(host="localhost", port=27017)  #端口可能不同，看你的配置文件
+        print "Connected successfully"
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)</p>
+
+<p>if __name__ == "__main__":
+    main()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>3 插入数据（文档）到集合</p>
+
+<p><pre class="sh_python">
+import sys
+from datetime import datetime
+from pymongo import Connection
+from pymongo.errors import ConnectionFailure</p>
+
+<p>def main():
+    try:
+        c = Connection(host="localhost", port=27017)
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)
+    dbh = c["mydb"]
+    assert dbh.connection == c
+    user_doc = {
+        "username" : "weiming",
+        "firstname" : "dong",
+        "surname" : "Chris",
+        "dateofbirth" : datetime(1985, 4, 18),
+        "email" : "ciici1234@hotmail.com",
+        "score" : 0
+    }</p>
+
+<p>    dbh.users.insert(user_doc, safe=True)   #可确保写成功，或将抛出一个异常
+    print "Successfully inserted document: %s" % user_doc</p>
+
+<p>if __name__ == "__main__":
+    main()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>4 保障写入到多个数据库节点</p>
+
+<p>dbh.users.insert(user_doc, w=2)    #它被写入到至少有一个 replica set的2个服务器才算成功</p>
+
+<p>5 MongoDB的查询语言简介</p>
+
+<p>如果我们想检索firstname是“dong”</p>
+
+<p>q = {
+&#8220;firstname&#8221; : &#8220;jane&#8221;
+}
+如果我们想检索firstname是“dong” 和username是 &#8220;weiming&#8221;</p>
+
+<p>q = {
+ &#8220;username&#8221; : &#8220;weiming&#8221;,
+ &#8220;firstname&#8221; : &#8220;dong&#8221;,}
+}
+如果我们想检索score大于0
+q = {
+&#8220;score&#8221; : { &#8220;$gt&#8221; : 0 }
+}
+5 查找单个文档;
+user_doc = dbh.users.find_one({&#8220;username&#8221; : &#8220;weiming&#8221;})
+if not user_doc:
+    print &#8220;no document found for username janedoe&#8221;
+6 查找多个文档：
+users = dbh.users.find({&#8220;firstname&#8221;:&#8221;dong&#8221;})
+for user in users:
+    print user.get(&#8220;email&#8221;)
+7 检索单个字段：
+users = dbh.users.find({&#8220;firstname&#8221;:&#8221;dong&#8221;}, {&#8220;email&#8221;:1})  #只检索邮件字段 但是也包含_id
+for user in users:
+    print user.get(&#8220;email&#8221;)
+8 查看有多少文件在用户的集合
+userscount = dbh.users.find().count()
+print &#8220;There are %d documents in users collection&#8221; % userscount
+9 排序（查找firstname是“dong”的文档，然后根据生日排序）
+users = dbh.users.find(
+    {&#8220;firstname&#8221;:&#8221;dong&#8221;}).sort((&#8220;dateofbirth&#8221;, pymongo.DESCENDING))
+for user in users:
+    print user.get(&#8220;email&#8221;）
+也可以这样：
+users = dbh.users.find({&#8220;firstname&#8221;:&#8221;dong&#8221;},
+    sort=[(&#8220;dateofbirth&#8221;, pymongo.DESCENDING)])
+for user in users:
+    print user.get(&#8220;email&#8221;) 
+10 排序+限制（如果符合的文档太多，假如我想取分数前十）： 
+users = dbh.users.find().sort((&#8220;score&#8221;, pymongo.DESCENDING)).limit(10)
+for user in users:
+    print user.get(&#8220;username&#8221;), user.get(&#8220;score&#8221;, 0)
+11 可用于翻页，就是排序后跳过一定数量的结果
+users = dbh.users.find().sort(
+    (&#8220;surname&#8221;, pymongo.ASCENDING)).limit(20).skip(20)
+12 我的理解是，当数据库很繁忙，为了防止重复查询一个可能会修改的结果，遍历整个用户集合，使用快照方式
+for user in dbh.users.find(snapshot=True):
+    print user.get(&#8220;username&#8221;), user.get(&#8220;score&#8221;, 0)
+13 更新修改集合数据
+dbh.users.update({&#8220;username&#8221;:&#8221;janedoe&#8221;},
+    {&#8220;$set&#8221;:{&#8220;email&#8221;:&#8221;admin@dongwm.com&#8221;}}, safe=True)
+dbh.users.update({&#8220;username&#8221;:&#8221;dong&#8221;},
+    {&#8220;$set&#8221;:{&#8220;email&#8221;:&#8221;admin@dongwm.com&#8221;, &#8220;score&#8221;:1}}, safe=True)  #更新多个条件
+dbh.users.update({&#8220;score&#8221;:0},{&#8220;$set&#8221;:{&#8220;flagged&#8221;:True}}, multi=True, safe=True)  #所有符合条件&#8221;score&#8221;:0的文档将被更新
+14 删除用户集合中的文档
+dbh.users.remove({&#8220;score&#8221;:1}, safe=True)    #删除用户集合中的符合&#8221;score&#8221;:1文档
+dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89%E5%AE%89%E8%A3%85google-chrome/">Gentoo笔记（七）安装google-chrome</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-01T00:00:00+08:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1 /etc/portage/package.keywords</p>
+
+<p>添加一行：www-client/google-chrome</p>
+
+<p>2 /etc/make.conf</p>
+
+<p>添加一行：ACCEPT_LICENSE=&#8221;google-chrome&#8221;</p>
+
+<p>3 安装</p>
+
+<p>dongwm@localhost ~ $sudo emerge www-client/google-chrome</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/20/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/18/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

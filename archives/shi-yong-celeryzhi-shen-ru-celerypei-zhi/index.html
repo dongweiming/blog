@@ -1,0 +1,540 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用celery之深入celery配置 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">使用celery之深入celery配置</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-24T14:08:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4 id="section">前言</h4>
+
+<p>celery的官方文档其实相对还是写的很不错的.但是在一些深层次的使用上面却显得杂乱甚至就没有某些方面的介绍, 通过我的一个测试环境的settings.py来说明一些使用celery的技巧和解决办法</p>
+
+<h4 id="amqp">amqp交换类型</h4>
+
+<p>其实一共有4种交换类型，还有默认类型和自定义类型. 但是对我们配置队列只会用到其中之三，我来一个个说明，英语好的话可以直接去看英文文档</p>
+
+<p>首先思考一下流程:</p>
+
+<ol>
+  <li>
+    <p>celerybeat生成任务消息，然后发送消息到一个exchange(交换机)</p>
+  </li>
+  <li>
+    <p>交换机决定那个(些)队列会接收这个消息，这个其实就是根据下面的exchange的类型和绑定到这个交换机所用的bindingkey</p>
+  </li>
+</ol>
+
+<p>我们这里要说的其实就是怎么样决定第二步谁接收的问题</p>
+
+<ol>
+  <li>Direct Exchange</li>
+</ol>
+
+<p>如其名，直接交换，也就是指定一个消息被那个队列接收， 这个消息被celerybeat定义个一个routing key，如果你发送给交换机并且那个队列绑定的bindingkey 那么就会直接转给这个队列</p>
+
+<ol>
+  <li>Topic Exchange</li>
+</ol>
+
+<p>你设想一下这样的环境(我举例个小型的应该用场景): 你有三个队列和三个消息, A消息可能希望被X,Y处理,B消息你希望被,X,Z处理,C消息你希望被Y,Z处理.并且这个不是队列的不同而是消息希望被相关的队列都去执行,看一张图可能更好理解:</p>
+
+<p><img src="https://access.redhat.com/site/documentation/resources/docs/en-US/Red_Hat_Enterprise_MRG/1.1/html/Messaging_User_Guide/images/topic-exchange.png" alt="" /></p>
+
+<p>对，Topic可以根据同类的属性进程通配, 你只需要routing key有’.’分割:比如上图中的usa.news, usa.weather, europe.news, europe.weather</p>
+
+<ol>
+  <li>Fanout Exchange</li>
+</ol>
+
+<p>先想一下广播的概念, 在设想你有某个任务，相当耗费时间，但是却要求很高的实时性,那么你可以需要多台服务器的多个workers一起工作，每个服务器负担其中的一部分,但是celerybeat只会生成一个任务,被某个worker取走就没了,
+所以你需要让每个服务器的队列都要收到这个消息.这里很需要注意的是:你的fanout类型的消息在生成的时候为多份,每个队列一份，而不是一个消息发送给单一队列的次数</p>
+
+<h4 id="settingspy">我的settings.py</h4>
+
+<p>这里只是相关于celery的部分:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">djcelery</span>
+</span><span class="line"><span class="n">djcelery</span><span class="o">.</span><span class="n">setup_loader</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.sites&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c">#&#39;django.contrib.staticfiles&#39;,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c"># Uncomment the next line to enable the admin:</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c"># Uncomment the next line to enable admin documentation:</span>
+</span><span class="line">    <span class="c"># &#39;django.contrib.admindocs&#39;,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smhome&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.apply&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;djcelery&#39;</span><span class="p">,</span> <span class="c"># 这里增加了djcelery 也就是为了在django admin里面可一直接配置和查看celery</span>
+</span><span class="line">    <span class="s">&#39;django_extensions&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;djsupervisor&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.humanize&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django_jenkins&#39;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">BROKER_URL</span> <span class="o">=</span> <span class="s">&#39;amqp://username:password@localhost:5672/yourvhost&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_IMPORTS</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smhome.tasks&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smdata.tasks&#39;</span><span class="p">,</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_RESULT_BACKEND</span> <span class="o">=</span> <span class="s">&quot;amqp&quot;</span> <span class="c"># 官网优化的地方也推荐使用c的librabbitmq</span>
+</span><span class="line"><span class="n">CELERY_TASK_RESULT_EXPIRES</span> <span class="o">=</span> <span class="mi">1200</span> <span class="c"># celery任务执行结果的超时时间，我的任务都不需要返回结果,只需要正确执行就行</span>
+</span><span class="line"><span class="n">CELERYD_CONCURRENCY</span> <span class="o">=</span> <span class="mi">50</span> <span class="c"># celery worker的并发数 也是命令行-c指定的数目,事实上实践发现并不是worker也多越好,保证任务不堆积,加上一定新增任务的预留就可以</span>
+</span><span class="line"><span class="n">CELERYD_PREFETCH_MULTIPLIER</span> <span class="o">=</span> <span class="mi">4</span> <span class="c"># celery worker 每次去rabbitmq取任务的数量，我这里预取了4个慢慢执行,因为任务有长有短没有预取太多</span>
+</span><span class="line"><span class="n">CELERYD_MAX_TASKS_PER_CHILD</span> <span class="o">=</span> <span class="mi">40</span> <span class="c"># 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200</span>
+</span><span class="line"><span class="n">CELERYBEAT_SCHEDULER</span> <span class="o">=</span> <span class="s">&#39;djcelery.schedulers.DatabaseScheduler&#39;</span> <span class="c"># 这是使用了django-celery默认的数据库调度模型,任务执行周期都被存在你指定的orm数据库中</span>
+</span><span class="line"><span class="n">CELERY_DEFAULT_QUEUE</span> <span class="o">=</span> <span class="s">&quot;default_dongwm&quot;</span> <span class="c"># 默认的队列，如果一个消息不符合其他的队列就会放在默认队列里面</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_QUEUES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="s">&quot;default_dongwm&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># 这是上面指定的默认队列</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;default_dongwm&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;direct&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;routing_key&quot;</span><span class="p">:</span> <span class="s">&quot;default_dongwm&quot;</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;topicqueue&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># 这是一个topic队列 凡是topictest开头的routing key都会被放到这个队列</span>
+</span><span class="line">        <span class="s">&quot;routing_key&quot;</span><span class="p">:</span> <span class="s">&quot;topictest.#&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;topic_exchange&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;topic&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;test2&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># test和test2是2个fanout队列,注意他们的exchange相同</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;fanout&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;binding_key&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;test&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;fanout&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;binding_key&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks2&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">MyRouter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">route_for_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;topictest&#39;</span><span class="p">):</span>
+</span><span class="line">            <span class="k">return</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&#39;queue&#39;</span><span class="p">:</span> <span class="s">&#39;topicqueue&#39;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="c"># 我的dongwm.tasks文件里面有2个任务都是test开头</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">task</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;dongwm.tasks.test&#39;</span><span class="p">):</span>
+</span><span class="line">            <span class="k">return</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="c"># 剩下的其实就会被放到默认队列</span>
+</span><span class="line">        <span class="k">else</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="bp">None</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># CELERY_ROUTES本来也可以用一个大的含有多个字典的字典,但是不如直接对它做一个名称统配</span>
+</span><span class="line"><span class="n">CELERY_ROUTES</span> <span class="o">=</span> <span class="p">(</span><span class="n">MyRouter</span><span class="p">(),</span> <span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-24T14:08:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/celery/'>celery</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/feng-zhuang-pymongozi-dong-guan-bi-lian-jie/" title="Previous Post:
+        封装pymongo自动关闭连接">&laquo; 封装pymongo自动关闭连接</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/vary-dot-vim-zi-dong-qu-diao-xing-wei-kong-ge/"
+        title="Next Post: vary.vim-自动去掉行尾空格">vary.vim-自动去掉行尾空格
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

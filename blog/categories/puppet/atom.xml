@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: puppet | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/puppet/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[准确掌握puppet client向server请求时间]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E5%87%86%E7%A1%AE%E6%8E%8C%E6%8F%A1puppet-client%E5%90%91server%E8%AF%B7%E6%B1%82%E6%97%B6%E9%97%B4/"/>
+    <updated>2011-04-28T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/准确掌握puppet-client向server请求时间</id>
+    <content type="html"><![CDATA[<p><p>使用puppet，发现默认半小时客户端就和服务器端请求一次信息，如果发现有更新就会自动更新。但是在使用了tagmail后，这是一件很郁闷的事情，因为请求一次就产生一个邮件，设想有上千台client，没30分钟一个邮件。。。但是我不希望用cron，因为有些事情是很紧急的，不能等到下一个定时任务执行时才去执行。</p>  <p>解决方法：</p>  <p>修改puppet.conf修改向server请求的时间间隔：</p>  <p>在[agent]下面加一行：</p>  <p>runinterval = 86400&#160; //单位是秒 我设置的一天更新一次&#160; 然后puppetd进程是一直后台运行的</p>  <p>采用server端向客户端主动发送要求，触发客户端来向server请求</p>  <p>#puppetrun –host 主机名</p>  <p>可以吧主机做个for循环，虽然性能不够，也不能实现并行执行。幸好puppetrun只是发送一个信号</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[升级puppet版本]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E5%8D%87%E7%BA%A7puppet%E7%89%88%E6%9C%AC/"/>
+    <updated>2011-03-29T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/升级puppet版本</id>
+    <content type="html"><![CDATA[<p><p><strong>目前最新版puppet是2.6.7，我的版本是2.6.3，以下是升级过程（本例只适合编译安装puppet）：</strong></p>
+<p><strong>思路：</strong></p>
+<p><strong>1  先升级server端，后升级client端</strong></p>
+<p><strong>2  先删除就版本库文件和程序文件，再安装新版本文件，而默认的/var/lib/puppet和/etc/puppet目录不要动</strong></p>
+<p><strong>1 删除旧相关文件：</strong></p>
+<p><pre class="sh_bash">#rm /usr/local/sbin/puppet* –rf
+#rm /usr/local/lib/ruby/site_ruby/1.8/puppet –rf
+#rm /usr/local/bin/puppet* –rf</pre></p>
+<p><strong>2 安装新版本：
+</strong><pre class="sh_bash">#tar zxvf puppet-2.6.7.tar.gz
+#cd puppet-2.6.7
+#ruby install.rb</pre></p>
+<p><strong>3  测试：</strong></p>
+<p><pre class="sh_bash">[root@dongwm puppet-2.6.7]# puppet -V
+2.6.7
+<p>使用debug模式启动puppet会出现下面的信息：</p>
+<p>&nbsp;</p>
+<p>notice: Starting Puppet client version 2.6.7</p>
+
+</pre></p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[让puppet代码支持vim高亮显示]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/rangpuppetdaimazhichivimgaoliangxianshi/"/>
+    <updated>2010-12-25T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/rangpuppetdaimazhichivimgaoliangxianshi</id>
+    <content type="html"><![CDATA[<p>puppet的<span>语言<em> </em></span>还没有被vim支持，编辑时候黑底白字，不容易排错，看起来也不好分辨，请一定要看我一下这篇高亮显示的文章^.^<!--more--></p>
+
+<p>原理就是在你用户根目录下的.vim里面加2个文件，具体如下：</p>
+
+<p>1 切换到个人vim目录：</p>
+
+<p>#cd ~/.vim</p>
+
+<p>#vi syntax/puppet.vim</p>
+
+<p>添加以下内容：</p>
+
+<p>[ccine_perl height="100%" width="99%"]</p>
+
+<p>" puppet syntax file
+" Filename:     puppet.vim
+" Language:     puppet configuration file
+" Maintainer:   Dongwm&lt;ciici1234@hotmail.com&gt;
+" URL:
+" Last Change:
+" Version:
+"</p>
+
+<p>" Copied from the cfengine, ruby, and perl syntax files
+" For version 5.x: Clear all syntax items
+" For version 6.x: Quit when a syntax file was already loaded
+if version &lt; 600
+syntax clear
+elseif exists("b:current_syntax")
+finish
+endif</p>
+
+<p>syn region  puppetDefine         start="^\s*\(class\|define\|site\|node\)" end="{"  contains=puppetDefType,puppetDefName,puppetDefArguments
+syn keyword puppetDefType       class define site node inherits contained
+syn keyword puppetInherits      inherits contained
+syn region  puppetDefArguments  start="(" end=")" contains=puppetArgument
+syn match   puppetArgument      "\w\+" contained
+syn match   puppetArgument      "\$\w\+" contained
+syn match   puppetArgument      "'[^']+'" contained
+syn match   puppetArgument      '"[^"]+"' contained
+syn match   puppetDefName     "\w\+" contained</p>
+
+<p>syn match   puppetInstance           "\w\+\s*{" contains=puppetTypeBrace,puppetTypeName,puppetTypeDefault
+syn match   puppetTypeBrace       "{" contained
+syn match   puppetTypeName       "[a-z]\w*" contained
+syn match   puppetTypeDefault    "[A-Z]\w*" contained</p>
+
+<p>syn match   puppetParam           "\w\+\s*=&gt;" contains=puppetTypeRArrow,puppetParamName
+syn match   puppetParamRArrow       "=&gt;" contained
+syn match   puppetParamName       "\w\+" contained
+syn match   puppetVariable           "$\w\+"
+syn match   puppetVariable           "${\w\+}"
+syn match   puppetParen           "("
+syn match   puppetParen           ")"
+syn match   puppetBrace           "{"
+syn match   puppetBrace           "}"</p>
+
+<p>syn region  puppetString start=+"+ skip=+\\\\\|\\"+ end=+"+ contains=puppetVariable</p>
+
+<p>syn keyword puppetBoolean    true false
+syn keyword puppetKeyword    import inherits include
+syn keyword puppetControl    case default</p>
+
+<p>" comments last overriding everything else
+syn match   puppetComment            "\s*#.*$" contains=puppetTodo
+syn keyword puppetTodo               TODO NOTE FIXME XXX contained</p>
+
+<p>" Define the default highlighting.
+" For version 5.7 and earlier: only when not done already
+" For version 5.8 and later: only when an item doesn't have highlighting yet
+if version &gt;= 508 || !exists("did_puppet_syn_inits")
+if version &lt; 508
+let did_puppet_syn_inits = 1
+command -nargs=+ HiLink hi link &lt;args&gt;
+else
+command -nargs=+ HiLink hi def link &lt;args&gt;
+endif</p>
+
+<p>HiLink puppetVariable             Identifier
+HiLink puppetBoolean              Boolean
+HiLink puppetType                 Identifier
+HiLink puppetDefault              Identifier
+HiLink puppetKeyword              Define
+HiLink puppetTypeDefs             Define
+HiLink puppetComment              Comment
+HiLink puppetString               String
+HiLink puppetTodo                 Todo
+"  HiLink puppetBrace                Delimiter
+"  HiLink puppetTypeBrace            Delimiter
+"  HiLink puppetParen                Delimiter
+HiLink puppetDelimiter            Delimiter
+HiLink puppetControl              Statement
+HiLink puppetDefType              Define
+HiLink puppetDefName              Type
+HiLink puppetTypeName             Statement
+HiLink puppetTypeDefault          Type
+HiLink puppetParamName            Identifier
+HiLink puppetArgument             Identifier</p>
+
+<p>delcommand HiLink
+endif</p>
+
+<p>let b:current_syntax = "puppet"</p>
+
+<p>[/ccine_perl]</p>
+
+<p>然后创建目录ftdetect</p>
+
+<p>#mkdir ftdetect</p>
+
+<p>编辑第二个文件：</p>
+
+<p>#vi ftdetect/puppet.vim</p>
+
+<p>[ccine_perl height="100%" width="99%"]au BufRead,BufNewFile *.pp setfiletype puppet[/ccine_perl]</p>
+
+<p>OK!</p>
+
+<p>效果自己体验吧</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[puppet配置文件结构树参考]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/puppet%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E6%A0%91%E5%8F%82%E8%80%83/"/>
+    <updated>2010-12-18T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/puppet配置文件结构树参考</id>
+    <content type="html"><![CDATA[<p>我想大多数人开始学习puppet都会对它的结构化有些迷惑，本文仅供初学puppet，以及希望对puppet更好结构化管理的同学们。很少见的一种思路：</p>
+
+<p><img class="alignnone" title="puppet" src="http://farm6.static.flickr.com/5243/5288063660_0a1ecac877.jpg" alt="" width="500" height="479" /><!--more--></p>
+
+<p><strong>我的整体思路是：</strong></p>
+
+<p><strong>1  所有的配置文件最后都要被主site.pp引用。</strong></p>
+
+<p>主线是：1 class目录下的类.pp=&gt;服务的主配置文件init.pp=&gt;引用模块的mudule.pp</p>
+
+<p>2  node文件夹下服务器分组node节点.pp（例如C.pp）=&gt;node文件夹下site.pp</p>
+
+<p>3  主配置site.pp把1的mudule.pp  和2的node文件夹下site.pp 去“ import”。</p>
+
+<p><strong>2  但是site.pp，不是唯一的，我们可以建无数的site.pp，需要在/etc/puppet/manifests目录下</strong></p>
+
+<p><strong>3   维护方法：</strong></p>
+
+<p>1  增加服务为模块，在/etc/puppet/module目录下新建文件夹。</p>
+
+<p>2  只需要维护此模块下的class下的文件，配置文件全部引用变量，在对应的node里面“ include”类，并且申明变量值。</p>
+
+<p>其中重要文件配置：</p>
+
+<p>vi manifests/node/site.pp ：
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">import "java.pp"
+import "c.pp"</td>
+</tr>
+</tbody>
+</table>
+vi modules/revfsserver/manifests/init.pp ：
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">import "class/*.pp"</td>
+</tr>
+</tbody>
+</table>
+vi manifests/node/c.pp
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">node 'client.dongwm.com' {
+$group="dongwm"
+$owner="dongwm"
+$tar="X.tar.gz"
+$homedir="/opt/newfs/bin"
+$tardir="/opt/src"
+$path="/usr/bin:/usr/sbin:/bin"
+include revfsserver::base
+include revfsserver::update
+include revfsserver::rollback</td></tr></tbody></table></p>
+
+<p>}
+
+
+
+vi manifests/site.pp
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="406" valign="top">import "node/site.pp"</td></tr></tbody></table></p>
+
+<p>import "node/module.pp "
+
+
+
+vi manifests/module.pp
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="400" valign="top">import "revfsserver"</td>
+</tr>
+</tbody>
+</table></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用svn和hook（钩子）对puppet进行版本控制]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E4%BD%BF%E7%94%A8svn%E5%92%8Chook%EF%BC%88%E9%92%A9%E5%AD%90%EF%BC%89%E5%AF%B9puppet%E8%BF%9B%E8%A1%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/"/>
+    <updated>2010-11-30T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/使用svn和hook（钩子）对puppet进行版本控制</id>
+    <content type="html"><![CDATA[<p>puppet默认没有使用版本控制。可以在puppet.conf文件中添加一下一行：
+<code>config_version = /usr/local/bin/return_version</code>
+其中“/usr/local/bin/return_version” 是我自定义的脚本：<!--more--></p>
+
+<p>[ccine_perl height="100%" width="99%"]#!/bin/bash</p>
+
+<p>date +%Y%m%d%H[/ccine_perl]</p>
+
+<p>so 简单 ^.^</p>
+
+<p>puppet的这个版本号是用于与client端通信的信息，可以使用tagmail或者puppet的report功能，在基于webUI的dashboard或者foreman方便查阅自动化情况，通过时间判断是一个不错的办法。</p>
+
+<p>svn的版本控制主要是对puppet部署的配置文件的控制，对于传送文件，使用exec执行客户端命令等操作不能进行回滚操作，需要自定义回滚方法（svn只负责svn服务器本地版本库内的文件系统）</p>
+
+<p>1 安装svn</p>
+
+<p>我使用yum安装：</p>
+
+<p>#yum  install subversion mod_dav_svn mod_auth_mysql –y</p>
+
+<p>2 确认是否已安装一下安装包：</p>
+
+<p>openssl-XXX</p>
+
+<p>openssl-devel-XXX</p>
+
+<p>mod_ssl-XXX</p>
+
+<p>mod_auth_mysql-XXX</p>
+
+<p>subversion-XXX</p>
+
+<p>mod_dav_svn-XXX</p>
+
+<p>3 确认模块：</p>
+
+<p>在/etc/httpd/modules（根据你的apache安装目录）</p>
+
+<p>mod_authz_svn.so</p>
+
+<p>mod_dav_svn.so</p>
+
+<p>mod_auth_mysql.so</p>
+
+<p>4 建立并创建svn版本库</p>
+
+<p>#mkdir –p /opt/svn/puppet</p>
+
+<p>#svnadmin create /opt/svn/puppet</p>
+
+<p>5 修改SVN配置文件</p>
+
+<p>#vi /opt/svn/puppet/conf/svnserve.conf(操作权限文件指定)</p>
+
+<p>[ccine_perl height="100%" width="99%"][general]</p>
+
+<p>auth-access = write</p>
+
+<p>password-db = passwd</p>
+
+<p>authz-db = authz</p>
+
+<p>realm = puppet[/ccine_perl]</p>
+
+<p>#vi /opt/svn/puppet/conf/password（容许访问SVN的用户及密码）</p>
+
+<p>[ccine_perl height="100%" width="99%"][users]</p>
+
+<p>puppet = <a href="mailto:Ry0va@g4zPbn">testpassword</a>[/ccine_perl]</p>
+
+<p>#vi /opt/svn/puppet/conf/authz(用户对某目录及自动目录的访问权限，下面表示admin组对svn所有目录都有读写权限)</p>
+
+<p>[ccine_perl height="100%" width="99%"][groups]</p>
+
+<p>admin = puppet</p>
+
+<p>[/]</p>
+
+<p>@admin = rw[/ccine_perl]</p>
+
+<p>6 启动svn</p>
+
+<p>#svnserve -d –r /opt/svn/</p>
+
+<p>7向版本库提交资源，我设置的路径是puppet模块的主目录(原因见下面的说明，默认为/etc/puppet,我指定到了其他路径,puppet.conf中指定）</p>
+
+<p>#svn import –m “test” /usr/share/svn/modules  <a>file:///opt/svn/puppet</a></p>
+
+<p>8 svn还是需要系统学习的，这里只是一个开端，，为了让大家尽快懂得svn，下面介绍一些会用到的命令包括：</p>
+
+<p>svn add * （将新修改的配置以及新添加的文件纳入版本控制，这是在修改量大的情况下，最简单快速的办法）</p>
+
+<p>svn commit -m "一些更新信息" （将新修改的配置提交到版本库）</p>
+
+<p>svn co file:///home/okooo/apps/svn/puppet tmp（将版本库的内容拷贝一个副本到这次操作的目录下的tmp目录-这个都可以定义，默认就是版本库的名字，本例中是puppet）</p>
+
+<p>svn up （下载一份完整的版本库内容到操作的目录下）</p>
+
+<p>svn cleanup （有些时候在别人修改时候文件被锁定等原因，运行这个命令可以解除锁定）</p>
+
+<p>svn del manifests/node/java.pp（将版本库的某些内容删除，这里是删除java.pp，然后svn commit就会成功删除）</p>
+
+<p>svn diff manifests/node/java.pp （将修改后的java.pp文件和版本库的同名文件对比不同的内容）</p>
+
+<p>svn log （查看更新内容的日志，这个log显示出来的就是上面执行“svn commit -m” 后的内容）</p>
+
+<p>....</p>
+
+<p>因为我们不涉及开发维护，所以svn不需要太熟，但是还是建议掌握所有内容</p>
+
+<p><strong>SVN的hooks</strong></p>
+
+<p><strong> </strong></p>
+
+<p>钩子的功能其实我也迷糊了很久，我的理解就是在版本库出现修改时被触发的自定义脚本，这样可以确定很多属性：比如Pre-Commit钩子的作用是代码提交前是否有写messages，是否有tab，是否有不允许上传的文件，是否有超过限制大小的文件等等，这样可以控制一些不合适的提交。</p>
+
+<p>以下是一个Pre-Commit钩子，用于检查语法错误：</p>
+
+<p>检查puppet的.pp配置文件是否有问题，也可以执行：</p>
+
+<p>puppet －v  你的主要配置文件site.pp
+[ccine_perl height="100%" width="99%"]<code>#!/bin/sh
+# SVN pre-commit hook to check Puppet syntax for .pp files
+# Modified from http://mail.madstop.com/pipermail/puppet-users/2007-March/002034.html
+REPOS="$1"
+TXN="$2"
+tmpfile=`mktemp`
+export HOME=/
+SVNLOOK=/usr/bin/svnlook
+$SVNLOOK changed -t "$TXN" "$REPOS" | awk '/^[^D].*\.pp$/ {print $2}' | while read line
+do
+    $SVNLOOK cat -t "$TXN" "$REPOS" "$line" &gt; $tmpfile
+    if [ $? -ne 0 ]
+    then
+        echo "Warning: Failed to checkout $line" &gt;&amp;2
+    fi
+    puppet --color=false --confdir=/etc/puppet --vardir=/var/lib/puppet --parseonly --ignoreimport $tmpfile &gt;&amp;2
+    if [ $? -ne 0 ]
+    then
+        echo "Puppet syntax error in $line." &gt;&amp;2
+        exit 2
+    fi
+done
+res=$?
+rm -f $tmpfile
+if [ $res -ne 0 ]
+then
+    exit $res
+fi</code>[/ccine_perl]</p>
+]]></content>
+  </entry>
+  
+</feed>

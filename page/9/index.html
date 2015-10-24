@@ -1,0 +1,2725 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/9">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusysyanjiuer/">关于sys研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+import sys
+print 'Arguments:', sys.argv #命令行参数
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~ python test.py -h
+Arguments: [&#8216;test.py&#8217;, &#8216;-h&#8217;]
+<pre class="sh_python">
+import sys</p>
+
+<p>print sys.stderr, 'STATUS: Reading from stdin' #<tt>stderr</tt>被用于警告或错误信息使用</p>
+
+<p>data = sys.stdin.read()  #输入流保存</p>
+
+<p>print sys.stderr, 'STATUS: Writing data to stdout'</p>
+
+<p>sys.stdout.write(data) #打印数据
+sys.stdout.flush() #将stdout实时自动刷出来</p>
+
+<p>print sys.stderr, 'STATUS: Done'
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>exit_code = int(sys.argv[1])
+sys.exit(exit_code) #设置退出时候的code，正常执行是0，不正常就是非0
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>one = []
+print 'At start         :', sys.getrefcount(one) #Python使用<em>引用计数</em>和<em>垃圾收集</em>的自动内存管理。一个对象被自动标记被收集时，它的引用计数下降到零,使用<tt>getrefcount（）</tt>审查现有对象的引用计数
+<tt></tt>two = one
+print 'Second reference :', sys.getrefcount(one)
+del two
+print 'After del        :', sys.getrefcount(one)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+At start         : 2
+Second reference : 3
+After del        : 2
+<pre class="sh_python">
+import sys</p>
+
+<p>class OldStyle:
+    pass</p>
+
+<p>class NewStyle(object):
+    pass</p>
+
+<p>for obj in [ [], (), {}, 'c', 'string', 1, 2.3, 
+             OldStyle, OldStyle(), NewStyle, NewStyle(),
+             ]:    
+    print '%10s : %s' % (type(obj).__name__, sys.getsizeof(obj)) #各种类型对象的大小
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+list : 32
+tuple : 24
+dict : 136
+str : 25
+str : 30
+int : 12
+float : 16
+classobj : 44
+instance : 32
+type : 448
+NewStyle : 28
+<pre class="sh_python">
+import sys</p>
+
+<p>class WithoutAttributes(object):
+    pass</p>
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return</p>
+
+<p>without_attrs = WithoutAttributes()
+print 'WithoutAttributes:', sys.getsizeof(without_attrs)</p>
+
+<p>with_attrs = WithAttributes()
+print 'WithAttributes:', sys.getsizeof(with_attrs)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+WithoutAttributes: 28
+WithAttributes: 28 #带属性的和不带属性的类竟然一样大看下面的例子，通过聚合对象的 属性的大小来计算：</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return
+    def __sizeof__(self):
+        return object.__sizeof__(self) + \
+            sum(sys.getsizeof(v) for v in self.__dict__.values())</p>
+
+<p>my_inst = WithAttributes()
+print sys.getsizeof(my_inst)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+78  #这样就不是28，这样就合理了</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>print 'Initial limit:', sys.getrecursionlimit()  #得到递归的次数，要不然不停的自己调用自己会引起崩溃
+sys.setrecursionlimit(10) #设置递归的次数</p>
+
+<p>print 'Modified limit:', sys.getrecursionlimit()</p>
+
+<p>def generate_recursion_error(i):
+    print 'generate_recursion_error(%s)' % i
+    generate_recursion_error(i+1) #不断的递归调用自己，但是计数加+1</p>
+
+<p>try:
+    generate_recursion_error(1)
+except RuntimeError, err:
+    print 'Caught exception:', err
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Initial limit: 1000 #默认可递归的次数为1000
+Modified limit: 10
+generate_recursion_error(1)
+generate_recursion_error(2)
+generate_recursion_error(3)
+generate_recursion_error(4)
+generate_recursion_error(5)
+generate_recursion_error(6)
+generate_recursion_error(7)
+generate_recursion_error(8)
+Caught exception: maximum recursion depth exceeded while getting the str of an object #到达递归限制
+<pre class="sh_python">
+import sys</p>
+
+<p>print 'maxint    :', sys.maxint #python支持的最大数字
+print 'maxsize   :', sys.maxsize #python支持的最大的数据大小
+print 'maxunicode:', sys.maxunicode #支持 Unicode的最大整数
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusocketyanjiuer-2/">关于socket研究(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T00:00:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>socket服务器端：</p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   #socket.AF_INET表示类型是ipv4，SOCK_STREAM提供面向连接的稳定数据传输，即TCP协议.相应的ＵＤＰ就是<span><em>SOCK_DGRAM</em></span>
+server_address = ('localhost', 10000) 
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+sock.bind(server_address)  #绑定到本地的10000端口
+sock.listen(1) #使用主动连接套接口变为被连接套接口，使得一个进程可以接受其它进程的请求，从而成为一个服务器进程。指定最多允许1个客户连接到服务器</p>
+
+<p>while True:
+    print &gt;&gt;sys.stderr, 'waiting for a connection'
+    connection, client_address = sock.accept() #在listen()后监听连接
+    try:
+        print &gt;&gt;sys.stderr, 'connection from', client_address</p>
+
+<p>        while True:  #等待收到数据后。。。
+            data = connection.recv(16) #从TCP连接的另一端接收数据，缓存区为16
+            print &gt;&gt;sys.stderr, 'received "%s"' % data
+            if data:
+                print &gt;&gt;sys.stderr, 'sending data back to the client'
+                connection.sendall(data)
+            else:
+                print &gt;&gt;sys.stderr, 'no more data from', client_address
+                break</p>
+
+<p>    finally:
+        connection.close()   #关闭socket连接
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #创建socket连接</p>
+
+<p>server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'connecting to %s port %s' % server_address
+sock.connect(server_address)  #连接到socket服务器的端口
+try:
+    message = 'This is the message.  It will be repeated.'
+    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sock.sendall(message)  #<code>send()</code>和 <code>.sendall()</code> 之间做出选择。前者一次发送尽可能多的字节数，后者发送整个报文（如果不能发送就会引发一个异常）
+    amount_received = 0
+    amount_expected = len(message)</p>
+
+<p>    while amount_received &lt; amount_expected:
+        data = sock.recv(16)
+        amount_received += len(data)
+        print &gt;&gt;sys.stderr, &#8216;received &#8220;%s&#8221;&#8217; % data</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, &#8216;closing socket&#8217;
+    sock.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #创建一个ｕｄｐ的socket连接
+server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+sock.bind(server_address)
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting to receive message'
+    data, address = sock.recvfrom(4096)  #udp使用recvfrom接收</p>
+
+<p>    print &gt;&gt;sys.stderr, 'received %s bytes from %s' % (len(data), address)
+    print &gt;&gt;sys.stderr, data</p>
+
+<p>    if data:
+        sent = sock.sendto(data, address)  #udp使用sendto发送
+        print &gt;&gt;sys.stderr, 'sent %s bytes back to %s' % (sent, address)
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  #udp的socket客户端</p>
+
+<p>server_address = ('localhost', 10000)
+message = 'This is the message.  It will be repeated.'</p>
+
+<p>try:</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sent = sock.sendto(message, server_address)</p>
+
+<p>    print &gt;&gt;sys.stderr, 'waiting to receive'
+    data, server = sock.recvfrom(4096)
+    print &gt;&gt;sys.stderr, 'received "%s"' % data</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+import os</p>
+
+<p>server_address = './uds_socket'  #一个socket文件</p>
+
+<p>try:
+    os.unlink(server_address)  #确保这个文件本来不存在
+except OSError:
+    if os.path.exists(server_address):
+        raise
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)  #创建一个unix domain socket
+print &gt;&gt;sys.stderr, 'starting up on %s' % server_address
+sock.bind(server_address)
+sock.listen(1)
+while True:
+    print &gt;&gt;sys.stderr, 'waiting for a connection'
+    connection, client_address = sock.accept()
+    try:
+        print &gt;&gt;sys.stderr, 'connection from', client_address
+        while True:
+            data = connection.recv(16)
+            print &gt;&gt;sys.stderr, 'received "%s"' % data
+            if data:
+                print &gt;&gt;sys.stderr, 'sending data back to the client'
+                connection.sendall(data)
+            else:
+                print &gt;&gt;sys.stderr, 'no more data from', client_address
+                break</p>
+
+<p>    finally:
+        connection.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)  #unix domain socket客户端</p>
+
+<p>server_address = './uds_socket'
+print &gt;&gt;sys.stderr, 'connecting to %s' % server_address
+try:
+    sock.connect(server_address)
+except socket.error, msg:
+    print &gt;&gt;sys.stderr, msg
+    sys.exit(1)</p>
+
+<p>try:</p>
+
+<p>    message = 'This is the message.  It will be repeated.'
+    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sock.sendall(message)
+    amount_received = 0
+    amount_expected = len(message)
+    while amount_received &lt; amount_expected:
+        data = sock.recv(16)
+        amount_received += len(data)
+        print &gt;&gt;sys.stderr, 'received "%s"' % data
+finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre></p>
+
+<p>注：这个socket文件需要注意权限：</p>
+
+<p>dongwm@localhost ~ $ls -l !$
+ls -l uds_socket
+srwxr-xr-x 1 dongwm dongwm 0  7月  9 12:46 uds_socket
+假如你没有权限，那么会告诉你：connecting to ./uds_socket [Errno 13] Permission denied</p>
+
+<p><pre class="sh_python">
+import socket
+import os</p>
+
+<p>parent, child = socket.socketpair()  #socket父子进程之间通信</p>
+
+<p>pid = os.fork()</p>
+
+<p>if pid:
+    print 'in parent, sending message'
+    child.close()
+    parent.sendall('ping')
+    response = parent.recv(1024)
+    print 'response from child:', response
+    parent.close()</p>
+
+<p>else:
+    print 'in child, waiting for message'
+    parent.close()
+    message = child.recv(1024)
+    print 'message from parent:', message
+    child.sendall('pong')
+    child.close()
+</pre>
+执行结果：</p>
+
+<p>dongwm@localhost ~ $python test.py
+in parent, sending message
+in child, waiting for message
+message from parent: ping
+response from child: pong</p>
+
+<p><pre class="sh_python">
+import socket
+import struct
+import sys</p>
+
+<p>message = 'very important data'
+multicast_group = ('224.3.29.71', 10000)
+#在发送者和每一接收者之间实现点对多点网络连接。如果一台发送者同时给多个的接收者传输相同的数据，也只需复制一份的相同数据包。它提高了数据传送效率。减少了骨干网络出现拥塞的可能性
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #创建socket，用来接收，这个程序可以运行在多个ＩＰ上面，组播只能用ＵＤＰ
+sock.settimeout(0.2) #设置超时
+ttl = struct.pack('b', 1)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)  #设置组播
+try:</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sent = sock.sendto(message, multicast_group)
+    while True:
+        print &gt;&gt;sys.stderr, 'waiting to receive'
+        try:
+            data, server = sock.recvfrom(16)
+        except socket.timeout:
+            print &gt;&gt;sys.stderr, 'timed out, no more responses'
+            break
+        else:
+            print &gt;&gt;sys.stderr, 'received "%s" from %s' % (data, server)
+finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import struct
+import sys</p>
+
+<p>multicast_group = '224.3.29.71'
+server_address = ('', 10000)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #这个程序发送组播数据
+sock.bind(server_address)  #绑定组播地址
+group = socket.inet_aton(multicast_group) 
+mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq) #告诉系统在所有接口增加这个socket到组播组
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting to receive message'
+    data, address = sock.recvfrom(1024)</p>
+
+<p>    print &gt;&gt;sys.stderr, 'received %s bytes from %s' % (len(data), address)
+    print &gt;&gt;sys.stderr, data</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending acknowledgement to', address
+    sock.sendto('ack', address)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>ｉｐ1(192.168.8.49)：</p>
+
+<p>[htdocs@debian ~]$ python test.py</p>
+
+<p>waiting to receive message
+received 19 bytes from (&#8216;192.168.8.48&#8217;, 59274)
+very important data
+sending acknowledgement to (&#8216;192.168.8.48&#8217;, 59274)</p>
+
+<p>waiting to receive message
+ｉｐ2（192.168.8.48）:</p>
+
+<p>dongwm@localhost ~ $python test1.py</p>
+
+<p>waiting to receive message
+received 19 bytes from (&#8216;192.168.8.48&#8217;, 59274)
+very important data
+sending acknowledgement to (&#8216;192.168.8.48&#8217;, 59274)</p>
+
+<p>waiting to receive message
+发送端（192.168.8.48）：</p>
+
+<p>dongwm@localhost ~ $python test.py
+sending &#8220;very important data&#8221;
+waiting to receive
+received &#8220;ack&#8221; from (&#8216;192.168.8.48&#8217;, 10000)
+waiting to receive
+received &#8220;ack&#8221; from (&#8216;192.168.8.49&#8217;, 10000)
+waiting to receive
+timed out, no more responses
+closing socket
+<pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('localhost', 10000)
+sock.bind(server_address)
+sock.listen(1)</p>
+
+<p>unpacker = struct.Struct('I 2s f')</p>
+
+<p>while True:
+    print &gt;&gt;sys.stderr, '\nwaiting for a connection'
+    connection, client_address = sock.accept()
+    try:
+        data = connection.recv(unpacker.size) 
+        print &gt;&gt;sys.stderr, 'received "%s"' % binascii.hexlify(data) #收到的二进制数据</p>
+
+<p>        unpacked_data = unpacker.unpack(data)
+        print &gt;&gt;sys.stderr, 'unpacked:', unpacked_data  #数据解包</p>
+
+<p>    finally:
+        connection.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('localhost', 10000)
+sock.connect(server_address)</p>
+
+<p>values = (1, 'ab', 2.7)
+packer = struct.Struct('I 2s f')
+packed_data = packer.pack(*values) #压包</p>
+
+<p>try:
+    print &gt;&gt;sys.stderr, 'sending "%s"' % binascii.hexlify(packed_data), values
+    sock.sendall(packed_data)</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre>
+执行结果：</p>
+
+<p>dongwm@localhost ~ $python !$
+python server.py  #接收端</p>
+
+<p>waiting for a connection
+received &#8220;0100000061620000cdcc2c40&#8221;
+unpacked: (1, &#8216;ab&#8217;, 2.700000047683716)</p>
+
+<p>waiting for a connection
+dongwm@localhost ~ $python test.py  #发送端
+sending &#8220;0100000061620000cdcc2c40&#8221; (1, &#8216;ab&#8217;, 2.7)
+closing socket</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoobijishisangengxinxitongdebaocuojiejue/">Gentoo笔记（十三）更新系统的总结和报错解决</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T00:00:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>升级步骤：</p>
+
+<p>1 emerge -–sync ＃同步更新目录
+2 emerge portage ＃更新portage
+3 emerge python ＃更新python，这属于个人习惯
+4 python-updater ＃更新python配置
+5 emerge -aDjNquv @world ＃升级整个系统（包括依赖）,-D 表示-deep,－j不加参数表示不限制同时运行的emerge进程（模式是1）</p>
+
+<p>#－N表示查看每个包的可用的USE参数，－q表示减少显示器屏幕输出，－u表示 &#8211;update ,-v表示详细模式
+6 emerge -av –depclean ＃清除不需要的软件包
+7 revdep-rebuild ＃检查系统依赖关系自动安装不满足的 关系包,假如过程中出现错误，重新 执行还是过去的包数量，</p>
+
+<p>#这是因为对需要重新安装的依赖包的数据缓存了，可以删除：rm /var/cache/revdep-rebuild/*.rr
+8 dispatch-conf或etc-update ＃更新系统配置文件</p>
+
+<p>9 （可选）emerge -ej world #重新编译系统，假如USE修改不大就不需要</p>
+
+<p>1 [blocks B ] 原因：说明小于sys-libs/talloc-2.0.5的包被sys-libs/talloc-2.0.7被屏蔽了，需要卸载重装新版本
+解决：dongwm@localhost ~ $sudo emerge -C talloc &amp;&amp; sudo emerge -1 talloc
+2 !!! The following updates are masked by LICENSE changes: - www-plugins/adobe-flash-11.2.202.236
+原因：这是adobe-flash造成的阻止安装，需要手动容许这个LICENSE
+解决：echo &#8220;www-plugins/adobe-flash AdobeFlash-10.3&#8221; &gt;&gt; /etc/portage/package.license #其中的10.3是报错提示信息重提到的</p>
+
+<p>3 !!! One of the following masked packages is required to complete your request:
+- x11-plugins/compiz-plugins-extra-0.8.8::gentoo (masked by: corruption)</p>
+
+<p>原因：主要是权限问题,本来更新portage后不存在这个ebuild，但是依赖关系又需要，所以去http://gpo.zugaina.org/x11-plugins/compiz-plugins-extra下载了一个相应版本，其他的地址，你懂的!</p>
+
+<p>解决：ebuild compiz-plugins-extra-0.8.8.ebuild digest</p>
+
+<p>4 emerge: there are no ebuilds built with USE flags to satisfy &#8220;&gt;=x11-libs/libdrm-2.4.24[video_cards_nouveau]&#8221;.
+!!! One of the following packages is required to complete your request:
+- x11-libs/libdrm-2.4.33::gentoo (Change USE: +video_cards_nouveau)</p>
+
+<p>原因：需要指定一个USE标识，可以直接在安装指定
+解决：这样安装：USE=video_cards_nouveau emerge  x11-drivers/xf86-video-nouveau 或者给某个包一个特定的USE到/etc/portage/package.use，这里也就是添加一行：</p>
+
+<p>x11-drivers/xf86-video-nouveau video_cards_nouveau
+5The following REQUIRED_USE flag constraints are unsatisfied:</p>
+
+<p>osdmenu? ( X ) xscreensaver? ( X ) xv? ( X )</p>
+
+<p>原因：说明USE包括osdmenu对其他标识有影响</p>
+
+<p>解决：需要去掉，或者&#8217;-osdmenu&#8217;</p>
+
+<p>6 /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../i686-pc-linux-gnu/bin/ld: warning: libxcb-util.so.0, needed by /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../lib/libstartup-notification-1.so, not found (try using -rpath or -rpath-link)(安装时)</p>
+
+<p>原因： libxcb-util的动态链接有问题</p>
+
+<p>解决：需要重新emerge x11-libs/xcb-util, x11-libs/libxc 然后 revdep-rebuild重建依赖关系</p>
+
+<p>7 Traceback (most recent call last):
+File &#8220;configure.py&#8221;, line 32, in &lt;module&gt;
+import sipconfig
+ImportError: No module named sipconfig
+* ERROR: dev-python/PyQt4-4.9.1 failed (configure phase):
+*   (no error message)
+原因：安装qt需要sip</p>
+
+<p>解决：重新安装dev-python/sip
+</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentoobijishierzhongxinbianyineihezongjie/">Gentoo笔记（十二）重新编译内核总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T00:00:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：最初使用了genkernel配置的内核，因为默认不支持高内存支持，我的系统只识别了886M内存（本来是4G），那么需要修改内核重新编译，以下是总结的过程：</p>
+
+<p>1 切换到内核源码目录，其实这是一个真正地址的软连接地址
+cd /usr/src/linux
+2 配置内核
+genkernel &#8211;menuconfig  all #&#8211;bootloader=grub表示自动更新grub引导程序配置,个人不建议使用，因为他可能会改错grub
+注：其实还是genkernel自动配置内核，而不是make menuconfig+make &amp;&amp; make modules_install+cp arch/i386/boot/bzImage /boot/kernel-ＸＸ-gentoo，
+但是事实上&#8211;menuconfig在自动配置前也会弹出那个菜单，让你自定义选择。我尝试了make menuconfig手动配置，但是因为硬件等原因，
+出现了很多错误，还不如直接使用genkernel全部配置，再小范围修改，比如我这里修改了支持4Ｇ内存的选项等（默认是ＯＦＦ）</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuthreadingyanjiuer-2/">关于threading研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def lock_holder(lock):  #显示资源holding和not holding
+    logging.debug('Starting')
+    while True:
+        lock.acquire()
+        try:
+            logging.debug('Holding')
+            time.sleep(0.5)
+        finally:
+            logging.debug('Not holding')
+            lock.release()
+        time.sleep(0.5)
+    return</p>
+
+<p>def worker(lock):
+    logging.debug('Starting')
+    num_tries = 0
+    num_acquires = 0
+    while num_acquires &lt; 3: #迭代2次，这样就会尝试4次，二次holding，2次not holding
+        time.sleep(0.5)
+        logging.debug('Trying to acquire')
+        have_it = lock.acquire(0)  #找出另一个线程是否已取得当前线程持有锁
+        try:
+            num_tries += 1
+            if have_it:
+                logging.debug('Iteration %d: Acquired',  num_tries)
+                num_acquires += 1
+            else:
+                logging.debug('Iteration %d: Not acquired', num_tries)
+        finally:
+            if have_it:
+                lock.release()
+    logging.debug('Done after %d iterations', num_tries)</p>
+
+<p>lock = threading.Lock()</p>
+
+<p>holder = threading.Thread(target=lock_holder, args=(lock,), name='LockHolder')
+holder.setDaemon(True)
+holder.start()</p>
+
+<p>worker = threading.Thread(target=worker, args=(lock,), name='Worker')
+worker.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+(LockHolder) Starting
+(LockHolder) Holding
+(Worker    ) Starting  #在sleep(0.5)的时候资源被worker获取
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 1: Acquired
+(LockHolder) Holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 2: Not acquired
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 3: Acquired
+(LockHolder) Holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 4: Not acquired
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 5: Acquired  #第5次因为num_acquires＝3而不进入循环
+(Worker    ) Done after 5 iterations
+<pre class="sh_python">
+import threading</p>
+
+<p>lock = threading.Lock()</p>
+
+<p>print 'First try :', lock.acquire()  #返回true
+print 'Second try:', lock.acquire(0)  #资源自能被锁定一次，这里就返回false了</p>
+
+<p>lock = threading.RLock()  #这样可以重新获得锁</p>
+
+<p>print 'First try :', lock.acquire()  #返回true
+print 'Second try:', lock.acquire(0)  #返回1
+</pre></p>
+
+<p><pre class="sh_python">
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def worker_with(lock):
+    with lock:   #使用wit关键字，执行lock的上下文管理
+        logging.debug('Lock acquired via with')</p>
+
+<p>def worker_no_with(lock):
+    lock.acquire()
+    try:
+        logging.debug('Lock acquired directly')
+    finally:
+        lock.release()</p>
+
+<p>lock = threading.Lock()
+w = threading.Thread(target=worker_with, args=(lock,))
+nw = threading.Thread(target=worker_no_with, args=(lock,))</p>
+
+<p>w.start()
+nw.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s (%(threadName)-2s) %(message)s',  #当前时间
+                    )</p>
+
+<p>def consumer(cond):
+    logging.debug('Starting consumer thread')
+    t = threading.currentThread()
+    with cond:
+        cond.wait()  #释放内部所占用的琐，同时线程被挂起，直至接收到通知被唤醒或超时（如果提供了timeout参数的话）。 
+                     #当线程被唤醒并重新占有琐的时候，程序才会继续执行下去。
+        logging.debug('Resource is available to consumer')</p>
+
+<p>def producer(cond):
+    logging.debug('Starting producer thread')
+    with cond:
+        logging.debug('Making resource available')
+        cond.notifyAll()  #唤醒所有挂起的线程（如果存在挂起的线程），但是这些方法不会释放所占用的琐</p>
+
+<p>condition = threading.Condition()   #它提供了比Lock, RLock更高级的功能，允许我们能够控制复杂的线程同步问题
+c1 = threading.Thread(name='c1', target=consumer, args=(condition,))
+c2 = threading.Thread(name='c2', target=consumer, args=(condition,))
+p = threading.Thread(name='p', target=producer, args=(condition,))</p>
+
+<p>c1.start()
+time.sleep(2)
+c2.start()
+time.sleep(2)
+p.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-07-06 14:11:54,001 (c1) Starting consumer thread
+2012-07-06 14:11:56,001 (c2) Starting consumer thread
+2012-07-06 14:11:58,003 (p ) Starting producer thread
+2012-07-06 14:11:58,003 (p ) Making resource available  #producer唤起挂起的线程，触发consumer 线程继续执行
+2012-07-06 14:11:58,003 (c1) Resource is available to consumer
+2012-07-06 14:11:58,004 (c2) Resource is available to consumer
+<pre class="sh_python">
+import logging
+import random
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s (%(threadName)-2s) %(message)s',
+                    )</p>
+
+<p>class ActivePool(object):  #跟踪进程执行状态
+    def __init__(self):
+        super(ActivePool, self).__init__()   #保证公共父类仅被执行一次
+        self.active = []
+        self.lock = threading.Lock()
+    def makeActive(self, name):
+        with self.lock:
+            self.active.append(name)
+            logging.debug('Running: %s', self.active)
+    def makeInactive(self, name):
+        with self.lock:
+            self.active.remove(name)
+            logging.debug('Running: %s', self.active)</p>
+
+<p>def worker(s, pool):
+    logging.debug('Waiting to join the pool')
+    with s:
+        name = threading.currentThread().getName()
+        pool.makeActive(name)
+        time.sleep(0.1)
+        pool.makeInactive(name)</p>
+
+<p>pool = ActivePool()
+s = threading.Semaphore(4) ##Semaphore用来控制对共享资源的访问数量，例如池的最大连接数，这里只有4个活动进程同时运行
+for i in range(4):
+    t = threading.Thread(target=worker, name=str(i), args=(s, pool))
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-07-06 14:19:04,395 (0 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (0 ) Running: [&#8216;0&#8217;]
+2012-07-06 14:19:04,395 (1 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (2 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (3 ) Waiting to join the pool
+2012-07-06 14:19:04,396 (1 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;]
+2012-07-06 14:19:04,396 (2 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;]
+2012-07-06 14:19:04,396 (3 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;, &#8216;3&#8217;]
+2012-07-06 14:19:04,496 (0 ) Running: [&#8216;1&#8217;, &#8216;2&#8217;, &#8216;3&#8217;]
+2012-07-06 14:19:04,496 (1 ) Running: [&#8216;2&#8217;, &#8216;3&#8217;]
+2012-07-06 14:19:04,496 (2 ) Running: [&#8216;3&#8217;]
+2012-07-06 14:19:04,496 (3 ) Running: []</p>
+
+<p><pre class="sh_python">
+import random
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def show_value(data):
+    try:
+        val = data.value
+    except AttributeError:
+        logging.debug('No value yet')
+    else:
+        logging.debug('value=%s', val)</p>
+
+<p>def worker(data):
+    show_value(data)
+    data.value = random.randint(1, 100)
+    show_value(data)</p>
+
+<p>local_data = threading.local()  #虽然有些资源需要被锁定，所以多个线程可以使用它们,这里创建一个能够隐藏在单独的线程的值对象
+show_value(local_data)
+local_data.value = 1000
+show_value(local_data)</p>
+
+<p>for i in range(2):
+    t = threading.Thread(target=worker, args=(local_data,))
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) No value yet   #第一次调用还没有设置
+(MainThread) value=1000
+(Thread-1  ) No value yet  #子线程1还没有设置
+(Thread-1  ) value=4 #子线程1设置，但是是本地的属性没有继承1000
+(Thread-2  ) No value yet
+(Thread-2  ) value=55
+<pre class="sh_python">
+import random
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def show_value(data):
+    try:
+        val = data.value
+    except AttributeError:
+        logging.debug('No value yet')
+    else:
+        logging.debug('value=%s', val)</p>
+
+<p>def worker(data):
+    show_value(data)
+    data.value = random.randint(1, 100)
+    show_value(data)</p>
+
+<p>class MyLocal(threading.local):
+    def __init__(self, value): #初始化设置，让所有的线程具有相同的value
+        logging.debug('Initializing %r', self)
+        self.value = value</p>
+
+<p>local_data = MyLocal(1000)
+show_value(local_data)</p>
+
+<p>for i in range(2):
+    t = threading.Thread(target=worker, args=(local_data,))
+    t.start()
+</pre>
+执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
+(MainThread) value=1000
+(Thread-1  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
+(Thread-1  ) value=1000
+(Thread-1  ) value=42
+(Thread-2  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;  #实例的对象id都是一样的
+(Thread-2  ) value=1000
+(Thread-2  ) value=64</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuthreadingyanjiuer/">关于threading研究（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：threading是python的管理多线程模块，实际工作中很常用，很多功能类似于multiprocessing（多进程模块）</p>
+
+<p><pre class="sh_python">
+import threading</p>
+
+<p>def worker(num):   #带参数的函数
+    print 'Worker: %s' % num
+    return</p>
+
+<p>threads = []
+for i in range(5):
+    t = threading.Thread(target=worker, args=(i,))  #实例化，多线程操作
+    threads.append(t)
+    t.start()  #启动多线程，还可以继承threading.Thread类，重写run()函数为worker函数内容，实现一样的效果
+</pre></p>
+
+<p><pre class="sh_python">
+import threading
+import time</p>
+
+<p>def worker():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(2)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>def my_service():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(3)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)  #设置实现的线程函数的名字
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) # 使用线程函数的默认的名字，这里就是Thread-1，Thread-2，这样的累加</p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,   #打印日志使用logging模块
+                    format='[%(levelname)s] (%(threadName)-10s) %(message)s',  #格式格式，前面是logging的级别，因为上面指定DEBUG模式，threadName表示线程的名字
+                    )</p>
+
+<p>def worker():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>def my_service():
+    logging.debug('Starting')
+    time.sleep(3)
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) </p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+[DEBUG] (worker    ) Starting
+[DEBUG] (Thread-1  ) Starting
+[DEBUG] (my_service) Starting
+[DEBUG] (worker    ) Exiting
+[DEBUG] (Thread-1  ) Exiting
+[DEBUG] (my_service) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)  #设置daemon模式，主程序结束，这个子线程依然存在</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)  #默认deamon是false，也就是不使用守护模式，子线程跟随主程序结束</p>
+
+<p>d.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)</p>
+
+<p>d.start()
+t.start()</p>
+
+<p>d.join()  #表示等待子线程死掉再退出，也可以设置超时，超时会返回，不等待子线程结束 d.join(1) 这样sleep的2秒还不够， d.isAlive()得出线程还是存在的
+t.join()  #，但是程序也结束。
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+(daemon    ) Exiting  #等待那个deamon的子线程结束才结束</p>
+
+<p><pre class="sh_python">
+import random
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def worker():
+    t = threading.currentThread()
+    pause = random.randint(1,5)
+    logging.debug('sleeping %s', pause)
+    time.sleep(pause)  #sleep一个随机值
+    logging.debug('ending')
+    return</p>
+
+<p>for i in range(3):
+    t = threading.Thread(target=worker)
+    t.setDaemon(True)  
+    t.start()</p>
+
+<p>main_thread = threading.currentThread()  #获取当前线程
+for t in threading.enumerate():  #enumerate返回线程实例的列表
+    if t is main_thread:  #因为join当前线程会引起死锁，需要过滤
+        continue
+    logging.debug('joining %s', t.getName())
+    t.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) sleeping 3
+(Thread-2  ) sleeping 5
+(Thread-3  ) sleeping 1
+(MainThread) joining Thread-1
+(Thread-3  ) ending
+(Thread-1  ) ending
+(MainThread) joining Thread-3
+(MainThread) joining Thread-2
+(Thread-2  ) ending
+<pre class="sh_python">
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class MyThreadWithArgs(threading.Thread):  #和第一个例子说的继承threading.Thread类，实例化，重写run，然后调用start()启动</p>
+
+<p>    def __init__(self, group=None, target=None, name=None,  #初始化
+                 args=(), kwargs=None, verbose=None):
+        threading.Thread.__init__(self, group=group, target=target, name=name,  #初始化threading.Thread类，因为这个类初始化有很多参数需要设定
+                                  verbose=verbose)
+        self.args = args
+        self.kwargs = kwargs
+        return</p>
+
+<p>    def run(self):
+        logging.debug('running with %s and %s', self.args, self.kwargs)
+        return</p>
+
+<p>for i in range(5):
+    t = MyThreadWithArgs(args=(i,), kwargs={'a':'A', 'b':'B'}) #kwargs被初始化
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) running with (0,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-2  ) running with (1,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-3  ) running with (2,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-4  ) running with (3,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-5  ) running with (4,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def delayed():
+    logging.debug('worker running')
+    return</p>
+
+<p>t1 = threading.Timer(3, delayed)   #Timer主要是计时器用来延迟
+t1.setName('t1')
+t2 = threading.Timer(3, delayed)
+t2.setName('t2')</p>
+
+<p>logging.debug('starting timers')
+t1.start()
+t2.start()</p>
+
+<p>logging.debug('waiting before canceling %s', t2.getName())
+time.sleep(2)
+logging.debug('canceling %s', t2.getName())
+t2.cancel()  #取消线程
+logging.debug('done')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) starting timers
+(MainThread) waiting before canceling t2
+(MainThread) canceling t2
+(MainThread) done
+(t1        ) worker running
+<pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def wait_for_event(e):
+    logging.debug('wait_for_event starting')
+    event_is_set = e.wait()  #主线程将被阻塞，它将不会 再被分配时间片 直到现有的一些线程退出运行
+    logging.debug('event set: %s', event_is_set)  ##返回事件是否设置的布尔值</p>
+
+<p>def wait_for_event_timeout(e, t):
+    while not e.isSet():
+        logging.debug('wait_for_event_timeout starting')
+        event_is_set = e.wait(t)  #设置等待超时
+        logging.debug('event set: %s', event_is_set)
+        if event_is_set:
+            logging.debug('processing event')
+        else:
+            logging.debug('doing other work')</p>
+
+<p>e = threading.Event()  #替代time.sleep(),用wait()和set()来精确控制线程，2个或者多个线程同步操作
+t1 = threading.Thread(name='block', 
+                      target=wait_for_event,
+                      args=(e,))
+t1.start()</p>
+
+<p>t2 = threading.Thread(name='non-block', 
+                      target=wait_for_event_timeout, 
+                      args=(e, 2))
+t2.start()</p>
+
+<p>logging.debug('Waiting before calling Event.set()')
+time.sleep(3)
+e.set()
+logging.debug('Event is set')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(block     ) wait_for_event starting
+(MainThread) Waiting before calling Event.set()
+(non-block ) wait_for_event_timeout starting
+(non-block ) event set: False
+(non-block ) doing other work
+(non-block ) wait_for_event_timeout starting
+(MainThread) Event is set
+(block     ) event set: True
+(non-block ) event set: True
+(non-block ) processing event
+<pre class="sh_python">
+import logging
+import random
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class Counter(object):
+    def __init__(self, start=0):
+        self.lock = threading.Lock()  #锁资源，防止同时访问对象
+        self.value = start
+    def increment(self):
+        logging.debug('Waiting for lock')
+        self.lock.acquire()  #获得资源
+        try:
+            logging.debug('Acquired lock')
+            self.value = self.value + 1
+        finally:
+            self.lock.release()  #释放资源</p>
+
+<p>def worker(c):
+    for i in range(2):
+        pause = random.random()
+        logging.debug('Sleeping %0.02f', pause)
+        time.sleep(pause)
+        c.increment()
+    logging.debug('Done')</p>
+
+<p>counter = Counter()
+for i in range(2):
+    t = threading.Thread(target=worker, args=(counter,))
+    t.start()</p>
+
+<p>logging.debug('Waiting for worker threads')
+main_thread = threading.currentThread()
+for t in threading.enumerate():
+    if t is not main_thread:
+        t.join()
+logging.debug('Counter: %d', counter.value)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) Sleeping 0.85
+(Thread-2  ) Sleeping 0.12
+(MainThread) Waiting for worker threads
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Sleeping 0.04
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Done
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Sleeping 0.47
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Done
+(MainThread) Counter: 4</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusocketyanjiuyi/">关于socket研究(一)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言；socket是python网络通讯的模块，socket用于描述IP地址和端口，是一个通信链的句柄。在Internet上的主机一般运行了多个服务软件，同时提供几种服务。每种服务都打开一个Socket，并绑定到一个端口上，不同的端口对应于不同的服务。Socket正如其英文原意那样，象一个多孔插座。</p>
+
+<p><pre class="sh_python">
+import socket
+print socket.gethostname()  #获取linux主机的hostname
+print socket.gethostbyname('www.dongwm.com')  #获取www.dongwm.com的ip
+hostname, aliases, addresses = socket.gethostbyname_ex('www.baidu.com')  #获取主机名，别名和ip地址
+print hostname, aliases, addresses
+print socket.getfqdn('www.dongwm.com')  #获取<span><em>FQDN</em></span>(<span>全称域名</span>)
+hostname, aliases, addresses = socket.gethostbyaddr('61.135.169.105')  #通过ip获取主机名，别名和ip地址
+print hostname, aliases, addresses
+
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+from urlparse import urlparse,urlunparse</p>
+
+<p>for url in [ 'http://www.python.org',
+             'https://www.mybank.com',
+             'ftp://prep.ai.mit.edu',
+             'gopher://gopher.micro.umn.edu',
+             'smtp://mail.example.com',
+             'imap://mail.example.com',
+             'imaps://mail.example.com',
+             'pop3://pop.example.com',
+             'pop3s://pop.example.com',
+             ]:
+    parsed_url = urlparse(url)
+    port = socket.getservbyname(parsed_url.scheme)  #通过urlparse解析协议端口
+    print '%6s : %s' % (parsed_url.scheme, port)
+for port in [ 80, 443, 21, 70, 25, 143, 993, 110, 995 ]:
+    print urlunparse(
+        (socket.getservbyport(port), 'example.com', '/', '', '', '')  #通过端口返回协议前缀
+        )
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+http : 80
+https : 443
+ftp : 21
+gopher : 70
+smtp : 25
+imap : 143
+imaps : 993
+pop3 : 110
+pop3s : 995
+http://example.com/
+https://example.com/
+ftp://example.com/
+gopher://example.com/
+smtp://example.com/
+imap://example.com/
+imaps://example.com/
+pop3://example.com/
+pop3s://example.com/</p>
+
+<p><pre class="sh_python">
+import socket</p>
+
+<p>def get_constants(prefix):
+    """Create a dictionary mapping socket module constants to their names."""
+    return dict( (getattr(socket, n), n)
+                 for n in dir(socket)
+                 if n.startswith(prefix)
+                 )</p>
+
+<p>protocols = get_constants('IPPROTO_')</p>
+
+<p>for name in [ 'icmp', 'udp', 'tcp' ]:
+    proto_num = socket.getprotobyname(name)  #获取协议号
+    const_name = protocols[proto_num]  #协议标识
+    print '%4s -&gt; %2d (socket.%-12s = %2d)' % \
+        (name, proto_num, const_name, getattr(socket, const_name))
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+icmp -&gt;  1 (socket.IPPROTO_ICMP =  1)
+udp -&gt; 17 (socket.IPPROTO_UDP  = 17)
+tcp -&gt;  6 (socket.IPPROTO_TCP  =  6)
+<pre class="sh_python">
+import socket</p>
+
+<p>def get_constants(prefix):
+    """Create a dictionary mapping socket module constants to their names."""
+    return dict( (getattr(socket, n), n)  #返回一个<span>模块定义的标识符</span>符合某前缀标识号和名字的字典
+                 for n in dir(socket)
+                 if n.startswith(prefix)
+                 )</p>
+
+<p>families = get_constants('AF_')  #返回协议簇
+types = get_constants('SOCK_')  #套接字类型
+protocols = get_constants('IPPROTO_')  #协议类型</p>
+
+<p>for response in socket.getaddrinfo('www.python.org', 'http'): #gethostbyname和gethostbyaddr这两个函数仅仅支持IPv4，
+                                       #getaddrinfo函数能够处理名字到地址以及服务到端口这两 种转换</p>
+
+<p>    family, socktype, proto, canonname, sockaddr = response</p>
+
+<p>    print 'Family        :', families[family]
+    print 'Type          :', types[socktype]
+    print 'Protocol      :', protocols[proto]
+    print 'Canonical name:', canonname
+    print 'Socket address:', sockaddr
+    print
+for response in socket.getaddrinfo('www.python.org', 'http',  
+                                   socket.AF_INET,      # 添加筛选添加，family
+                                   socket.SOCK_STREAM,  # socktype
+                                   socket.IPPROTO_TCP,  # protocol
+                                   socket.AI_CANONNAME, # flags
+                                   ):</p>
+
+<p>    family, socktype, proto, canonname, sockaddr = response</p>
+
+<p>    print 'Family        :', families[family]
+    print 'Type          :', types[socktype]
+    print 'Protocol      :', protocols[proto]
+    print 'Canonical name:', canonname
+    print 'Socket address:', sockaddr
+    print
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Family        : AF_INET
+Type          : SOCK_DGRAM
+Protocol      : IPPROTO_UDP
+Canonical name:
+Socket address: (&#8216;82.94.164.162&#8217;, 80)</p>
+
+<p>Family        : AF_INET
+Type          : SOCK_STREAM
+Protocol      : IPPROTO_TCP
+Canonical name:
+Socket address: (&#8216;82.94.164.162&#8217;, 80)</p>
+
+<p>Family        : AF_INET6
+Type          : SOCK_DGRAM
+Protocol      : IPPROTO_UDP
+Canonical name:
+Socket address: (&#8216;2001:888:2000:d::a2&#8217;, 80, 0, 0)</p>
+
+<p>Family        : AF_INET6
+Type          : SOCK_STREAM
+Protocol      : IPPROTO_TCP
+Canonical name:
+Socket address: (&#8216;2001:888:2000:d::a2&#8217;, 80, 0, 0)</p>
+
+<p>
+Family        : AF_INET
+Type          : SOCK_STREAM
+Protocol      : IPPROTO_TCP
+Canonical name: dinsdale.python.org
+Socket address: (&#8216;82.94.164.162&#8217;, 80)
+<pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>string_address = sys.argv[1]
+packed = socket.inet_aton(string_address)  #将ip地址的4段地址分别进行2进制转化，但输出用16进制表示</p>
+
+<p>print 'Original:', string_address
+print 'Packed  :', binascii.hexlify(packed)
+print 'Unpacked:', socket.inet_ntoa(packed) #从网络字节序的数字’’转换为ip
+</pre>
+执行结果：
+dongwm@linux-dongwm:~&gt; python test.py 192.168.1.1
+Original: 192.168.1.1
+Packed  : c0a80101
+Unpacked: 192.168.1.1
+dongwm@linux-dongwm:~&gt; python test.py 127.0.0.1
+Original: 127.0.0.1
+Packed  : 7f000001
+Unpacked: 127.0.0.1
+<pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>string_address = sys.argv[1]
+packed = socket.inet_pton(socket.AF_INET6, string_address)  #socket.inet_pton代替socket.inet_aton指定参数处理ipv6地址
+
+print 'Original:', string_address
+print 'Packed  :', binascii.hexlify(packed)
+print 'Unpacked:', socket.inet_ntop(socket.AF_INET6, packed) ##从网络字节序的数字’’转换为ipv6
+</pre></p>
+
+<p></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pythonzhuabaochengxupypcap/">Python抓包程序（pypcap）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：网上好像抓包例子就是那么几个，我这里提供一个抓包例子，但是请注意，如果网卡流量&gt;200M，由于性能原因，建议使用c源码编译的程序：</p>
+
+<p><pre class="sh_python">
+#/usr/bin/env python
+#-*-coding:utf8-*-</p>
+
+<p>#抓包脚本
+"""
+This script is used to Capture and Analysis packets</p>
+
+<p>Required dependencies:
+1 libpcap-devel
+Installation:
+rpm -ivh ../libpcap-devel-0.9.4-14.el5.i386.rpm
+2 pypcap 
+Installation:
+tar zxvf pypcap-1.1.tar.gz 
+cd pypcap-1.1
+CFLAGS=-m32 python setup.py config 
+CFLAGS=-m32 python setup.py build 
+CFLAGS=-m32 python setup.py install </p>
+
+<p>3 iplist Format
+iplist＝ 'ip/mask','ip/mask'  OR iplist＝ 'ip/mask',    #本脚本主要根据ip段分析内外网流量数据，我自定义一个函数用来解析子网掩码方式的ip段，这里支持多个ip段，也支持一个段，但是要加‘,’</p>
+
+<p>Writer:Dongweiming</p>
+
+<p>"""</p>
+
+<p>import pcap
+import socket
+import struct
+import ctypes
+import datetime
+import threading
+import inspect
+import traceback
+from optparse import OptionParser
+from subprocess import *
+import sys,os
+import time</p>
+
+<p>iplist = '115.12.1.0/24','219.213.232.192/26'  #设置解析这2个段的ip列表</p>
+
+<p>def _async_raise(tid, exctype):
+    if not inspect.isclass(exctype):
+        raise TypeError("Only types can be raised (not instances)")
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, 0)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+def ipto(ip,ti):
+    d = ti/8
+    c = 256/(2**(ti%8))
+    ip_items = ip.split('.')
+    if len(ip_items[d:]) == 1:
+        if ti%8 == 0:
+            cmin = '%s.%s' % ('.'.join(ip_items[:d]),'0')
+            cmax = '%s.%s' % ('.'.join(ip_items[:d]),'255')
+        else:
+            for i in range(2**(ti%8)):
+	        mymax = (i+1)*c-1
+	        mymin=  i*c
+	        data =  int(''.join(ip_items[d:]))
+	        if data &lt; mymax and data &gt;= mymin:
+	            cmin = '%s.%s' % ('.'.join(ip_items[:d]),mymin)
+  	            cmax = '%s.%s' % ('.'.join(ip_items[:d]),mymax)
+    else:
+        if ti%8 == 0:
+             cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),'0',('0.'*(len(ip_items)-d-1))[:-1])
+             cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),'255',('255.'*(len(ip_items)-d-1))[:-1])
+        else:
+	    for i in range(2**(ti%8)):
+                mymax = (i+1)*c-1
+                mymin=  i*c
+	        data =  int(''.join(ip_items[d]))
+	        if data &lt; mymax and data &gt;= mymin:
+		    cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymin,('0.'*(len(ip_items)-d-1))[:-1])
+		    cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymax,('255.'*(len(ip_items)-d-1))[:-1])
+    return cmin,cmax  #返回ip段中可用的最小ip和最大ip</p>
+
+<p>class MYthread(threading.Thread):  #自定义theading.Thread类，能够产生线程并且杀掉线程
+    def _get_my_tid(self):
+        if not self.isAlive():
+            raise threading.ThreadError("the thread is not active")
+        if hasattr(self, "_thread_id"):
+            return self._thread_id</p>
+
+<p>        for tid, tobj in threading._active.items():
+            if tobj is self:
+                self._thread_id = tid
+                return tid
+        raise AssertionError("could not determine the thread's id")
+    def raise_exc(self, exctype):
+        _async_raise(self._get_my_tid(), exctype)</p>
+
+<p>    def terminate(self):
+        self.raise_exc(SystemExit)
+class Crawl():  #解析主函数
+    def __init__(self,eth,mytime,flag):
+        self.bytes = 0
+        self.bytes_out = 0
+        self.packets = 0
+        self.packets_out = 0
+        self.eth = eth
+        self.mytime = mytime
+        self.flag = flag
+    def myntohl(self,ip):
+        return socket.ntohl(struct.unpack("I",socket.inet_aton(ip))[0])  #inet_aton 将ip地址的4段地址分别进行2进制转化，输出用16进制表示，
+                                                     #unpack的处理是按16进制（4bit）将2进制字符，从后向前读入的，低位入
+                                                     #ntohl, htonl 表示的是网络地址和主机地址之间的转换（network byte &lt;==&gt; host byte）
+                                                     #由于unpack/pack的解/打包的颠倒顺序，必须通过htonl 或者 ntohl 进行处理
+                                                     #比如从’192.168.1.235’ 可以转换为数字’3120670912’，此数字为网络字节序
+    def check(self,dict,uip):
+        flag = 0
+        for i in dict.keys():
+            if uip &gt; self.myntohl(i) and uip &lt; self.myntohl(dict[i]):  #如果抓取的uip属于ip段，flag＝1，否则为0
+#       if (uip &gt; self.myntohl('1941307648') and uip &lt; self.myntohl('1941307903')) or (self.myntohl('3689867456') and uip &lt; self.myntohl('3689867519')):
+                 flag =1
+        return flag
+    def run(self):  #设置的抓取时间里pcap一直抓包，各个队列累加数值，最后除以时间，即平均
+        dict = {}
+        for i in iplist:
+             d = i.split('/')
+             cmin,cmax = ipto(d[0],int(d[1]))
+             dict[cmin]=cmax  #这里记录一个字典，key是ip段最小的的ip，value是最大的ip</p>
+
+<p>        if self.eth == 'all':
+            pc = pcap.pcap()
+        else:
+            pc = pcap.pcap(self.eth)
+        for ptime,pdata in pc:
+            #try:
+            #    ip_type = socket.ntohs(struct.unpack("H",pdata[12:14])[0])  #
+            #except:
+            #     pass 
+      	    #if ip_type != 2048: 
+	    #    continue
+ 	    s_uip = socket.ntohl(struct.unpack("I",pdata[14+12:14+16])[0]) #源ip的网络字节序
+	    #d_uip = socket.ntohl(struct.unpack("I",pdata[14+16:14+20])[0])  #目的ip的网络字节序
+            bytes = socket.ntohs(struct.unpack("H",pdata[14+2:14+4])[0])+14 #数据的字节数
+            if self.check(dict,s_uip):
+	        self.bytes_out += bytes
+                self.packets_out += 1
+ 	    else:
+	        self.bytes += bytes
+                self.packets += 1
+    def withtime(self):
+        pid =  os.getpid()
+        name = sys.argv[0]
+        Popen("kill -9 `ps -ef |grep %s|grep -v grep |awk '{print $2}'|grep -v %d`" % (name,pid),stdout=PIPE, stderr=PIPE,shell=True) #这里是
+                                     #在启动时候主动杀掉系统中存在的残留程序,使用中发现有时候（极少）执行时间到没有杀掉程序，为了定时任务安全
+        self.t = MYthread(target = self.run)
+        self.t.setDaemon(1)
+        self.t.start()
+        curtime = time.ctime(time.time())
+        t = 0
+        while t&lt;int(self.mytime):
+           t +=1
+           time.sleep(1)
+        nowtime = time.ctime(time.time())
+        data = "From[%s]To[%s]%s\n%s%s%s%s\n%s%s%s%s\n" \
+        % (curtime,nowtime,u'数据统计'.encode('utf8'),u'出网总流量/s'.encode('utf8').ljust(22,' '),\
+           u'出网总数据包/s'.encode('utf8').ljust(22,' '),u'进网总流量/s'.encode('utf8').ljust(22,' '),\
+           u'进网总数据包/s'.encode('utf8').ljust(22,' '),str(int(self.bytes_out)/int(self.mytime)).ljust(18,' '),\
+           str(int(self.packets_out)/int(self.mytime)).ljust(18,' '),str(int(self.bytes)/int(self.mytime)).ljust(18,' '),\
+           str(int(self.packets)/int(self.mytime)).ljust(18,' '))
+        if self.flag:
+            print data
+        self.log(data)
+        self.t.terminate()
+        self.t.join()</p>
+
+<p>    def log(self,log):  #记录日志，使用－p选项只在记录，不在终端打印，用于定时任务等需求时（定时任务执行没必要输出）
+        path = os.path.split(os.path.realpath(__file__))[0]
+        log_file = "%s/common.log" % path
+        if not os.path.exists(log_file):
+            f=open(log_file,'w')
+            f.close()
+        try:
+            fr = open(log_file, "a+")
+            fr.write(log+"\r\n")
+	    fr.close()
+	except Exception, e:
+            pass</p>
+
+<p>if __name__ == '__main__':
+    argc = len(sys.argv)
+    parser = OptionParser(description="Use For Capture and Analysis packets",add_help_option=False,prog="sniffer.py",usage="%prog [ -e &lt;ethname&gt;][ -t &lt;time&gt;]")
+    parser.add_option("-e", "--eth",action = "store",default = "all",help = "Select the card, the default is 'all'") #选择网卡，默认是all
+    parser.add_option("-t", "--time",action = "store",default = 5,help = "Select the capture time,the default is 5s")  #设置要抓包的时间，单位秒，时间越长越精确
+    parser.add_option("-p", "--myprint",action = "store_false",default = True,help = "Print data, the default is true")
+    parser.add_option("-h", "--help",action = "help",help="print help")
+    options, arguments=parser.parse_args()
+    a = Crawl(options.eth,options.time,options.myprint)
+    a.withtime()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusubprocessyanjiu/">关于subprocess研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：subprocess启动一个新的进程（子进程）并与其进行通讯的模块，subprocess被用来替换一些老的模块和函数，如：os.system、os.spawn*、os.popen*、popen2.*、commands.*。可见，subprocess是被推荐使用的模块。</p>
+
+<p><pre class="sh_python">
+import subprocess</p>
+
+<p>subprocess.call(['ls', '-1'], shell=True)  #call类似于<em>os.system()</em>执行外部命令，而且他也支持定义的变量比如echo $HOME'
+subprocess.check_call(['false'])  #这个false命令会返回一个exitcode不为0的结果，她会被捕捉raise
+output = subprocess.check_output(['ls', '-1'])  #捕获执行结果输出
+print 'Have %d bytes in output' % len(output)
+output = subprocess.check_output(
+    'echo to stdout; echo to stderr 1&gt;&amp;2; exit 1',   #因为重定向了输出，输出流数据不被记录，错误输出流被记录
+    shell=True,
+    )
+output = subprocess.check_output(
+    'echo to stdout; echo to stderr 1&gt;&amp;2; exit 1',
+    shell=True,
+    stderr=subprocess.STDOUT,   #错误输出也被重定向，只会打印check捕捉到的退出代码不是0的异常
+    )
+print 'Have %d bytes in output' % len(output)
+print output
+print '\nread:'
+proc = subprocess.Popen(['echo', '"to stdout"'],   Popen类似于os.popen，将输出，输入，错误定向到管道 
+                        stdout=subprocess.PIPE,  #将输出流定向到管道
+                        )
+stdout_value = proc.communicate()[0]  #获取数据
+print '\tstdout:', repr(stdout_value)
+import subprocess</p>
+
+<p>print '\nwrite:'
+proc = subprocess.Popen(['cat', '-'],
+                        stdin=subprocess.PIPE,  #输入流定向到管道
+                        )
+proc.communicate('\tstdin: to stdin\n')
+print '\npopen2:'</p>
+
+<p>proc = subprocess.Popen(['cat', '-'],
+                        stdin=subprocess.PIPE,  #同时定向输出输入流
+                        stdout=subprocess.PIPE,
+                        )
+stdout_value = proc.communicate('through stdin to stdout')[0]
+print '\tpass through:', repr(stdout_value)
+print '\npopen3:'
+proc = subprocess.Popen('cat -; echo "to stderr" 1&gt;&amp;2',
+                        shell=True,
+                        stdin=subprocess.PIPE,  ##同时定向输出输入错误流
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        )
+stdout_value, stderr_value = proc.communicate('through stdin to stdout')
+print '\tpass through:', repr(stdout_value)
+print '\tstderr      :', repr(stderr_value)
+print '\npopen4:'
+proc = subprocess.Popen('cat -; echo "to stderr" 1&gt;&amp;2',
+                        shell=True,
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,  #把错误流定向到输出流，那么错误流就是none
+                        )
+stdout_value, stderr_value = proc.communicate('through stdin to stdout\n')
+print '\tcombined output:', repr(stdout_value)
+print '\tstderr value   :', repr(stderr_value)
+</pre></p>
+
+<p><pre class="sh_python">
+import subprocess</p>
+
+<p>cat = subprocess.Popen(['cat', 'index.rst'], 
+                        stdout=subprocess.PIPE,
+                        )</p>
+
+<p>grep = subprocess.Popen(['grep', '.. include::'],
+                        stdin=cat.stdout,
+                        stdout=subprocess.PIPE,
+                        )</p>
+
+<p>cut = subprocess.Popen(['cut', '-f', '3', '-d:'],
+                        stdin=grep.stdout,
+                        stdout=subprocess.PIPE,
+                        )</p>
+
+<p>end_of_pipe = cut.stdout #这个效果也就是执行：cat index.rst|grep '.. include::'|cut -f2 -d':'</p>
+
+<p>print 'Included files:'
+for line in end_of_pipe:
+    print '\t', line.strip()
+</pre></p>
+
+<p>以下是一个测试的脚本（test1.py）：</p>
+
+<p><pre class="sh_python">
+import os
+import signal
+import time
+import sys</p>
+
+<p>pid = os.getpid()
+received = False</p>
+
+<p>def signal_usr1(signum, frame):   #回调接收到信号时调用
+    global received
+    received = True
+    print 'CHILD %6s: Received USR1' % pid
+    sys.stdout.flush()</p>
+
+<p>print 'CHILD %6s: Setting up signal handler' % pid
+sys.stdout.flush()
+signal.signal(signal.SIGUSR1, signal_usr1)
+print 'CHILD %6s: Pausing to wait for signal' % pid
+sys.stdout.flush()
+time.sleep(3)</p>
+
+<p>if not received:
+    print 'CHILD %6s: Never received signal' % pid
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import signal
+import subprocess
+import time
+import sys</p>
+
+<p>proc = subprocess.Popen(['python', 'signal_child.py'])
+print 'PARENT      : Pausing before sending signal...'
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling child'
+sys.stdout.flush()
+os.kill(proc.pid, signal.SIGUSR1)
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+PARENT      : Pausing before sending signal&#8230;
+CHILD  15335: Setting up signal handler
+CHILD  15335: Pausing to wait for signal
+PARENT      : Signaling child
+CHILD  15335: Received USR1
+<pre class="sh_python">
+import os
+import signal
+import subprocess
+import tempfile
+import time
+import sys</p>
+
+<p>script = '''#!/bin/sh
+echo "Shell script in process $$"
+set -x
+python signal_child.py
+'''
+script_file = tempfile.NamedTemporaryFile('wt')
+script_file.write(script)
+script_file.flush() #创建一个临时文件</p>
+
+<p>proc = subprocess.Popen(['sh', script_file.name], close_fds=True)  #执行新进程前关闭0/1/2之外的文件
+print 'PARENT      : Pausing before sending signal to child %s...' % proc.pid
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling child %s' % proc.pid
+sys.stdout.flush()
+os.kill(proc.pid, signal.SIGUSR1)
+time.sleep(3)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+PARENT      : Pausing before sending signal to child 15434&#8230;
+Shell script in process 15434
++ python test1.py
+CHILD  15435: Setting up signal handler
+CHILD  15435: Pausing to wait for signal
+PARENT      : Signaling child 15434
+CHILD  15435: Never received signal  #child不能收到父进程的信号</p>
+
+<p><pre class="sh_python">
+import os
+import signal
+import subprocess
+import tempfile
+import time
+import sys</p>
+
+<p>script = '''#!/bin/sh
+echo "Shell script in process $$"
+set -x
+python test1.py
+'''
+script_file = tempfile.NamedTemporaryFile('wt')
+script_file.write(script)
+script_file.flush()</p>
+
+<p>proc = subprocess.Popen(['sh', script_file.name], 
+                        close_fds=True,
+                        preexec_fn=os.setsid,  # 钩子函数， 在fork和exec之间执行
+                        )
+print 'PARENT      : Pausing before sending signal to child %s...' % proc.pid
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling process group %s' % proc.pid
+sys.stdout.flush()
+os.killpg(proc.pid, signal.SIGUSR1)
+time.sleep(3)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusocketserveryanjiu/">关于SocketServer研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言;SocketServer模块是一个用于创建网络服务器的框架. 他提供了处理TCP, UDP, Unix流和Unix数据包的基本类和支持线程和进程服务器</p>
+
+<p><pre class="sh_python">
+import logging
+import sys
+import SocketServer</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+  format='%(name)s: %(message)s',
+)</p>
+
+<p>class EchoRequestHandler(SocketServer.BaseRequestHandler):   #通过启动不同的线程（进程）来实现每个链接一个线程</p>
+
+<p>    def __init__(self, request, client_address, server):
+        self.logger = logging.getLogger('EchoRequestHandler')
+        self.logger.debug('__init__')
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        return</p>
+
+<p>    def setup(self):  #准备一个请求处理者
+        self.logger.debug('setup')
+        return SocketServer.BaseRequestHandler.setup(self)</p>
+
+<p>    def handle(self):  #做实际处理请求的工作. 解析到来的请求, 处理数据并发送一个response.
+        self.logger.debug('handle')
+        data = self.request.recv(1024)
+        self.logger.debug('recv()-&gt;"%s"', data)
+        self.request.send(data)
+        return</p>
+
+<p>    def finish(self):  #清除在setup()中创建的所有东西.
+        self.logger.debug('finish')
+        return SocketServer.BaseRequestHandler.finish(self)</p>
+
+<p>class EchoServer(SocketServer.TCPServer):  #使用TCP/IP sockets来通信</p>
+
+<p>    def __init__(self, server_address, handler_class=EchoRequestHandler):  #设置使用的处理类是上面创建的
+        self.logger = logging.getLogger('EchoServer')
+        self.logger.debug('__init__')
+        SocketServer.TCPServer.__init__(self, server_address, handler_class)
+        return</p>
+
+<p>    def server_activate(self): #激活server
+        self.logger.debug('server_activate')
+        SocketServer.TCPServer.server_activate(self)
+        return</p>
+
+<p>    def serve_forever(self): 
+        self.logger.debug('waiting for request')
+        self.logger.info('Handling requests, press &lt;Ctrl-C&gt; to quit')
+        while True:   #在一个无穷循环中调用 <tt>handle_request()</tt>，激活后进入这个循环
+            self.handle_request()
+        return</p>
+
+<p>    def handle_request(self):  
+        self.logger.debug('handle_request')
+        return SocketServer.TCPServer.handle_request(self)</p>
+
+<p>    def verify_request(self, request, client_address):  #返回True来处理请求, 或者False表示忽略这个请求. 比如, 你也可以拒绝从一个IP范围来的请求, 假如你想要阻断某些客户端访问服务器.
+        self.logger.debug('verify_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.verify_request(self, request, client_address)</p>
+
+<p>    def process_request(self, request, client_address): #它通常是调用finish_request()来完成实际工作. 但它也看创建一个独立的线程或进程, 作为混合类来使用(如下).
+        self.logger.debug('process_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.process_request(self, request, client_address)</p>
+
+<p>    def server_close(self):  
+        self.logger.debug('server_close')
+        return SocketServer.TCPServer.server_close(self)</p>
+
+<p>    def finish_request(self, request, client_address): #使用在服务器构造时指定的类来创建一个请求处理实例. 她调用请求处理类的 <tt>handle()</tt> 来处理请求.
+        self.logger.debug('finish_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.finish_request(self, request, client_address)</p>
+
+<p>    def close_request(self, request_address):
+        self.logger.debug('close_request(%s)', request_address)
+        return SocketServer.TCPServer.close_request(self, request_address)
+if __name__ == '__main__':
+    import socket
+    import threading</p>
+
+<p>    address = ('localhost', 0) # 让内核自动分配一个端口
+    server = EchoServer(address, EchoRequestHandler)
+    ip, port = server.server_address </p>
+
+<p>    t = threading.Thread(target=server.serve_forever) #将EchoServer放在线程运行，不影响继续操作
+    t.setDaemon(True) # 设置deamon
+    t.start()</p>
+
+<p>    logger = logging.getLogger('client')
+    logger.info('Server on %s:%s', ip, port)</p>
+
+<p>    logger.debug('creating socket')
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    logger.debug('connecting to server')
+    s.connect((ip, port))</p>
+
+<p>    message = 'Hello, world'
+    logger.debug('sending data: "%s"', message)
+    len_sent = s.send(message)</p>
+
+<p>    logger.debug('waiting for response')
+    response = s.recv(len_sent)
+    logger.debug('response from server: "%s"', response)</p>
+
+<p>    logger.debug('closing socket')
+    s.close()
+    logger.debug('done')
+    server.socket.close()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+EchoServer: __init__
+EchoServer: server_activate
+EchoServer: waiting for request
+client: Server on 127.0.0.1:42902
+EchoServer: Handling requests, press &lt;Ctrl-C&gt; to quit
+client: creating socket
+EchoServer: handle_request
+client: connecting to server
+client: sending data: &#8220;Hello, world&#8221;
+EchoServer: verify_request(&lt;socket._socketobject object at 0x8114ae4&gt;, (&#8216;127.0.0.1&#8217;, 33084))
+client: waiting for response
+EchoServer: process_request(&lt;socket._socketobject object at 0x8114ae4&gt;, (&#8216;127.0.0.1&#8217;, 33084))
+EchoServer: finish_request(&lt;socket._socketobject object at 0x8114ae4&gt;, (&#8216;127.0.0.1&#8217;, 33084))
+EchoRequestHandler: __init__
+EchoRequestHandler: setup
+EchoRequestHandler: handle
+EchoRequestHandler: recv()-&gt;&#8221;Hello, world&#8221;
+EchoRequestHandler: finish
+client: response from server: &#8220;Hello, world&#8221;
+EchoServer: close_request(&lt;socket._socketobject object at 0x8114ae4&gt;)
+client: closing socket
+EchoServer: handle_request
+client: done
+<pre class="sh_python">
+import threading
+import SocketServer</p>
+
+<p>class ThreadedEchoRequestHandler(SocketServer.BaseRequestHandler):</p>
+
+<p>    def handle(self):  #重写handle函数
+        data = self.request.recv(1024)
+        cur_thread = threading.currentThread() # 当要处理一个请求时开始一个新的线程, 并且会在一个新的孩子线程中完成工作
+        response = '%s: %s' % (cur_thread.getName(), data)
+        self.request.send(response)
+        return</p>
+
+<p>class ThreadedEchoServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer): 对于线程, 使用ThreadingMixIn:
+    pass</p>
+
+<p>if __name__ == '__main__':
+    import socket
+    import threading</p>
+
+<p>    address = ('localhost', 0) 
+    server = ThreadedEchoServer(address, ThreadedEchoRequestHandler)
+    ip, port = server.server_address </p>
+
+<p>    t = threading.Thread(target=server.serve_forever)
+    t.setDaemon(True)
+    t.start()
+    print 'Server loop running in thread:', t.getName()</p>
+
+<p>    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((ip, port))</p>
+
+<p>    message = 'Hello, world'
+    print 'Sending : "%s"' % message
+    len_sent = s.send(message)</p>
+
+<p>    response = s.recv(1024)
+    print 'Received: "%s"' % response</p>
+
+<p>    s.close()
+    server.socket.close()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>注：使用独立的进程, 可以使用ForkingMixIn:</p>
+
+<p><pre class="sh_python">
+class ForkingEchoRequestHandler(SocketServer.BaseRequestHandler):</p>
+
+<p>    def handle(self):
+        # Echo the back to the client
+        data = self.request.recv(1024)
+        cur_pid = os.getpid()
+        response = '%s: %s' % (cur_pid, data)
+        self.request.send(response)
+        return</p>
+
+<p>class ForkingEchoServer(SocketServer.ForkingMixIn, SocketServer.TCPServer):
+    pass
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/10/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/8/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

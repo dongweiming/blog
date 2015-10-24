@@ -1,0 +1,591 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用celery之怎么让celery跑起来 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/how-to-use-celery">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">使用celery之怎么让celery跑起来</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-24T16:46:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4 id="section">前言</h4>
+
+<p>自从发了上次的文章<a href="http://www.dongwm.com/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi/">使用celery之深入celery配置</a>,
+有一些网友再问我怎么让celery跑起来. 其实说来也是,celery在新手眼里真的是比较重量级,不好懂,今天先让他跑起来吧
+本文大部分代码和使用方法都可以在celery官网看到</p>
+
+<h4 id="section-1">我想要的效果</h4>
+
+<p>我想实现一个定时任务, 每3个小时的12分启动,假如是定时任务大概是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">12 */3 * * * python /where/is/the/path/that.py</span></pre></figure></notextile></div>
+
+<h4 id="mq">选择MQ</h4>
+
+<p>使用消息队列其实就是为了给任务一个时序,保证任务消息不丢失,想想你的一个任务是关乎公司核心业务,犹豫某种原因失败或者丢失怎么办?
+celery就需要这个消息的存储,我这里还是选择rabbitmq  mongodb,redis都无所谓 只是存储的位置的问题.
+选择其他的工具没有远程控制和监控</p>
+
+<p>写法就是:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">BROKER_URL = 'amqp://myuser:mypassword@localhost:5672/vhost'</span></pre></figure></notextile></div>
+
+<p>其中可以这样解析</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">amqp://user:password@hostname:port/vhost</span></pre></figure></notextile></div>
+
+<p>vhost是命名空间,就像网站的子域名,在这里由于权限控制我们需要先创建账号和密码</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$ rabbitmqctl add_user myuser mypassword
+</span><span class="line">$ rabbitmqctl add_vhost myvhost
+</span><span class="line">$ rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"</span></pre></figure></notextile></div>
+
+<h4 id="taskspy">编写tasks.py脚本</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from celery import Celery
+</span><span class="line">
+</span><span class="line">app = Celery('tasks', broker='amqp://myuser:mypassword@localhost:5672/vhost')
+</span><span class="line">
+</span><span class="line">@app.task
+</span><span class="line">def add(x, y):
+</span><span class="line">    return x + y</span></pre></figure></notextile></div>
+<p>#### 简单的使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$celery -A tasks worker --loglevel=debug</span></pre></figure></notextile></div>
+
+<p>-A指定的就是任务的程序 tasks.py  worker表示他是一个执行任务角色. 后面的记录日志类型,默认是info</p>
+
+<p>这个时候,你可以在当前目录下使用python交互模式生成一个任务</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">&gt;&gt;&gt; from tasks import add
+</span><span class="line">&gt;&gt;&gt; add.delay(4, 4)</span></pre></figure></notextile></div>
+
+<p>这个时候可以看见上面的日志里面多了一些消息,然后里面多了这个任务的信息,比如下面这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">[2013-11-24 17:11:59,369: INFO/MainProcess] Received task: tasks.add[f27994b0-3628-43a1-b136-540a360e3d64]
+</span><span class="line">[2013-11-24 17:11:59,371: INFO/MainProcess] Task tasks.add[f27994b0-3628-43a1-b136-540a360e3d64] succeeded in 0.00102571400021s: 8</span></pre></figure></notextile></div>
+
+<p>可以看见你的任务被执行了</p>
+
+<h4 id="python-">假如我使用python的包, 就像一个应用,让代码结构化一些</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$tree proj
+</span><span class="line">proj
+</span><span class="line">├── __init__.py
+</span><span class="line">├── celery.py
+</span><span class="line">└── tasks.py</span></pre></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat proj/celery.py
+</span><span class="line">from __future__ import absolute_import
+</span><span class="line">from celery import Celery
+</span><span class="line">app = Celery('proj',
+</span><span class="line">              broker='amqp://myuser:mypassword@localhost:5672/vhost',
+</span><span class="line">              backend='amqp://',
+</span><span class="line">              include=['proj.tasks'])
+</span><span class="line">app.conf.update(CELERY_TASK_RESULT_EXPIRES=3600,)
+</span><span class="line">if __name__ == '__main__':
+</span><span class="line">    app.start()</span></pre></figure></notextile></div>
+
+<p>上面的broker就是消息存储的地址
+backend是存储任务执行情况的,比如正在执行，执行失败, 已经执行结果.
+include表示执行的任务的代码都放在哪个程序里面,比如这里的proj.tasks就是proj/tasks.py</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat proj/tasks.py
+</span><span class="line">from __future__ import absolute_import
+</span><span class="line">
+</span><span class="line">from proj.celery import app
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">@app.task
+</span><span class="line">def add(x, y):
+</span><span class="line">    return x + y</span></pre></figure></notextile></div>
+
+<p>其中的app.task是一个装饰器, 你可以在tasks.py里面加很多函数,但是celery只会找带这个装饰器的函数当成一种任务去执行
+你可以有多个这样的脚本,只要在上面的celery.py的include的列表中指定</p>
+
+<p>好吧 我们可以这样启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$celery worker --app=proj -l info</span></pre></figure></notextile></div>
+
+<p>proj 就是我们刚才应用的项目目录</p>
+
+<h4 id="section-2">给我们的项目任务放到特定的队列</h4>
+
+<p>可能你有很多的任务,但是你希望某些机器跑某些任务, 你可以希望有些任务优先级比较高,而不希望
+先进先出的等待. 那么需要引入一个队列的问题. 也就是说在你的broker的消息存储里面有一些队列，他们并行运行，但是worker只从对应
+的队列里面取任务.</p>
+
+<p>我们要修改配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat proj/celery.py
+</span><span class="line">from __future__ import absolute_import
+</span><span class="line">from celery import Celery
+</span><span class="line">app = Celery('proj',
+</span><span class="line">              broker='amqp://myuser:mypassword@localhost:5672/vhost',
+</span><span class="line">              backend='amqp://',
+</span><span class="line">              include=['proj.tasks'])
+</span><span class="line">app.conf.update(
+</span><span class="line">    CELERY_ROUTES = {
+</span><span class="line">            'proj.tasks.add': {'queue': 'hipri'},
+</span><span class="line">                },
+</span><span class="line">                )
+</span><span class="line">if __name__ == '__main__':
+</span><span class="line">    app.start()</span></pre></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">celery -A proj worker -Q hipri #这个worker只处理hipri这个队列的任务</span></pre></figure></notextile></div>
+
+<p>你会发现add这个函数任务被放在一个叫做’hipri’的队列里面，想要执行那么也需要改:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from proj.tasks import add
+</span><span class="line">add.apply_async((2, 2), queue='hipri')</span></pre></figure></notextile></div>
+
+<h4 id="beat">使用beat自动调度</h4>
+
+<p>想想吧. 目前还是交互模式去手动执行, 我们要是想crontab的定时生成和执行,那么就是celery beat干的事情</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from __future__ import absolute_import
+</span><span class="line">
+</span><span class="line">from datetime import timedelta
+</span><span class="line">from celery import Celery
+</span><span class="line">
+</span><span class="line">app = Celery('proj',
+</span><span class="line">             broker='amqp://myuser:mypassword@localhost:5672/vhost',
+</span><span class="line">             backend='amqp://',
+</span><span class="line">              include=['proj.tasks'])
+</span><span class="line">
+</span><span class="line">app.conf.update(
+</span><span class="line">    CELERY_ROUTES = {
+</span><span class="line">        'proj.tasks.add': {'queue': 'hipri'},
+</span><span class="line">    },
+</span><span class="line">
+</span><span class="line">    CELERYBEAT_SCHEDULE = {
+</span><span class="line">        "add": {
+</span><span class="line">                "task": "proj.tasks.add",
+</span><span class="line">                "schedule": timedelta(seconds=10),
+</span><span class="line">                "args": (16, 16)
+</span><span class="line">                }, },
+</span><span class="line">                )
+</span><span class="line">
+</span><span class="line">if __name__ == '__main__':
+</span><span class="line">    app.start()
+</span></pre></figure></notextile></div>
+
+<p>注意发现了一个CELERYBEAT_SCHEDULE,里面的调度其实就是表示10秒生成一次,worker启动方法一样,
+这里启动beat,他就是按时生成任务发到MQ里面,让worker取走去执行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">celery -A proj beat</span></pre></figure></notextile></div>
+
+<p>其实也可以在worker命令中加-B</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">celery -A proj worker -B -Q hipri -l debug</span></pre></figure></notextile></div>
+
+<p>刚才的CELERYBEAT_SCHEDULE也可以使用crontab的风格，比如我说的没3小时的12分就可以这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">from celery.schedules import crontab
+</span><span class="line">
+</span><span class="line">CELERYBEAT_SCHEDULE = {
+</span><span class="line">        "add": {
+</span><span class="line">                "task": "tasks.add",
+</span><span class="line">                "schedule": crontab(hour="*/3", minute=12),
+</span><span class="line">                "args": (16, 16),
+</span><span class="line">                },
+</span><span class="line">            }</span></pre></figure></notextile></div>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-24T16:46:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/celery/'>celery</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/how-to-use-celery/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/a-data-analysis-site-by-flask-and-mongoengine/" title="Previous Post:
+        一个flask+mongoengine的site">&laquo; 一个flask+mongoengine的site</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/gentoo-use-stumpwm/"
+        title="Next Post: gentoo使用stumpwm做桌面管理器">gentoo使用stumpwm做桌面管理器
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/how-to-use-celery/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/how-to-use-celery/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

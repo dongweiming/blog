@@ -1,0 +1,2001 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/4">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/vary-dot-vim-zi-dong-qu-diao-xing-wei-kong-ge/">vary.vim-自动去掉行尾空格</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-08T21:03:00+08:00" pubdate data-updated="true">Sep 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>一直想改成emacs无奈工作需要效率，所以vim还没有完全放弃. 我想做python的同学很可能有我一样的困扰:</p>
+
+<ol>
+  <li>在维护别人的代码的时候发现有很多tab和空格混用或者行尾空格没有删除</li>
+</ol>
+
+<p>我以前可能没有注意这个问题，就是自觉的使用ed模式: :%s/\s+$//g和:retab，最近老大的一句话提醒
+了我:他问我是否vim可以配置成自动模式? 以我对vim的了解它肯定不会介入个人的编辑,那么可能就要使用hook的方法.</p>
+
+<p>这也就是我的<a href="https://github.com/dongweiming/vary.vim">vary.vim</a>的原理:当保存文件的时候(:w)自动执行命令.
+其实我想你可能会问，为啥是我保存的时候而不是打开的时候呢?额 下面会讲到</p>
+
+<h4 id="readme">安装配置请看项目的README</h4>
+
+<p>安装后就算不配置默认只对python语言生效-团队和语言风格不同</p>
+
+<h4 id="vim">修改我的vim插件</h4>
+
+<p>我一直在想究竟哪种方式更合理(打开文件就修改还是保存的时候再修改),我默认是保存，但是其实你可以修改我的autocmd命令为:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line">autocmd BufReadPost * :call StripTrailingWhite<span class="o">()</span>
+</span><span class="line">autocmd BufReadPost * :call RetabIndents<span class="o">()</span>
+</span></pre></figure></notextile></div>
+
+<p>表示打开文件之前就修改，把修改后的结果呈现给你</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi/">使用celery之深入celery配置</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-24T14:08:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>celery的官方文档其实相对还是写的很不错的.但是在一些深层次的使用上面却显得杂乱甚至就没有某些方面的介绍, 通过我的一个测试环境的settings.py来说明一些使用celery的技巧和解决办法</p>
+
+<h4 id="amqp">amqp交换类型</h4>
+
+<p>其实一共有4种交换类型，还有默认类型和自定义类型. 但是对我们配置队列只会用到其中之三，我来一个个说明，英语好的话可以直接去看英文文档</p>
+
+<p>首先思考一下流程:</p>
+
+<ol>
+  <li>
+    <p>celerybeat生成任务消息，然后发送消息到一个exchange(交换机)</p>
+  </li>
+  <li>
+    <p>交换机决定那个(些)队列会接收这个消息，这个其实就是根据下面的exchange的类型和绑定到这个交换机所用的bindingkey</p>
+  </li>
+</ol>
+
+<p>我们这里要说的其实就是怎么样决定第二步谁接收的问题</p>
+
+<ol>
+  <li>Direct Exchange</li>
+</ol>
+
+<p>如其名，直接交换，也就是指定一个消息被那个队列接收， 这个消息被celerybeat定义个一个routing key，如果你发送给交换机并且那个队列绑定的bindingkey 那么就会直接转给这个队列</p>
+
+<ol>
+  <li>Topic Exchange</li>
+</ol>
+
+<p>你设想一下这样的环境(我举例个小型的应该用场景): 你有三个队列和三个消息, A消息可能希望被X,Y处理,B消息你希望被,X,Z处理,C消息你希望被Y,Z处理.并且这个不是队列的不同而是消息希望被相关的队列都去执行,看一张图可能更好理解:</p>
+
+<p><img src="https://access.redhat.com/site/documentation/resources/docs/en-US/Red_Hat_Enterprise_MRG/1.1/html/Messaging_User_Guide/images/topic-exchange.png" alt="" /></p>
+
+<p>对，Topic可以根据同类的属性进程通配, 你只需要routing key有’.’分割:比如上图中的usa.news, usa.weather, europe.news, europe.weather</p>
+
+<ol>
+  <li>Fanout Exchange</li>
+</ol>
+
+<p>先想一下广播的概念, 在设想你有某个任务，相当耗费时间，但是却要求很高的实时性,那么你可以需要多台服务器的多个workers一起工作，每个服务器负担其中的一部分,但是celerybeat只会生成一个任务,被某个worker取走就没了,
+所以你需要让每个服务器的队列都要收到这个消息.这里很需要注意的是:你的fanout类型的消息在生成的时候为多份,每个队列一份，而不是一个消息发送给单一队列的次数</p>
+
+<h4 id="settingspy">我的settings.py</h4>
+
+<p>这里只是相关于celery的部分:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">djcelery</span>
+</span><span class="line"><span class="n">djcelery</span><span class="o">.</span><span class="n">setup_loader</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.sites&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c">#&#39;django.contrib.staticfiles&#39;,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c"># Uncomment the next line to enable the admin:</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c"># Uncomment the next line to enable admin documentation:</span>
+</span><span class="line">    <span class="c"># &#39;django.contrib.admindocs&#39;,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smhome&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.apply&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;djcelery&#39;</span><span class="p">,</span> <span class="c"># 这里增加了djcelery 也就是为了在django admin里面可一直接配置和查看celery</span>
+</span><span class="line">    <span class="s">&#39;django_extensions&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;djsupervisor&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.humanize&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django_jenkins&#39;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">BROKER_URL</span> <span class="o">=</span> <span class="s">&#39;amqp://username:password@localhost:5672/yourvhost&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_IMPORTS</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smhome.tasks&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smdata.tasks&#39;</span><span class="p">,</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_RESULT_BACKEND</span> <span class="o">=</span> <span class="s">&quot;amqp&quot;</span> <span class="c"># 官网优化的地方也推荐使用c的librabbitmq</span>
+</span><span class="line"><span class="n">CELERY_TASK_RESULT_EXPIRES</span> <span class="o">=</span> <span class="mi">1200</span> <span class="c"># celery任务执行结果的超时时间，我的任务都不需要返回结果,只需要正确执行就行</span>
+</span><span class="line"><span class="n">CELERYD_CONCURRENCY</span> <span class="o">=</span> <span class="mi">50</span> <span class="c"># celery worker的并发数 也是命令行-c指定的数目,事实上实践发现并不是worker也多越好,保证任务不堆积,加上一定新增任务的预留就可以</span>
+</span><span class="line"><span class="n">CELERYD_PREFETCH_MULTIPLIER</span> <span class="o">=</span> <span class="mi">4</span> <span class="c"># celery worker 每次去rabbitmq取任务的数量，我这里预取了4个慢慢执行,因为任务有长有短没有预取太多</span>
+</span><span class="line"><span class="n">CELERYD_MAX_TASKS_PER_CHILD</span> <span class="o">=</span> <span class="mi">40</span> <span class="c"># 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200</span>
+</span><span class="line"><span class="n">CELERYBEAT_SCHEDULER</span> <span class="o">=</span> <span class="s">&#39;djcelery.schedulers.DatabaseScheduler&#39;</span> <span class="c"># 这是使用了django-celery默认的数据库调度模型,任务执行周期都被存在你指定的orm数据库中</span>
+</span><span class="line"><span class="n">CELERY_DEFAULT_QUEUE</span> <span class="o">=</span> <span class="s">&quot;default_dongwm&quot;</span> <span class="c"># 默认的队列，如果一个消息不符合其他的队列就会放在默认队列里面</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_QUEUES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="s">&quot;default_dongwm&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># 这是上面指定的默认队列</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;default_dongwm&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;direct&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;routing_key&quot;</span><span class="p">:</span> <span class="s">&quot;default_dongwm&quot;</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;topicqueue&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># 这是一个topic队列 凡是topictest开头的routing key都会被放到这个队列</span>
+</span><span class="line">        <span class="s">&quot;routing_key&quot;</span><span class="p">:</span> <span class="s">&quot;topictest.#&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;topic_exchange&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;topic&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;test2&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># test和test2是2个fanout队列,注意他们的exchange相同</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;fanout&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;binding_key&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;test&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;fanout&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;binding_key&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks2&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">MyRouter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">route_for_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;topictest&#39;</span><span class="p">):</span>
+</span><span class="line">            <span class="k">return</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&#39;queue&#39;</span><span class="p">:</span> <span class="s">&#39;topicqueue&#39;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="c"># 我的dongwm.tasks文件里面有2个任务都是test开头</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">task</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;dongwm.tasks.test&#39;</span><span class="p">):</span>
+</span><span class="line">            <span class="k">return</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="c"># 剩下的其实就会被放到默认队列</span>
+</span><span class="line">        <span class="k">else</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="bp">None</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># CELERY_ROUTES本来也可以用一个大的含有多个字典的字典,但是不如直接对它做一个名称统配</span>
+</span><span class="line"><span class="n">CELERY_ROUTES</span> <span class="o">=</span> <span class="p">(</span><span class="n">MyRouter</span><span class="p">(),</span> <span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/feng-zhuang-pymongozi-dong-guan-bi-lian-jie/">封装pymongo自动关闭连接</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-16T21:42:00+08:00" pubdate data-updated="true">Aug 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>在我工作的项目里面使用了mongodb.自然也用到了pymongo.但是它都是在大片的函数里面使用类似于这样的方式</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">db</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+</span><span class="line">    <span class="o">...</span>
+</span><span class="line">    <span class="n">db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+</span><span class="line">    <span class="o">...</span>
+</span></pre></figure></notextile></div>
+
+<p>但是问题是在使用完都没有关闭连接,这样多台服务器连接我这台mongodb服务器，在业务高峰期就会占满我的连接, 我当时总结造成这个原因的问题有以下三种:</p>
+
+<ol>
+  <li>
+    <p>上面说的用完db不关闭连接而是等着db超时</p>
+  </li>
+  <li>
+    <p>注意上面的import，其实在import文件的时候数据库连接就已经生成了，没有在需要的时候才创建, 占满我连接的应用其实有很多没有用，浪费了</p>
+  </li>
+  <li>
+    <p>nginx、uwsgi，celery等应用配置的问题，造成过多的实例，其实根本无益</p>
+  </li>
+</ol>
+
+<h4 id="pymongo">我今天写的一个封装pymongo和关闭数据库连接的装饰器</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#/usr/bin/env python</span>
+</span><span class="line"><span class="c"># coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="sd">&quot;&quot;&quot;</span>
+</span><span class="line"><span class="sd">1. 封装数据库操作(INSERT,FIND,UPDATE)</span>
+</span><span class="line"><span class="sd">2. 函数执行完MONGODB操作后关闭数据库连接</span>
+</span><span class="line"><span class="sd">&quot;&quot;&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">pymongo.database</span> <span class="kn">import</span> <span class="n">Database</span>
+</span><span class="line">
+</span><span class="line"><span class="k">try</span><span class="p">:</span>
+</span><span class="line">    <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+</span><span class="line"><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span class="line">    <span class="c"># 好像2.4之前的pymongo都没有MongoClient,现在官网已经把Connection抛弃了</span>
+</span><span class="line">    <span class="kn">import</span> <span class="nn">warnings</span>
+</span><span class="line">    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Strongly recommend upgrading to the latest version pymongo version,&quot;</span>
+</span><span class="line">                  <span class="s">&quot;Connection is DEPRECATED: Please use mongo_client instead.&quot;</span><span class="p">)</span>
+</span><span class="line">    <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">Connection</span> <span class="k">as</span> <span class="n">MongoClient</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Mongo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;封装数据库操作&#39;&#39;&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">27017</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
+</span><span class="line">                 <span class="n">max_pool_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">max_pool_size</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@property</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 我这里是为了使用类似&quot;db.集合.操作&quot;的操作的时候才会生成数据库连接,其实pymongo已经实现了进程池,也可以把这个db放在__init__里面,</span>
+</span><span class="line">        <span class="c"># 比如我把db关掉有其他的数据库调用连接又会生成,并且不影响使用.我这里只是想每次执行数据库生成一个连接用完关掉-自己控制自己的</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">MongoClientself</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">max_pool_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+</span><span class="line">                  <span class="n">connectTimeoutMS</span><span class="o">=</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collection</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 为了兼容db[集合].操作的用法</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">):</span>
+</span><span class="line">        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">]</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">collection_or_func</span> <span class="ow">in</span> <span class="n">Database</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+</span><span class="line">            <span class="c"># 当调用的是db的方法就直接返回</span>
+</span><span class="line">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># 否则委派给Collection</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">Collection</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Collection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">collection</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 我这个封装只是为了拦截一部分操作,不符合的就直接raise属性错误</span>
+</span><span class="line">        <span class="n">control_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;disconnect&#39;</span><span class="p">,</span> <span class="s">&#39;insert&#39;</span><span class="p">,</span> <span class="s">&#39;update&#39;</span><span class="p">,</span> <span class="s">&#39;find&#39;</span><span class="p">,</span> <span class="s">&#39;find_one&#39;</span><span class="p">]</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">operation</span> <span class="ow">in</span> <span class="n">control_type</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+</span><span class="line">        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">close_db</span><span class="p">(</span><span class="n">dbs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;db&#39;</span><span class="p">]):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;</span>
+</span><span class="line"><span class="sd">    关闭mongodb数据库连接</span>
+</span><span class="line"><span class="sd">    db : 在执行函数里面使用的db的名字(大部分是db，也会有s_db)</span>
+</span><span class="line"><span class="sd">        Usage::</span>
+</span><span class="line"><span class="sd">            &gt;&gt;&gt;s_db = Mongo()</span>
+</span><span class="line"><span class="sd">            &gt;&gt;&gt;@close_db([&#39;s_db&#39;])</span>
+</span><span class="line"><span class="sd">            ...: def test():</span>
+</span><span class="line"><span class="sd">            ...:     print s_db.test.insert({&#39;a&#39;: 1, &#39;b&#39;: 2})</span>
+</span><span class="line"><span class="sd">            ...:</span>
+</span><span class="line"><span class="sd">    &#39;&#39;&#39;</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">_deco</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class="line">        <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">dbs</span><span class="p">:</span>
+</span><span class="line">                <span class="k">try</span><span class="p">:</span>
+</span><span class="line">                    <span class="n">func</span><span class="o">.</span><span class="n">func_globals</span><span class="p">[</span><span class="n">db</span><span class="p">]</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</span><span class="line">                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+</span><span class="line">                    <span class="k">pass</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">result</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">_call</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">_deco</span>
+</span></pre></figure></notextile></div>
+
+<p>PS: 在我测试的时候发现,使用Mongo()类生成的db，操作完会自动关闭连接了…</p>
+
+<h4 id="section-1">怎么样给一个很大的文件每个函数都加上面的这个装饰器？</h4>
+
+<p>项目每个脚本的代码都很长，函数也很多，并且每个函数里面使用的db的名字都不同,比如有一些一些风格:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+</span><span class="line"><span class="n">s_db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">test</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="o">...</span>
+</span></pre></figure></notextile></div>
+
+<p>每个函数加一个装饰器,好费劲，就想能不能自动分辨文件中的函数然后给他们自动加装饰器，然后就有以下的一个做好的脚本:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">copy</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">types</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span class="line">        <span class="k">print</span> <span class="s">&#39;wrap you&#39;</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">result</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">_call</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;test&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">test2</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;test3&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">glocal_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</span><span class="line">
+</span><span class="line"><span class="n">func_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">glocal_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_list</span><span class="p">:</span>
+</span><span class="line">    <span class="k">if</span>  <span class="n">func_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;wraps&#39;</span><span class="p">,</span> <span class="s">&#39;copy&#39;</span><span class="p">,</span> <span class="s">&#39;wrap&#39;</span><span class="p">,</span> <span class="s">&#39;types&#39;</span><span class="p">]:</span>
+</span><span class="line">        <span class="k">continue</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span>  <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">        <span class="nb">globals</span><span class="p">()[</span><span class="n">func_name</span><span class="p">]</span><span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>这样当你调用的时候自动就有了装饰器:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line">&gt;&gt;&gt; from <span class="nb">test </span>import <span class="nb">test</span>
+</span><span class="line">&gt;&gt;&gt; <span class="nb">test</span><span class="o">()</span>
+</span><span class="line"><span class="nb">test</span>
+</span><span class="line">wrap you
+</span><span class="line">&gt;&gt;&gt;
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shi-yong-tornadorang-ni-de-qing-qiu-yi-bu-fei-zu-sai/">使用tornado让你的请求异步非阻塞</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-14T12:08:00+08:00" pubdate data-updated="true">Aug 14<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>也许有同学很迷惑:tornado不是标榜异步非阻塞解决10K问题的嘛?但是我却发现不是torando不好，而是你用错了.比如最近发现一个事情:某网站打开页面很慢,服务器cpu/内存都正常.网络状态也良好.
+后来发现，打开页面会有很多请求后端数据库的访问，有一个mongodb的数据库业务api的rest服务.但是它的tornado却用错了,一步步的来研究问题:</p>
+
+<h4 id="section-1">说明</h4>
+
+<p>以下的例子都有2个url,一个是耗时的请求，一个是可以或者说需要立刻返回的请求,我想就算一个对技术不熟，从道理上来说的用户，
+他希望的是他访问的请求不会影响也不会被其他人的请求影响</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>假如你使用页面请求或者使用哪个httpie,curl等工具先访问http://localhost:8000/sleep,再访问http://localhost:8000/justnow.你会发现本来可以立刻返回的/jsutnow的请求会一直阻塞到/sleep请求完才返回.</p>
+
+<p>这是为啥?为啥我的请求被/sleep请求阻塞了？如果平时我们的web请求足够快我们可能不会意识到这个问题，但是事实上经常会有一些耗时的进程，意味着应用程序被有效的锁定直至处理结束.</p>
+
+<p>这是时候你有没有想起@tornado.web.asynchronous这个装饰器？但是使用这个装饰器有个前提就是你要耗时的执行需要执行异步,比如上面的time.sleep,你只是加装饰器是没有作用的，而且需要注意的是
+Tornado默认在函数处理返回时关闭客户端的连接,但是当你使用@tornado.web.asynchonous装饰器时，Tornado永远不会自己关闭连接，需要显式的self.finish()关闭</p>
+
+<p>我们大部分的函数都是阻塞的, 比如上面的time.sleep其实tornado有个异步的实现:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.concurrent</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">tornado</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_timeout</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>这里有个新的tornado.gen.coroutine装饰器, coroutine是3.0之后新增的装饰器.以前的办法是用回调，还是看我这个例子:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_timeout</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">on_response</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">on_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>使用了callback, 但是新的装饰器让我们通过yield实现同样的效果:你在打开/sleep之后再点击/justnow，
+justnow的请求都是立刻返回不受影响.但是用了asynchronous的装饰器你的耗时的函数也需要执行异步</p>
+
+<p>刚才说的都是没有意义的例子，下面写个有点用的:读取mongodb数据库数据，然后再前端按行write出来</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.concurrent</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line"><span class="c"># 一个mongodb出品的支持异步的数据库的python驱动</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">motor</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line"><span class="c"># db其实就是test数据库的游标</span>
+</span><span class="line"><span class="n">db</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">MotorClient</span><span class="p">()</span><span class="o">.</span><span class="n">open_sync</span><span class="p">()</span><span class="o">.</span><span class="n">test</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 这一行执行还是阻塞需要时间的，我的tt集合有一些数据并且没有索引</span>
+</span><span class="line">        <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">tt</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
+</span><span class="line">        <span class="c"># 这部分会异步非阻塞的执行二不影响其他页面请求</span>
+</span><span class="line">        <span class="k">while</span> <span class="p">(</span><span class="k">yield</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetch_next</span><span class="p">):</span>
+</span><span class="line">            <span class="n">message</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">next_object</span><span class="p">()</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;li&gt;</span><span class="si">%s</span><span class="s">&lt;/li&gt;&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">])</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;/ul&gt;&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">_on_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+</span><span class="line">            <span class="k">raise</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">message</span><span class="p">:</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+</span><span class="line">                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;li&gt;</span><span class="si">%s</span><span class="s">&lt;/li&gt;&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">])</span>
+</span><span class="line">        <span class="k">else</span><span class="p">:</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;/ul&gt;&#39;</span><span class="p">)</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>一个同事提示为什么这个耗时的东西不能异步的丢给某工具去执行而不阻塞我的请求呢?好吧，我也想到了:celery，正好github有这个东西:<a href="https://github.com/mher/tornado-celery">tornado-celery</a></p>
+
+<p>执行下面的程序首先你要安装rabbitmq和celery:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tcelery</span><span class="o">,</span> <span class="nn">tasks</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">tcelery</span><span class="o">.</span><span class="n">setup_nonblocking_producer</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># tornado.gen.Task的参数是:要执行的函数, 参数</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">tornado</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">tasks</span><span class="o">.</span><span class="n">sleep</span><span class="o">.</span><span class="n">apply_async</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>task是celery的任务定义的文件，包含我们说的time.sleep的函数</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+</span><span class="line">
+</span><span class="line"><span class="n">celery</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s">&quot;tasks&quot;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s">&quot;amqp://guest:guest@localhost:5672&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="n">celery</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">CELERY_RESULT_BACKEND</span> <span class="o">=</span> <span class="s">&quot;amqp&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="nd">@celery.task</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">sleep</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
+</span><span class="line">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">seconds</span><span class="p">))</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">seconds</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">celery</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>然后启动celelry  worker(要不然你的任务怎么执行呢?肯定需要一个消费者取走):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">celery</span> <span class="o">-</span><span class="n">A</span> <span class="n">tasks</span> <span class="n">worker</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">info</span>
+</span></pre></figure></notextile></div>
+
+<p>但是这里的问题也可能很严重:我们的异步非阻塞依赖于celery,还是这个队列的长度,假如任务很多那么就需要等待,效率很低.有没有一种办法把我的同步阻塞函数变为异步(或者说被tornado的装饰器理解和识别)呢?</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span>
+</span><span class="line"><span class="c"># 这个并发库在python3自带在python2需要安装sudo pip install futures</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 假如你执行的异步会返回值被继续调用可以这样(只是为了演示),否则直接yield就行</span>
+</span><span class="line">        <span class="n">res</span> <span class="o">=</span> <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">sleep</span><span class="p">()</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@run_on_executor</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">sleep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span class="line">        <span class="k">return</span> <span class="mi">5</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>但是有朋友留言和我说为什么在浏览器打开多个url请求还是会阻塞一个个的响应呢?</p>
+
+<p>这个事浏览器自身实现的可能是缓存把,当请求的资源相同就会出现这个问题,可以使用多浏览器(多人)或者命令行下的curl登都不会有这个问题,还有个比较恶的解决方法:</p>
+
+<p>给你的请求添加一些无用参数，比如: http://localhost:8000/sleep/?a=1 也可以是个时间戳</p>
+
+<h5 id="blocking-tasks-in-tornadohttplbollainfoblog20130122blocking-tornado">2014.4.1更新,发现了2种新的写法,请参照<a href="http://lbolla.info/blog/2013/01/22/blocking-tornado">Blocking tasks in Tornado</a></h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">EXECUTOR</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">unblock</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">future</span><span class="p">):</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">EXECUTOR</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+</span><span class="line">            <span class="n">partial</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span class="line">        <span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span>
+</span><span class="line">            <span class="k">lambda</span> <span class="n">future</span><span class="p">:</span> <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span>
+</span><span class="line">                <span class="n">partial</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">future</span><span class="p">)))</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="n">wrapper</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@unblock</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&quot;Awake! </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepAsyncHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">future</span><span class="p">):</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">EXECUTOR</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+</span><span class="line">            <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span><span class="line">        <span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span>
+</span><span class="line">            <span class="k">lambda</span> <span class="n">future</span><span class="p">:</span> <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span>
+</span><span class="line">                <span class="n">partial</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">future</span><span class="p">)))</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&quot;Awake! </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+</span><span class="line">    <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">),</span>
+</span><span class="line">    <span class="p">(</span><span class="s">r&quot;/sleep/(\d+)&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span>
+</span><span class="line">    <span class="p">(</span><span class="s">r&quot;/sleep_async/(\d+)&quot;</span><span class="p">,</span> <span class="n">SleepAsyncHandler</span><span class="p">),</span>
+</span><span class="line"><span class="p">])</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">   <span class="n">application</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">   <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shi-yong-celeryzhi-liao-jie-celery/">使用celery之了解celery</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-10T20:12:00+08:00" pubdate data-updated="true">Aug 10<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我想很多做开发和运维的都会涉及一件事:crontab, 也就是在服务器上设定定时任务,按期执行一些任务.但是假如你有上千台的服务器，
+你有上千种任务,那么对于这个定时任务的管理恐怕是一件很头疼的事情.哪怕你只是几十个任务分配的不同的机器上怎么样合理的管理和实现以下功能呢:</p>
+
+<ol>
+  <li>查看定时任务的执行情况.比如执行是否成功，当前状态，执行花费的时间.</li>
+  <li>一个友好的界面或者命令行下实现添加,删除任务</li>
+  <li>怎么样简单实现不同的机器设定不同种任务,某些机器执行不同的队列</li>
+  <li>假如你需要生成一个任务怎么样不阻塞剩下来的过程(异步了呗)</li>
+  <li>怎么样并发的执行任务</li>
+</ol>
+
+<h4 id="section-1">几种选择</h4>
+
+<ol>
+  <li>有钱有人有时间自己实现一套,优点是完全符合公司业务的需要,有专门的团队维护和服务</li>
+  <li>使用<a href="http://gearman.org/">Gearman</a>,听说过没用过，因为是C/java/perl,对我们这种python开发者或者运维来说,假如没有这方面经验之后没有能力了解底层实现和二次开发的能力</li>
+  <li>使用<a href="http://python-rq.org/">rq</a>, rq是搞gitflow的那个作者写的，简介里面说的很清楚:Simple job queues for Python. 怕它不够复杂,但是假如业务没有那么复杂或者应用不是那么严格，完全可以尝试下</li>
+  <li>好吧我选择了<a href="https://github.com/celery/celery">celery</a>, 现在用了快半年，可能是历史遗留问题,版本较低.有很多坑.但是很不错</li>
+</ol>
+
+<h4 id="section-2">消息队列</h4>
+
+<p>RabbitMQ,ZeroMQ这样的消息队列总是出现在我们视线中, 其实意义是很简单: 消息就是一个要传送的数据,celery是一个分布式的任务队列.这个”任务”其实就是一种消息,
+任务被生成到队列中，被RabbitMQ等容器接收和存储，在适当的时候又被要执行的机器把这个消息取走.</p>
+
+<p>celery任务可以使用RabbitMQ/Redis/SQLAlchemy/Django的orm/Mongodb等等容器(这里叫做Broker).我使用的是RabbitMQ,因为作者在github主页的介绍里面很明确的写了这个</p>
+
+<p>所谓队列,你可以设想一个问题,我有一大推的东西要执行,但是我并不是需要每个服务器都执行这个任务,因为业务不同嘛. 所以就要做个队列, 比如任务A,B,C A可以在X,Y服务器执行,
+但是不需要或者不能在Z服务器上执行.那么在X,Y你启动worker(下面会说，其实就是消费者和生产者的消费者)加上这个队列,Z服务器就不需要指定这个队列,也就不会执行这个队列的任务</p>
+
+<h5 id="celerydjangocelerydjango-celery">celery的原理,我这里的角度是django+celery+django-celery</h5>
+
+<p>首先说一下流程:</p>
+
+<ol>
+  <li>使用django-celery或者直接操作数据库(settings.py里面指定)添加任务,设置的相关属性(包含定时任务的间隔)存入数据库.</li>
+  <li>celerybeat通过djcelery.schedulers.DatabaseScheduler获取django内你设置的任务周期性的检查(默认5s),发现需要执行某任务讲其丢入你设置的broker(我这里是rabbitmq),他会更具settings.py的设置放到对应的队列</li>
+  <li>在你启动了celery worker(以前是celeryd)的服务器上,根据worker也会定期(默认5s)去broker里面查找需要它执行的队列里面是否有任务</li>
+  <li>当发现队列有要执行的任务,worker将它取出来执行,执行完的结果通过celerycam(默认30s,所以这个进程也要启动)写入django设置的数据库,更新了这个任务的状态.比如花费的时间</li>
+</ol>
+
+<h4 id="supervisor">supervisor进程管理</h4>
+
+<p>不知道有没有人用过<a href="http://cr.yp.to/daemontools/supervise.html">supervise</a>，我以前经常在最初的项目开发中经常使用它监视我的程序,当程序死掉自动启动, <a href="https://github.com/Supervisor/supervisor">supervisor</a>确是一个
+进程管理的工具，我在这里使用它管理celery的程序和uwsgi</p>
+
+<p>粘贴下我的一个本地环境的配置,并直接进行一下说明:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="p">;</span><span class="err">程序名字</span>
+</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celery</span><span class="o">-</span><span class="n">queue</span><span class="o">-</span><span class="n">fetch</span><span class="p">]</span>
+</span><span class="line"><span class="p">;</span><span class="err">程序要执行的命令</span><span class="p">,</span> <span class="o">-</span><span class="n">Q</span> <span class="err">指定了生成和接受任务的队列</span><span class="p">,</span><span class="err">多个用都好分开</span> <span class="o">-</span><span class="n">c</span><span class="err">为</span><span class="n">workr</span><span class="err">的数量</span><span class="p">,</span><span class="err">原意为并发数量</span>
+</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celery</span> <span class="n">worker</span> <span class="o">-</span><span class="n">E</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_local</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">INFO</span> <span class="o">-</span><span class="n">Q</span> <span class="n">fetch_</span> <span class="o">-</span><span class="n">c</span> <span class="mi">30</span>
+</span><span class="line"><span class="p">;</span><span class="err">程序执行时候所在目录</span>
+</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
+</span><span class="line"><span class="p">;</span><span class="err">执行程序使用的用户</span>
+</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
+</span><span class="line"><span class="p">;</span><span class="err">启动的程序的实例数</span><span class="p">,</span><span class="err">默认是</span><span class="mi">1</span>
+</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
+</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="p">;</span><span class="err">在启动</span><span class="n">supervisor</span><span class="err">时候自动启动</span>
+</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="p">;</span><span class="err">当程序可能因为某些原因没有启动成功会自动重启</span>
+</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="p">;</span><span class="err">启动的等待时候</span><span class="p">,</span><span class="err">我想是为了重启能杀掉原来进程预留的时间</span>
+</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">10</span>
+</span><span class="line"><span class="p">;</span><span class="err">进程发送停止信号等待</span><span class="n">os</span><span class="err">返回</span><span class="n">SIGCHILD</span><span class="err">的时间</span>
+</span><span class="line"><span class="n">stopwaitsecs</span><span class="o">=</span><span class="mi">10</span>
+</span><span class="line"><span class="p">;</span><span class="err">低优先级的会首先启动最后关闭</span>
+</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">998</span>
+</span><span class="line"><span class="p">;</span><span class="err">以下</span><span class="mi">2</span><span class="err">句是为了保证杀掉进程和其子进程而不会只杀死其控制的程序主进程而留下子进程变为孤立进程的问题</span>
+</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
+</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line">
+</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celery</span><span class="o">-</span><span class="n">queue</span><span class="o">-</span><span class="n">feed</span><span class="p">]</span>
+</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celeryd</span> <span class="o">-</span><span class="n">E</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_local</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">INFO</span> <span class="o">-</span><span class="n">Q</span> <span class="n">feed</span>
+</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
+</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
+</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
+</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">10</span>
+</span><span class="line"><span class="n">stopwaitsecs</span><span class="o">=</span><span class="mi">10</span>
+</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">998</span>
+</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
+</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line">
+</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celerycam</span><span class="p">]</span>
+</span><span class="line"><span class="p">;</span><span class="err">任务快照的间隔时间为</span><span class="mi">10</span><span class="n">s</span>
+</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celerycam</span> <span class="o">-</span><span class="n">F</span> <span class="mi">10</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_local</span>
+</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
+</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
+</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
+</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celerycam</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celerycam</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">5</span>
+</span><span class="line"><span class="n">stopwaitsecs</span><span class="o">=</span><span class="mi">5</span>
+</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">998</span>
+</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
+</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line">
+</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celerybeat</span><span class="p">]</span>
+</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celerybeat</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_real_old</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">DEBUG</span>
+</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
+</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
+</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
+</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery_beat</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery_beat</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">10</span>
+</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">999</span>
+</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
+</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line">
+</span><span class="line"><span class="p">;</span><span class="err">这是</span><span class="n">supervisor</span><span class="err">官方的一个监控进程状态异常退出的脚本</span><span class="p">,</span><span class="err">我对它进行了较大的修改</span><span class="p">,</span><span class="err">这样在程序奇怪退出的时候会给我发邮件</span>
+</span><span class="line"><span class="p">[</span><span class="n">eventlistener</span><span class="p">:</span><span class="n">crashmail</span><span class="p">]</span>
+</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">superlance</span><span class="o">/</span><span class="n">superlance</span><span class="o">/</span><span class="n">crashmail</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">m</span> <span class="n">ciici123</span><span class="nd">@163.com</span>
+</span><span class="line"><span class="n">events</span><span class="o">=</span><span class="n">PROCESS_STATE_EXITED</span>
+</span><span class="line">
+</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">uwsgi</span><span class="p">]</span>
+</span><span class="line"><span class="n">user</span> <span class="o">=</span> <span class="n">dongwm</span>
+</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
+</span><span class="line"><span class="n">command</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">uwsgi</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">uwsgi</span><span class="o">-</span><span class="n">sandbox</span><span class="o">.</span><span class="n">sock</span> <span class="o">--</span><span class="n">processes</span> <span class="mi">4</span>  <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">threads</span> \
+</span><span class="line">     <span class="o">--</span><span class="n">pythonpath</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">uwsgi</span> <span class="o">--</span><span class="nb">buffer</span><span class="o">-</span><span class="n">size</span> <span class="mi">32768</span> <span class="o">--</span><span class="n">listen</span> <span class="mi">100</span> <span class="o">--</span><span class="n">daemonize</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">ulog</span><span class="o">/</span><span class="n">uwsgi_out</span><span class="o">.</span><span class="n">log</span>
+</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span>
+</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">redirect_stderr</span><span class="o">=</span><span class="n">true</span>
+</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
+</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="nginxuwsgi">nginx+uwsgi的实践</h4>
+
+<p>nginx进程数会直接影响性能, 如何使用到的模块不会出现阻塞式的调用，应该有多少cpu就配多少worker_processes,否则才需要配置更多的进程数.
+比如你的用户大量读取你的本地静态文件，并且服务器上面内存较少，硬盘的I/O调用可能会阻塞worker少量时间,那么就要多配</p>
+
+<p>为了更好利用多核的优势,我绑定了worker和对应的内核:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">worker_processes</span>     <span class="mi">4</span><span class="p">;</span>
+</span><span class="line"><span class="n">worker_cpu_affinity</span> <span class="mo">0001</span> <span class="mo">0010</span> <span class="mo">0100</span> <span class="mi">1000</span><span class="p">;</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/ni-zhen-de-hui-pythonma/">你真的会python嘛?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-02T18:55:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我这个博客一直都是一些技术分享,show code的地方，我从来没有写过个人生活或者情感杂谈,当然我也从来没有谈论过我对什么东西的喜恶.
+很多人喜欢喷XX语言，喜欢谈论XX和YY的优缺,甚至凑了一本不知所云的书…好吧,我觉得没有使用一门语言超过10年，没有对一个技术研究个5,6年，
+不好意思说自己懂(天才除外).我也觉得我没有资格讨论什么，也许我有我的观点看法，但是我怀着怀疑的心态看自己，生怕自己理解错了.
+下文纯属个人吐槽,也许没有指定路怎么走，只是希望提个醒…</p>
+
+<p>使用python2年，可喜的是python被越来越多的人接受，甚至前端工程师…但是却有点烂大街的感觉:感觉出门不聊几句python都不好意思和人打招呼.但是你真的懂python嘛?</p>
+
+<h4 id="python">你会python真的不重要</h4>
+
+<p>python实在太好学习了,假如你会其它的语言，可能搞本书翻一翻，一周后就能写很高端的python程序，由于web框架的普及，你甚至可以让一个网站应用跑起来. 你会我也会，你有什么竞争力?</p>
+
+<h4 id="python-1">你知道python怎么用嘛?</h4>
+
+<ol>
+  <li>在什么时候需要使用OOP？</li>
+  <li>在什么时候使用类装饰器?</li>
+  <li>你用过元类嘛?</li>
+  <li>在什么时候用静态方法什么时候使用类方法?</li>
+  <li>你了解那些管理属性? <code>__call__</code> ,  <code>__init__</code> , <code>__new__</code>都是在什么时候被触发?<code>__getattr__</code>和<code>__getattribute__</code>应用有什么不同?</li>
+  <li>你知道标准库里面的多少个模块?你能在需要的时候知道这个功能其实标准库里面已经实现了?</li>
+  <li>什么时候用回调？</li>
+  <li>什么时候用signal？假如你会django你知道django的signal是什么?你了解orm嘛?</li>
+  <li>asyncore，contextlib， functools， collections， heapq，itertools， SocketServer， weakref，operator(知道3个就算)这些你会几个？</li>
+  <li>python的多态是什么?</li>
+  <li>在什么场景可以尝试python的设计模式中的XX(能想到2个场景就算)?</li>
+  <li>在什么时候可以使用Mixin？</li>
+  <li>在什么时候可以使用python的闭包？</li>
+  <li>你曾经用过yield嘛？生成器和迭代器的区别和应用场景是什么?</li>
+  <li>在什么可以使用python的函数式编程?</li>
+  <li>__future__模块里面都有什么定义的用法?</li>
+</ol>
+
+<p>提笔想了这上面16点我认为体现python的东西，假如你不能有效的回答上面1/4, 好吧不要和我说你原来是会python的，踏实下来..你的路还很长.假如你回答不超过一半,我提醒你-你只是刚入行而已(这是我的角度)</p>
+
+<h4 id="section-1">假如我是一个入职后的带新人的引导者</h4>
+
+<ol>
+  <li>学好git… 呵呵</li>
+  <li>假如新人还不熟悉python,python_koans是个不错的入门选择</li>
+  <li>首先就是严格的代码规范，加上团队的文化以及风格.</li>
+  <li>我会给一个任务，比如一周内写个多线程的socket命令行聊天程序,支持群组，加好友，群聊，发送文件等功能，看新人能力而定</li>
+  <li>而后把项目一部分略棘手的工作教给他，注意这里是生产环境，在他完成任务的过程中会熟悉我们的上线/code review/代码风格等东西</li>
+  <li>我希望整个团队一起贡献一个基础的公共库，包含一些常用的功能，然后新人首先学习这些东西，以后就不需要浪费时间造轮子，但是可以修改完善公共库，
+这个公共库可以在新服务器部署时候直接使用pypi或者ubuntuPPA安装进来</li>
+</ol>
+
+<h4 id="python-2">什么算是好的python代码?</h4>
+
+<p>假如你的代码没使用pep8检验过，你…. 最差你也要使用<a href="https://github.com/hhatto/autopep8">autopep8</a>格式化差劲的代码吧?如果你想对自己的代码质量有要求，我强烈建议你了解什么是pythonic:</p>
+
+<ol>
+  <li>doughellmann(<python标准库>的作者)的[an-introduction-to-the-zen-of-python](http://www.slideshare.net/doughellmann/an-introduction-to-the-zen-of-python)</python标准库></li>
+  <li><a href="http://sssslide.com/www.slideshare.net/hychen/be-pythonic-14859746">be-pythonic</a></li>
+</ol>
+
+<h4 id="section-2">代码易懂但是堆了很多/代码难懂但是精炼之间的取舍</h4>
+
+<p>我想很多对代码有追求的人, 会看见项目中存在大量，没有被重用的函数，似曾相似的方法甚至方法的名字…
+我是极为见不得ugly或者华而不实的代码的人, 但是有个问题. 我封装的代码很不直观，难懂..原来的代码貌似极为好懂.每个人都有自己的理解吧.就象我的团队里面有人说django代码太难懂，因为它们有django项目组的文化…
+celery代码写的不好这样的安慰似的评论…但是我不这样认为,我还在读celery代码，我也承认里面是有作者风格的取名或者实现的方式，但是我学到了很多.</p>
+
+<p>通过看开源代码，比如django，requests，flask. 我会发现和总结很多别人的用法，思考别人为啥这样用.比如项目代码目录结构，解决一些问题使用的方式. 还有一些pep8中没有提到的规范. 比如一些代码实用的风格，举个例子：</p>
+
+<p>我们的代码引用其它模块是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">long_long_long_test1</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">long_long_long_test2</span>
+</span><span class="line"><span class="n">form</span> <span class="n">test</span> <span class="kn">import</span> <span class="nn">long_long_long_test3</span>
+</span></pre></figure></notextile></div>
+
+<p>省略20多行，很脑残吧? 有一种风格是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">long_long_long_test1</span><span class="p">,</span> \
+</span><span class="line">                 <span class="n">long_long_long_test2</span><span class="p">,</span> \
+</span><span class="line">                 <span class="n">long_long_long_test3</span>
+</span></pre></figure></notextile></div>
+
+<p>说一个技巧:当我不知道该用什么，去看很NB项目怎么用
+结果django和requests是这样的风格</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">long_long_long_test1</span><span class="p">,</span>
+</span><span class="line">                  <span class="n">long_long_long_test2</span><span class="p">,</span>
+</span><span class="line">                  <span class="n">long_long_long_test3</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>怎么样进步?不是闭门造车..先去看看别人是怎么用的..</p>
+
+<p>比如我以前拼接一个文件路径都是这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="s">&#39;{0}/{1}&#39;</span><span class="o">.</span><span class="n">fotmat</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>其实人家本来有:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>很惭愧.然后花了半个小时，把以前我这样用的地方全改了</p>
+
+<p>这是我说的重要的一点: 知道了什么是对的 就要改….</p>
+
+<p>对于这个主题, 我的答案是: 我喜欢难懂但是精炼的代码. 境界就是你看的懂就能写的出来.
+假如你连这点代码都看不懂.你看不了开源项目的做法.你会一直是个堆代码的码农..你会一直在堆着垃圾的代码.你会增加未来接手人的维护成本</p>
+
+<h4 id="python-3">怎么样提高python可读性和质量</h4>
+
+<p>以下是我的想法</p>
+
+<ol>
+  <li>首先给函数/类/方法取个好懂的名字(我这点很失败，英语太烂…是不是应该加一个学好英语)</li>
+  <li>当一个差不多的操作出现了三次，不要继续堆代码，要抽象出来</li>
+  <li>我倾向于写FIXME，TODO, 写文件/函数的用途的注释，在不是很好理解的代码上面注释作用，标明输入和输出都是什么(如果不是要修改维护你的代码，没人在乎你的算法多NB)</li>
+  <li>上面说的，请不要让别人需要仔细研究你的代码才明白是什么意思.. 我写代码很有压力，因为我不想以后维护我代码的人骂我.</li>
+  <li>不要炫技，请不要乱用函数式编程/闭包.我在乎的是性能和简单粗暴的实现功能</li>
+  <li>多用标准库的实现，如果不知道有这个功能实现前先google.</li>
+  <li>多读有名的项目，github上面有很多.思考别人为什么这样用</li>
+</ol>
+
+<p>….</p>
+
+<h4 id="section-3">我们是封装开源项目还是直接修改开源代码给自己用</h4>
+
+<p>其实我这样描述,比如有个项目因为历史原因是一个很早的版本.但是和其它新的版本组件有兼容问题以及我们业务的特殊需要.我看了源码发现需要改动几个地方.
+问题改动后就需要自己维护这个项目，对于新部署的环境甚至其它版本我还继续需要这个变动. 还有一种声音是”你不能修改XX源码”,你要在上面封装出一个新的东西，
+也就是不直接调用XX，而是在我的自己的项目对XX有了个封装YY，然后我们的调用YY.</p>
+
+<p>我觉得这个东西自己部署是一个可行的方案，首先这个修改不是一个patch，不是主流的修改.只能算是我们业务的二次开发而已，封装只是在掩耳盗铃.
+着让我想起一个问题:为什么中国鲜有好的开源项目:中国人不缺好的idea?是因为中国人觉得这件事情做不了，是因为它们觉得别人实现的就是很牛比的，
+自己改了就会有问题…其实这是自卑..首先是代码就会有bug，tornado/flask/requests不还是在开发和解决问题嘛？bug一直在只是你没有发现和注意.
+我觉得开源项目的代码看懂了，了解了就可以修改..没什么可担心的…我指的是角度.我觉得每个人学了一门语言看了某个项目的源码只要你有胆量，
+你有一个怀疑的善于发现和思考的心，那么你都能贡献你的代码，做你的二次开发.</p>
+
+<p>和本文相关: 如果你没有做过这件事，你怎么可以说你会python?</p>
+
+<h4 id="section-4">我的感想</h4>
+
+<p>我不赞同”做好工作就好了”的调调.对你个人来说你明年今天做的事情和现在是一样的，不同的是你老了一岁.
+如果是为了完成工作而完成工作. 其实你这个代码就是线上运行的代码，并且是以后很长时间再用的版本，你随意的一些代码会在很久之后很难的变动..
+我也不同意一上来就把你的程序写的能承受千万级PV的架构.我认为对于现在项目状态，我要思考大约未来一年可能的发展，它如何简单的扩展就好了..</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shi-yong-glancesjian-kong-ben-di-he-yuan-cheng-fu-wu-qi-de-xing-neng-zhuang-tai-%2Cyi-ji-wo-dui-ta-de-xiu-gai/">使用glances监控本地和远程服务器的性能状态，以及我对它的修改</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-01T11:43:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>首先开始感谢<a href="http://www.vpsee.com">Vpsee</a>的那篇<a href="http://www.vpsee.com/2013/07/a-new-system-monitoring-tool-glances-installation-and-usage/">安装和使用系统监控工具 Glances</a>，让我发现了<a href="https://github.com/nicolargo/glances">glances</a>这个新的系统监控工具.并且可以通过xml-rpc
+监控远程服务器的系统情况显示到本地.它其实类似于top,支持键盘按键.使用了psutil库获取了硬盘分区，负载，内存使用，交换分区使用，进程(支持根据cpu占用,内存占用，进程名和
+io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温度.记录日志,高亮显示可配置的阀值的预警颜色.就像一个超级版的top,但是它的优点其实就是2个:</p>
+
+<ol>
+  <li>它是python的，你可以定制化</li>
+  <li>它可以使用rpc获取其他服务端的系统信息,top可不行额</li>
+</ol>
+
+<h4 id="section-1">我对它做了些贡献</h4>
+
+<ol>
+  <li>首先我给他添加了中文的国际化,但是因为显示英文比汉语占用得长度要小，我没有在太多的地方全部显示中文，而且我觉得作为运维本来就应该好好用英语…如果有必要我可以做一个glance-cn，完全汉化</li>
+  <li>我读了它的源码,发现它的代码已经超过4000行，但是好几个地方其实有很大的优化空间,比如它的glancesScreen类，有下面这样的代码:</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">__getMemAlert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="c"># If current &lt; CAREFUL of max then alert = OK                          </span>
+</span><span class="line">    <span class="c"># If current &gt; CAREFUL of max then alert = CAREFUL                     </span>
+</span><span class="line">    <span class="c"># If current &gt; WARNING of max then alert = WARNING                     </span>
+</span><span class="line">    <span class="c"># If current &gt; CRITICAL of max then alert = CRITICAL                   </span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="n">variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span>
+</span><span class="line">    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;DEFAULT&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMCritical</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CRITICAL&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMWarning</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;WARNING&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMCareful</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CAREFUL&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="s">&#39;OK&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getMemColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getMemAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getMemColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getMemAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapAlert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="c"># If current &lt; CAREFUL of max then alert = OK                          </span>
+</span><span class="line">    <span class="c"># If current &gt; CAREFUL of max then alert = CAREFUL                     </span>
+</span><span class="line">    <span class="c"># If current &gt; WARNING of max then alert = WARNING                     </span>
+</span><span class="line">    <span class="c"># If current &gt; CRITICAL of max then alert = CRITICAL                   </span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="n">variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span>
+</span><span class="line">    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;DEFAULT&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPCritical</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CRITICAL&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPWarning</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;WARNING&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPCareful</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CAREFUL&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="s">&#39;OK&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getSwapAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getSwapAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span></pre></figure></notextile></div>
+
+<p>我来分析下,每种模块都有__getXXXAlert，__getXXXColor， __getxxxColor2，其中__getXXXColor， __getxxxColor2都会调用__getXXXAlert,他们的参数可能不同</p>
+
+<p>你看到了很多好相似的代码了嘛?其实待遇代码的可读性和可理解性已经代码的紧凑和不易懂一直就需要一个折中，我提了一个pull request，其实对这个类的属性做了下拦截</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># 使用__getattr__是为了只获取类中没有定义的属性</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class="line">        <span class="n">base_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Mem&#39;</span><span class="p">,</span> <span class="s">&#39;Swap&#39;</span><span class="p">,</span> <span class="s">&#39;Fs&#39;</span><span class="p">,</span> <span class="s">&#39;HDDTemp&#39;</span><span class="p">,</span> <span class="s">&#39;Sensors&#39;</span><span class="p">]</span>
+</span><span class="line">        <span class="n">get_alert_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Alert&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
+</span><span class="line">        <span class="n">base_type</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&#39;Load&#39;</span><span class="p">,</span> <span class="s">&#39;Cpu&#39;</span><span class="p">])</span> <span class="c">#我没有也处理_getCpu/LoadAlert,因为他们的调用略有不同,保留了</span>
+</span><span class="line">        <span class="n">get_color_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Color&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
+</span><span class="line">        <span class="n">get_color_list2</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Color2&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_alert_list</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAlert</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_color_list</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getColor</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_color_list2</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getColor2</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">getColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&quot;&quot;&quot;                                                                    </span>
+</span><span class="line"><span class="sd">        default: current=0, max=100, stat=&#39;&#39;, core=1                           </span>
+</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
+</span><span class="line">            <span class="bp">self</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_glancesScreen__get&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="s">&#39;Alert&#39;</span><span class="p">]))(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">getColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&quot;&quot;&quot;                                                                    </span>
+</span><span class="line"><span class="sd">        default: current=0, max=100, stat=&#39;&#39;, core=1                           </span>
+</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
+</span><span class="line">            <span class="bp">self</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_glancesScreen__get&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="s">&#39;Alert&#39;</span><span class="p">]))(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
+</span></pre></figure></notextile></div>
+
+<p>— update 2013-08-10 —– </p>
+
+<p>它已经接收了我的代码</p>
+
+<ol>
+  <li>我在服务器用pip，安装的是1.6.1，而本地是1.7.1a，但是有一个功能hddtemp支持实在1.6.1之后添加的,我用本地使用-c连接远程服务器,本
+地有-y选项，但是远程是没有的，按’h’就会报错,我修改了这个问题</li>
+</ol>
+
+<h4 id="section-2">如何使用国际化</h4>
+
+<ol>
+  <li>
+    <p>它自带了这个脚本i18n-gen.sh</p>
+  </li>
+  <li>
+    <p>我在我的gentoo和mac下都实验了,没有作用，难道是我理解有问题?</p>
+  </li>
+</ol>
+
+<p>首先我先把本地的locale换成中文:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">export</span> <span class="n">LANG</span><span class="o">=</span><span class="n">zh_CN</span><span class="o">.</span><span class="n">UTF</span><span class="o">-</span><span class="mi">8</span>
+</span></pre></figure></notextile></div>
+<p>后来我发现它使用国际化的原理是:</p>
+
+<ol>
+  <li>在安装的时候将.mo文件一起拷贝到glances的安装目录下得share/locale/XX/LC_MESSAGES下(XX代表你的生成的国际化名字)</li>
+  <li>它使用了这样的方法加载国际化</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">__appname__</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>但是没有去作用，因为没有找到.mo文件</p>
+
+<p>我提了pull req, 这样修改(其实就是去目录下找到那个语言的.mo):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="line"><span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">__appname__</span><span class="p">,</span> <span class="s">&#39;{0}/../share/locale&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">))</span>
+</span></pre></figure></notextile></div>
+
+<p>— update 2013-08-10 —–</p>
+
+<p>它没有采用我的方法而是比较复杂的实现了</p>
+
+<p>我在想，难道以前得几种语言是可以实现的?其实原来的方式在程序目录下是可以的，但是setup.py install后目录结构变化了</p>
+
+<h4 id="section-3">远程连接服务器</h4>
+
+<p>这是glances最大的一个特点，但是不能让谁都可以使用serverproxy链接查看你的状态吧?所以你需要指定-P选项，加一个随机密码(其实账号是glances，没有提供参数，在程序里面写死了)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%5B%3F%5D-qi-xue-xi-common-lispba/">一起学习common Lisp吧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-28T11:28:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我记得在什么地方说过一个程序员要学什么语言:汇编,C,lisp,还有一门脚本语言(python或者ruby).遗憾的是我只会一点python和一点点ruby. 
+最近关注到google出品了<a href="https://github.com/google/lisp-koans">lisp_koans</a>-一个给初学者学习commonlisp的好东西,也许你也没有听过ruby_koans
+和python_koans,假如你已经回了这2门语言可以忽略假如你想学习这2门语言,从koans入手是一个很好地途径.
+最近几天花了些时间完成了lisp_koans,把答案分享出来<a href="https://github.com/dongweiming/lisp-koans-answer">lisp-koans-answer</a></p>
+
+<p>我也给python_koans贡献了几行代码,在入职培训要求通过几种koans,xx_koans其实是一些测试用例,就像过关题目,他涉及这个语言的方方面面.只能你提供了正确的答案
+才能继续下一个题目</p>
+
+<h4 id="section-1">为啥分享答案</h4>
+
+<ol>
+  <li>
+    <p>做过python_koans的都记得，当某一题目你的答案不是期望的值的时候，这个测试没有通过，但是会提示你正确的结果,但是lisp_koans不会，你可以在不明所以的情况下需要研究很久</p>
+  </li>
+  <li>
+    <p>lisp_koans还很新(2013.05), 而且本来lisp语言就很小众. 不像ruby和python那样广泛.你不能从stackoverflow或者stackexchange找到答案</p>
+  </li>
+</ol>
+
+<h4 id="common-lisp">让我们一起学习common lisp吧</h4>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shi-yong-httphe-websocketlian-jie-fu-wu-qi/">使用http和websocket连接服务器</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-19T22:53:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>想想吧，通过网页ssh登录服务器是一件多么酷的事情?今天看了<a href="http://www.vpsee.com/2013/06/invoke-a-linux-shell-with-ssh-account-from-browser">使用浏览器访问 Linux 终端</a>,
+也就是这个<a href="https://github.com/dongweiming/wssh">wssh</a>,你也可以理解为websocket-ssh, 觉得有点意思就拿出来</p>
+
+<h4 id="section-1">原路</h4>
+
+<p>它是一个库，很简单，作者写了2个flask+gevent+websocket+paramiko的例子，其中网页版的使用了bootstrap.
+简单的理解就是不通过ssh连接服务器，而是通过网页或者一个client请求url+相应参数调用
+shell到服务器的方式，但是遗憾的是作者一年没有再维护，bootstrap的网页竟然没有指定ssh端口的选项，但是很多时候为了安全
+都会把ssh端口换成其它端口，这样就不能用了,好吧 我动手给它加了这个功能，也提了pull request.目前大家可以用我的这版:<a href="https://github.com/dongweiming/wssh">wssh</a></p>
+
+<h4 id="update"><strong>update</strong></h4>
+
+<p>wssh作者已经合并了我的修改</p>
+
+<h4 id="section-2">使用说明</h4>
+
+<p>当你使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo python setup.py install</span></pre></figure></notextile></div>
+
+<p>安装后，就能直接使用wssh和wsshd,wsshd是一个flask作为httpserver和gevent作为wsgi的服务端，默认启动在你本机的5000端口.
+网页登录就能看见简单大气的选项页面，可以指定用户，服务器ip，端口，以及使用密钥或者密码登录.输入点击连接就会登录到那台服务器,数据通过websocket实时显示到页面上</p>
+
+<p>而wssh是一个命令行登录的带选项的命令，其实就是页面输入的参数通过命令行的方式输入然后直接登录服务器，比如我下面的用法:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">wssh dongwm@dongwm.com -p XXX -s 58404</span></pre></figure></notextile></div>
+
+<h4 id="section-3">我觉得有空可以基于这个做点好玩的东西</h4>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/gentooxia-de-lxche-docker/">Gentoo下的lxc和docker</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-13T20:03:00+08:00" pubdate data-updated="true">Jul 13<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>上次就说要写一篇gentoo下安装使用docker的文章，顺便也学习了下gentoo下的lxc，记录下来</p>
+
+<h4 id="section-1">升级你的内核</h4>
+
+<p>docker要求升级到3.8以上的内核,假如你的已经是3.8.XX,那么你就要重新编译内核,参看<a href="http://wiki.gentoo.org/wiki/LXC">Wiki</a>
+很多人比较怕编译内核，一看那个启动的简陋的页面就不知道该干什么了,出现问题不知道该去选择什么或者去掉什么选项.我来说一些小窍门,简单的说就是
+根据提示去内核界面按’/’搜索这个参数，根据提示的位置找到那个项</p>
+
+<p>问题1: 假如符合项很多怎么判断那个是真正要我选择的呢?</p>
+
+<p>回答: 首先是上下文的判断，一般的情况都是符合某写关键字的项都是某项和它的子项，当你去掉其父项，子项的选项也就消失了，还有个使用的经验的积累.
+比如下面的提示:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">*   CONFIG_NETFILTER_XT_MATCH_ADDRTYPE:  is not set when it should be.</span></pre></figure></notextile></div>
+
+<p>意思就是提示你”NETFILTER_XT_MATCH_ADDRTYPE”, 没有设置，然后你使用/输入”NETFILTER_XT_MATCH_ADDRTYPE”,回车，会显示类似下面的东西:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"> Search Results ─────────────────────────────┐
+</span><span class="line">  │ Symbol: NETFILTER_XT_MATCH_ADDRTYPE [=n]                                │  
+</span><span class="line">  │ Type  : tristate                                                        │  
+</span><span class="line">  │ Prompt: "addrtype" address type match support                           │  
+</span><span class="line">  │   Defined at net/netfilter/Kconfig:798                                  │  
+</span><span class="line">  │   Depends on: NET [=y] &amp;&amp; INET [=y] &amp;&amp; NETFILTER [=y] &amp;&amp; NETFILTER_XTAB │  
+</span><span class="line">  │   Location:                                                             │  
+</span><span class="line">  │     -&gt; Networking support (NET [=y])                                    │  
+</span><span class="line">  │       -&gt; Networking options                                             │  
+</span><span class="line">  │         -&gt; Network packet filtering framework (Netfilter) (NETFILTER [= │  
+</span><span class="line">  │           -&gt; Core Netfilter Configuration                               │  
+</span><span class="line">  │ (1)         -&gt; Netfilter Xtables support (required for ip_tables) (NETF │ </span></pre></figure></notextile></div>
+
+<p>注意其中的’Prompt’,他是帮助你在实际找对应项判断主题的关键字,’Location’告诉你它的位置是
+‘Networking support’下的’Networking options’子项下的’Network packet filtering framework’…</p>
+
+<p>问题2： 为什么我选择了这个项依然还是没有显示成功，比如上面’NETFILTER_XT_MATCH_ADDRTYPE [=n]’ n就是no，y就是yes
+一个严重的问题就是某项其实会有很多依赖，只有这些依赖都是’y’的时候它才生效.比如lxc要求的’USER_NS’,
+默认内核中是没有显示出来的,原因是存在很多依赖和他冲突，必须去掉那些项他才会显示, 你打开它的搜索去看还有那个依赖还是’n’.
+这个过程可能好几次，直到最后，就显示了UIDGID_CONVERTED的bool值为n，这个时候你就要去看这个内核参数的依赖,打开/usr/src/linux/init/Kconfig,
+找到依赖挨个去掉，直到能显示</p>
+
+<h4 id="docker">安装docker</h4>
+
+<p><a href="https://github.com/tianon/gentoo-overlay">tianon</a>做好了一个docker的overlay源，而且docker的gentoo镜像也是他贡献的，感谢.
+把三方layman增加到你的gentoo系统在以前的<a href="http://www.dongwm.com/archives/wo-wei-hu-de-colout">我维护的colout</a>说过就不说了,假设这里你已经添加了tianon的源</p>
+
+<p>然后安装</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo emerge app-emulation/lxc-docker</span></pre></figure></notextile></div>
+
+<p>这个依赖过程当然也会安装lxc</p>
+
+<p>因为docker依赖aufs,但是安装aufs的时候出现问题，我还记得一句:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">You need to apply a patch to your kernel to compile and run the aufs3 module</span></pre></figure></notextile></div>
+
+<p>然后就异常退出了,看了下源码也的确有这些patch,当我手动打了第一个patch,依然报错…只能一个个的补丁手动打进去？
+看它的ebuild,有这样一行:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">IUSE="debug doc fuse hfs inotify kernel-patch nfs pax_kernel ramfs"</span></pre></figure></notextile></div>
+
+<p>可是kernel-patch没有起作用,那么你在你的/etc/make.conf的USE里面添加’kernel-patch’就好了</p>
+
+<h4 id="docker0">增加docker0网卡</h4>
+<p>增加一个配置，这个配置也是创建容器可选的配置，都放在/etc/lxc目录下</p>
+
+<p>cat /etc/lxc/guest.conf</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc.network.type = veth
+</span><span class="line">lxc.network.flags = up
+</span><span class="line">lxc.network.link = docker0</span></pre></figure></notextile></div>
+
+<h4 id="docker-1">启动docker</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">docker -d &amp;</span></pre></figure></notextile></div>
+<p>当提示类似:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">2013/07/13 13:36:46 Listening for HTTP on 127.0.0.1:4243 (tcp)</span></pre></figure></notextile></div>
+
+<p>表示搞定了</p>
+
+<p>但是我这里出现了一个报错</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">iptables v1.4.16.3: can't initialize iptables table `nat': Table does not exist (do you need to insmod?)</span></pre></figure></notextile></div>
+
+<p>iptables的版本够高，但是很明显还是内核模块的问题，查看下,果然如此</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">localhost ~ # zgrep NF_NAT /proc/config.gz
+</span><span class="line"># CONFIG_NF_NAT_IPV4 is not set
+</span><span class="line"># CONFIG_NF_NAT_IPV6 is not set</span></pre></figure></notextile></div>
+
+<p>还是需要设置在重新编译内核,重启生效</p>
+
+<h4 id="lxc">使用lxc</h4>
+
+<p>比如我想创建个debian的容器</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">emerge dev-util/debootstrap #不同的系统依赖不同的这个包，比如fedora/centos就是sys-apps/yum, arch就是sys-apps/pacman...
+</span><span class="line">lxc-create -t debian -n debian_test #也可以加-p 指定配置文件 ，配置类似上面的guest.conf，可以配置ip之类
+</span><span class="line"># 假如想要ubuntu
+</span><span class="line"># lxc-create -t ubuntu -n ubuntu_test
+</span></pre></figure></notextile></div>
+<p>这个时间会下载debian的基础镜像，包含一些基础的包</p>
+
+<p>你要设置root密码,比如我这个debian_test， 相关数据都在/etc/lxc/debian_test</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cd /etc/lxc/debian_test
+</span><span class="line">chroot rootfs /bin/bash</span></pre></figure></notextile></div>
+
+<p>然后登录设置密码</p>
+
+<p>启动和关闭容器的命令是 </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc-start -n debian_test
+</span><span class="line">lxc-stop -n debian_test</span></pre></figure></notextile></div>
+
+<p>当然你也可以设置个开机启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">ln -s lxc /etc/init.d/lxc.debian_test
+</span><span class="line">/etc/init.d/lxc.debian_test stop
+</span><span class="line">/etc/init.d/lxc.debian_test start
+</span><span class="line">rc-update add lxc.debian_test default</span></pre></figure></notextile></div>
+
+<p>还可以使用终端连接</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc-console -n debian_test</span></pre></figure></notextile></div>
+
+<h4 id="gentoo">创建gentoo容器</h4>
+
+<p>当我想创建gentoo的容器,可以借用<a href="https://github.com/globalcitizen/lxc-gentoo">lxc-gentoo</a>,它提供一个命令行的选择.简单粗暴，以下是一个例子
+创建一个ip为192.168.0.10，网关为192.168.0.1，容器叫做gentoo_test，主机名为test1的容器</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo lxc-gentoo/lxc-gentoo create -i 192.168.0.10/26 -g 192.168.0.1 -n gentoo_test -u test1 </span></pre></figure></notextile></div>
+
+<p>默认会把容器安装在执行命令的当前目录,这样启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo /usr/sbin/lxc-start -f test1.conf -n gentoo_test</span></pre></figure></notextile></div>
+
+<p>你也可以chroot进去， 为什么这样用？比如我经常用到的场景，我安装了gentoo/opensuse的双系统，可能我把其中一个系统玩坏(比如升级产生的问题，我安装或者卸载了某些东西等)
+，我就可以在没有u盘，livecd的前提下进入另外一个系统，chroot到这个系统去修复,而且不影响工作，因为我的很多目录之类都是软连接，修改一个地方切换另外的系统继续用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">mount -t proc proc ./gentoo_test/proc
+</span><span class="line">mount -o bind /dev ./gentoo_test/dev
+</span><span class="line">chroot ./gentoo_test /bin/bash
+</span><span class="line">export PS1="(gentoo_test) $PS1"
+</span><span class="line"># 现在你就进来了,而不需要启动系统</span></pre></figure></notextile></div>
+
+<h4 id="archlinux">创建Archlinux容器</h4>
+
+<p>我没有用gentoo的lxc自带的/usr/share/lxc/templates/lxc-archlinux,因为它根本用不了,并且存在以下一些问题:</p>
+
+<ol>
+  <li>
+    <p>arch早已不用initscripts，改用systemd</p>
+  </li>
+  <li>
+    <p>安装基础系统不需要chroot到其系统,直接pacman指定系统根目录即可,并且它chroot进去指定根系统,那肯定永远也成功不了</p>
+  </li>
+  <li>
+    <p>在一个新的系统的pacman.conf没有指定XferCommand,那么也就不知道用什么下载了</p>
+  </li>
+</ol>
+
+<p>我新建个一个项目<a href="https://github.com/dongweiming/gentoo-lxc-templates">gentoo-lxc-templates</a>,目前包含了我修改的lxc-archlinux,我很少用arch,有问题欢迎pullme</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/5/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/3/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

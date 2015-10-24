@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: zxtm | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/zxtm/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[zxtm实现mongodb的Route Server负载均衡]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/zxtm%E5%AE%9E%E7%8E%B0mongodb%E7%9A%84route-server%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"/>
+    <updated>2011-06-14T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/zxtm实现mongodb的route-server负载均衡</id>
+    <content type="html"><![CDATA[<p>Route Server是一个mongos 实例，客户端由此接入，可以让整个集群看上去像单一数据库，简单的理解就是一个前端的路由。在实际配置中Route Server的冗余那也是很必须的，伟大的ZXTM也支持了它！关键步骤是1&nbsp; 创建pool时每个node都填入其ip和route sever的端口2&nbsp; 在创建virtual server时选择协议“Generic&nbsp; client first”这样就可以通过负载均衡来访问：[root@test ~]# mongo 192.168.8.20:30000MongoDB shell version: 1.8.1connecting to: 192.168.8.200:30000/test&gt; </p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ZXTM专题一：介绍负载均衡器ZXTM LB]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/zxtm%E4%B8%93%E9%A2%98%E4%B8%80%EF%BC%9A%E4%BB%8B%E7%BB%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8zxtm-lb/"/>
+    <updated>2011-02-23T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/zxtm专题一：介绍负载均衡器zxtm-lb</id>
+    <content type="html"><![CDATA[<p><strong>1 什么是ZXTM：</strong></p>
+
+<p>总是在说ZXTM，什么是ZXTM呢？其实它是Zeus Technology（官网www.zeus.com）的产品<a href="http://www.zeus.com/products/traffic-manager"><strong>Zeus Traffic Manager</strong></a>以前的称呼，是一个基于J2EE运行，为一些网络服务（比如web server，邮件服务器等）应用提供复杂的负载均衡商业软件。</p>
+
+<p><strong>2  ZXTM和ZXTM LB：</strong></p>
+
+<p>其实ZXTM LB 就是为客户提供一个基础的负载均衡功能的解决方案，在ZXTM“cut”了一部分就成了ZXTM LB 呵呵，请看下图：</p>
+
+<p><strong>3  为什么要选择ZXTM LB<!--more-->（我这里以version5.0为例）</strong></p>
+
+<p><strong>1 可以创建一个完全容错的服务器集群</strong></p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2011/02/3.jpg"><img style="display: inline; border: 0px;" title="3" src="http://www.dongwm.com/wp-content/uploads/2011/02/3_thumb.jpg" border="0" alt="3" width="244" height="215" /></a></p>
+
+<p><strong>2 高效，可靠，可扩展</strong></p>
+
+<p>ZXTM LB有非常严格的对性能和健康检查和监控机制，以及集群诊断。通过不断监控您的后端服务器的运行状况，失败的服务器会自动检测并从集群中删除，直到他们康复，对于网络中很小的健康问题它都能提供报警使管理者提高警惕。它对高性能SSL和内容压缩，内容识别交通管理规则等支持非常好</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2011/02/4.jpg"><img style="display: inline; border: 0px;" title="4" src="http://www.dongwm.com/wp-content/uploads/2011/02/4_thumb.jpg" border="0" alt="4" width="244" height="128" /></a></p>
+
+<p><strong>3  管理服务
+</strong>ZXTM LB接近服务器管理，使复杂的负载均衡决策，并密切监察托管服务。 它可以平衡UDP或任何基于TCP的协议，包括Web，DNS的，邮件（SMTP /IMAP / POP）的，FTP和流媒体DENG ,负载均衡决策最大限度地提高服务响应速度和防止任何一个应用程序或服务器节点成为超载。</p>
+
+<p><strong>4  帮助性能改进
+</strong>ZXTM LB能够大大提高应用程序的服务，通过流量优化和智能负载均衡性能。它可以让流量重定向使用内容感知路由策略服务器的特定设置，采取不同的应用功能并预留优质客户的能力。 ZXTM LB支持会话持久性方法，范围广</p>
+
+<p><strong>5  易于配置的GUI向导，以及RuleBuilderTM</strong></p>
+
+<p>图形用户界面RuleBuilder可以很容易创建负载平衡策略，以确定不同类型的流量和处理她们。
+<strong>6  Connection Draining </strong></p>
+
+<p>它的特殊的“Connection Draining ”功能可以让你安全地把一台服务器进行维修服务，而无需中断任何用户连接或会话。</p>
+
+<p><strong>7  流量可视化，趋势分析和完整系统的故障诊断
+</strong>ZXTM LB提供实时报告和灵活的查看某条件下的性能的历史趋势图。你以计划未来的能力要求，并且允许快速故障隔离，减少了时间来解决。统计数据收集的ZXTM LB，可以检索使用，易于集成到现有的网络基础设施的SNMP监控。</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2011/02/5.jpg"><img style="display: inline; border: 0px;" title="5" src="http://www.dongwm.com/wp-content/uploads/2011/02/5_thumb.jpg" border="0" alt="5" width="227" height="244" /></a></p>
+
+<p><img class="alignnone" title="zxtm" src="http://knowledgehub.zeus.com/media/zxtm-zxtmlb.png" alt="" width="378" height="596" /></p>
+]]></content>
+  </entry>
+  
+</feed>

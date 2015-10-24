@@ -1,0 +1,997 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/26">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/fedora-ubuntu-%E6%B7%BB%E5%8A%A0%E5%AF%B9%E6%96%B9grub%E8%8F%9C%E5%8D%95/">Fedora Ubuntu 添加对方grub菜单</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-01T00:00:00+08:00" pubdate data-updated="true">May 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>这几天折腾ubuntu11.04，结果把我的opensuse弄坏了&#8230;索性直接换成了fedora。乘机研究了下grub2，以及各个操作系统之间的启动菜单的一些特性。
+1 先fedora，后ubuntu
+进入ubuntu系统：
+<pre class="sh_bash">sudo grub-install /dev/sda //安装grub到硬盘mbr，一般系统会自动搜索到
+sudo update-grub2  //更新grub.cfg</pre>
+进入ubuntuliveCD：
+<pre class="sh_bash">sudo su
+mount /dev/sdaX /mnt //挂载系统文件 我这里是根分区
+mount /dev/sdaY /tmp/boot  //挂载boot分区
+cp -rp /tmp/boot/* /mnt/boot //我直接挂载/mnt/boot有问题，所以用这种简介方式，把/boot文件考到/mnt/boot下
+grub-install --root-directory=/mnt /dev/sda --force   //强制安装grub到硬盘mbr root目录是指定的/mnt
+update-grub2  //更新grub.cfg
+注：mbr信息可以执行如下脚本取得：
+http://nchc.dl.sourceforge.net/project/bootinfoscript/bootinfoscript/0.55/boot_info_script055.sh</strong></p>
+
+<p><strong></pre>
+</strong></p>
+
+<p><strong>2 先</strong><strong>ubuntu</strong><strong>，后</strong><strong>fedora</strong></p>
+
+<p><pre class="sh_bash">sudo gedit /boot/grub/menu.lst
+title Ubuntu
+root (hd0,9)  //根目录所在分区，根据上面的脚本自己调整
+kernel /vmlinuz-2.6.38-8-generic root=UUID=7319d96d-4c6e-4e00-84b4-f5ed70052456 ro   quiet splash vt.handoff=7
+可以直接把ubuntu分区上的grub.cfg上的相同字段 linux 行的内容复制
+initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相同字段 /initrd 内容</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%87%86%E7%A1%AE%E6%8E%8C%E6%8F%A1puppet-client%E5%90%91server%E8%AF%B7%E6%B1%82%E6%97%B6%E9%97%B4/">准确掌握puppet Client向server请求时间</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-28T00:00:00+08:00" pubdate data-updated="true">Apr 28<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p>使用puppet，发现默认半小时客户端就和服务器端请求一次信息，如果发现有更新就会自动更新。但是在使用了tagmail后，这是一件很郁闷的事情，因为请求一次就产生一个邮件，设想有上千台client，没30分钟一个邮件。。。但是我不希望用cron，因为有些事情是很紧急的，不能等到下一个定时任务执行时才去执行。</p>  <p>解决方法：</p>  <p>修改puppet.conf修改向server请求的时间间隔：</p>  <p>在[agent]下面加一行：</p>  <p>runinterval = 86400&#160; //单位是秒 我设置的一天更新一次&#160; 然后puppetd进程是一直后台运行的</p>  <p>采用server端向客户端主动发送要求，触发客户端来向server请求</p>  <p>#puppetrun –host 主机名</p>  <p>可以吧主机做个for循环，虽然性能不够，也不能实现并行执行。幸好puppetrun只是发送一个信号</p></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8pssh%E8%BF%9B%E8%A1%8C%E5%B9%B6%E8%A1%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C/">使用pssh进行并行批量操作</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-22T00:00:00+08:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>假如同时给上千台服务器执行一个命令,拷贝一个文件,杀一个进程等,有什么简化运维管理的工具呢?在小型使用中我都是使用for循环,数量巨大,一方面不确定操作是否成功,一方面for循环语句性能不好估计且是不是同步并行执行.，这类工具比如pdsh，mussh，cssh，dsh等还有这里提到的pssh:
+1  安装:</strong>
+<pre class="sh_bash">#wget http://peak.telecommunity.com/dist/ez_setup.py
+python ez_setup.py
+#wget http://parallel-ssh.googlecode.com/files/pssh-2.2.2.tar.gz
+# tar zxvf pssh-2.2.2.tar.gz
+# cd pssh-2.2.2
+# python setup.py install</pre>
+<strong>2  pssh使用 (假设ssh已做好SSH信任,ssh信任请参看:<a href="http://www.dongwm.com/archives/%E5%85%B3%E4%BA%8Essh%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6%E4%BB%A5%E5%8F%8Assh%E4%BF%A1%E4%BB%BB%E8%AF%A6%E8%A7%A3/" target="_blank">关于ssh命令研究以及SSH信任详解</a>)</strong>
+pssh工具包主要有5个程序:
+<strong>1 pssh  多主机并行运行命令</strong>
+<pre class="sh_bash">[root@server pssh-2.2.2]# pssh -P -h test.txt uptime
+192.168.9.102:  14:04:58 up 26 days, 17:05,  0 users,  load average: 0.07, 0.02, 0.00
+192.168.9.102: [1] 14:04:58 [SUCCESS] 192.168.9.102 9922
+192.168.8.171:  14:04:59 up 35 days,  2:01,  6 users,  load average: 0.00, 0.00, 0.00
+192.168.8.171: [2] 14:04:59 [SUCCESS] 192.168.8.171 22
+192.168.9.104:  14:04:59 up 7 days, 20:59,  0 users,  load average: 0.10, 0.04, 0.01
+192.168.9.104: [3] 14:04:59 [SUCCESS] 192.168.9.104 9922
+[root@server pssh-2.2.2]# cat test.txt
+192.168.9.102:9922
+192.168.9.104:9922
+192.168.8.171:22   //注意我的端口号不仅是默认的22
+假如想将输出重定向到一个文件 加-o file 选项</pre>
+<strong>2 pscp  把文件并行地复制到多个主机上</strong>
+注意 是从服务器端给客户端传送文件:
+<pre class="sh_bash">[root@server pssh-2.2.2]# pscp -h test.txt /etc/sysconfig/network /tmp/network   //标示将本地的/etc/sysconfig/network传到目标服务器的/tmp/network</pre>
+<strong>3 prsync 使用rsync协议从本地计算机同步到远程主机</strong>
+<pre class="sh_bash">[root@server ~]# pssh -h test.txt -P mkdir /tmp/etc
+[root@server ~]# prsync -h test.txt -l dongwm -a -r /etc/sysconfig /tmp/etc //标示将本地的/etc/sysconfig目录递归同步到目标服务器的 /tmp/etc目录下,并保持原来的时间戳,使用用户 dongwm</pre>
+<strong>4  pslurp 将文件从远程主机复制到本地,和pscp方向相反:</strong>
+<pre class="sh_bash">[root@server ~]# pslurp -h test.txt   -L /tmp/test -l root /tmp/network test  //标示将目标服务器的/tmp/network文件复制到本地的/tmp/test目录下,并更名为test
+[1] 14:53:54 [SUCCESS] 192.168.9.102 9922
+[2] 14:53:54 [SUCCESS] 192.168.9.104 9922
+[root@server ~]# ll /tmp/test/192.168.9.10
+192.168.9.102/ 192.168.9.104/
+[root@server ~]# ll /tmp/test/192.168.9.102/
+总计 4.0K
+-rw-r--r-- 1 root root 60 2011-04-22 14:53 test
+[root@server ~]# ll /tmp/test/192.168.9.104/
+总计 4.0K
+-rw-r--r-- 1 root root 60 2011-04-22 14:53 test</pre>
+<strong>5  pnuke 并行在远程主机杀进程:</strong>
+<pre class="sh_bash">[root@server ~]# pnuke -h test.txt   syslog //杀死目标服务器的syslog进程,只要ps进程中出现相关词语 都能杀死
+[1] 15:05:14 [SUCCESS] 192.168.9.102 9922
+[2] 15:05:14 [SUCCESS] 192.168.9.104 9922</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=eb2641aa-47eb-83ae-b8a8-d1a0b97e174d" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/nagios%E6%97%A5%E5%BF%97%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2%E9%97%AE%E9%A2%98/">Nagios日志格式转换问题</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-20T00:00:00+08:00" pubdate data-updated="true">Apr 20<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>默认的nagios的日志格式记录的是从1970年到发生事件的秒数,而不是直接告诉我们当前的时间.在分析日志时,我进行了转换:</p>
+
+<p><pre class="sh_bash">[root@log05 ~]# cat /home/dongwm/nagios-log.sh
+#!/bin/bash
+while read line
+do
+ec=`echo $line|grep -Po [0-9]\{10\}`
+ed=`date -d '1970-01-01 '$ec' sec' +%Y-%m-%d-%T`
+eval sed -i 's/'$ec'/'$ed'/g' nagios.log
+done&lt;YZ.nagios.log</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=8ae86720-8fa5-8f60-aa82-1ce730b156e2" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/icinga%E4%B8%93%E9%A2%98%EF%BC%88%E4%B8%80%EF%BC%89icinga%E5%AE%89%E8%A3%85/">Icinga专题（一）Icinga安装</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-16T00:00:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>Icinga是一些nagios项目社区的成员发起的，兼容nagios，并实现了中文化和安卓系统版本。I like ^.^</strong></p>
+
+<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png"><img class="alignnone size-full wp-image-461" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png" alt="" width="890" height="342" /></a>
+</strong></p>
+
+<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png"><img class="alignnone size-full wp-image-459" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png" alt="" width="800" height="453" /></a>
+</strong></p>
+
+<p><strong>1 准备</strong></p>
+
+<p><pre class="sh_bash">#yum  install freetype libjpeg libpng fontconfig libdbi libdbi-drivers gcc glibc glibc-common gd gd-devel libjpeg libjpeg-devel libpng libpng-devel net-snmp net-snmp-devel</pre></p>
+
+<p><strong>2 下载安装icinga</strong></p>
+
+<p><pre class="sh_bash">#wget http://sourceforge.net/projects/icinga/files/icinga/1.3.1/icinga-1.3.1.tar.gz/download</p>
+
+<p># tar zxvf icinga-1.3.1.tar.gz</p>
+
+<p>#cd icinga-1.3.1/</p>
+
+<p>#./configure --with-rdbm --with-rdbm-incdir=/usr/include/rdbm/ --with-rdbm-libdir=/usr/lib64/ --disable-docs  --with-icinga-user=dongwm   --with-icinga-group=dongwm --with-command-user=dongwm  --with-command-group=dongwm &amp;&amp; make all &amp;&amp; make install</p>
+
+<p>#make install-init   //# 安装主程序，CGI和HTML
+#make install-commandmode //在/etc/rc.d/init.d安装启动脚本
+#make install-config  // 安装配置实例配置文件
+#make install-webconf  //安装apache相关的配置文件
+# chkconfig --add icinga
+# chkconfig icinga on</p>
+
+<p># /etc/init.d/icinga start</pre></p>
+
+<p><strong>3 设置web页面登陆用户</strong><strong>及密码(必须）</strong></p>
+
+<p><pre class="sh_bash">默认用户名 icingaadmin 默认密码admin</p>
+
+<p>用户可自行修改,如htpasswd -c /usr/local/icinga/etc/htpasswd.users dongwm</pre></p>
+
+<p><strong>4  安装nagios-plugins</strong></p>
+
+<p><pre class="sh_bash"># wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/1.4.15/nagios-plugins-1.4.15.tar.gz/download</p>
+
+<p># tar zxvf nagios-plugins-1.4.15.tar.gz</p>
+
+<p># cd nagios-plugins-1.4.15/</p>
+
+<p>#./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-htmurl=/icinga --with-nagios-user=dongwm --with-nagios-group=dongwm</p>
+
+<p># make &amp;&amp; make install</pre></p>
+
+<p><strong>5  安装nrpe</strong></p>
+
+<p><pre class="sh_bash">#wget "<a href="https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz&quot;">https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz"</a> -O nrpe.tgz
+#tar zxvf nrpe.tgz</p>
+
+<p># cd icinga-nrpe  &amp;&amp;  ./configure --with-nrpe-user=dongwm --with-nrpe-group=dongwm --with-icinga-user=dongwm --with-icinga-group=dongwm &amp;&amp;make all &amp;&amp;make install-plugin</p>
+
+<p>拷贝nrpe文件：</p>
+
+<p>#cp src/nrpe  /usr/local/icinga/bin</p>
+
+<p>#cp sample-config/nrpe.cfg /usr/local/icinga/etc</p>
+
+<p>启动nrpe并检查：</p>
+
+<p># /usr/local/icinga/bin/nrpe -n -c /usr/local/icinga/etc/nrpe.cfg -d</p>
+
+<p># /usr/local/icinga/libexec/check_nrpe  -H 127.0.0.1 –n</p>
+
+<p>NRPE v2.12</p>
+
+<p>stop nrpe：</p>
+
+<p>#kill `ps -ef | grep "sample-config/nrpe.cfg" | grep -v grep | awk '{print $2}'`</pre></p>
+
+<p><strong>6 配置文件</strong></p>
+
+<p><strong>其实icinga的配置文件可以把nagios的配置文件直接拷贝过来使用，把关键字‘nagios’改成‘icinga’就完全可以了</strong></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/chef%E4%B8%93%E9%A2%98%E4%B8%80%E5%AE%89%E8%A3%85chef/">Chef专题(一):安装chef</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-15T00:00:00+08:00" pubdate data-updated="true">Apr 15<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1  安装前准备:</strong>
+<pre class="sh_bash">
+1 确保hostname是FQDN格式:
+[root@dongwm ~]# hostname -f
+dongwm.okooo.com
+2 查看iptables是否占用4000和4040端口,或者给这2个端口以权限
+3 安装EPEL Yum Repository.
+sudo rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+3 安装ELFF Yum Repository. </pre>
+<strong>2  安装server</strong>
+<pre class="sh_bash">
+sudo yum install chef-server-api  //安装
+[root@zhouyq yum.repos.d]# rpm -e --nodeps rubygem-rest-client-1.6.1-2.el5 //可能这个被EPEL升级不能兼容,因为server需要的版本要小于1.5
+wget http://rubygems.org/downloads/rest-client-1.3.1.gem   /下载合适的gem
+[root@zhouyq yum.repos.d]# gem install ~/rest-client-1.3.1.gem --local  //本地安装,因为直接使用"gem install rest-client -v 1.3.1 "总是有问题
+Successfully installed rest-client-1.3.1
+1 gem installed
+Installing ri documentation for rest-client-1.3.1...
+Installing RDoc documentation for rest-client-1.3.1...</pre>
+<strong>启动相关服务:</strong>
+<pre class="sh_bash">
+for service in couchdb rabbitmq-server chef-solr chef-solr-indexer chef-server
+do
+sudo /sbin/service $service start
+sudo /sbin/chkconfig $service on
+done
+注:这里可能会出现问题 要是服务启动不了 可能是rest-client和hostname的关系
+Starting database server couchdb
+Starting rabbitmq-server: SUCCESS
+rabbitmq-server.
+Starting chef-solr:                                        [  OK  ]
+Starting chef-solr-indexer:                                [  OK  ]
+Starting chef-server:                                      [  OK  ]</pre>
+<strong>测试见通的相关服务端口是否启动:</strong>
+<pre class="sh_bash">
+[root@zhouyq yum.repos.d]# netstat -tunlp|grep 5984
+tcp        0      0 127.0.0.1:5984              0.0.0.0:*                    LISTEN      5609/beam.smp       //CouchDB服务
+[root@zhouyq yum.repos.d]# netstat -tunlp|grep 5672
+tcp        0      0 0.0.0.0:5672                0.0.0.0:*                   LISTEN      5661/beam.smp   //rabbitmq服务
+[root@zhouyq yum.repos.d]# netstat -tunlp|grep 8983
+tcp        0      0 :::8983                     :::*                        LISTEN      5740/java        //chef-solr服务
+[root@zhouyq yum.repos.d]# netstat -tunlp|grep 4000
+tcp        0      0 0.0.0.0:4000                0.0.0.0:*                   LISTEN      6207/merb : chef-se //主程序</pre>
+<strong>安装chef的webgui:</strong>
+<pre class="sh_bash">
+yum install chef-server-webui &amp;&amp; /sbin/service chef-server-webui start &amp;&amp; /sbin/chkconfig chef-server-webui on
+查看监听端口
+[root@zhouyq yum.repos.d]# netstat -tunlp|grep 4040
+tcp        0      0 0.0.0.0:4040                0.0.0.0:*                   LISTEN      6285/merb : chef-se </pre>
+<strong>3 安装client</strong>
+<pre class="sh_bash">yum install chef
+root@client ~&gt; wget http://rubygems.org/downloads/rest-client-1.3.1.gem
+root@client ~&gt; gem install ~/rest-client-1.3.1.gem --local
+Successfully installed rest-client-1.3.1
+1 gem installed
+Installing ri documentation for rest-client-1.3.1...
+Installing RDoc documentation for rest-client-1.3.1...
+root@client ~&gt; /sbin/service chef-client start
+Starting chef-client:                                      [  OK  ]
+root@client ~&gt; /sbin/chkconfig chef-client on</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=f4be854d-40c5-8145-81a2-0a12f26e9cea" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E5%AE%89%E8%A3%85debian%E5%90%8E%E6%97%A0%E6%B3%95%E8%BF%9B%E5%85%A5windows-7-%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">安装debian后无法进入windows 7 解决办法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-14T00:00:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近安装了debian6.1版本，发现grub没有了windows7 菜单选项，这个grub是debian的天下。。。研究后感觉应该是debian使用了grub2的缘故，解决办法如下：</p>
+
+<p><pre class="sh_bash">sudo vi /boot/grub/grub.cfg</p>
+
+<p>将 windows 7 信息写进去：</p>
+
+<p>### BEGIN /etc/grub.d/30_os-prober ###</p>
+
+<p>menuentry "Windows 7 (loader) (on /dev/sda2)" {</p>
+
+<p>insmod part_msdos</p>
+
+<p>insmod ntfs</p>
+
+<p>set root='(hd0,msdos2)'</p>
+
+<p>search --no-floppy --fs-uuid --set 2e40f57240f540df</p>
+
+<p>chainloader +1</p>
+
+<p>}</p>
+
+<p>### END /etc/grub.d/30_os-prober ###</pre></p>
+
+<p>注：其中分区信息可以使用在开机进入grub菜单按“c”，然后在grub&gt;下输入 root （hd0，X）（实在不懂X可以从0开始试 ） –&gt; chainloader +1 –&gt; boot 要是启动到windows  说明这个就是需要找的</p>
+
+<p>然后 执行 sudo update-grub    重启电脑就可以了</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E4%BF%AE%E6%94%B9opensuse%E4%BF%AE%E6%94%B9%E5%BC%80%E6%9C%BA%E8%BF%87%E7%A8%8B%E8%83%8C%E6%99%AF%E7%94%BB%E9%9D%A2%E5%92%8Cgrub%E5%BC%80%E5%90%AF%E4%BC%81%E9%B9%85%E5%8A%A8%E7%94%BB%E6%8A%80/">修改opensuse修改开机过程背景画面和Grub开启企鹅动画技巧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-14T00:00:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>类似于XP开机那个来回循环走的小进度条的方式,opensuse其实也是可以修改的
+1  制作注意事项:
+使用GIMP编辑注意保存时候参数设置:另存为-&gt;保存-&gt;高级选项.其中质量的参数能控制图片大小,子采样需要<em><strong>2x2,1x1,1x1</strong></em> DCT方法 需要&#8221;整数&#8221;
+2 备份复制图片
+<pre class="sh_bash">linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/silent-1024x768.jpg
+linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/bootsplash-bootsplash-1024x768.jpg </pre>
+3 生成新的initrd
+<pre class="sh_bash">mkinitrd -s 1024x768</pre></p>
+
+<p>企鹅动态画面是openSUSE发行的Grub自带的启动画面，只需要修改gfxboot的配置文件就可以开启企鹅动态画面。
+<pre class="sh_bash">
+linux-3qd1:/home/dongwm #  gfxboot --change-config base::penguin=100
+还可以自己修改gfxboot.cfg文件，启用企鹅画面：
+linux-3qd1:/home/dongwm # vi /etc/bootsplash/themes/openSUSE/cdrom/gfxboot.cfg</p>
+
+<p>; penguin theme likelihood (in percent, -1 = auto)
+penguin=-1
+</pre></p>
+
+<p>修改peguin变量的值为企鹅画面显示的几率（从0-100选个数字，代表出现几率为0%-100%）:</p>
+
+<p>; penguin theme likelihood (in percent, -1 = auto)
+penguin=100</p>
+
+<p>&nbsp;
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=670cf740-daf0-8a3f-ab8a-79decfa2c7a8" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/%E4%BF%AE%E6%94%B9opensuse%E5%BC%80%E6%9C%BAgrub%E7%94%BB%E9%9D%A2/">修改opensuse开机grub画面</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-13T00:00:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>追溯到菜鸟时间,见到以百度大大吧百度服务器的开机画面都弄成了百度的那个小脚丫图片,崇拜的哇哇的!!最近闲来无事,也修改了下自己的opensuse11.4系统,以下是过程及一些心得:
+</strong><pre class="sh_bash">linux-3qd1:/home/dongwm # mkdir new   //创建一个目录 用来放message解压出来的文件
+\linux-3qd1:/home/dongwm # cp /boot/message new/
+linux-3qd1:/home/dongwm # cd new/
+linux-3qd1:/home/dongwm/new # cpio -i &lt; message   //解开message文件,其中包含了一些文件和图片
+827 块
+linux-3qd1:/home/dongwm/new # cp /home/dongwm/桌面/Background.jpg back.jpg  //替换解压出来的一个back.jpg文件  这个就是开始启动的那个背景图片，Background.jpg是我自己的图片，使用GIMP编辑，尺寸最大为800x600，色深24bit真彩色，gimp采样格式 <em>2x2,1x1,1x1（最小文件）</em> ;文件大小不能超过150-300KB .
+linux-3qd1:/home/dongwm/new # rm message -f   //删除这个message  因为要不然生成的新message还包含了以前的message  不起效果
+linux-3qd1:/home/dongwm/new # ls |cpio -o &gt;../message   //生成新的message  放在了上一级目录下
+867 块
+linux-3qd1:/home/dongwm/new # cp /boot/message /boot/message.bak  //安全起见  备份
+linux-3qd1:/home/dongwm/new # cp ../message /boot/   //拷贝新的message</p>
+
+<p>ok  重启吧  </pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=e2ffd0ef-61c7-8737-8233-02af011192cb" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shell%E8%84%9A%E6%9C%AC%E8%B0%83%E8%AF%95%E9%AB%98%E7%BA%A7%E5%AD%A6%E4%B9%A0/">Shell脚本调试高级学习</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-13T00:00:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1  函数调试&#8211;额这个函数使用了shell内置变量$?，执行$?的值可以接着执行命令，调用函数</strong></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+alert ()
+{ if [ "$1" -ne 0 ]; then echo "WARNING: $2 did not complete successfully." &gt;&amp;2; exit $1; else echo "INFO: $2 completed successfully" &gt;&amp;2; fi;}
+sh test11.sh  //一个我用来测试的脚本,当脚本正确或者不正确输出不一样的调试报错
+alert $?</pre></p>
+
+<p><strong>2 trap</strong></p>
+
+<p>trap命令用于捕获指定的信号并执行预定义的命令。</p>
+
+<p>语法：trap &#8216;command&#8217; signal</p>
+
+<p>转：其中signal是要捕获的信号，command是捕获到指定的信号之后，所要执行的命令。可以用kill –l命令看到系统中全部可用的信号名，捕获信号后所执行的命令可以是任何一条或多条合法的shell语句，也可以是一个函数名。
+shell脚本在执行时，会产生三个所谓的“伪信号”，(之所以称之为“伪信号”是因为这三个信号是由shell产生的，而其它的信号是由操作系统产生的)，通过使用trap命令捕获这三个“伪信号”并输出相关信息对调试非常有帮助。</p>
+
+<p><a name="table1"><span style="background-color: #ffff00;"><strong> shell伪信号</strong></span></a><span style="background-color: #ffff00;"><strong>分类：</strong></span></p>
+
+<p>EXIT
+从一个函数中退出或整个脚本执行完毕</p>
+
+<p>ERR
+当一条命令返回非零状态时(代表命令执行不成功)</p>
+
+<p>DEBUG
+脚本中每一条命令执行之前</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+trap 'echo “before execute line:$LINENO, a=$a,b=$b,c=$c”' DEBUG
+a=1
+b=$(($a+1))
+c=$(($b+1))
+echo $c</p>
+
+<p>[root@server ~]# sh !$
+sh test.sh
+“before execute line:3, a=,b=,c=”
+“before execute line:4, a=1,b=,c=”
+“before execute line:5, a=1,b=2,c=”
+“before execute line:6, a=1,b=2,c=3”
+3</p>
+
+<p>注：这个调试脚本不需要每句语句都加echo，只要最上面一行trap。本例表示此行执行前执行信号</p>
+
+<p></pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/27/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/25/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

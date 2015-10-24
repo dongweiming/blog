@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: ipython | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/ipython/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[IPython3时代到来]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ipython3shi-dai-dao-lai/"/>
+    <updated>2015-02-28T23:27:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ipython3shi-dai-dao-lai</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>我以前写过一些<a href="http://www.dongwm.com/blog/categories/ipython/">IPython高级用法</a>, 还有在组内分享了一期<a href="http://www.dongwm.com/archives/ji-jiang-zai-bpugfen-xiang/">IPython notebook的分享</a>. 今天<a href="https://github.com/ipython/ipython">IPython3</a>被release了. 它带来什么可以看一下<a href="http://ipython.org/ipython-doc/3/whatsnew/version3.html">release notes</a>.
+好吧, 我也没有意识到ipython3来的会这样快. 这多半年来. 我作为一个150个贡献者之一, 见证了IPython的发展. 这是个里程碑的版本. 他带来了非常多的变化和新的特性. 今天我来帮大家迁移和解读一些吧.</p>
+
+<p>IPython是什么? 本质上它是一个增强版的python交互模式解释器, 所见即所得的执行代码, 查看结果, 也拥有历史记录. 我认为这是一个python开发者必备的工具. 我个人依赖ipython常用的功能有:</p>
+
+<ul>
+  <li>ipython notebook - 一个可以跑的在线可编辑可运行的笔记. 可以测试程序, 执行代码, 当做说明文档, 能帮助不擅长web开发的同学做出很多页面的效果, 支持markdown语法等</li>
+  <li>自动补全 - 当我<code>import xx</code>的时候 我可以像用zsh一样使用Tab自动补全对应的模块/方法的名字</li>
+  <li>magic - 它提供很很多magic的函数命令, 比如你可以直接执行ls, pwd等. 还能使用其他shell命令, 调用编辑器等</li>
+  <li>它能通过?或者??帮我查看代码的注释, 接口参数等等.</li>
+  <li>它提供很多的配置选择, 可以使用内置/外部插件达到一些其他的功能, 比如autoreload - 你不需要退出ipython就能获得你已经import之后的代码修改后的效果.</li>
+  <li>它在分布计算, 数据分析上又很好的支持, ipython非常大的使用群体是科学家和算法工程师</li>
+</ul>
+
+<p>它在python界有什么地位? 我肯定会带有个人色彩. 来一些github的数据说一说(截止到2015-03-01之前):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>项目</th>
+      <th style="text-align: center">Issue数</th>
+      <th style="text-align: right">Star数</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>django</td>
+      <td style="text-align: center">4221</td>
+      <td style="text-align: right">13088</td>
+    </tr>
+    <tr>
+      <td>flask</td>
+      <td style="text-align: center">1359</td>
+      <td style="text-align: right">12810</td>
+    </tr>
+    <tr>
+      <td>tornado</td>
+      <td style="text-align: center">1352</td>
+      <td style="text-align: right">8626</td>
+    </tr>
+    <tr>
+      <td>ipython</td>
+      <td style="text-align: center">7898</td>
+      <td style="text-align: right">5822</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这是python最有名的几个项目. 可以看到ipython的star远落后于其他. 但是他的issue数却大大的高于其他, 一方面IPython覆盖的功能和逻辑更多更复杂.
+一方面用户对IPython的依赖和兴趣要高很多, 还有一方面IPython也由于内容太多更容易有bug,且主要维护者都是科学家没有太多精力和兴趣做一些基础保障.
+可见IPython的知名度不高, 但是对用户粘性却很高.</p>
+
+<h4 id="section-1">如何升级</h4>
+
+<p>假如你需要使用ipython notebook, 需要使用</p>
+
+<p><code>python
+pip install --upgrade "ipython[all]"
+</code></p>
+
+<p>否则直接</p>
+
+<p><code>python
+pip install --upgrade ipython
+</code></p>
+
+<h4 id="kernel">使用不同的内核(kernel)</h4>
+
+<p>IPython的组件大多是核心开发者开发的, <release notes="">中提到了kernel是这样几个:</release></p>
+
+<p><code>python
+Bash
+Echo
+Python2
+Python3
+R
+</code></p>
+
+<p>Bash是这个项目<a href="https://github.com/takluyver/bash_kernel/">https://github.com/takluyver/bash_kernel/</a>, 你可以直接</p>
+
+<p><code>python
+sudo pip install bash_kernel
+</code></p>
+
+<p>那么开始说kernel是什么, kernel是一个能执行各种语言的程序封装, 比如可以用notebook跑bash, 跑ruby, 能使用其他语言的语法.
+上面的bash就是借用pexpect的<a href="http://pexpect.readthedocs.org/en/latest/api/replwrap.html">replwrap</a>实现的bash的封装.对比一下就知道了:</p>
+
+<p>```python
+$/usr/local/bin/ipython
+In [1]: echo
+—————————————————————————
+NameError                                 Traceback (most recent call last)</p>
+<ipython-input-1-53f31a089339> in <module>()
+----&gt; 1 echo
+
+NameError: name 'echo' is not defined
+In [2]: bc
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-2-b79898bb7907> in <module>()
+----&gt; 1 bc
+
+NameError: name 'bc' is not defined
+$/usr/local/bin/ipython console --kernel bash # 使用bash内核就可以使用这些bash下命令了
+IPython Console 3.0.0
+
+In [1]: echo '2-1'
+2-1
+
+In [2]: echo '2-1'|bc
+1
+```
+
+看一下我本地都能用什么kernel:
+
+```python
+$ipython kernelspec list
+Available kernels:
+python2
+python3
+bash
+echo
+```
+
+python2就是系统默认的, 原来用的那个. 看到echo和python3的原因在这里:
+
+
+```python
+$pwd
+/Users/dongweiming/.ipython/kernels
+$tree
+.
+├── echo # 在~/.ipython/kernels有这个echo的目录里面包含了正确地kernel.json就会出现对应的kernel
+│   └── kernel.json
+├── echokernel.py
+└── python3
+    └── kernel.json
+
+2 directories, 3 files
+```
+
+看一下代码:
+
+```
+$cat echo/kernel.json
+{"argv":["python","-m","echokernel", "-f", "{connection_file}"],
+ "display_name":"Echo"
+ }
+
+$cat python3/kernel.json
+{
+  "display_name": "IPython (Python 3)",
+  "language": "python",
+  "argv": [
+    "python3",
+    "-c", "from IPython.kernel.zmq.kernelapp import main; main()",
+    "-f", "{connection_file}"
+    ],
+  "codemirror_mode": {
+    "version": 2,
+    "name": "ipython"
+    }
+}
+$ipython console --kernel python3 # 可以在python2下跑python3的代码了
+In [1]: print
+Out[1]: <function print="">
+
+In [2]: print 'sd'
+  File "<ipython-input-2-f747b7d9e029>", line 1
+      print 'sd'
+      ^
+SyntaxError: invalid syntax
+```
+
+更多的自定义请看[Wrapper kernels](http://ipython.org/ipython-doc/3/development/wrapperkernels.html)
+
+当然这里默认都可以在notebook里使用
+
+#### Widget
+
+widget系统经过了很大的重构和更新, 全部信息在[widget migration guide](http://ipython.org/ipython-doc/3/whatsnew/version3_widget_migration.html).
+
+Widget是什么? 这是ipython notebook的插件系统, 大部分的插件都可以看这里: [containers_widgets.ipynb](http://nbviewer.ipython.org/github/dongweiming/divingintoipynb/blob/master/double11/containers_widgets.ipynb), 看完就知道它是什么和它能做什么了.
+在我分享notebook的项目[divingintoipynb](https://github.com/dongweiming/divingintoipynb)里你能看到我自定义的widget:
+[selectize_widget.ipynb](https://github.com/dongweiming/divingintoipynb/blob/master/double11/selectize_widget.ipynb), 和对应的[widget_selectize.py](https://github.com/dongweiming/divingintoipynb/blob/master/double11/widget_selectize.py).
+
+custom.js在使用的时候也有了很大的变动, 可以看我分享项目的[custom.js](https://github.com/dongweiming/divingintoipynb/blob/master/profile_double11/static/custom/custom.js)
+
+#### Notebook format
+
+原来的Notebook的版本是3, 现在已经升级为4. 他们是不兼容的版本. 在启动新版IPython访问你的ipynb的时候会出现这样的弹出框:
+
+```python
+This notebook has been converted from an older notebook format (v3) to the current notebook format (v4). The next time you save this notebook, the current notebook format will be used. Older versions of IPython may not be able to read the new format. To preserve the original version, close the notebook without saving it.
+```
+
+你记得保存一下会帮你自动转化为新版本, 下次再启动就可以. 假如由于bug或者其他原因想降级可以这样:
+
+```python
+ipython nbconvert --to notebook --nbformat 3 <notebook>
+```
+
+#### 使用jinja2自定义模板
+
+通过`NotebookApp.extra_template_paths`可以指定外部模板目录, 可以代替默认模板. 或者:
+
+```python
+ipython notebook '--extra_template_paths=["/Users/dongweiming/.ipython/templates/"]'
+```
+
+比如你不喜欢ipython notebook提供的现有的目录页(http://localhost:8000/tree这样的路径). 你可以自己写一个叫做tree.html.的模板放在
+/Users/dongweiming/.ipython/templates/目录下. 但是建议还是继承原来的tree.html, 再自由发挥.
+
+#### 使用ipython notebook的terminal功能.
+
+在notebook页面上其实是可以直接使用websocket连接到服务器上的. 但是你需要安装`terminado`. 这样在/tree下新建的时候就能选择terminal了.
+
+#### 其他
+
+剩下就是一些bug修改, 方法重命名, 功能增强, 去掉一些不再被维护的内容等等. 对95%的用户影响几乎没有.
+</notebook></ipython-input-2-f747b7d9e029></function></module></ipython-input-2-b79898bb7907></module></ipython-input-1-53f31a089339>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[分享ipython notebook]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ji-jiang-zai-bpugfen-xiang/"/>
+    <updated>2015-01-16T15:48:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ji-jiang-zai-bpugfen-xiang</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>本来准备下一次的Bpug(北京python用户组)的活动上准备做这个分享. 搁置了. 有兴趣组织纯技术活动的公司或者组织可以联系我. 有兴趣的同学可以前往(我也会把录像地址放到网站的).
+提前给大家做一些预告. 其实ppt早就放到slideshare上了, 地址是http://www.slideshare.net/dongweiming/ipython-notebook-43211257. 也可以从<a href="https://github.com/dongweiming/divingintoipynb/blob/master/ipython-notebook.pdf">github下载</a></p>
+
+<p>对应的代码在<a href="https://github.com/dongweiming/divingintoipynb">divingintoipynb</a>. Youtube在线看: <a href="https://www.youtube.com/watch?v=qMcKp8gFAYA">https://www.youtube.com/watch?v=qMcKp8gFAYA</a></p>
+
+<h4 id="section-1">大纲</h4>
+
+<ol>
+  <li>豆瓣东西双11临时后台 - 想看效果么? 看下面</li>
+  <li>把ipython notebook转换成html或者其他格式以及它的原理</li>
+  <li>我写的一个缩小版的<a href="https://github.com/jupyter/nbviewer">nbviewer</a>: <a href="https://github.com/dongweiming/Ipynb-viewer">Ipynb-viewer</a>, 直接在ipython目录启动web服务</li>
+  <li>nbconvert原理</li>
+  <li>用ipynb写blog(pelican/nikola) 效果可见<a href="http://dongweiming.github.io/divingintoipynb_pelican">divingintoipynb_pelican</a>和<a href="http://dongweiming.github.io/divingintoipynb_nikola/">divingintoipynb_nikola</a>
+还会讲到pelican转换ipynb到html插件，使用fabric: new_post, edit，import_ipynb. 我也给nikola贡献了import ipynb功能.</li>
+  <li>ipython notebook用到得第三方库和组件</li>
+  <li>Rich display system</li>
+  <li>现有的扩展, 演示. 我自己写的一个扩展. 演示, 代码分析</li>
+  <li>定制ipython notebook的键位. 使用emacs键位. 设计一个新的功能 - 弹出一个dialog列出所有emacs快捷键说明(想起来了么? C-h b)</li>
+  <li>定制一个基于<a href="https://github.com/brianreavis/selectize.js">selectize.js</a>的widget. 前后端代码分析.</li>
+  <li>ipython notebook 其他方面的一些用法， 整个过程中有ipython2也有ipython3</li>
+</ol>
+
+<p>模拟后台效果:</p>
+
+<p><img src="https://github.com/dongweiming/divingintoipynb/raw/master/double11/double11.png" alt="" /></p>
+
+<h3 id="update-2015-02-02">UPDATE: 2015-02-02</h3>
+
+<p>上周五在组内分享了, 下面是视频下载地址: <a href="http://pan.baidu.com/s/1o6BjBXg">http://pan.baidu.com/s/1o6BjBXg</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ipython的一些高级用法(二)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa-er/"/>
+    <updated>2014-12-11T17:04:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ipythonde-[?]-xie-gao-ji-yong-fa-er</id>
+    <content type="html"><![CDATA[<h4 id="ipythonmagic--magic-ipython-history-prun-logstart">今天我们学习下写ipython的magic命令. 好, magic是什么? 它是ipython自带的一些扩展命令, 类似%history, %prun, %logstart..</h4>
+<p>想查看全部的magic可以使用ismagic, 列出可用的全部magics</p>
+
+<p><code>python
+%lsmagic
+</code></p>
+
+<p>magic分为2类:</p>
+
+<ul>
+  <li>line magic: 一些功能命令</li>
+  <li>cell magic: 主要是渲染ipython notebook页面效果以及执行某语言的代码</li>
+</ul>
+
+<h5 id="idbhttpsgithubcomdongweimingidb---python-dbpy-shell-extension"><a href="https://github.com/dongweiming/idb">idb</a> - python db.py shell extension</h5>
+
+<p>idb是我最近写的一个magic. 主要是给ipython提供<a href="https://github.com/yhat/db.py">db.py</a>的接口,我们直接分析代码(我只截取有代表性的一段):</p>
+
+<p>```python
+import os.path
+from functools import wraps
+from operator import attrgetter
+from urlparse import urlparse</p>
+
+<p>from db import DB # db.py提供的接口
+from IPython.core.magic import Magics, magics_class, line_magic # 这三个就是我们需要做magic插件的组件</p>
+
+<p>def get_or_none(attr):
+    return attr if attr else None</p>
+
+<p>def check_db(func):
+    @wraps(func)
+    def deco(<em>args):
+        if args[0]._db is None: # 每个magic都需要首页实例化过db，so 直接加装饰器来判断
+            print ‘[ERROR]Please make connection: <code>con = %db_connect xx</code> or <code>%use_credentials xx</code> first!’  # noqa
+            return
+        return func(</em>args)
+    return deco</p>
+
+<p>@magics_class  # 每个magic都需要加这个magics_class装饰器
+class SQLDB(Magics): # 要继承至Magics
+    _db = None # 每次打开ipython都是一次实例化</p>
+
+<pre><code>@line_magic('db_connect') # 这里用了line_magic 表示它是一个line magic.(其他2种一会再说) magic的名字是db_connect. 注意 函数名不重要
+                          # 最后我们用 %db_connect而不是%conn
+def conn(self, parameter_s): # 每个这样的方法都接收一个参数 就是你在ipython里输入的内容
+    """Conenct to database in ipython shell.
+    Examples::
+        %db_connect
+        %db_connect postgresql://user:pass@localhost:port/database
+    """
+    uri = urlparse(parameter_s) # 剩下的都是解析parameter_s的逻辑
+
+    if not uri.scheme:
+        params = {
+            'dbtype': 'sqlite',
+            'filename': os.path.join(os.path.expanduser('~'), 'db.sqlite')
+        }
+    elif uri.scheme == 'sqlite':
+        params = {
+            'dbtype': 'sqlite',
+            'filename': uri.path
+        }
+    else:
+        params = {
+            'username': get_or_none(uri.username),
+            'password': get_or_none(uri.password),
+            'hostname': get_or_none(uri.hostname),
+            'port': get_or_none(uri.port),
+            'dbname': get_or_none(uri.path[1:])
+        }
+
+    self._db = DB(**params) # 这里给_db赋值
+
+    return self._db # return的结果就会被ipython接收,显示出来
+
+@line_magic('db') # 一个新的magic 叫做%db -- 谨防取名冲突
+def db(self, parameter_s):
+    return self._db
+
+@line_magic('table')
+@check_db
+def table(self, parameter_s):
+    p = parameter_s.split() # 可能传进来的是多个参数,但是对ipython来说,传进来的就是一堆字符串，所以需要按空格分隔下
+    l = len(p)
+    if l == 1:
+        if not p[0]:
+            return self._db.tables
+        else:
+            return attrgetter(p[0])(self._db.tables)
+    else:
+        data = self._db.tables
+        for c in p:
+            if c in ['head', 'sample', 'unique', 'count', 'all', 'query']:
+                data = attrgetter(c)(data)()
+            else:
+                data = attrgetter(c)(data)
+        return data
+</code></pre>
+
+<p>def load_ipython_extension(ipython): # 注册一下. 假如你直接去ipython里面加 就不需要这个了
+    ipython.register_magics(SQLDB)
+```</p>
+
+<p>PS:</p>
+
+<ol>
+  <li>调试中可以使用%reloa_ext idb 的方式重启magic</li>
+  <li>%install_ext 之后默认放在你的ipython自定义目录/extensions里. 我这里是~/.ipython/extensions</li>
+</ol>
+
+<p>好了,大家是不是觉得ipython的magic也不是很难嘛</p>
+
+<h5 id="ipython">来了解ipython都提供了什么?</h5>
+
+<ol>
+  <li>magic装饰器的类型:</li>
+</ol>
+
+<ul>
+  <li>line_magic # 刚才我们见识了, 就是%xx, xx就是magic的名字</li>
+  <li>cell_magic # 就是%%xx</li>
+  <li>line_cell_magic # 可以是%xx, 也可以是%%xx</li>
+</ul>
+
+<p>先说cell_magic 来个例子，假如我想执行个ruby,本来应该是:</p>
+
+<p>```python
+In [1]: !ruby -e ‘p “hello”’
+“hello”</p>
+
+<p>In [2]: %%ruby # 也可以这样
+   …: p “hello”
+      …:
+      “hello”</p>
+
+<p>再说个notebook的:</p>
+
+<p>In [3]: %%javascript
+   …: require.config({
+   …:     paths: {
+   …:         chartjs: ‘//code.highcharts.com/highcharts’
+   …:     }
+   …: });
+   …:
+   <ipython.core.display.javascript object="">
+});
+```</ipython.core.display.javascript></p>
+
+<p>然后再说line_cell_magic:</p>
+
+<p>```python
+In [4]: %time 2**128
+CPU times: user 2 µs, sys: 1 µs, total: 3 µs
+Wall time: 5.01 µs
+Out[4]: 340282366920938463463374607431768211456L</p>
+
+<p>In [5]: %%time
+   …: 2**128
+   …:
+   CPU times: user 4 µs, sys: 0 ns, total: 4 µs
+   Wall time: 9.06 µs
+   Out[5]: 340282366920938463463374607431768211456L
+```</p>
+
+<p>Ps: line_cell_magic方法的参数是2个:</p>
+
+<p><code>python
+@line_cell_magic
+def xx(self, line='', cell=None):
+</code></p>
+
+<h5 id="magicipythonmagic">带参数的magic（我直接拿ipython源码提供的magic来说明):</h5>
+
+<p>一共2种风格:</p>
+
+<ul>
+  <li>使用getopt: self.parse_options</li>
+  <li>使用argparse: magic_arguments</li>
+</ul>
+
+<h6 id="selfparseoptions">self.parse_options</h6>
+
+<p><code>python
+@line_cell_magic
+def prun(self, parameter_s='', cell=None):
+    opts, arg_str = self.parse_options(parameter_s, 'D:l:rs:T:q',
+                                       list_all=True, posix=False)
+    ...
+</code></p>
+
+<p>getopt用法可以看这里 http://pymotw.com/2/getopt/index.html#module-getopt</p>
+
+<p>我简单介绍下’D:l:rs:T:q’就是可以使用 -D, -l, -r, -s, -T, -q这些选项. <code>:</code>号是告诉你是否需要参数,split下就是:
+D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %prun -D <filename /></p>
+
+<h6 id="magicarguments">magic_arguments</h6>
+
+<p><code>python
+@magic_arguments.magic_arguments() # 最上面
+@magic_arguments.argument('--breakpoint', '-b', metavar='FILE:LINE',
+    help="""
+    Set break point at LINE in FILE.
+    """
+) # 这种argument可以有多个
+@magic_arguments.argument('statement', nargs='*',
+    help="""
+    Code to run in debugger.
+    You can omit this in cell magic mode.
+    """
+)
+@line_cell_magic
+def debug(self, line='', cell=None):
+    args = magic_arguments.parse_argstring(self.debug, line) # 要保持第一个参数等于这个方法名字,这里就是self.debug
+    ...
+</code></p>
+
+<p>还有个magic方法集: 用于并行计算的magics: <a href="https://github.com/ipython/ipython/blob/master/IPython/parallel/client/magics.py">IPython/parallel/client/magics.py</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ipython的一些高级用法(一)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/"/>
+    <updated>2014-12-07T09:56:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ipythonde-[?]-xie-gao-ji-yong-fa</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>以前在我的PPT<a href="http://dongweiming.github.io/Expert-Python/">python高级编程</a>也提到了一些关于ipython的用法. 今天继续由浅入深的看看ipython,
+本文作为读者的你已经知道ipython并且用了一段时间了.</p>
+
+<h5 id="run">%run</h5>
+
+<p>这是一个magic命令, 能把你的脚本里面的代码运行, 并且把对应的运行结果存入ipython的环境变量中:</p>
+
+<p>```
+$cat t.py
+# coding=utf-8
+l = range(5)</p>
+
+<p>$ipython
+In [1]: %run t.py # <code>%</code>可加可不加</p>
+
+<p>In [2]: l # 这个l本来是t.py里面的变量, 这里直接可以使用了
+Out[2]: [0, 1, 2, 3, 4]
+```</p>
+
+<h5 id="alias">alias</h5>
+
+<p><code>python
+In [3]: %alias largest ls -1sSh | grep %s
+In [4]: largest to
+total 42M
+ 20K tokenize.py
+ 16K tokenize.pyc
+8.0K story.html
+4.0K autopep8
+4.0K autopep8.bak
+4.0K story_layout.html
+</code></p>
+
+<p>PS 别名需要存储的, 否则重启ipython就不存在了:</p>
+
+<p><code>
+In [5]: %store largest
+Alias stored: largest (ls -1sSh | grep %s)
+</code></p>
+
+<p>下次进入的时候<code>%store -r</code></p>
+
+<h5 id="bookmark---">bookmark - 对目录做别名</h5>
+
+<p>```python
+In [2]: %pwd
+Out[2]: u’/home/vagrant’</p>
+
+<p>In [3]: %bookmark dongxi ~/shire/dongxi</p>
+
+<p>In [4]: %cd dongxi
+/home/vagrant/shire/dongxi_code</p>
+
+<p>In [5]: %pwd
+Out[5]: u’/home/vagrant/shire/dongxi_code’
+```</p>
+
+<h5 id="ipcluster---">ipcluster - 并行计算</h5>
+
+<p>其实ipython提供的方便的并行计算的功能. 先回答ipython做并行计算的特点:</p>
+
+<p>1.</p>
+
+<p><code>bash
+$wget http://www.gutenberg.org/files/27287/27287-0.txt
+</code></p>
+
+<p>第一个版本是直接的, 大家习惯的用法.</p>
+
+<p>```python
+In [1]: import re</p>
+
+<p>In [2]: import io</p>
+
+<p>In [3]: non_word = re.compile(r’[\W\d]+’, re.UNICODE)</p>
+
+<p>In [4]: common_words = {
+   …: ‘the’,’of’,’and’,’in’,’to’,’a’,’is’,’it’,’that’,’which’,’as’,’on’,’by’,
+   …: ‘be’,’this’,’with’,’are’,’from’,’will’,’at’,’you’,’not’,’for’,’no’,’have’,
+   …: ‘i’,’or’,’if’,’his’,’its’,’they’,’but’,’their’,’one’,’all’,’he’,’when’,
+   …: ‘than’,’so’,’these’,’them’,’may’,’see’,’other’,’was’,’has’,’an’,’there’,
+   …: ‘more’,’we’,’footnote’, ‘who’, ‘had’, ‘been’,  ‘she’, ‘do’, ‘what’,
+   …: ‘her’, ‘him’, ‘my’, ‘me’, ‘would’, ‘could’, ‘said’, ‘am’, ‘were’, ‘very’,
+   …: ‘your’, ‘did’, ‘not’,
+   …: }</p>
+
+<p>In [5]: def yield_words(filename):
+   …:     import io
+   …:     with io.open(filename, encoding=’latin-1’) as f:
+   …:         for line in f:
+   …:             for word in line.split():
+   …:                 word = non_word.sub(‘’, word.lower())
+   …:                 if word and word not in common_words:
+   …:                     yield word
+   …:</p>
+
+<p>In [6]: def word_count(filename):
+   …:     word_iterator = yield_words(filename)
+   …:     counts = {}
+   …:     counts = defaultdict(int)
+   …:     while True:
+   …:         try:
+   …:             word = next(word_iterator)
+   …:         except StopIteration:
+   …:             break
+   …:         else:
+   …:             counts[word] += 1
+   …:     return counts
+   …:</p>
+
+<p>In [6]: from collections import defaultdict # 脑残了 忘记放进去了..
+In [7]: %time counts = word_count(filename)
+CPU times: user 88.5 ms, sys: 2.48 ms, total: 91 ms
+Wall time: 89.3 ms
+```</p>
+
+<p>现在用ipython来跑一下:</p>
+
+<p><code>python
+ipcluster start -n 2 # 好吧, 我的Mac是双核的
+</code></p>
+
+<p>先讲下ipython 并行计算的用法:</p>
+
+<p>```python
+In [1]: from IPython.parallel import Client # import之后才能用%px*的magic</p>
+
+<p>In [2]: rc = Client()</p>
+
+<p>In [3]: rc.ids # 因为我启动了2个进程
+Out[3]: [0, 1]</p>
+
+<p>In [4]: %autopx # 如果不自动 每句都需要: <code>%px xxx</code>
+%autopx enabled</p>
+
+<p>In [5]: import os # 这里没autopx的话 需要: <code>%px import os</code></p>
+
+<p>In [6]: print os.getpid() # 2个进程的pid
+[stdout:0] 62638
+[stdout:1] 62636</p>
+
+<p>In [7]: %pxconfig –targets 1 # 在autopx下 这个magic不可用
+[stderr:0] ERROR: Line magic function <code>%pxconfig</code> not found.
+[stderr:1] ERROR: Line magic function <code>%pxconfig</code> not found.</p>
+
+<p>In [8]: %autopx # 再执行一次就会关闭autopx
+%autopx disabled</p>
+
+<p>In [10]: %pxconfig –targets 1 # 指定目标对象, 这样下面执行的代码就会只在第2个进程下运行</p>
+
+<p>In [11]: %%px –noblock # 其实就是执行一段非阻塞的代码
+   ….: import time
+   ….: time.sleep(1)
+   ….: os.getpid()
+   ….:
+Out[11]: <asyncresult: execute="" /></p>
+
+<p>In [12]: %pxresult # 看 只返回了第二个进程的pid
+Out[1:21]: 62636</p>
+
+<p>In [13]: v = rc[:] # 使用全部的进程, ipython可以细粒度的控制那个engine执行的内容</p>
+
+<p>In [14]: with v.sync_imports(): # 每个进程都导入time模块
+   ….:     import time
+   ….:
+importing time on engine(s)</p>
+
+<p>In [15]: def f(x):
+   ….:     time.sleep(1)
+   ….:     return x * x
+   ….:</p>
+
+<p>In [16]: v.map_sync(f, range(10)) # 同步的执行</p>
+
+<p>Out[16]: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</p>
+
+<p>In [17]: r = v.map(f, range(10)) # 异步的执行</p>
+
+<p>In [18]: r.ready(), r.elapsed # celery的用法
+Out[18]: (True, 5.87735)</p>
+
+<p>In [19]: r.get() # 获得执行的结果
+Out[19]: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+```</p>
+
+<p>入正题:</p>
+
+<p>```python
+In [20]: def split_text(filename):
+….:    text = open(filename).read()
+….:    lines = text.splitlines()
+….:    nlines = len(lines)
+….:    n = 10
+….:    block = nlines//n
+….:    for i in range(n):
+….:        chunk = lines[i<em>block:(i+1)</em>(block)]
+….:        with open(‘count_file%i.txt’ % i, ‘w’) as f:
+….:            f.write(‘\n’.join(chunk))
+….:    cwd = os.path.abspath(os.getcwd())
+….:    fnames = [ os.path.join(cwd, ‘count_file%i.txt’ % i) for i in range(n)] # 不用glob是为了精准
+….:    return fnames</p>
+
+<p>In [21]: from IPython import parallel</p>
+
+<p>In [22]: rc = parallel.Client()</p>
+
+<p>In [23]: view = rc.load_balanced_view()</p>
+
+<p>In [24]: v = rc[:]</p>
+
+<p>In [25]: v.push(dict(
+   ….:     non_word=non_word,
+   ….:     yield_words=yield_words,
+   ….:     common_words=common_words
+   ….: ))
+Out[25]: <asyncresult: _push="" /></p>
+
+<p>In [26]: fnames = split_text(filename)</p>
+
+<p>In [27]: def count_parallel():
+   …..:     pcounts = view.map(word_count, fnames)
+   …..:     counts = defaultdict(int)
+   …..:     for pcount in pcounts.get():
+   …..:         for k, v in pcount.iteritems():
+   …..:             counts[k] += v
+   …..:     return counts, pcounts
+   …..:</p>
+
+<p>In [28]: %time counts, pcounts = count_parallel() # 这个时间包含了我再聚合的时间
+CPU times: user 47.6 ms, sys: 6.67 ms, total: 54.3 ms # 是不是比直接运行少了很多时间?
+Wall time: 106 ms # 这个时间是</p>
+
+<p>In [29]: pcounts.elapsed, pcounts.serial_time, pcounts.wall_time
+Out[29]: (0.104384, 0.13980499999999998, 0.104384)
+```</p>
+
+<p>更多地关于并行计算请看这里: <a href="http://nbviewer.ipython.org/url/www.astro.washington.edu/users/vanderplas/Astr599/notebooks/21_IPythonParallel.ipynb">Parallel Computing with IPython</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[怎样不退出交互模式自动reload模块]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/how-to-not-exit-interactive-mode-autoreload/"/>
+    <updated>2013-05-24T11:54:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/how-to-not-exit-interactive-mode-autoreload</id>
+    <content type="html"><![CDATA[<h4 id="section"><em>前言</em></h4>
+
+<p>我想做python开发的人尤其是django开发都会有一种经历:进入python交互模式(直接 执行python回车)或者进入django-shell调试某功能，然后修改源码，退出交互模式或者djangoshell，重新进入在吧那些模块一一import… 问题是什么呢？浪费时间，为啥不像web 框架那样修改源码自动reload？ </p>
+
+<p>本来我花了2个多礼拜一直在做这件事情，其实原理就是封装ipython到我的shell，然后在我的shell加这个autoreload功能，但是昨晚看ipython源码发现：ipython早已经实现了…</p>
+
+<p>我的系统的实现的源码文件是 /usr/lib64/python2.7/site-packages/IPython/Extensions/ipy_autoreload.py</p>
+
+<h4 id="ipython">在ipython交互模式实现</h4>
+
+<p>和ipython版本有关，大于0.11 这样加载</p>
+
+<p><code>
+%load_ext autoreload
+%autoreload 2
+</code>
+小于0.11的就要这样加载
+<code>
+import ipy_autoreload
+%autoreload 2
+</code></p>
+
+<h4 id="ipython-1">ipython交互模式自动加载</h4>
+
+<p>你总不像每次进入ipython都执行这么2句吧, 那么可以加到ipython的自定义配置里面.因操作系统和ipython版本不同，ipython的用户自定义目录有所不同，增加的配置也 有所不同</p>
+
+<p>首先创建ipython个人配置 </p>
+
+<p><code>
+ipython profile create
+</code></p>
+
+<p>gentoo ~/.ipython  ipython :0.10.2 </p>
+
+<p>配置文件是.ipython/ipy_user_conf.py 添加</p>
+
+<p>```
+import ipy_autoreload
+o.autoexec.append(‘%autoreload 2’)</p>
+
+<p>```</p>
+
+<p>opensuse ~/.config/ipython  :0.13</p>
+
+<p>配置文件是~/.config/ipython/profile_default/ipython_config.py</p>
+
+<p><code>
+c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')
+c.InteractiveShellApp.exec_lines.append('%autoreload 2')
+</code></p>
+
+<h4 id="django-shell">Django shell的实现</h4>
+
+<p>遗憾的是改django源码中的core/management/commands/shell.py,没有提供自动reload,但是当你修改了ipython配置 他也是会起作用(这个操作系统有关，下面我会说不起作用的geek方法)</p>
+
+<p>PS： 你还可以使用<a href="https://github.com/dongweiming/django-extensions">django-extensions</a>中的shell_plus.py</p>
+
+<h4 id="ipythonbpythonpythondjango-shell">当你系统有ipython,bpython和默认的python，django shell选择的顺序</h4>
+
+<ul>
+  <li>
+    <p>当你系统没有ipython和bpython，那么就会选择默认的python</p>
+  </li>
+  <li>
+    <p>上面说的shell_plus的遍历列表顺序是bpython-&gt;ipython  </p>
+  </li>
+  <li>
+    <p>django自带的shell的遍历顺序是ipython-&gt;bpython</p>
+  </li>
+</ul>
+
+<p>上面说djangoshell不起作用怎么办？首先看了django/ipython源码(0.13.2)，其实djangoshell甚至django-extensions里面的shell_plus都没有问题，关键是ipython的问题</p>
+
+<p>我只说在用户配置里面的外部模块为啥没有正确执行</p>
+
+<p>ipython进入交互模式的流程</p>
+
+<ol>
+  <li>当调用ipython，都是通过IPython.frontend.terminal.ipapp的launch_new_instance函数开始</li>
+  <li>通过IPython.core.shellapp的InteractiveShellApp类里面的init_code方法去初始化启动后的加载</li>
+  <li>在init_code方法会执行self._run_exec_lines(),这个就是上面的模块导入执行</li>
+</ol>
+
+<p>djangoshell进入交互模式的流程</p>
+
+<ol>
+  <li>通过IPython.frontend.terminal.embed的TerminalInteractiveShell类开始</li>
+  <li>在TerminalInteractiveShell初始化中,没有执行上面的第三条</li>
+</ol>
+
+<p>解决办法就是暴力修改IPython/frontend/terminal/interactiveshell.py源码 给他加上模块初始化的操作</p>
+
+<p>在326行开始的地方，这样添加一段(包含存在的代码帮你你理解在什么位置添加代码,也就是下面的3-8行)</p>
+
+<p><code>
+self.init_usage(usage)                                                 
+self.init_banner(banner1, banner2, display_banner) 
+exex_lines = self.config['InteractiveShellApp']['exec_lines']          
+for line in exex_lines:                                                
+    try:                                                                        
+        self.run_cell(line, store_history=False)                       
+    except:                                                                     
+        pass
+#-------------------------------------------------------------------------          
+# Overrides of init stages                                                          
+#-------------------------------------------------------------------------
+</code></p>
+
+]]></content>
+  </entry>
+  
+</feed>

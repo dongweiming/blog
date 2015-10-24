@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: shell | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/shell/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[跨操作系统初始化安装工具(laptop)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell/"/>
+    <updated>2013-04-08T18:07:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>上周看了<a href="https://github.com/docopt/docopt">docopt</a>, 感想很多。最近因为工作需要用opensuse，用ubuntu，个人pc用gentoo，
+实在够折腾，每个系统都要相应的安装那些软件，搭建环境。早就想好好整理下思路，更geek的做这件事情。上段时间还看了个
+<a href="https://github.com/thoughtbot/laptop">laptop</a>,觉得能力很一般，但是fork真不少。但是确实这个想法很不错，很有必要。
+然后周末就构思了我的<a href="https://github.com/orzrd/laptop.git">laptop</a></p>
+
+<h4 id="section-1">它的特性</h4>
+
+<ul>
+  <li>记录操作记录，当某处出现故障，下次会从这个位置继续执行，而不需要全部执行一遍</li>
+  <li>受<a href="https://github.com/docopt/docopt">docopt</a>启发，根据我特定的语法写配置文件，不需要修改初始化脚本initialize.sh</li>
+  <li>只需要添加你要安装的软件包的安装命令（使用包管理器的就需要修改相应操作系统的install文件）</li>
+  <li>支持对已安装软件的确认，不再安装而跳过</li>
+  <li>根据特定语法打印安装过程的提示</li>
+  <li>提供绿色，红色的asciilinux终端显示字体</li>
+  <li>执行在没有git等环境下git clone项目安装</li>
+</ul>
+
+<h4 id="section-2">目前每个版本会安装那些软件？</h4>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gcc</td>
+          <td>g++</td>
+          <td>automake</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>tmux</td>
+          <td>htop</td>
+          <td>dstat</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>ruby</td>
+          <td>python</td>
+          <td>python库</td>
+          <td>expect</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>zsh</td>
+          <td>oh-my-zsh</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>easy_install</td>
+          <td>pip</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>django</td>
+          <td>torando</td>
+          <td>flask</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>nginx</td>
+          <td>uwsgi</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>redis</td>
+          <td>mongodb</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>mit-scheme</td>
+          <td>commonlisp</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>emacs</li>
+  <li>gitflow</li>
+  <li>celery</li>
+  <li>colout</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>MySQLdb</td>
+          <td>pymongo</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>taglist</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gevent</td>
+          <td>twisted</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>the_silver_searcher</li>
+  <li>检查vim是否自带python/ruby支持，否则下载编译一个执行的版本</li>
+  <li>我的常用脚本<a href="https://github.com/orzrd/mytools.github">mytools</a>,目前包含一个expect脚本和orzdba</li>
+  <li>我的<a href="https://github.com/dongweiming/dotfiles.git">dotfiles</a></li>
+</ul>
+
+<h2 id="gentoo">gentoo系统一些软件</h2>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gentoolkit</td>
+          <td>module-rebuild</td>
+          <td>genlop</td>
+          <td>eix</td>
+          <td>euses</td>
+          <td>elogv</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>fcitx</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>iproute2</td>
+          <td>netkit-telnetd</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="section-3">使用方法</h4>
+
+<ol>
+  <li>有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;git clone https://github.com/orzrd/laptop
+shell&gt;cd laptop
+shell&gt;bash initialize.sh
+</pre></figure></notextile></div>
+
+<ol>
+  <li>没有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;bash &lt;(curl -s https://raw.github.com/orzrd/laptop/master/setup_laptop)
+</pre></figure></notextile></div>
+
+<h5 id="section-4">脚本语法</h5>
+
+<h2 id="section-5">可操作文件</h2>
+
+<ol>
+  <li>common.install: 用户自定义的软件安装脚本，推荐非操作系统包管理器的都放在这里，注意逻辑顺序</li>
+  <li>opensuse/ubuntu/gentoo.install: 相应系统的安装脚本，这个只需要修改，我的脚本会自动根据系统信息找到</li>
+  <li>initialize.sh： 假如你想把需要我的安装方法，添加功能等，修改他，他是主入口</li>
+  <li>
+    <p>setup_laptop： 当用户没有git环境不能git clone  直接远程curl我，主要是下载git，clone我的laptop</p>
+  </li>
+  <li>’#’  以’#’开头的行表示这个信息会被安装过程以绿色字体打印，提示一下你要安装的东西等</li>
+  <li>： 以’:’开头的行，表示后面的字符串是个命令，也就是检查这个软件包有没有被安装需要的，假如which找到了路径说明被安装</li>
+  <li>; 以’;’开头的行为注释</li>
+  <li>其它行就是要执行的语句，请不要当作shell注释等，因为他会把你写的东西当成要执行的命令</li>
+</ol>
+
+<h2 id="todo">TODO</h2>
+
+<ul>
+  <li>文件下载后就不需要再下载而直接使用</li>
+  <li>在执行某软件的安装过程中其他进程继续下载其他软件包（也就是实现shell版本的emerge）</li>
+  <li>进度条或者python_koans的提示已完成/剩余，更多的异常处理等</li>
+  <li>更多的异常处理</li>
+  <li>打印彩色字体内容嵌其他颜色字体（比如提示出错，高亮错误的原因或者软件包）</li>
+</ul>
+
+<h2 id="forkpull-requestissue">注意我的项目地址，欢迎各种fork，pull request，issue</h2>
+
+<h3 id="httpsgithubcomorzrdlaptop">https://github.com/orzrd/laptop</h3>
+
+]]></content>
+  </entry>
+  
+</feed>

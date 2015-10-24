@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: Bash Shell | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/bash-shell/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[shell脚本调试高级学习]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shell%E8%84%9A%E6%9C%AC%E8%B0%83%E8%AF%95%E9%AB%98%E7%BA%A7%E5%AD%A6%E4%B9%A0/"/>
+    <updated>2011-04-13T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shell脚本调试高级学习</id>
+    <content type="html"><![CDATA[<p><strong>1  函数调试--额这个函数使用了shell内置变量$?，执行$?的值可以接着执行命令，调用函数</strong></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+alert ()
+{ if [ "$1" -ne 0 ]; then echo "WARNING: $2 did not complete successfully." &gt;&amp;2; exit $1; else echo "INFO: $2 completed successfully" &gt;&amp;2; fi;}
+sh test11.sh  //一个我用来测试的脚本,当脚本正确或者不正确输出不一样的调试报错
+alert $?</pre></p>
+
+<p><strong>2 trap</strong></p>
+
+<p>trap命令用于捕获指定的信号并执行预定义的命令。</p>
+
+<p>语法：trap 'command' signal</p>
+
+<p>转：其中signal是要捕获的信号，command是捕获到指定的信号之后，所要执行的命令。可以用kill –l命令看到系统中全部可用的信号名，捕获信号后所执行的命令可以是任何一条或多条合法的shell语句，也可以是一个函数名。
+shell脚本在执行时，会产生三个所谓的“伪信号”，(之所以称之为“伪信号”是因为这三个信号是由shell产生的，而其它的信号是由操作系统产生的)，通过使用trap命令捕获这三个“伪信号”并输出相关信息对调试非常有帮助。</p>
+
+<p><a name="table1"><span style="background-color: #ffff00;"><strong> shell伪信号</strong></span></a><span style="background-color: #ffff00;"><strong>分类：</strong></span></p>
+
+<p>EXIT
+从一个函数中退出或整个脚本执行完毕</p>
+
+<p>ERR
+当一条命令返回非零状态时(代表命令执行不成功)</p>
+
+<p>DEBUG
+脚本中每一条命令执行之前</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+trap 'echo “before execute line:$LINENO, a=$a,b=$b,c=$c”' DEBUG
+a=1
+b=$(($a+1))
+c=$(($b+1))
+echo $c
+
+<p>[root@server ~]# sh !$
+sh test.sh
+“before execute line:3, a=,b=,c=”
+“before execute line:4, a=1,b=,c=”
+“before execute line:5, a=1,b=2,c=”
+“before execute line:6, a=1,b=2,c=3”
+3</p>
+
+<p>注：这个调试脚本不需要每句语句都加echo，只要最上面一行trap。本例表示此行执行前执行信号</p>
+
+<p />
+</pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用Vim的bash-Support插件调试bash shell脚本]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E4%BD%BF%E7%94%A8vim%E7%9A%84bash-support%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95bash-shell%E8%84%9A%E6%9C%AC/"/>
+    <updated>2011-04-08T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/使用vim的bash-support插件调试bash-shell脚本</id>
+    <content type="html"><![CDATA[<p><strong>1  下载安装并启用：</strong></p>
+
+<p><pre class="sh_bash">[root@server ~]# mkdir ~/.vim
+[root@server ~]# cd !$
+
+<p>cd ~/.vim</p>
+
+<p>[root@server ~]# wget -O bash-support.zip <a href="http://www.vim.org/scripts/download_script.php?src_id=15125">http://www.vim.org/scripts/download_script.php?src_id=15125</a>
+[root@server .vim]# unzip bash-support.zip</p>
+
+<p>假如你没有自己设置的vimrc文件，建议使用他提供的一个自定义的vimrc</p>
+
+<p>[root@server ~]# cp .vim/bash-support/rc/customization.vimrc ~/.vimrc</p>
+
+<p><strong>2  使用中的一些技巧：</strong></p>
+
+<p><strong>1 自动向sh文件中添加文件头部</strong></p>
+
+<p>当你打开一个以sh为后缀的文件时，文件中会包含以下文件头。然后进入插入状态，光标会移动到DESCRIPTION位置。</p>
+
+<p><pre class="sh_bash">#!/bin/bash -
+#===============================================================================
+#
+#          FILE:  ssss.sh
+#
+#         USAGE:  ./ssss.sh
+#
+#   DESCRIPTION:
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR: Dong Weiming (os), ciici1234@hotmail.com
+#       COMPANY: dongwm.com
+#       CREATED: 2011年02月14日 14时02分33秒 CST
+#      REVISION:  ---
+#===============================================================================
+
+<p>set -o nounset                              # Treat unset variables as an error</p>
+
+<p>这是因为我修改了模版文件.vim/bash-support/templates/Templates</p>
+
+<p><pre class="sh_bash">=============================================================
+========== USER MACROS ========================================
+=============================================================
+|AUTHOR|    = Dong Weiming
+|AUTHORREF| = os
+|EMAIL|     = ciici1234@hotmail.com
+|COMPANY|   = dongwm.com
+|COPYRIGHT| = Copyright (c) |YEAR|, |AUTHOR|</pre></p>
+
+<p><strong>2 </strong><a href="http://lug.fh-swf.de/vim/vim-bash/bash-hot-keys.pdf" target="_blank"><strong>程序的一些命令(注：(i) insert mode, (n) normal mode, (v) visual mode下同)</strong></a></p>
+</pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Shell 高级变量]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shell-%E9%AB%98%E7%BA%A7%E5%8F%98%E9%87%8F/"/>
+    <updated>2011-04-08T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shell-高级变量</id>
+    <content type="html"><![CDATA[<p><strong>1 测试变量存在与否:</strong>
+语法 ${变量-默认值}
+若变量不存在换回-后面的默认值,要存在传回变量值
+<pre class="sh_bash">[root@server ~]# unset dongwm
+[root@server ~]# r=${dongwm-'not exist'}
+[root@server ~]# echo $r
+not exist
+[root@server ~]# dongwm=hello
+[root@server ~]# r=${dongwm-'not exist'}
+[root@server ~]# echo $r
+hello</pre>
+<strong>2  测试变量不存在或者为空值:</strong>
+r=${变量:-默认值}
+<pre class="sh_bash">[root@server ~]# unset dongwm
+[root@server ~]# r=${dongwm:-'not exist'}
+[root@server ~]# echo $r
+not exist
+[root@server ~]# dongwm=
+[root@server ~]# r=${dongwm:-'not exist'}
+[root@server ~]# echo $r
+not exist</pre>
+<strong>3  测试变量不存在或者其值为空 提示错误信息</strong>
+<pre class="sh_bash">[root@server test]# cat test.sh
+#!/bin/bash
+ra=${1:?'错误,请提供要删除目录的名称'}
+echo  '你要执行的命令是'
+echo  "rm -rf ./$ra"
+rm -rf ./$ra
+[root@server test]# ls
+test  test.sh
+[root@server test]# sh test.sh
+test.sh: line 2: 1: 错误,请提供要删除目录的名称
+[root@server test]# ls
+test  test.sh
+[root@server test]# sh test.sh test
+你要执行的命令是
+rm -rf ./test
+[root@server test]# ls
+test.sh  //test目录被删除了</pre><!--more-->
+<strong>4  判断变量存在性 并返回特定值:</strong>
+<pre class="sh_bash">[root@server test]# dongwm=hello
+[root@server test]# r=${dongwm:+'true'}
+[root@server test]# echo $r
+true
+[root@server test]# dongwm=
+[root@server test]# r=${dongwm:+'true'}
+[root@server test]# echo $r
+
+<p>//变量不存在 所以是空值</p>
+
+<p><strong>5 取字符串切片</strong>
+<pre class="sh_bash">语法1 ${变量:位置起点}
+从指定位置开始一直到字符串结尾
+[root@server test]# dongwm="You are welcome"
+[root@server test]# eval echo ${dongwm:5}
+re welcome
+//从位置起点+1个字符开始
+语法2 ${变量:位置起点:长度}
+从之定位置开始取特定长度字符串
+[root@server test]# eval echo ${dongwm:5:7}
+re welc  //空格也算字符</pre>
+<strong>6  取位置参数:</strong>
+<pre class="sh_bash">语法1 ${@:起点}
+有起点开始 取得后面所有参数
+[root@server test]# cat test.sh
+#!/bin/bash
+echo $0
+echo ${@:2}
+[root@server test]# sh test.sh 1 2 3 4 5
+test.sh
+2 3 4 5
+语法2 ${@:起点:个数}
+由起点开始取得特定个数数量的位置参数:
+<pre class="sh_bash">[root@server test]# cat test.sh
+#!/bin/bash
+echo $0
+echo ${@:2:2}
+[root@server test]# sh test.sh 1 2 3 4 5
+test.sh
+2 3</pre>
+<strong>7 计算字符串长度:</strong>
+语法 ${#变量名称}
+<pre class="sh_bash">[root@server test]# dongwm='You are welcome'
+[root@server test]# echo ${#dongwm}
+15
+语法拓展
+1 语法expr length "字符串"
+[root@server test]# expr length "You are welcome"
+15
+2 语法 expr "字符串" :'.*'
+[root@server test]# expr "You are welcome" : '.*'
+15</pre>
+<strong>8  有字符串对比,删除相符者:</strong>
+语法1 ${变量#样式}  //从前开始对比 最短相符
+<pre class="sh_bash">[root@server test]# dongwm="/etc/sysconfig/network-scripts/ifdown-eth"
+[root@server test]# eval echo ${dongwm#/*/}
+sysconfig/network-scripts/ifdown-eth  // 删除了最开始的"/etc/"
+语法2 ${变量##样式} //从前开始对比 最长相符
+[root@server test]# dongwm="/etc/sysconfig/network-scripts/ifdown-eth"
+[root@server test]# eval echo ${dongwm##/*/}
+ifdown-eth
+语法3 ${dongwm%/*/}  //从后开始对比 最短相符
+[root@server test]# dongwm="/etc/sysconfig/network-scripts/ifdown-eth"
+[root@server test]# eval echo ${dongwm%/*}
+/etc/sysconfig/network-scripts
+语法4 ${变量%%样式}   //从后开始对比 最长相符
+[root@server test]# dongwm="www.dongwm.com"
+[root@server test]# eval echo ${dongwm%%.*}
+www</pre>
+<strong>9  取代或者删除字符串</strong>
+语法1 ${变量/样式/替换的字符串}
+<pre class="sh_bash">[root@server test]# dongwm="sync:x:5:0:sync:/sbin:/bin/sync"
+[root@server test]# eval echo ${dongwm/:/,}
+sync,x:5:0:sync:/sbin:/bin/sync  //只替换了第一个相符
+语法2 ${变量//样式/替换的字符串}
+[root@server test]# dongwm="sync:x:5:0:sync:/sbin:/bin/sync"
+[root@server test]# eval echo ${dongwm//:/,}
+sync,x,5,0,sync,/sbin,/bin/sync
+注 不提换只删除 没有最后一个"替换的字符串"选项
+[root@server test]# eval echo ${dongwm//:/}
+syncx50sync/sbin/bin/sync
+[root@server test]# eval echo ${dongwm/:/}
+syncx:5:0:sync:/sbin:/bin/sync</pre>
+
+<p><strong>10 命令替换</strong>
+语法 $(命令)
+<pre class="sh_bash">[root@server test]# dongwm=$(ls)
+[root@server test]# for f in $dongwm
+&gt; do
+&gt; echo $f
+&gt; done
+test
+test.sh
+
+<p>[root@server test]# dongwm="/etc/passwd"
+[root@server test]# IFS=" "
+[root@server test]# f=$(&lt; $dongwm)
+[root@server test]# echo $f
+注 IFS标示分割字符变量 它的内容包含:空格符,\t,\n</p>
+
+<p><strong>11 算数运算</strong>
+语法 $((算数式))
+<pre class="sh_bash">[root@server test]# eval echo $((1+3))
+4</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=96a78524-c46f-816f-a821-e23986f21990" alt="" /></div></p>
+</pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[shell  进度条]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shell-%E8%BF%9B%E5%BA%A6%E6%9D%A1/"/>
+    <updated>2011-03-31T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shell-进度条</id>
+    <content type="html"><![CDATA[<p>我想要实现的是根据任务完成度实现进度条显示，但是以下前4种都是设定了循环时间，主要是产生一种进度的效果：</p>
+
+<p>1 以下格式：</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test1.sh
+
+<p>progress:[##################################################]100% </p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test1.sh
+
+<p>#!/bin/sh</p>
+
+<p>b=''</p>
+
+<p>for ((i=0;$i&lt;=100;i+=2))</p>
+
+<p>do</p>
+
+<p>printf "progress:[%-50s]%d%%\r" $b $i</p>
+
+<p>sleep 0.1</p>
+
+<p>b=#$b</p>
+
+<p>done</p>
+
+<p>echo '' </p>
+
+<p><!--more--></p>
+
+<p>2  以下格式：</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test2.sh
+
+<p>==============================================&gt;   92% </p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test2.sh
+
+<p>#!/bin/bash</p>
+
+<p>i=0</p>
+
+<p>while [ $i -lt 50 ]</p>
+
+<p>do</p>
+
+<p>((i++))</p>
+
+<p>echo -ne "=&gt;\033[s"</p>
+
+<p>echo -ne "\033[40;55H"$((i*2*100/100))%"\033[u\033[1D"</p>
+
+<p>usleep 50000</p>
+
+<p>done</p>
+
+<p>echo '' </p>
+
+<p>或者:</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test2.sh
+
+<p>[========================================&gt;                                                           ]41%</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test2.sh
+
+<p>#!/bin/bash</p>
+
+<p>COUNTER=0</p>
+
+<p>_R=0</p>
+
+<p>_C=`tput cols`</p>
+
+<p>_PROCEC=`tput cols`</p>
+
+<p>tput cup $_C $_R</p>
+
+<p>printf "["</p>
+
+<p>while [ $COUNTER -lt 100 ]</p>
+
+<p>do</p>
+
+<p>COUNTER=`expr $COUNTER + 1`</p>
+
+<p>sleep 0.1</p>
+
+<p>printf "=&gt;"</p>
+
+<p>_R=`expr $_R + 1`</p>
+
+<p>_C=`expr $_C + 1`</p>
+
+<p>tput cup $_PROCEC 101</p>
+
+<p>printf "]%d%%" $COUNTER</p>
+
+<p>tput cup $_C $_R</p>
+
+<p>done</p>
+
+<p>printf "\n"</p>
+
+<p>3  直线的原地旋转：</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test3.sh
+
+<p>#!/bin/sh</p>
+
+<p>trap 'kill $BG_PID;echo;exit' 1 2 3 15</p>
+
+<p>function rotate</p>
+
+<p>{</p>
+
+<p>INTERVAL=0.1</p>
+
+<p>TCOUNT="0"</p>
+
+<p>stty -echo &gt;/dev/null 2&gt;&amp;1</p>
+
+<p>while :</p>
+
+<p>do</p>
+
+<p>TCOUNT=`expr $TCOUNT + 1`</p>
+
+<p>case $TCOUNT in</p>
+
+<p>"1") echo -e '-'"\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>"2") echo -e '\\'"\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>"3") echo -e "|\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>"4") echo -e "/\b\c"</p>
+
+<p>sleep $INTERVAL</p>
+
+<p>;;</p>
+
+<p>*) TCOUNT="0" ;;</p>
+
+<p>esac</p>
+
+<p>done</p>
+
+<p>stty echo</p>
+
+<p>}</p>
+
+<p>rotate &amp;</p>
+
+<p>ROTATE_PID=$!</p>
+
+<p>#</p>
+
+<p># #开始程序主体，本例中执行休眠10秒</p>
+
+<p># #注意必要时使用 &gt;/dev/null 2&gt;&amp;1关闭输出和错误回显，避免破坏显示</p>
+
+<p>sleep 10</p>
+
+<p>#</p>
+
+<p># #程序结尾注意kill dots，否则dots会一直执行；清除多余字符</p>
+
+<p>kill -9 $ROTATE_PID</p>
+
+<p>echo -e "\b\b"</p>
+
+<p>4  以下格式：</p>
+
+<p><pre class="sh_bash">[root@server ~]# sh test5.sh
+
+<p>35% .......</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test5.sh
+
+<p>#!/bin/sh</p>
+
+<p>echo</p>
+
+<p>for i in `seq 1 20`; do</p>
+
+<p>arrow="$arrow."</p>
+
+<p>echo -e "\e[A\e[0G$[i*5]% $arrow"</p>
+
+<p>echo -e "\e[A\e[50G"</p>
+
+<p>sleep 1</p>
+
+<p>done</p>
+
+<p>5  外国一高手写得bar.sh：</p>
+
+<p><a href="http://www.dongwm.com/bar.sh" target="_blank">下载地址</a></p>
+
+<p><pre class="sh_bash">使用举例：
+
+<p>cat file1 file2 file2 &gt; file3</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar file1 file2 file2 &gt; file3</p>
+
+<p>cp infile outfile</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -o outfile infile</p>
+
+<p>Copy several files to another directory (showing a common progress bar)</p>
+
+<p>Standard:</p>
+
+<p>cp file1 file2 file2 outdir/</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -c 'cat &gt; outdir/${bar_file}' file1 file2 file3</p>
+
+<p>Unpack each file individually, but have a common progress bar</p>
+
+<p>Standard:</p>
+
+<p>for i in *.tar.gz; do tar xzpf $i; done</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -c 'tar xzpf -' *.tar.gz</p>
+
+<p>Make a File Listing</p>
+
+<p>We don't want to mention ‘.tar.gz’ in the listing, so we use ‘-e’ to append an extension in each command.</p>
+
+<p>Standard:</p>
+
+<p>(for file in erwin-2.0.274 bar-1.0-src linux-2.4.21</p>
+
+<p>do</p>
+
+<p>echo ${file}:</p>
+
+<p>tar tzvpf ${file}.tar.gz</p>
+
+<p>done) &gt; package-list.txt</p>
+
+<p>With Progress Bar:</p>
+
+<p>bar -c 'echo ${bar_file}: ; tar tzvpf -' \</p>
+
+<p>-e .tar.gz                           \</p>
+
+<p>erwin-2.0.274                    \</p>
+
+<p>bar-1.0-src                      \</p>
+
+<p>linux-2.4.21                     \</p>
+
+<p>&gt; package-list.txt</p>
+</pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Bash Shell  位置参数和内部参数]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/"/>
+    <updated>2011-03-17T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/bash-shell-位置参数和内部参数</id>
+    <content type="html"><![CDATA[<p><pre class="sh_bash">$0表示当前执行的进程名,script 本身的名字,或者在正则表达式中表示整行输出
+
+<p>$# ----传递给程序的总的参数数目</p>
+
+<p>$? ----上一个代码或者shell程序在shell中退出的情况，如果正常退出则返回0，反之为非0值。</p>
+
+<p>$* ----传递给程序的所有参数组成的字符串。</p>
+
+<p>$n ----表示第几个参数，$1 表示第一个参数，$2 表示第二个参数 ...</p>
+
+<p>$0 ----当前程序的名称</p>
+
+<p>$@----以"参数1" "参数2" ... 形式保存所有参数</p>
+
+<p>$$ ----本程序的(进程ID号)PID</p>
+
+<p>$! ----上一个命令的PID</p>
+
+<p>$_ ----保存之前执行的命令的最后一个参数<!--more--></p>
+
+<p><pre class="sh_bash">[root@client ~]# cat test.sh
+
+<p>#!/bin/bash</p>
+
+<p>echo "程序的名称是：" $0</p>
+
+<p>echo "进程的PID：" $$</p>
+
+<p>echo "第一个参数：" $1</p>
+
+<p>echo "第二个参数：" $2</p>
+
+<p>echo "第三个参数：" $3</p>
+
+<p>echo "传入的参数个数：" $#</p>
+
+<p>echo "传入的参数为：" "$@"</p>
+
+<p>echo "传入的参数为：" "$*"</p>
+
+<p>echo "最后一个参数是：" "$_"</p>
+
+<p><pre class="sh_bash">[root@client ~]# sh test.sh 1 2 3
+
+<p>程序的名称是： test.sh</p>
+
+<p>进程的PID： 26521</p>
+
+<p>第一个参数： 1</p>
+
+<p>第二个参数： 2</p>
+
+<p>第三个参数： 3</p>
+
+<p>传入的参数个数： 3</p>
+
+<p>传入的参数为： 1 2 3</p>
+
+<p>传入的参数为： 1 2 3</p>
+
+<p>最后一个参数是： 3</p>
+</pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,513 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用crush-tools分析apache访问日志 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/ok">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">使用crush-tools分析apache访问日志</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-21T00:00:00+08:00" pubdate data-updated="true">Feb 21<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>crush（Custom Reporting Utilities for SHell）是用于处理数据的工具包，在这里我用来分析apache访问日志，它的网址是http://code.google.com/p/crush-tools/，我所要说的是其强大的性能和功能。</strong></p>
+
+<p><strong>1  下载安装：</strong></p>
+
+<p><pre class="sh_bash"># wget http://crush-tools.googlecode.com/files/crush-tools-2010-03.tar.gz &amp;&amp; tar zxvf crush-tools-2010-03.tar.gz &amp;&amp; cd crush-tools-2010-03  &amp;&amp; ./configure --prefix=/opt/dongwm &amp;&amp; make &amp;&amp; make install</pre></p>
+
+<p>将其加入$PATH以便操作：</p>
+
+<p>#export PATH=$PATH:/opt/dongwm/bin</p>
+
+<p><strong>2  介绍本文使用到的工具包主要的命令：</strong></p>
+
+<p>aggregates 将分离数据集合，比如想知道某网页某段时间的访问量</p>
+
+<p>csvformat  将文件转换成csv格式</p>
+
+<p><tt>convdate  将数据转换日期格式，比如我们想按天统计</tt></p>
+
+<p>cutfield    当取得的数据有些不重要,可以使用此参数去掉那些列</p>
+
+<p><strong>3  设置：</strong></p>
+
+<p><strong>1  设置apache访问日志格式：</strong></p>
+
+<p>我使用默认的apache访问日志格式（httpd.conf中定义）：
+<pre class="sh_bash">LogFormat "%h %l %u %t \"%r\" %&gt;s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %&gt;s %b" common
+LogFormat "%{Referer}i -&gt; %U" referer
+LogFormat "%{User-agent}i" agent</pre>
+<strong>2  以下是perl脚本，用来格式化日志文件：</strong></p>
+
+<p><pre class="sh_bash">[root@dongwm tmp]# cat  Format.pl
+#!/usr/bin/perl -w
+use strict;
+if (! open LOGFILE,"$ARGV[0]"){
+die "logfile not exists!($!)"
+}
+my $output_delim = $ENV{DELIMITER} || chr(0xfe);
+my $VirtualName=$ARGV[1];
+# (dropping the RFC 1413 identity field)
+print join($output_delim,
+qw(IP 日期 时间 方式 页面 返回时间 平均处理时间)),qq(\n);
+while (&lt;LOGFILE&gt;) {
+if (/((?:\d{1,3})(?:\.\d{1,3}){3}|-)   # 1 IP
+(?:,.*)?\s+(\d+-\d+-\d+)\s+       # 2 日期
+(\d+:\d+:\d+)\s+                   # 3 时
+(GET|POST)\s+                     # 4 方法
+"(.*?\.php?)\??.*"\s+             # 5 URL
+(\d{3})\s+                        # 6 返回码
+(\d+.\d+).*$/x                    # 7 处理时间
+)
+{
+print join($output_delim, ($1,$2,$3,$4,$5,$6,$7,$VirtualName)),qq(\n);
+}
+}
+exit(0);</pre></p>
+
+<p><strong>3 从ZXTM负载均衡设备上提取apache日志，我这里只一行用来说明：</strong></p>
+
+<p><pre class="sh_bash">48.29.102.43 2011-03-15 00:00:22 GET "/Lifeonline/NewIndex.php?MatchType=DWMet" 200 0.025989 7860 "http://www.dongwm.com/Test/DWMetIndex.php?ThisType=Lift" "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; MDDC; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)"</p>
+
+<p>格式化后：</p>
+
+<p>#./Format.pl zxtm.log www|csvformat</p>
+
+<p>"48.29.102.43","2011-03-15","00:00:22","GET","/Lifeonline/NewIndex.php","200","0.025989","www"</pre></p>
+
+<p>4 几种对网站内容性能测试体验：</p>
+
+<p><strong>1 查看用户访问各页面的数量：</strong></p>
+
+<p><pre class="sh_bash"># ./Format.pl zxtm.log www|aggregate -k 5 -c 5 |csvformat  //其中-k 表示选择第五列作为key选择的主键，输出结果会显示此列，-c表示对第五列的主键进行统计次数，根据上面格式化后的信息可以知道，第五列也就是/Lifeonline/NewIndex.php，计算这个页面访问的次数</p>
+
+<p>输出如下：</p>
+
+<p>"/Lifeonline/NewIndex.php","7"</pre></p>
+
+<p><strong>2 查看网站每页面响应时间最慢时间：</strong></p>
+
+<p><pre class="sh_bash"># ./Format.pl zxtm.log www |aggregate -k 3,5 -x 7</p>
+
+<p>"00:00:20","/OKAdmin/index.php","0.038450"
+"00:00:20","/Remoting/gateway.php","0.104104"
+"00:00:20","/Remoting/json.php","0.247292"
+"00:00:20","/User/UserCenter.php","0.492700"
+"00:00:20","/WapAPI/v1.php","0.297009"</pre></p>
+
+<p><strong>3 查找页面影响最慢的页面:</strong></p>
+
+<p><pre class="sh_bash"># ./Format.pl zxtm.log www|aggregate -p  -K 平均处理时间,页面|csvformat</p>
+
+<p>"0.766413","/Buy/UserBetList.php"
+"0.871648","/Lottery06/SportterySoccer/SportteryTest.php"
+"1.021357","/Lottery06/SportterySoccer/SportteryTest.php"
+"2.170618","/Buy/UserBetList.php"
+"3.906909","/Buy06/PassStat.php"</p>
+
+<p>注:命令中-k -c -s等小学字母是以前的版本 新版支持大写+相对应的标签  这个命令 最初使用小写参数选项时候出现了一定的报错,但是使用大写参数就可以了,并且再去用小写也可以了,一个BUG</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-21T00:00:00+08:00" pubdate data-updated="true">Feb 21<span>st</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linuxji-chu/'>linux基础</a>, <a class='category' href='/blog/categories/qi-ta/'>其它</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/ok/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/guanyugrepminglingdeyanjiu/" title="Previous Post:
+        关于grep命令的研究">&laquo; 关于grep命令的研究</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/zxtm%E4%B8%93%E9%A2%98%E4%B8%80%EF%BC%9A%E4%BB%8B%E7%BB%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8zxtm-lb/"
+        title="Next Post: ZXTM专题一：介绍负载均衡器ZXTM LB">ZXTM专题一：介绍负载均衡器ZXTM LB
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/ok/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/ok/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

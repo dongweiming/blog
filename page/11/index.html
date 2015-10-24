@@ -1,0 +1,2034 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/11">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuweakrefyanjiu/">关于weakref研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：对一个对象的弱引用。相对于通常的引用来说，如果一个对象有一个常规的引用，它是不会被垃圾收集器销毁的，但是如果一个对象只剩下一个弱引用，那么它可能被垃圾收集器收回。weakref就是这样的垃圾收集对象的引用模块</p>
+
+<p><pre class="sh_python">
+import weakref</p>
+
+<p>class ExpensiveObject(object):
+    def __del__(self):
+        print '(Deleting %s)' % self</p>
+
+<p>obj = ExpensiveObject()
+r = weakref.ref(obj)</p>
+
+<p>print 'obj:', obj
+print 'ref:', r
+print 'r():', r()</p>
+
+<p>print 'deleting obj'
+del obj
+print 'r():', r()
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+obj: &lt;__main__.ExpensiveObject object at 0xb73cfe2c&gt;
+ref: &lt;weakref at 0xb73d06e4; to &#8216;ExpensiveObject&#8217; at 0xb73cfe2c&gt;
+r(): &lt;__main__.ExpensiveObject object at 0xb73cfe2c&gt;  #一个弱引用
+deleting obj
+(Deleting &lt;__main__.ExpensiveObject object at 0xb73cfe2c&gt;)
+r(): None   #这个引用删除就没有了
+<pre class="sh_python">
+import weakref</p>
+
+<p>class ExpensiveObject(object):
+    def __del__(self):
+        print '(Deleting %s)' % self</p>
+
+<p>def callback(reference):  #回调函数
+    print 'callback(', reference, ')'</p>
+
+<p>obj = ExpensiveObject()
+r = weakref.ref(obj, callback) #当弱引用被删除会调用回调函数</p>
+
+<p>print 'obj:', obj
+print 'ref:', r
+print 'r():', r()</p>
+
+<p>print 'deleting obj'
+del obj
+print 'r():', r()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+obj: &lt;__main__.ExpensiveObject object at 0xb74c2eec&gt;
+ref: &lt;weakref at 0xb74c370c; to &#8216;ExpensiveObject&#8217; at 0xb74c2eec&gt;
+r(): &lt;__main__.ExpensiveObject object at 0xb74c2eec&gt;
+deleting obj
+callback( &lt;weakref at 0xb74c370c; dead&gt; )
+(Deleting &lt;__main__.ExpensiveObject object at 0xb74c2eec&gt;)
+r(): None</p>
+
+<p><pre class="sh_python">
+import weakref</p>
+
+<p>class ExpensiveObject(object):
+    def __init__(self, name):
+        self.name = name
+    def __del__(self):
+        print '(Deleting %s)' % self</p>
+
+<p>obj = ExpensiveObject('My Object')
+r = weakref.ref(obj)
+p = weakref.proxy(obj) #弱引用代理</p>
+
+<p>print 'via obj:', obj.name
+print 'via ref:', r().name
+print 'via proxy:', p.name
+del obj
+print 'via proxy:', p.name
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+via obj: My Object
+via ref: My Object
+via proxy: My Object
+(Deleting &lt;__main__.ExpensiveObject object at 0xb72f9eec&gt;)
+via proxy:
+Traceback (most recent call last):  #<tt>因为引用不存在了，触发ReferenceError</tt>
+File &#8220;test.py&#8221;, line 17, in &lt;module&gt;
+print &#8216;via proxy:&#8217;, p.name
+ReferenceError: weakly-referenced object no longer exists</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuwarningsyanjiu/">关于warnings研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：warnings是非致命级别警报的模块,当执行行程序时遇到问题时给用户非致命性的警示</p>
+
+<p><pre class="sh_python">
+print 'Before the warning'
+warnings.warn('This is a warning message')  #产生一个警告
+print 'After the warning'
+print
+warnings.simplefilter('error', UserWarning)#当出现报错 就停止继续</p>
+
+<p>print 'Before the warning'
+warnings.warn('This is a warning message')  
+print 'After the warning'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before the warning
+test.py:5: UserWarning: This is a warning message
+warnings.warn(&#8216;This is a warning message&#8217;)
+After the warning</p>
+
+<p>Before the warning
+Traceback (most recent call last):
+File &#8220;test.py&#8221;, line 11, in &lt;module&gt;
+warnings.warn(&#8216;This is a warning message&#8217;)
+UserWarning: This is a warning message   #UserWarning  执行报错 停止</p>
+
+<p><pre class="sh_python">
+import warnings
+import logging
+warnings.filterwarnings('ignore', '.*do not.*',) #过滤报错信息，其中包含6种：error：变成一个异常警告，ignore:丢弃警告，
+#always:始终报警，default:它是从每个位置产生的第一次打印警告，module:它是从每个模块产生的第一次打印警告，once:它生成的第一次打印警告
+warnings.warn('Show this message')   #打印这个信息
+warnings.warn('Do not show this message')  #不打印这个信息，上面过滤了'.*do not.*'这样的模式匹配</p>
+
+<p>def function_with_warning():
+    warnings.warn('This is a warning!')</p>
+
+<p>function_with_warning() #虽然调用三次，只打印一次 不重复
+function_with_warning()
+function_with_warning()</p>
+
+<p>warnings.simplefilter('once', UserWarning)  #也可以这样调用，告诉值是第一次打印错误警告</p>
+
+<p>warnings.warn('This is a warning!')
+warnings.warn('This is a warning!')
+warnings.warn('This is a warning!')</p>
+
+<p>logging.basicConfig(level=logging.INFO)</p>
+
+<p>def send_warnings_to_log(message, category, filename, lineno, file=None):  #设定一个记录日志的方法
+    logging.warning(
+        '%s:%s: %s:%s' % 
+        (filename, lineno, category.__name__, message))
+    return</p>
+
+<p>old_showwarning = warnings.showwarning  #默认是终端显示错误信息，但是也可能改变方式  这里保存旧的方式
+warnings.showwarning = send_warnings_to_log  #将显示错误信息的方式改成用这个函数执行</p>
+
+<p>warnings.warn('This is a warning message')  #这里就会以logging的方式显示</p>
+
+<p>def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
+    return ' %s:%s: %s:%s' % (filename, lineno, category.__name__, message)</p>
+
+<p>warnings.warn('This is a warning message, before')
+warnings.formatwarning = warning_on_one_line #修改显示错误信息的格式
+warnings.warn('This is a warning message, after')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+test.py:5: UserWarning: Show this message
+warnings.warn(&#8216;Show this message&#8217;)
+test.py:9: UserWarning: This is a warning!
+warnings.warn(&#8216;This is a warning!&#8217;)
+test.py:17: UserWarning: This is a warning!
+warnings.warn(&#8216;This is a warning!&#8217;)
+WARNING:root:test.py:32: UserWarning:This is a warning message
+WARNING:root:test.py:37: UserWarning:This is a warning message, before
+WARNING:root:test.py:39: UserWarning:This is a warning message, after</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuuuidyanjiu/">关于uuid研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：uuid是使用python生成唯一ID的模块，uuid是一种唯一标识，在许多领域作为标识用途.主要方法从硬件地址和时间生成，md5，sha－1，随机四种方法</p>
+
+<p><pre class="sh_python">
+import uuid</p>
+
+<p>print hex(uuid.getnode())   #根据系统的mac地址打印  ,但是多个mac就有问题</p>
+
+<p>u = uuid.uuid1()  #uuid.uuid1()根据mac地址生成uuid  不带参数就是使用uuid.getnode() </p>
+
+<p>print u
+print type(u)
+print 'bytes   :', repr(u.bytes)
+print 'hex     :', u.hex
+print 'int     :', u.int
+print 'urn     :', u.urn
+print 'variant :', u.variant
+print 'version :', u.version
+print 'fields  :', u.fields
+print '\ttime_low            : ', u.time_low
+print '\ttime_mid            : ', u.time_mid
+print '\ttime_hi_version     : ', u.time_hi_version
+print '\tclock_seq_hi_variant: ', u.clock_seq_hi_variant
+print '\tclock_seq_low       : ', u.clock_seq_low
+print '\tnode                : ', u.node
+print '\ttime                : ', u.time
+print '\tclock_seq           : ', u.clock_seq</p>
+
+<p>for i in xrange(3):
+    print uuid.uuid1()  #uuid1()里面也包含了时间的影响  这样的迭代其中的一部分因为是时间不同而不同</p>
+
+<p>node1 = uuid.getnode()
+print hex(node1), uuid.uuid1(node1)  #本机mac地址生成</p>
+
+<p>node2 =  0x1e5274040e
+print hex(node2), uuid.uuid1(node2)  #根据这个特定mac生成</p>
+
+<p>hostnames = ['www.ailll.com', 'www.dongwm.com']</p>
+
+<p>for name in hostnames:
+    print name
+    print '\tMD5   :', uuid.uuid3(uuid.NAMESPACE_DNS, name)  #uuid3基于dns和加密算法md5
+    print '\tSHA-1 :', uuid.uuid5(uuid.NAMESPACE_DNS, name)  #uuid5是基于dns和加密算法sha-1 
+for i in xrange(3):
+    print uuid.uuid3(uuid.NAMESPACE_DNS, 'www.doughellmann.com')  #不基于时间 所以是迭代的是一样的
+for i in xrange(3):
+    print uuid.uuid4()  #uuid4是根据随机算法  每次差别很大
+def show(msg, l):
+    print msg
+    for v in l:
+        print '\t', v
+    print</p>
+
+<p>input_values = [ 
+    'urn:uuid:f2f84497-b3bf-493a-bba9-7c68e6def80b',
+    '{417a5ebb-01f7-4ed5-aeac-3d56cd5037b0}',
+    '2115773a-5bf1-11dd-ab48-001ec200d9e0',
+    ]  #用于分析各种格式的字符串创建的UUID对象</p>
+
+<p>show('input_values', input_values)</p>
+
+<p>uuids = [ uuid.UUID(s) for s in input_values ]
+show('converted to uuids', uuids)</p>
+
+<p>uuids.sort()
+show('sorted', uuids)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+0xaeb8f70e0L
+f312fcaa-b9f1-11e1-bc26-000aeb8f70e0
+&lt;class &#8216;uuid.UUID&#8217;&gt;
+bytes   : &#8216;\xf3\x12\xfc\xaa\xb9\xf1\x11\xe1\xbc&amp;\x00\n\xeb\x8fp\xe0&#8217;
+hex     : f312fcaab9f111e1bc26000aeb8f70e0
+int     : 323100989012742094042604002680798933216
+urn     : urn:uuid:f312fcaa-b9f1-11e1-bc26-000aeb8f70e0
+variant : specified in RFC 4122
+version : 1
+fields  : (4078107818L, 47601L, 4577L, 188L, 38L, 46901719264L)
+time_low            :  4078107818
+time_mid            :  47601
+time_hi_version     :  4577
+clock_seq_hi_variant:  188
+clock_seq_low       :  38
+node                :  46901719264
+time                :  135593912614190250
+clock_seq           :  15398
+f31305ec-b9f1-11e1-bc26-000aeb8f70e0
+f31307f4-b9f1-11e1-bc26-000aeb8f70e0
+f3130952-b9f1-11e1-bc26-000aeb8f70e0
+0xaeb8f70e0L f3131b0c-b9f1-11e1-8092-000aeb8f70e0
+0x1e5274040eL f3131d17-b9f1-11e1-b53b-001e5274040e
+www.ailll.com
+MD5   : 3b7e4bb6-9606-34f9-ae27-98e0a83555ea
+SHA-1 : 2eae48e1-73e7-57c7-8b7c-3229c87fd79e
+www.dongwm.com
+MD5   : 2ddcfb77-c053-3e92-8a24-b57206b75157
+SHA-1 : 1ceafb54-c8ec-5090-b6ec-e71b3f0e15a9
+bcd02e22-68f0-3046-a512-327cca9def8f
+bcd02e22-68f0-3046-a512-327cca9def8f
+bcd02e22-68f0-3046-a512-327cca9def8f
+225d3fa0-d176-4eea-af0f-5a043711062d
+5039067a-e2a7-4a9b-8f3a-edd54d90a280
+40c69a3c-ebbc-4b67-b083-3223e32248ac
+input_values
+urn:uuid:f2f84497-b3bf-493a-bba9-7c68e6def80b
+{417a5ebb-01f7-4ed5-aeac-3d56cd5037b0}
+2115773a-5bf1-11dd-ab48-001ec200d9e0</p>
+
+<p>converted to uuids
+f2f84497-b3bf-493a-bba9-7c68e6def80b
+417a5ebb-01f7-4ed5-aeac-3d56cd5037b0
+2115773a-5bf1-11dd-ab48-001ec200d9e0</p>
+
+<p>sorted
+2115773a-5bf1-11dd-ab48-001ec200d9e0
+417a5ebb-01f7-4ed5-aeac-3d56cd5037b0
+f2f84497-b3bf-493a-bba9-7c68e6def80b</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuurllibyanjiu/">关于urllib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言;urllib模块提供了一个访问网络资源的简单接口支持（ftp协议)，访问不需要认证的远程资源</p>
+
+<p>因为urllib模块是一个客户端模块，需要一个httpserver，借用以前的BaseHTTPServer的模块的程序：</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import urlparse </p>
+
+<p>class GetHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_GET(self):   #这个是get方法的处理
+        parsed_path = urlparse.urlparse(self.path)
+        message_parts = [
+                'CLIENT VALUES:',
+                'client_address=%s (%s)' % (self.client_address,
+                                            self.address_string()),
+                'command=%s' % self.command,
+                'path=%s' % self.path,
+                'real path=%s' % parsed_path.path,
+                'query=%s' % parsed_path.query,
+                'request_version=%s' % self.request_version,
+                '',
+                'SERVER VALUES:',
+                'server_version=%s' % self.server_version,
+                'sys_version=%s' % self.sys_version,
+                'protocol_version=%s' % self.protocol_version,
+                '',
+                'HEADERS RECEIVED:',
+                ]
+        for name, value in sorted(self.headers.items()):
+            message_parts.append('%s=%s' % (name, value.rstrip()))
+        message_parts.append('')
+        message = '\r\n'.join(message_parts)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(message)
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), GetHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import cgi</p>
+
+<p>class PostHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_POST(self):  ##这个是post方法的处理
+        # Parse the form data posted
+        form = cgi.FieldStorage(
+            fp=self.rfile, 
+            headers=self.headers,
+            environ={'REQUEST_METHOD':'POST',
+                     'CONTENT_TYPE':self.headers['Content-Type'],
+                     })</p>
+
+<p>        # Begin the response
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write('Client: %s\n' % str(self.client_address))
+        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
+        self.wfile.write('Path: %s\n' % self.path)
+        self.wfile.write('Form data:\n')</p>
+
+<p>        # Echo back information about what was posted in the form
+        for field in form.keys():
+            field_item = form[field]
+            if field_item.filename:
+                # The field contains an uploaded file
+                file_data = field_item.file.read()
+                file_len = len(file_data)
+                del file_data
+                self.wfile.write('\tUploaded %s as "%s" (%d bytes)\n' % \
+                        (field, field_item.filename, file_len))
+            else:
+                # Regular form value
+                self.wfile.write('\t%s=%s\n' % (field, form[field].value))
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), PostHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib</p>
+
+<p>response = urllib.urlopen('http://localhost:8080/')  #指定要打开的网页
+print 'RESPONSE:', response   #这个类文件对象也是可以迭代
+print 'URL :', response.geturl() #返回这个网页的url地址</p>
+
+<p>headers = response.info()
+print 'DATE :', headers['date']  #执行请求的时间
+print 'HEADERS :'
+print '---------'
+print headers  #返回server的信息和date信息</p>
+
+<p>data = response.read() #取到数据
+print 'LENGTH :', len(data) #数据长度
+print 'DATA :'
+print '---------'
+print data  #返回客户端，服务器端的一些信息，header信息
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+RESPONSE: &lt;addinfourl at 3074658828L whose fp = &lt;socket._fileobject object at 0xb7418b2c&gt;&gt;
+URL : http://localhost:8080/
+DATE : Tue, 19 Jun 2012 07:55:13 GMT
+HEADERS :
+&#8212;&#8212;&#8212;
+Server: BaseHTTP/0.3 Python/2.7
+Date: Tue, 19 Jun 2012 07:55:13 GMT</p>
+
+<p>LENGTH : 304
+DATA :
+&#8212;&#8212;&#8212;
+CLIENT VALUES:
+client_address=(&#8216;127.0.0.1&#8217;, 57709) (localhost)
+command=GET
+path=/
+real path=/
+query=
+request_version=HTTP/1.0</p>
+
+<p>SERVER VALUES:
+server_version=BaseHTTP/0.3
+sys_version=Python/2.7
+protocol_version=HTTP/1.0</p>
+
+<p>HEADERS RECEIVED:
+host=localhost:8080
+user-agent=Python-urllib/1.17</p>
+
+<p><pre class="sh_python">
+import urllib
+query_args = { 'q':'query string', 'foo':'bar' }
+encoded_args = urllib.urlencode(query_args) #将dict或者包含两个元素的元组列表转换成url参数，如果参数doseq=True ，表示使用单独的变量来传递值序列时
+print 'Encoded:', encoded_args</p>
+
+<p>url = 'http://localhost:8080/?' + encoded_args
+print urllib.urlopen(url).read()  #返回打开的这个get页面的数据
+print 'quote() :', urllib.quote(url) #对字符串进行编码。参数safe指定了不需要编码的字符 同样的还原就是unquote
+print 'quote_plus():', urllib.quote_plus(url) #与urllib.quote类似，但这个方法用'+'来替换' '，而quote用'%20'来代替 同样的还原就是unquote_plus
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib
+query_args = { 'q':'query string', 'foo':'bar' }
+encoded_args = urllib.urlencode(query_args)
+url = 'http://localhost:8080/'
+print urllib.urlopen(url, encoded_args).read()  #通过POST代替GET方式传递数据给远程服务器, 仅仅是把已编码的查询参数当作数据传递给urlopen().
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib
+import os</p>
+
+<p>def reporthook(blocks_read, block_size, total_size):
+    if not blocks_read:
+        print 'Connection opened'
+        return
+    if total_size &lt; 0:
+        # Unknown size 未知大小
+        print 'Read %d blocks' % blocks_read
+    else:
+        amount_read = blocks_read * block_size
+        print 'Read %d blocks, or %d/%d' % (blocks_read, amount_read, total_size)
+        return</p>
+
+<p>try:
+    filename, msg = urllib.urlretrieve('http://www.dongwm.com/', reporthook=reporthook) # urlretrieve方法直接将远程数据下载到本地。
+                                                #参数filename指定了保存到本地的路径（如果未指定该参数，urllib会生成一个临时文件来保存数据） ,reporthook是一个回调函数
+                                                #当连接上服务器、以及相应的数据块传输完毕的时候会触发该回调。我们可以利用这个回调函 数来显示当前的下载进度
+    print
+    print 'File:', filename
+    print 'Headers:'
+    print msg
+    print 'File exists before cleanup:', os.path.exists(filename)
+finally:
+    urllib.urlcleanup()   #除这些临时的复本
+    print 'File still exists:', os.path.exists(filename)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuurllib2yanjiu/">关于urllib2研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：urllib2和urilib很类似，但是模块最显著的区别：1 urllib2可以接受一个<strong>Request</strong>类的实例来设置URL请求的headers，urllib仅可以接受URL。这意味着，你不可以伪装你的User Agent字符串等</p>
+
+<p>2 urllib提供<strong>urlencode</strong>方法用来GET查询字符串的产生，而urllib2没有。这是为何urllib常和urllib2一起使用的原因。</p>
+
+<p>还是借用BaseHTTPServer做的2个程序为服务器端：</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import urlparse </p>
+
+<p>class GetHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_GET(self):   #这个是get方法的处理
+        parsed_path = urlparse.urlparse(self.path)
+        message_parts = [
+                'CLIENT VALUES:',
+                'client_address=%s (%s)' % (self.client_address,
+                                            self.address_string()),
+                'command=%s' % self.command,
+                'path=%s' % self.path,
+                'real path=%s' % parsed_path.path,
+                'query=%s' % parsed_path.query,
+                'request_version=%s' % self.request_version,
+                '',
+                'SERVER VALUES:',
+                'server_version=%s' % self.server_version,
+                'sys_version=%s' % self.sys_version,
+                'protocol_version=%s' % self.protocol_version,
+                '',
+                'HEADERS RECEIVED:',
+                ]
+        for name, value in sorted(self.headers.items()):
+            message_parts.append('%s=%s' % (name, value.rstrip()))
+        message_parts.append('')
+        message = '\r\n'.join(message_parts)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(message)
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), GetHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import cgi</p>
+
+<p>class PostHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_POST(self):  ##这个是post方法的处理
+        # Parse the form data posted
+        form = cgi.FieldStorage(
+            fp=self.rfile, 
+            headers=self.headers,
+            environ={'REQUEST_METHOD':'POST',
+                     'CONTENT_TYPE':self.headers['Content-Type'],
+                     })</p>
+
+<p>        # Begin the response
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write('Client: %s\n' % str(self.client_address))
+        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
+        self.wfile.write('Path: %s\n' % self.path)
+        self.wfile.write('Form data:\n')</p>
+
+<p>        # Echo back information about what was posted in the form
+        for field in form.keys():
+            field_item = form[field]
+            if field_item.filename:
+                # The field contains an uploaded file
+                file_data = field_item.file.read()
+                file_len = len(file_data)
+                del file_data
+                self.wfile.write('\tUploaded %s as "%s" (%d bytes)\n' % \
+                        (field, field_item.filename, file_len))
+            else:
+                # Regular form value
+                self.wfile.write('\t%s=%s\n' % (field, form[field].value))
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), PostHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+import urllib2</p>
+
+<p>response = urllib2.urlopen('http://localhost:8080/')  #指定一个url地址
+print 'RESPONSE:', response 
+print 'URL     :', response.geturl() #返回url地址</p>
+
+<p>headers = response.info() #头信息
+print 'DATE    :', headers['date']  #返回日期
+print 'HEADERS :'
+print '---------'
+print headers  #返回服务器的信息和请求时间</p>
+
+<p>data = response.read()  #返回相应数据
+print 'LENGTH  :', len(data)  #数据长度
+print 'DATA    :'
+print '---------'
+print data #包含客户端和服务器端以及头信息
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+RESPONSE: &lt;addinfourl at 3071720012L whose fp = &lt;socket._fileobject object at 0xb7482cec&gt;&gt;
+URL     : http://localhost:8080/
+DATE    : Tue, 19 Jun 2012 08:25:13 GMT
+HEADERS :
+&#8212;&#8212;&#8212;
+Server: BaseHTTP/0.3 Python/2.7
+Date: Tue, 19 Jun 2012 08:25:13 GMT</p>
+
+<p>LENGTH  : 347
+DATA    :
+&#8212;&#8212;&#8212;
+CLIENT VALUES:
+client_address=(&#8216;127.0.0.1&#8217;, 33760) (localhost)
+command=GET
+path=/
+real path=/
+query=
+request_version=HTTP/1.1</p>
+
+<p>SERVER VALUES:
+server_version=BaseHTTP/0.3
+sys_version=Python/2.7
+protocol_version=HTTP/1.0</p>
+
+<p>HEADERS RECEIVED:
+accept-encoding=identity
+connection=close
+host=localhost:8080
+user-agent=Python-urllib/2.7  #这些和urllib差不多</p>
+
+<p><pre class="sh_python">
+import urllib2</p>
+
+<p>request = urllib2.Request('http://localhost:8080/')
+request.add_header('User-agent', 'DWM (http://www.dongwm.com/)')  #指定一个头信息的用户代理，这样更容易识别。<tt>有利于robots.txt</tt>的控制</p>
+
+<p>response = urllib2.urlopen(request)
+data = response.read()
+print data
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+CLIENT VALUES:
+client_address=(&#8216;127.0.0.1&#8217;, 48836) (localhost)
+command=GET
+path=/
+real path=/
+query=
+request_version=HTTP/1.1</p>
+
+<p>SERVER VALUES:
+server_version=BaseHTTP/0.3
+sys_version=Python/2.7
+protocol_version=HTTP/1.0</p>
+
+<p>HEADERS RECEIVED:
+accept-encoding=identity
+connection=close
+host=localhost:8080
+user-agent=DWM (http://www.dongwm.com/)  #设置的用户代理</p>
+
+<p><pre class="sh_python">
+import urllib
+import urllib2</p>
+
+<p>query_args = { 'q':'query string', 'foo':'bar' }</p>
+
+<p>request = urllib2.Request('http://localhost:8080/')
+print 'Request method before data:', request.get_method()</p>
+
+<p>request.add_data(urllib.urlencode(query_args))
+print 'Request method after data :', request.get_method()
+request.add_header('User-agent', 'DWM (http://www.dongwm.com/)')</p>
+
+<p>print
+print 'OUTGOING DATA:'
+print request.get_data()</p>
+
+<p>print
+print 'SERVER RESPONSE:'
+print urllib2.urlopen(request).read()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>Request method before data: GET
+Request method after data : POST  #从get变成了post</p>
+
+<p>OUTGOING DATA:
+q=query+string&amp;foo=bar</p>
+
+<p>SERVER RESPONSE:
+Client: (&#8216;127.0.0.1&#8217;, 59952)
+User-agent: DWM (http://www.dongwm.com/)
+Path: /
+Form data:
+q=query string
+foo=bar
+<pre class="sh_python">
+import itertools
+import mimetools #解析MIME的工具
+import mimetypes  #隐射文件名为MIME类型
+from cStringIO import StringIO
+import urllib
+import urllib2</p>
+
+<p>class MultiPartForm(object):  #积累张贴表单时要使用的数据</p>
+
+<p>    def __init__(self):
+        self.form_fields = []
+        self.files = []
+        self.boundary = mimetools.choose_boundary()  #用来隔开表单中不同部分数据的
+        return</p>
+
+<p>    def get_content_type(self):
+        return 'multipart/form-data; boundary=%s' % self.boundary  #修改Content-type</p>
+
+<p>    def add_field(self, name, value):
+        self.form_fields.append((name, value)) #增加一个表单项
+        return</p>
+
+<p>    def add_file(self, fieldname, filename, fileHandle, mimetype=None):
+        body = fileHandle.read() 
+        if mimetype is None:
+            mimetype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+        self.files.append((fieldname, filename, mimetype, body))
+        return</p>
+
+<p>    def __str__(self):  #返回一个字符串，代表形式的数据，包括附加的文件。
+        parts = []
+        part_boundary = '--' + self.boundary</p>
+
+<p>        parts.extend(
+            [ part_boundary,
+              'Content-Disposition: form-data; name="%s"' % name,
+              '',
+              value,
+            ]
+            for name, value in self.form_fields
+            )   #增加表单项</p>
+
+<p>        parts.extend(
+            [ part_boundary,
+              'Content-Disposition: file; name="%s"; filename="%s"' % \
+                 (field_name, filename),
+              'Content-Type: %s' % content_type,
+              '',
+              body,
+            ]
+            for field_name, filename, content_type, body in self.files
+            ) #增加上传文件</p>
+
+<p>        flattened = list(itertools.chain(*parts))  #合并列表
+        flattened.append('--' + self.boundary + '--')
+        flattened.append('')
+        return '\r\n'.join(flattened)  #连接CR + LF分隔的数据</p>
+
+<p>if __name__ == '__main__':
+    form = MultiPartForm()  #创建表单域
+    form.add_field('firstname', 'Dong')
+    form.add_field('lastname', 'weiming')</p>
+
+<p>    form.add_file('biography', 'bio.txt',   #添加一个伪造的文件
+                  fileHandle=StringIO('Python developer and blogger.'))</p>
+
+<p>    request = urllib2.Request('http://localhost:8080/')  #创建请求
+    request.add_header('User-agent', 'DMW (http://www.dongwm.com/)')  #头信息添加用户代理
+    body = str(form) 
+    request.add_header('Content-type', form.get_content_type())  #添加Content-type
+    request.add_header('Content-length',str(len(body)))  #和英文教程原文不同，这里需要一个字符串的而不是int的
+    request.add_data(body)
+    print 'OUTGOING DATA:'
+    print request.get_data()</p>
+
+<p>    print
+    print 'SERVER RESPONSE:'
+    d = urllib2.urlopen(request)
+    print d.read()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+OUTGOING DATA:
+&#8211;127.0.0.2.1000.3551.1340096549.946.1
+Content-Disposition: form-data; name=&#8221;firstname&#8221;</p>
+
+<p>Dong
+&#8211;127.0.0.2.1000.3551.1340096549.946.1
+Content-Disposition: form-data; name=&#8221;lastname&#8221;</p>
+
+<p>weiming
+&#8211;127.0.0.2.1000.3551.1340096549.946.1
+Content-Disposition: file; name=&#8221;biography&#8221;; filename=&#8221;bio.txt&#8221;
+Content-Type: text/plain</p>
+
+<p>Python developer and blogger.
+&#8211;127.0.0.2.1000.3551.1340096549.946.1&#8211;</p>
+
+<p>SERVER RESPONSE:
+Client: (&#8216;127.0.0.1&#8217;, 53901)
+User-agent: DMW (http://www.dongwm.com/)
+Path: /
+Form data:
+lastname=weiming
+Uploaded biography as &#8220;bio.txt&#8221; (29 bytes)
+firstname=Dong</p>
+
+<p><pre class="sh_python">
+import mimetypes
+import os
+import tempfile
+import urllib
+import urllib2</p>
+
+<p>class NFSFile(file):
+    def __init__(self, tempdir, filename):
+        self.tempdir = tempdir
+        file.__init__(self, filename, 'rb')
+    def close(self):
+        print
+        print 'NFSFile:'
+        print '  unmounting %s' % self.tempdir
+        print '  when %s is closed' % os.path.basename(self.name)
+        return file.close(self)</p>
+
+<p>class FauxNFSHandler(urllib2.BaseHandler):  #继承至urllib2.BaseHandler类，自定义协议处理程序类</p>
+
+<p>    def __init__(self, tempdir):
+        self.tempdir = tempdir</p>
+
+<p>    def nfs_open(self, req):
+        url = req.get_selector()
+        directory_name, file_name = os.path.split(url)
+        server_name = req.get_host()
+        print
+        print 'FauxNFSHandler simulating mount:'
+        print '  Remote path: %s' % directory_name
+        print '  Server     : %s' % server_name
+        print '  Local path : %s' % tempdir
+        print '  File name  : %s' % file_name
+        local_file = os.path.join(tempdir, file_name)
+        fp = NFSFile(tempdir, local_file)
+        content_type = mimetypes.guess_type(file_name)[0] or 'application/octet-stream'
+        stats = os.stat(local_file)
+        size = stats.st_size
+        headers = { 'Content-type': content_type,
+                    'Content-length': size,
+                  }
+        return urllib.addinfourl(fp, headers, req.get_full_url())</p>
+
+<p>if __name__ == '__main__':
+    tempdir = tempfile.mkdtemp()
+    try:
+        with open(os.path.join(tempdir, 'file.txt'), 'wt') as f:
+            f.write('Contents of file.txt')</p>
+
+<p>        opener = urllib2.build_opener(FauxNFSHandler(tempdir))  #构建NFS处理类（他返回的类对象去调用该对象的open方法）
+        urllib2.install_opener(opener)  #注册这个类</p>
+
+<p>        response = urllib2.urlopen('nfs://remote_server/path/to/the/file.txt')  
+        print
+        print 'READ CONTENTS:', response.read()
+        print 'URL          :', response.geturl()
+        print 'HEADERS:'
+        for name, value in sorted(response.info().items()):
+            print '  %-15s = %s' % (name, value)
+        response.close()
+    finally:
+        os.remove(os.path.join(tempdir, 'file.txt'))
+        os.removedirs(tempdir)
+</pre>
+执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py</p>
+
+<p>FauxNFSHandler simulating mount:
+Remote path: /path/to/the
+Server     : remote_server
+Local path : /tmp/tmpAdEnXg
+File name  : file.txt</p>
+
+<p>READ CONTENTS: Contents of file.txt
+URL          : nfs://remote_server/path/to/the/file.txt
+HEADERS:
+Content-length  = 20
+Content-type    = text/plain</p>
+
+<p>NFSFile:
+unmounting /tmp/tmpAdEnXg
+when file.txt is closed</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyutracebackyanjiu/">关于traceback研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：traceback模块被用来跟踪异常返回信息</p>
+
+<p>这事一个处理的脚本：</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>def produce_exception(recursion_level=2):
+    sys.stdout.flush()
+    if recursion_level:
+        produce_exception(recursion_level-1)
+    else:
+        raise RuntimeError()</p>
+
+<p>def call_function(f, recursion_level=2):
+    if recursion_level:
+        return call_function(f, recursion_level-1)
+    else:
+        return f()
+</pre></p>
+
+<p><pre class="sh_python">
+import traceback
+import sys
+from pprint import pprint
+from test1 import produce_exception  #引入上面脚本的方法</p>
+
+<p>print 'print_exc() with no exception:'
+traceback.print_exc(file=sys.stdout) #这里是none
+print</p>
+
+<p>try:
+    produce_exception()
+except Exception, err:
+    print 'print_exc():'
+    traceback.print_exc(file=sys.stdout)  #使用<tt>sys.exc_info()</tt> 获取当前线程,打印文本到一个文件句柄<tt>（默认是sys.stderr）</tt>
+    print
+    print 'print_exc(1):'
+    traceback.print_exc(limit=1, file=sys.stdout)
+    exc_type, exc_value, exc_tb = sys.exc_info()  
+    traceback.print_exception(exc_type, exc_value, exc_tb) #其实traceback.print_exc是traceback.print_exception的短快捷方式 这2行的效果就是上面的
+    pprint(traceback.format_exception(exc_type, exc_value, exc_tb)) #通过pprint以traceback.format_exception格式化的数据显示出来
+</pre></p>
+
+<p><pre class="sh_python">
+import traceback
+import sys
+from pprint import pprint</p>
+
+<p>from traceback_example import call_function</p>
+
+<p>def f():
+    traceback.print_stack(file=sys.stdout) #显示堆栈信息</p>
+
+<p>print 'Calling f() directly:'
+f()</p>
+
+<p>print
+print 'Calling f() from 3 levels deep:'
+call_function(f)
+def f():
+    return traceback.format_stack() #将堆栈信息通过format_stack()格式化</p>
+
+<p>formatted_stack = call_function(f)
+pprint(formatted_stack)
+def f(): 
+    return traceback.extract_stack()  #提取堆栈信息
+stack = call_function(f)
+pprint(stack)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyutimeityanjiu/">关于timeit研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：timeit是一个计时工具模块</p>
+
+<p><pre class="sh_python">
+import timeit</p>
+
+<p>t = timeit.Timer("print 'main statement'", "print 'setup'")  #第一个参数是要计时的语句，第二个参数是为第一个参数语句构建环境的导入语句</p>
+
+<p>print 'TIMEIT:'
+print t.timeit(2)</p>
+
+<p>print 'REPEAT:'
+print t.repeat(3, 3) #第一个参数是重复整个测试的次数，第2个参数是每个测试中调用被计时语句的次数
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+TIMEIT:
+setup
+main statement
+main statement
+5.00679016113e-06
+REPEAT:
+setup
+main statement
+main statement
+main statement
+setup
+main statement
+main statement
+main statement
+setup
+main statement
+main statement
+main statement
+[5.0067901611328125e-06, 5.0067901611328125e-06, 5.0067901611328125e-06]
+<pre class="sh_python">
+import timeit
+import sys</p>
+
+<p>range_size=1000
+count=1000
+setup_statement="l = [ (str(x), x) for x in range(%d) ]; d = {}" % range_size
+def show_results(result):
+    "Print results in terms of microseconds per pass and per item."
+    global count, range_size
+    per_pass = 1000000 * (result / count) #每次计数占用的微秒
+    print '%.2f usec/pass' % per_pass,
+    per_item = per_pass / range_size  #每次项目迭代占用的微秒
+    print '%.2f usec/item' % per_item</p>
+
+<p>print "%d items" % range_size
+print "%d iterations" % count
+print
+print '__setitem__:\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回使用<tt>__setitem__</tt>函数（避免覆盖已在字典中的值）的效果计算，这个最快
+print 'setdefault:\t',
+sys.stdout.flush()
+t = timeit.Timer("""
+for s, i in l:
+    d.setdefault(s, i) #
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回setdefault函数（假如字典存在不覆盖，不存在赋值)已的效果计算
+print 'has_key:\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    if not d.has_key(s):
+        d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count))#返回<tt>has_key函数（判断字典存在key不覆盖，不存在赋值）</tt>的效果计算
+print 'KeyError:\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    try:
+        existing = d[s]
+    except KeyError:
+        d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回<em>判断不存在赋值时候异常引起KeyError</em>的效果计算
+print '"not in":\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    if s not in d:
+        d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回'not in'的方式的效果计算
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+1000 items
+1000 iterations</p>
+
+<p>__setitem__:    80.00 usec/pass 0.08 usec/item
+setdefault:    175.76 usec/pass 0.18 usec/item
+has_key:    116.62 usec/pass 0.12 usec/item
+KeyError:    86.06 usec/pass 0.09 usec/item
+&#8220;not in&#8221;:    60.73 usec/pass 0.06 usec/item
+注：还可以从终端直接导入模块执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt;  python -m timeit -s &#8220;d={}&#8221; &#8220;for i in range(1000):&#8221; &#8220;  d[str(i)] = i&#8221;
+1000 loops, best of 3: 296 usec per loop
+还可以创建一个py文件 import进来的方式(假设这个文件叫做：timeit_setitem.py)：</p>
+
+<p><pre class="sh_python">
+def test_setitem(range_size=1000):
+    l = [ (str(x), x) for x in range(range_size) ]
+    d = {}
+    for s, i in l:
+        d[s] = i
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python -m timeit &#8220;import timeit_setitem; timeit_setitem.test_setitem()&#8221;
+1000 loops, best of 3: 384 usec per loop</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyutimeyanjiu/">关于time研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：time模块提供了操作日期和时间的函数，它利用了c函数来处理日期和时间, 也就是说它绑定了c的实现, 一些特定的细节(比如纪元的开始时间、日期的最大值)是和平台相关的</p>
+
+<p><pre class="sh_python">
+import time
+import hashlib
+import os</p>
+
+<p>print 'The time is:', time.time() #返回一个自公元开始的总秒数(浮点型).精度是依赖于不同的系统平台的
+print '-'*30
+print 'The time is      :', time.ctime() 和上面的一样，但是输出的结果利于我们阅读
+later = time.time() + 15
+print '15 secs from now :', time.ctime(later)
+print '-'*30
+data = open(__file__, 'rt').read()
+for i in range(5):
+    h = hashlib.sha1()
+    print time.ctime(), ': %0.3f %0.3f' % (time.time(), time.clock()) #time()函数返回的是现实世界的时间, 而clock()函数返回的是cpu时钟. clock()函数返回值常用作性能测试
+    for i in range(100000):
+        h.update(data)
+    cksum = h.digest()
+for i in range(6, 1, -1):
+    print '%s %0.2f %0.2f' % (time.ctime(), time.time(), time.clock()) #如果程序没有做任何事情, 处理器时钟是不会计时.
+    print 'Sleeping', i
+    time.sleep(i) #控制当前的线程, 让它等待直到系统重新唤醒它, 如果应用中只有一个线程, 那么它会阻塞当前进程, 使其不做任何事情.
+print '-'*30
+print 'gmtime   :', time.gmtime() #返回当前的UTC时间
+print 'localtime:', time.localtime() #返回当前时间域的当前时间
+print 'mktime   :', time.mktime(time.localtime()) #接收struct_time参数并将其转化为浮点型来表示.</p>
+
+<p>print
+t = time.localtime()
+print 'Day of month:', t.tm_mday #当前时间的月份
+print ' Day of week:', t.tm_wday #当前时间的周数
+print ' Day of year:', t.tm_yday #当前时间的年份
+print '-'*30
+now = time.ctime()
+print now
+parsed = time.strptime(now) #strptime()和strftime()可以使struct_time和时间值字符串相互转化
+print parsed
+print time.strftime("%a %b %d %H:%M:%S %Y", parsed) #输出和输入字符串不是完全的一致, 主要表现在月份前加了一个0前缀.
+def show_zone_info():
+    print '\tTZ    :', os.environ.get('TZ', '(not set)')
+    print '\ttzname:', time.tzname
+    print '\tZone  : %d (%d)' % (time.timezone, (time.timezone / 3600))
+    print '\tDST   :', time.daylight
+    print '\tTime  :', time.ctime()
+    print</p>
+
+<p>print 'Default :'
+show_zone_info() #我们这里没有设置时区</p>
+
+<p>for zone in [ 'US/Eastern','GMT', 'Asia/Shanghai' ]:
+    os.environ['TZ'] = zone
+    time.tzset() #首先设置一个时区  改变时区设置是不会改变实际时间, 只会改变表示时间的方法
+    print zone, ':'
+    show_zone_info()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+The time is: 1340011050.99
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+The time is      : Mon Jun 18 17:17:30 2012
+15 secs from now : Mon Jun 18 17:17:45 2012
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+Mon Jun 18 17:17:30 2012 : 1340011050.989 0.010
+Mon Jun 18 17:17:31 2012 : 1340011051.483 0.500
+Mon Jun 18 17:17:31 2012 : 1340011051.958 0.980
+Mon Jun 18 17:17:32 2012 : 1340011052.431 1.450
+Mon Jun 18 17:17:32 2012 : 1340011052.907 1.920
+Mon Jun 18 17:17:33 2012 1340011053.38 2.40
+Sleeping 6
+Mon Jun 18 17:17:39 2012 1340011059.39 2.40
+Sleeping 5
+Mon Jun 18 17:17:44 2012 1340011064.39 2.40
+Sleeping 4
+Mon Jun 18 17:17:48 2012 1340011068.40 2.40
+Sleeping 3
+Mon Jun 18 17:17:51 2012 1340011071.40 2.40
+Sleeping 2
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+gmtime   : time.struct_time(tm_year=2012, tm_mon=6, tm_mday=18, tm_hour=9, tm_min=17, tm_sec=53, tm_wday=0, tm_yday=170, tm_isdst=0)
+localtime: time.struct_time(tm_year=2012, tm_mon=6, tm_mday=18, tm_hour=17, tm_min=17, tm_sec=53, tm_wday=0, tm_yday=170, tm_isdst=0)
+mktime   : 1340011073.0</p>
+
+<p>Day of month: 18
+Day of week: 0
+Day of year: 170
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+Mon Jun 18 17:17:53 2012
+time.struct_time(tm_year=2012, tm_mon=6, tm_mday=18, tm_hour=17, tm_min=17, tm_sec=53, tm_wday=0, tm_yday=170, tm_isdst=-1)
+Mon Jun 18 17:17:53 2012
+Default :
+TZ    : (not set)
+tzname: (&#8216;CST&#8217;, &#8216;CST&#8217;)
+Zone  : -28800 (-8)
+DST   : 0
+Time  : Mon Jun 18 17:17:53 2012</p>
+
+<p>US/Eastern :
+TZ    : US/Eastern
+tzname: (&#8216;EST&#8217;, &#8216;EDT&#8217;)
+Zone  : 18000 (5)
+DST   : 1
+Time  : Mon Jun 18 05:17:53 2012</p>
+
+<p>GMT :
+TZ    : GMT
+tzname: (&#8216;GMT&#8217;, &#8216;GMT&#8217;)
+Zone  : 0 (0)
+DST   : 0
+Time  : Mon Jun 18 09:17:53 2012</p>
+
+<p>Asia/Shanghai :
+TZ    : Asia/Shanghai
+tzname: (&#8216;CST&#8217;, &#8216;CST&#8217;)
+Zone  : -28800 (-8)
+DST   : 0
+Time  : Mon Jun 18 17:17:53 2012</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyutextwrapyanjiu/">关于textwrap研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：textwrap通过调整段落中的换行符位置来格式化文本以美化输出</p>
+
+<p><pre class="sh_python">
+import textwrap</p>
+
+<p>sample_text = '''  #一段测试文本</p>
+
+<p> The textwrap module can be used to format text for output in situations
+ where pretty-printing is desired.  It offers programmatic functionality similar
+ to the paragraph wrapping or filling features found in many text editors.</p>
+
+<p>'''
+print 'No dedent:\n'
+print textwrap.fill(sample_text)  #默认的输出
+print
+dedented_text = textwrap.dedent(sample_text).strip() #删除样本行中的普通空格前缀
+print 'Dedented:\n'
+print dedented_text
+print
+for width in [ 20, 60, 80 ]:
+    print
+    print '%d Columns:\n' % width
+    print textwrap.fill(dedented_text, width=width) #使用不同行宽值进行格式化输出
+print
+print '\nHanging indent:\n'
+print textwrap.fill(dedented_text, initial_indent='', subsequent_indent='    ') #控制首行缩进, 他独立于接下来的行
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+No dedent:  #嵌入的tab符号和多余的空格被混合在输出文本中</p>
+
+<p>The textwrap module can be used to format text for output in
+situations  where pretty-printing is desired.  It offers programmatic
+functionality similar  to the paragraph wrapping or filling features
+found in many text editors.</p>
+
+<p>Dedented: #将每行开始的普通空白符删除了. 如果某行已经比另一行多了个缩进层次, 那么对应的空格不会被去掉.</p>
+
+<p>The textwrap module can be used to format text for output in situations
+where pretty-printing is desired.  It offers programmatic functionality similar
+to the paragraph wrapping or filling features found in many text editors.</p>
+
+<p>20 Columns:</p>
+
+<p>The textwrap module
+can be used to
+format text for
+output in situations
+where pretty-
+printing is desired.
+It offers
+programmatic
+functionality
+similar to the
+paragraph wrapping
+or filling features
+found in many text
+editors.</p>
+
+<p>60 Columns:</p>
+
+<p>The textwrap module can be used to format text for output in
+situations where pretty-printing is desired.  It offers
+programmatic functionality similar to the paragraph wrapping
+or filling features found in many text editors.</p>
+
+<p>80 Columns:</p>
+
+<p>The textwrap module can be used to format text for output in situations where
+pretty-printing is desired.  It offers programmatic functionality similar to the
+paragraph wrapping or filling features found in many text editors.</p>
+
+<p>Hanging indent:</p>
+
+<p>The textwrap module can be used to format text for output in
+situations where pretty-printing is desired.  It offers
+programmatic functionality similar to the paragraph wrapping or
+filling features found in many text editors.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyutempfileyanjiu/">关于tempfile研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：tempfile可以安全的生成临时文件和目录.许多程序需要将产生的中间数据保存在文件中. 安全地创建一些具有唯一名字的文件, 使得想要中断应用的人无法猜测到这些文件的名字，tempfile就是为了这样产生的模块</p>
+
+<p><pre class="sh_python">
+import os
+import tempfile</p>
+
+<p>print 'Building a file name yourself:'
+filename = '/tmp/guess_my_name.%s.txt' % os.getpid()  #创建一个文件 文件名包含此次进程pid
+temp = open(filename, 'w+b') #创建文件
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close()
+    os.remove(filename)     #删除文件，需要手动</p>
+
+<p>print
+print 'TemporaryFile:'
+temp = tempfile.TemporaryFile() #创建一个临时文件
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close() #关闭的时候自动删除文件
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Building a file name yourself:
+temp: &lt;open file &#8216;/tmp/guess_my_name.20571.txt&#8217;, mode &#8216;w+b&#8217; at 0xb72f62e0&gt;
+temp.name: /tmp/guess_my_name.20571.txt</p>
+
+<p>TemporaryFile:
+temp: &lt;open file &#8216;&lt;fdopen&gt;&#8217;, mode &#8216;w+b&#8217; at 0xb72f6338&gt;  #TemporaryFile()返回的文件不含有名字,因为在文件系统表中没有它的引用
+temp.name: &lt;fdopen&gt;
+<pre class="sh_python">
+import tempfile</p>
+
+<p>f = tempfile.TemporaryFile(mode='w+t') #文件以模式’w+b’方式被创建,这里是文本模式的临时文件
+try:
+    f.writelines(['first\n', 'second\n']) #接受一个列表，按行写入
+    f.seek(0) #将当前文件指针文件最开始以便能够读取所有的数据</p>
+
+<p>    for line in f:
+        print line.rstrip()
+finally:
+    f.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import tempfile</p>
+
+<p>temp = tempfile.NamedTemporaryFile() #创建了一个有名字的, 即可以按名访问的文件，可以设置一下参数：suffix='_suffix'（设置文件结尾内容）,
+                                    # prefix='prefix_'(设置文件开头内容), dir='/tmp' （设置文件所在目录）
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close()
+    print 'Exists after close:', os.path.exists(temp.name) #这里肯定是false  因为关闭句柄文件就会删掉
+directory_name = tempfile.mkdtemp()  #需要多个临时文件, 可以创建一个临时目录然后把所有文件放在这个目录中. 使用mkdtemp()函数来创建一个临时目录.
+print directory_name
+os.removedirs(directory_name) #删掉临时目录需要手动
+print
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/12/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/10/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

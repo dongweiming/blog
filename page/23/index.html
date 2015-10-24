@@ -1,0 +1,2101 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/23">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/fuzashijiancepchulidexiaoxiduiliezmqzaiserverduandepythonchulijiaoben/">复杂事件(cep)处理的消息队列zmq在server端的python日志记录处理脚本</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-26T00:00:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p>前言：主要用来接收客户端服务器传送来的socket内容，并写到指定数据目录下。</p>
+<p><pre class="sh_python"></p>
+import zmq
+import threading
+from datetime import date</p>
+
+<p>def main(addrs):</p>
+
+<p>    context = zmq.Context()
+    client = context.socket(zmq.SUB)
+    client.setsockopt(zmq.SUBSCRIBE, "")
+    print "Connecting to: ", addrs[0]
+    client.connect(addrs[0])</p>
+
+<p>    try:
+        while True:
+                topic, msg = client.recv_multipart()
+                #print "%s: %s" % (topic, msg)
+                FILE = open(addrs[1]+topic+".log."+ date.today().isoformat(), "a"  )
+                FILE.write(msg )
+                FILE.close()
+    except KeyboardInterrupt:
+        raise SystemExit</p>
+
+<p>if __name__ == '__main__':
+    import sys
+    if len(sys.argv) &lt; 2:
+        print "usage: logger.py &lt;address&gt; &lt;path&gt;"
+        raise SystemExit
+    main(sys.argv[1:])
+<p></pre></p>
+</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/pythonyumingchaxunfuwuwhoischengxujiancha5weiyineiyumingdaoqishijianyoujianbaojingqiangzhuyuming/">（python）域名查询服务（whois）程序+检查5位以内域名到期时间邮件报警抢注域名！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-24T00:00:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：这个程序写了挺长时间，主要的加‘-d’选项+域名（只支持.com域名）查询特定域名，不带任何参数后台运行（可以设定cron）脚本检查域名到期时间，发现域名还有5天以内到期报警提示，方便抢注呵呵！</p>
+
+<p>缺点：1  有些域名是没有域名信息的，比如a.com，p.com  所有就过滤掉了</p>
+
+<p>2  程序执行时间不会对负载有影响，但是可能出现socket超时，我设置了socket连接三次，但是可能会出现一些未知错误break，大家发现BUG留言我再修改</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+import sys
+import string
+import socket
+import optparse
+import smtplib
+import re
+import time
+import itertools
+reload(sys)
+sys.setdefaultencoding('utf8') </p>
+
+<p>class Host(object):</p>
+
+<p>    INTERHOST           ="whois.internic.net"
+    NICHOST             = "whois.crsnic.net"
+    INICHOST            = "whois.networksolutions.com"
+    ip_whois = [ INTERHOST, NICHOST ,INICHOST ]</p>
+
+<p>class Whois(object) :</p>
+
+<p>    WHOIS_SERVER_ID     = "Whois Server:"
+    WHOIS_ORG_SERVER_ID = "Registrant Street1:Whois Server:"
+    WHOIS_RECURSE       = 0x01
+    WHOIS_QUICK         = 0x02</p>
+
+<p>    def whois(self, query, hostname, flags):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        fails =0
+        while True:
+            try:
+                if fails &lt;=3:
+                    s.connect((hostname, 43))
+            except socket.error:
+                fails +=1
+            else:
+                break
+                print 'Socket Connection timed out'
+        queryBytes = None
+        queryBytes = (query  + "\r\n").encode()
+        s.send(queryBytes)
+        response = ''
+        while True:
+            d = s.recv(4096)
+            response += d
+            if not d:
+                break
+        s.close()
+        nhost = None
+        nhost = self.findwhois_server(response.decode(), hostname)
+        if (nhost != None):
+            response += self.whois(query, nhost, 0)
+        return response.decode()
+    def findwhois_server(self, buf, hostname):
+        nhost = None
+        parts_index = 1
+        start = buf.find(Whois.WHOIS_SERVER_ID)
+        if (start == -1):
+            start = buf.find(Whois.WHOIS_ORG_SERVER_ID)
+            parts_index = 2</p>
+
+<p>        if (start &gt; -1):
+            end = buf[start:].find('\n')
+            whois_line = buf[start:end+start]
+            whois_parts = whois_line.split(':')
+            nhost = whois_parts[parts_index].strip()
+        else:
+            for nichost in Host.ip_whois:
+                if (buf.find(nichost) != -1):
+                    nhost = nichost
+                    break
+        return nhost</p>
+
+<p>    def whois_lookup(self, options, query_arg, flags):
+        nichost = None
+        if (options == None):
+            options = {}</p>
+
+<p>        options['whoishost'] = Host.NICHOST
+        if ( not (flags &amp; Whois.WHOIS_QUICK)):
+            flags |= Whois.WHOIS_RECURSE
+        return self.whois(query_arg, options['whoishost'], flags)   </p>
+
+<p>class WhoisEntry(object):
+    _regex = {
+        'domain_name':      'Domain Name:\s?(.+)',
+        'registrar':        'Registrar:\s?(.+)',
+        'whois_server':     'Whois Server:\s?(.+)',
+        'referral_url':     'Referral URL:\s?(.+)',
+        'updated_date':     'Updated Date:\s?(.+)',
+        'creation_date':    'Creation Date:\s?(.+)',
+        'expiration_date':  'Expiration Date:\s?(.+)',
+        'name_servers':     'Name Server:\s?(.+)',
+        'status':           'Status:\s?(.+)',
+        'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}',
+    }
+    def __init__(self, domain, text, regex=None):
+        self.domain = domain
+        self.text = text
+        if regex is not None:
+            self._regex = regex</p>
+
+<p>    def __getattr__(self, attr):
+        whois_regex = self._regex.get(attr)
+        if whois_regex:
+            setattr(self, attr, re.findall(whois_regex, self.text))
+            return getattr(self, attr)</p>
+
+<p>        else:
+            raise KeyError('Unknown attribute: %s' % attr)</p>
+
+<p>    def __str__(self):
+        return '\n'.join('%s: %s' % (attr, str(getattr(self, attr))) for attr in self.attrs())</p>
+
+<p>    def attrs(self):
+        return sorted(self._regex.keys())</p>
+
+<p>    @staticmethod
+    def load(domain, text):
+        if text.strip() == 'No whois server is known for this kind of object.':
+            pass
+        return WhoisCom(domain, text)
+class WhoisCom(WhoisEntry):
+    def __init__(self, domain, text):
+        if 'No match for "' in text:
+            pass
+        else:
+            WhoisEntry.__init__(self, domain, text)
+class Email(object):
+    def __init__(self,body):
+        mail_server = 'mail.dongwm.com'
+        mail_server_port = 25
+        from_addr='whois_check@dongwm.com'
+        to_addr ='dongwm@dongwm.com'
+        from_header = 'From: %s\r\n' % from_addr#    to_header = 'To: %s\r\n\r\n' % to_addr
+        to_header = 'To: %s\r\n\r\n' % to_addr
+        subject_header = 'Subject: Yuming check'
+        email_message = '%s\n%s\n%s\n\n%s' % (from_header, to_header, subject_header, body)
+        s = smtplib.SMTP(mail_server, mail_server_port)
+        s.sendmail(from_addr, to_addr, email_message)
+        s.quit()</p>
+
+<p>def parse_command_line(argv):
+    usage = "usage: %prog [options] name"
+    parser = optparse.OptionParser(add_help_option=False, usage=usage)
+    parser.add_option("-d", "--domain", action="store_const",
+                      const=Host.NICHOST, dest="whoishost",
+                      help="Query for a specific domain name, please use: XXX.com format")
+    parser.add_option("-h", "--help", action="help")
+    return parser.parse_args(argv)</p>
+
+<p>if __name__ == "__main__":
+     whoisclient = Whois()
+     (options, args) = parse_command_line(sys.argv)
+     if len(sys.argv)==3 and re.sub('^.*://', '', args[1]).split('/')[0].lower().split('.')[1]  in 'com':
+             text = whoisclient.whois_lookup(options.__dict__,args[1], 0)
+             print  WhoisEntry.load(args[1], text)</p>
+
+<p>     elif len(sys.argv)==1:
+         #for i in range(97,123):
+         #   print chr(i)
+         len = 1
+         while (len&lt;6):
+             for i in list(itertools.permutations(string.lowercase,len)):
+                 if whoisclient.whois_lookup(options.__dict__,''.join(i)+'.com', 0).encode('utf8').find('Expiration Date: ') != -1:
+                     sa = whoisclient.whois_lookup(options.__dict__,''.join(i)+'.com', 0).encode('utf8').split('Expiration Date: ')[1].split(r'&gt;&gt;&gt; Last')[0][:-2]
+                     wtime = time.strftime('%d-%b-%Y',time.localtime(time.time()))
+                     if wtime.lower()[3:6] == sa[3:6] and wtime[7:11] == sa[7:11] and int(sa[0:2]) - int(wtime[0:2]) &lt;=5 and int(sa[0:2]) - int(wtime[0:2]) &gt;=0:
+                         tt = '%s is %s' % (''.join(i)+'.com',sa)
+                         Email(tt)
+                         time.sleep(1)
+             len +=1
+     else:
+             print "Please use the '-h' or '--help' parameter"
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/fuzashijiancepchulijieguozhanshijiaoben/">复杂事件(cep)处理结果实时展示脚本（perl）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-24T00:00:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：复杂事件处理主要用来企业作为应用系统的监测和决策控制，但是我们可能需要一个实时的展示平台，以下脚本实现了终端的彩色终端展示，并支持键盘输入不同的按键刷新不同功能的展示（比如ip访问量的排行，页面访问数的排行等自定义效果）</p>
+
+<p><pre class="sh_perl">
+#!/usr/bin/perl
+#use strict;
+#use warnings;
+use Term::ReadKey;
+use Term::ANSIColor;
+use Getopt::Long;
+use Pod::Usage;
+use Time::HiRes qw ( time alarm sleep );
+Getopt::Long::Configure('bundling');</p>
+
+<p>#变量设定
+$|=1;					#激活autoflush，将缓冲区的内容立即送出
+@ltime=localtime();
+my $date=sprintf("%d-%d-%d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);		#当天日期
+my $Clear=`clear`;			#调用系统命令 clear
+sub Clear();				#
+sub GetHead();</p>
+
+<p>#颜色的定义
+import Term::ANSIColor ':constants';
+my $RESET  = RESET()   || '';
+my $YELLOW = YELLOW()  || '';
+my $RED    = RED()     || '';
+my $GREEN  = GREEN()   || '';
+my $BLUE   = BLUE()    || '';
+my $WHITE  = WHITE()   || '';
+my $BOLD   = BOLD()    || '';</p>
+
+<p>#读取配置文件
+my $config='/cepdata/conf/ceptop.cfg';
+my %config;				#配置文件hash
+get_config();				#读取配置文件内容，存入%config</p>
+
+<p>#读取命令行参数
+my @opt_spec=(
+	{ s =&gt; 'h', d =&gt; 'display help message'},
+	{ s =&gt; 'p', d =&gt; '选择默认展示页面'},
+);
+GetOptions(
+	"p=s" =&gt; \$choose,
+	"h"	  =&gt; \$help	
+) or pod2usage(1);</p>
+
+<p>if ($help) {
+	foreach my $spec (sort {$a-&gt;{s} cmp $b-&gt;{s}}  @opt_spec) {
+        printf "  -%-4s %-15s\n",$spec-&gt;{s},$spec-&gt;{d};
+		if ("$spec-&gt;{s}" eq 'p') {
+			foreach my $page (sort keys %{$config{pagelist}}) {
+				printf "%10s =&gt; %-10s\n",$config{pagelist}{$page}-&gt;{hotkey},$config{pagelist}{$page}-&gt;{desc} || $page;
+					}
+			}
+    }
+	exit 0;
+}</p>
+
+<p>Clear();
+#日志目录
+my $LogPath=$config{main}-&gt;{logpath}; 
+#页面切换的准备
+my %pagelist;					#为页面切换准备的hash, hotkey  =&gt; Page
+my $hotkeylist;					# qr/[abc]/ a,b,c为快捷键
+for_change_page();				#读取%config中的pagelist，生成%pagelist</p>
+
+<p>my %printlist=reverse %pagelist;
+my $listline;
+foreach my $page (sort keys %printlist) {
+	if ($page =~ /^C/) {
+	    $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;32m$page\t";
+	} elsif ($page =~ /^Java/) {
+	    $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;33m$page\t";
+	} elsif ($page =~ /^Ops/) {
+            $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;36m$page\e[0m\t";
+	} elsif ($page =~ /^Php/) {
+            $listline .="\e[0;31m&lt;$printlist{$page}&gt;\e[0;34m$page\e[0m\t";
+        }
+      }</p>
+
+<p>#打开所有文件句柄
+foreach my $fh (values %pagelist) {
+		my $logfile;
+        if ($config{pagelist}-&gt;{$fh}-&gt;{logfile} =~ /^\//) {
+            $logfile="$config{pagelist}-&gt;{$fh}-&gt;{logfile}.$date";
+        } else {
+            $logfile="$LogPath/$config{pagelist}-&gt;{$fh}-&gt;{logfile}.$date";
+        }
+		open $fh,"&lt;$logfile";		#为每个日志文件打开句柄，句柄名为页面名
+	}</p>
+
+<p>my $warning='99999';
+my $critimal='99999';
+my $Page=$pagelist{$choose} || $config{main}-&gt;{defaultpage};	#默认页面
+#GetOptions(
+#	'p:s' =&gt; \$Page,
+#	'w:f' =&gt; \$warning,
+#	'c:f' =&gt; \$critimal,
+#	'f:i' =&gt; \$SortOrder,
+#	);
+ChangePage();					#切换页面，改变参数</p>
+
+<p>#页面切换相关变量
+my $key=0;					#捕获键盘输入，默认值0
+my $lines_left;					#终端行数
+my $diff=0;					#值为1时,切换页面
+my $listpages=0;				#值为1时,显示页面列表供切换</p>
+
+<p>print RED();
+print "Waiting for New Data.....\n";
+print RESET();</p>
+
+<p>#============#
+# Main Loop	 #
+#============#</p>
+
+<p>#ReadMode
+#    0    Restore original settings.
+#    1    Change to cooked mode.
+#    2    Change to cooked mode with echo off. 
+#          (Good for passwords)
+#    3    Change to cbreak mode.
+#    4    Change to raw mode.
+#    5    Change to ultra-raw mode.</p>
+
+<p>#ReadKey
+#    0    Perform a normal read using getc
+#    -1   Perform a non-blocked read
+#    &gt;0   Perform a timed read</p>
+
+<p>#ReadLine
+#    0    Perform a normal read using scalar(&lt;FileHandle&gt;)
+#    -1   Perform a non-blocked read
+#    &gt;0   Perform a timed read</p>
+
+<p>ReadMode(3);
+while (1) {
+	if ( $diff ) {
+			ChangePage();		#切换页面，改变参数
+			$diff = 0;		#改为0,下次循环跳过页面切换
+			}
+	&amp;GetMtime(new);
+	if ("$new_mtime" == "$old_mtime") {	#文件修改时间未变化时
+		sleep 0.1;			#sleep 0.5秒
+		next;				#继续主循环
+		} 
+	else {
+		GetHead();			#设置终端参数，输出描述信息
+		OutPut();			#输出页面内容
+		$key=ReadKey(5);		#捕获键盘输入
+		}
+	unless ($key) {				#没有键盘输入时		
+		next;				#继续主循环
+		}
+	if ( $key =~ /q/ ) {			#键入 q ，退出程序
+		ReadMode(0);
+		print "\n";
+		exit;
+		}
+	if ( $key =~ /l/ ) {		
+		$listpages= $listpages?0:1;
+		if ($listpages) {
+		print "$listline\n";
+		}
+		$key=0;
+		ReadMode(3);
+		}
+	if ( $key =~ /p/ ) {
+        print RED();
+		print '-- paused. press any key to resume --';					#暂停页面输出
+		print RESET();
+        ReadKey(0);
+        next;
+		$key=0;
+		}
+	if ( $key =~ $hotkeylist ) {			#读入快捷键
+		ReadMode(0);
+		$Page=$pagelist{$key};			#根据快捷键切换改变默认页面
+		$diff =1;				#将$diff设置为1,下次主循环会先进行页面切换工作
+		print RED(),"FLUSH AT NEXT TIME";				
+		print RESET();			
+		ReadMode(3);	
+		$key=0;					#将捕获键盘输入设为0
+		$listpages=0;
+		next;
+		}
+}</p>
+
+<p>#==========#
+#  子程序  #
+#==========#</p>
+
+<p>#==清屏==#
+sub Clear()
+{
+	print "$Clear";
+}</p>
+
+<p>#==打印描述信息==#
+sub GetHead()
+{
+	my ($width, $height, $wpx, $hpx) = GetTerminalSize();	#获取终端长宽高等信息
+    $lines_left = $height - 3;					#获取行数，并预留3行
+	my $time=`date +%T`;
+	chomp($time);
+	Clear();						#清屏
+	print GREEN();
+	print "Page: $desc\t\tTime: $time\n";			#打印页面描述，当前时间
+	$lines_left--;
+	print RESET();
+}			</p>
+
+<p>#==页面内容输出==#
+sub OutPut{</p>
+
+<p>    print YELLOW();
+    printf "$f_title\n",@Fieldname;  #打印标题
+    #printf "$f_title\n",$Fieldname[0],$Fieldname[1],$Fieldname[2],$Fieldname[3],$Fieldname[4];  #打印标题
+	$lines_left--;																				</p>
+
+<p>    print RED();
+    printf "$f_title\n",'-' x $F_gang[0],'-' x $F_gang[1],'-' x $F_gang[2],'-' x $F_gang[3],'-' x $F_gang[4],'-' x $F_gang[5];	#打印 -----
+    $lines_left--;																							
+	print RESET();</p>
+
+<p>	#记录了所有行
+	my @record;
+	my $href;
+	while (&lt;$Page&gt;) {
+		chomp();
+		if ($_ =~ $regex) {						#正则匹配取出所需值
+		next if ("$4" eq "-");
+		if ("$Page" eq "OpsAgent") {
+			my $agent = substr("$4",0,100);
+			$href = {'1'=&gt;$1,'2'=&gt;$2,'3'=&gt;$3,'4'=&gt;$agent,'5'=&gt;$5,'6'=&gt;$6};
+			} else {
+			$href = {'1'=&gt;$1,'2'=&gt;$2,'3'=&gt;$3,'4'=&gt;$4,'5'=&gt;$5,'6'=&gt;$6};	#引用hash
+			}
+		push @record,$href;						#将引用存入数组
+			}
+	}</p>
+
+<p>	#排序并输出
+	my @sorted;
+	@sorted = sort { $b-&gt;{$SortOrder} &lt;=&gt; $a-&gt;{$SortOrder} } @record;
+	foreach my $row (@sorted) {
+		last unless $lines_left;
+		printf "$format\n",$row-&gt;{1},$row-&gt;{2},$row-&gt;{3},$row-&gt;{4},$row-&gt;{5},$row-&gt;{6};
+		$lines_left--;
+	}</p>
+
+<p>	#打印常用功能键
+	print "\n" while ($lines_left--);
+	print RED(),"&lt;l&gt;",BLUE(),"PAGELIST\t",RED(),"&lt;p&gt;",BLUE(),"PAUSE\t",RED(),"&lt;q&gt;",BLUE(),"QUIT\n",RESET();</p>
+
+<p>	#打印页面切换的快捷键
+        print "$listline\n" if ($listpages);</p>
+
+<p>	#记录文件修改时间
+	&amp;GetMtime(old);
+}</p>
+
+<p>#==读取配置文件==#
+sub get_config
+{
+	open CEPCONF,"&lt;$config" or die "can't open configfile!";	#打开配置文件
+	while (&lt;CEPCONF&gt;) {
+		next if /^$/;						#忽略空行
+		next if /^\s*\#/;					#忽略注释
+		if (my ($menu) = /\[(\w+)\]/) {				#遇到[a]
+				while (&lt;CEPCONF&gt;) {			#循环读取[a]下的内容
+					next if /^$/;
+					next if /^\s*\#/;
+					last if /\[\/(\w+)\]/;		#如果遇到[/a]结束此循环
+					chomp;
+					if (my ($pagename) = /\[(\w+)\]/) {	#又遇到[b]
+						while (&lt;CEPCONF&gt;) {			#循环读取[]下的内容
+						next if /^$/;
+						next if /^\s*\#/;
+						last if /\[\/(\w+)\]/;			#如果遇到[/b]结束此循环
+						chomp;
+						my ($cfg_key,$cfg_value)= split /=/;	#获取以=分隔的变量名，变量值
+						$cfg_key =~ s/^\s+|\s+$//g;		#去掉变量名前后的空白字符
+						$cfg_value =~ s/\#.*$//g;		#去掉变量值后的注释
+						$cfg_value =~ s/^\s+|\s+$//g;		#去掉变量值前后的空白字符
+						$cfg_value =~ s/['"]//g;		#去掉变量值前后的引号
+						$config{$menu}-&gt;{$pagename}-&gt;{$cfg_key}=$cfg_value;		#将变量名、变量值存入hash $config{a}-&gt;{b}-&gt;{变量名}=变量值
+							}
+						}
+					next if /\[\/(\w+)\]/;				#遇到[/b]跳过
+					my ($cfg_key,$cfg_value)= split /=/;		#获取以=分隔的变量名，变量值
+				$cfg_key =~ s/^\s+|\s+$//g;				#同上
+			$cfg_value =~ s/\#.*$//g;
+		$cfg_value =~ s/^\s+|\s+$//g;
+		$cfg_value =~ s/['"]//g;					#去掉变量值前后的引号
+	$config{$menu}-&gt;{$cfg_key} = $cfg_value;	#存入hash $config{a}-&gt;{变量名}=变量值
+			}
+		}
+	}
+	close CEPCONF;		#关闭文件句柄
+}</p>
+
+<p>#==为页面切换准备的hash==#
+sub for_change_page{
+	my @pages= keys %{$config{pagelist}};					#取出pagelist下的所有键，即所有页面名
+	foreach my $value (@pages) {
+		$pagelist{$config{pagelist}-&gt;{$value}-&gt;{hotkey}} = $value;	# hotkey =&gt; page
+			}
+	foreach my $hotkey (keys %pagelist) {
+		$hotkeylist .= $hotkey;						#将hotkey连接起来
+		}	
+		$hotkeylist = qr/[$hotkeylist]/;				#构建正则表达式
+}</p>
+
+<p>#==获取文件修改时间==#
+sub GetMtime{
+	my $type=shift;
+	if ( $type =~ /new/) {
+		$new_mtime=(stat ($logfile))[9];
+		}
+	elsif ( $type =~ /old/ ) {
+		$old_mtime=(stat ($logfile))[9];
+		}
+}</p>
+
+<p>#==页面切换工作==#
+sub ChangePage{
+	seek $Page,0,2;								#读到文件结尾
+	if ($config{pagelist}-&gt;{$Page}-&gt;{logfile} =~ /^\//) {
+            our $logfile="$config{pagelist}-&gt;{$Page}-&gt;{logfile}.$date";
+        } else {
+            our $logfile="$LogPath/$config{pagelist}-&gt;{$Page}-&gt;{logfile}.$date";
+        }
+#	our $logfile="$LogPath/$config{pagelist}-&gt;{$Page}-&gt;{logfile}.$date";	#日志文件名
+	our $desc = $config{pagelist}-&gt;{$Page}-&gt;{desc} ||$Page ;		#描述信息，默认为页面名
+	&amp;GetMtime(old);								#记录文件修改时间，被用来比较</p>
+
+<p>	our $SortOrder=$SortOrder ||$config{pagelist}-&gt;{$Page}-&gt;{sortorder} || 1;</p>
+
+<p>	our $fields=$config{pagelist}-&gt;{$Page}-&gt;{fields};			#取出列名
+	our @Fieldname = split /\s+/,$fields;					#将列名存入数组
+	our $format=$config{pagelist}-&gt;{$Page}-&gt;{format};			#取出结果输出格式
+	our $f_title=$format;							#列名的输出格式
+	$f_title =~ s/\.\d+f|d/s/g;						#列名都为字符串，将其它格式转成字符串</p>
+
+<p>	our $f_gang = $f_title;							#分割线---，和列名一样的输出格式
+	$f_gang =~ s/[^\d\s]//g;						#
+	our @F_gang = split /\s+/,$f_gang;					#每列要输出多少个-，计入数组
+	my $count = @Fieldname;							#列的数目</p>
+
+<p>	my $num = $count;							#定一个值，和列的数目一样，用途为计算数组下标
+	my $tmp_regex;								#声明临时正则表达式
+	while ($count) {
+		$tmp_regex .= $Fieldname[$num -$count] . '=' . '([^,]+),\s*';	#每个列名后连一个等号和一个正则表达式
+		$count--;
+		}	
+	$tmp_regex =~ s/,\\s\*$//;						#去掉正则表达式末尾的 ,\s*
+	our $regex = qr/$tmp_regex/;						#构建正则表达式，存入变量中
+}
+</pre></p>
+
+<p>他的ceptop.cfg配置类似于：</p>
+
+<p><pre class="sh_perl">
+[main]
+    logpath=/cepdata
+    defaultpage=OpsSumTime
+[/main]</p>
+
+<p>[pagelist]
+    [OpsAvgTime]
+        desc	= 平均执行时间统计
+        logfile = ops/AvgRequestTime.log
+        fields  = AvgTime Count Service Url
+        format  = %10.5f %7s %8s %-25s
+        hotkey  = a
+    [/OpsAvgTime]
+</pre> 可加入不同的pagelist实现不同的自定义效果</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/shiyongkeyidaixuanxiangdeperlfasongzhongwenyoujian/">使用可以带选项的perl发送中文邮件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-13T00:00:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>为了处理复杂事件处理的故障报警，需要使用perl语言实现邮件报警和短信报警</p>
+
+<p><pre class="sh_perl">
+#!/usr/bin/perl
+use strict;
+use Getopt::Long;
+use MIME::Lite;
+use MIME::Words qw(encode_mimewords);</p>
+
+<p>my ($title,$sendto,$cc,@data,$help);</p>
+
+<p>GetOptions(
+    'title|t=s'	    =&gt; \$title,
+    'sendto|s=s'    =&gt; \$sendto,
+    'cc|c=s'	    =&gt; \$cc,
+    'data|d=s{1,10}'=&gt; \@data,
+    'h|help'	    =&gt; \$help,
+);</p>
+
+<p>if ( $help ) {
+print &lt;&lt;EOF;
+    -t	--title	    标题
+    -s	--sendto    收件人
+    -c	--cc	    抄送人
+    -d	--data	    内容
+    -h	--help	    帮助
+EOF
+}
+my @ltime=localtime;
+my $today=sprintf("%04d%02d%02d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);
+open LOG,"&gt;&gt;/cepdata/notification.log.$today";</p>
+
+<p>my $data="@data";
+$data =~ s/=/:/g;
+my $subject = encode_mimewords("$title",'Charset','GB2312');
+$sendto =~ s/(?=,|$)/\@dongwm.com/g;
+$cc =~ s/(?=,|$)/\@dongwm.com/g if $cc;</p>
+
+<p>my $msg = MIME::Lite-&gt;new (
+        From =&gt; 'cep@dongwm.com',
+        To =&gt; $sendto,
+	Cc  =&gt; $cc,
+        Subject =&gt; $subject,
+        Type     =&gt; 'text/html',
+        Data     =&gt; $data,
+        Encoding =&gt; 'base64',
+    ) or die "create container failed: $!";</p>
+
+<p>$msg-&gt;attr('content-type.charset' =&gt; 'GB2312');
+$msg-&gt;send('smtp','localhost',Debug=&gt;0);
+my @time=localtime;
+my $currenttime=sprintf("%04d-%02d-%02d %02d:%02d:%02d",$time[5]+1900,$time[4]+1,$time[3],$time[2],$time[1],$time[0]);
+print LOG "$currenttime send mail to $sendto : \"$data\"\n";
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/bashhistorybiantaiyongfa/">Bash History （变态用法）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-12T00:00:00+08:00" pubdate data-updated="true">Aug 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>首先看一个例子：</p>
+
+<p>root@client ~&gt; history</p>
+
+<p>1002  ll /root
+1003  cat moxi
+1004  cd /home/dongwm
+1005  history</p>
+
+<p>1 从历史执行一个特定的命令使用，这里我想要执行“cat moxi”，使用“！histroy前面的数字”</p>
+
+<p>root@client ~&gt; !1003
+cat moxi
+21233 = {
+&#8220;hashAlgorithm&#8221;: &#8220;fnv1a_32&#8221;,
+&#8220;numReplicas&#8221;: 2,
+&#8220;serverList&#8221;: [&#8220;192.168.8.138:11211&#8221;,&#8221;192.168.8.137:11211&#8221;],
+&#8220;vBucketMap&#8221;: [
+[0,2,3],
+[1,2,3]
+]
+}</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/bashhistorybiantaiyongfa/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/mongodbguanlijiaoben/">Mongodb集群管理脚本（python）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-06T00:00:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：mongodb集群需要一个管理脚本，比如启动集群，关闭集群，查看集群状态等功能，本脚本使用了pdsh代替ssh，本来为了并行操作，但是事实上在for循环里面并行是不必要的，所以可以改成ssh的。以后会改成多线程并行操作。</p>
+
+<p>本脚本特性：</p>
+
+<p>1 需要安装PDSH （并行的ssh）和termcolor(一个让终端显示颜色的pythonapi)，-h选项有安装方法介绍</p>
+
+<p>2 支持查看集群服务状态（包括查看监听端口列表和各设定服务是否正常，正常状态为绿色，不正常为红色），start/stop/restart等集群服务</p>
+
+<p>3 支持tab自动补齐相关命令</p>
+
+<p>4  启动服务前先判定服务是否运行，防止多次启动。停止服务时给于倒计时，防止误操作</p>
+
+<p>5  效果截图：</p>
+
+<p><img class="alignnone" title="mongodb1" src="http://farm7.static.flickr.com/6143/6034397038_9edf238f9b_z.jpg" alt="" width="640" height="437" /></p>
+
+<p><img class="alignnone" title="mongodb2" src="http://farm7.static.flickr.com/6189/6034397214_dc86e3bd26_z.jpg" alt="" width="640" height="264" /></p>
+
+<p><img class="alignnone" title="mongodb3" src="http://farm7.static.flickr.com/6181/6033847951_a7e188c613_z.jpg" alt="" width="640" height="437" /></p>
+
+<p>本脚本需要一个配置文件conf.cfg，当切换shard或者仲裁到其他服务器上面时候只需要修改此配置文件，本例有7台服务器，其中mongod1代表shard1，mongod3a代表shard3的arbiter，这样的写法是我为了直接在脚本里面取值，因为在相应服务器启动进程使用的是init.d下的脚本，配置文件也是conf型，下面有2个例子：</p>
+
+<p>cat /etc/conf.cfg  //python脚本的配置文件
+<pre class="sh_python">
+[host]
+ hosts=mg01,mg02,mg03,mg04,mg05,mg06,mg07
+ [mg01]
+ mongod = mongod1,mongod4
+ arbiter= mongod3a
+ config =
+ mongos = mongos
+ [mg02]
+ mongod = mongod1,mongod4
+ arbiter= mongod3a
+ config = mongoconfig
+ mongos =
+ [mg03]
+ mongod = mongod1,mongod2
+ arbiter= mongod4a
+ config =
+ mongos = mongos
+ [mg04]
+ mongod = mongod2
+ arbiter= mongod1a,mongod4a
+ config = mongoconfig
+ mongos =
+ [mg05]
+ mongod = mongod2,mongod3
+ arbiter= mongod1a
+ config =
+ mongos = mongos
+ [mg06]
+ mongod = mongod3
+ arbiter= mongod2a
+ config = mongoconfig
+ mongos =
+ [mg07]
+ mongod = mongod3,mongod4
+ arbiter= mongod2a
+ config =
+ mongos = mongos
+</pre></p>
+
+<p>cat /etc/init.d/mongod1  //mongodb进程启动脚本，支持start，stop等
+<pre class="sh_bash">
+#!/bin/bash</p>
+
+<p># mongod - Startup script for mongod</p>
+
+<p># chkconfig: 35 85 15
+ # description: Mongo is a scalable, document-oriented database.
+ # processname: mongod
+ # config: /etc/mongod.conf
+ # pidfile: /var/run/mongo/mongo.pid</p>
+
+<p>. /etc/rc.d/init.d/functions</p>
+
+<p># things from mongod.conf get there by mongod reading it</p>
+
+<p>OPTIONS=" -f /etc/mongod1.conf"</p>
+
+<p>mongod=${MONGOD-/usr/local/mongodb/bin/mongod}</p>
+
+<p>MONGO_USER=mongod
+ MONGO_GROUP=mongod</p>
+
+<p>start()
+ {
+ echo -n $"Starting mongod1: "
+ daemon --user "$MONGO_USER" $mongod $OPTIONS
+ RETVAL=$?
+ echo
+ [ $RETVAL -eq 0 ] &amp;&amp; touch /var/lock/subsys/mongod1
+ }</p>
+
+<p>stop()
+ {
+ echo -n $"Stopping mongod1: "
+ killproc -p /var/lib/mongo/mongod1.lock -t30 -TERM /usr/local/mongodb/bin/mongod
+ RETVAL=$?
+ echo
+ [ $RETVAL -eq 0 ] &amp;&amp; rm -f /var/lock/subsys/mongod1
+ }</p>
+
+<p>restart () {
+ stop
+ start
+ }</p>
+
+<p>ulimit -n 12000
+ RETVAL=0</p>
+
+<p>case "$1" in
+ start)
+ start
+ ;;
+ stop)
+ stop
+ ;;
+ restart|reload|force-reload)
+ restart
+ ;;
+ condrestart)
+ [ -f /var/lock/subsys/mongod1 ] &amp;&amp; restart || :
+ ;;
+ status)
+ status $mongod
+ RETVAL=$?
+ ;;
+ *)
+ echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+ RETVAL=1
+ esac</p>
+
+<p>exit $RETVAL
+</pre></p>
+
+<p>cat /etc/mongod1.conf  //mongodb启动脚本需要的conf配置文件，mongos和config配置文件类似
+<pre class="sh_bash">
+# shard1 config
+ shardsvr=true
+ replSet=shard1
+ port=10000
+ fork=true
+ journal=true
+ dbpath=/data/shard1
+ oplogSize=10240
+ logpath=/data/shard1/shard1.log
+ logappend=true
+ pidfilepath=/var/lib/mongo/mongod1.lock
+ unixSocketPrefix=/data/shard1/
+</pre></p>
+
+<p>下面是python管理脚本：</p>
+
+<p>cat /usr/bin/Mshell.py  //真正的管理脚本</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+# coding=gbk</p>
+
+<p>#__doc__注释  执行脚本 -h 或者 --help  打印输出的内容
+"""
+This script is used to manage mongodb!</p>
+
+<p>The Feature:
+1 Support command automatically filled
+2 View the current status of the cluster
+3 Shut down or start the cluster service</p>
+
+<p>Required dependencies:
+1 PDSH -&gt; Parallel Distributed Shell
+Installation:
+rpm -ivh pdsh-2.24-1.el5.rf.x86_64.rpm
+2 termcolor -&gt; ANSII Color formatting for output in terminal
+Installation:
+python setup.py install</p>
+
+<p>Usage:
+/usr/bin/Mshell.py
+Note: Does not require any parameters</p>
+
+<p>Writer:Dongweiming</p>
+
+<p>"""
+#引用一些需要的模块
+import os
+import sys
+import time
+import re
+import string
+import readline
+from subprocess import Popen, PIPE
+import ConfigParser
+from optparse import OptionParser
+from termcolor import colored</p>
+
+<p>class Cfg():
+#类初始化函数
+    def __init__(self,cfg):
+        self.cfg = cfg
+        self._parse_configure()
+#设定取值逻辑，当出现多个分割格式化
+    def _get_value(self,conf, line, key):
+        try:
+            value = conf.get(line, key)
+        except ConfigParser.NoOptionError:
+            return []
+        if value:
+            return [i.strip() for i in value.split(',') if i]
+        else:
+            return []
+#从配置文件中取得某主机某服务相关值
+    def _parse_configure(self):
+        conf = ConfigParser.RawConfigParser()
+        conf.read(self.cfg)
+        green_on_grey = lambda x:colored(x,'red','on_grey')
+        self.hosts=self._get_value(conf,'host','hosts')
+        for h in self.hosts:
+            for service in ['arbiter', 'config', 'mongod', 'mongos']:
+                setattr(self, '%s_%s' % (h, service), self._get_value(conf, h, service))
+                self.h_service=self._get_value(conf, h, service)
+#登录Shell打印一些配置文件格式化后的明细
+            print green_on_grey('host:\t%s\n') % h
+            if getattr(self,'%s_mongod' % h):
+                print colored('Shard:\t%s','yellow')  % getattr(self,'%s_mongod' % h )
+            if getattr(self,'%s_config' % h):
+                print colored('Config server is Open','green')
+            if getattr(self,'%s_mongos' % h):
+                print colored('Mongos server is Open','magenta')
+            if getattr(self,'%s_arbiter' % h):
+                print colored('Arbiter:\t%s','blue') % getattr(self,'%s_arbiter' % h )</p>
+
+<p>class Manager(Cfg):
+#初始化函数
+    def __init__(self,confile):
+        Cfg.__init__(self,confile)
+        self.services = [ 'arbiter', 'config', 'mongod', 'mongos', 'all','*']
+#执行命令的函数，设定命令操作逻辑过程
+    def fetch_job(self,cmd):
+        cmd = cmd.strip().split(None, 2)
+        if len(cmd) == 1 and cmd[0] not in ['show', 'help','status']:
+            print '%s what...' % cmd[0]
+            return
+        service= None
+        host = None
+#判断当命令以 start stop开始，host和服务是不是再设定的范围值
+        if cmd[0] in ['start', 'stop']:
+            if '@' in cmd[1]:
+                (service,host) = cmd[1].split('@')
+                if host not in self.hosts:
+                    print 'No such a host %s' % host
+                    return
+            else:
+                service = cmd[1]
+                host = 'all'</p>
+
+<p>            if service not in self.services:
+                print "bad service %s,Correct parameters: [ 'arbiter', 'config', 'mongod', 'mongos', 'all','*']" % service
+                return
+#当符合要求 调用下面的_start_srv函数用于启动
+            if cmd[0] == 'start' and len(cmd) == 2:
+                self._start_srv(host, service)
+            elif cmd[0] == 'stop' and len(cmd) &lt;= 3:
+                now = False
+                if len(cmd) == 3:
+                    if cmd[2] == 'now':
+                        now = True
+                    else:
+                        print 'Oops, bad command'
+                        return
+                self._stop_srv(host, service, now)
+            else:
+                print 'Oops, bad command'
+                return
+        elif cmd[0] == 'show':
+            self._show_srv()
+        elif cmd[0] == 'help':
+            self._show_help()
+        elif cmd[0] == 'status':
+            self._status_srv()
+        else:
+            print 'command error %s %s' % (cmd[0], cmd[1])
+            return
+#执行show命令
+    def _show_srv(self):
+        print  colored('服务器'+('-'*2) + 'PID'+('-'*4)+ '数据'+('-'*10)+'监听端口'+('-'*4)+'服务端口','blue')
+        for host in self.hosts:
+            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s ps -ef |grep mongod|grep -v grep' % ( host )
+            for line in os.popen(cmd).readlines():
+                dict = {}
+                s = string.split(line)
+                if s[1] == 'mongod':
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat %s|grep -v "#"|grep -v "^$"' % (s[0].strip(':'),s[10])
+                    for line in os.popen(cmd).readlines():
+                        f = string.rstrip(line)
+                        value = f.split('=')[1:2]
+                        key = f.split('=')[0].split(':')[1]
+                        if key != '':
+                           dict[key] = value
+                           if not dict.get(" replSet"):
+                               dict[' replSet']=['NO']
+                    print  colored(s[0].ljust(6,' '),"red"),colored(s[2].ljust(6,' '),"green"),colored('%s  %s ','cyan') % (''.join(dict.get(" unixSocketPrefix")).split('/')[2].ljust(14,' '),''.join(dict.get(" port")).ljust(8,' '))
+#查看集群状态，执行status命令
+    def _status_srv(self):
+        yellow_on_grey = lambda x:colored(x,'yellow','on_grey')
+        for h in self.hosts:
+            print yellow_on_grey('host:\t%s\n') % h
+            for str in ','.join(getattr(self,'%s_mongod' % h)).split(','):
+                if getattr(self,'%s_mongod' % h):
+                       cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/%s.conf' % (h,str)
+                       for line in os.popen(cmd).readlines():
+                           cmds ="PDSH_SSH_ARGS_APPEND='-p9922' pdsh -Rssh -w ssh:root@%s netstat -tunlp|egrep '10000|12000|14000|16000'|awk '{print $5}'|cut -d':' -f2"  % h
+                           for lines in  os.popen(cmds).readlines():
+                               setattr(self, '%s' % h,lines.strip())
+                               if line.strip().split('=')[1]  in lines.strip():
+                                   print 'Shard :%s\t [%s] ' % (str,colored('ok','green'))
+                                   break
+                           #else  line.strip().split('=')[1] not in lines.strip():
+                           else:
+                                   print 'Shard :%s\t [%s] ' % (str,colored('ok','red'))</p>
+
+<p>            if getattr(self,'%s_arbiter' % h):
+                for str in ','.join(getattr(self,'%s_arbiter' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/%s.conf' % (h,str)
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep mongo|grep "1[0-9]\{3\}1"' % h
+                            for line in  os.popen(cmd1).readlines():
+                               t = string.rstrip(line)
+                               value=t.split('0.0.0.0:')[1].rstrip()
+                               if cc in value:
+                                print 'Arbiter :%s\t [%s] ' % (str,colored('ok','green'))
+                                break
+                            else:
+                                print 'Arbiter :%s\t [%s] ' % (str,colored('ok','red'))</p>
+
+<p>            if getattr(self,'%s_config' % h):
+                for str in ''.join(getattr(self,'%s_config' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/mongoconfig.conf' % h
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep 20000' % h
+                            for line in  os.popen(cmd1).readlines():
+                               t = string.rstrip(line)
+                               value=t.split('0.0.0.0:')[1].rstrip()
+                               if cc in value:
+                                  print 'Config :%s\t %s' % (str,('[' + colored('ok','green')+']'))
+                                  break
+                            else:
+                                  print 'Config :%s\t %s' % (str,('[' + colored('ok','red')+']'))
+            if getattr(self,'%s_mongos' % h):
+                for str in ''.join(getattr(self,'%s_mongos' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w  ssh:root@%s grep "^port" /etc/mongos.conf' % h
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep mongos' % h
+                        for line in  os.popen(cmd1).readlines():
+                            t = string.rstrip(line)
+                            value=t.split('0.0.0.0:')[1].rstrip()
+                            if cc in value:
+                                print 'Mongos :%s\t [%s] ' % (str,colored('ok','green'))
+                                break
+                        else:
+                                print 'Mongos :%s\t [%s] ' % (str,colored('ok','red'))
+                                break
+#当执行 start 命令
+    def _start_srv(self,host,prog):
+#当执行start all
+        if prog == 'all':
+            for h in self.hosts:
+                if getattr(self,'%s_mongod' % h):
+                    for str in ','.join(getattr(self,'%s_mongod' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/%s.conf|grep -v "#"|grep port' % (h,str)
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s mongod process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,str)
+                            os.system(cmd)
+            for h in self.hosts:
+                if getattr(self,'%s_arbiter' % h):
+                    for str in ','.join(getattr(self,'%s_arbiter' % h)).split(','):
+                        print str
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/%s.conf|grep -v "#"|grep port' % (h,str)
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s arbiter process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,str)
+                            os.system(cmd)</p>
+
+<p>            for h in self.hosts:
+                if getattr(self,'%s_config' % h):
+                        print ','.join(getattr(self,'%s_config' % h))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/mongoconfig.conf|grep -v "#"|grep port' % h
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s config process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,','.join(getattr(self,'%s_config' % h)))
+                            os.system(cmd)
+            for h in self.hosts:
+                if getattr(self,'%s_mongos' % h):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/mongos.conf|grep -v "#"|grep port' % h
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s mongos process' % h
+                        else:
+                           cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,','.join(getattr(self,'%s_mongos' % h)))
+                           os.system(cmd)
+        else:
+            if  host== 'all':
+                host = self.hosts
+            else:
+                host = [host]
+            for i in host:
+                if  prog == '*':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                    if getattr(self,'%s_arbiter' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                    for service in ['config', 'mongos']:
+                        if getattr(self,'%s_%s' % (i,service)):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_%s' % (i,service))))
+                            os.system(cmd)
+                if prog == 'mongod':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                if prog == 'mongos':
+                    print ','.join(getattr(self,'%s_mongos' % i))
+                    if getattr(self,'%s_mongos' % i):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_mongos' % i)))
+                        os.system(cmd)
+                if prog == 'config':
+                    print ''.join(getattr(self,'%s_config' % i))
+                    if getattr(self,'%s_config' % i):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_config' % i)))
+                        os.system(cmd)
+                if prog == 'arbiter':
+                    print ','.join(getattr(self,'%s_arbiter' % i))
+                    if getattr(self,'%s_arbiter' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                        os.system(cmd)
+#当执行stop 的一些设置
+    def _stop_srv(self, host, prog, now):
+        if host == 'all':
+            host = self.hosts
+        else:
+            host = [host]
+        verify = None
+#当执行 stop all
+        if prog == 'all':
+            if not now:
+#执行前做确定验证，并倒计时3秒
+                try:
+                    verify = raw_input(colored("Are you sure to stop all? (y/n) ","yellow")).lower()
+                    if verify == 'y':
+                        print "&gt;&gt;&gt; Waiting 3 seconds before stoping..."
+                        print "&gt;&gt;&gt; (Control-C to abort)..."
+                        print "&gt;&gt;&gt; Stoping in:",</p>
+
+<p>                        for i in range(3, 0, -1):
+                            print colored('%d','red') % i,
+                            sys.stdout.flush()
+                            time.sleep(1)
+                        print
+                    else:
+                        return
+                except KeyboardInterrupt:
+                    print
+                    return
+#stop 过程逻辑
+            for host in self.hosts:
+                if getattr(self,'%s_mongos' % host):
+                    ','.join(getattr(self,'%s_mongos' % host))
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,','.join(getattr(self,'%s_mongos' % host)))
+                    os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_config' % host):
+                    print ','.join(getattr(self,'%s_config' % host))
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,','.join(getattr(self,'%s_config' % host)))
+                    os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_arbiter' % host):
+                    for str in ','.join(getattr(self,'%s_arbiter' % host)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,str)
+                        os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_mongod' % host):
+                    for str in ','.join(getattr(self,'%s_mongod' % host)).split(','):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,str)
+                            os.system(cmd)
+#当执行stop service@XX 逻辑过程
+        else:
+            for i in host:
+                if  prog == '*':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,str)
+                            os.system(cmd)
+                    for service in ['arbiter', 'config', 'mongos']:
+                        if getattr(self,'%s_%s' % (i,service)):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_%s' % (i,service))))
+                            os.system(cmd)
+                if prog == 'mongod':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,str)
+                            os.system(cmd)
+                if prog == 'mongos':
+                    if getattr(self,'%s_mongos' % i):
+                        print ','.join(getattr(self,'%s_mongos' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_mongos' % i)))
+                        os.system(cmd)
+                if prog == 'config':
+                    if getattr(self,'%s_config' % i):
+                        print ','.join(getattr(self,'%s_config' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_config' % i)))
+                        os.system(cmd)
+                if prog == 'arbiter':
+                    if getattr(self,'%s_arbiter' % i):
+                        print ','.join(getattr(self,'%s_arbiter' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_arbiter' % i)))
+                        os.system(cmd)
+#当执行help打印一些帮助信息
+    def _show_help(self):
+        help = " CMD                        ARGS                          DESCRIPTOR               \n" \
+             " ==============================================================================         \n" \
+             " start/stop       all/mongod/arbiter/config/mongos        启动关闭进程          \n" \
+             " 注：启动关闭方式：1 start/stop service@host \n"  \
+             "                   2 start/stop all（相当于start/stop * \n" \
+             "                   3 start/stop service     \n" \
+             " 例子：停止集群mongos服务： stop  mongos \n" \
+             "       启动集群mg02主机的config服务：start  config@mg02 \n" \
+             "       停止整个集群服务： stop all\n" \
+             " help                                                     找到帮助      \n" \
+             " show                                                     查看当前启动进程      \n" \
+             " status                                                   查看状态     \n" \
+             " ==============================================================================         \n"
+        print help                 </p>
+
+<p>#Shell累 主要是用户操作的一些指导
+class Shell:
+#设定进入Shell显示的颜色和语言
+    PROMPT = colored('root','green') + colored('@MongoDB# ','red')
+#初始化函数 设定配置文件conf.cfg，命令行限制可以使用的几个命令
+    def __init__(self):
+        confile = os.path.join("", '/etc/conf.cfg')
+        self.cmds = ['start', 'stop', 'show', 'log', 'help','status']
+#调用类Manager
+        self.manager = Manager(confile)
+#        self.pro = Cfg(confile)
+    def start(self):
+        readline.set_completer(self._completer)
+        readline.parse_and_bind("tab: complete")
+        while True:
+            try:
+                cmd = raw_input(self.PROMPT)
+            except EOFError:
+                print colored('Exit','green')
+                exit(0)
+            except KeyboardInterrupt:
+                print colored('type ctrl-D to exit Mongo Manager Shell','yellow')
+                continue
+            if cmd:
+                self._parse_cmd(cmd)
+    def _completer(self, word, index):
+        matches = [c for c in self.cmds if c.startswith(word)]
+        try:
+            return matches[index] + ''
+        except IndexError:
+            pass
+    def _shell(self, cmd):
+        print 'Mongo-Shell: "%s": command not find  please input "help"' % cmd
+#判断命令开始是不是设定的那几个词语，是-&gt;执行fetch_job函数
+    def _parse_cmd(self, cmd):
+        if cmd.startswith('start') or \
+                cmd.startswith('stop') or \
+                cmd.startswith('show') or \
+                cmd.startswith('status') or \
+                cmd.startswith('help') or \
+                cmd.startswith('log'):
+            self.manager.fetch_job(cmd)
+        else:
+            self._shell(cmd)
+#主函数
+if __name__ == '__main__':
+    argc = len(sys.argv)
+    parser = OptionParser(description="Use For Mongodb Shell",prog="Mshell.py",version="1.0",usage="%prog")
+    parser.add_option("-v", "--verbose",action="count",help="Show Shell Version Information(For more information, please use the option: -vv)")
+    options, arguments=parser.parse_args()
+#判断是否root
+    if os.geteuid() != 0:
+        print red('Need to be root :(')
+        exit(1)
+#当脚本不带参数引发调用类Shell
+    if argc == 1:
+        test = Shell()
+        test.start()
+#当不了脚本的用户使用-h或者--help  给与doc提示
+    if '-h' in sys.argv  or '--help' in sys.argv:
+        print __doc__
+    elif options.verbose ==1:
+        print __doc__
+    elif options.verbose ==2:
+        print __doc__
+        print "Version =1.0  Revision time at 2011年 07月 04日"
+    else:
+        print '请直接运行脚本，不需要附带参数'
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/sikewangluoanquanzhuantierguanyuluyouqianquan/">思科网络安全专题（二）:关于路由器安全</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-01T00:00:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>怎么说我也是ccsp出生，呵呵也看过很多IE级别的关于安全的书 ，所以最近准备做一个基于配置的关于安全的专题。</p>
+
+<p>1  vty访问</p>
+
+<p>虚拟终端访问当然需要一些安全</p>
+
+<p>3640_M(config)#aaa new-model
+3640_M(config)#aaa authentication login for-ssh local</p>
+
+<p>3640_M(config)#username dongwm password dongwmtest</p>
+
+<p>3640_M(config)#line vty 0 4
+3640_M(config-line)#transport input ssh
+3640_M(config-line)#exec-timeout 3 30  //超时时间为3分30秒
+3640_M(config-line)#login authentication for-ssh</p>
+
+<p>2 记录路由器事件</p>
+
+<p>3640_M(config)#service timestamps debug datetime msec localtime show-timezone
+3640_M(config)#service timestamps log datetime msec localtime show-timezone   //用Log信息和Debug信息的时间戳，格式为Datetime：，并且支持毫秒显示
+3640_M(config)#no logging console  //<span>禁止在控制台上打印日志报文</span>
+3640_M(config)#logging buffered 16384  //将日志信息记录到内存缓冲区的大小</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/sikewangluoanquanzhuantierguanyuluyouqianquan/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/luyouqishangmianqiyonganquanshellssh/">路由器上面启用安全Shell（ssh）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-31T00:00:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>R1(config)#ip domain-name dongwm.com</p>
+
+<p>R1(config)#crypto key zeroize rsa
+% No Signature RSA Keys found in configuration.  //想把配置中的rsa清除 但是发现配置中没有配置 呵呵</p>
+
+<p>R1(config)#crypto key generate rsa general-keys modulus 1024  //产生SSH所用安全密钥 长度为1024 类型为rsa</p>
+
+<p>% You already have RSA keys defined named R1.dongwm.com.
+% They will be replaced.</p>
+
+<p>% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable&#8230;
+*Mar  1 00:06:14.043: %SSH-5-DISABLED: SSH 1.99 has been disabled[OK]
+*Mar  1 00:06:20.631: %SSH-5-ENABLED: SSH 1.99 has been enabled</p>
+
+<p>R1(config)#ip ssh time-out 90  //设置ssh超市时间为90s</p>
+
+<p>R1(config)#ip ssh authentication-retries 4  //重置ssh验证的错误尝试次数</p>
+
+<p>R1(config)#line vty 0 15</p>
+
+<p>R1(config-line)#transport input ssh //容许vty线路使用ssh</p>
+
+<p>R1#sh crypto key mypubkey rsa
+% Key pair was generated at: 00:06:20 UTC Mar 1 2002
+Key name: R1.dongwm.com
+Usage: General Purpose Key
+Key is not exportable.
+Key Data:
+30819F30 0D06092A 864886F7 0D010101 05000381 8D003081 89028181 00C04D5B
+EA7876B0 DAD6D615 6F2B7DC6 8A6DB09A FA3C1EA0 36173B5C ACCC56C2 796D814B
+9F27CECF C48FD5D9 F9547F96 4623BDD2 D53CA81D D95B426F 64DB1D2B 01CD2BD0
+6C7223BB 3DDA577A 7E1D9AA8 7D48080E A9EB69E5 93A3E851 41F22715 27961027
+E254956F 7E6C23F3 4D314CF9 75E99F1B 1A0F287D 1AC4D83A 2AA7BD8F 55020301 0001
+% Key pair was generated at: 00:06:21 UTC Mar 1 2002
+Key name: R1.dongwm.com.server
+Usage: Encryption Key
+Key is not exportable.
+Key Data:
+307C300D 06092A86 4886F70D 01010105 00036B00 30680261 00D36FB0 D8F4A184
+7C8CAEAB C5F0155F B7FA5BEB 65096F81 18359560 53D5F9C9 CF2C0470 F04EE42B
+773E4E4F 7B181E2E BC83D77B 2C9A6C54 247D4ECA 77E53770 D440F979 A7A327CE
+5B35A59C 61EE0AD9 9A4D0C09 EE108B57 F906A97E FF24BE90 CF020301 0001</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyujiaohuanjianquan/">思科网络安全专题（一）:关于交换机安全</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-31T00:00:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>生产环境交换机比较多，以前的同事没有对其进行什么安全策略，就是简单配置一个登录密码而已。我接手后进行了一些改造！</p>
+
+<p>1 禁用DTP，中继</p>
+
+<p>因为一些交换机默认的中继为auto模式。可能在收到dtp协议帧后自动成为中继。</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#switchport mode access</p>
+
+<p>2 stp安全</p>
+
+<p>如果攻击者获得2个不同交换的2个端口，可将一个交换机引入网络，配置更高的桥优先级，使之比根桥的桥接优先级更低，这样stp重新收敛后就会被这个冒充交换机截取流量</p>
+
+<p>1 根保护： 收到bpdu后进入根保护不一致的状态，端口不再转发流量，bpdu停止后恢复</p>
+
+<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
+
+<p>SW1(config-if-range)#spanning-tree  guard root</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/guanyujiaohuanjianquan/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/zhandaozhanvpnyugongxiangmiyue/">站到站VPN(预共享密钥)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-30T00:00:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R1</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>line con 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>logg sy</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>no ip domain-lookup</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int loopback 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 1.1.1.1 255.255.255.255</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int f0/0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.3.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.15.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 0.0.0.0 0.0.0.0 192.168.15.5</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>access-list 100 permit ip 1.1.1.1 0.0.0.0 5.5.5.5 0.0.0.0</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>authentication pre-share</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>encryption aes 128</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>group 2</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>hash sha</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto ipsec transform-set cisco esp-aes 128 esp-sha-hmac</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/zhandaozhanvpnyugongxiangmiyue/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/24/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/22/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

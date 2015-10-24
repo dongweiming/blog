@@ -1,0 +1,1771 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/page/12">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyutarfileyanjiu/">关于tarfile研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：使用tarfile模块来实现文件归档压缩与解压</p>
+
+<p><pre class="sh_python">
+import tarfile</p>
+
+<p>print 'creating archive'
+out = tarfile.open('tarfile_add.tar', mode='w')  #创建一个tar文件
+try:
+    print 'adding README.txt'
+    out.add('README.txt')  #望这个tar添加一个文件
+finally:
+    print 'closing'
+    out.close()</p>
+
+<p>print
+print 'Contents:'
+t = tarfile.open('tarfile_add.tar', 'r')
+print t.getnames() #存档内容的名称列表
+for member_info in t.getmembers():  #遍历tar包含的文件
+    print member_info
+    print member_info.name
+    print '\tModified:\t', time.ctime(member_info.mtime)  #文件修改时间
+    print '\tMode    :\t', oct(member_info.mode) #文件的权限
+    print '\tType    :\t', member_info.type 
+    print '\tSize    :\t', member_info.size, 'bytes'  #文件大小
+    print
+print
+for filename in [ 'README.txt', 'tarfile_add.tar', 
+                  'bad.tar', 'notthere.tar' ]:
+    try:
+        print '%20s  %s' % (filename, tarfile.is_tarfile(filename))  #测试tar文件是否有效
+    except IOError, err:
+        print '%20s  %s' % (filename, err)
+</pre></p>
+
+<p>直接过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+creating archive
+adding README.txt
+closing</p>
+
+<p>Contents:</p>
+
+<p>[&#8216;README.txt&#8217;]
+README.txt
+Modified:    Mon Jun 18 15:28:10 2012
+Mode    :    0644
+Type    :    0
+Size    :    0 bytes</p>
+
+<p>README.txt  False  #存在文件 但他不是tar文件
+tarfile_add.tar  True #上面创建的tar文件
+bad.tar  False  #值是touch了这个名字的文件
+notthere.tar  [Errno 2] No such file or directory: &#8216;notthere.tar&#8217;  #不存在这个文件</p>
+
+<p><pre class="sh_python">
+import tarfile
+import os
+t = tarfile.open('tarfile_add.tar', 'r')
+for filename in [ 'README.txt', 'notthere.txt' ]:
+    try:
+        f = t.extractfile(filename)  #从tar中解压出某文件
+    except KeyError:
+        print 'ERROR: Did not find %s in tar archive' % filename
+    else:
+        print filename, ':', f.read() #读取解压出来的文件内容
+os.mkdir('outdir')
+t.extract('README.txt', 'outdir')  #解压tar中的这个文件到outdir目录
+t.extractall('outdir')  #将tar全部文件解压到outdir目录
+t.extractall('outdir', members=[t.getmember('README.txt')]) #解压tar中的README.txt到outdir目录
+print os.listdir('outdir')
+</pre></p>
+
+<p><pre class="sh_python">
+import tarfile</p>
+
+<p>data = 'This is the data to write to the archive.'
+out = tarfile.open('tarfile_addfile.tar', mode='w')
+try:
+    print 'adding README.txt as RENAMED.txt'
+    info = out.gettarinfo('README.txt', arcname='RENAMED.txt')  #将tar中的README.txt修改成RENAMED.txt
+    out.addfile(info)
+    info = tarfile.TarInfo('made_up_file.txt') #准备修改的文件
+    info.size = len(data)  
+    out.addfile(info, StringIO(data)) #将数据流写道文件里面</p>
+
+<p>finally:
+    print 'closing'
+    out.close()</p>
+
+<p>t = tarfile.open('tarfile_addfile.tar', 'r')
+for member_info in t.getmembers():
+    print member_info.name
+    f = t.extractfile(member_info)
+    print f.read()
+out = tarfile.open('tarfile_addfile.tar', mode='a') 
+try: 
+    out.add('index.rst')  #往tar再加入一个文件  上面的模式是‘a’
+finally: 
+    out.close()~
+</pre></p>
+
+<p><pre class="sh_python">
+import tarfile
+import os</p>
+
+<p>fmt = '%-30s %-10s'
+print fmt % ('FILENAME', 'SIZE')
+print fmt % ('README.txt', os.stat('README.txt').st_size)  #文件的字节数</p>
+
+<p>for filename, write_mode in [
+    ('tarfile_compression.tar', 'w'),  #默认的.tar后缀
+    ('tarfile_compression.tar.gz', 'w:gz'), #修改成.tar.gz
+    ('tarfile_compression.tar.bz2', 'w:bz2'), #修改成.tar.bz2
+    ]:
+    out = tarfile.open(filename, mode=write_mode)
+    try:
+        out.add('README.txt')
+    finally:
+        out.close()</p>
+
+<p>    print fmt % (filename, os.stat(filename).st_size),
+    print [m.name for m in tarfile.open(filename, 'r:*').getmembers()]
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+FILENAME                       SIZE
+README.txt                     9
+tarfile_compression.tar        10240      [&#8216;README.txt&#8217;]
+tarfile_compression.tar.gz     165        [&#8216;README.txt&#8217;]
+tarfile_compression.tar.bz2    150        [&#8216;README.txt&#8217;]</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuqueueyanjiu/">关于Queue研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：Queue提供了一个线程安全的FIFO功能.一般常用于多线程编程, 它可以在生产者和消费者线程中安全的传递消息或者其他数据. 调用者会自动创建锁, 当使用Queue对象, 你可以根据需求创建多个线程. 一个Queue的大小(元素的个数)受可用内存的限制</p>
+
+<p><pre class="sh_python">
+from Queue import Queue
+from threading import Thread
+import time
+import feedparser #检索feed的内容  需要安装
+num_fetch_threads = 2
+enclosure_queue = Queue()  #可以设定 maxsize = 10  
+feed_urls = [ 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml',] #一个rss订阅地址，你懂的
+def downloadEnclosures(i, q): #子线程使用的函数</p>
+
+<p>    while True:
+        print '%s: Looking for the next enclosure' % i
+        url = q.get() #阻塞, 直到队列有东西返回 可以设定超时 timeout
+        print '%s: Downloading:' % i, url
+        time.sleep(i + 2) #可以采用其他办法，比如下载 这里为了演示效果sleep了一下
+        q.task_done() #在完成这项工作之后，使用 <code>queue.task_done()</code> 函数向任务已经完成的队列发送一个信号
+for i in range(num_fetch_threads):
+    worker = Thread(target=downloadEnclosures, args=(i, enclosure_queue,))
+    worker.setDaemon(True)
+    worker.start()
+for url in feed_urls:
+    response = feedparser.parse(url)  
+    for entry in response[&#8216;entries&#8217;]:
+        for enclosure in entry.get(&#8216;enclosures&#8217;, []):
+            print &#8216;Queuing:&#8217;, enclosure[&#8216;url&#8217;]
+            enclosure_queue.put(enclosure[&#8216;url&#8217;]) #往队列里面加入url
+print &#8216;*** Main thread waiting&#8217;
+enclosure_queue.join() #等到队列为空，再执行别的操作
+print &#8216;*** Done&#8217;
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>0: Looking for the next enclosure
+1: Looking for the next enclosure
+Queuing: http://a4.mzstatic.com/us/r1000/065/Music/35/e5/c6/mzi.bupwcfkr.aac.p.m4a
+Queuing: http://a2.mzstatic.com/us/r1000/074/Music/3c/1f/71/mzi.zsmvohyi.aac.p.m4a
+0: Downloading: Queuing: http://a1.mzstatic.com/us/r1000/108/Music/da/c6/a1/mzi.awhjgoey.aac.p.m4a
+http://a4.mzstatic.com/us/r1000/065/Music/35/e5/c6/mzi.bupwcfkr.aac.p.m4a
+Queuing: http://a4.mzstatic.com/us/r1000/065/Music/e6/38/b5/mzm.lvqyybtv.aac.p.m4a
+1: Downloading: http://a2.mzstatic.com/us/r1000/074/Music/3c/1f/71/mzi.zsmvohyi.aac.p.m4a
+Queuing: http://a1.mzstatic.com/us/r1000/117/Music/05/3d/59/mzm.tbfwkjza.aac.p.m4a
+Queuing: http://a1.mzstatic.com/us/r1000/087/Music/3a/1f/c5/mzi.idwdqaeq.aac.p.m4a
+Queuing: http://a1.mzstatic.com/us/r1000/090/Music/89/9c/a4/mzm.jujzxcsz.aac.p.m4a
+Queuing: http://a5.mzstatic.com/us/r1000/071/Music/60/31/bb/mzm.jdguvcvo.aac.p.m4a
+Queuing: http://a2.mzstatic.com/us/r1000/000/Music/65/25/e6/mzi.pjhbiyza.aac.p.m4a
+Queuing: http://a3.mzstatic.com/us/r30/Music/6e/0e/2a/mzm.vieuqpdk.aac.p.m4a
+*** Main thread waiting
+0: Looking for the next enclosure
+0: Downloading: http://a1.mzstatic.com/us/r1000/108/Music/da/c6/a1/mzi.awhjgoey.aac.p.m4a
+1: Looking for the next enclosure
+1: Downloading: http://a4.mzstatic.com/us/r1000/065/Music/e6/38/b5/mzm.lvqyybtv.aac.p.m4a
+0: Looking for the next enclosure
+0: Downloading: http://a1.mzstatic.com/us/r1000/117/Music/05/3d/59/mzm.tbfwkjza.aac.p.m4a
+1: Looking for the next enclosure
+1: Downloading: http://a1.mzstatic.com/us/r1000/087/Music/3a/1f/c5/mzi.idwdqaeq.aac.p.m4a
+0: Looking for the next enclosure
+0: Downloading: http://a1.mzstatic.com/us/r1000/090/Music/89/9c/a4/mzm.jujzxcsz.aac.p.m4a
+0: Looking for the next enclosure
+0: Downloading: http://a5.mzstatic.com/us/r1000/071/Music/60/31/bb/mzm.jdguvcvo.aac.p.m4a
+1: Looking for the next enclosure
+1: Downloading: http://a2.mzstatic.com/us/r1000/000/Music/65/25/e6/mzi.pjhbiyza.aac.p.m4a
+0: Looking for the next enclosure
+0: Downloading: http://a3.mzstatic.com/us/r30/Music/6e/0e/2a/mzm.vieuqpdk.aac.p.m4a
+0: Looking for the next enclosure
+1: Looking for the next enclosure
+*** Done</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyustructyanjiu/">关于struct研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：struct是一个实现字符串和二进制数据之间的相互转换的模块，它包含了实现字符串字节和Python本地数据类型(如数字和字符串)间的相互转换的函数.</p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>values = (1, 'ab', 2.7)
+s = struct.Struct('I 2s f')
+packed_data = s.pack(*values)
+data = binascii.hexlify(packed_data) #封装后的值被转换成16进制字节流输出
+print 'Original values:', values
+print 'Format string  :', s.format
+print 'Uses           :', s.size, 'bytes'
+print 'Packed Value   :', data
+print
+packed_data = binascii.unhexlify(data)
+s = struct.Struct('I 2s f')
+unpacked_data = s.unpack(packed_data)
+print 'Unpacked Values:', unpacked_data
+</pre></p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>values = (1, 'ab', 2.7)
+print 'Original values:', values</p>
+
+<p>endianness = [
+    ('@', 'native, native'),
+    ('=', 'native, standard'),
+    ('&lt;', 'little-endian'),
+    ('&gt;', 'big-endian'),
+    ('!', 'network'),
+]</p>
+
+<p>for code, name in endianness:
+    s = struct.Struct(code + ' I 2s f')  #默认情况下, 使用标准C库中”字节序”的概念将数值编码. 通过在字符串格式中直接指定一个明确的字节序可以简单的覆盖这个选项
+    packed_data = s.pack(*values)
+    print
+    print 'Format string  :', s.format, 'for', name
+    print 'Uses           :', s.size, 'bytes'
+    print 'Packed Value   :', binascii.hexlify(packed_data)
+    print 'Unpacked Value :', s.unpack(packed_data)
+</pre></p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>s = struct.Struct('I 2s f')
+values = (1, 'ab', 2.7)
+print 'Original:', values</p>
+
+<p>print
+print 'ctypes string buffer'</p>
+
+<p>import ctypes
+b = ctypes.create_string_buffer(s.size)  #在高性能的敏感情况或者通过通过第三方模块来传递数据经常会要求对二进制数据进行封装
+print 'Before  :', binascii.hexlify(b.raw)
+s.pack_into(b, 0, *values) #一种优化的方式是避免为每一个封装结构分配新的缓冲区. 函数pack_into()和unpack_from()支持直接写入到预分配的缓冲区中.
+print 'After   :', binascii.hexlify(b.raw)
+print 'Unpacked:', s.unpack_from(b, 0)</p>
+
+<p>print
+print 'array'</p>
+
+<p>import array
+a = array.array('c', '\0' *s.size)
+print 'Before  :', binascii.hexlify(a)
+s.pack_into(a, 0, *values)
+print 'After   :', binascii.hexlify(a)
+print 'Unpacked:', s.unpack_from(a, 0)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyustringyanjiu/">关于string研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：string是包括文本处理中的常量和类的模块，大量简化我们工作</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>for n in dir(string):
+    if n.startswith('_'):
+        continue
+    v = getattr(string, n)
+    if isinstance(v, basestring):  #打印模块定义的常量
+        print '%s=%s' % (n, repr(v))
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+ascii_letters=&#8217;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+ascii_lowercase=&#8217;abcdefghijklmnopqrstuvwxyz&#8217;
+ascii_uppercase=&#8217;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+digits=&#8217;0123456789&#8217;
+hexdigits=&#8217;0123456789abcdefABCDEF&#8217;
+letters=&#8217;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+lowercase=&#8217;abcdefghijklmnopqrstuvwxyz&#8217;
+octdigits=&#8217;01234567&#8217;
+printable=&#8217;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&#8221;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[&#92;]^_`{|}~ \t\n\r\x0b\x0c&#8217;
+punctuation=&#8217;!&#8221;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[&#92;]^_`{|}~&#8217;
+uppercase=&#8217;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+whitespace=&#8217;\t\n\x0b\x0c\r &#8217;</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>s = 'The quick brown fox jumped over the lazy dog.'  #一段字符串
+leet = string.maketrans('abegiloprstz', '463611092572') #想要把某些字母翻译成对应的东西 比如 a翻译成4</p>
+
+<p>print s
+print string.capwords(s) #每个单词第一个字母大写
+print s.translate(leet)
+</pre>
+结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+The quick brown fox jumped over the lazy dog.
+The Quick Brown Fox Jumped Over The Lazy Dog.
+Th3 qu1ck 620wn f0x jum93d 0v32 7h3 142y d06.
+<pre class="sh_python">
+import string</p>
+
+<p>values = { 'var':'foo' }</p>
+
+<p>t = string.Template("""  #使用了 <tt>string.Template</tt> 的占位符, 前缀为$的单词就被认为是变量(如$var), 如果需要将其在上下文中区别出来的话, 也可以将变量名包括在大括号中(如${var}).
+$var
+$$
+${var}iable
+""")  #设置string模板</p>
+
+<p>print 'TEMPLATE:', t.substitute(values) #假如某个键不存在会报错，避免报错，可以用t.safe_substitute(values)捕获了异常并将这个未知的变量表达式保留在文本中</p>
+
+<p>s = """
+%(var)s
+%%
+%(var)siable
+"""</p>
+
+<p>print 'INTERPLOATION:', s % values
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+TEMPLATE:
+foo  #var的value是 foo
+$ #重复两次则被转义为普通字符
+fooiable #只替换一段</p>
+
+<p>INTERPLOATION:
+foo
+%
+fooiable</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>class MyTemplate(string.Template):
+    delimiter = '%' #默认是'$'  这里修改成了'%'
+    idpattern = '[a-z]+_[a-z]+'  #修改默认的匹配模式：这里有个"_"</p>
+
+<p>t = MyTemplate('%% %with_underscore %notunderscored')  
+d = { 'with_underscore':'replaced',
+          'notunderscored':'not replaced',  #这里的value没有"_"，不匹配
+}</p>
+
+<p>print t.safe_substitute(d)
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusmtplibyanjiu/">关于smtplib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：smtplib是一个邮件传输协议的客户端模块，它与smtp服务器交互, 提供邮件发送</p>
+
+<p><pre class="sh_python">
+import smtplib
+import email.utils
+from email.mime.text import MIMEText
+import getpass</p>
+
+<p>to_email = raw_input('Recipient: ') #提示输入收件人
+servername = raw_input('Mail server name: ')  #输入服务器 比如 mail.dongwm.com
+username = raw_input('Mail user name: ') #用户名
+password = getpass.getpass("%s's password: " % username) #输入登录密码</p>
+
+<p>msg = MIMEText('Test message from dongwm.') #主体
+msg.set_unixfrom('author') 
+msg['To'] = email.utils.formataddr(('Recipient', to_email)) 
+msg['From'] = email.utils.formataddr(('Author', 'test@dongwm.com')) #设置发件人标识，和邮箱地址
+msg['Subject'] = 'Test from dongwm' #完成邮件内容</p>
+
+<p>server = smtplib.SMTP(servername)
+try:
+    server.set_debuglevel(True)</p>
+
+<p>    server.ehlo() #鉴定并询问服务器支持何种类型扩展</p>
+
+<p>    if server.has_extn('STARTTLS'):  #如果包含标识需要加密
+        server.starttls()
+        server.ehlo() # 重新确定自己的连接特性
+    server.login(username, password)
+    server.sendmail('author@example.com', [to_email], msg.as_string())
+finally:
+    server.quit()
+</pre></p>
+
+<p>注：可以使用一个命令&#8217;VRFY&#8217;验证邮箱地址，比如是否有这个用户，但是为了防止恶意的黑客扫描用户，一般是关闭的，假如打开这个功能：</p>
+
+<p>print server.verify(&#8216;unknownuser&#8217;)</p>
+
+<p>结果就是：
+unknownuser : (550, &#8216;5.1.1 &lt;unknownuser&gt;&#8230; User unknown&#8217;)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusimplexmlrpcserveryanjiu/">关于SimpleXMLRPCServer研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：SimpleXMLRPCServer顾名思义就是实现XML-RPC的远程调用服务器</p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer  #服务器端
+import logging
+import os</p>
+
+<p>logging.basicConfig(level=logging.DEBUG)  #记录日志级别为DEBUG</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)  #绑定到9000端口 假如指定allow_none=True，接受返回值是none</p>
+
+<p>def list_contents(dir_name):  #一个响应操作方法  
+    logging.debug('list_contents(%s)', dir_name)  #记录日志
+    return os.listdir(dir_name)  #给客户端返回结果，这个例子返回当前目录的所有文件名
+def my_function(a, b): #这个响应方法含有参数
+    return a * b
+class DirectoryService: #一个响应类
+    def list(self, dir_name):
+        return os.listdir(dir_name)
+class ServiceRoot:  #添加一个空类
+    pass</p>
+
+<p>class DirectoryService:  #这个类是定义响应方法的类
+    def list(self, dir_name):
+        return os.listdir(dir_name)</p>
+
+<p>root = ServiceRoot()
+root.dir = DirectoryService()  #就是为了在使用ServiceRoot.dir的时候找到DirectoryService()
+ server.register_function(list_contents,'dir')  #在服务器注册这个方法 会表示把这个方法重定义成'dir'，客户端使用proxy.dir而不是proxy.list_contents
+server.register_function(os.mkdir, 'dir.create')  #注册的方法别名也支持'.'，这里这个方法是proxy.dir.create
+server.register_function(my_function, 'multiply args')  #这个在调用时是getattr(proxy, 'multiply args')(5, 5) 使用getattr是因为这个注册的方法名字'multiply args'含有空格
+server.register_instance(DirectoryService())  #用类的方法注册  只在在客户端使用proxy.list （list是这个类中定义的方法）
+server.register_instance(root, allow_dotted_names=True) #指定容许类中的'.' 这样调用：proxy.dir.list
+try: 
+    print 'Use Control-C to exit'
+    server.serve_forever()  #loop运行
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p><pre class="sh_python">
+import xmlrpclib  #客户端</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')  
+print proxy.list_contents('/tmp') #使用上面注册的这个方法找到'/tmp'下的所有文件名
+</pre></p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+import os
+import inspect</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)</p>
+
+<p>def expose(f):  #自定义一个装饰器，返回的方法的exposed属性为真
+    f.exposed = True
+    return f
+def is_exposed(f): #测试方法是否公开exposed
+    return getattr(f, 'exposed', False)</p>
+
+<p>class MyService:
+    PREFIX = 'prefix'
+    def _dispatch(self, method, params): #设置自己的调度方式，因为默认不会调度以'_'开始的方法，而且有些方法可能是不愿意公开的 比如下面的private（私有）
+        if not method.startswith(self.PREFIX + '.'): #设置不能直接以proxy.+方法的方式调用，而需要proxy.prefix.+方法的方式
+            raise Exception('method "%s" is not supported' % method)</p>
+
+<p>        method_name = method.partition('.')[2]  #获取第三个参数，也就是类的方法名字
+        func = getattr(self, method_name)            
+        if not is_exposed(func):  #判断这个方法是不是能公开，使用其中的exposed属性值判断
+            raise Exception('method "%s" is not supported' % method)</p>
+
+<p>        return func(*params)  #执行这个方法</p>
+
+<p>    @expose
+    def public(self):
+        return 'This is public'</p>
+
+<p>    def private(self):
+        return 'This is private'</p>
+
+<p>server.register_instance(MyService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p>客户端：</p>
+
+<p><pre class="sh_python">
+import xmlrpclib</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')
+print 'public():', proxy.prefix.public()  #因为服务器的装饰器让这个方法的exposed永远为真，可以公开
+try:
+    print 'private():', proxy.prefix.private() #因为没有设置exposed的bool值，默认是假  
+except Exception, err:
+    print 'ERROR:', err
+try:
+    print 'public() without prefix:', proxy.public() #因为没有使用proxy.prefix.+方法的方式
+except Exception, err:
+    print 'ERROR:', err
+</pre></p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer, list_public_methods
+import os
+import inspect</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)
+server.register_introspection_functions() #开启方法检查，如检查支持什么方法等作用</p>
+
+<p>class DirectoryService:</p>
+
+<p>    def _listMethods(self):
+        return list_public_methods(self) #返回方法列表</p>
+
+<p>    def _methodHelp(self, method):
+        f = getattr(self, method)
+        return inspect.getdoc(f)  #返回方法是否有doc文档</p>
+
+<p>    def list(self, dir_name):
+        """list(dir_name) =&gt; [&lt;filenames&gt;] 
+            Returns a list containing the contents of the named directory. 
+        """
+         return os.listdir(dir_name)</p>
+
+<p>server.register_instance(DirectoryService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p>客户端：</p>
+
+<p><pre class="sh_python">
+import xmlrpclib</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')
+for method_name in proxy.system.listMethods():  #返回支持的方法列表
+    print '=' * 60
+    print method_name
+    print '-' * 60
+    print proxy.system.methodHelp(method_name)  #返回方法帮助类定义的功能，因为服务器端设置这个方法是打印文档，这里就会打印文档
+    print
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyusignalyanjiu/">关于signal研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：signal是接收异步系统事件通知的模块，</p>
+
+<p>信号是操作系统的功能，它提供了一个通知你事件的方案，并异步处理的手段。 他们可以通过系统本身产生或从一个过程发送到另一个（一个进程一旦接收到信号就会打断原来的程序执行流程来处理信号）。常用信号包括SIGINT （终止进程  中断进程  (control+c)），SIGTERM   （终止进程     软件终止信号），SIGKILL   （终止进程     杀死进程）等</p>
+
+<p><pre class="sh_python">
+import signal
+import os
+import time</p>
+
+<p>def receive_signal(signum, stack):#接收信号是通过建立一个回调函数，称为一个<em>信号处理</em> ，信号发生时被调用
+    print 'Received:', signum</p>
+
+<p>signal.signal(signal.SIGUSR1, receive_signal) 
+signal.signal(signal.SIGUSR2, receive_signal)</p>
+
+<p>print 'My PID is:', os.getpid()</p>
+
+<p>while True:
+    print 'Waiting...'
+    time.sleep(3) #每次暂停3秒钟。 当一个信号到来时，呼叫中断唤醒并用receive_signal做信号处理
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+My PID is: 5418
+Waiting&#8230;
+Received: 12  #kill -USR2 5418  杀死USR2的信号  5418是PID号码
+Waiting&#8230;
+Received: 12 #再执行一遍
+Waiting&#8230;
+Waiting&#8230;
+Waiting&#8230;
+Waiting&#8230;
+Received: 10 #kill -USR1 5418  杀死USR1的信号
+Waiting&#8230;
+Waiting&#8230;
+Traceback (most recent call last):  #kill -INT 5418 中断进程  (相当于control+c)
+File &#8220;test.py&#8221;, line 15, in &lt;module&gt;
+time.sleep(3)
+KeyboardInterrupt</p>
+
+<p><pre class="sh_python">
+import signal
+import time</p>
+
+<p>def receive_alarm(signum, stack):
+    print 'Alarm :', time.ctime()</p>
+
+<p>signal.signal(signal.SIGALRM, receive_alarm)
+signal.alarm(2) #2秒后受到报警，它避免无限期阻塞的I / O操作或其他系统调用</p>
+
+<p>print 'Before:', time.ctime()
+time.sleep(4)
+print 'After :', time.ctime()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before: Fri Jun 15 11:57:16 2012
+Alarm : Fri Jun 15 11:57:18 2012 #报警
+After : Fri Jun 15 11:57:18 2012  #本来应该11.57.20才打印</p>
+
+<p><pre class="sh_python">
+import signal
+import os
+import time</p>
+
+<p>def do_exit(sig, stack):  #设置一个处理器
+    raise SystemExit('Exiting')</p>
+
+<p>signal.signal(signal.SIGINT, signal.SIG_IGN) #使用SIG_IGN忽略信息，代替默认的SIGINT
+signal.signal(signal.SIGUSR1, do_exit)  #设置当使用kill －USR1 时候调用do_exit</p>
+
+<p>print 'My PID:', os.getpid()</p>
+
+<p>signal.pause() #等待接收信号
+</pre></p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python test.py
+My PID: 6647
+^CExiting  #kill -INT 6647没管用，使用ctrl+c也不管事，使用kill -USR1 6647 杀掉</p>
+
+<p><pre class="sh_python">
+import signal
+import threading
+import os
+import time</p>
+
+<p>def signal_handler(num, stack):  
+    print 'Received signal %d in %s' % (num, threading.currentThread())</p>
+
+<p>signal.signal(signal.SIGUSR1, signal_handler)</p>
+
+<p>def wait_for_signal():
+    print 'Waiting for signal in', threading.currentThread()
+    signal.pause()
+    print 'Done waiting'</p>
+
+<p>receiver = threading.Thread(target=wait_for_signal, name='receiver') #将做等待接受信号处理放到线程里面
+receiver.start()
+time.sleep(0.1)</p>
+
+<p>def send_signal():
+    print 'Sending signal in', threading.currentThread()
+    os.kill(os.getpid(), signal.SIGUSR1)</p>
+
+<p>sender = threading.Thread(target=send_signal, name='sender') ##将做发送信号处理放到另外的线程里面
+sender.start()
+sender.join()</p>
+
+<p>print 'Waiting for', receiver
+signal.alarm(2) #接收线程将永远不会退出，这里设置非阻塞
+receiver.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>Waiting for signal in &lt;Thread(receiver, started -1221059728)&gt;
+Sending signal in &lt;Thread(sender, started -1229456528)&gt;
+Received signal 10 in &lt;_MainThread(MainThread, started -1219656000)&gt; #主线程接收信号
+Waiting for &lt;Thread(receiver, started -1221059728)&gt;
+闹钟
+<pre class="sh_python">
+import signal
+import time
+import threading</p>
+
+<p>def signal_handler(num, stack):
+    print time.ctime(), 'Alarm in', threading.currentThread()</p>
+
+<p>signal.signal(signal.SIGALRM, signal_handler)</p>
+
+<p>def use_alarm():
+    print time.ctime(), 'Setting alarm in', threading.currentThread()
+    signal.alarm(1)
+    print time.ctime(), 'Sleeping in', threading.currentThread()
+    time.sleep(3)
+    print time.ctime(), 'Done with sleep'</p>
+
+<p>alarm_thread = threading.Thread(target=use_alarm, name='alarm_thread') #启动一个线程，将不会收到信号
+alarm_thread.start()
+time.sleep(0.1)</p>
+
+<p>print time.ctime(), 'Waiting for', alarm_thread
+alarm_thread.join()</p>
+
+<p>print time.ctime(), 'Exiting normally'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Fri Jun 15 12:16:22 2012 Setting alarm in &lt;Thread(alarm_thread, started -1220539536)&gt;
+Fri Jun 15 12:16:22 2012 Sleeping in &lt;Thread(alarm_thread, started -1220539536)&gt;
+Fri Jun 15 12:16:22 2012 Waiting for &lt;Thread(alarm_thread, started -1220539536)&gt;
+Fri Jun 15 12:16:25 2012 Done with sleep
+Fri Jun 15 12:16:25 2012 Alarm in &lt;_MainThread(MainThread, started -1219135808)&gt; #子线程报警被主线程收到
+Fri Jun 15 12:16:25 2012 Exiting normally</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyushelveyanjiu/">关于shelve研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：shelve模块实现了对任意可被pickle的Python对象进行持久性存储, 也提供类字典API给我们使用，当使用关系数据库是一种浪费的时候, shelve模块可以为Python对象提供一个简单的持久性存储选择. 就像使用字典一样, 通过关键字访问shelf对象. 其值经过pickle, 写入到由anydbm创建和管理的数据库.</p>
+
+<p><pre class="sh_python">
+import shelve</p>
+
+<p>s = shelve.open('test.db')   #创建Shelf对象,
+try:
+    s['key1'] = { 'int': 10, 'float':9.5, 'string':'Sample data' }  #写入key－value
+finally:
+    s.close()
+s = shelve.open('test.db')   #这里读取，可以设置 flag='r'  表示值是只读
+try:
+    print s['key1']
+finally:
+    s.close()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+{&#8216;int&#8217;: 10, &#8216;float&#8217;: 9.5, &#8216;string&#8217;: &#8216;Sample data&#8217;}</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyuselectyanjiu/">关于select研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：select可以完成非阻塞（所谓非阻塞方式non-block，就是进程或线程执行此函数时不必非要等待事件的发生，一旦执行肯定返回，以返回值的不同 来反映函数的执行情况，如果事件发生则与阻塞方式相同，若事件没有发生则返回一个代码来告知事件未发生，而进程或线程继续执行，所以效率较高）方式工作的 程序，还能够监视我们需要监视的文件描述符，socket，pipe的变化情况——读写或是异常（windows只能用于socket）。他可以访问select()和epoll()的系统调用，他通常用来实现轮询，也可以在不使用多线程和或者子进程的前提下跨多个I／O流进行多重处理</p>
+
+<p>服务器的程序：</p>
+
+<p><pre class="sh_python"></p>
+
+<p>import select
+import socket
+import sys
+import Queue</p>
+
+<p>server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setblocking(0) #设置socket非阻塞</p>
+
+<p>server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+server.bind(server_address)</p>
+
+<p>server.listen(5)
+inputs = [server] #等待输入对象的列表
+outputs = [] #等待输出对想的列表
+message_queues = {} #异常情况的对象列表
+while inputs:
+print &gt;&gt;sys.stderr, '\nwaiting for the next event'
+readable, writable, exceptional = select.select(inputs, outputs, inputs) #其实还是第四个参数：timeout，未设置表示函数一直等待直到准备好一个文件描述符
+for s in readable:  #数据可以读取了
+if s is server:
+connection, client_address = s.accept()  #文件描述符准备好就接受连接
+print &gt;&gt;sys.stderr, 'new connection from', client_address
+connection.setblocking(0)
+inputs.append(connection) #操作完继续放到查询队列
+message_queues[connection] = Queue.Queue()  #为我们要发送的数据把连接给一个队列
+else:
+data = s.recv(1024)
+if data:  #一个客户端sokcet有数据准备着
+print &gt;&gt;sys.stderr, 'received "%s" from %s' % (data, s.getpeername())
+message_queues[s].put(data) ＃往队列中的连接写入数据
+if s not in outputs:
+outputs.append(s)  #为响应增加输出通道
+else: #关闭空连接
+print &gt;&gt;sys.stderr, 'closing', client_address, 'after reading no data'
+if s in outputs: #停止监听这个等待输入的连接
+outputs.remove(s)  #也删除等待输出的连接
+inputs.remove(s)
+s.close()</p>
+
+<p>del message_queues[s]  #从队列把这个连接内容也删掉
+for s in writable: #缓存区已经有空间了，可以写入了
+try:
+next_msg = message_queues[s].get_nowait() #获取输出的数据
+except Queue.Empty: #队列没有数据
+print &gt;&gt;sys.stderr, 'output queue for', s.getpeername(), 'is empty'
+outputs.remove(s)  #停止查询这个等待输出连接
+else:
+print &gt;&gt;sys.stderr, 'sending "%s" to %s' % (next_msg, s.getpeername())
+s.send(next_msg) #发送数据
+for s in exceptional:
+print &gt;&gt;sys.stderr, 'handling exceptional condition for', s.getpeername()
+inputs.remove(s)
+if s in outputs:
+outputs.remove(s)
+s.close()
+del message_queues[s]
+
+</pre></p>
+
+<p>客户端程序：</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+messages = [ 'This is the message. ',
+             'It will be sent ',
+             'in parts.',
+             ]
+server_address = ('localhost', 10000)</p>
+
+<p>socks = [ socket.socket(socket.AF_INET, socket.SOCK_STREAM),
+          socket.socket(socket.AF_INET, socket.SOCK_STREAM),
+          ]   #创建2个socket</p>
+
+<p>print &gt;&gt;sys.stderr, 'connecting to %s port %s' % server_address
+for s in socks:
+    s.connect(server_address)  #通过2个socket连接，数据都是发送接受2次</p>
+
+<p>for message in messages:</p>
+
+<p>    for s in socks:
+        print &gt;&gt;sys.stderr, '%s: sending "%s"' % (s.getsockname(), message)
+        s.send(message)  #发送数据</p>
+
+<p>    for s in socks:
+        data = s.recv(1024)  #接受数据
+        print &gt;&gt;sys.stderr, '%s: received "%s"' % (s.getsockname(), data)
+        if not data:
+            print &gt;&gt;sys.stderr, 'closing socket', s.getsockname()
+            s.close()
+</pre></p>
+
+<p>看2端的打印信息：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test1.py  #客户端
+connecting to localhost port 10000
+(&#8216;127.0.0.1&#8217;, 39054): sending &#8220;This is the message. &#8221;
+(&#8216;127.0.0.1&#8217;, 39055): sending &#8220;This is the message. &#8221;
+(&#8216;127.0.0.1&#8217;, 39054): received &#8220;This is the message. &#8221;
+(&#8216;127.0.0.1&#8217;, 39055): received &#8220;This is the message. &#8221;
+(&#8216;127.0.0.1&#8217;, 39054): sending &#8220;It will be sent &#8221;
+(&#8216;127.0.0.1&#8217;, 39055): sending &#8220;It will be sent &#8221;
+(&#8216;127.0.0.1&#8217;, 39054): received &#8220;It will be sent &#8221;
+(&#8216;127.0.0.1&#8217;, 39055): received &#8220;It will be sent &#8221;
+(&#8216;127.0.0.1&#8217;, 39054): sending &#8220;in parts.&#8221;
+(&#8216;127.0.0.1&#8217;, 39055): sending &#8220;in parts.&#8221;
+(&#8216;127.0.0.1&#8217;, 39054): received &#8220;in parts.&#8221;
+(&#8216;127.0.0.1&#8217;, 39055): received &#8220;in parts.&#8221;</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+starting up on localhost port 10000</p>
+
+<p>waiting for the next event
+new connection from (&#8216;127.0.0.1&#8217;, 39054)</p>
+
+<p>waiting for the next event
+new connection from (&#8216;127.0.0.1&#8217;, 39055)
+received &#8220;This is the message. &#8221; from (&#8216;127.0.0.1&#8217;, 39054)</p>
+
+<p>waiting for the next event
+received &#8220;This is the message. &#8221; from (&#8216;127.0.0.1&#8217;, 39055)
+sending &#8220;This is the message. &#8221; to (&#8216;127.0.0.1&#8217;, 39054)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 39054) is empty
+sending &#8220;This is the message. &#8221; to (&#8216;127.0.0.1&#8217;, 39055)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 39055) is empty</p>
+
+<p>waiting for the next event
+received &#8220;It will be sent &#8221; from (&#8216;127.0.0.1&#8217;, 39054)</p>
+
+<p>waiting for the next event
+received &#8220;It will be sent &#8221; from (&#8216;127.0.0.1&#8217;, 39055)
+sending &#8220;It will be sent &#8221; to (&#8216;127.0.0.1&#8217;, 39054)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 39054) is empty
+sending &#8220;It will be sent &#8221; to (&#8216;127.0.0.1&#8217;, 39055)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 39055) is empty</p>
+
+<p>waiting for the next event
+received &#8220;in parts.&#8221; from (&#8216;127.0.0.1&#8217;, 39054)
+received &#8220;in parts.&#8221; from (&#8216;127.0.0.1&#8217;, 39055)</p>
+
+<p>waiting for the next event
+sending &#8220;in parts.&#8221; to (&#8216;127.0.0.1&#8217;, 39054)
+sending &#8220;in parts.&#8221; to (&#8216;127.0.0.1&#8217;, 39055)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 39054) is empty
+output queue for (&#8216;127.0.0.1&#8217;, 39055) is empty</p>
+
+<p>waiting for the next event
+closing (&#8216;127.0.0.1&#8217;, 39055) after reading no data</p>
+
+<p>waiting for the next event
+closing (&#8216;127.0.0.1&#8217;, 39055) after reading no data  #发现没有数据了
+waiting for the next event  #一直在等待数据</p>
+
+<p><pre class="sh_python">
+import select
+import socket
+import sys
+import Queue</p>
+
+<p>server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #建立tcp socket
+server.setblocking(0)</p>
+
+<p>server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+server.bind(server_address) #绑定socket到地址和端口</p>
+
+<p>server.listen(5) #监听传入的连接</p>
+
+<p># Keep up with the queues of outgoing messages
+message_queues = {} #建立传出的消息队列
+TIMEOUT = 1000 #设置poll超时值（毫秒为单位）
+READ_ONLY = select.POLLIN | select.POLLPRI | select.POLLHUP | select.POLLERR #其中POLLIN事件表示输入准备，POLLPRI表示优先的输入准备，POLLHUP表示通道被关闭，POLLERR表示错误
+READ_WRITE = READ_ONLY | select.POLLOUT #其中POLLOUT表示状态可以收取传入
+poller = select.poll() #poll类似select,但底层实现更加高效
+poller.register(server, READ_ONLY) #设置socket被注册让传入的连接和数据触发事件
+fd_to_socket = { server.fileno(): server,}#poll()返回一个包含文件描述符和上面说的状态的元组列表，从文件描述符号码映射对象需要检索socket读取或写入这个列表
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting for the next event'
+    events = poller.poll(TIMEOUT)
+    for fd, flag in events:
+        s = fd_to_socket[fd] #从文件描述符找回从实际的socket
+        if flag &amp; (select.POLLIN | select.POLLPRI): #当已经准备好输入
+            if s is server:
+                connection, client_address = s.accept() #可读socket准备接受连接
+                print &gt;&gt;sys.stderr, 'new connection from', client_address
+                connection.setblocking(0)
+                fd_to_socket[ connection.fileno() ] = connection
+                poller.register(connection, READ_ONLY)
+                message_queues[connection] = Queue.Queue() 
+            else:
+                data = s.recv(1024)
+                if data:
+                    print &gt;&gt;sys.stderr, 'received "%s" from %s' % (data, s.getpeername())
+                    message_queues[s].put(data) 
+                    poller.modify(s, READ_WRITE) #为响应增加输出通道
+                else:
+                    print &gt;&gt;sys.stderr, 'closing', client_address, 'after reading no data' 
+                    poller.unregister(s) #停止在连接上监听输入
+                    s.close()
+                    del message_queues[s] #从队列中移出这个连接
+        elif flag &amp; select.POLLHUP: #当通道已经关闭
+            print &gt;&gt;sys.stderr, 'closing', client_address, 'after receiving HUP'
+            poller.unregister(s)
+            s.close()
+        elif flag &amp; select.POLLOUT:  #当已经准备好发送
+            try:
+                next_msg = message_queues[s].get_nowait()
+            except Queue.Empty:
+                print &gt;&gt;sys.stderr, 'output queue for', s.getpeername(), 'is empty'
+                poller.modify(s, READ_ONLY) #没有消息等待
+            else:
+                print &gt;&gt;sys.stderr, 'sending "%s" to %s' % (next_msg, s.getpeername())
+                s.send(next_msg)
+        elif flag &amp; select.POLLERR: #当出现错误
+            print &gt;&gt;sys.stderr, 'handling exceptional condition for', s.getpeername()
+            poller.unregister(s)
+            s.close()
+            del message_queues[s]
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+starting up on localhost port 10000</p>
+
+<p>waiting for the next event</p>
+
+<p>waiting for the next event  #因为超时是1秒，没有数据一秒钟连一次</p>
+
+<p>waiting for the next event</p>
+
+<p>waiting for the next event
+new connection from (&#8216;127.0.0.1&#8217;, 57127)  #当server准备接受连接，发现了这2个连接。</p>
+
+<p>waiting for the next event
+new connection from (&#8216;127.0.0.1&#8217;, 57128)
+received &#8220;This is the message. &#8221; from (&#8216;127.0.0.1&#8217;, 57127) #因为连接存在，接受数据</p>
+
+<p>waiting for the next event
+sending &#8220;This is the message. &#8221; to (&#8216;127.0.0.1&#8217;, 57127) #当发现输出通道准备好，发送数据出去
+received &#8220;This is the message. &#8221; from (&#8216;127.0.0.1&#8217;, 57128)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 57127) is empty #对列空了，修改成准备接受读入
+sending &#8220;This is the message. &#8221; to (&#8216;127.0.0.1&#8217;, 57128)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 57128) is empty</p>
+
+<p>waiting for the next event
+received &#8220;It will be sent &#8221; from (&#8216;127.0.0.1&#8217;, 57127)
+received &#8220;It will be sent &#8221; from (&#8216;127.0.0.1&#8217;, 57128)</p>
+
+<p>waiting for the next event
+sending &#8220;It will be sent &#8221; to (&#8216;127.0.0.1&#8217;, 57127)
+sending &#8220;It will be sent &#8221; to (&#8216;127.0.0.1&#8217;, 57128)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 57127) is empty
+output queue for (&#8216;127.0.0.1&#8217;, 57128) is empty</p>
+
+<p>waiting for the next event
+received &#8220;in parts.&#8221; from (&#8216;127.0.0.1&#8217;, 57127)
+received &#8220;in parts.&#8221; from (&#8216;127.0.0.1&#8217;, 57128)</p>
+
+<p>waiting for the next event
+sending &#8220;in parts.&#8221; to (&#8216;127.0.0.1&#8217;, 57127)
+sending &#8220;in parts.&#8221; to (&#8216;127.0.0.1&#8217;, 57128)</p>
+
+<p>waiting for the next event
+output queue for (&#8216;127.0.0.1&#8217;, 57127) is empty
+output queue for (&#8216;127.0.0.1&#8217;, 57128) is empty</p>
+
+<p>waiting for the next event
+closing (&#8216;127.0.0.1&#8217;, 57128) after reading no data
+closing (&#8216;127.0.0.1&#8217;, 57128) after reading no data</p>
+
+<p>waiting for the next event</p>
+
+<p>waiting for the next event</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/archives/guanyu-4/">关于smtpd研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：smtpd？大家是不是一下子想到了smtplib？其实smtpd是一个实现建立简单邮件传输协议服务器的模块，smtplib是一个实现smtp客户端的模块。</p>
+
+<p><pre class="sh_python">
+import smtpd #服务器端
+import asyncore</p>
+
+<p>class CustomSMTPServer(smtpd.SMTPServer): #定一个自己的SMTPServer类</p>
+
+<p>    def process_message(self, peer, mailfrom, rcpttos, data): 
+        print 'Receiving message from:', peer #客户端的ip和端口
+        print 'Message addressed from:', mailfrom  #发件人 
+        print 'Message addressed to  :', rcpttos #手件人列表
+        print 'Message length        :', len(data) #信息长度
+        return</p>
+
+<p>server = CustomSMTPServer(('127.0.0.1', 1025), None) #只需要服务器的ip和端口</p>
+
+<p>asyncore.loop()
+</pre></p>
+
+<p>客户端</p>
+
+<p><pre class="sh_python">
+import smtplib
+import email.utils
+from email.mime.text import MIMEText</p>
+
+<p>msg = MIMEText('This is the body of the message.') #邮件主体
+msg['To'] = email.utils.formataddr(('Recipient', 'recipient@example.com'))  #收件人，这个是邮件内容里面的，就是我们收件会告诉我们，要不然就是一个未定义状态
+msg['From'] = email.utils.formataddr(('Author', 'author@example.com')) #发件人 
+msg['Subject'] = 'Simple test message' #邮件主题</p>
+
+<p>server = smtplib.SMTP('127.0.0.1', 1025)
+server.set_debuglevel(True) # 显示debug
+try:
+    server.sendmail('author@example.com', ['recipient@example.com'], msg.as_string()) #最后一个参数是构建好的邮件的字符串模式
+finally:
+    server.quit()
+</pre></p>
+
+<p><pre class="sh_python">
+import smtpd
+import asyncore</p>
+
+<p>server = smtpd.DebuggingServer(('127.0.0.1', 1025), None) #这是模块自带的调试服务器</p>
+
+<p>asyncore.loop()
+~
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>&#8212;&#8212;&#8212;- MESSAGE FOLLOWS &#8212;&#8212;&#8212;-
+Content-Type: text/plain; charset=&#8221;us-ascii&#8221;
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+To: Recipient &lt;recipient@example.com&gt;
+From: Author &lt;author@example.com&gt;
+Subject: Simple test message
+X-Peer: 127.0.0.1</p>
+
+<p>This is the body of the message.
+&#8212;&#8212;&#8212;&#8212; END MESSAGE &#8212;&#8212;&#8212;&#8212;</p>
+
+<p><pre class="sh_python">
+import smtpd
+import asyncore
+server = smtpd.PureProxy(('127.0.0.1', 1025), ('mail', 25)) #设置成代理，让将数据传到本地25端口发送邮件
+asyncore.loop()
+</pre></p>
+
+<p>查看日志需要读取你的比如postfix或者sendmail的mail日志</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page/13/">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">博客文章</a></li>
+    
+    <li class="next"><a href="/page/11/">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,557 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>django和flask分页 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/djangohe-flaskfen-ye">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Django和flask分页</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-29T15:37:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>最近搞了一些关于flask和django的东西，尤其是django的模板和admin功能以及这些框架使用bootstrap的东西，没时间更新博客，先说一下flask和django分页吧</p>
+
+<h5 id="flaskbootstrapflask-paginatehttppackagespythonorgflask-paginate">flask的bootstrap分页插件<a href="http://packages.python.org/Flask-paginate">flask-paginate</a></h5>
+
+<p>其实安装很常规，他的思路就是根据你的数据量给每个页面加一个li前缀到最后返回的div里面。因为官网提供的说明很简单，我在这里仔细说说：</p>
+
+<ol>
+  <li>官网说给你的网站页面添加css：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    background: #6aa6ed;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
+</pre></figure></notextile></div></notextile></div>
+<p>其实这个是给你页面显示统计数据的方法pagination.info提供的样式，默认的class=’pagination’是bootstrap自带的，不需要你添加</p>
+
+<ol>
+  <li>官网的例子使用的是：Blueprint：</li>
+</ol>
+
+<p>我们一般都是： ‘from flask import Flask’，其实Blueprint就是一个可定制的容器，一个应用可以有多个容器，他们都继承于flask.helpers._PackageBoundObject
+可以看我的一个例子：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+@app.route('/')
+def index():
+
+	pagesize = 100 #设定每页显示条目数
+	page = int(request.args.get('page',0)) #获取当前页面页数
+	data = get_MongoData(page, pagesize) #get_MongoData是我自己的函数，根据页数过滤要显示的数据（因为实在太大了）
+	pagination = Pagination(total=data[1], per_page=pagesize, page=page) #total的值是总数据条目，per_page表示每页显示数目，page就是当前页数。还可以设置向前/后页面标签（默认是&lt;&lt;/&gt;&gt;）等
+	return render_template("index.html", pagination=pagination)
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>我对他的一点修改：
+    <ol>
+      <li>我发现在我的程序里面，这个分页栏在后部会放不下而换行显示，我就直接把link_css制定的div改成了行内元素span</li>
+      <li>当我默认使用link_size,代码是这样：</li>
+    </ol>
+    <xmp>
+     link_css = &#8217;<span class="pagination{0} green"><ul>&#8217;
+     其实最后页面出来的效果是&#8217;<span class="paginationNone green"><ul>&#8217; 
+ 
+		
+     这样就没有符合的bootstrap类，所以我修改了links方法:
+
+     <div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+     @property
+     def links(self):
+         '''get all the pagination links'''
+         if self.total_pages &lt;= 1:
+             return ''
+         if not self.link_size:
+             self.link_size = ''
+         s = [link_css.format(self.link_size)]
+         s.append(self.prev_page)
+         for page in self.pages:
+             s.append(self.single_page(page) if page else gap_marker)
+
+         s.append(self.next_page)
+         s.append('')
+         return ''.join(s)
+     </pre></figure></notextile></div></notextile></div>
+
+</ul></span></ul></span></xmp>
+  </li>
+</ol>
+<p>#####flask的bootstrap分页插件<a href="http://tgdn.github.com/django-bootstrap-pagination/">django-bootstrap-pagination</a></p>
+
+<p>django的插件比较复杂，它自己定义了中间件和标签，这样你需要在模板中load它提供的函数，并且很nb的使用了RequestContext去处理变量,可以看张沈鹏以前写的一个小文章：<a href="http://zsp.iteye.com/blog/115254">django 简化 view 函数的编写</a></p>
+
+<ol>
+  <li>先看我的后台方法：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+def showlist(req):
+
+	t = req.GET.get('type', None)
+	l = req.GET.get('app', None)
+	if t and l:
+		db = getMongo('XXX.XXX.XXX.XXX:XX', 'dc2')
+		if t == 'v':
+			q = re.compile(r'.*%s$' % l)
+			data = db.site.find({'modules.site.level':'v4', 'site':{ '$regex' : q }}, 
+				{'site':1, '_id':0, 'modules.site.links':1, 'modules.site.keywords':1}).sort(
+				'modules.site.site.check_time')
+
+	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
+</pre></figure></notextile></div></notextile></div>
+
+<p>但是运行时候会报错：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+Traceback:
+File "/usr/local/lib/python2.6/dist-packages/django/core/handlers/base.py" in get_response
+  111.                         response = callback(request, *callback_args, **callback_kwargs)
+File "/home/dongwm/centerCon/views.py" in showlist
+  68. 	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
+File "/usr/local/lib/python2.6/dist-packages/django/shortcuts/__init__.py" in render_to_response
+  20.     return HttpResponse(loader.render_to_string(*args, **kwargs), **httpresponse_kwargs)
+File "/usr/local/lib/python2.6/dist-packages/django/template/loader.py" in render_to_string
+  176.         return t.render(context_instance)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
+  140.             return self._render(context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in _render
+  134.         return self.nodelist.render(context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
+  823.                 bit = self.render_node(node, context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/debug.py" in render_node
+  74.             return node.render(context)
+File "/home/dongwm/centerCon/templatetags/pagination_tags.py" in render 
+  91.             page_obj = paginator.page(context['request'].page)
+File "/usr/local/lib/python2.6/dist-packages/django/template/context.py" in __getitem__
+  54.         raise KeyError(key)
+
+Exception Type: KeyError at /showlist/
+Exception Value: 'request'
+</pre></figure></notextile></div></notextile></div>
+
+<p>不管你用那个插件都会有这个报错。。。</p>
+
+<p><em>后来发现原因是：</em></p>
+
+<p><em>settings文件没有设置TEMPLATE_CONTEXT_PROCESSORS</em>
+理由：模板上下文处理器会指定了哪些contextprocessors总是默认被使用。这样就省去了每次使用RequestContext都指定processors的麻烦
+在settings加入：
+TEMPLATE_CONTEXT_PROCESSORS = (
+    “django.core.context_processors.media”,
+    “django.core.context_processors.request”
+    )</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-29T15:37:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/django/'>django</a>, <a class='category' href='/blog/categories/flask/'>flask</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/djangohe-flaskfen-ye/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/octopress-de-3D-biao-qian-yun/" title="Previous Post:
+        octopress的3D标签云插件">&laquo; octopress的3D标签云插件</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/gevent-twisted-duo-xian-cheng-shui-geng-kuai/"
+        title="Next Post: gevent-twisted-多线程谁更快?">gevent-twisted-多线程谁更快?
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/djangohe-flaskfen-ye/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/djangohe-flaskfen-ye/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

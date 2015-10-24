@@ -1,0 +1,1642 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: python模块研究 | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/pythonmo-kuai-yan-jiu/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[关于sys研究（一）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyusysyanjiuyi/"/>
+    <updated>2012-07-10T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyusysyanjiuyi</id>
+    <content type="html"><![CDATA[<p>前言：sys是一个关系系统配置使用的模块，和os一样经常被使用</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>print 'Version info:'
+print
+print 'sys.version      =', repr(sys.version) #这些是编译python时候的一些系统信息，这事python版本
+print 'sys.version_info =', sys.version_info #python版本号元组格式
+print 'sys.hexversion   =', hex(sys.hexversion) #版本标识为一个整数
+print 'sys.subversion   =', sys.subversion #python分支，修订号等信息
+print 'sys.api_version  =', sys.api_version #C的api版本
+print 'This interpreter was built for:', sys.platform #系统版本，比如linux，windows等类似于命令uname -s的结果
+print 'Interpreter executable:', sys.executable #编译器的位置 /usr/bin/python
+print 'Installation prefix   :', sys.prefix #包含bin,lib目录的服目录，这里是/usr
+print <tt>sys.flags</tt> #当执行python -h 出现很多选项，当执行某选项和参数，那么sys.flag就包含了这个项
+print 'Default encoding    :', sys.getdefaultencoding()  #默认文件Unicode编码
+print 'Filesystem encoding :', sys.getfilesystemencoding() #默认文件系统编码
+#reload(sys) #当想要修改文件编码，先reloadsys模块（否则没有setdefaultencoding函数），再set
+#sys.setdefaultencoding('utf-8')
+</p>
+
+<p><pre class="sh_python">
+&gt;&gt;&gt; sys.ps1
+'&gt;&gt;&gt; ' #ps1是交互模式中的提示符，效果类似于linux的PS1
+&gt;&gt;&gt; sys.ps2
+'... ' #ps2是交互模式中，当出现":"等需要多行输入的数据时候的提示符
+&gt;&gt;&gt; sys.ps1='--&gt;'
+--&gt;sys.ps2='~~~'
+--&gt;for i in xrange(2): 
+~~~    print i
+~~~
+0
+1
+</pre></p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>class LineCounter(object): #修改PS1修饰符还可以定义类的方式，假设本文件是test.py
+    def __init__(self):
+        self.count = 0 #对命令计数，初始为0
+    def __str__(self):
+        self.count += 1 #使用一次触发一次计数增加      
+        return '(%3d)&gt; ' % self.count
+</p>
+
+<p>进入交互模式：</p>
+
+<p><pre class="sh_python">
+&gt;&gt;&gt; from test import LineCounter
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; sys.ps1 = LineCounter()
+(  1)&gt; 
+(  2)&gt; #点击一次增加1
+(  3)&gt;
+</pre></p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>class ExpressionCounter(object):</p>
+
+<p>    def __init__(self):
+        self.count = 0
+        self.previous_value = self</p>
+
+<p>    def __call__(self, value):
+        print
+        print '  Previous:', self.previous_value
+        print '  New     :', value
+        print
+        if value != self.previous_value:
+            self.count += 1
+            sys.ps1 = '(%3d)&gt; ' % self.count
+        self.previous_value = value
+        sys.__displayhook__(value) #默认值保存在这里
+print 'installing'
+sys.displayhook = ExpressionCounter()#钩子，我的理解是每次使用都要触发的表达式  假设本文件是test
+</p>
+
+<p><pre class="sh_python">
+dongwm@linux-vkmz:~&gt; python
+Python 2.6.5 (r265:79063, Jul  5 2010, 11:47:21) 
+[GCC 4.5.0 20100604 [gcc-4_5-branch revision 160292]] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import test
+installing
+&gt;&gt;&gt; 1+2
+
+<p>  Previous: &lt;test.ExpressionCounter object at 0x80ab2ac&gt;
+  New     : 3</p>
+
+<p>3
+(  1)&gt; 'abc'</p>
+
+<p>  Previous: 3
+  New     : abc</p>
+
+<p>'abc'
+(  2)&gt; 'abc'</p>
+
+<p>  Previous: abc
+  New     : abc</p>
+
+<p>'abc'
+(  2)&gt; 'abc'*3</p>
+
+<p>  Previous: abc
+  New     : abcabcabc</p>
+
+<p>'abcabcabc'
+</p>
+
+<p>&nbsp;</p>
+</pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于sys研究（四）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyusysyanjiusi/"/>
+    <updated>2012-07-10T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyusysyanjiusi</id>
+    <content type="html"><![CDATA[<p><pre class="sh_python">
+import sys
+import textwrap
+
+<p>names = sorted(sys.modules.keys()) #sys.modules是模块名和模块路径信息的字典集合
+name_text = ', '.join(names)</p>
+
+<p>print textwrap.fill(name_text)
+for name in sys.builtin_module_names: #内建模块就是不用import进来就能使用的模块，这些模块不再上面的sys.modules里面
+    print name
+for d in sys.path: # sys.path是管理模块的搜索路径的列表集合，包含当前目录，<tt>site-packages</tt>目录列在最后
+    print d    #注：当在执行程序时前面设置：PYTHONPATH=XXX:xxx，则首先输出它指定的目录
+</p>
+
+<p><pre class="sh_python">
+import sys
+import os
+
+<p>base_dir = os.path.dirname(__file__) or '.' #dirname(__file__)表示当前程序文件所在目录
+print 'Base directory:', base_dir</p>
+
+<p>package_dir_a = os.path.join(base_dir, 'package_dir_a')
+sys.path.insert(0, package_dir_a)  #在当前目录插入一个python目录路径</p>
+
+<p>import example
+print 'Imported example from:', example.__file__
+print '\t', example.DATA  #比如这里是的数据是A</p>
+
+<p>package_dir_b = os.path.join(base_dir, 'package_dir_b')
+sys.path.insert(0, package_dir_b) #在当前目录再插入一个python目录路径
+reload(example) #reload这个模块，但是首先搜索的是package_dir_b下的这个模块数据
+print 'Reloaded example from:', example.__file__
+print '\t', example.DATA #这里的数据就是B了
+</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>class NoisyImportFinder(object):</p>
+
+<p>    PATH_TRIGGER = 'NoisyImportFinder_PATH_TRIGGER' #设定一个数据，方便识别
+    def __init__(self, path_entry):
+        print 'Checking NoisyImportFinder support for %s' % path_entry
+        if path_entry != self.PATH_TRIGGER:
+            print 'NoisyImportFinder does not work for %s' % path_entry
+            raise ImportError()
+        return</p>
+
+<p>    def find_module(self, fullname, path=None):
+        print 'NoisyImportFinder looking for "%s"' % fullname
+        return None</p>
+
+<p>sys.path_hooks.append(NoisyImportFinder) #添加自定义的import的发现者</p>
+
+<p>sys.path.insert(0, NoisyImportFinder.PATH_TRIGGER) #将数据路径插入到python路径</p>
+
+<p>try:
+    import target_module
+except Exception, e:
+    print 'Import failed:', e
+</p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Checking NoisyImportFinder support for NoisyImportFinder_PATH_TRIGGER #首先import使用我们自定义的import发现类
+NoisyImportFinder looking for "target_module"
+Checking NoisyImportFinder support for /home/dongwm #使用下一个python路径（当前目录）搜索
+NoisyImportFinder does not work for /home/dongwm #不工作
+Import failed: No module named target_module #使用系统的import发现</p>
+
+<p><pre class="sh_python">
+import sys #这事一个脚本,用来生成shelve对象
+import shelve
+import os
+
+<p>filename = './import_example.shelve'
+if os.path.exists(filename):
+    os.unlink(filename)
+db = shelve.open(filename)
+try:
+    db['data:README'] = """
+==============
+package README
+==============</p>
+
+<p>This is the README for ``package``.
+"""
+    db['package.__init__'] = """
+print 'package imported'
+message = 'This message is in package.__init__'
+"""
+    db['package.module1'] = """
+print 'package.module1 imported'
+message = 'This message is in package.module1'
+"""
+    db['package.subpackage.__init__'] = """
+print 'package.subpackage imported'
+message = 'This message is in package.subpackage.__init__'
+"""
+    db['package.subpackage.module2'] = """
+print 'package.subpackage.module2 imported'
+message = 'This message is in package.subpackage.module2'
+"""
+    db['package.with_error'] = """
+print 'package.with_error being imported'
+raise ValueError('raising exception to break import')
+"""
+    print 'Created %s with:' % filename
+    for key in sorted(db.keys()):
+        print '\t', key
+finally:
+    db.close()
+</p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Created ./import_example.shelve with:
+data:README
+package.__init__
+package.module1
+package.subpackage.__init__
+package.subpackage.module2
+package.with_error
+<pre class="sh_python">
+import contextlib
+import imp
+import os
+import shelve
+import sys
+
+<p>@contextlib.contextmanager
+def shelve_context(filename, flag='r'): #创建上下文管理方法，让shelves使用with
+    db = shelve.open(filename, flag)
+    try:
+        yield db
+    finally:
+        db.close()</p>
+
+<p>def _mk_init_name(fullname): #返回被定义了包名字的__init__ module的名字
+    if fullname.endswith('.__init__'):
+        return fullname
+    return fullname + '.__init__'</p>
+
+<p>def _get_key_name(fullname, db): #在shelves里面寻找fullname或者fullname.__init__，返回名字
+    if fullname in db:
+        return fullname
+    init_name = _mk_init_name(fullname)
+    if init_name in db:
+        return init_name
+    return None</p>
+
+<p>class ShelveFinder(object): #shelve归档里面寻找模块
+    def __init__(self, path_entry):
+        if not os.path.isfile(path_entry):
+            raise ImportError
+        try:
+            with shelve_context(path_entry): 
+                pass
+        except Exception, e:
+            raise ImportError(str(e))
+        else:
+            print 'new shelf added to import path:', path_entry
+            self.path_entry = path_entry
+        return</p>
+
+<p>    def __str__(self):
+        return '&lt;%s for "%s"&gt;' % (self.__class__.__name__, self.path_entry)</p>
+
+<p>    def find_module(self, fullname, path=None):
+        path = path or self.path_entry
+        print 'looking for "%s" in %s ...' % (fullname, path),
+        with shelve_context(path) as db:
+            key_name = _get_key_name(fullname, db)
+            if key_name:
+                print 'found it as %s' % key_name
+                return ShelveLoader(path)
+        print 'not found'
+        return None</p>
+
+<p>class ShelveLoader(object): #从shelve数据里面为模块加载源</p>
+
+<p>    def __init__(self, path_entry):
+        self.path_entry = path_entry
+        return</p>
+
+<p>    def _get_filename(self, fullname):
+        # Make up a fake filename that starts with the path entry
+        # so pkgutil.get_data() works correctly.
+return os.path.join(self.path_entry, fullname) #设置假文件，pkgutil.get_data()正常
+    def get_source(self, fullname):
+        print 'loading source for "%s" from shelf' % fullname
+        try:
+            with shelve_context(self.path_entry) as db:
+                key_name = _get_key_name(fullname, db)
+                if key_name:
+                    return db[key_name]
+                raise ImportError('could not find source for %s' % fullname)
+        except Exception, e:
+            print 'could not load source:', e
+            raise ImportError(str(e))</p>
+
+<p>    def get_code(self, fullname):
+        source = self.get_source(fullname)
+        print 'compiling code for "%s"' % fullname
+        return compile(source, self._get_filename(fullname), 'exec', dont_inherit=True)</p>
+
+<p>    def get_data(self, path):
+        print 'looking for data in %s for "%s"' % (self.path_entry, path)
+        if not path.startswith(self.path_entry):
+            raise IOError
+        path = path[len(self.path_entry)+1:]
+        key_name = 'data:' + path
+        try:
+            with shelve_context(self.path_entry) as db:
+                return db[key_name]
+        except Exception, e:
+            # Convert all errors to IOError
+            raise IOError</p>
+
+<p>    def is_package(self, fullname):
+        init_name = _mk_init_name(fullname)
+        with shelve_context(self.path_entry) as db:
+            return init_name in db</p>
+
+<p>    def load_module(self, fullname):
+        source = self.get_source(fullname)</p>
+
+<p>        if fullname in sys.modules:
+            print 'reusing existing module from previous import of "%s"' % fullname
+            mod = sys.modules[fullname]
+        else:
+            print 'creating a new module object for "%s"' % fullname
+            mod = sys.modules.setdefault(fullname, imp.new_module(fullname))
+        mod.__file__ = self._get_filename(fullname)
+        mod.__name__ = fullname
+        mod.__path__ = self.path_entry
+        mod.__loader__ = self
+        mod.__package__ = '.'.join(fullname.split('.')[:-1])</p>
+
+<p>        if self.is_package(fullname):
+            print 'adding path for package'
+            # Set __path__ for packages
+            # so we can find the sub-modules.
+            mod.__path__ = [ self.path_entry ]
+        else:
+            print 'imported as regular module'</p>
+
+<p>        print 'execing source...'
+        exec source in mod.__dict__
+        print 'done'
+        return mod
+</p>
+
+<p><pre class="sh_python">
+import sys
+import sys_shelve_importer
+
+<p>def show_module_details(module):
+    print '  message    :', module.message
+    print '  __name__   :', module.__name__
+    print '  __package__:', module.__package__
+    print '  __file__   :', module.__file__
+    print '  __path__   :', module.__path__
+    print '  __loader__ :', module.__loader__</p>
+
+<p>filename = '/tmp/pymotw_import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename) #导入shelve文件</p>
+
+<p>print 'Import of "package":'
+import package #import这个包</p>
+
+<p>print
+print 'Examine package details:'
+show_module_details(package)</p>
+
+<p>print
+print 'Global settings:'
+print 'sys.modules entry:', sys.modules['package']
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Import of "package":
+new shelf added to import path: import_example.shelve
+looking for "package" in import_example.shelve ... found it as package.__init__
+loading source for "package" from shelf
+creating a new module object for "package"
+adding path for package
+execing source...
+package imported
+done</p>
+
+<p>Examine package details:
+message    : This message is in package.__init__
+__name__   : package
+__package__:
+__file__   : import_example.shelve/package
+__path__   : ['import_example.shelve']
+__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x80aed0c&gt;</p>
+
+<p>Global settings:
+sys.modules entry: &lt;module 'package' from 'import_example.shelve/package'&gt;
+<pre class="sh_python">
+import sys
+import sys_shelve_importer
+
+<p>def show_module_details(module):
+    print '  message    :', module.message
+    print '  __name__   :', module.__name__
+    print '  __package__:', module.__package__
+    print '  __file__   :', module.__file__
+    print '  __path__   :', module.__path__
+    print '  __loader__ :', module.__loader__</p>
+
+<p>filename = 'import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>print
+print 'Import of "package.module1":'
+import package.module1 #import子模块</p>
+
+<p>print
+print 'Examine package.module1 details:'
+show_module_details(package.module1)</p>
+
+<p>print
+print 'Import of "package.subpackage.module2":'
+import package.subpackage.module2</p>
+
+<p>print
+print 'Examine package.subpackage.module2 details:'
+show_module_details(package.subpackage.module2)
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py</p>
+
+<p>Import of "package.module1":
+new shelf added to import path: import_example.shelve
+looking for "package" in import_example.shelve ... found it as package.__init__
+loading source for "package" from shelf
+creating a new module object for "package"
+adding path for package
+execing source...
+package imported
+done
+looking for "package.module1" in import_example.shelve ... found it as package.module1
+loading source for "package.module1" from shelf
+creating a new module object for "package.module1"
+imported as regular module
+execing source...
+package.module1 imported
+done</p>
+
+<p>Examine package.module1 details:
+message    : This message is in package.module1
+__name__   : package.module1
+__package__: package
+__file__   : import_example.shelve/package.module1
+__path__   : import_example.shelve
+__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x8119d6c&gt;</p>
+
+<p>Import of "package.subpackage.module2":
+looking for "package.subpackage" in import_example.shelve ... found it as package.subpackage.__init__
+loading source for "package.subpackage" from shelf
+creating a new module object for "package.subpackage"
+adding path for package
+execing source...
+package.subpackage imported
+done
+looking for "package.subpackage.module2" in import_example.shelve ... found it as package.subpackage.module2
+loading source for "package.subpackage.module2" from shelf
+creating a new module object for "package.subpackage.module2"
+imported as regular module
+execing source...
+package.subpackage.module2 imported
+done</p>
+
+<p>Examine package.subpackage.module2 details:
+message    : This message is in package.subpackage.module2
+__name__   : package.subpackage.module2
+__package__: package.subpackage
+__file__   : import_example.shelve/package.subpackage.module2
+__path__   : import_example.shelve
+__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x8119e0c&gt;
+<pre class="sh_python">
+import sys
+import sys_shelve_importer
+
+<p>filename = 'import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>print 'First import of "package":'
+import package</p>
+
+<p>print
+print 'Reloading "package":'
+reload(package) #创建一个新的模块对象，而不是现有的模块被重新使用
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+First import of "package":
+new shelf added to import path: import_example.shelve
+looking for "package" in import_example.shelve ... found it as package.__init__
+loading source for "package" from shelf
+creating a new module object for "package"
+adding path for package
+execing source...
+package imported
+done</p>
+
+<p>Reloading "package":
+looking for "package" in import_example.shelve ... found it as package.__init__
+loading source for "package" from shelf
+reusing existing module from previous import of "package"
+adding path for package
+execing source...
+package imported
+done
+<pre class="sh_python">
+import sys
+import sys_shelve_importer
+
+<p>filename = 'import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>try:
+    import package.module3
+except ImportError, e:
+    print 'Failed to import:', e
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+new shelf added to import path: import_example.shelve
+looking for "package" in import_example.shelve ... found it as package.__init__
+loading source for "package" from shelf
+creating a new module object for "package"
+adding path for package
+execing source...
+package imported
+done
+looking for "package.module3" in import_example.shelve ... not found
+Failed to import: No module named module3
+<pre class="sh_python">
+import sys
+import sys_shelve_importer
+import os
+import pkgutil
+
+<p>filename = '/tmp/pymotw_import_example.shelve'
+sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
+sys.path.insert(0, filename)</p>
+
+<p>import package</p>
+
+<p>readme_path = os.path.join(package.__path__[0], 'README')</p>
+
+<p>#readme = package.__loader__.get_data(readme_path)
+readme = pkgutil.get_data('package', 'README') #返回文件内容
+print readme</p>
+
+<p>foo_path = os.path.join(package.__path__[0], 'foo')
+#foo = package.__loader__.get_data(foo_path)
+foo = pkgutil.get_data('package', 'foo')
+print foo
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+new shelf added to import path: import_example.shelve
+looking for "package" in import_example.shelve ... found it as package.__init__
+loading source for "package" from shelf
+creating a new module object for "package"
+adding path for package
+execing source...
+package imported
+done
+looking for data in import_example.shelve for "import_example.shelve/README"</p>
+
+<p>==============
+package README
+==============</p>
+
+<p>This is the README for ``package``.</p>
+
+<p>looking for data in import_example.shelve for "import_example.shelve/foo"
+Traceback (most recent call last):
+File "test.py", line 20, in &lt;module&gt;
+foo = pkgutil.get_data('package', 'foo')
+File "/usr/lib/python2.6/pkgutil.py", line 583, in get_data
+return loader.get_data(resource_name)
+File "/home/dongwm/sys_shelve_importer.py", line 107, in get_data
+raise IOError
+IOError</p>
+</pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于sys研究（三）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyusysyanjiusan/"/>
+    <updated>2012-07-10T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyusysyanjiusan</id>
+    <content type="html"><![CDATA[<p><pre class="sh_python">
+import sys
+
+<p>def my_excepthook(type, value, traceback): #三个参数包含：错误类型，错误值和错误的回调
+    print 'Unhandled error:', type, value</p>
+
+<p>sys.excepthook = my_excepthook #设置一个异常处理方法的通用处理</p>
+
+<p>print 'Before exception'</p>
+
+<p>raise RuntimeError('This is the error message')</p>
+
+<p>print 'After exception'
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Before exception
+Unhandled error: &lt;type 'exceptions.RuntimeError'&gt; This is the error message  #由这个异常做的处理，因为异常，不再执行后面的print</p>
+
+<p><pre class="sh_python">
+import sys
+import threading
+import time
+
+<p>def do_something_with_exception():
+exc_type, exc_value = sys.exc_info()[:2] #当出现异常，通过sys.exc_info捕获当前异常，返回元组包含错误类型，错误值
+    print 'Handling %s exception with message "%s" in %s' % \
+        (exc_type.__name__, exc_value, threading.current_thread().name)</p>
+
+<p>def cause_exception(delay):
+    time.sleep(delay)
+    raise RuntimeError('This is the error message')</p>
+
+<p>def thread_target(delay):
+    try:
+        cause_exception(delay)
+    except:
+        do_something_with_exception()</p>
+
+<p>threads = [ threading.Thread(target=thread_target, args=(0.3,)),
+            threading.Thread(target=thread_target, args=(0.1,)),
+            ]
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Handling RuntimeError exception with message "This is the error message" in Thread-2 #因为第2个线程time.sleep时间短，先完成
+Handling RuntimeError exception with message "This is the error message" in Thread-1</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>def trace_calls(frame, event, arg): #调用跟踪函数需要三个参数：正在运行的代码 的堆栈帧，事件通知类型，事件参数
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        return #放弃write
+    func_line_no = frame.f_lineno
+    func_filename = co.co_filename
+    caller = frame.f_back
+    caller_line_no = caller.f_lineno
+    caller_filename = caller.f_code.co_filename
+    print 'Call to %s on line %s of %s from line %s of %s' % \
+        (func_name, func_line_no, func_filename,
+         caller_line_no, caller_filename)
+    return</p>
+
+<p>def b():
+    print 'in b()'</p>
+
+<p>def a():
+    print 'in a()'
+    b()</p>
+
+<p>sys.settrace(trace_calls) #settrace用来跟踪程序运行
+a()
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Call to a on line 24 of test.py from line 29 of test.py #先运行到24行的def a()
+in a()
+Call to b on line 21 of test.py from line 26 of test.py #函数a调用了21行的b()
+in b()</p>
+
+<p>注：正在执行的事件类型：
+<table border="1">
+<thead valign="bottom">
+<tr>
+<th>事件</th>
+<th>时间点</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+<td><tt>'call'</tt></td>
+<td>方法执行前</td>
+<td><tt>None</tt></td>
+</tr>
+<tr>
+<td><tt>'line'</tt></td>
+<td>某行被执行前</td>
+<td><tt>None</tt></td>
+</tr>
+<tr>
+<td><tt>'return'</tt></td>
+<td>方法返回前</td>
+<td>返回值</td>
+</tr>
+<tr>
+<td><tt>'exception'</tt></td>
+<td>异常发生</td>
+<td>包含类型，值，回调的元组</td>
+</tr>
+<tr>
+<td><tt>'c_call'</tt></td>
+<td>c方法call前</td>
+<td>c方法对象</td>
+</tr>
+<tr>
+<td><tt>'c_return'</tt></td>
+<td>c方法返回后</td>
+<td><tt>None</tt></td>
+</tr>
+<tr>
+<td><tt>'c_exception'</tt></td>
+<td>c方法出现错误后</td>
+<td><tt>None</tt></td>
+</tr>
+</tbody>
+</table>
+<pre class="sh_python">
+import sys
+
+<p>def trace_lines(frame, event, arg):
+    if event != 'line':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    print '  %s line %s' % (func_name, line_no)</p>
+
+<p>def trace_calls(frame, event, arg):
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        return
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
+    if func_name in TRACE_INTO: #跟踪到新的方法里面，使用一个本地跟踪
+        return trace_lines
+    return</p>
+
+<p>def c(input):
+    print 'input =', input
+    print 'Leaving c()'</p>
+
+<p>def b(arg):
+    val = arg * 5
+    c(val)
+    print 'Leaving b()'</p>
+
+<p>def a():
+    b(2)
+    print 'Leaving a()'</p>
+
+<p>TRACE_INTO = ['b'] #保存在变量函数的全局列表</p>
+
+<p>sys.settrace(trace_calls)
+a()
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Call to a on line 37 of test.py
+Call to b on line 32 of test.py
+b line 33
+b line 34
+Call to c on line 28 of test.py
+input = 10
+Leaving c()
+b line 35
+Leaving b()
+Leaving a()
+<pre class="sh_python">
+import sys
+
+<p>def trace_calls_and_returns(frame, event, arg):
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        return
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    if event == 'call':
+        print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
+        return trace_calls_and_returns #返回值可以监测 到自身的引用    
+    elif event == 'return':
+        print '%s =&gt; %s' % (func_name, arg)
+    return</p>
+
+<p>def b():
+    print 'in b()'
+    return 'response_from_b '</p>
+
+<p>def a():
+    print 'in a()'
+    val = b()
+    return val * 2</p>
+
+<p>sys.settrace(trace_calls_and_returns)
+a()
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Call to a on line 22 of test.py
+in a()
+Call to b on line 18 of test.py
+in b()
+b =&gt; response_from_b
+a =&gt; response_from_b response_from_b</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>def trace_exceptions(frame, event, arg): #通过寻找一个本地跟踪功能的<tt>异常</tt>事件监控异常，异常发生会返回错误类型，值和回调数据
+    if event != 'exception':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    exc_type, exc_value, exc_traceback = arg
+    print 'Tracing exception: %s "%s" on line %s of %s' % \
+        (exc_type.__name__, exc_value, line_no, func_name)</p>
+
+<p>def trace_calls(frame, event, arg):
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name in TRACE_INTO:
+        return trace_exceptions</p>
+
+<p>def c():
+    raise RuntimeError('generating exception in c()')</p>
+
+<p>def b():
+    c()
+    print 'Leaving b()'</p>
+
+<p>def a():
+    b()
+    print 'Leaving a()'</p>
+
+<p>TRACE_INTO = ['a', 'b', 'c']</p>
+
+<p>sys.settrace(trace_calls)
+try:
+    a()
+except Exception, e:
+    print 'Exception handler:', e
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Tracing exception: RuntimeError "generating exception in c()" on line 23 of c
+Tracing exception: RuntimeError "generating exception in c()" on line 26 of b
+Tracing exception: RuntimeError "generating exception in c()" on line 30 of a
+Exception handler: generating exception in c()
+<pre class="sh_python">
+import sys
+import threading
+from Queue import Queue
+import time
+
+<p>def show_thread(q, extraByteCodes):
+    for i in range(5):
+        for j in range(extraByteCodes):
+            pass
+        q.put(threading.current_thread().name)
+    return</p>
+
+<p>def run_threads(prefix, interval, extraByteCodes):
+    print '%(prefix)s interval = %(interval)s with %(extraByteCodes)s extra operations' % locals()
+    sys.setcheckinterval(interval) #线程执行多任务。在一个固定的时间间隔，暂停字节码执行和解释检查是否需要执行任何信号处理。在相同的时间间隔检查，全局解释器锁释放当前线程，
+#然后获取，给其他线程一个机会执行，setcheckinterval修改这个间隔，但是可能影响性能
+    q = Queue()
+    threads = [ threading.Thread(target=show_thread, name='%s T%s' % (prefix, i), 
+                                 args=(q, extraByteCodes)
+                                 )
+                for i in range(3)
+              ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    while not q.empty():
+        print q.get()
+    print
+    return</p>
+
+<p>run_threads('Default', interval=10, extraByteCodes=1000)
+run_threads('Custom', interval=10, extraByteCodes=0)
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Default interval = 10 with 1000 extra operations #当检查间隔是小于线程字节码的数量，解释可能给另一个线程控制，以便它运行一段时间
+Default T0
+Default T2
+Default T1
+Default T0
+Default T2
+Default T1
+Default T0
+Default T2
+Default T1
+Default T0
+Default T0
+Default T2
+Default T1
+Default T2
+Default T1</p>
+
+<p>Custom interval = 10 with 0 extra operations #当检查间隔是大 于由一个线程正在执行的字节码数时不会释放控制，该线程将在时间间隔出现前完成其工作
+Custom T0
+Custom T0
+Custom T0
+Custom T0
+Custom T0
+Custom T1
+Custom T1
+Custom T2
+Custom T1
+Custom T2
+Custom T1
+Custom T1
+Custom T2
+Custom T2
+Custom T2
+<pre class="sh_python">
+import sys
+import threading
+from Queue import Queue
+import time
+
+<p>def show_thread(q, extraByteCodes):
+    for i in range(5):
+        for j in range(extraByteCodes):
+            pass
+        #q.put(threading.current_thread().name)
+        print threading.current_thread().name ##使该线程打印直接追加到队列中，而不是<tt>sys.stdout</tt>修改。输出是可预测的要少得多
+     return</p>
+
+<p>def run_threads(prefix, interval, extraByteCodes):
+    print '%(prefix)s interval = %(interval)s with %(extraByteCodes)s extra operations' % locals()
+    sys.setcheckinterval(interval)
+    q = Queue()
+    threads = [ threading.Thread(target=show_thread, name='%s T%s' % (prefix, i), 
+                                 args=(q, extraByteCodes)
+                                 )
+                for i in range(3)
+              ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    while not q.empty():
+        print q.get()
+    print
+    return</p>
+
+<p>run_threads('Default', interval=100, extraByteCodes=1000)
+run_threads('Custom', interval=10, extraByteCodes=0)
+</p>
+
+<p><pre class="sh_python">
+import sys
+import threading
+import time
+
+<p>io_lock = threading.Lock()
+blocker = threading.Lock()</p>
+
+<p>def block(i):
+    t = threading.current_thread()
+    with io_lock:
+        print '%s with ident %s going to sleep' % (t.name, t.ident)
+    if i:
+        blocker.acquire() # 获取但不释放
+        time.sleep(0.2)
+    with io_lock:
+        print t.name, 'finishing'
+    return</p>
+
+<p>threads = [ threading.Thread(target=block, args=(i,)) for i in range(3) ]
+for t in threads:
+    t.setDaemon(True)
+    t.start()</p>
+
+<p>threads_by_ident = dict((t.ident, t) for t in threads) #映射对象和标识</p>
+
+<p>time.sleep(0.01)
+with io_lock:
+    for ident, frame in sys._current_frames().items(): #识别死锁线程工作<tt>很难，sys._current_frames（）</tt>可以帮助准确显示
+        t = threads_by_ident.get(ident)
+        if not t: #主线程忽略
+            continue
+        print t.name, 'stopped in', frame.f_code.co_name, 
+        print 'at line', frame.f_lineno, 'of', frame.f_code.co_filename
+</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Thread-1 with ident -1221342352 going to sleep
+Thread-1 finishing #线程一没有sleep，完成了
+Thread-2 with ident -1221342352 going to sleep #线程2获取block
+Thread-3 with ident -1229735056 going to sleep
+Thread-3 stopped in block at line 13 of test.py #线程3想获取block，但是被线程2占用
+Thread-2 stopped in block at line 14 of test.py</p>
+
+<p>&nbsp;</p>
+</pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于sys研究（二）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyusysyanjiuer/"/>
+    <updated>2012-07-10T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyusysyanjiuer</id>
+    <content type="html"><![CDATA[<p><pre class="sh_python">
+import sys
+print 'Arguments:', sys.argv #命令行参数
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~ python test.py -h
+Arguments: ['test.py', '-h']
+<pre class="sh_python">
+import sys
+
+<p>print sys.stderr, 'STATUS: Reading from stdin' #<tt>stderr</tt>被用于警告或错误信息使用</p>
+
+<p>data = sys.stdin.read()  #输入流保存</p>
+
+<p>print sys.stderr, 'STATUS: Writing data to stdout'</p>
+
+<p>sys.stdout.write(data) #打印数据
+sys.stdout.flush() #将stdout实时自动刷出来</p>
+
+<p>print sys.stderr, 'STATUS: Done'
+</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>exit_code = int(sys.argv[1])
+sys.exit(exit_code) #设置退出时候的code，正常执行是0，不正常就是非0
+</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>one = []
+print 'At start         :', sys.getrefcount(one) #Python使用<em>引用计数</em>和<em>垃圾收集</em>的自动内存管理。一个对象被自动标记被收集时，它的引用计数下降到零,使用<tt>getrefcount（）</tt>审查现有对象的引用计数
+<tt />two = one
+print 'Second reference :', sys.getrefcount(one)
+del two
+print 'After del        :', sys.getrefcount(one)
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+At start         : 2
+Second reference : 3
+After del        : 2
+<pre class="sh_python">
+import sys
+
+<p>class OldStyle:
+    pass</p>
+
+<p>class NewStyle(object):
+    pass</p>
+
+<p>for obj in [ [], (), {}, 'c', 'string', 1, 2.3, 
+             OldStyle, OldStyle(), NewStyle, NewStyle(),
+             ]:    
+    print '%10s : %s' % (type(obj).__name__, sys.getsizeof(obj)) #各种类型对象的大小
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+list : 32
+tuple : 24
+dict : 136
+str : 25
+str : 30
+int : 12
+float : 16
+classobj : 44
+instance : 32
+type : 448
+NewStyle : 28
+<pre class="sh_python">
+import sys
+
+<p>class WithoutAttributes(object):
+    pass</p>
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return</p>
+
+<p>without_attrs = WithoutAttributes()
+print 'WithoutAttributes:', sys.getsizeof(without_attrs)</p>
+
+<p>with_attrs = WithAttributes()
+print 'WithAttributes:', sys.getsizeof(with_attrs)
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+WithoutAttributes: 28
+WithAttributes: 28 #带属性的和不带属性的类竟然一样大看下面的例子，通过聚合对象的 属性的大小来计算：</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return
+    def __sizeof__(self):
+        return object.__sizeof__(self) + \
+            sum(sys.getsizeof(v) for v in self.__dict__.values())</p>
+
+<p>my_inst = WithAttributes()
+print sys.getsizeof(my_inst)
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+78  #这样就不是28，这样就合理了</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>print 'Initial limit:', sys.getrecursionlimit()  #得到递归的次数，要不然不停的自己调用自己会引起崩溃
+sys.setrecursionlimit(10) #设置递归的次数</p>
+
+<p>print 'Modified limit:', sys.getrecursionlimit()</p>
+
+<p>def generate_recursion_error(i):
+    print 'generate_recursion_error(%s)' % i
+    generate_recursion_error(i+1) #不断的递归调用自己，但是计数加+1</p>
+
+<p>try:
+    generate_recursion_error(1)
+except RuntimeError, err:
+    print 'Caught exception:', err
+</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Initial limit: 1000 #默认可递归的次数为1000
+Modified limit: 10
+generate_recursion_error(1)
+generate_recursion_error(2)
+generate_recursion_error(3)
+generate_recursion_error(4)
+generate_recursion_error(5)
+generate_recursion_error(6)
+generate_recursion_error(7)
+generate_recursion_error(8)
+Caught exception: maximum recursion depth exceeded while getting the str of an object #到达递归限制
+<pre class="sh_python">
+import sys
+
+<p>print 'maxint    :', sys.maxint #python支持的最大数字
+print 'maxsize   :', sys.maxsize #python支持的最大的数据大小
+print 'maxunicode:', sys.maxunicode #支持 Unicode的最大整数
+</p>
+
+<p>&nbsp;</p>
+</pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于socket研究(二)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/guanyusocketyanjiuer-2/"/>
+    <updated>2012-07-09T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/guanyusocketyanjiuer-2</id>
+    <content type="html"><![CDATA[<p>socket服务器端：</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   #socket.AF_INET表示类型是ipv4，SOCK_STREAM提供面向连接的稳定数据传输，即TCP协议.相应的ＵＤＰ就是<span><em>SOCK_DGRAM</em></span>
+server_address = ('localhost', 10000) 
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+sock.bind(server_address)  #绑定到本地的10000端口
+sock.listen(1) #使用主动连接套接口变为被连接套接口，使得一个进程可以接受其它进程的请求，从而成为一个服务器进程。指定最多允许1个客户连接到服务器</p>
+
+<p>while True:
+    print &gt;&gt;sys.stderr, 'waiting for a connection'
+    connection, client_address = sock.accept() #在listen()后监听连接
+    try:
+        print &gt;&gt;sys.stderr, 'connection from', client_address</p>
+
+<p>        while True:  #等待收到数据后。。。
+            data = connection.recv(16) #从TCP连接的另一端接收数据，缓存区为16
+            print &gt;&gt;sys.stderr, 'received "%s"' % data
+            if data:
+                print &gt;&gt;sys.stderr, 'sending data back to the client'
+                connection.sendall(data)
+            else:
+                print &gt;&gt;sys.stderr, 'no more data from', client_address
+                break</p>
+
+<p>    finally:
+        connection.close()   #关闭socket连接
+</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #创建socket连接</p>
+
+<p>server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'connecting to %s port %s' % server_address
+sock.connect(server_address)  #连接到socket服务器的端口
+try:
+    message = 'This is the message.  It will be repeated.'
+    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sock.sendall(message)  #<code>send()</code>和 <code>.sendall()</code> 之间做出选择。前者一次发送尽可能多的字节数，后者发送整个报文（如果不能发送就会引发一个异常）
+    amount_received = 0
+    amount_expected = len(message)</p>
+
+<p>    while amount_received &lt; amount_expected:
+        data = sock.recv(16)
+        amount_received += len(data)
+        print &gt;&gt;sys.stderr, 'received "%s"' % data</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #创建一个ｕｄｐ的socket连接
+server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+sock.bind(server_address)
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting to receive message'
+    data, address = sock.recvfrom(4096)  #udp使用recvfrom接收</p>
+
+<p>    print &gt;&gt;sys.stderr, 'received %s bytes from %s' % (len(data), address)
+    print &gt;&gt;sys.stderr, data</p>
+
+<p>    if data:
+        sent = sock.sendto(data, address)  #udp使用sendto发送
+        print &gt;&gt;sys.stderr, 'sent %s bytes back to %s' % (sent, address)
+</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  #udp的socket客户端</p>
+
+<p>server_address = ('localhost', 10000)
+message = 'This is the message.  It will be repeated.'</p>
+
+<p>try:</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sent = sock.sendto(message, server_address)</p>
+
+<p>    print &gt;&gt;sys.stderr, 'waiting to receive'
+    data, server = sock.recvfrom(4096)
+    print &gt;&gt;sys.stderr, 'received "%s"' % data</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+import os
+
+<p>server_address = './uds_socket'  #一个socket文件</p>
+
+<p>try:
+    os.unlink(server_address)  #确保这个文件本来不存在
+except OSError:
+    if os.path.exists(server_address):
+        raise
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)  #创建一个unix domain socket
+print &gt;&gt;sys.stderr, 'starting up on %s' % server_address
+sock.bind(server_address)
+sock.listen(1)
+while True:
+    print &gt;&gt;sys.stderr, 'waiting for a connection'
+    connection, client_address = sock.accept()
+    try:
+        print &gt;&gt;sys.stderr, 'connection from', client_address
+        while True:
+            data = connection.recv(16)
+            print &gt;&gt;sys.stderr, 'received "%s"' % data
+            if data:
+                print &gt;&gt;sys.stderr, 'sending data back to the client'
+                connection.sendall(data)
+            else:
+                print &gt;&gt;sys.stderr, 'no more data from', client_address
+                break</p>
+
+<p>    finally:
+        connection.close()
+</p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+
+<p>sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)  #unix domain socket客户端</p>
+
+<p>server_address = './uds_socket'
+print &gt;&gt;sys.stderr, 'connecting to %s' % server_address
+try:
+    sock.connect(server_address)
+except socket.error, msg:
+    print &gt;&gt;sys.stderr, msg
+    sys.exit(1)</p>
+
+<p>try:</p>
+
+<p>    message = 'This is the message.  It will be repeated.'
+    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sock.sendall(message)
+    amount_received = 0
+    amount_expected = len(message)
+    while amount_received &lt; amount_expected:
+        data = sock.recv(16)
+        amount_received += len(data)
+        print &gt;&gt;sys.stderr, 'received "%s"' % data
+finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</p>
+
+<p>注：这个socket文件需要注意权限：</p>
+
+<p>dongwm@localhost ~ $ls -l !$
+ls -l uds_socket
+srwxr-xr-x 1 dongwm dongwm 0  7月  9 12:46 uds_socket
+假如你没有权限，那么会告诉你：connecting to ./uds_socket [Errno 13] Permission denied</p>
+
+<p><pre class="sh_python">
+import socket
+import os
+
+<p>parent, child = socket.socketpair()  #socket父子进程之间通信</p>
+
+<p>pid = os.fork()</p>
+
+<p>if pid:
+    print 'in parent, sending message'
+    child.close()
+    parent.sendall('ping')
+    response = parent.recv(1024)
+    print 'response from child:', response
+    parent.close()</p>
+
+<p>else:
+    print 'in child, waiting for message'
+    parent.close()
+    message = child.recv(1024)
+    print 'message from parent:', message
+    child.sendall('pong')
+    child.close()
+
+执行结果：</p>
+
+<p>dongwm@localhost ~ $python test.py
+in parent, sending message
+in child, waiting for message
+message from parent: ping
+response from child: pong</p>
+
+<p><pre class="sh_python">
+import socket
+import struct
+import sys
+
+<p>message = 'very important data'
+multicast_group = ('224.3.29.71', 10000)
+#在发送者和每一接收者之间实现点对多点网络连接。如果一台发送者同时给多个的接收者传输相同的数据，也只需复制一份的相同数据包。它提高了数据传送效率。减少了骨干网络出现拥塞的可能性
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #创建socket，用来接收，这个程序可以运行在多个ＩＰ上面，组播只能用ＵＤＰ
+sock.settimeout(0.2) #设置超时
+ttl = struct.pack('b', 1)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)  #设置组播
+try:</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sent = sock.sendto(message, multicast_group)
+    while True:
+        print &gt;&gt;sys.stderr, 'waiting to receive'
+        try:
+            data, server = sock.recvfrom(16)
+        except socket.timeout:
+            print &gt;&gt;sys.stderr, 'timed out, no more responses'
+            break
+        else:
+            print &gt;&gt;sys.stderr, 'received "%s" from %s' % (data, server)
+finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</p>
+
+<p><pre class="sh_python">
+import socket
+import struct
+import sys
+
+<p>multicast_group = '224.3.29.71'
+server_address = ('', 10000)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #这个程序发送组播数据
+sock.bind(server_address)  #绑定组播地址
+group = socket.inet_aton(multicast_group) 
+mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq) #告诉系统在所有接口增加这个socket到组播组
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting to receive message'
+    data, address = sock.recvfrom(1024)</p>
+
+<p>    print &gt;&gt;sys.stderr, 'received %s bytes from %s' % (len(data), address)
+    print &gt;&gt;sys.stderr, data</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending acknowledgement to', address
+    sock.sendto('ack', address)
+</p>
+
+<p>执行结果：</p>
+
+<p>ｉｐ1(192.168.8.49)：</p>
+
+<p>[htdocs@debian ~]$ python test.py</p>
+
+<p>waiting to receive message
+received 19 bytes from ('192.168.8.48', 59274)
+very important data
+sending acknowledgement to ('192.168.8.48', 59274)</p>
+
+<p>waiting to receive message
+ｉｐ2（192.168.8.48）:</p>
+
+<p>dongwm@localhost ~ $python test1.py</p>
+
+<p>waiting to receive message
+received 19 bytes from ('192.168.8.48', 59274)
+very important data
+sending acknowledgement to ('192.168.8.48', 59274)</p>
+
+<p>waiting to receive message
+发送端（192.168.8.48）：</p>
+
+<p>dongwm@localhost ~ $python test.py
+sending "very important data"
+waiting to receive
+received "ack" from ('192.168.8.48', 10000)
+waiting to receive
+received "ack" from ('192.168.8.49', 10000)
+waiting to receive
+timed out, no more responses
+closing socket
+<pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('localhost', 10000)
+sock.bind(server_address)
+sock.listen(1)</p>
+
+<p>unpacker = struct.Struct('I 2s f')</p>
+
+<p>while True:
+    print &gt;&gt;sys.stderr, '\nwaiting for a connection'
+    connection, client_address = sock.accept()
+    try:
+        data = connection.recv(unpacker.size) 
+        print &gt;&gt;sys.stderr, 'received "%s"' % binascii.hexlify(data) #收到的二进制数据</p>
+
+<p>        unpacked_data = unpacker.unpack(data)
+        print &gt;&gt;sys.stderr, 'unpacked:', unpacked_data  #数据解包</p>
+
+<p>    finally:
+        connection.close()
+</p>
+
+<p><pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('localhost', 10000)
+sock.connect(server_address)</p>
+
+<p>values = (1, 'ab', 2.7)
+packer = struct.Struct('I 2s f')
+packed_data = packer.pack(*values) #压包</p>
+
+<p>try:
+    print &gt;&gt;sys.stderr, 'sending "%s"' % binascii.hexlify(packed_data), values
+    sock.sendall(packed_data)</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+
+执行结果：</p>
+
+<p>dongwm@localhost ~ $python !$
+python server.py  #接收端</p>
+
+<p>waiting for a connection
+received "0100000061620000cdcc2c40"
+unpacked: (1, 'ab', 2.700000047683716)</p>
+
+<p>waiting for a connection
+dongwm@localhost ~ $python test.py  #发送端
+sending "0100000061620000cdcc2c40" (1, 'ab', 2.7)
+closing socket</p>
+</pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+</feed>

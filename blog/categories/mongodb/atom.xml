@@ -1,0 +1,1205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: mongodb | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/mongodb/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[封装pymongo自动关闭连接]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/feng-zhuang-pymongozi-dong-guan-bi-lian-jie/"/>
+    <updated>2013-08-16T21:42:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/feng-zhuang-pymongozi-dong-guan-bi-lian-jie</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>在我工作的项目里面使用了mongodb.自然也用到了pymongo.但是它都是在大片的函数里面使用类似于这样的方式</p>
+
+<p><code>python
+import db
+def test():
+    ...
+    db.test.find_one()
+    ...
+</code></p>
+
+<p>但是问题是在使用完都没有关闭连接,这样多台服务器连接我这台mongodb服务器，在业务高峰期就会占满我的连接, 我当时总结造成这个原因的问题有以下三种:</p>
+
+<ol>
+  <li>
+    <p>上面说的用完db不关闭连接而是等着db超时</p>
+  </li>
+  <li>
+    <p>注意上面的import，其实在import文件的时候数据库连接就已经生成了，没有在需要的时候才创建, 占满我连接的应用其实有很多没有用，浪费了</p>
+  </li>
+  <li>
+    <p>nginx、uwsgi，celery等应用配置的问题，造成过多的实例，其实根本无益</p>
+  </li>
+</ol>
+
+<h4 id="pymongo">我今天写的一个封装pymongo和关闭数据库连接的装饰器</h4>
+
+<p>```python
+#/usr/bin/env python
+# coding=utf-8</p>
+
+<p>”””
+1. 封装数据库操作(INSERT,FIND,UPDATE)
+2. 函数执行完MONGODB操作后关闭数据库连接
+“””</p>
+
+<p>from functools import wraps
+from pymongo.database import Database</p>
+
+<p>try:
+    from pymongo import MongoClient
+except ImportError:
+    # 好像2.4之前的pymongo都没有MongoClient,现在官网已经把Connection抛弃了
+    import warnings
+    warnings.warn(“Strongly recommend upgrading to the latest version pymongo version,”
+                  “Connection is DEPRECATED: Please use mongo_client instead.”)
+    from pymongo import Connection as MongoClient</p>
+
+<p>class Mongo(object):</p>
+
+<pre><code>'''封装数据库操作'''
+
+def __init__(self, host='localhost', port=27017, database='test',
+             max_pool_size=10, timeout=10):
+    self.host = host
+    self.port = port
+    self.max_pool_size = max_pool_size
+    self.timeout = timeout
+    self.database = database
+
+@property
+def connect(self):
+    # 我这里是为了使用类似"db.集合.操作"的操作的时候才会生成数据库连接,其实pymongo已经实现了进程池,也可以把这个db放在__init__里面,
+    # 比如我把db关掉有其他的数据库调用连接又会生成,并且不影响使用.我这里只是想每次执行数据库生成一个连接用完关掉-自己控制自己的
+    return MongoClientself.host, self.port, max_pool_size=self.max_pool_size,
+              connectTimeoutMS=60 * 60 * self.timeout)
+
+def __getitem__(self, collection):
+    # 为了兼容db[集合].操作的用法
+    return self.__getattr__(collection)
+
+def __getattr__(self, collection_or_func):
+    db = self.connect[self.database]
+    if collection_or_func in Database.__dict__:
+        # 当调用的是db的方法就直接返回
+        return getattr(db, collection_or_func)
+    # 否则委派给Collection
+    return Collection(db, collection_or_func)
+</code></pre>
+
+<p>class Collection(object):</p>
+
+<pre><code>def __init__(self, db, collection):
+    self.collection = getattr(db, collection)
+
+def __getattr__(self, operation):
+    # 我这个封装只是为了拦截一部分操作,不符合的就直接raise属性错误
+    control_type = ['disconnect', 'insert', 'update', 'find', 'find_one']
+    if operation in control_type:
+        return getattr(self.collection, operation)
+    raise AttributeError(operation)
+</code></pre>
+
+<p>def close_db(dbs=[‘db’]):
+    ‘’’
+    关闭mongodb数据库连接
+    db : 在执行函数里面使用的db的名字(大部分是db，也会有s_db)
+        Usage::
+            »&gt;s_db = Mongo()
+            »&gt;@close_db([‘s_db’])
+            …: def test():
+            …:     print s_db.test.insert({‘a’: 1, ‘b’: 2})
+            …:
+    ‘’’
+    def _deco(func):
+        @wraps(func)
+        def _call(<em>args, **kwargs):
+            result = func(</em>args, **kwargs)
+            for db in dbs:
+                try:
+                    func.func_globals[db].connection.disconnect()
+                except KeyError:
+                    pass
+            return result
+        return _call
+    return _deco
+```</p>
+
+<p>PS: 在我测试的时候发现,使用Mongo()类生成的db，操作完会自动关闭连接了…</p>
+
+<h4 id="section-1">怎么样给一个很大的文件每个函数都加上面的这个装饰器？</h4>
+
+<p>项目每个脚本的代码都很长，函数也很多，并且每个函数里面使用的db的名字都不同,比如有一些一些风格:</p>
+
+<p><code>python
+db.test.find_one()
+s_db.test.insert(dict(test='test'))
+...
+</code></p>
+
+<p>每个函数加一个装饰器,好费劲，就想能不能自动分辨文件中的函数然后给他们自动加装饰器，然后就有以下的一个做好的脚本:</p>
+
+<p>```python
+#coding=utf-8</p>
+
+<p>from functools import wraps
+import copy
+import types</p>
+
+<p>def wrap(func):
+    @wraps(func)
+    def _call(<em>args, **kwargs):
+        result = func(</em>args, **kwargs)
+        print ‘wrap you’
+        return result
+    return _call</p>
+
+<p>def test():
+    print ‘test’</p>
+
+<p>def test2():
+    print ‘test3’</p>
+
+<p>glocal_dict = copy.copy(globals())</p>
+
+<p>func_list = [[k, v] for k, v in glocal_dict.iteritems() if not k.startswith(‘__’)]</p>
+
+<p>for func_name, func in func_list:
+    if  func_name in [‘wraps’, ‘copy’, ‘wrap’, ‘types’]:
+        continue
+    if types.FunctionType  == type(func):
+        globals()[func_name]= wrap(func)
+```</p>
+
+<p>这样当你调用的时候自动就有了装饰器:</p>
+
+<p><code>bash
+&gt;&gt;&gt; from test import test
+&gt;&gt;&gt; test()
+test
+wrap you
+&gt;&gt;&gt;
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[pymongo教程（二）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%BA%8C%EF%BC%89/"/>
+    <updated>2012-02-06T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/pymongo教程（二）</id>
+    <content type="html"><![CDATA[<p>1  移除子文档：</p>
+
+<p>user_doc = {
+"username":"foouser",
+"emails":[
+{
+"email":"foouser1@dongwm.com",
+"primary":True
+},
+{
+"email":"foouser2@dongwm.com",
+"primary":False
+},
+{
+"email":"foouser3@dongwm.com",
+"primary":False
+}
+]
+}
+dbh.users.insert(user_doc, safe=True)
+dbh.users.update({"username":"foouser"},
+{"$pull":{"emails":{"email":"foouser2@dongwm.com"}}}, safe=True)   #移除 "foouser2@dongwm.com"子文档</p>
+
+<p>2 增加子文档</p>
+
+<p>new_email = {"email":"fooemail4@dongwm.com", "primary":False}
+dbh.users.update({"username":"foouser"},
+{"$push":{"emails":new_email}}, safe=True)   #使用$push增加</p>
+
+<p>3 修改子文档</p>
+
+<p>user_doc = {
+"username":"foouser",
+"emails":[
+{
+"email":"foouser1@dongwm.com",
+"primary":True
+},
+{
+"email":"foouser2@dongwm.com",
+"primary":False
+},
+{
+"email":"foouser3@dongwm.com",
+"primary":False
+}
+]
+}
+dbh.users.insert(user_doc, safe=True)
+dbh.users.update({"emails.email":"foouser2@dongwm.com"},
+{"$set":{"emails.$.primary":True}}, safe=True)   #设置子文档属性 "primary"为真</p>
+
+<p>4 使用索引加快查找</p>
+
+<p>这里有个文档</p>
+
+<p>user_doc = {
+"username":"foouser",
+"emails":[
+{
+"email":"foouser1@dongwm.com",
+"primary":True
+},
+{
+"email":"foouser2@dongwm.com",
+"primary":False
+},
+{
+"email":"foouser3@dongwm.com",
+"primary":False
+}
+]
+}</p>
+
+<p>dbh.users.insert(user_doc)</p>
+
+<p>正常查找使用：</p>
+
+<p>user = dbh.users.find_one({"emails.email":"foouser2@dongwm.com"})</p>
+
+<p>使用索引（根据mail.mail）：</p>
+
+<p>dbh.users.create_index("emails.email")</p>
+
+<p>注：简历索引比较耗时也增加系统负荷可以使用将其放在后台：dbh.users.create_index("emails.email", background=True)</p>
+
+<p>5 删除索引</p>
+
+<p>dbh.users.create_index("username", name="username_idx")
+dbh.users.drop_index("username_idx")
+6 复合索引（简单的理解就是在where条件中字段用索引，如果用多字段就用复合索引）</p>
+
+<p>dbh.users.create_index([("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)])</p>
+
+<p>注：删除索引方法：dbh.users.drop_index([("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)])</p>
+
+<p>或者：</p>
+
+<p>dbh.users.create_index([
+("first_name", pymongo.ASCENDING),
+("last_name", pymongo.ASCENDING)
+],
+name="name_idx")  #给索引使用一个名字</p>
+
+<p>7 geospatial（<span>地理位置</span>）索引</p>
+
+<p>这个说来比较复杂：可以关注http://blog.nosqlfan.com/html/1811.html以及mongodbCTO的个人博客http://www.snailinaturtleneck.com/blog/</p>
+
+<p>dbh.users.create_index([("user_location", pymongo.GEO2D), ("username", pymongo.ASCENDING)])</p>
+
+<p>8 例子（在点（40,40）最大距离为5的最近的10个用户）</p>
+
+<p>nearest_users = dbh.users.find(
+{"user_location":
+{"$near" : [40, 40],
+"$maxDistance":5}}).limit(10)   #关键字：$near
+for user in nearest_users:
+print "User %s is at location %s,%s" %(user["username"], user["user_location"][0],user["user_location"[1])</p>
+
+<p>9 例子2（相关区域内的查找）</p>
+
+<p>box = [[50.73083, -83.99756], [50.741404,  -83.988135]]
+users_in_boundary = dbh.users.find({"user_location":{"$within": {"$box":box}}})</p>
+
+<p>10 例子3（一个圆区域的查询，提供中心点和半径）</p>
+
+<p>users_in_circle = dbh.users.find({"user_location":{"$within":{"$center":[40, 40, 5]}}}).limit(10)  （点（40,40）,半径为5内的区域查询，只要前10个数据）</p>
+
+<p>11 例子4（球形区域查询）：</p>
+
+<p>earth_radius_km = 6371.0
+max_distance_km = 5.0
+max_distance_radians = max_distance_km / earth_radius_km
+nearest_users = dbh.users.find(
+{"user_location":
+{"$nearSphere" : [40, 40],
+"$maxDistance":max_distance_radians}}).limit(10)   #还是点（40,40）,半径为5内的区域查询，只要前10个数据</p>
+
+<p>12 避免KeyErrors和其他错误，使用默认值</p>
+
+<p>比如计算分数，假如因为某些原因出现错误，为了不影响正常使用，例如将出现问题的那一次运算设计成0：</p>
+
+<p>total_score = 0
+for username in ("jill", "sam", "cathy"):
+user_doc = dbh.users.find_one({"username":username})
+total_score += user_doc.get("score", 0)  #这样的话 有数据的就加数据 没有数据就是0</p>
+
+<p>注：也可能存在不是空值而是空列表</p>
+
+<p>for supplier in product_doc.get("suppliers", []):
+email_supplier(supplier)
+13 插入或者更新的选择：</p>
+
+<p>先查询是否已经存在的文档，没有选择插入，有的话就是更新</p>
+
+<p>def edit_or_add_session(description, session_id):
+dbh.sessions.update({"session_id":session_id},
+{"$set":{"session_description":description}}, safe=True, upsert=True)</p>
+
+<p>14 自动增加文档属性值</p>
+
+<p>ret = dbh.users.find_and_modify({"username":username},
+{"$inc":{"account_balance":20}}, safe=True, new=True)
+new_account_balance = ret["account_balance"]  #"account_balance"自动加了20</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[pymongo教程（三）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%89%EF%BC%89/"/>
+    <updated>2012-02-06T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/pymongo教程（三）</id>
+    <content type="html"><![CDATA[<p>1 MongoDB 队列查询
+$gt 大于 例子：“score”:{"$gt”:0}
+$lt小于 例子：“score”:{"$lt”:0}
+$gte 大于等于例子： “score”:{"$gte”:0}
+$lte 小于等于 例子：“score”:{"$lte”:0} ⇐
+$all all  例子：“skills”:{"$all”:["mongodb”,"python"]}
+$exists 属性必须存在 例子：“email”:{"$exists”:True}
+$mod 模块X等于Y 例子： “seconds”:{"$mod”:[60,0]}
+$ne 不等于 例子：“seconds”:{"$ne”:60}
+$in In 例子： “skills”:{"$in”:["c”,"c++"]}
+$nin Not In 例子：“skills”:{"$nin”:["php”,"ruby”,"perl"]}
+$nor Nor例子： “$nor”:[{"language”:"english"},{"coun- N/A
+try”:"usa"}]
+$or Or 例子：“$or”:[{"language”:"english"},{"coun- OR
+try”:"usa"}]
+$size 数组个数 例子： “skills”:{"$size”:3}</p>
+
+<p>2 MongoDB更新修改</p>
+
+<p>$inc 子增长 “$inc”:{"score”:1}
+$set 设置属性值 “$set”:{"username”:"niall"}
+$unset 取消（删除）属性值 “$unset”:{"username”:1}
+$push 增加  “$push”:{"emails”:"foo@example.com"}
+$pushAll 增加多个 “$pushall”:{"emails”:["foo@example.com”,"foo2@ex-
+ample.com"]}
+$addToSet 不存在增加 “$addToSet”:{"emails”:"foo@example.com"}
+$pop 数组尾部去除 “$pop”:{"emails”:1}
+$pull  数组删除项 “$pull”:{"emails”:"foo@example.com"}
+$pullAll 删除数组all项 “$pullAll”:{"emails”:["foo@example.com”, “foo2@ex-
+moval ample.com"]}
+$rename 属性重命名 “$rename”:{"emails”:"old_emails"}</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[pymongo教程（一）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <updated>2012-02-01T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/pymongo教程（一）</id>
+    <content type="html"><![CDATA[<p>前言：本文是一些简单的使用python模块的例子，主旨是帮助使用本模块的朋友找到使用方法</p>
+
+<p>1 一个MongoDB的文档</p>
+
+<p>本质上是附带了一些额外功能一个JSON文件</p>
+
+<p><pre class="sh_python">
+from datetime import datetime
+user_doc = {
+    "username" : "weiming",
+    "firstname" : "dong",
+    "surname" : "Chris",
+    "dateofbirth" : datetime(1985, 4, 18),
+    "email" : "ciici1234@.hotmail.com",
+    "score" : 0
+}
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>2   使用python连接mongodb</p>
+
+<p><pre class="sh_python">
+import sys
+
+<p>from pymongo import Connection
+from pymongo.errors import ConnectionFailure</p>
+
+<p>def main():
+    """ Connect to MongoDB """
+    try:
+        c = Connection(host="localhost", port=27017)  #端口可能不同，看你的配置文件
+        print "Connected successfully"
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)</p>
+
+<p>if __name__ == "__main__":
+    main()
+</p>
+
+<p>&nbsp;</p>
+
+<p>3 插入数据（文档）到集合</p>
+
+<p><pre class="sh_python">
+import sys
+from datetime import datetime
+from pymongo import Connection
+from pymongo.errors import ConnectionFailure
+
+<p>def main():
+    try:
+        c = Connection(host="localhost", port=27017)
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)
+    dbh = c["mydb"]
+    assert dbh.connection == c
+    user_doc = {
+        "username" : "weiming",
+        "firstname" : "dong",
+        "surname" : "Chris",
+        "dateofbirth" : datetime(1985, 4, 18),
+        "email" : "ciici1234@hotmail.com",
+        "score" : 0
+    }</p>
+
+<p>    dbh.users.insert(user_doc, safe=True)   #可确保写成功，或将抛出一个异常
+    print "Successfully inserted document: %s" % user_doc</p>
+
+<p>if __name__ == "__main__":
+    main()
+</p>
+
+<p>&nbsp;</p>
+
+<p>4 保障写入到多个数据库节点</p>
+
+<p>dbh.users.insert(user_doc, w=2)    #它被写入到至少有一个 replica set的2个服务器才算成功</p>
+
+<p>5 MongoDB的查询语言简介</p>
+
+<p>如果我们想检索firstname是“dong”</p>
+
+<p>q = {
+"firstname" : "jane"
+}
+如果我们想检索firstname是“dong” 和username是 "weiming"</p>
+
+<p>q = {
+ "username" : "weiming",
+ "firstname" : "dong",}
+}
+如果我们想检索score大于0
+q = {
+"score" : { "$gt" : 0 }
+}
+5 查找单个文档;
+user_doc = dbh.users.find_one({"username" : "weiming"})
+if not user_doc:
+    print "no document found for username janedoe"
+6 查找多个文档：
+users = dbh.users.find({"firstname":"dong"})
+for user in users:
+    print user.get("email")
+7 检索单个字段：
+users = dbh.users.find({"firstname":"dong"}, {"email":1})  #只检索邮件字段 但是也包含_id
+for user in users:
+    print user.get("email")
+8 查看有多少文件在用户的集合
+userscount = dbh.users.find().count()
+print "There are %d documents in users collection" % userscount
+9 排序（查找firstname是“dong”的文档，然后根据生日排序）
+users = dbh.users.find(
+    {"firstname":"dong"}).sort(("dateofbirth", pymongo.DESCENDING))
+for user in users:
+    print user.get("email"）
+也可以这样：
+users = dbh.users.find({"firstname":"dong"},
+    sort=[("dateofbirth", pymongo.DESCENDING)])
+for user in users:
+    print user.get("email") 
+10 排序+限制（如果符合的文档太多，假如我想取分数前十）： 
+users = dbh.users.find().sort(("score", pymongo.DESCENDING)).limit(10)
+for user in users:
+    print user.get("username"), user.get("score", 0)
+11 可用于翻页，就是排序后跳过一定数量的结果
+users = dbh.users.find().sort(
+    ("surname", pymongo.ASCENDING)).limit(20).skip(20)
+12 我的理解是，当数据库很繁忙，为了防止重复查询一个可能会修改的结果，遍历整个用户集合，使用快照方式
+for user in dbh.users.find(snapshot=True):
+    print user.get("username"), user.get("score", 0)
+13 更新修改集合数据
+dbh.users.update({"username":"janedoe"},
+    {"$set":{"email":"admin@dongwm.com"}}, safe=True)
+dbh.users.update({"username":"dong"},
+    {"$set":{"email":"admin@dongwm.com", "score":1}}, safe=True)  #更新多个条件
+dbh.users.update({"score":0},{"$set":{"flagged":True}}, multi=True, safe=True)  #所有符合条件"score":0的文档将被更新
+14 删除用户集合中的文档
+dbh.users.remove({"score":1}, safe=True)    #删除用户集合中的符合"score":1文档
+dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>
+</pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[mongodb集群管理脚本（python）]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/mongodbguanlijiaoben/"/>
+    <updated>2011-08-06T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/mongodbguanlijiaoben</id>
+    <content type="html"><![CDATA[<p>前言：mongodb集群需要一个管理脚本，比如启动集群，关闭集群，查看集群状态等功能，本脚本使用了pdsh代替ssh，本来为了并行操作，但是事实上在for循环里面并行是不必要的，所以可以改成ssh的。以后会改成多线程并行操作。</p>
+
+<p>本脚本特性：</p>
+
+<p>1 需要安装PDSH （并行的ssh）和termcolor(一个让终端显示颜色的pythonapi)，-h选项有安装方法介绍</p>
+
+<p>2 支持查看集群服务状态（包括查看监听端口列表和各设定服务是否正常，正常状态为绿色，不正常为红色），start/stop/restart等集群服务</p>
+
+<p>3 支持tab自动补齐相关命令</p>
+
+<p>4  启动服务前先判定服务是否运行，防止多次启动。停止服务时给于倒计时，防止误操作</p>
+
+<p>5  效果截图：</p>
+
+<p><img class="alignnone" title="mongodb1" src="http://farm7.static.flickr.com/6143/6034397038_9edf238f9b_z.jpg" alt="" width="640" height="437" /></p>
+
+<p><img class="alignnone" title="mongodb2" src="http://farm7.static.flickr.com/6189/6034397214_dc86e3bd26_z.jpg" alt="" width="640" height="264" /></p>
+
+<p><img class="alignnone" title="mongodb3" src="http://farm7.static.flickr.com/6181/6033847951_a7e188c613_z.jpg" alt="" width="640" height="437" /></p>
+
+<p>本脚本需要一个配置文件conf.cfg，当切换shard或者仲裁到其他服务器上面时候只需要修改此配置文件，本例有7台服务器，其中mongod1代表shard1，mongod3a代表shard3的arbiter，这样的写法是我为了直接在脚本里面取值，因为在相应服务器启动进程使用的是init.d下的脚本，配置文件也是conf型，下面有2个例子：</p>
+
+<p>cat /etc/conf.cfg  //python脚本的配置文件
+<pre class="sh_python">
+[host]
+ hosts=mg01,mg02,mg03,mg04,mg05,mg06,mg07
+ [mg01]
+ mongod = mongod1,mongod4
+ arbiter= mongod3a
+ config =
+ mongos = mongos
+ [mg02]
+ mongod = mongod1,mongod4
+ arbiter= mongod3a
+ config = mongoconfig
+ mongos =
+ [mg03]
+ mongod = mongod1,mongod2
+ arbiter= mongod4a
+ config =
+ mongos = mongos
+ [mg04]
+ mongod = mongod2
+ arbiter= mongod1a,mongod4a
+ config = mongoconfig
+ mongos =
+ [mg05]
+ mongod = mongod2,mongod3
+ arbiter= mongod1a
+ config =
+ mongos = mongos
+ [mg06]
+ mongod = mongod3
+ arbiter= mongod2a
+ config = mongoconfig
+ mongos =
+ [mg07]
+ mongod = mongod3,mongod4
+ arbiter= mongod2a
+ config =
+ mongos = mongos
+</pre></p>
+
+<p>cat /etc/init.d/mongod1  //mongodb进程启动脚本，支持start，stop等
+<pre class="sh_bash">
+#!/bin/bash
+
+<p># mongod - Startup script for mongod</p>
+
+<p># chkconfig: 35 85 15
+ # description: Mongo is a scalable, document-oriented database.
+ # processname: mongod
+ # config: /etc/mongod.conf
+ # pidfile: /var/run/mongo/mongo.pid</p>
+
+<p>. /etc/rc.d/init.d/functions</p>
+
+<p># things from mongod.conf get there by mongod reading it</p>
+
+<p>OPTIONS=" -f /etc/mongod1.conf"</p>
+
+<p>mongod=${MONGOD-/usr/local/mongodb/bin/mongod}</p>
+
+<p>MONGO_USER=mongod
+ MONGO_GROUP=mongod</p>
+
+<p>start()
+ {
+ echo -n $"Starting mongod1: "
+ daemon --user "$MONGO_USER" $mongod $OPTIONS
+ RETVAL=$?
+ echo
+ [ $RETVAL -eq 0 ] &amp;&amp; touch /var/lock/subsys/mongod1
+ }</p>
+
+<p>stop()
+ {
+ echo -n $"Stopping mongod1: "
+ killproc -p /var/lib/mongo/mongod1.lock -t30 -TERM /usr/local/mongodb/bin/mongod
+ RETVAL=$?
+ echo
+ [ $RETVAL -eq 0 ] &amp;&amp; rm -f /var/lock/subsys/mongod1
+ }</p>
+
+<p>restart () {
+ stop
+ start
+ }</p>
+
+<p>ulimit -n 12000
+ RETVAL=0</p>
+
+<p>case "$1" in
+ start)
+ start
+ ;;
+ stop)
+ stop
+ ;;
+ restart|reload|force-reload)
+ restart
+ ;;
+ condrestart)
+ [ -f /var/lock/subsys/mongod1 ] &amp;&amp; restart || :
+ ;;
+ status)
+ status $mongod
+ RETVAL=$?
+ ;;
+ *)
+ echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+ RETVAL=1
+ esac</p>
+
+<p>exit $RETVAL
+</p>
+
+<p>cat /etc/mongod1.conf  //mongodb启动脚本需要的conf配置文件，mongos和config配置文件类似
+<pre class="sh_bash">
+# shard1 config
+ shardsvr=true
+ replSet=shard1
+ port=10000
+ fork=true
+ journal=true
+ dbpath=/data/shard1
+ oplogSize=10240
+ logpath=/data/shard1/shard1.log
+ logappend=true
+ pidfilepath=/var/lib/mongo/mongod1.lock
+ unixSocketPrefix=/data/shard1/
+</pre></p>
+
+<p>下面是python管理脚本：</p>
+
+<p>cat /usr/bin/Mshell.py  //真正的管理脚本</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+# coding=gbk
+
+<p>#__doc__注释  执行脚本 -h 或者 --help  打印输出的内容
+"""
+This script is used to manage mongodb!</p>
+
+<p>The Feature:
+1 Support command automatically filled
+2 View the current status of the cluster
+3 Shut down or start the cluster service</p>
+
+<p>Required dependencies:
+1 PDSH -&gt; Parallel Distributed Shell
+Installation:
+rpm -ivh pdsh-2.24-1.el5.rf.x86_64.rpm
+2 termcolor -&gt; ANSII Color formatting for output in terminal
+Installation:
+python setup.py install</p>
+
+<p>Usage:
+/usr/bin/Mshell.py
+Note: Does not require any parameters</p>
+
+<p>Writer:Dongweiming</p>
+
+<p>"""
+#引用一些需要的模块
+import os
+import sys
+import time
+import re
+import string
+import readline
+from subprocess import Popen, PIPE
+import ConfigParser
+from optparse import OptionParser
+from termcolor import colored</p>
+
+<p>class Cfg():
+#类初始化函数
+    def __init__(self,cfg):
+        self.cfg = cfg
+        self._parse_configure()
+#设定取值逻辑，当出现多个分割格式化
+    def _get_value(self,conf, line, key):
+        try:
+            value = conf.get(line, key)
+        except ConfigParser.NoOptionError:
+            return []
+        if value:
+            return [i.strip() for i in value.split(',') if i]
+        else:
+            return []
+#从配置文件中取得某主机某服务相关值
+    def _parse_configure(self):
+        conf = ConfigParser.RawConfigParser()
+        conf.read(self.cfg)
+        green_on_grey = lambda x:colored(x,'red','on_grey')
+        self.hosts=self._get_value(conf,'host','hosts')
+        for h in self.hosts:
+            for service in ['arbiter', 'config', 'mongod', 'mongos']:
+                setattr(self, '%s_%s' % (h, service), self._get_value(conf, h, service))
+                self.h_service=self._get_value(conf, h, service)
+#登录Shell打印一些配置文件格式化后的明细
+            print green_on_grey('host:\t%s\n') % h
+            if getattr(self,'%s_mongod' % h):
+                print colored('Shard:\t%s','yellow')  % getattr(self,'%s_mongod' % h )
+            if getattr(self,'%s_config' % h):
+                print colored('Config server is Open','green')
+            if getattr(self,'%s_mongos' % h):
+                print colored('Mongos server is Open','magenta')
+            if getattr(self,'%s_arbiter' % h):
+                print colored('Arbiter:\t%s','blue') % getattr(self,'%s_arbiter' % h )</p>
+
+<p>class Manager(Cfg):
+#初始化函数
+    def __init__(self,confile):
+        Cfg.__init__(self,confile)
+        self.services = [ 'arbiter', 'config', 'mongod', 'mongos', 'all','*']
+#执行命令的函数，设定命令操作逻辑过程
+    def fetch_job(self,cmd):
+        cmd = cmd.strip().split(None, 2)
+        if len(cmd) == 1 and cmd[0] not in ['show', 'help','status']:
+            print '%s what...' % cmd[0]
+            return
+        service= None
+        host = None
+#判断当命令以 start stop开始，host和服务是不是再设定的范围值
+        if cmd[0] in ['start', 'stop']:
+            if '@' in cmd[1]:
+                (service,host) = cmd[1].split('@')
+                if host not in self.hosts:
+                    print 'No such a host %s' % host
+                    return
+            else:
+                service = cmd[1]
+                host = 'all'</p>
+
+<p>            if service not in self.services:
+                print "bad service %s,Correct parameters: [ 'arbiter', 'config', 'mongod', 'mongos', 'all','*']" % service
+                return
+#当符合要求 调用下面的_start_srv函数用于启动
+            if cmd[0] == 'start' and len(cmd) == 2:
+                self._start_srv(host, service)
+            elif cmd[0] == 'stop' and len(cmd) &lt;= 3:
+                now = False
+                if len(cmd) == 3:
+                    if cmd[2] == 'now':
+                        now = True
+                    else:
+                        print 'Oops, bad command'
+                        return
+                self._stop_srv(host, service, now)
+            else:
+                print 'Oops, bad command'
+                return
+        elif cmd[0] == 'show':
+            self._show_srv()
+        elif cmd[0] == 'help':
+            self._show_help()
+        elif cmd[0] == 'status':
+            self._status_srv()
+        else:
+            print 'command error %s %s' % (cmd[0], cmd[1])
+            return
+#执行show命令
+    def _show_srv(self):
+        print  colored('服务器'+('-'*2) + 'PID'+('-'*4)+ '数据'+('-'*10)+'监听端口'+('-'*4)+'服务端口','blue')
+        for host in self.hosts:
+            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s ps -ef |grep mongod|grep -v grep' % ( host )
+            for line in os.popen(cmd).readlines():
+                dict = {}
+                s = string.split(line)
+                if s[1] == 'mongod':
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat %s|grep -v "#"|grep -v "^$"' % (s[0].strip(':'),s[10])
+                    for line in os.popen(cmd).readlines():
+                        f = string.rstrip(line)
+                        value = f.split('=')[1:2]
+                        key = f.split('=')[0].split(':')[1]
+                        if key != '':
+                           dict[key] = value
+                           if not dict.get(" replSet"):
+                               dict[' replSet']=['NO']
+                    print  colored(s[0].ljust(6,' '),"red"),colored(s[2].ljust(6,' '),"green"),colored('%s  %s ','cyan') % (''.join(dict.get(" unixSocketPrefix")).split('/')[2].ljust(14,' '),''.join(dict.get(" port")).ljust(8,' '))
+#查看集群状态，执行status命令
+    def _status_srv(self):
+        yellow_on_grey = lambda x:colored(x,'yellow','on_grey')
+        for h in self.hosts:
+            print yellow_on_grey('host:\t%s\n') % h
+            for str in ','.join(getattr(self,'%s_mongod' % h)).split(','):
+                if getattr(self,'%s_mongod' % h):
+                       cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/%s.conf' % (h,str)
+                       for line in os.popen(cmd).readlines():
+                           cmds ="PDSH_SSH_ARGS_APPEND='-p9922' pdsh -Rssh -w ssh:root@%s netstat -tunlp|egrep '10000|12000|14000|16000'|awk '{print $5}'|cut -d':' -f2"  % h
+                           for lines in  os.popen(cmds).readlines():
+                               setattr(self, '%s' % h,lines.strip())
+                               if line.strip().split('=')[1]  in lines.strip():
+                                   print 'Shard :%s\t [%s] ' % (str,colored('ok','green'))
+                                   break
+                           #else  line.strip().split('=')[1] not in lines.strip():
+                           else:
+                                   print 'Shard :%s\t [%s] ' % (str,colored('ok','red'))</p>
+
+<p>            if getattr(self,'%s_arbiter' % h):
+                for str in ','.join(getattr(self,'%s_arbiter' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/%s.conf' % (h,str)
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep mongo|grep "1[0-9]\{3\}1"' % h
+                            for line in  os.popen(cmd1).readlines():
+                               t = string.rstrip(line)
+                               value=t.split('0.0.0.0:')[1].rstrip()
+                               if cc in value:
+                                print 'Arbiter :%s\t [%s] ' % (str,colored('ok','green'))
+                                break
+                            else:
+                                print 'Arbiter :%s\t [%s] ' % (str,colored('ok','red'))</p>
+
+<p>            if getattr(self,'%s_config' % h):
+                for str in ''.join(getattr(self,'%s_config' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/mongoconfig.conf' % h
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep 20000' % h
+                            for line in  os.popen(cmd1).readlines():
+                               t = string.rstrip(line)
+                               value=t.split('0.0.0.0:')[1].rstrip()
+                               if cc in value:
+                                  print 'Config :%s\t %s' % (str,('[' + colored('ok','green')+']'))
+                                  break
+                            else:
+                                  print 'Config :%s\t %s' % (str,('[' + colored('ok','red')+']'))
+            if getattr(self,'%s_mongos' % h):
+                for str in ''.join(getattr(self,'%s_mongos' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w  ssh:root@%s grep "^port" /etc/mongos.conf' % h
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep mongos' % h
+                        for line in  os.popen(cmd1).readlines():
+                            t = string.rstrip(line)
+                            value=t.split('0.0.0.0:')[1].rstrip()
+                            if cc in value:
+                                print 'Mongos :%s\t [%s] ' % (str,colored('ok','green'))
+                                break
+                        else:
+                                print 'Mongos :%s\t [%s] ' % (str,colored('ok','red'))
+                                break
+#当执行 start 命令
+    def _start_srv(self,host,prog):
+#当执行start all
+        if prog == 'all':
+            for h in self.hosts:
+                if getattr(self,'%s_mongod' % h):
+                    for str in ','.join(getattr(self,'%s_mongod' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/%s.conf|grep -v "#"|grep port' % (h,str)
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s mongod process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,str)
+                            os.system(cmd)
+            for h in self.hosts:
+                if getattr(self,'%s_arbiter' % h):
+                    for str in ','.join(getattr(self,'%s_arbiter' % h)).split(','):
+                        print str
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/%s.conf|grep -v "#"|grep port' % (h,str)
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s arbiter process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,str)
+                            os.system(cmd)</p>
+
+<p>            for h in self.hosts:
+                if getattr(self,'%s_config' % h):
+                        print ','.join(getattr(self,'%s_config' % h))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/mongoconfig.conf|grep -v "#"|grep port' % h
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s config process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,','.join(getattr(self,'%s_config' % h)))
+                            os.system(cmd)
+            for h in self.hosts:
+                if getattr(self,'%s_mongos' % h):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/mongos.conf|grep -v "#"|grep port' % h
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s mongos process' % h
+                        else:
+                           cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,','.join(getattr(self,'%s_mongos' % h)))
+                           os.system(cmd)
+        else:
+            if  host== 'all':
+                host = self.hosts
+            else:
+                host = [host]
+            for i in host:
+                if  prog == '*':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                    if getattr(self,'%s_arbiter' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                    for service in ['config', 'mongos']:
+                        if getattr(self,'%s_%s' % (i,service)):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_%s' % (i,service))))
+                            os.system(cmd)
+                if prog == 'mongod':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                if prog == 'mongos':
+                    print ','.join(getattr(self,'%s_mongos' % i))
+                    if getattr(self,'%s_mongos' % i):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_mongos' % i)))
+                        os.system(cmd)
+                if prog == 'config':
+                    print ''.join(getattr(self,'%s_config' % i))
+                    if getattr(self,'%s_config' % i):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_config' % i)))
+                        os.system(cmd)
+                if prog == 'arbiter':
+                    print ','.join(getattr(self,'%s_arbiter' % i))
+                    if getattr(self,'%s_arbiter' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                        os.system(cmd)
+#当执行stop 的一些设置
+    def _stop_srv(self, host, prog, now):
+        if host == 'all':
+            host = self.hosts
+        else:
+            host = [host]
+        verify = None
+#当执行 stop all
+        if prog == 'all':
+            if not now:
+#执行前做确定验证，并倒计时3秒
+                try:
+                    verify = raw_input(colored("Are you sure to stop all? (y/n) ","yellow")).lower()
+                    if verify == 'y':
+                        print "&gt;&gt;&gt; Waiting 3 seconds before stoping..."
+                        print "&gt;&gt;&gt; (Control-C to abort)..."
+                        print "&gt;&gt;&gt; Stoping in:",</p>
+
+<p>                        for i in range(3, 0, -1):
+                            print colored('%d','red') % i,
+                            sys.stdout.flush()
+                            time.sleep(1)
+                        print
+                    else:
+                        return
+                except KeyboardInterrupt:
+                    print
+                    return
+#stop 过程逻辑
+            for host in self.hosts:
+                if getattr(self,'%s_mongos' % host):
+                    ','.join(getattr(self,'%s_mongos' % host))
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,','.join(getattr(self,'%s_mongos' % host)))
+                    os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_config' % host):
+                    print ','.join(getattr(self,'%s_config' % host))
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,','.join(getattr(self,'%s_config' % host)))
+                    os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_arbiter' % host):
+                    for str in ','.join(getattr(self,'%s_arbiter' % host)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,str)
+                        os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_mongod' % host):
+                    for str in ','.join(getattr(self,'%s_mongod' % host)).split(','):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,str)
+                            os.system(cmd)
+#当执行stop service@XX 逻辑过程
+        else:
+            for i in host:
+                if  prog == '*':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,str)
+                            os.system(cmd)
+                    for service in ['arbiter', 'config', 'mongos']:
+                        if getattr(self,'%s_%s' % (i,service)):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_%s' % (i,service))))
+                            os.system(cmd)
+                if prog == 'mongod':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,str)
+                            os.system(cmd)
+                if prog == 'mongos':
+                    if getattr(self,'%s_mongos' % i):
+                        print ','.join(getattr(self,'%s_mongos' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_mongos' % i)))
+                        os.system(cmd)
+                if prog == 'config':
+                    if getattr(self,'%s_config' % i):
+                        print ','.join(getattr(self,'%s_config' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_config' % i)))
+                        os.system(cmd)
+                if prog == 'arbiter':
+                    if getattr(self,'%s_arbiter' % i):
+                        print ','.join(getattr(self,'%s_arbiter' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_arbiter' % i)))
+                        os.system(cmd)
+#当执行help打印一些帮助信息
+    def _show_help(self):
+        help = " CMD                        ARGS                          DESCRIPTOR               \n" \
+             " ==============================================================================         \n" \
+             " start/stop       all/mongod/arbiter/config/mongos        启动关闭进程          \n" \
+             " 注：启动关闭方式：1 start/stop service@host \n"  \
+             "                   2 start/stop all（相当于start/stop * \n" \
+             "                   3 start/stop service     \n" \
+             " 例子：停止集群mongos服务： stop  mongos \n" \
+             "       启动集群mg02主机的config服务：start  config@mg02 \n" \
+             "       停止整个集群服务： stop all\n" \
+             " help                                                     找到帮助      \n" \
+             " show                                                     查看当前启动进程      \n" \
+             " status                                                   查看状态     \n" \
+             " ==============================================================================         \n"
+        print help                 </p>
+
+<p>#Shell累 主要是用户操作的一些指导
+class Shell:
+#设定进入Shell显示的颜色和语言
+    PROMPT = colored('root','green') + colored('@MongoDB# ','red')
+#初始化函数 设定配置文件conf.cfg，命令行限制可以使用的几个命令
+    def __init__(self):
+        confile = os.path.join("", '/etc/conf.cfg')
+        self.cmds = ['start', 'stop', 'show', 'log', 'help','status']
+#调用类Manager
+        self.manager = Manager(confile)
+#        self.pro = Cfg(confile)
+    def start(self):
+        readline.set_completer(self._completer)
+        readline.parse_and_bind("tab: complete")
+        while True:
+            try:
+                cmd = raw_input(self.PROMPT)
+            except EOFError:
+                print colored('Exit','green')
+                exit(0)
+            except KeyboardInterrupt:
+                print colored('type ctrl-D to exit Mongo Manager Shell','yellow')
+                continue
+            if cmd:
+                self._parse_cmd(cmd)
+    def _completer(self, word, index):
+        matches = [c for c in self.cmds if c.startswith(word)]
+        try:
+            return matches[index] + ''
+        except IndexError:
+            pass
+    def _shell(self, cmd):
+        print 'Mongo-Shell: "%s": command not find  please input "help"' % cmd
+#判断命令开始是不是设定的那几个词语，是-&gt;执行fetch_job函数
+    def _parse_cmd(self, cmd):
+        if cmd.startswith('start') or \
+                cmd.startswith('stop') or \
+                cmd.startswith('show') or \
+                cmd.startswith('status') or \
+                cmd.startswith('help') or \
+                cmd.startswith('log'):
+            self.manager.fetch_job(cmd)
+        else:
+            self._shell(cmd)
+#主函数
+if __name__ == '__main__':
+    argc = len(sys.argv)
+    parser = OptionParser(description="Use For Mongodb Shell",prog="Mshell.py",version="1.0",usage="%prog")
+    parser.add_option("-v", "--verbose",action="count",help="Show Shell Version Information(For more information, please use the option: -vv)")
+    options, arguments=parser.parse_args()
+#判断是否root
+    if os.geteuid() != 0:
+        print red('Need to be root :(')
+        exit(1)
+#当脚本不带参数引发调用类Shell
+    if argc == 1:
+        test = Shell()
+        test.start()
+#当不了脚本的用户使用-h或者--help  给与doc提示
+    if '-h' in sys.argv  or '--help' in sys.argv:
+        print __doc__
+    elif options.verbose ==1:
+        print __doc__
+    elif options.verbose ==2:
+        print __doc__
+        print "Version =1.0  Revision time at 2011年 07月 04日"
+    else:
+        print '请直接运行脚本，不需要附带参数'
+</p>
+</pre></p></pre></p>
+]]></content>
+  </entry>
+  
+</feed>

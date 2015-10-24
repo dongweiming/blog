@@ -1,0 +1,871 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>关于xml.etree.ElementTree研究(解析篇) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/guanyuxml-etree-elementtreeyanjiujiexipian">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">关于xml.etree.ElementTree研究(解析篇)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>&nbsp;</p>
+
+<p>前言：xml.etree.ElementTree是xml模块中的一部分，从python2.5开始添加，是一个处理xml的接口模块</p>
+
+<p>这里有一个需要解析的opml文件（<a href="http://www.opml.org/">OPML</a>(Outline Processor Markup Language)是建立在XML基础上的“大纲处理标记语言”，</p>
+
+<p>主要用于描述一份资料的结构。它的优势是订阅集中及分享）：</p>
+
+<p><pre class="sh_xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是podcasts.opml
+&lt;opml version="1.0"&gt;
+&lt;head&gt;
+	&lt;title&gt;My Podcasts&lt;/title&gt;
+	&lt;dateCreated&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateCreated&gt;
+	&lt;dateModified&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateModified&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;outline text="Science and Tech"&gt;
+    &lt;outline text="APM: Future Tense" type="rss" 
+             xmlUrl="http://www.publicradio.org/columns/futuretense/podcast.xml" 
+             htmlUrl="http://www.publicradio.org/columns/futuretense/" /&gt;
+	&lt;outline text="Engines Of Our Ingenuity Podcast" type="rss" 
+             xmlUrl="http://www.npr.org/rss/podcast.php?id=510030" 
+             htmlUrl="http://www.uh.edu/engines/engines.htm" /&gt;
+	&lt;outline text="Science &amp;#38; the City" type="rss" 
+             xmlUrl="http://www.nyas.org/Podcasts/Atom.axd" 
+             htmlUrl="http://www.nyas.org/WhatWeDo/SciencetheCity.aspx" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Books and Fiction"&gt;
+	&lt;outline text="Podiobooker" type="rss" 
+             xmlUrl="http://feeds.feedburner.com/podiobooks" 
+             htmlUrl="http://www.podiobooks.com/blog" /&gt;
+	&lt;outline text="The Drabblecast" type="rss" 
+             xmlUrl="http://web.me.com/normsherman/Site/Podcast/rss.xml" 
+             htmlUrl="http://web.me.com/normsherman/Site/Podcast/Podcast.html" /&gt;
+	&lt;outline text="tor.com / category / tordotstories" type="rss" 
+             xmlUrl="http://www.tor.com/rss/category/TorDotStories" 
+             htmlUrl="http://www.tor.com/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Computers and Programming"&gt;
+	&lt;outline text="MacBreak Weekly" type="rss" 
+             xmlUrl="http://leo.am/podcasts/mbw" 
+             htmlUrl="http://twit.tv/mbw" /&gt;
+	&lt;outline text="FLOSS Weekly" type="rss" 
+             xmlUrl="http://leo.am/podcasts/floss" 
+             htmlUrl="http://twit.tv" /&gt;
+	&lt;outline text="Core Intuition" type="rss" 
+             xmlUrl="http://www.coreint.org/podcast.xml" 
+             htmlUrl="http://www.coreint.org/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Python"&gt;
+    &lt;outline text="PyCon Podcast" type="rss" 
+             xmlUrl="http://advocacy.python.org/podcasts/pycon.rss" 
+             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
+	&lt;outline text="A Little Bit of Python" type="rss" 
+             xmlUrl="http://advocacy.python.org/podcasts/littlebit.rss" 
+             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
+	&lt;outline text="Django Dose Everything Feed" type="rss" 
+             xmlUrl="http://djangodose.com/everything/feed/" /&gt;
+  &lt;/outline&gt;
+  &lt;outline text="Miscelaneous"&gt;
+	&lt;outline text="dhellmann's CastSampler Feed" type="rss" 
+             xmlUrl="http://www.castsampler.com/cast/feed/rss/dhellmann/" 
+             htmlUrl="http://www.castsampler.com/users/dhellmann/" /&gt;
+  &lt;/outline&gt;
+&lt;/body&gt;
+&lt;/opml&gt;
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是data.xml
+&lt;top&gt;
+  &lt;child&gt;This child contains text.&lt;/child&gt;
+  &lt;child_with_tail&gt;This child has regular text.&lt;/child_with_tail&gt;And "tail" text.
+  &lt;with_attributes name="value" foo="bar" /&gt;
+  &lt;entity_expansion attribute="This &amp;#38; That"&gt;That &amp;#38; This&lt;/entity_expansion&gt;
+&lt;/top&gt;
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+from xml.etree import ElementTree</p>
+
+<p>with open('podcasts.opml', 'rt') as f:
+    tree = ElementTree.parse(f)  #返回一个ElementTree的对象</p>
+
+<p>print tree</p>
+
+<p>for node in tree.iter():  #遍历解析树
+    print node.tag, node.attrib #标签和值 </p>
+
+<p>for node in tree.iter('outline'): #遍历outline部分
+    name = node.attrib.get('text') 
+    url = node.attrib.get('xmlUrl')
+    if name and url:
+        print '  %s :: %s' % (name, url)
+    else:
+        print name</p>
+
+<p>for node in tree.findall('.//outline'): #没有用getiterator()，而是findall出一个列表迭代 outline是node的名字
+    url = node.attrib.get('xmlUrl')
+    if url:
+        print url
+for node in tree.findall('.//outline/outline'): #寻找2级层次的node 就是node'outline'的子node是'outline'的过滤
+    url = node.attrib.get('xmlUrl')
+    print url
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+&lt;xml.etree.ElementTree.ElementTree object at 0xb748e58c&gt;
+opml {&#8216;version&#8217;: &#8216;1.0&#8217;}
+head {}
+title {}
+dateCreated {}
+dateModified {}
+body {}
+outline {&#8216;text&#8217;: &#8216;Science and Tech&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.publicradio.org/columns/futuretense/podcast.xml&#8217;, &#8216;text&#8217;: &#8216;APM: Future Tense&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.publicradio.org/columns/futuretense/&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.npr.org/rss/podcast.php?id=510030&#8217;, &#8216;text&#8217;: &#8216;Engines Of Our Ingenuity Podcast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.uh.edu/engines/engines.htm&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.nyas.org/Podcasts/Atom.axd&#8217;, &#8216;text&#8217;: &#8216;Science &amp; the City&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8217;}
+outline {&#8216;text&#8217;: &#8216;Books and Fiction&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://feeds.feedburner.com/podiobooks&#8217;, &#8216;text&#8217;: &#8216;Podiobooker&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.podiobooks.com/blog&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8217;, &#8216;text&#8217;: &#8216;The Drabblecast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.tor.com/rss/category/TorDotStories&#8217;, &#8216;text&#8217;: &#8216;tor.com / category / tordotstories&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.tor.com/&#8217;}
+outline {&#8216;text&#8217;: &#8216;Computers and Programming&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://leo.am/podcasts/mbw&#8217;, &#8216;text&#8217;: &#8216;MacBreak Weekly&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://twit.tv/mbw&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://leo.am/podcasts/floss&#8217;, &#8216;text&#8217;: &#8216;FLOSS Weekly&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://twit.tv&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.coreint.org/podcast.xml&#8217;, &#8216;text&#8217;: &#8216;Core Intuition&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.coreint.org/&#8217;}
+outline {&#8216;text&#8217;: &#8216;Python&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/pycon.rss&#8217;, &#8216;text&#8217;: &#8216;PyCon Podcast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/littlebit.rss&#8217;, &#8216;text&#8217;: &#8216;A Little Bit of Python&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://djangodose.com/everything/feed/&#8217;, &#8216;text&#8217;: &#8216;Django Dose Everything Feed&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;}
+outline {&#8216;text&#8217;: &#8216;Miscelaneous&#8217;}
+outline {&#8216;xmlUrl&#8217;: &#8216;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8217;, &#8216;text&#8217;: &#8220;dhellmann&#8217;s CastSampler Feed&#8221;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.castsampler.com/users/dhellmann/&#8217;}
+Science and Tech
+APM: Future Tense :: http://www.publicradio.org/columns/futuretense/podcast.xml
+Engines Of Our Ingenuity Podcast :: http://www.npr.org/rss/podcast.php?id=510030
+Science &amp; the City :: http://www.nyas.org/Podcasts/Atom.axd
+Books and Fiction
+Podiobooker :: http://feeds.feedburner.com/podiobooks
+The Drabblecast :: http://web.me.com/normsherman/Site/Podcast/rss.xml
+tor.com / category / tordotstories :: http://www.tor.com/rss/category/TorDotStories
+Computers and Programming
+MacBreak Weekly :: http://leo.am/podcasts/mbw
+FLOSS Weekly :: http://leo.am/podcasts/floss
+Core Intuition :: http://www.coreint.org/podcast.xml
+Python
+PyCon Podcast :: http://advocacy.python.org/podcasts/pycon.rss
+A Little Bit of Python :: http://advocacy.python.org/podcasts/littlebit.rss
+Django Dose Everything Feed :: http://djangodose.com/everything/feed/
+Miscelaneous
+dhellmann&#8217;s CastSampler Feed :: http://www.castsampler.com/cast/feed/rss/dhellmann/
+http://www.publicradio.org/columns/futuretense/podcast.xml
+http://www.npr.org/rss/podcast.php?id=510030
+http://www.nyas.org/Podcasts/Atom.axd
+http://feeds.feedburner.com/podiobooks
+http://web.me.com/normsherman/Site/Podcast/rss.xml
+http://www.tor.com/rss/category/TorDotStories
+http://leo.am/podcasts/mbw
+http://leo.am/podcasts/floss
+http://www.coreint.org/podcast.xml
+http://advocacy.python.org/podcasts/pycon.rss
+http://advocacy.python.org/podcasts/littlebit.rss
+http://djangodose.com/everything/feed/
+http://www.castsampler.com/cast/feed/rss/dhellmann/
+http://www.publicradio.org/columns/futuretense/podcast.xml
+http://www.npr.org/rss/podcast.php?id=510030
+http://www.nyas.org/Podcasts/Atom.axd
+http://feeds.feedburner.com/podiobooks
+http://web.me.com/normsherman/Site/Podcast/rss.xml
+http://www.tor.com/rss/category/TorDotStories
+http://leo.am/podcasts/mbw
+http://leo.am/podcasts/floss
+http://www.coreint.org/podcast.xml
+http://advocacy.python.org/podcasts/pycon.rss
+http://advocacy.python.org/podcasts/littlebit.rss
+http://djangodose.com/everything/feed/
+http://www.castsampler.com/cast/feed/rss/dhellmann/
+<pre class="sh_python">
+from xml.etree import ElementTree</p>
+
+<p>with open('data.xml', 'rt') as f:
+    tree = ElementTree.parse(f)</p>
+
+<p>node = tree.find('./with_attributes') #找到这个节点
+print node.tag #打印这个节点的值
+for name, value in sorted(node.attrib.items()): #
+    print '  %-4s = "%s"' % (name, value)</p>
+
+<p>for path in [ './child', './child_with_tail' ]:
+    node = tree.find(path)
+    print node.tag
+    print '  child node text:', node.text  #标签中间部分
+    print '  and tail text  :', node.tail  #标签结束后的那部分</p>
+
+<p>node = tree.find('entity_expansion')
+print node.tag
+print '  in attribute:', node.attrib['attribute']  #获取这个标签的属性
+print '  in text     :', node.text #获取这个标签的值
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>with_attributes
+foo  = &#8220;bar&#8221;
+name = &#8220;value&#8221;
+child
+child node text: This child contains text.
+and tail text  :</p>
+
+<p>child_with_tail
+child node text: This child has regular text.
+and tail text  : And &#8220;tail&#8221; text.</p>
+
+<p>entity_expansion
+in attribute: This &amp; That  #转换为适当的字符值返回
+in text     : That &amp; This</p>
+
+<p><pre class="sh_python">
+from xml.etree.ElementTree import iterparse</p>
+
+<p>depth = 0
+prefix_width = 8
+prefix_dots = '.' * prefix_width
+line_template = '{prefix:&lt;0.{prefix_len}}{event:&lt;8}{suffix:&lt;{suffix_len}} {node.tag:&lt;12} {node_id}'  #模式匹配</p>
+
+<p>for (event, node) in iterparse('podcasts.opml', ['start', 'end', 'start-ns', 'end-ns']): #iterparse返回一个迭代产生的元组
+                                   #包含事件的名称和触发事件的节点，这些事件：包含在参数第二个参数的列表
+    if event == 'end':
+        depth -= 1  #当事件结束深度－1</p>
+
+<p>    prefix_len = depth * 2</p>
+
+<p>    print line_template.format(prefix=prefix_dots,  #解析格式化  前缀使用设定的一定位数的'.'
+                               prefix_len=prefix_len,
+                               suffix='',
+                               suffix_len=(prefix_width - prefix_len),
+                               node=node,
+                               node_id=id(node),
+                               event=event,
+                               )</p>
+
+<p>    if event == 'start':
+        depth += 1
+
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+start            opml         3074976588
+..start          head         3074976748
+&#8230;.start        title        3074976908
+&#8230;.end          title        3074976908
+&#8230;.start        dateCreated  3074977228
+&#8230;.end          dateCreated  3074977228
+&#8230;.start        dateModified 3074977292
+&#8230;.end          dateModified 3074977292
+..end            head         3074976748
+..start          body         3074977324
+&#8230;.start        outline      3074977420
+&#8230;&#8230;start      outline      3074977644
+&#8230;&#8230;end        outline      3074977644
+&#8230;&#8230;start      outline      3074977676
+&#8230;&#8230;end        outline      3074977676
+&#8230;&#8230;start      outline      3074990124
+&#8230;&#8230;end        outline      3074990124
+&#8230;.end          outline      3074977420
+&#8230;.start        outline      3074990188
+&#8230;&#8230;start      outline      3074990220
+&#8230;&#8230;end        outline      3074990220
+&#8230;&#8230;start      outline      3074990156
+&#8230;&#8230;end        outline      3074990156
+&#8230;&#8230;start      outline      3074990284
+&#8230;&#8230;end        outline      3074990284
+&#8230;.end          outline      3074990188
+&#8230;.start        outline      3074990348
+&#8230;&#8230;start      outline      3074990380
+&#8230;&#8230;end        outline      3074990380
+&#8230;&#8230;start      outline      3074990316
+&#8230;&#8230;end        outline      3074990316
+&#8230;&#8230;start      outline      3074990412
+&#8230;&#8230;end        outline      3074990412
+&#8230;.end          outline      3074990348
+&#8230;.start        outline      3074990508
+&#8230;&#8230;start      outline      3074990444
+&#8230;&#8230;end        outline      3074990444
+&#8230;&#8230;start      outline      3074990476
+&#8230;&#8230;end        outline      3074990476
+&#8230;&#8230;start      outline      3074990636
+&#8230;&#8230;end        outline      3074990636
+&#8230;.end          outline      3074990508
+&#8230;.start        outline      3074990700
+&#8230;&#8230;start      outline      3074990604
+&#8230;&#8230;end        outline      3074990604
+&#8230;.end          outline      3074990700
+..end            body         3074977324
+end              opml         3074976588</p>
+
+<p><pre class="sh_python">
+import csv
+from xml.etree.ElementTree import iterparse
+import sys</p>
+
+<p>writer = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)  #将xml解析成csv文件格式</p>
+
+<p>group_name = ''</p>
+
+<p>for (event, node) in iterparse('podcasts.opml', events=['start']):  
+    if node.tag != 'outline':
+        continue
+    if not node.attrib.get('xmlUrl'):
+        group_name = node.attrib['text']
+    else:
+        # Output a podcast entry
+        writer.writerow( (group_name, node.attrib['text'],
+                          node.attrib['xmlUrl'],
+                          node.attrib.get('htmlUrl', ''),
+                          )
+                         )
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+&#8220;Science and Tech&#8221;,&#8221;APM: Future Tense&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/podcast.xml&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Engines Of Our Ingenuity Podcast&#8221;,&#8221;http://www.npr.org/rss/podcast.php?id=510030&#8221;,&#8221;http://www.uh.edu/engines/engines.htm&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Science &amp; the City&#8221;,&#8221;http://www.nyas.org/Podcasts/Atom.axd&#8221;,&#8221;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;Podiobooker&#8221;,&#8221;http://feeds.feedburner.com/podiobooks&#8221;,&#8221;http://www.podiobooks.com/blog&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;The Drabblecast&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;tor.com / category / tordotstories&#8221;,&#8221;http://www.tor.com/rss/category/TorDotStories&#8221;,&#8221;http://www.tor.com/&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;MacBreak Weekly&#8221;,&#8221;http://leo.am/podcasts/mbw&#8221;,&#8221;http://twit.tv/mbw&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;FLOSS Weekly&#8221;,&#8221;http://leo.am/podcasts/floss&#8221;,&#8221;http://twit.tv&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;Core Intuition&#8221;,&#8221;http://www.coreint.org/podcast.xml&#8221;,&#8221;http://www.coreint.org/&#8221;
+&#8220;Python&#8221;,&#8221;PyCon Podcast&#8221;,&#8221;http://advocacy.python.org/podcasts/pycon.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;A Little Bit of Python&#8221;,&#8221;http://advocacy.python.org/podcasts/littlebit.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;Django Dose Everything Feed&#8221;,&#8221;http://djangodose.com/everything/feed/&#8221;,&#8221;&#8221;
+&#8220;Miscelaneous&#8221;,&#8221;dhellmann&#8217;s CastSampler Feed&#8221;,&#8221;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8221;,&#8221;http://www.castsampler.com/users/dhellmann/&#8221;
+<pre class="sh_python">
+import csv
+from xml.etree.ElementTree import XMLTreeBuilder  #创建一个自定义的xml数建构
+import sys</p>
+
+<p>class PodcastListToCSV(object):</p>
+
+<p>    def __init__(self, outputFile):
+        self.writer = csv.writer(outputFile, quoting=csv.QUOTE_NONNUMERIC)
+        self.group_name = ''
+        return</p>
+
+<p>    def start(self, tag, attrib):
+        if tag != 'outline':
+            return
+        if not attrib.get('xmlUrl'):
+            self.group_name = attrib['text']
+        else:
+            self.writer.writerow( (self.group_name, attrib['text'],
+                                   attrib['xmlUrl'],
+                                   attrib.get('htmlUrl', ''),
+                                   )
+                                  )</p>
+
+<p>    def end(self, tag):
+        pass  #放弃关闭标签
+    def data(self, data):
+        pass  #放弃node数据
+    def close(self):
+        return #什么都不做</p>
+
+<p>target = PodcastListToCSV(sys.stdout)
+parser = XMLTreeBuilder(target=target)
+with open('podcasts.opml', 'rt') as f:
+    for line in f:
+        parser.feed(line)
+parser.close()
+</pre>
+执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+&#8220;Science and Tech&#8221;,&#8221;APM: Future Tense&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/podcast.xml&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Engines Of Our Ingenuity Podcast&#8221;,&#8221;http://www.npr.org/rss/podcast.php?id=510030&#8221;,&#8221;http://www.uh.edu/engines/engines.htm&#8221;
+&#8220;Science and Tech&#8221;,&#8221;Science &amp; the City&#8221;,&#8221;http://www.nyas.org/Podcasts/Atom.axd&#8221;,&#8221;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;Podiobooker&#8221;,&#8221;http://feeds.feedburner.com/podiobooks&#8221;,&#8221;http://www.podiobooks.com/blog&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;The Drabblecast&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8221;
+&#8220;Books and Fiction&#8221;,&#8221;tor.com / category / tordotstories&#8221;,&#8221;http://www.tor.com/rss/category/TorDotStories&#8221;,&#8221;http://www.tor.com/&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;MacBreak Weekly&#8221;,&#8221;http://leo.am/podcasts/mbw&#8221;,&#8221;http://twit.tv/mbw&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;FLOSS Weekly&#8221;,&#8221;http://leo.am/podcasts/floss&#8221;,&#8221;http://twit.tv&#8221;
+&#8220;Computers and Programming&#8221;,&#8221;Core Intuition&#8221;,&#8221;http://www.coreint.org/podcast.xml&#8221;,&#8221;http://www.coreint.org/&#8221;
+&#8220;Python&#8221;,&#8221;PyCon Podcast&#8221;,&#8221;http://advocacy.python.org/podcasts/pycon.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;A Little Bit of Python&#8221;,&#8221;http://advocacy.python.org/podcasts/littlebit.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
+&#8220;Python&#8221;,&#8221;Django Dose Everything Feed&#8221;,&#8221;http://djangodose.com/everything/feed/&#8221;,&#8221;&#8221;
+&#8220;Miscelaneous&#8221;,&#8221;dhellmann&#8217;s CastSampler Feed&#8221;,&#8221;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8221;,&#8221;http://www.castsampler.com/users/dhellmann/&#8221;
+<pre class="sh_python">
+from xml.etree.ElementTree import XML,XMLID</p>
+
+<p>parsed = XML('''  参数是一段xml文本
+&lt;root&gt;
+  &lt;group&gt;
+    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
+    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
+  &lt;/group&gt;
+  &lt;group&gt;
+    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
+  &lt;/group&gt;
+&lt;/root&gt;
+''')</p>
+
+<p>print 'parsed =', parsed</p>
+
+<p>for elem in parsed:
+    print elem.tag
+    if elem.text is not None and elem.text.strip():
+        print '  text: "%s"' % elem.text
+    if elem.tail is not None and elem.tail.strip():
+        print '  tail: "%s"' % elem.tail
+    for name, value in sorted(elem.attrib.items()):
+        print '  %-4s = "%s"' % (name, value)
+    print
+tree, id_map = XMLID('''  #使用<tt>id</tt>属性分析xml文本
+&lt;root&gt;
+  &lt;group&gt;
+    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
+    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
+  &lt;/group&gt;
+  &lt;group&gt;
+    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
+  &lt;/group&gt;
+&lt;/root&gt;
+''')</p>
+
+<p>for key, value in sorted(id_map.items()):
+    print '%s = %s' % (key, value)
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+parsed = &lt;Element &#8216;root&#8217; at 0xb738fa2c&gt;
+group</p>
+
+<p>group</p>
+
+<p>a = &lt;Element &#8216;child&#8217; at 0xb738fdcc&gt;
+b = &lt;Element &#8216;child&#8217; at 0xb738fcec&gt;
+c = &lt;Element &#8216;child&#8217; at 0xb738fe2c&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/pythonmo-kuai-yan-jiu/'>python模块研究</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/guanyuxml-etree-elementtreeyanjiujiexipian/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/guanyuxml-etree-elementtreeyanjiuchuangjianpian/" title="Previous Post:
+        关于xml.etree.ElementTree研究(创建篇)">&laquo; 关于xml.etree.ElementTree研究(创建篇)</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/guanyuxmlrpclibyanjiu/"
+        title="Next Post: 关于xmlrpclib研究">关于xmlrpclib研究
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/guanyuxml-etree-elementtreeyanjiujiexipian/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/guanyuxml-etree-elementtreeyanjiujiexipian/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

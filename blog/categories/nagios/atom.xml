@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: nagios | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/nagios/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[nrpe模式检查mongodb进程脚本]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/nrpe%E6%A8%A1%E5%BC%8F%E6%A3%80%E6%9F%A5mongo%E8%BF%9B%E7%A8%8B%E8%84%9A%E6%9C%AC/"/>
+    <updated>2011-07-28T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/nrpe模式检查mongo进程脚本</id>
+    <content type="html"><![CDATA[<p>前言：nagios检查状态无外乎三种方式：1 直接到客户端取状态 2 nrpe间接再客户端取状态 3 被动检查通过nsca向nagios主服务器传送状态。这里是nrpe模式检查状态，要点包括 1 再nagios配置文件添加services 2 在客户端的nrpe.cfg里面添加command</p>
+
+<p>1 在nagios添加配置：</p>
+
+<p>define service{
+use                     major-service
+hostgroup_name          MongoGroup
+service_description     check_mongo_procs
+check_command           check_nrpe!check_mongo_procs  //选择nrpe模式
+servicegroups           memory
+contact_groups          sys
+_SRCTYPE                sys
+}</p>
+
+<p>2 客户端nrpe.cfg添加：</p>
+
+<p>command[check_mongo_procs]=/usr/local/nagios/libexec/check_mongopro.py</p>
+
+<p>并重启nrpe进程</p>
+
+<p>3 客户端脚本</p>
+
+<p>cat /usr/local/nagios/libexec/check_mongopro.py</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+# coding=gbk
+import os
+import sys
+from subprocess import Popen, PIPE
+
+<p>list =[]
+cmd = 'chkconfig --list |grep "启用"|grep mongo'
+for line in os.popen(cmd).readlines():
+     pro = line.split(' ')[0] 
+     p1=Popen(['ps', '-ef'], stdout=PIPE)
+     p2 = Popen(['grep', '-v', 'grep'], stdin=p1.stdout, stdout=PIPE) 
+     p3 = Popen(['grep', '/etc/%s.conf' % pro], stdin=p2.stdout, stdout=PIPE)
+     p4 = Popen(['awk', '{print $3}'], stdin=p3.stdout, stdout=PIPE)
+     flag2 = [int(i.strip()) for i in p4.communicate()[0].split('\n') if i]
+     if 1 not in flag2:
+         list.append(pro)
+         flag =1
+if flag==1:
+    print 'CRITICAL %s is dead!' % ','.join(list)
+    sys.exit(2)
+else:
+    print 'Mongo Pro is OK'
+</p>
+</pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[nagios插件安装nagios-plugin-mongodb报错“need to install pymongo”]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/nagios%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85nagios-plugin-mongodb%E6%8A%A5%E9%94%99%E2%80%9Cneed-to-install-pymongo%E2%80%9D/"/>
+    <updated>2011-07-16T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/nagios插件安装nagios-plugin-mongodb报错“need-to-install-pymongo”</id>
+    <content type="html"><![CDATA[<p>最近做mongodb的cacti和nagios监控，下载了github.com/mzupan/nagios-plugin-mongodb.git，但是执行脚本需要pymongo，否则报错：”need to install pymongo“，但是重新启动nagios后发现依然出现这样的报错，而我在本地执行是没有问题的，后来尝试了nrpe方式发现不可行，我的安装nagios服务器上面有2个python，后来我又给centos默认的2.4.3版本的python安装了pymongo，最后使用了yum安装的办法，都不能解决。通过几小时的研究发现，问题处在python环境上：我把check_mongodb.py的首行修改成指定的地址：#!/usr/local/bin/python，而放弃了默认的“env python”方式，OK，问题得解！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使nagios使用LDAP帐号密码登录]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E4%BD%BFnagios%E4%BD%BF%E7%94%A8ldap%E5%B8%90%E5%8F%B7%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95/"/>
+    <updated>2011-07-14T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/使nagios使用ldap帐号密码登录</id>
+    <content type="html"><![CDATA[<p>生产环境中使用了LDAP的OSS（单点登录），后来觉得nagios也就放到了ldap里面。</p>
+
+<p>1修改apache配置文件/etc/httpd/conf.d/nagios.conf
+&lt;VirtualHost *:6060&gt;
+DocumentRoot /ops/dongwm/nagios/share
+ServerName nagios.dongwm.com</p>
+
+<p>ScriptAlias /nagios/cgi-bin "/ops/dongwm/nagios/sbin"</p>
+
+<p>&lt;Directory "/ops/dongwm/nagios/sbin"&gt;
+Options ExecCGI
+AllowOverride None
+Order allow,deny
+Allow from all</p>
+
+<p>AuthType Basic
+AuthBasicProvider ldap
+AuthName "Please input user info:"
+AuthzLDAPAuthoritative off
+AuthLDAPURL ldap://你的ldap服务器IP/cn=Manager,dc=你的域名,dc=com?uid?sub?(objectClass=*)
+Require ldap-user dongwm dongwm1
+&lt;/Directory&gt;</p>
+
+<p>Alias /nagios "/opt/dongwm/nagios/share"</p>
+
+<p>&lt;Directory "/opt/dongwm/nagios/share"&gt;
+Options None
+AllowOverride None
+Order allow,deny
+Allow from all</p>
+
+<p>AuthType Basic
+AuthBasicProvider ldap
+AuthName "Please input user info:"
+AuthzLDAPAuthoritative off
+AuthLDAPURL ldap://你的ldap服务器IP/cn=Manager,dc=你的域名,dc=com?uid?sub?(objectClass=*)
+Require ldap-user dongwm dongwm1
+&lt;/Directory&gt;
+2  修改nagios.conf的权限为apache用户 文件属性400
+3  增加apache的ldap模块
+LoadModule ldap_module modules/mod_ldap.so
+LoadModule authnz_ldap_module modules/mod_authnz_ldap.so</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[nagios日志格式转换问题]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/nagios%E6%97%A5%E5%BF%97%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2%E9%97%AE%E9%A2%98/"/>
+    <updated>2011-04-20T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/nagios日志格式转换问题</id>
+    <content type="html"><![CDATA[<p>默认的nagios的日志格式记录的是从1970年到发生事件的秒数,而不是直接告诉我们当前的时间.在分析日志时,我进行了转换:</p>
+
+<p><pre class="sh_bash">[root@log05 ~]# cat /home/dongwm/nagios-log.sh
+#!/bin/bash
+while read line
+do
+ec=`echo $line|grep -Po [0-9]\{10\}`
+ed=`date -d '1970-01-01 '$ec' sec' +%Y-%m-%d-%T`
+eval sed -i 's/'$ec'/'$ed'/g' nagios.log
+done&lt;YZ.nagios.log</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=8ae86720-8fa5-8f60-aa82-1ce730b156e2" alt="" /></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nagios深入进阶之四：主从配置的同步]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/nagios%E6%B7%B1%E5%85%A5%E8%BF%9B%E9%98%B6%E4%B9%8B%E5%9B%9B%EF%BC%9A%E4%B8%BB%E4%BB%8E%E9%85%8D%E7%BD%AE%E7%9A%84%E5%90%8C%E6%AD%A5/"/>
+    <updated>2010-12-16T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/nagios深入进阶之四：主从配置的同步</id>
+    <content type="html"><![CDATA[<p>继实现冗余nagios服务器后，我们要保证nagios配置文件的相同，不能每次都在改动“主”nagios后都也去更改“从”nagios。<!--more-->因为重载/etc/init.d/nagios脚本才能是配置生效，所以我将同步的命令写在了这个脚本里，在reload和restart里引用这个 function（只有能使用这2个参数时候说明配置是正确的，才需要同步信息）
+[ccine_perl height="100%" width="99%"]function sync_conf()
+{
+sed -i 's/master/slave/g' /opt/nagios/etc/objects/commands.cfg
+sed -i 's/M/S/g'  /opt/nagios/bin/ssms.sh
+rsync -azvh  --progress  --exclude-from=/opt/nagios/etc/exclude --delete /opt/nagios/etc/objects/ sys00:/ opt /nagios/etc/objects 2&gt;&amp;1 &gt;/dev/null
+if [ "$?" == "0" ];then
+action "sync conf to slave..."  /bin/true
+fi
+sed -i 's/slave/master/g' /opt/nagios/etc/objects/commands.cfg
+sed -i 's/S/M/g'  /opt/nagios/bin/ssms.sh
+}[/ccine_perl]</p>
+
+<p>注：其中的ssms.sh是我们的短信网关的脚本；</p>
+
+<p>其中master/slave和M/S的sed替换，是因为短信内容变量的设置，同步时需要修改相关内容分辨发送短信的服务器名称；</p>
+
+<p>其中的--exclude-from=/opt/nagios/etc/exclude，是主从nagios配置不同的地方，需要排除防止删除，这个配置文件里面的内容作用是主从nagios服务器对对方状态的报警。</p>
+]]></content>
+  </entry>
+  
+</feed>

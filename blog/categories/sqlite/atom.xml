@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: sqlite | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/sqlite/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[sqlite的python操作模板]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/sqlitedepythoncaozuomoban/"/>
+    <updated>2011-12-14T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/sqlitedepythoncaozuomoban</id>
+    <content type="html"><![CDATA[<p>前言：最近弄了一个程序，但是使用mysql这样需要服务器的数据库有些限制和浪费，尝试了一下sqlite：</p>
+
+<p><pre class="sh_python">
+#!/usr/bin/env python
+#conding= gbk
+'''
+一般服务器安装python自带了sqlite3模块，但是有些机器可能安装有问题，没有——sqlite3.so这个文件，所以需要去手动安装pysqlite2，其实他们是一样的模块
+'''
+try:
+    from sqlite3 import dbapi2 as sqlite
+except:
+    from pysqlite2 import dbapi2 as sqlite 
+
+<p>class gysqlite:
+    def __init__(self,path):
+         '''
+         初始化，path是使用的数据库文件路径
+         '''
+        self.conn = sqlite.connect(path)
+        self.cur = self.conn.cursor()  #cursor是一个记录标识，用于一行一行迭代的访问查询返回的结果
+    def create(self,table):
+         '''
+         创建table，我这里创建包含2个段 ID（数字型，自增长），Name（char 40字符），Flag（数字型）
+         '''
+        try:
+            self.cur.execute("CREATE TABLE IF NOT EXISTS %s(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR(40),Flag INTEGER)"% table)
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            self.conn.rollback()
+    def insert(self,table,name,flag = 0):
+         '''
+         插入数据，指定表名，设置Name的值，Flag默认设置为0
+         '''
+        try:
+            self.cur.execute("INSERT INTO %s(Name,Flag) VALUES('%s',%d)" % (table,name,flag))
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            self.conn.rollback()
+    def drop(self,table):
+         '''
+        drop表
+         '''
+        try:
+            self.cur.execute("DROP TABLE IF EXISTS %s" % table)
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            self.conn.rollback()
+    def update(self,table,name,flag = 1):
+         '''
+         修改表条目数据，在这里主要是设置条目Flag（符合Name等于name）
+         '''
+        try:
+            self.cur.execute("UPDATE %s SET Flag = %d WHERE Name = '%s'" % (table,flag,name))
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            print 'sqlite update error'
+            self.conn.rollback()
+    def delete(self,table,name):
+         '''
+         删除表条目数据，在这里主要是删除Name等于name的条目
+         '''
+        try:
+            self.cur.execute("DELETE FROM %s WHERE Name = '%s'" % (table,name))
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            print 'sqlite delete error'
+            self.conn.rollback()
+    def selectflag(self,table,flag):
+         '''
+         select查询，返回符合Flag等于flag的条目的数据
+         '''
+        try:
+            self.cur.execute("SELECT * FROM %s WHERE Flag = %d" % (table,flag))
+            rows = self.cur.fetchall()
+            return rows
+        except sqlite.Error, e:
+            print "Error %s:" % e.args[0]
+    def select(self,table):
+         '''
+         select查询，返回名字为table的表数据
+         '''
+        try:
+            self.cur.execute("SELECT * FROM %s" % table)
+            rows = self.cur.fetchall()
+            return rows
+        except sqlite.Error, e:
+            print "Error %s:" % e.args[0]
+    def done(self):
+         '''
+         事务提交
+         '''
+        self.conn.commit()
+    def close(self):
+         '''
+         关闭游标
+         '''
+        self.conn.close()
+</p>
+
+<p>使用方法：<!--more--></p>
+
+<p><pre class="sh_python">
+&gt;&gt;&gt; from sql import gysqlite
+&gt;&gt;&gt; a = gysqlite('/home/dongwm/user.db')
+&gt;&gt;&gt; a.create('dongwm')
+&gt;&gt;&gt; a.insert('dongwm','hello')
+&gt;&gt;&gt; a.update('dongwm','hello')
+&gt;&gt;&gt; a.select('dongwm')
+[(1, u'hello', 1)]
+&gt;&gt;&gt; a.delete('dongwm','hello')
+&gt;&gt;&gt; a.select('dongwm')
+[]
+&gt;&gt;&gt; a.drop('dongwm')
+&gt;&gt;&gt; a.select('dongwm')
+Error no such table: dongwm:
+&gt;&gt;&gt; a.close()
+</pre></p>
+</pre></p>
+]]></content>
+  </entry>
+  
+</feed>

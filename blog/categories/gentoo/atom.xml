@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: gentoo | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/gentoo/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[udev升级的网卡重命名问题和解决]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/udevsheng-ji-de-wang-qia-zhong-ming-ming-wen-ti-he-jie-jue/"/>
+    <updated>2013-04-27T15:32:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/udevsheng-ji-de-wang-qia-zhong-ming-ming-wen-ti-he-jie-jue</id>
+    <content type="html"><![CDATA[<h4 id="section">故障描述</h4>
+
+<p>最近终于更新了下gentoo，重启发现我的eth0网卡启动失败：</p>
+
+<p><code>
+ * Bringing up interface eth0
+ *   ERROR: interface eth0 does not exist
+ *   Ensure that you have loaded the correct kernel module for your hardware
+ * ERROR: net.eth0 failed to start
+</code>
+而启动某些我常用的服务，比如mongodb，也报错：</p>
+
+<p><code>
+~ # /etc/init.d/mongodb restart
+ * Bringing up interface eth0
+ *   ERROR: interface eth0 does not exist
+ *   Ensure that you have loaded the correct kernel module for your hardware
+ * ERROR: net.eth0 failed to start
+ * ERROR: cannot start mongodb as net.eth0 would not start
+</code></p>
+
+<p>竟然也需要启动网卡？</p>
+
+<h6 id="dmesg">查看内核和dmesg：</h6>
+
+<p>查看内核模块已经选中，而且以前eth0也有，再看dmesg</p>
+
+<p>```
+dmesg |grep network 
+[   74.261872] systemd-udevd[14259]: renamed network interface wlan0 to wlp2s0
+[   74.391865] systemd-udevd[14259]: renamed network interface eth0 to enp0s4</p>
+
+<p>```</p>
+
+<p>原来被重命名了</p>
+
+<h4 id="section-1">为什么？</h4>
+
+<p>从udev-197将自动分配更好的接口名字，具体解释请看[PredictableNetworkInterfaceNames]
+(http://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames),</p>
+
+<h4 id="section-2">解决办法，有三种</h4>
+
+<ol>
+  <li>临时办法，重启还是会失效</li>
+</ol>
+
+<p>ifrename -i enp0s4 -n eth0 #修改网卡名字变成原来的eth0</p>
+
+<ol>
+  <li>使用新的名字</li>
+</ol>
+
+<p>```
+rm /etc/init.d/net.eth0 #删除不存在的引用</p>
+
+<p>localhost ~ # rc-update delete net.eth0 default #删除不存在的开机启动
+ * service net.eth0 removed from runlevel default
+localhost ~ # rc-update add net.enp0s4 default #使用新名字
+```</p>
+
+<ol>
+  <li>重置udev的rules，还是用原来的方法</li>
+</ol>
+
+<p><code>
+ln -s /dev/null /etc/udev/rules.d/80-net-name-slot.rules
+</code></p>
+
+<p>第二种，和第三种需要重启</p>
+
+<h4 id="section-3">启动应用为什么也需要启动应该启动的网卡</h4>
+
+<p>查看/etc/init.d/mongodb脚本，发现是因为depend，一般的初始化脚本结构是</p>
+
+<p>```
+#!/sbin/runscript</p>
+
+<p>depend() {
+  （依赖关系信息）
+}</p>
+
+<p>start() {
+  （启动服务所必需的命令）
+}</p>
+
+<p>stop() {
+  （停止服务所必需的命令）
+}</p>
+
+<p>restart() {
+  （重启服务所必需的命令）
+}
+```
+比如 mongodb 的依赖是</p>
+
+<p><code>
+depend() {
+  need net #需要依赖net.X
+}
+</code></p>
+
+<p>下次我专门研究一篇gentoo初始化脚本的文章</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[跨操作系统初始化安装工具(laptop)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell/"/>
+    <updated>2013-04-08T18:07:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>上周看了<a href="https://github.com/docopt/docopt">docopt</a>, 感想很多。最近因为工作需要用opensuse，用ubuntu，个人pc用gentoo，
+实在够折腾，每个系统都要相应的安装那些软件，搭建环境。早就想好好整理下思路，更geek的做这件事情。上段时间还看了个
+<a href="https://github.com/thoughtbot/laptop">laptop</a>,觉得能力很一般，但是fork真不少。但是确实这个想法很不错，很有必要。
+然后周末就构思了我的<a href="https://github.com/orzrd/laptop.git">laptop</a></p>
+
+<h4 id="section-1">它的特性</h4>
+
+<ul>
+  <li>记录操作记录，当某处出现故障，下次会从这个位置继续执行，而不需要全部执行一遍</li>
+  <li>受<a href="https://github.com/docopt/docopt">docopt</a>启发，根据我特定的语法写配置文件，不需要修改初始化脚本initialize.sh</li>
+  <li>只需要添加你要安装的软件包的安装命令（使用包管理器的就需要修改相应操作系统的install文件）</li>
+  <li>支持对已安装软件的确认，不再安装而跳过</li>
+  <li>根据特定语法打印安装过程的提示</li>
+  <li>提供绿色，红色的asciilinux终端显示字体</li>
+  <li>执行在没有git等环境下git clone项目安装</li>
+</ul>
+
+<h4 id="section-2">目前每个版本会安装那些软件？</h4>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gcc</td>
+          <td>g++</td>
+          <td>automake</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>tmux</td>
+          <td>htop</td>
+          <td>dstat</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>ruby</td>
+          <td>python</td>
+          <td>python库</td>
+          <td>expect</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>zsh</td>
+          <td>oh-my-zsh</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>easy_install</td>
+          <td>pip</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>django</td>
+          <td>torando</td>
+          <td>flask</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>nginx</td>
+          <td>uwsgi</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>redis</td>
+          <td>mongodb</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>mit-scheme</td>
+          <td>commonlisp</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>emacs</li>
+  <li>gitflow</li>
+  <li>celery</li>
+  <li>colout</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>MySQLdb</td>
+          <td>pymongo</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>taglist</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gevent</td>
+          <td>twisted</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>the_silver_searcher</li>
+  <li>检查vim是否自带python/ruby支持，否则下载编译一个执行的版本</li>
+  <li>我的常用脚本<a href="https://github.com/orzrd/mytools.github">mytools</a>,目前包含一个expect脚本和orzdba</li>
+  <li>我的<a href="https://github.com/dongweiming/dotfiles.git">dotfiles</a></li>
+</ul>
+
+<h2 id="gentoo">gentoo系统一些软件</h2>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gentoolkit</td>
+          <td>module-rebuild</td>
+          <td>genlop</td>
+          <td>eix</td>
+          <td>euses</td>
+          <td>elogv</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>fcitx</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>iproute2</td>
+          <td>netkit-telnetd</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="section-3">使用方法</h4>
+
+<ol>
+  <li>有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;git clone https://github.com/orzrd/laptop
+shell&gt;cd laptop
+shell&gt;bash initialize.sh
+</pre></figure></notextile></div>
+
+<ol>
+  <li>没有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;bash &lt;(curl -s https://raw.github.com/orzrd/laptop/master/setup_laptop)
+</pre></figure></notextile></div>
+
+<h5 id="section-4">脚本语法</h5>
+
+<h2 id="section-5">可操作文件</h2>
+
+<ol>
+  <li>common.install: 用户自定义的软件安装脚本，推荐非操作系统包管理器的都放在这里，注意逻辑顺序</li>
+  <li>opensuse/ubuntu/gentoo.install: 相应系统的安装脚本，这个只需要修改，我的脚本会自动根据系统信息找到</li>
+  <li>initialize.sh： 假如你想把需要我的安装方法，添加功能等，修改他，他是主入口</li>
+  <li>
+    <p>setup_laptop： 当用户没有git环境不能git clone  直接远程curl我，主要是下载git，clone我的laptop</p>
+  </li>
+  <li>’#’  以’#’开头的行表示这个信息会被安装过程以绿色字体打印，提示一下你要安装的东西等</li>
+  <li>： 以’:’开头的行，表示后面的字符串是个命令，也就是检查这个软件包有没有被安装需要的，假如which找到了路径说明被安装</li>
+  <li>; 以’;’开头的行为注释</li>
+  <li>其它行就是要执行的语句，请不要当作shell注释等，因为他会把你写的东西当成要执行的命令</li>
+</ol>
+
+<h2 id="todo">TODO</h2>
+
+<ul>
+  <li>文件下载后就不需要再下载而直接使用</li>
+  <li>在执行某软件的安装过程中其他进程继续下载其他软件包（也就是实现shell版本的emerge）</li>
+  <li>进度条或者python_koans的提示已完成/剩余，更多的异常处理等</li>
+  <li>更多的异常处理</li>
+  <li>打印彩色字体内容嵌其他颜色字体（比如提示出错，高亮错误的原因或者软件包）</li>
+</ul>
+
+<h2 id="forkpull-requestissue">注意我的项目地址，欢迎各种fork，pull request，issue</h2>
+
+<h3 id="httpsgithubcomorzrdlaptop">https://github.com/orzrd/laptop</h3>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[gentoo使用wpa_supplicant配置无线网卡]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/gentoo-wpa_supplicant-wireless/"/>
+    <updated>2013-03-31T23:22:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/gentoo-wpa_supplicant-wireless</id>
+    <content type="html"><![CDATA[<h4 id="section"><em>前言</em></h4>
+
+<p>公司全部使用了无线网络，我也被‘逼’的开始研究gentoo的无线上网，看了网上很多文章，以及gentoo文档，但是感觉都让我很迷糊，以下是我使用wpa_supplicant是一些总结</p>
+
+<h4 id="section-1">总结</h4>
+
+<ul>
+  <li>查看本机的无线网卡</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+emerge pciutils #这样就有了lspci这个命令
+localhost ~ # lspci |grep -i wire
+02:00.0 Network controller: Atheros Communications Inc. AR9285 Wireless Network Adapter (PCI-Express) (rev 01)
+</pre></figure></notextile></div>
+
+<p>可以发现，网卡是Atheros的AR9285</p>
+
+<ul>
+  <li>安装wpa_supplicant</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+emerge -s wpa_supplicant
+</pre></figure></notextile></div>
+
+<ul>
+  <li>生成一个配置配置文件</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+zcat /usr/share/doc/wpa_supplicant-2.0/wpa_supplicant.conf.bz2 &gt; /etc/wpa_supplicant/wpa_supplicant.conf
+</pre></figure></notextile></div>
+
+<ul>
+  <li>配置，以下是我去掉注释行，空白行等剩下的配置，其中的psk的字符串这样生成：</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # wpa_passphrase 我的ssid 我的key
+network={
+	ssid="我的ssid"
+	#psk="我的key"
+	psk=e596aa911775ed47e04f5b9a9540978203210874eb258208b87cf82b5cf72588
+}
+</pre></figure></notextile></div>
+
+<p>把这段加在配置文件中</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # cat /etc/wpa_supplicant.conf 
+
+ctrl_interface=/var/run/wpa_supplicant
+eapol_version=1
+ap_scan=1
+fast_reauth=1
+network={
+	ssid="我的ssid"
+	psk=e596aa911775ed47e04f5b9a9540978203210874eb258208b87cf82b5cf72588
+	priority=2
+}
+</pre></figure></notextile></div>
+
+<ul>
+  <li>命令行启动wpa(如果想看详细的信息用于调试，加-d选项)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # wpa_supplicant -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf   
+Successfully initialized wpa_supplicant
+wlan0: Trying to associate with 20:dc:c6:61:ab:34 (SSID='我的ssid' freq=2437 MHz)
+ioctl[SIOCSIWFREQ]: Device or resource busy
+wlan0: Association request to the driver failed
+wlan0: Associated with 20:dc:c6:61:ab:34
+wlan0: WPA: Key negotiation completed with 20:dc:c6:61:ab:34 [PTK=CCMP GTK=CCMP]
+wlan0: CTRL-EVENT-CONNECTED - Connection to 20:dc:c6:61:ab:34 completed [id=0 id_str=]
+</pre></figure></notextile></div>
+
+<p>其中wlan0: Association request to the driver failed 没关系</p>
+
+<ul>
+  <li>安装udhcpc</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+emerge udhcpc
+</pre></figure></notextile></div>
+
+<ul>
+  <li>通过dhcp自动获得</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+localhost ~ # dhcpcd wlan0
+dhcpcd[12395]: version 5.6.4 starting
+dhcpcd[12395]: wlan0: waiting for carrier
+dhcpcd[12395]: wlan0: carrier acquired
+dhcpcd[12395]: wlan0: carrier lost
+dhcpcd[12395]: wlan0: waiting for carrier
+dhcpcd[12395]: wlan0: carrier acquired
+dhcpcd[12395]: wlan0: sending IPv6 Router Solicitation
+dhcpcd[12395]: wlan0: sendmsg: Cannot assign requested address
+dhcpcd[12395]: wlan0: rebinding lease of 192.168.0.106
+dhcpcd[12395]: wlan0: acknowledged 192.168.0.106 from 192.168.0.1 `�'
+dhcpcd[12395]: wlan0: checking for 192.168.0.106
+dhcpcd[12395]: wlan0: sending IPv6 Router Solicitation
+dhcpcd[12395]: wlan0: leased 192.168.0.106 for 7200 seconds
+dhcpcd[12462]: wlan0: wlan0: MTU set to 576
+dhcpcd[12395]: forked to background, child pid 12479
+</pre></figure></notextile></div>
+
+<p>看到了吧 获得了192.168.0.106这个地址</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[gentoo3.2.21内核编译vmware8.02failed to compile module vmnet 解决]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/gentoo3-2-21neihebianyivmware8-02failedtocompilemodulevmnetjiejue/"/>
+    <updated>2012-07-12T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/gentoo3-2-21neihebianyivmware8-02failedtocompilemodulevmnetjiejue</id>
+    <content type="html"><![CDATA[<p>前言：我一直是vmware忠实使用者,最近重新编译gentoo内核后重新安装vmware并且升级到8.02,其它模块正常,但是唯独vmnet编译失败,报错日志如下:</p>
+
+<p>2012-07-12T10:33:01.401+08:00| vthread-3| I120: Building module with command: /usr/bin/make -j -C /tmp/vmware-root/modules/vmnet-only auto-build SUPPORT_SMP=1 HEADER_DIR=/lib/modules/3.2.21-gentoo/build/include CC=/usr/bin/gcc GREP=/usr/bin/make IS_GCC_3=no VMCCVER=4.5.3
+2012-07-12T10:33:02.088+08:00| vthread-3| I120: Failed to compile module vmnet!</p>
+
+<p>解决:这是vmware软件bug,官方已经提供补丁:</p>
+
+<p>http://communities.vmware.com/servlet/JiveServlet/download/2025997-86343/vmware802fixlinux320.tar.gz</p>
+
+<p>解压缩后2个文件,根据你的vmpalyer和vmware版本修改patch-modules_3.2.0.sh ,然后执行:</p>
+
+<p>dongwm@localhost ~/下载 $ sudo ./patch-modules_3.2.0.sh</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[gentoo笔记（十三）更新系统的总结和报错解决]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/gentoobijishisangengxinxitongdebaocuojiejue/"/>
+    <updated>2012-07-09T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/gentoobijishisangengxinxitongdebaocuojiejue</id>
+    <content type="html"><![CDATA[<p>升级步骤：</p>
+
+<p>1 emerge -–sync ＃同步更新目录
+2 emerge portage ＃更新portage
+3 emerge python ＃更新python，这属于个人习惯
+4 python-updater ＃更新python配置
+5 emerge -aDjNquv @world ＃升级整个系统（包括依赖）,-D 表示-deep,－j不加参数表示不限制同时运行的emerge进程（模式是1）</p>
+
+<p>#－N表示查看每个包的可用的USE参数，－q表示减少显示器屏幕输出，－u表示 --update ,-v表示详细模式
+6 emerge -av –depclean ＃清除不需要的软件包
+7 revdep-rebuild ＃检查系统依赖关系自动安装不满足的 关系包,假如过程中出现错误，重新 执行还是过去的包数量，</p>
+
+<p>#这是因为对需要重新安装的依赖包的数据缓存了，可以删除：rm /var/cache/revdep-rebuild/*.rr
+8 dispatch-conf或etc-update ＃更新系统配置文件</p>
+
+<p>9 （可选）emerge -ej world #重新编译系统，假如USE修改不大就不需要</p>
+
+<p>1 [blocks B ] 原因：说明小于sys-libs/talloc-2.0.5的包被sys-libs/talloc-2.0.7被屏蔽了，需要卸载重装新版本
+解决：dongwm@localhost ~ $sudo emerge -C talloc &amp;&amp; sudo emerge -1 talloc
+2 !!! The following updates are masked by LICENSE changes: - www-plugins/adobe-flash-11.2.202.236
+原因：这是adobe-flash造成的阻止安装，需要手动容许这个LICENSE
+解决：echo "www-plugins/adobe-flash AdobeFlash-10.3" &gt;&gt; /etc/portage/package.license #其中的10.3是报错提示信息重提到的</p>
+
+<p>3 !!! One of the following masked packages is required to complete your request:
+- x11-plugins/compiz-plugins-extra-0.8.8::gentoo (masked by: corruption)</p>
+
+<p>原因：主要是权限问题,本来更新portage后不存在这个ebuild，但是依赖关系又需要，所以去http://gpo.zugaina.org/x11-plugins/compiz-plugins-extra下载了一个相应版本，其他的地址，你懂的!</p>
+
+<p>解决：ebuild compiz-plugins-extra-0.8.8.ebuild digest</p>
+
+<p>4 emerge: there are no ebuilds built with USE flags to satisfy "&gt;=x11-libs/libdrm-2.4.24[video_cards_nouveau]".
+!!! One of the following packages is required to complete your request:
+- x11-libs/libdrm-2.4.33::gentoo (Change USE: +video_cards_nouveau)</p>
+
+<p>原因：需要指定一个USE标识，可以直接在安装指定
+解决：这样安装：USE=video_cards_nouveau emerge  x11-drivers/xf86-video-nouveau 或者给某个包一个特定的USE到/etc/portage/package.use，这里也就是添加一行：</p>
+
+<p>x11-drivers/xf86-video-nouveau video_cards_nouveau
+5The following REQUIRED_USE flag constraints are unsatisfied:</p>
+
+<p>osdmenu? ( X ) xscreensaver? ( X ) xv? ( X )</p>
+
+<p>原因：说明USE包括osdmenu对其他标识有影响</p>
+
+<p>解决：需要去掉，或者'-osdmenu'</p>
+
+<p>6 /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../i686-pc-linux-gnu/bin/ld: warning: libxcb-util.so.0, needed by /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../lib/libstartup-notification-1.so, not found (try using -rpath or -rpath-link)(安装时)</p>
+
+<p>原因： libxcb-util的动态链接有问题</p>
+
+<p>解决：需要重新emerge x11-libs/xcb-util, x11-libs/libxc 然后 revdep-rebuild重建依赖关系</p>
+
+<p>7 Traceback (most recent call last):
+File "configure.py", line 32, in &lt;module&gt;
+import sipconfig
+ImportError: No module named sipconfig
+* ERROR: dev-python/PyQt4-4.9.1 failed (configure phase):
+*   (no error message)
+原因：安装qt需要sip</p>
+
+<p>解决：重新安装dev-python/sip
+</p>
+]]></content>
+  </entry>
+  
+</feed>

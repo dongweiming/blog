@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: jquery | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/jquery/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用Google Captcha作tornado网站的验证码]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shiyonggooglecaptchazuotornadowangzhandeyanzhengma/"/>
+    <updated>2012-04-13T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shiyonggooglecaptchazuotornadowangzhandeyanzhengma</id>
+    <content type="html"><![CDATA[<p>前言：为了防止恶意尝试破解密码，在用户注册和登录的时候都需要一个验证码，但是简单的验证码图片实在太好破解了，还是不安全，正好发现类似于google，yahoo等大网站的图片验证使用了这样的方式：</p>
+
+<p><img class="alignnone" title="recaptcha" src="https://developers.google.com/recaptcha/images/reCAPTCHA_Sample_White.png" alt="" width="322" height="132" /></p>
+
+<p>我不知道安全性怎么样，但是至少这样的网站在使用就能说明问题。</p>
+
+<p>，而且省去了自己研究复杂算法，自己画图，然后根据数据确定是不是正确验证，也省去了Captcha服务器，感谢google！</p>
+
+<p>网站上有一个例子,而且也有一个python模块：http://recaptcha.googlecode.com/svn/trunk/recaptcha-plugins/python ，和我的实现差不多</p>
+
+<p>1 captcha.py #recaptcha检查模块</p>
+
+<p><pre class="sh_python">
+import urllib,urllib2
+import os
+GOOGLE_CAPTCHA_API = 'http://www.google.com/recaptcha/api/verify'
+class RecaptchaResponse:
+    def __init__(self, is_valid, error_code=None):
+        self.is_valid = is_valid
+        self.error_code = error_code
+def check_google_captcha(request,remote_ip,recaptcha_challenge_field,recaptcha_response_field):
+    if not (recaptcha_challenge_field and recaptcha_response_field):
+        return RecaptchaResponse (is_valid = False, error_code = 'incorrect-captcha-sol')
+    def encode_if_necessary(s):
+        if isinstance(s, unicode):
+            return s.encode('utf-8')
+        return s
+    params = urllib.urlencode ({
+            'privatekey': encode_if_necessary('6LfyINASAAcxzdUXc_f_kJ1ADSA6NfkU8ZoNgw_jl'),  #这里是我的私钥
+            'remoteip' :  encode_if_necessary(remote_ip), #远程主机ip
+            'challenge':  encode_if_necessary(recaptcha_challenge_field),
+            'response' :  encode_if_necessary(recaptcha_response_field),  #填入的数据
+            })
+    request = urllib2.Request(
+        url = GOOGLE_CAPTCHA_API,
+        data = params,
+        headers = {
+            "Content-type": "application/x-www-form-urlencoded",
+            "User-agent": "reCAPTCHA Python"
+            }
+        )
+    httpresp = urllib2.urlopen(request)
+    return_values = httpresp.read().splitlines();
+    httpresp.close();
+    return_code = return_values[0]
+    if (return_code == "true"):
+        return RecaptchaResponse(is_valid=True)
+    else:
+        return RecaptchaResponse(is_valid=False, error_code = return_values[1])
+</pre></p>
+
+<p>2 后台相关代码：</p>
+
+<p><pre class="sh_python">
+
+<p>import captcha
+remote_ip = self.request.remote_ip  #获取远程ip  这个和django，gae获取方式都不同
+challenge = self.get_argument('recaptcha_challenge_field',None)
+response =  self.get_argument('recaptcha_response_field',None)
+rsp = captcha.check_google_captcha(self,remote_ip,challenge,response)
+if not rsp.is_valid:
+self.write('Verification code error!')
+             return -1
+</p>
+
+<p>3 前台网页代码：</p>
+
+<p><pre class="sh_html4strict">
+&lt;!DOCTYPE html&gt;
+&lt;head&gt;
+&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"/&gt;&lt;/script&gt;  #引用google的js
+&lt;script type="text/javascript" src="static/jquery.cookies.2.2.0.min.js"&gt;&lt;/script&gt; 
+&lt;script type="text/javascript"&gt;
+
+<p>$(document).ready(function(){
+    google_captcha('gcaptcha');
+});
+function google_captcha(element){
+    Recaptcha.create('6LfyINASAAsdddJhhV-ofP8nQ-sRsddup8AHSQHl',element,{   #输入公钥
+        theme: "clean",  #主题 一共四种
+        callback: Recaptcha.focus_response_field 
+    });
+}
+$(function()
+        {
+$("#lg").click(function(event)
+            {
+    var xsrf = $.cookies.get("_xsrf");
+    var name = $("#zh").val();
+    var loginElement = encodeURI(encodeURI($("#zh").val()));
+    var passElement = encodeURI(encodeURI($("#ps").val()));
+    var response = $("#recaptcha_response_field").val();  #因为这里使用jquery的ajax，post的数据需要指定都取什么
+    var challenge = $("#recaptcha_challenge_field").val(); 
+    $.ajax({
+   type: "POST",
+   url: "/login",
+   data: {'login':loginElement,'passwd':passElement,'_xsrf':xsrf,'recaptcha_response_field':response,'recaptcha_challenge_field':challenge}, #数据包含这五种
+   success: function(data){
+   if (/Login Success/.exec(decodeURI(data)) == null)
+   {
+   alert(decodeURI(data));
+   Recaptcha.reload();   #假如有输入错误会弹窗警告，然后会重置验证码图片
+}
+   else {  window.location="/home";
+   }}
+	});    
+   $.cookies.set("name",name);
+});
+})
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="login"&gt;
+&lt;form class="login" action="/login" method="post"&gt;
+{ % module xsrf_form_html() % } <!-- 这里我把%和{/}分开了-->
+&lt;input class="text" type="text" name="login" id="zh" spellcheck="false" placeholder="帐 号" autofocus tabindex="1"&gt;
+&lt;input class="text" type="password" name="passwd" id ="ps" placeholder="密 码" tabindex="2"&gt;
+&lt;div id="gcaptcha"&gt;&lt;/div&gt;  #验证码图片在这里
+&lt;input class="button" id="lg" value="登 录" tabindex="3"&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</p>
+</pre></p></pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[tornado应用例子(二)：使用ajax（jquery）通过前台和后台交互]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/tornadoyingyongliziershiyongajaxjquerytongguoqiantaihehoutaijiaohu/"/>
+    <updated>2012-03-31T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/tornadoyingyongliziershiyongajaxjquerytongguoqiantaihehoutaijiaohu</id>
+    <content type="html"><![CDATA[<p>前言：在实际使用中肯定出现在web页面输入一些数据然后把数据传送到后台（tornado），执行完毕后再从后台把结果返回到web前台，其中也安排一些异常处理，比如数据在后台不存在，会进行提示（异步），上一个例子主要把html文件写到了python脚本，本例子是一个html＋tornado类</p>
+
+<p><pre class="sh_html4strict">
+&lt;html&gt;
+&lt;head&gt;
+&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;   #我这里使用了jquery封装
+&lt;script type="text/javascript"&gt;
+preAllow = true;   #定义一个变量，主要是为了防止恶刷，也是为了防止重复提交，在返回结果之前是不能点击的
+$(function()
+        {
+$("#AjaxGet").click(function(event)   #使用jquery封装js
+            {
+    if(preAllow){   
+    preAllow=false;
+    var flag =1  #定义一个变量，当下面的一些检查发现问题会置0，这样就不会发送post请求了
+    var htmlElement = encodeURI(encodeURI($("#myhtml").val()));  #使用jquery获取DOM 
+    if (/(\w+)\.html/.exec(htmlElement) == null||htmlElement=="")  #使用js的正则匹配判断格式不符合  或者  为空  都会alert
+    {
+    alert("请输入正确的html文件");
+    flag=0;
+    }
+    var tableElement = encodeURI(encodeURI($("#mytable").val()));
+    if (tableElement=="")
+    {
+    alert("请输入数据库表名");
+    flag=0;
+    }
+    var senderElement = encodeURI(encodeURI($("#sender").val()));
+    if (/(\w+)\@(.*)/.exec(senderElement) == null||senderElement=="")
+    {
+    alert("请输入正确的Email地址");
+    flag=0;
+    }
+    var headElement = $("#myhead").val();   #这里的jquery获取DOM，但是为了解析方便我没有编码url
+    if (headElement=="")
+    {
+    alert("请输入发送邮件的head");
+    flag=0;
+    }
+    var senderidElement = $("#sender_id").val();
+    if (senderidElement=="")
+    {
+    alert("请输入发送邮件标识");
+    flag=0;
+    }
+    if(flag){
+    $.ajax({   #使用了jquery的ajax，因为我需要回调没有使用$.get
+   type: "POST",  #调用类型
+   url: "/path",  #调用的url地址
+   data: {"html":htmlElement,"table":tableElement,"sender":senderElement,"head":headElement,"senderid":senderidElement},  #传送的dict数据
+   success: function(data){  #回调函数，alert返回结果
+   alert(decodeURI(data));
+   preAllow = true;
+}
+
+<p>	});    
+}}
+else {alert("已经发送了!");}   #执行中再点击，弹出警告！
+});
+})
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;    
+    &lt;form&gt;
+    &lt;label for=filename&gt;调用的html文件名&lt;/label&gt;   #充分使用html5
+    &lt;input id=myhtml type=text required /&gt;&lt;/br&gt;
+    &lt;label for=tablename&gt;调用数据库表名&lt;/label&gt;
+    &lt;input id=mytable  type=text required /&gt;&lt;/br&gt;
+    &lt;label for=email&gt;发送者邮件地址&lt;/label&gt;
+    &lt;input id=sender  type=email required /&gt;&lt;/br&gt;
+    &lt;label for=emailhead&gt;邮件标题&lt;/label&gt;
+    &lt;input id=myhead  type=text required /&gt;&lt;/br&gt;
+    &lt;label for=emailid&gt;邮件发送人标识&lt;/label&gt;
+    &lt;input id=sender_id  type=text required /&gt;&lt;/br&gt;
+    &lt;/form&gt;
+    &lt;button id="AjaxGet"&gt;使用执行&lt;/button&gt;&lt;br /&gt;
+    &lt;div id="serverResponse"&gt;&lt;/div&gt;  #暂时没用
+&lt;/body&gt;
+&lt;/html&gt;
+</p>
+
+<p><pre class="sh_python">
+class SendPostHandler(MyRequestHandler):
+    def post(self):
+        uri = self.request.body
+        sql = MysqlHander()
+        mydict = {}
+        for i in uri.split('&amp;'):
+            data = i.split('=')
+            mydict[data[0]]=data[1]
+        htmlpath = 'uphtml/' + mydict['html']
+        if not os.path.exists(htmlpath):
+            self.write('This html file does not exist!')
+            return -1
+        import Main
+        d = Main.Send()
+        d.General('mail',mydict['table'],sender,head,senderid,mydict['html']) 
+        time.sleep(10)
+        self.write('Sender Done!')
+</pre></p>
+</pre></p>
+]]></content>
+  </entry>
+  
+</feed>

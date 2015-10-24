@@ -1,0 +1,549 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>配置Cherokee下的cacti - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/%E9%85%8D%E7%BD%AEcherokee%E4%B8%8B%E7%9A%84cacti">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">配置Cherokee下的cacti</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-23T00:00:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>LCMP</strong><strong>是指</strong><em><strong>Linux.Cherokee.MySQL.PHP/Perl/Python</strong></em><em><strong>。</strong></em><em><strong> </strong></em></p>
+
+<p><em><strong>其中</strong></em><em><strong>Cherokee</strong></em>号称是目前最快的 Web 服务器软件，在性能上，甚至比  Nginx 还略胜一筹。Cherokee 的功能包括支持 FastCGI、SCGI、PHP、CGI、TLS 及 SSL  加密连接，虚拟主机，授权认证，实时编码，载入均衡，与 Apache 兼容的 log 文件等等。Cherokee 内含一个名为  cherokee-admin 的工具，执行后，允许管理员直接通过浏览器进入 http://localhost:9090/ 对其进行管理和配置<!--more--><img title="更多..." src="../wp-includes/js/tinymce/plugins/wordpress/img/trans.gif" alt="" /><strong> </strong></p>
+
+<p><strong>安装</strong><strong>yum-priorities</strong><strong>插件</strong><strong> </strong></p>
+
+<p>#yum install yum-priorities</p>
+
+<p>设置yum在调用软件源时的顺序的。因为官方提供的软件源，都是比较稳定和被推荐使用的。因此，官方源的顺序要高于第三方源的顺序。为保证这个顺序，安装yum-priorities。</p>
+
+<p><strong>配置epel 软件源</strong></p>
+
+<p>#rpm -Uvh <a href="http://download.fedora.redhat.com/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm">http://download.fedora.redhat.com/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm</a></p>
+
+<p><strong>配置ius软件源</strong></p>
+
+<p>注：IUS(<a href="http://iuscommunity.org/">http://iuscommunity.org</a>)是php.net推荐的yum源</p>
+
+<p>#Rpm –Uvh <a href="http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/x86_64/ius-release-1.0-6.ius.el5.noarch.rpm">http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/x86_64/ius-release-1.0-6.ius.el5.noarch.rpm</a></p>
+
+<p><strong>安装 Cherokee</strong></p>
+
+<p>#yum install Cherokee</p>
+
+<p><strong>安装 rrdtool</strong></p>
+
+<p>#yum install rrdtool</p>
+
+<p><strong>安装mysql</strong></p>
+
+<p>#yum install mysql mysql-server</p>
+
+<p><strong>安装PHP, Perl and Python.</strong></p>
+
+<p>注：如果想升级版本，需要卸载之前安装的php</p>
+
+<p>#yum install php53-pear php53 php53-cli php53-common php53-devel  php53-gd php53-mbstring php53-mcrypt php53-mysql php53-pdo php53-soap  php53-xml php53-xmlrpc php53-bcmath php53-pecl-apc php53-pecl-memcache</p>
+
+<p># yum update perl python</p>
+
+<p><strong>设置开机启动：</strong></p>
+
+<p># chkconfig cherokee on
+# chkconfig mysqld on</p>
+
+<p><strong>启动服务：</strong></p>
+
+<p># service mysqld start
+# service cherokee start</p>
+
+<p><strong>到cherokee 管理界面配置虚拟主机：</strong></p>
+
+<p>启动web界面：</p>
+
+<p># cherokee-admin –b
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top">Login:
+User:              admin
+One-time Password: MdTESIfkMdSmwUj2</td></tr></tbody></table></p>
+
+<p>Web Interface:
+URL:               <a href="http://localhost:9090/">http://localhost:9090/</a></p>
+
+<p>Cherokee Web Server 1.0.6 (Aug  6 2010): Listening on port ALL:9090, TLS
+disabled, IPv6 enabled, using epoll, 4096 fds system limit, max. 2041
+connections, caching I/O, single thread
+
+
+
+它会自动生成一个一次性的随机密码。</p>
+
+<p>登陆后的界面：</p>
+
+<p><img title="chreokee" src="http://farm6.static.flickr.com/5167/5289412171_325d69b391.jpg" alt="" width="500" height="203" /></p>
+
+<p>首先启动服务器</p>
+
+<p>选择 右上角的 vservers</p>
+
+<p><img title="cherokee" src="http://farm6.static.flickr.com/5046/5290015692_289460c8c5.jpg" alt="" width="360" height="73" /></p>
+
+<p>添加一个新的虚拟主机。</p>
+
+<p><img title="cherokee" src="http://farm6.static.flickr.com/5284/5290015614_646d500b02.jpg" alt="" width="360" height="217" /></p>
+
+<p>昵称自定，路径为/var/www/cacti</p>
+
+<p>配置好默认已经支持fastCGI：</p>
+
+<p><img title="cherokee4" src="http://farm6.static.flickr.com/5283/5289412343_c5a1eebb0f.jpg" alt="" width="500" height="449" /></p>
+
+<p>然后点击右上角的save  会提示重载。</p>
+
+<p><strong>安装snmp</strong></p>
+
+<p># yum install net-snmp net-snmp-utils</p>
+
+<p><strong>安装cacti</strong></p>
+
+<p># yum install cacti</p>
+
+<p>设置snmp开机启动</p>
+
+<p><strong>启动snmp</strong></p>
+
+<p># chkconfig snmpd on</p>
+
+<p>创建一个cacti的mysql数据库</p>
+
+<p># mysql
+Welcome to the MySQL monitor. Commands end with ; or \g.
+Your MySQL connection id is 14323
+Server version: 5.0.77 Source distribution
+<blockquote>Type ‘help;’ or ‘\h’ for help. Type ‘\c’ to clear the buffer.</blockquote></p>
+
+<p>mysql&gt;create database cacti;
+mysql&gt;GRANT ALL ON cacti.* TO cactiuser@localhost IDENTIFIED BY &#8216;Rubocyz8wM1=&#8217;;
+mysql&gt;quit
+<strong>导入cacti的mysql数据库架构</strong></p>
+
+<p># mysql -ucactiuser -pcactipassword cacti &lt; /var/www/cacti/cacti.sql</p>
+
+<p><strong>配置cacti，引用刚才在mysql创建的数据</strong></p>
+
+<p># vi /var/www/cacti/include/config.php</p>
+
+<p>$database_type = &#8220;mysql&#8221;;
+$database_default = &#8220;cacti&#8221;;
+$database_hostname = &#8220;localhost&#8221;;
+$database_username = &#8220;cactiuser&#8221;;
+$database_password = &#8220;Rubocyz8wM1=&#8221;;
+$database_port = &#8220;3306&#8221;;</p>
+
+<p>登陆<a href="../">www.dongwm.com</a></p>
+
+<p>出现了cacti的“Cacti Installation Guide”</p>
+
+<p>过程请见其他教程的配置。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-23T00:00:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2010</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/cacti/'>cacti</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/%E9%85%8D%E7%BD%AEcherokee%E4%B8%8B%E7%9A%84cacti/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/syslog%E8%AE%B0%E5%BD%95history%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95/" title="Previous Post:
+        syslog记录history历史记录">&laquo; syslog记录history历史记录</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/rangpuppetdaimazhichivimgaoliangxianshi/"
+        title="Next Post: 让puppet代码支持vim高亮显示">让puppet代码支持vim高亮显示
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/%E9%85%8D%E7%BD%AEcherokee%E4%B8%8B%E7%9A%84cacti/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/%E9%85%8D%E7%BD%AEcherokee%E4%B8%8B%E7%9A%84cacti/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

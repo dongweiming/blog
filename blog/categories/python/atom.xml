@@ -1,0 +1,1072 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: python | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/python/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[idiomatic python]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/idiomatic-python/"/>
+    <updated>2015-10-24T18:28:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/idiomatic-python</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p>算来学会python已经4年有余, 使用它作为我的工作语言也3年了. 这个过程中我读过一些书, 看了很多人的博客.
+也读了一些开源项目的代码, 但是尤其重要的是和同事在一起得到的进步. 一直到现在我都有习惯了解python, 提高自己的python能力</p>
+
+<p>说到idiomatic. python有自己独特的语法和习惯. 而实现同样功能的代码不用的人呢也会使用不同的方式.
+写出来的代码内容也有非常大的区别, 但是总是会有一个是更好的, idiomatic的写法. 今天突然翻到了一个我之前一直维护的keynote. 这里面记录了我总结和从其他的ppt或者代码里看到更优美的写法.
+其中有些已经放在python3中, 说明这样的功能确实是程序员蛮有用的. 我整理了一下. 来给大家分享下.</p>
+
+<p>PS: 这些是编程的思维, 举一反三, 再适合的时候利用上.</p>
+
+<h4 id="section-1">循环列表, 直到找到符合的结果, 没有结果返回一个默认值</h4>
+
+<p>通常这样:</p>
+
+<p><code>python
+a = -1
+for i in range(1, 10):
+    if not i % 4:
+        a = i
+        break
+# a = 4
+</code></p>
+
+<p>更好的写法:</p>
+
+<p><code>python
+a = ''
+a = next((i for i in range(1, 10) if not i % 4), -1)
+# a = 4
+</code></p>
+
+<h4 id="section-2">执行调用直到某种情况</h4>
+
+<p>通常这样:</p>
+
+<p><code>python
+blocks = []
+while True:
+    block = f.read(32)
+    if block == '':
+        break
+    blocks.append(block)
+</code></p>
+
+<p>更好的写法:</p>
+
+<p><code>python
+from functools import partial
+blocks = []
+for block in iter(partial(f.read, 32), ''):
+    blocks.append(block)
+</code></p>
+
+<h4 id="section-3">标记区分</h4>
+
+<p><code>python
+def find(seq, target):
+    found = False
+    for i, value in enumerate(seq):
+        if value == target:
+            found = True
+            break
+    if not found:
+        return -1
+    return i
+</code></p>
+
+<p>更好的写法:</p>
+
+<p><code>python
+def find(seq, target):
+    for i, value in enumerate(seq):
+        if value == target:
+            break
+    else:
+        return -1
+    return i
+</code></p>
+
+<h4 id="threadinglock">threading.Lock</h4>
+
+<p>```python
+lock = threading.Lock()
+lock.acquire()</p>
+
+<p>try:
+    print ‘Critical section 1’
+    print ‘Critical section 2’
+finally:
+    lock.release()
+    ```</p>
+
+<p>其实是这样的:</p>
+
+<p>```python
+lock = threading.Lock()</p>
+
+<p>with lock:
+    print ‘Critical section 1’
+    print ‘Critical section 2’
+    ```</p>
+
+<h4 id="section-4">忽略抛出的异常</h4>
+
+<p><code>python
+try:
+    os.remove('somefile.tmp')
+except OSError:
+    pass
+   </code></p>
+
+<p><code>python
+with ignored(OSError):
+    os.remove('somefile.tmp')
+   </code></p>
+
+<p>就算用python2, 我也强烈建议把这样的函数放在项目里</p>
+
+<p><code>python
+@contextmanager
+def ignored(*exceptions):
+    try:
+        yield
+    except exceptions:
+        pass
+       </code></p>
+
+<p>如果你使用python3.4或以上可以使用标准库的 <code>contextlib.suppress</code></p>
+
+<p><code>python
+class suppress:
+    def __init__(self, *exceptions):
+        self._exceptions = exceptions
+    def __enter__(self):
+        pass
+    def __exit__(self, exctype, excinst, exctb):
+        return exctype is not None and issubclass(exctype, self._exceptions)
+</code></p>
+
+<h4 id="section-5">直接把输出存进文件中</h4>
+
+<p><code>python
+with open('help.txt', 'w') as f:
+    oldstdout = sys.stdout
+    sys.stdout = f
+    try:
+        help(pow)
+    finally:
+        sys.stdout = oldstdout
+       </code></p>
+
+<p>同样使用python3.4以上可以使用</p>
+
+<p><code>python
+with open('help.txt', 'w') as f:
+    with redirect_stdout(f):
+        help(pow)
+       </code></p>
+
+<p>redirect_stdout是这样的:</p>
+
+<p><code>python
+@contextmanager
+def redirect_stdout(fileobj):
+    oldstdout = sys.stdout
+    sys.stdout = fileobj
+    try:
+        yield fieldobj
+    finally:
+        sys.stdout = oldstdout
+</code></p>
+
+<h4 id="section-6">最简单的缓存</h4>
+
+<p>通常这样实现缓存:</p>
+
+<p><code>python
+def web_lookup(url, saved={}):
+    if url in saved:
+        return saved[url]
+    page = urllib.urlopen(url).read()
+    saved[url] = page
+    return page
+</code></p>
+
+<p>可以这样写</p>
+
+<p>```python
+@cache
+def web_lookup(url):
+    return urllib.urlopen(url).read()</p>
+
+<p>def cache(func):
+    saved = {}
+    @wraps(func)
+    def newfunc(<em>args):
+        if args in saved:
+            return newfunc(</em>args)
+        result = func(*args)
+        saved[args] = result
+        return result
+    return newfunc
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[slack上的小黄鸡 - SlackBot]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/slackshang-de-xiao-huang-ji-slackbot/"/>
+    <updated>2015-06-23T23:28:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/slackshang-de-xiao-huang-ji-slackbot</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p><a href="http://www.slack.com/">Slack</a>是一个最近一年兴起的团队沟通协作平台. 程序员对工具其实是最有品位和要求的，相信国内很多公司和团队都在使用，豆瓣也算比较早在用.
+相信用过的人会理解本文. 如果你还没有接触它, 尤其是对现有的团队沟通协作工具有些不满, 可以试一下.</p>
+
+<p>本文就是介绍我们在最近做出来的一个bot - <a href="https://github.com/python-cn/slack_bot">slack_bot</a>. 它的口号是: 立志成为一个可被调戏且有用的Bot</p>
+
+<h3 id="section-1">为什么</h3>
+
+<p>无论是运维还是开发, 某些时间都会收到一些邮件/提醒, 可能是固定的时间的定时任务跑出来的结果,
+也可能是某个故障引起的问题邮件. 我们都很烦手头有好几个东西来接收这些消息， 而slack可以使用某些方法让这些问题集中起来.</p>
+
+<p>比如很常用的, 使用<a href="https://api.slack.com/methods/chat.postMessage">chat</a>或者<a href="https://api.slack.com/incoming-webhooks">incoming-webhooks</a>接收消息. 做什么呢?
+我可以把一些昨天的数据汇总或者汇总的地址在今天早上发到某个channel下, 这样想要看这个数据的人直接点进去就好了.
+当然啦, 也可以直接发消息到某个人. 一个具体的例子: 豆瓣的同事都知道, 我们的测试环境时间过期就会被删除, 在某段时间里面每天都有很多人在关注我们要新上的一个测试的地址,
+但是经常被同事@, 说地址怎么找不到了, 那么我就要抽出精力再去创建一个. 后来一想, 索性跑个定时任务, 拉最新的代码, 走逻辑, 生成一个测试环境. 每天都会在channel里面发消息给对应关心这个消息的人.
+一段时间以后, 我们的工作完成了, 同事都有点不适用, 哎， 怎么早上看不到那个消息了…</p>
+
+<p>但是今天说的是什么呢? 我们的slack_bot主要借用<a href="https://api.slack.com/outgoing-webhooks">outgoing-webhooks</a>. incoming表示把消息推到slack里面,
+outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳到我们提供的回调地址, 根据内容返回对应符合的回复. 大家是不是有点懂了, 这就是小黄鸡的原理.</p>
+
+<p>说到这里大家应该明白了. 其实slack给我们提供了很大的想象和实现的空间. 我立刻想起来做运维时候做的一些事情:</p>
+
+<p>比如当时有时候要去机房, 路上没有网(2g上网太慢), 有时候想看个监控状态, 切个负载均衡, 重启个服务什么的, 后来做了一个东西, 就是给某些号码发某些特殊的短信内容就可以获得想要的结果, 执行想做的事情.
+其实slack_bot只是一些爬虫的集合, 一些功能实现的例子. 在实际开发和工作中可以做很多更有意思的, 公司内部的插件. 和公司的业务相关, 和自己做的事情相关. 这样在路上就能用.
+比如我的地图功能, 我可以在网络不好的时候找到行程的最好路线; 我用公交插件可以实时的看我要等的公交需要多久到达, 我可以踩着点去站牌….</p>
+
+<h3 id="section-2">小黄鸡原理</h3>
+
+<p>小黄鸡很火的时候, 我还是一个perl运维…</p>
+
+<p>小黄鸡其实调用的是<a href="http://developer.simsimi.com/">simsim</a>的接口. 大家都可以去注册一个key来玩,也可以用项目自带的.</p>
+
+<p>其实就是post一个数据到simsim的api上, 他会返回你对应的小黄鸡的回复.</p>
+
+<h3 id="section-3">项目介绍</h3>
+
+<p>很多人听过甚至曾经用过<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>. 你可以把本bot理解为<code>增加了很多
+功能</code>, <code>只保留小黄鸡交流的基本逻辑</code>, <code>用于slackchannel里面</code>的<code>小黄鸡</code></p>
+
+<p>项目使用flask, 目前本项目是一个heroku应用. 地址是 https://slack-bot2.herokuapp.com/slack_callback 但是你
+也可以直接裸跑</p>
+
+<p><code>python
+gunicorn wsgi:app localhost:5000 --timeout 240 --log-file -
+</code></p>
+
+<p>你也可以使用heroku创建一个新的应用, 直接用我们的项目代码就可以.</p>
+
+<h3 id="slack">我们使用slack的特性</h3>
+
+<ol>
+  <li>可以把消息私聊发给自己</li>
+  <li>可以使用带图的方式接收结果(支持canvas, 以下会看到例图)</li>
+</ol>
+
+<h3 id="section-4">继承自小黄鸡的模块们, 但是都做了对应的修改:</h3>
+
+<ol>
+  <li>空气插件</li>
+  <li>wikipedia</li>
+  <li>地震了</li>
+  <li>糗百</li>
+  <li>orz  # orz需要自定义emoji</li>
+</ol>
+
+<h3 id="section-5">新加的模块们:</h3>
+
+<h4 id="section-6">地图插件 - 你可以输入我想从哪去哪, 会给你个路线(步行/开车/公交)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map2.png" alt="" /></p>
+
+<h4 id="api-">天气插件 - 使用了百度api, 获得城市的天气情况</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/weather.png" alt="" /></p>
+
+<h4 id="section-7">北京公交插件 - 可以查询北京公交线路, 获取实时的到某站的信息(有些线路站点不准)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus2.png" alt="" /></p>
+
+<h4 id="api---">美食插件 - 使用大众点评网api, 获取附近餐饮信息, 评分, 电话地址,距离等等</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/dianping.png" alt="" /></p>
+
+<h4 id="segmentfaultcsdn">技术活动插件 - 从segmentfault/csdn/车库咖啡/活动行获得最近的活动列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/events.png" alt="" /></p>
+
+<h4 id="githubissue---pull-requests">Github_issue插件 - 获得你个人或者组织下未处理的Pull requests列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/issue.png" alt="" /></p>
+
+<h4 id="section-8">电影信息插件 - 列出最近上映和即将上映的电影信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/movie.png" alt="" /></p>
+
+<h4 id="pycoders---pycoders-weekly">pycoders插件 - 获得<pycoders weekly="">订阅数据</pycoders></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pycoders.png" alt="" /></p>
+
+<h4 id="pythonweekly---pythonweekly">pythonweekly插件 - 获得<pythonweekly>订阅数据</pythonweekly></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pythonweekly.png" alt="" /></p>
+
+<h4 id="section-9">头条插件 - 获得今日头条新闻</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/toutiao.png" alt="" /></p>
+
+<h4 id="travel---">travel插件 - 旅游推荐/景点介绍</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel2.png" alt="" /></p>
+
+<h4 id="v2ex-feed---feed">v2ex feed插件 - 获得一些节点的最新feed</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/v2ex.png" alt="" /></p>
+
+<h4 id="help---">help插件 - 列出所有插件的帮助信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/help.png" alt="" /></p>
+
+<h4 id="simsim">最主要的是小黄鸡(simsim)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/simsim.png" alt="" /></p>
+
+<h4 id="slackbot-channel">也可以直接发到个人的slackbot channel里:</h4>
+
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct2.png" alt="" /></p>
+
+<h3 id="slack-1">配置slack</h3>
+
+<p>去你的slack组织的services页面. 比如我们是 https://pythoncn.slack.com/services/new. 找到<code>Outgoing WebHooks</code>:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311561/9ef87dc2-1a09-11e5-9d87-132d8d534042.png" alt="" /></p>
+
+<p>点击<code>Add+</code>并确认到新建页面:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311562/9efaffa2-1a09-11e5-8584-58894ae6e254.png" alt="" /></p>
+
+<p><code>channel</code> 可以选择any,也可以指定单独一个. <code>Trigger Word(s)</code> 可以不填, 那就是所有的记录都会走.
+也可以找关键词/字, 用逗号隔开. <code>url</code>就是你控制的回调的地址. 本图中的是我们用的herokuapp地址: https://slack-bot2.herokuapp.com/slack_callback</p>
+
+<p>你还可以自定义icon的图标和名字:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311563/9efe2ff6-1a09-11e5-8492-1dd39c4ae1d6.png" alt="" /></p>
+
+<h3 id="section-10">实现原理</h3>
+
+<p>我还是抄袭了<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>的插件思想. 但是完全脱离和小黄鸡的代码关系. 只留下了几个原有的插件并更新.
+<a href="https://github.com/python-cn/slack_bot/tree/master/slack_bot/plugins">plugins</a>目录下有一些插件.
+系统会按照plugins/__init__.py里面的__all__的列表顺序, 挨个插件对比是否符合. 符合即停止. 都不符合最后会使用simsim模块</p>
+
+<p>具体的插件编写可以参看项目的<a href="https://github.com/python-cn/slack_bot/blob/master/README.md#插件编写">插件编写</a></p>
+
+<h3 id="trick">一些trick</h3>
+
+<ol>
+  <li>假如你没有设置<code>Trigger Word</code>. 你要保证你的回复可以被停止, 否者你的回复会被当成下一次的输入. 这样就死循环了. 比如我们使用一个函数,
+只要文本用<code>!</code>开头就不会回调. 表示这个是一个正常的,不想被out-going的记录.</li>
+  <li>这里的天气图片是一个html5的data image. 还有豆瓣电影的海报图片做了防盗链， 不能被slack识别和正常显示.
+我的用法是upload到slack. 获得返回的url.然后在生成附件.</li>
+  <li>direct message其实是被限定了post的长度. 太长的话会报414. 需要对长数据切分. slack_bot已经实现了</li>
+  <li>现在simsim的借口被玩坏了, 有些低级，无聊，带有攻击性的回复. 酌情使用</li>
+</ol>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ipython的一些高级用法(二)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa-er/"/>
+    <updated>2014-12-11T17:04:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ipythonde-[?]-xie-gao-ji-yong-fa-er</id>
+    <content type="html"><![CDATA[<h4 id="ipythonmagic--magic-ipython-history-prun-logstart">今天我们学习下写ipython的magic命令. 好, magic是什么? 它是ipython自带的一些扩展命令, 类似%history, %prun, %logstart..</h4>
+<p>想查看全部的magic可以使用ismagic, 列出可用的全部magics</p>
+
+<p><code>python
+%lsmagic
+</code></p>
+
+<p>magic分为2类:</p>
+
+<ul>
+  <li>line magic: 一些功能命令</li>
+  <li>cell magic: 主要是渲染ipython notebook页面效果以及执行某语言的代码</li>
+</ul>
+
+<h5 id="idbhttpsgithubcomdongweimingidb---python-dbpy-shell-extension"><a href="https://github.com/dongweiming/idb">idb</a> - python db.py shell extension</h5>
+
+<p>idb是我最近写的一个magic. 主要是给ipython提供<a href="https://github.com/yhat/db.py">db.py</a>的接口,我们直接分析代码(我只截取有代表性的一段):</p>
+
+<p>```python
+import os.path
+from functools import wraps
+from operator import attrgetter
+from urlparse import urlparse</p>
+
+<p>from db import DB # db.py提供的接口
+from IPython.core.magic import Magics, magics_class, line_magic # 这三个就是我们需要做magic插件的组件</p>
+
+<p>def get_or_none(attr):
+    return attr if attr else None</p>
+
+<p>def check_db(func):
+    @wraps(func)
+    def deco(<em>args):
+        if args[0]._db is None: # 每个magic都需要首页实例化过db，so 直接加装饰器来判断
+            print ‘[ERROR]Please make connection: <code>con = %db_connect xx</code> or <code>%use_credentials xx</code> first!’  # noqa
+            return
+        return func(</em>args)
+    return deco</p>
+
+<p>@magics_class  # 每个magic都需要加这个magics_class装饰器
+class SQLDB(Magics): # 要继承至Magics
+    _db = None # 每次打开ipython都是一次实例化</p>
+
+<pre><code>@line_magic('db_connect') # 这里用了line_magic 表示它是一个line magic.(其他2种一会再说) magic的名字是db_connect. 注意 函数名不重要
+                          # 最后我们用 %db_connect而不是%conn
+def conn(self, parameter_s): # 每个这样的方法都接收一个参数 就是你在ipython里输入的内容
+    """Conenct to database in ipython shell.
+    Examples::
+        %db_connect
+        %db_connect postgresql://user:pass@localhost:port/database
+    """
+    uri = urlparse(parameter_s) # 剩下的都是解析parameter_s的逻辑
+
+    if not uri.scheme:
+        params = {
+            'dbtype': 'sqlite',
+            'filename': os.path.join(os.path.expanduser('~'), 'db.sqlite')
+        }
+    elif uri.scheme == 'sqlite':
+        params = {
+            'dbtype': 'sqlite',
+            'filename': uri.path
+        }
+    else:
+        params = {
+            'username': get_or_none(uri.username),
+            'password': get_or_none(uri.password),
+            'hostname': get_or_none(uri.hostname),
+            'port': get_or_none(uri.port),
+            'dbname': get_or_none(uri.path[1:])
+        }
+
+    self._db = DB(**params) # 这里给_db赋值
+
+    return self._db # return的结果就会被ipython接收,显示出来
+
+@line_magic('db') # 一个新的magic 叫做%db -- 谨防取名冲突
+def db(self, parameter_s):
+    return self._db
+
+@line_magic('table')
+@check_db
+def table(self, parameter_s):
+    p = parameter_s.split() # 可能传进来的是多个参数,但是对ipython来说,传进来的就是一堆字符串，所以需要按空格分隔下
+    l = len(p)
+    if l == 1:
+        if not p[0]:
+            return self._db.tables
+        else:
+            return attrgetter(p[0])(self._db.tables)
+    else:
+        data = self._db.tables
+        for c in p:
+            if c in ['head', 'sample', 'unique', 'count', 'all', 'query']:
+                data = attrgetter(c)(data)()
+            else:
+                data = attrgetter(c)(data)
+        return data
+</code></pre>
+
+<p>def load_ipython_extension(ipython): # 注册一下. 假如你直接去ipython里面加 就不需要这个了
+    ipython.register_magics(SQLDB)
+```</p>
+
+<p>PS:</p>
+
+<ol>
+  <li>调试中可以使用%reloa_ext idb 的方式重启magic</li>
+  <li>%install_ext 之后默认放在你的ipython自定义目录/extensions里. 我这里是~/.ipython/extensions</li>
+</ol>
+
+<p>好了,大家是不是觉得ipython的magic也不是很难嘛</p>
+
+<h5 id="ipython">来了解ipython都提供了什么?</h5>
+
+<ol>
+  <li>magic装饰器的类型:</li>
+</ol>
+
+<ul>
+  <li>line_magic # 刚才我们见识了, 就是%xx, xx就是magic的名字</li>
+  <li>cell_magic # 就是%%xx</li>
+  <li>line_cell_magic # 可以是%xx, 也可以是%%xx</li>
+</ul>
+
+<p>先说cell_magic 来个例子，假如我想执行个ruby,本来应该是:</p>
+
+<p>```python
+In [1]: !ruby -e ‘p “hello”’
+“hello”</p>
+
+<p>In [2]: %%ruby # 也可以这样
+   …: p “hello”
+      …:
+      “hello”</p>
+
+<p>再说个notebook的:</p>
+
+<p>In [3]: %%javascript
+   …: require.config({
+   …:     paths: {
+   …:         chartjs: ‘//code.highcharts.com/highcharts’
+   …:     }
+   …: });
+   …:
+   <ipython.core.display.javascript object="">
+});
+```</ipython.core.display.javascript></p>
+
+<p>然后再说line_cell_magic:</p>
+
+<p>```python
+In [4]: %time 2**128
+CPU times: user 2 µs, sys: 1 µs, total: 3 µs
+Wall time: 5.01 µs
+Out[4]: 340282366920938463463374607431768211456L</p>
+
+<p>In [5]: %%time
+   …: 2**128
+   …:
+   CPU times: user 4 µs, sys: 0 ns, total: 4 µs
+   Wall time: 9.06 µs
+   Out[5]: 340282366920938463463374607431768211456L
+```</p>
+
+<p>Ps: line_cell_magic方法的参数是2个:</p>
+
+<p><code>python
+@line_cell_magic
+def xx(self, line='', cell=None):
+</code></p>
+
+<h5 id="magicipythonmagic">带参数的magic（我直接拿ipython源码提供的magic来说明):</h5>
+
+<p>一共2种风格:</p>
+
+<ul>
+  <li>使用getopt: self.parse_options</li>
+  <li>使用argparse: magic_arguments</li>
+</ul>
+
+<h6 id="selfparseoptions">self.parse_options</h6>
+
+<p><code>python
+@line_cell_magic
+def prun(self, parameter_s='', cell=None):
+    opts, arg_str = self.parse_options(parameter_s, 'D:l:rs:T:q',
+                                       list_all=True, posix=False)
+    ...
+</code></p>
+
+<p>getopt用法可以看这里 http://pymotw.com/2/getopt/index.html#module-getopt</p>
+
+<p>我简单介绍下’D:l:rs:T:q’就是可以使用 -D, -l, -r, -s, -T, -q这些选项. <code>:</code>号是告诉你是否需要参数,split下就是:
+D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %prun -D <filename /></p>
+
+<h6 id="magicarguments">magic_arguments</h6>
+
+<p><code>python
+@magic_arguments.magic_arguments() # 最上面
+@magic_arguments.argument('--breakpoint', '-b', metavar='FILE:LINE',
+    help="""
+    Set break point at LINE in FILE.
+    """
+) # 这种argument可以有多个
+@magic_arguments.argument('statement', nargs='*',
+    help="""
+    Code to run in debugger.
+    You can omit this in cell magic mode.
+    """
+)
+@line_cell_magic
+def debug(self, line='', cell=None):
+    args = magic_arguments.parse_argstring(self.debug, line) # 要保持第一个参数等于这个方法名字,这里就是self.debug
+    ...
+</code></p>
+
+<p>还有个magic方法集: 用于并行计算的magics: <a href="https://github.com/ipython/ipython/blob/master/IPython/parallel/client/magics.py">IPython/parallel/client/magics.py</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ipython的一些高级用法(一)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/"/>
+    <updated>2014-12-07T09:56:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/ipythonde-[?]-xie-gao-ji-yong-fa</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>以前在我的PPT<a href="http://dongweiming.github.io/Expert-Python/">python高级编程</a>也提到了一些关于ipython的用法. 今天继续由浅入深的看看ipython,
+本文作为读者的你已经知道ipython并且用了一段时间了.</p>
+
+<h5 id="run">%run</h5>
+
+<p>这是一个magic命令, 能把你的脚本里面的代码运行, 并且把对应的运行结果存入ipython的环境变量中:</p>
+
+<p>```
+$cat t.py
+# coding=utf-8
+l = range(5)</p>
+
+<p>$ipython
+In [1]: %run t.py # <code>%</code>可加可不加</p>
+
+<p>In [2]: l # 这个l本来是t.py里面的变量, 这里直接可以使用了
+Out[2]: [0, 1, 2, 3, 4]
+```</p>
+
+<h5 id="alias">alias</h5>
+
+<p><code>python
+In [3]: %alias largest ls -1sSh | grep %s
+In [4]: largest to
+total 42M
+ 20K tokenize.py
+ 16K tokenize.pyc
+8.0K story.html
+4.0K autopep8
+4.0K autopep8.bak
+4.0K story_layout.html
+</code></p>
+
+<p>PS 别名需要存储的, 否则重启ipython就不存在了:</p>
+
+<p><code>
+In [5]: %store largest
+Alias stored: largest (ls -1sSh | grep %s)
+</code></p>
+
+<p>下次进入的时候<code>%store -r</code></p>
+
+<h5 id="bookmark---">bookmark - 对目录做别名</h5>
+
+<p>```python
+In [2]: %pwd
+Out[2]: u’/home/vagrant’</p>
+
+<p>In [3]: %bookmark dongxi ~/shire/dongxi</p>
+
+<p>In [4]: %cd dongxi
+/home/vagrant/shire/dongxi_code</p>
+
+<p>In [5]: %pwd
+Out[5]: u’/home/vagrant/shire/dongxi_code’
+```</p>
+
+<h5 id="ipcluster---">ipcluster - 并行计算</h5>
+
+<p>其实ipython提供的方便的并行计算的功能. 先回答ipython做并行计算的特点:</p>
+
+<p>1.</p>
+
+<p><code>bash
+$wget http://www.gutenberg.org/files/27287/27287-0.txt
+</code></p>
+
+<p>第一个版本是直接的, 大家习惯的用法.</p>
+
+<p>```python
+In [1]: import re</p>
+
+<p>In [2]: import io</p>
+
+<p>In [3]: non_word = re.compile(r’[\W\d]+’, re.UNICODE)</p>
+
+<p>In [4]: common_words = {
+   …: ‘the’,’of’,’and’,’in’,’to’,’a’,’is’,’it’,’that’,’which’,’as’,’on’,’by’,
+   …: ‘be’,’this’,’with’,’are’,’from’,’will’,’at’,’you’,’not’,’for’,’no’,’have’,
+   …: ‘i’,’or’,’if’,’his’,’its’,’they’,’but’,’their’,’one’,’all’,’he’,’when’,
+   …: ‘than’,’so’,’these’,’them’,’may’,’see’,’other’,’was’,’has’,’an’,’there’,
+   …: ‘more’,’we’,’footnote’, ‘who’, ‘had’, ‘been’,  ‘she’, ‘do’, ‘what’,
+   …: ‘her’, ‘him’, ‘my’, ‘me’, ‘would’, ‘could’, ‘said’, ‘am’, ‘were’, ‘very’,
+   …: ‘your’, ‘did’, ‘not’,
+   …: }</p>
+
+<p>In [5]: def yield_words(filename):
+   …:     import io
+   …:     with io.open(filename, encoding=’latin-1’) as f:
+   …:         for line in f:
+   …:             for word in line.split():
+   …:                 word = non_word.sub(‘’, word.lower())
+   …:                 if word and word not in common_words:
+   …:                     yield word
+   …:</p>
+
+<p>In [6]: def word_count(filename):
+   …:     word_iterator = yield_words(filename)
+   …:     counts = {}
+   …:     counts = defaultdict(int)
+   …:     while True:
+   …:         try:
+   …:             word = next(word_iterator)
+   …:         except StopIteration:
+   …:             break
+   …:         else:
+   …:             counts[word] += 1
+   …:     return counts
+   …:</p>
+
+<p>In [6]: from collections import defaultdict # 脑残了 忘记放进去了..
+In [7]: %time counts = word_count(filename)
+CPU times: user 88.5 ms, sys: 2.48 ms, total: 91 ms
+Wall time: 89.3 ms
+```</p>
+
+<p>现在用ipython来跑一下:</p>
+
+<p><code>python
+ipcluster start -n 2 # 好吧, 我的Mac是双核的
+</code></p>
+
+<p>先讲下ipython 并行计算的用法:</p>
+
+<p>```python
+In [1]: from IPython.parallel import Client # import之后才能用%px*的magic</p>
+
+<p>In [2]: rc = Client()</p>
+
+<p>In [3]: rc.ids # 因为我启动了2个进程
+Out[3]: [0, 1]</p>
+
+<p>In [4]: %autopx # 如果不自动 每句都需要: <code>%px xxx</code>
+%autopx enabled</p>
+
+<p>In [5]: import os # 这里没autopx的话 需要: <code>%px import os</code></p>
+
+<p>In [6]: print os.getpid() # 2个进程的pid
+[stdout:0] 62638
+[stdout:1] 62636</p>
+
+<p>In [7]: %pxconfig –targets 1 # 在autopx下 这个magic不可用
+[stderr:0] ERROR: Line magic function <code>%pxconfig</code> not found.
+[stderr:1] ERROR: Line magic function <code>%pxconfig</code> not found.</p>
+
+<p>In [8]: %autopx # 再执行一次就会关闭autopx
+%autopx disabled</p>
+
+<p>In [10]: %pxconfig –targets 1 # 指定目标对象, 这样下面执行的代码就会只在第2个进程下运行</p>
+
+<p>In [11]: %%px –noblock # 其实就是执行一段非阻塞的代码
+   ….: import time
+   ….: time.sleep(1)
+   ….: os.getpid()
+   ….:
+Out[11]: <asyncresult: execute="" /></p>
+
+<p>In [12]: %pxresult # 看 只返回了第二个进程的pid
+Out[1:21]: 62636</p>
+
+<p>In [13]: v = rc[:] # 使用全部的进程, ipython可以细粒度的控制那个engine执行的内容</p>
+
+<p>In [14]: with v.sync_imports(): # 每个进程都导入time模块
+   ….:     import time
+   ….:
+importing time on engine(s)</p>
+
+<p>In [15]: def f(x):
+   ….:     time.sleep(1)
+   ….:     return x * x
+   ….:</p>
+
+<p>In [16]: v.map_sync(f, range(10)) # 同步的执行</p>
+
+<p>Out[16]: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</p>
+
+<p>In [17]: r = v.map(f, range(10)) # 异步的执行</p>
+
+<p>In [18]: r.ready(), r.elapsed # celery的用法
+Out[18]: (True, 5.87735)</p>
+
+<p>In [19]: r.get() # 获得执行的结果
+Out[19]: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+```</p>
+
+<p>入正题:</p>
+
+<p>```python
+In [20]: def split_text(filename):
+….:    text = open(filename).read()
+….:    lines = text.splitlines()
+….:    nlines = len(lines)
+….:    n = 10
+….:    block = nlines//n
+….:    for i in range(n):
+….:        chunk = lines[i<em>block:(i+1)</em>(block)]
+….:        with open(‘count_file%i.txt’ % i, ‘w’) as f:
+….:            f.write(‘\n’.join(chunk))
+….:    cwd = os.path.abspath(os.getcwd())
+….:    fnames = [ os.path.join(cwd, ‘count_file%i.txt’ % i) for i in range(n)] # 不用glob是为了精准
+….:    return fnames</p>
+
+<p>In [21]: from IPython import parallel</p>
+
+<p>In [22]: rc = parallel.Client()</p>
+
+<p>In [23]: view = rc.load_balanced_view()</p>
+
+<p>In [24]: v = rc[:]</p>
+
+<p>In [25]: v.push(dict(
+   ….:     non_word=non_word,
+   ….:     yield_words=yield_words,
+   ….:     common_words=common_words
+   ….: ))
+Out[25]: <asyncresult: _push="" /></p>
+
+<p>In [26]: fnames = split_text(filename)</p>
+
+<p>In [27]: def count_parallel():
+   …..:     pcounts = view.map(word_count, fnames)
+   …..:     counts = defaultdict(int)
+   …..:     for pcount in pcounts.get():
+   …..:         for k, v in pcount.iteritems():
+   …..:             counts[k] += v
+   …..:     return counts, pcounts
+   …..:</p>
+
+<p>In [28]: %time counts, pcounts = count_parallel() # 这个时间包含了我再聚合的时间
+CPU times: user 47.6 ms, sys: 6.67 ms, total: 54.3 ms # 是不是比直接运行少了很多时间?
+Wall time: 106 ms # 这个时间是</p>
+
+<p>In [29]: pcounts.elapsed, pcounts.serial_time, pcounts.wall_time
+Out[29]: (0.104384, 0.13980499999999998, 0.104384)
+```</p>
+
+<p>更多地关于并行计算请看这里: <a href="http://nbviewer.ipython.org/url/www.astro.washington.edu/users/vanderplas/Astr599/notebooks/21_IPythonParallel.ipynb">Parallel Computing with IPython</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[python几个特别的__开头的方法]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/pythonji-ge-te-bie-de-kai-tou-de-fang-fa/"/>
+    <updated>2014-12-06T22:51:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/pythonji-ge-te-bie-de-kai-tou-de-fang-fa</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p><a href="http://www.rafekettler.com/magicmethods.html">A Guide to Python’s Magic Methods</a>python的绝大多数这样的特殊方法都
+在这里面被提到了. 今天我来说3个他没有提到的[__dir__, __slots__, __weakref__], 再强调下他提到的2个[__missing__, __contains__]</p>
+
+<h5 id="dir---">__dir__ -&gt; 看个小例子就知道了</h5>
+
+<p><code>python
+In [1]: class T(object):
+   ...:     pass
+   ...:
+In [2]: t = T()
+In [3]: t.&lt;Tab&gt;
+啥也没有...
+</code></p>
+
+<p><code>python
+In [4]: class T2(object):
+   ...:     def __dir__(self):
+   ...:         return ['a', 'b']
+   ...:
+In [5]: t = T2()
+In [6]: t.
+t.a  t.b
+In [7]: dir(t)
+Out[7]: ['a', 'b']
+</code></p>
+
+<p>看出来了把, 不解释, 但是这个__dir__是相对于类的实例有效果的.</p>
+
+<h5 id="slots">__slots__</h5>
+
+<p>这个在我初学python的时候就被模糊了, 原来的理解是它的出现替代了__dict__，也就是说你只能给__slots__
+这个变量列表项的属性赋值. 对外的接口减少了,也安全了. 后来看了这篇<a href="http://tech.oyster.com/save-ram-with-python-slots/">Saving 9 GB of RAM with Python’s <strong>slots</strong></a>.
+好久不做运维了,在生产环境究竟怎么样我无法定论, <python cookbook="">也提到了,在对象实例很多的时候他能帮助减少内存, 详见https://www.safaribooksonline.com/library/view/python-cookbook-3rd/9781449357337/ch08s04.html.
+这里来个小实验(在Hacker News也被讨论过https://news.ycombinator.com/item?id=6750187)</python></p>
+
+<p>代码例子(我对细节做注释):</p>
+
+<p>```python
+# coding=utf-8
+import sys
+from itertools import starmap, product</p>
+
+<p>class SlotTest(object):
+    # <strong>slots</strong> = [‘x’, ‘y’, ‘z’] 主要对比去掉这句和包含这句程序内存占用</p>
+
+<pre><code>def __init__(self, x, y, z):
+        self.x = x
+                self.y = y
+                        self.z = z
+
+def __str__(self):
+        return "{} {} {}".format(self.x, self.y, self.z)
+</code></pre>
+
+<p>p = product(range(10000), range(20), [4]) # 创建0-1000 &amp; 0-20 &amp; 4 的笛卡尔积
+a = list(starmap(SlotTest, p)) # 相当于对每个SlotTest实例化,实例化的格式是p的长度</p>
+
+<p>print a[0]
+sys.stdin.read(1)
+```</p>
+
+<p>结果对比:</p>
+
+<p><code>bash
+$pmap -x `ps -ef|grep test_slot.py|grep -v grep|awk '{print $2}'`|grep total # 未使用__slots__
+  total kB          103496   76480   73728
+$pmap -x `ps -ef|grep test_slot.py|grep -v grep|awk '{print $2}'`|grep total # 使用了__slots__
+  total kB           49960   22888   20136
+</code></p>
+
+<p>结果很明显,内存占用减少了很多…</p>
+
+<h5 id="weakref-">__weakref__ 弱引用</h5>
+
+<p>首先先说下<a href="http://zh.wikipedia.org/wiki/%E5%BC%B1%E5%BC%95%E7%94%A8">weakref</a>: 弱引用，与强引用相对，是指不能确保其引用的对象不会被垃圾回收器回收的引用。一个对象若只被弱引用所引用，则被认为是不可访问（或弱可访问）的，并因此可能在任何时刻被回收.
+在Python中,当一个对象的引用数目为0的时候，才会被从内存中回收. 但是被循环引用呢?</p>
+
+<p>```python
+In [1]: import weakref</p>
+
+<p>In [2]: import gc</p>
+
+<p>In [3]: class Obj(object):
+   …:     def a(self):
+   …:         return 1
+   …:
+In [4]: obj = Obj()</p>
+
+<p>In [5]: s = obj</p>
+
+<p>In [6]: gc.collect() # 不可达引用对象的数量
+Out[6]: 3</p>
+
+<p>In [7]: print s is obj
+True</p>
+
+<p>In [8]: obj = 1 # 最初的被引用的对象改变了.</p>
+
+<p>In [9]: gc.collect()
+Out[9]: 0</p>
+
+<p>In [10]: s is None # s还是指向了Obj 引用计数为1
+Out[10]: False</p>
+
+<p>In [11]: s
+Out[11]: &lt;<strong>main</strong>.Obj at 0x2b36510&gt;</p>
+
+<p>—-华丽的分割一下</p>
+
+<p>In [12]: obj = Obj()</p>
+
+<p>In [13]: r = weakref.ref(obj) # 让obj变成那个弱引用</p>
+
+<p>In [14]: gc.collect()
+Out[14]: 211</p>
+
+<p>In [15]: r() is obj
+True</p>
+
+<p>In [16]: obj = 1</p>
+
+<p>In [17]: gc.collect()
+Out[17]: 0</p>
+
+<p>In [18]: r() is None # 弱引用计数器没有增加，所以当obj不在引用Obj的时候，Obj对象就被释放了
+Out[18]: True
+```</p>
+
+<p>好吧, 我的总结是弱引用是个好东西, 但是加了__slots__就不支持弱引用了. 所以需要__weakref__</p>
+
+<p>```python
+In [9]: class T3(object):
+   …:     <strong>slots</strong> = []
+      …:</p>
+
+<p>In [10]: class T4(object):
+   ….:     <strong>slots</strong> = ‘<strong>weakref</strong>’  # 这样就支持了weakref
+      ….:</p>
+
+<p>In [11]:  import weakref</p>
+
+<p>In [12]: t3 = T3()</p>
+
+<p>In [13]: t4 = T4()</p>
+
+<h2 id="in-14-weakrefreft3">In [14]: weakref.ref(t3)</h2>
+<p>TypeError                                 Traceback (most recent call last)</p>
+<ipython-input-14-bdb7ab7ac3bc> in <module>()
+----&gt; 1 weakref.ref(t3)
+
+TypeError: cannot create weak reference to 'T3' object
+
+In [15]: weakref.ref(t4)
+Out[15]: &lt;weakref at 0x2766f70; to 'T4' at 0x2586fd8&gt;
+```
+
+##### \_\_contains\_\_ 判断某值 in/not in 实例
+
+```python
+In [1]: class NewList(object):
+   ...:     def __init(self, values):
+   ...:         self.values = values
+   ...:     def __contains__(self, value):
+   ...:         return value in self.values
+   ...:
+In [2]: l = NewList([1, 2, 3, 4])
+
+In [3]: 4 in l
+Out[3]: True
+
+In [4]: 10 in l
+Out[4]: False
+```
+
+##### \_\_missing\_\_
+
+最初看这个特殊方法是看python标准库的源码的时候(collections#L421):
+
+```python
+class Counter(dict):
+    ...
+
+    def __missing__(self, key):
+        'The count of elements not in the Counter is zero.'
+        # Needed so that self[missing_item] does not raise KeyError
+        return 0
+```
+
+什么意思呢?
+
+```python
+In [6]: c = collections.Counter({'a':1})
+
+In [7]: c['b'] # 没有键的count设置默认值0
+Out[7]: 0
+
+```
+
+很多人可能看过这个(关于defaultdict的ppt)[http://discorporate.us/jek/talks/defaultdict/]. 内容就不说了, 讲的非常好.
+</module></ipython-input-14-bdb7ab7ac3bc>
+]]></content>
+  </entry>
+  
+</feed>

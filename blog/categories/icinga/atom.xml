@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: icinga | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/icinga/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[安装及配置icinga-web]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/%E5%AE%89%E8%A3%85%E5%8F%8A%E9%85%8D%E7%BD%AEicinga-web/"/>
+    <updated>2011-07-29T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/安装及配置icinga-web</id>
+    <content type="html"><![CDATA[<p>前言：我所认为的icinga-web其实就是将icinga监控数据写到数据库，用icinga-web对其进行一些处理返回检查的状态
+<img style="max-width: 800px;" src="http://farm7.static.flickr.com/6025/5986605311_38600dbb57_b.jpg" alt="" />
+1 安装一些必备的rpm包：
+yum install libdbi-devel libdbi libdbi-drivers libdbi-dbd-mysql
+2 首先需要安装支持IDOUtils的icinga
+wget http://sourceforge.net/projects/icinga/files/icinga/1.4.2/icinga-1.4.2.tar.gz/download
+tar zxvf icinga-1.4.2.tar.gz
+cd icinga-1.4.2
+./configure  --with-icinga-group=dongwm  --with-icinga-user=dongwm  --with-command-user=dongwm  --with-command-group=dongwm --enable-idoutils &amp;&amp; make all &amp;&amp; make  fullinstall
+3 安装nagios插件
+wget http://prdownloads.sourceforge.net/sourceforge/nagiosplug/nagios-plugins-1.4.15.tar.gz
+tar zxvf nagios-plugins-1.4.15.tar.gz
+cd nagios-plugins-1.4.15
+./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-htmurl=/icinga --with-nagios-user=dongwm --with-nagios-group=dongwm &amp;&amp; make &amp;&amp; make install
+4 配置idoutils
+cd /usr/local/icinga/etc/
+mv ido2db.cfg-sample ido2db.cfg
+mv idomod.cfg-sample idomod.cfg
+vi /usr/local/icinga/etc/icinga.cfg
+讲这句前面的注释去掉：
+broker_module=/usr/local/icinga/bin/idomod.o config_file=/usr/local/icinga/etc/idomod.cfg
+确认库文件依赖关系是否正常：
+ldd /usr/local/icinga/bin/idomod.o
+输出类似：
+linux-vdso.so.1 =&gt;  (0x00007fff7f5fc000)
+libc.so.6 =&gt; /lib64/libc.so.6 (0x00002b2cbf799000)
+/lib64/ld-linux-x86-64.so.2 (0x0000003472c00000)
+表示相关库文件都找到
+创建mysql数据库：
+<pre class="code-java">mysql -u root -p
+ mysql&gt; CREATE DATABASE icinga;
+ GRANT USAGE ON *.* TO 'icinga'@'localhost' IDENTIFIED BY 'icinga' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;
+ GRANT SELECT , INSERT , UPDATE , DELETE ON icinga.* TO 'icinga'@'localhost';
+ FLUSH PRIVILEGES ;
+ quit
+mysql -u root -p icinga &lt; /icinga安装目录/module/idoutils/db/mysql/mysql.sql
+5 安装icinga-web
+wget http://sourceforge.net/projects/icinga/files/icinga-web/1.4.1/icinga-web-1.4.1.tar.gz/download
+tar zxvf icinga-web-1.4.1.tar.gz
+cd icinga-web-1.4.1
+./configure --prefix=/usr/local/icinga-web --with-web-user=dongwm --with-web-group=dongwm --with-db-type=mysql --with-db-host=localhost --with-db-port=3306 --with-db-name=icinga_web --with-db-user=icinga_web --with-db-pass=icinga_web --with-icinga-api=/usr/local/icinga/share/icinga-api --with-web-apache-path=/etc/httpd/conf.d
+make all
+make install
+创建mysql数据库：
+mysql -u root -p
+ mysql&gt; CREATE DATABASE icinga_web;
+        GRANT USAGE ON *.* TO 'icinga_web'@'localhost' IDENTIFIED BY 'icinga_web' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;
+        GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON icinga_web.* TO 'icinga_web'@'localhost';
+        quit
+
+<p>mysql -u root -p icinga_web &lt; /icinga-web安装目录/etc/schema/mysql.sql
+确认以下文件相关数据库相关信息：
+/usr/local/icinga-web/app/modules/Web/config/icinga-io.site.xml
+&lt;setting name="api.interfaces.data"&gt;
+                &lt;ae:parameter name="api_type"&gt;IcingaApi::CONNECTION_IDO&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_type"&gt;mysql&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_host"&gt;127.0.0.1&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_port"&gt;3306&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_database"&gt;icinga&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_user"&gt;icinga&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_password"&gt;icinga&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_table_prefix"&gt;icinga_&lt;/ae:parameter&gt;
+        &lt;/setting&gt;
+注意：这里是icinga-web的配置文件里面用的数据库是icinga的数据库信息，这样才能取到相关值
+清除缓存数据：
+/usr/local/icinga-web/bin/clearcache.sh
+然后使用一下地址登录icinga-web：
+http://localhost/icinga-web
+最重要的这里的默认帐号密码：root/password
+然后就可以看见icinga里面监控项的相关信息了！</p>
+</pre></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Icinga专题（一）Icinga安装]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/icinga%E4%B8%93%E9%A2%98%EF%BC%88%E4%B8%80%EF%BC%89icinga%E5%AE%89%E8%A3%85/"/>
+    <updated>2011-04-16T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/icinga专题（一）icinga安装</id>
+    <content type="html"><![CDATA[<p><strong>Icinga是一些nagios项目社区的成员发起的，兼容nagios，并实现了中文化和安卓系统版本。I like ^.^</strong></p>
+
+<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png"><img class="alignnone size-full wp-image-461" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png" alt="" width="890" height="342" /></a>
+</strong></p>
+
+<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png"><img class="alignnone size-full wp-image-459" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png" alt="" width="800" height="453" /></a>
+</strong></p>
+
+<p><strong>1 准备</strong></p>
+
+<p><pre class="sh_bash">#yum  install freetype libjpeg libpng fontconfig libdbi libdbi-drivers gcc glibc glibc-common gd gd-devel libjpeg libjpeg-devel libpng libpng-devel net-snmp net-snmp-devel</pre></p>
+
+<p><strong>2 下载安装icinga</strong></p>
+
+<p><pre class="sh_bash">#wget http://sourceforge.net/projects/icinga/files/icinga/1.3.1/icinga-1.3.1.tar.gz/download
+
+<p># tar zxvf icinga-1.3.1.tar.gz</p>
+
+<p>#cd icinga-1.3.1/</p>
+
+<p>#./configure --with-rdbm --with-rdbm-incdir=/usr/include/rdbm/ --with-rdbm-libdir=/usr/lib64/ --disable-docs  --with-icinga-user=dongwm   --with-icinga-group=dongwm --with-command-user=dongwm  --with-command-group=dongwm &amp;&amp; make all &amp;&amp; make install</p>
+
+<p>#make install-init   //# 安装主程序，CGI和HTML
+#make install-commandmode //在/etc/rc.d/init.d安装启动脚本
+#make install-config  // 安装配置实例配置文件
+#make install-webconf  //安装apache相关的配置文件
+# chkconfig --add icinga
+# chkconfig icinga on</p>
+
+<p># /etc/init.d/icinga start</p>
+
+<p><strong>3 设置web页面登陆用户</strong><strong>及密码(必须）</strong></p>
+
+<p><pre class="sh_bash">默认用户名 icingaadmin 默认密码admin
+
+<p>用户可自行修改,如htpasswd -c /usr/local/icinga/etc/htpasswd.users dongwm</p>
+
+<p><strong>4  安装nagios-plugins</strong></p>
+
+<p><pre class="sh_bash"># wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/1.4.15/nagios-plugins-1.4.15.tar.gz/download
+
+<p># tar zxvf nagios-plugins-1.4.15.tar.gz</p>
+
+<p># cd nagios-plugins-1.4.15/</p>
+
+<p>#./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-htmurl=/icinga --with-nagios-user=dongwm --with-nagios-group=dongwm</p>
+
+<p># make &amp;&amp; make install</p>
+
+<p><strong>5  安装nrpe</strong></p>
+
+<p><pre class="sh_bash">#wget "<a href="https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz&quot;">https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz"</a> -O nrpe.tgz
+#tar zxvf nrpe.tgz
+
+<p># cd icinga-nrpe  &amp;&amp;  ./configure --with-nrpe-user=dongwm --with-nrpe-group=dongwm --with-icinga-user=dongwm --with-icinga-group=dongwm &amp;&amp;make all &amp;&amp;make install-plugin</p>
+
+<p>拷贝nrpe文件：</p>
+
+<p>#cp src/nrpe  /usr/local/icinga/bin</p>
+
+<p>#cp sample-config/nrpe.cfg /usr/local/icinga/etc</p>
+
+<p>启动nrpe并检查：</p>
+
+<p># /usr/local/icinga/bin/nrpe -n -c /usr/local/icinga/etc/nrpe.cfg -d</p>
+
+<p># /usr/local/icinga/libexec/check_nrpe  -H 127.0.0.1 –n</p>
+
+<p>NRPE v2.12</p>
+
+<p>stop nrpe：</p>
+
+<p>#kill `ps -ef | grep "sample-config/nrpe.cfg" | grep -v grep | awk '{print $2}'`</p>
+
+<p><strong>6 配置文件</strong></p>
+
+<p><strong>其实icinga的配置文件可以把nagios的配置文件直接拷贝过来使用，把关键字‘nagios’改成‘icinga’就完全可以了</strong></p>
+</pre></p></pre></p></pre></p></pre></p>
+]]></content>
+  </entry>
+  
+</feed>

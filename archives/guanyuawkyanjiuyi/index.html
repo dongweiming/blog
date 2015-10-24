@@ -1,0 +1,609 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>关于awk研究（一） - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/guanyuawkyanjiuyi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">关于awk研究（一）</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-18T00:00:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前言：我想sed是对于行操作，而awk算是对于列操作</p>
+
+<p><strong>1 基本语法</strong></p>
+
+<p>awk -Fs &#8216;/pattern/ {action}&#8217; input-file
+或者</p>
+
+<p>awk -Fs &#8216;{action}&#8217; intput-file
+其中：－F是字段分割符，没有指定的话就是空字符</p>
+
+<p>/pattern/ 假如不存在这个模式匹配，指全文</p>
+
+<p>{action}是要执行的活动</p>
+
+<p>比如：awk -F: &#8216;/dongwm/ {print $1}&#8217; /etc/passwd 就是寻找 /etc/passwd匹配‘dongwm’的行，然后的操作（action）是用&#8217;:&#8217;分割，打印第一列</p>
+
+<p>或者</p>
+
+<p>awk -Fs -f myscript.awk input-file  指定一个文件 和sed类似
+<strong>2 awk结构（BEGIN, body, END）</strong>
+1 BEGIN  它可以初始化变量，这个结构是可选的</p>
+
+<p>语法：BEGIN { awk-commands }
+2 body 也就是awk的主体</p>
+
+<p>语法：/pattern/ {action}
+3 END 结束块</p>
+
+<p>语法：END { awk-commands } 也是可选的
+例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; } /dongwm/{print $1} END { print &#8220;&#8212;footer&#8212;&#8221;}&#8217; /etc/passwd
+&#8212;header&#8212;                              #这个例子，首先执行BEGIN里面的，设定分割符‘:’，打印header，然后匹配行打印分割的第一段，但后执行END，打印footer
+dongwm
+&#8212;footer&#8212;
+或者：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; }
+/dongwm/{print $1}
+END { print &#8220;&#8212;footer&#8212;&#8221;}
+dongwm@linux-dongwm:~&gt; awk -f test.awk /etc/passwd
+&#8212;header&#8212;
+dongwm
+&#8212;footer&#8212;</p>
+
+<p>例子2：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F: &#8216;BEGIN { print &#8220;UID&#8221;} { print $3 }&#8217; /etc/passwd  #awk 的打印都是‘print’
+UID
+25
+103
+1
+2
+102
+40
+12
+107
+109
+<strong>3 awk处理多个文件</strong>
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; } /dongwm/ {print $1} END { print &#8220;&#8212;footer&#8212;&#8221;}&#8217; /etc/passwd /etc/group
+&#8212;header&#8212;
+dongwm
+video   #这个video组包含dongwm
+&#8212;footer&#8212;
+<strong>4 print(打印功能)</strong>
+先看一个例子</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,ccc,ccc.com
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;BEGIN \
+{ print &#8220;&#8212;&#8212;&#8212;&#8212;-\nName\tTitle\n&#8212;&#8212;&#8212;&#8212;-&#8220;} \
+{ print $2,&#8221;\t&#8221;,$3;} \
+END { print &#8220;&#8212;&#8212;&#8212;&#8212;-&#8220;; }&#8217; test.txt  注：你也是格式化文件了
+&#8212;&#8212;&#8212;&#8212;-
+Name    Title
+&#8212;&#8212;&#8212;&#8212;-
+dongwm      dongwm.com
+ailll      ailll.com
+ccc      ccc.com
+&#8212;&#8212;&#8212;&#8212;-
+<strong>5 模式匹配</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;/dongwm/ {print $2, $3}&#8217; test.txt  寻找匹配行
+dongwm dongwm.com
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;/^112/ {print &#8220;Test id 112 is&#8221;, $2}&#8217; test.txt</p>
+
+<p>Test id 112 is dongwm  #选找开头是112的，然后自定义一些打印字符</p>
+
+<p><strong>6 内建变量</strong>
+1 FS :输入字段分隔符，模认的是空格
+看下面的例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;{print $2, $3}&#8217; test.txt
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} {print $2, $3}&#8217; test.txt
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+注：这2个是一样的效果</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com%1120
+113,ailll,ailll.com%1130
+114,ccc,ccc.com%1140
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;[,:%]&#8221;} {print $2, $3}&#8217; test.txt  #在这里会匹配‘,’,‘:’,&#8217;%&#8217;这三个分割符，三者是或者的关系
+dongwm dongwm.com
+ailll ailll.com
+ccc ccc.com
+2 OFS 输出字段分隔符，模认的是空格
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;{print $2, &#8220;:&#8221;, $3}&#8217; test.txt
+dongwm : dongwm.com
+ailll : ailll.com
+ccc : ccc.com
+其实这个例子可以用下面的语句实现
+dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;BEGIN { OFS=&#8221;:&#8221; } { print $2, $3 }&#8217; test.txt
+dongwm:dongwm.com
+ailll:ailll.com
+ccc:ccc.com
+3 RS 记录分隔符
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm:113,ailll:114,ccc
+dongwm@linux-dongwm:~&gt; awk -F, &#8216;{print $2}&#8217; test.txt
+dongwm:113  #因为在一行里面，没有实现取出所有符合要求的值
+dongwm@linux-dongwm:~&gt; awk -F, &#8216;BEGIN { RS=&#8221;:&#8221; } {print $2}&#8217; test.txt  #s使用RS可以实现
+dongwm
+ailll
+ccc
+一个复杂的例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112
+dongwm
+dongwm.com
+-
+113
+ailll
+ailll.com
+-
+114
+ccc
+ccc.com
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;\n&#8221;; RS=&#8221;-\n&#8221;; OFS=&#8221;:&#8221; } {print $2, $3}&#8217; test.txt
+dongwm:dongwm.com
+ailll:ailll.com
+ccc:ccc.com
+4 ORS 输出记录分割符</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;,&#8221;; ORS=&#8221;\n&#8212;\n&#8221; } {print $2, $3}&#8217; test.txt #在输出的时候，每行都添加了一段‘\n&#8212;\n’
+dongwm dongwm.com
+&#8212;
+ailll ailll.com
+&#8212;
+ccc ccc.com
+&#8212;
+5 NR 对数量的记录
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
+{print &#8220;Test Id of record number&#8221;,NR,&#8221;is&#8221;,$1;} \
+END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt
+Test Id of record number 1 is 112
+Test Id of record number 2 is 113
+Test Id of record number 3 is 114
+Total number of records: 3
+6 FILENAME  当前的文件名</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;{ print FILENAME }&#8217; test.txt
+test.txt
+test.txt
+test.txt  #因为有三行数据，每行打印了一次</p>
+
+<p>7 FNR 记录的数量的文件  NR会保存数据在多文件中一直增长，但FNR不会，他只是记录当前文件的数量记录</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
+{print FILENAME &#8220;: record number&#8221;,NR,&#8221;is&#8221;,$1;} \
+END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt test.txt.bak
+test.txt: record number 1 is 112
+test.txt: record number 2 is 113
+test.txt: record number 3 is 114
+test.txt.bak: record number 4 is 112
+test.txt.bak: record number 5 is 113
+test.txt.bak: record number 6 is 114
+Total number of records: 6
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
+{print FILENAME &#8220;: record number&#8221;,FNR,&#8221;is&#8221;,$1;} \
+END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt test.txt.bak
+test.txt: record number 1 is 112
+test.txt: record number 2 is 113
+test.txt: record number 3 is 114
+test.txt.bak: record number 1 is 112
+test.txt.bak: record number 2 is 113
+test.txt.bak: record number 3 is 114
+Total number of records: 6</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-18T00:00:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/categories/linuxji-chu/'>linux基础</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/guanyuawkyanjiuyi/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/guanyuawkyanjiuer/" title="Previous Post:
+        关于awk研究（二）">&laquo; 关于awk研究（二）</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/guanyuawkyanjiusi/"
+        title="Next Post: 关于awk研究（四）">关于awk研究（四）
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/guanyuawkyanjiuyi/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/guanyuawkyanjiuyi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

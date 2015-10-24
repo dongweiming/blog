@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: opensuse | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/opensuse/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[跨操作系统初始化安装工具(laptop)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell/"/>
+    <updated>2013-04-08T18:07:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>上周看了<a href="https://github.com/docopt/docopt">docopt</a>, 感想很多。最近因为工作需要用opensuse，用ubuntu，个人pc用gentoo，
+实在够折腾，每个系统都要相应的安装那些软件，搭建环境。早就想好好整理下思路，更geek的做这件事情。上段时间还看了个
+<a href="https://github.com/thoughtbot/laptop">laptop</a>,觉得能力很一般，但是fork真不少。但是确实这个想法很不错，很有必要。
+然后周末就构思了我的<a href="https://github.com/orzrd/laptop.git">laptop</a></p>
+
+<h4 id="section-1">它的特性</h4>
+
+<ul>
+  <li>记录操作记录，当某处出现故障，下次会从这个位置继续执行，而不需要全部执行一遍</li>
+  <li>受<a href="https://github.com/docopt/docopt">docopt</a>启发，根据我特定的语法写配置文件，不需要修改初始化脚本initialize.sh</li>
+  <li>只需要添加你要安装的软件包的安装命令（使用包管理器的就需要修改相应操作系统的install文件）</li>
+  <li>支持对已安装软件的确认，不再安装而跳过</li>
+  <li>根据特定语法打印安装过程的提示</li>
+  <li>提供绿色，红色的asciilinux终端显示字体</li>
+  <li>执行在没有git等环境下git clone项目安装</li>
+</ul>
+
+<h4 id="section-2">目前每个版本会安装那些软件？</h4>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gcc</td>
+          <td>g++</td>
+          <td>automake</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>tmux</td>
+          <td>htop</td>
+          <td>dstat</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>ruby</td>
+          <td>python</td>
+          <td>python库</td>
+          <td>expect</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>zsh</td>
+          <td>oh-my-zsh</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>easy_install</td>
+          <td>pip</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>django</td>
+          <td>torando</td>
+          <td>flask</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>nginx</td>
+          <td>uwsgi</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>redis</td>
+          <td>mongodb</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>mit-scheme</td>
+          <td>commonlisp</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>emacs</li>
+  <li>gitflow</li>
+  <li>celery</li>
+  <li>colout</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>MySQLdb</td>
+          <td>pymongo</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>taglist</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gevent</td>
+          <td>twisted</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>the_silver_searcher</li>
+  <li>检查vim是否自带python/ruby支持，否则下载编译一个执行的版本</li>
+  <li>我的常用脚本<a href="https://github.com/orzrd/mytools.github">mytools</a>,目前包含一个expect脚本和orzdba</li>
+  <li>我的<a href="https://github.com/dongweiming/dotfiles.git">dotfiles</a></li>
+</ul>
+
+<h2 id="gentoo">gentoo系统一些软件</h2>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gentoolkit</td>
+          <td>module-rebuild</td>
+          <td>genlop</td>
+          <td>eix</td>
+          <td>euses</td>
+          <td>elogv</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>fcitx</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>iproute2</td>
+          <td>netkit-telnetd</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="section-3">使用方法</h4>
+
+<ol>
+  <li>有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;git clone https://github.com/orzrd/laptop
+shell&gt;cd laptop
+shell&gt;bash initialize.sh
+</pre></figure></notextile></div>
+
+<ol>
+  <li>没有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;bash &lt;(curl -s https://raw.github.com/orzrd/laptop/master/setup_laptop)
+</pre></figure></notextile></div>
+
+<h5 id="section-4">脚本语法</h5>
+
+<h2 id="section-5">可操作文件</h2>
+
+<ol>
+  <li>common.install: 用户自定义的软件安装脚本，推荐非操作系统包管理器的都放在这里，注意逻辑顺序</li>
+  <li>opensuse/ubuntu/gentoo.install: 相应系统的安装脚本，这个只需要修改，我的脚本会自动根据系统信息找到</li>
+  <li>initialize.sh： 假如你想把需要我的安装方法，添加功能等，修改他，他是主入口</li>
+  <li>
+    <p>setup_laptop： 当用户没有git环境不能git clone  直接远程curl我，主要是下载git，clone我的laptop</p>
+  </li>
+  <li>’#’  以’#’开头的行表示这个信息会被安装过程以绿色字体打印，提示一下你要安装的东西等</li>
+  <li>： 以’:’开头的行，表示后面的字符串是个命令，也就是检查这个软件包有没有被安装需要的，假如which找到了路径说明被安装</li>
+  <li>; 以’;’开头的行为注释</li>
+  <li>其它行就是要执行的语句，请不要当作shell注释等，因为他会把你写的东西当成要执行的命令</li>
+</ol>
+
+<h2 id="todo">TODO</h2>
+
+<ul>
+  <li>文件下载后就不需要再下载而直接使用</li>
+  <li>在执行某软件的安装过程中其他进程继续下载其他软件包（也就是实现shell版本的emerge）</li>
+  <li>进度条或者python_koans的提示已完成/剩余，更多的异常处理等</li>
+  <li>更多的异常处理</li>
+  <li>打印彩色字体内容嵌其他颜色字体（比如提示出错，高亮错误的原因或者软件包）</li>
+</ul>
+
+<h2 id="forkpull-requestissue">注意我的项目地址，欢迎各种fork，pull request，issue</h2>
+
+<h3 id="httpsgithubcomorzrdlaptop">https://github.com/orzrd/laptop</h3>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[linux下升级到最新版本firefox浏览器]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/linuxxiashengjidaozuixinbanbenfirefoxlanqi/"/>
+    <updated>2012-07-11T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/linuxxiashengjidaozuixinbanbenfirefoxlanqi</id>
+    <content type="html"><![CDATA[<p>前言：一直是firefox忠实用户，本文是普及篇，系统是opensuse11.3，其他系统请借鉴方法</p>
+
+<p>1 首先查看当前系统firefox信息：</p>
+
+<p>linux-vkmz:~ # rpm -qa|grep -i firefox
+MozillaFirefox-3.6.6-1.2.i586  #这里就是firefox的版本3.6.6，而现在最新版本已经是firefox13.0.1，可是系统源没有更高版本
+MozillaFirefox-branding-openSUSE-3.5-16.2.i586
+MozillaFirefox-translations-common-3.6.6-1.2.i586
+2 下载最新版本firefox：</p>
+
+<p>linux-vkmz:~ # wget http://download.firefox.com.cn/releases/firefox/13.0/zh-CN/Firefox-latest.tar.bz2</p>
+
+<p>linux-vkmz:~ #tar jxf Firefox-latest.tar.bz2 #解压缩</p>
+
+<p>3 查看系统firefox被安装到了那里</p>
+
+<p>linux-vkmz:~ # rpm -ql MozillaFirefox-3.6.6-1.2.i586</p>
+
+<p>/usr/bin/firefox  #我只截取了一部分，可以看见库文件在/usr/lib，可执行文件在/usr/bin
+/usr/lib/firefox
+/usr/lib/firefox/application.ini
+/usr/lib/firefox/blocklist.xml
+/usr/lib/firefox/chrome
+/usr/lib/firefox/chrome/browser.jar
+/usr/lib/firefox/chrome/browser.m</p>
+
+<p>...
+linux-vkmz:~ #cp -rp firefox/* /usr/lib/firefox/   #拷贝lib文件到系统安装的firefox路径下</p>
+
+<p>linux-vkmz:~ #cp -rp firefox/firefox* /usr/bin/ #拷贝2个可执行文件到/usr/bin下</p>
+
+<p>OK了</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[解决Linux下打开的应用程序不在gnome桌面面板上面显示]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/jiejuelinuxxiadakaideyingyongchengxubuzaignomezhuomianmianbanshangmianxianshi/"/>
+    <updated>2012-03-08T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/jiejuelinuxxiadakaideyingyongchengxubuzaignomezhuomianmianbanshangmianxianshi</id>
+    <content type="html"><![CDATA[<p>前言：最近把我的opensuse的软件更新了一下，后来发现现在打开的程序没有在底部的面板上显示，当我打开多个程序的时候只能使用compiz特效‘alt’＋‘tab’键去找我想要让目前窗口显示的程序，很不方便（包括安装了Cairo-Dock，当程序最小化了在dock界面也不会有这个程序的图标，也不方便）</p>
+
+<p>解决办法：</p>
+
+<p>中文系统：在下面的gnome面板上，鼠标右键点开－》选择‘添加到面板’ －》‘窗口列表’</p>
+
+<p>英文系统：在下面的gnome面板上，鼠标右键点开－》选择“Add to Panel” －》 "Window List"</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[opensuse安装anjuta]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/opensuseanzhuanganjuta/"/>
+    <updated>2012-02-27T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/opensuseanzhuanganjuta</id>
+    <content type="html"><![CDATA[<p>问题：以前使用anjuta在gentoo下调试c/c++程序，最近在opensuse11.4想使用anjuta，发现yast/zypper安装的anjuta不能新建项目，直接卡住，然后杀掉进程后再启动anjuta会停止在"加载调试器"这一步。</p>
+
+<p>解决：1 使用源码安装：http://ftp.gnome.org/pub/GNOME/sources/anjuta</p>
+
+<p>发现各个版本（从2.1.0到3.3）都有一些依赖关系，重新编译安装会对现在的系统造成影响，比如我安装了一个新版本的glib，造成xwindows启动不了，最后在修复模式卸载了才恢复</p>
+
+<p>2  使用jhbuild</p>
+
+<p>提示 在autogen的过程中： gtkdocize: command not found  失败</p>
+
+<p>3 根据anjuta官网wiki https://live.gnome.org/DeveloperTools/Installation 文档安装 还是同样的问题，不能新建项目</p>
+
+<p>最终解决办法：</p>
+
+<p>从github上面找了一个anjuta源码版本：</p>
+
+<p>https://github.com/abderrahim/anjuta.git
+过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; git clone https://github.com/abderrahim/anjuta.git
+cd anjuta/
+./autogen.sh</p>
+
+<p>make</p>
+
+<p>sudo make install</p>
+
+<p>因为默认安装在/use/local下，需要</p>
+
+<p>sudo vi /etc/ld.so.conf
+添加一行： /usr/local/lib</p>
+
+<p>sudo /sbin/ldconfig</p>
+
+<p>这个anjuta正常了</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[opensuse rpm数据库损坏的解决方法]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/opensuserpmshujukusunhuaidejiejuefangfa/"/>
+    <updated>2012-02-23T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/opensuserpmshujukusunhuaidejiejuefangfa</id>
+    <content type="html"><![CDATA[<p>opensuse后来使用不知道为什么，安装更新软件以及我最近做的从11。4升级到12。1的操作，都会报类似的错误：</p>
+
+<p>rpmdb: PANIC: fatal region error detected; run recovery
+error: db3 error(-30977) from db-&gt;sync: DB_RUNRECOVERY: Fatal error, run database recovery
+rpmdb: PANIC: fatal region error detected; run recovery
+下列软件包在安装期间或安装后或移除时出现问题：
+Installation aborted by user
+研究发现：这是因为rpm数据库损坏了，解决办法</p>
+
+<p>使用 <span style="color: navy;"># rpm --rebuilddb</span> 或者 <span style="color: navy;"># rpm -initdb</span> 、（重新建立了rpm库里的记录）</p>
+
+<p>但是 加入还是不行，那只能这样：</p>
+
+<p>rm /var/lib/rpm/__db*</p>
+
+<p>rpm --rebuilddb
+yum clean all  会删除之前的缓存，例如刚下载国12。1的那些更新包，就不能使用 ，需要重新下载安装了</p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+</feed>

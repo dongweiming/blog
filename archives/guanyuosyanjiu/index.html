@@ -1,0 +1,737 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>关于os研究 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/guanyuosyanjiu">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">关于os研究</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前言：os可谓python模块最常用模块之一了，也称作：操作系统混合接口，包含的大部分函数用于创建和管理活动进程和文件系统(文件和目录)，但是有些函数在windows上无法使用</p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>TEST_GID=501
+TEST_UID=527</p>
+
+<p>def show_user_info():
+     print 'Effective User  :', os.geteuid()
+     print 'Effective Group :', os.getegid()
+     print 'Actual User    :', os.getuid(), os.getlogin()
+     print 'Actual Group  :', os.getgid()
+     print 'Actual Groups   :', os.getgroups()
+     return</p>
+
+<p>print 'BEFORE CHANGE:'
+show_user_info()
+print
+try:
+     os.setegid(TEST_GID)  #改变这个进程的用户和组属性. 需要root权限，否则改不了
+except OSError:
+     print 'ERROR: Could not change effective group.  Re-run as root.'
+else:
+     print 'CHANGED GROUP:'
+     show_user_info()
+     print</p>
+
+<p>try:
+     os.seteuid(TEST_UID)
+except OSError:
+     print 'ERROR: Could not change effective user.  Re-run as root.'
+else:
+     print 'CHANGE USER:'
+     show_user_info()
+     print
+print 'Initial value:', os.environ.get('TESTVAR', None) #访问在环境中设置的环境变量
+print 'Child process:'
+os.system('echo $TESTVAR')  #os.system通过一个shell中的子进程执行系统命令，但是现在不推荐这个函数.它可以包含shell语法, 比如通配符或环境变量:</p>
+
+<p>os.environ['TESTVAR'] = 'THIS VALUE WAS CHANGED'</p>
+
+<p>print
+print 'Changed value:', os.environ['TESTVAR']
+print 'Child process:'
+os.system('echo $TESTVAR')</p>
+
+<p>del os.environ['TESTVAR']</p>
+
+<p>print
+print 'Removed value:', os.environ.get('TESTVAR', None)
+print 'Child process:'
+os.system('echo $TESTVAR')
+print 'Starting:', os.getcwd()  #类似于执行命令pwd，获取当前目录
+print os.listdir(os.curdir)  #列出当前目录下所有文件和文件夹</p>
+
+<p>print 'Moving up one:', os.pardir  
+os.chdir(os.pardir) #改变目录到当前目录的上一级目录，想过类似于： cd .. </p>
+
+<p>print 'After move:', os.getcwd()
+print os.listdir(os.curdir)
+</pre></p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>print '\npopen, read:'
+pipe_stdout = os.popen('echo "to stdout"', 'r')  #os.popen是管道函数
+try:
+    stdout_value = pipe_stdout.read() #标准输出流
+finally:
+    pipe_stdout.close()
+print '\tstdout:', repr(stdout_value)</p>
+
+<p>print '\npopen, write:'
+pipe_stdin = os.popen('cat -', 'w')
+try:
+    pipe_stdin.write('\tstdin: to stdin\n') #标准输入流
+finally:
+    pipe_stdin.close()
+print '\npopen2:'
+pipe_stdin, pipe_stdout = os.popen2('cat -')  #popen2()函数返回一个与子进程标准输入绑定的只写流和一个与子进程标准输出绑定的只读流
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()</p>
+
+<p>try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+print '\npopen3:'
+pipe_stdin, pipe_stdout, pipe_stderr = os.popen3('cat -; echo ";to stderr" 1&gt;&amp;2') #popen3函数返回一个新进程的3个流stdin、stdout、stderr
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+try:
+    stderr_value = pipe_stderr.read()
+finally:
+    pipe_stderr.close()
+print '\tstderr:', repr(stderr_value)
+print '\npopen4:'
+pipe_stdin, pipe_stdout_and_stderr = os.popen4('cat -; echo ";to stderr" 1&gt;&amp;2') # popen4()返回两个流, stdin和stdout/stderr的组合,
+                                                # 这对于命令的结果需要被记录, 但不需要解析是很有用的.
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout_and_stderr.read()
+finally:
+    pipe_stdout.close()
+print '\tcombined output:', repr(stdout_value)
+print '\npopen2, cmd as sequence:'
+pipe_stdin, pipe_stdout = os.popen2(['cat', '-']) #popen2()、popen3()、popen4()函数同样接收字符串序列(命令, 加参数)
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+</pre></p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>print 'Testing:', __file__
+print 'Exists:', os.access(__file__, os.F_OK) #os.access()可以测试一个进程对一个文件是否有可访问权限.os.F_OK测试存在,返回布尔值
+print 'Readable:', os.access(__file__, os.R_OK) #os.R_OK测试可读,返回布尔值
+print 'Writable:', os.access(__file__, os.W_OK) #os.W_OK测试可写,返回布尔值
+print 'Executable:', os.access(__file__, os.X_OK) #os.X_OK测试可读,返回布尔值
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Testing: test.py
+Exists: True
+Readable: True
+Writable: True
+Executable: False
+<pre class="sh_python">
+import os
+import sys
+import time</p>
+
+<p>if len(sys.argv) == 1:
+    filename = __file__
+else:
+    filename = sys.argv[1]</p>
+
+<p>stat_info = os.stat(filename)</p>
+
+<p>print 'os.stat(%s):' % filename
+print '\tSize:', stat_info.st_size  #字节数
+print '\tPermissions:', oct(stat_info.st_mode) #文件权限
+print '\tOwner:', stat_info.st_uid  #文件uid（拥有者）
+print '\tDevice:', stat_info.st_dev #文件所在文件设备
+print '\tLast modified:', time.ctime(stat_info.st_mtime)  #文件修改时间（最近一次）
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+os.stat(test.py):
+Size: 388
+Permissions: 0100644
+Owner: 1000
+Device: 2055
+Last modified: Thu Jul  5 11:19:28 2012
+<pre class="sh_python">
+import os
+import stat</p>
+
+<p>existing_permissions = stat.S_IMODE(os.stat(__file__).st_mode)  #确定哪些权限已设置使用</p>
+
+<p>if not os.access(__file__, os.X_OK):
+    print 'Adding execute permission'
+    new_permissions = existing_permissions | stat.S_IXUSR #添加权限
+else:
+    print 'Removing execute permission'
+    new_permissions = existing_permissions ^ stat.S_IXUSR   #去掉权限</p>
+
+<p>os.chmod(__file__, new_permissions)
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import sys
+import tempfile dir_name = 'os_directories_example'</p>
+
+<p>print 'Creating', dir_name
+os.makedirs(dir_name)  #创建文件夹</p>
+
+<p>file_name = os.path.join(dir_name, 'example.txt')
+print 'Creating', file_name
+f = open(file_name, 'wt')  #添加文件
+try:
+    f.write('example file')
+finally:
+    f.close()</p>
+
+<p>print 'Listing', dir_name
+print os.listdir(dir_name)</p>
+
+<p>print 'Cleaning up'
+os.unlink(file_name)  #相当于删掉文件
+os.rmdir(dir_name)  #删除文件夹
+link_name = tempfile.mktemp()</p>
+
+<p>print 'Creating link %s-&gt;%s' % (link_name, __file__)
+os.symlink(__file__, link_name)  #创建符号链接 ，类似于ln -s</p>
+
+<p>stat_info = os.lstat(link_name) #链接文件的状态
+print 'Permissions:', oct(stat_info.st_mode)</p>
+
+<p>print 'Points to:', os.readlink(link_name)  #链接文件源文件
+os.unlink(link_name)
+if len(sys.argv) == 1:
+    root = '/tmp'
+else:
+    root = sys.argv[1]</p>
+
+<p>for dir_name, sub_dirs, files in os.walk(root):  #os.walk()可以递归遍历一个目录
+    print '\n', dir_name
+    sub_dirs = [ '%s/' % n for n in sub_dirs ]
+    contents = sub_dirs + files
+    contents.sort()
+    for c in contents:
+        print '\t%s' % c
+</pre></p>
+
+<p><pre class="sh_python">
+pid = os.fork() #创建一个新进程作为当前进程的一个复本,当fork之后, 你结束这两个运行着相同代码的进程. 可以检查返回值来直到你在哪个进程中. 
+                #如果它是0, 表示你在子进程中, 如果不是0, 则表示你在父进程中, 它返回的值是其子进程的进程id.</p>
+
+<p>if pid:
+    print 'Child process id:', pid
+else:
+    print 'I am the child'
+</pre></p>
+
+<p><pre class="sh_python"></p>
+
+<p>import os
+import signal
+import time</p>
+
+<p>def signal_usr1(signum, frame):
+    pid = os.getpid()
+    print 'Received USR1 in process %s' % pid
+print 'Forking...'
+child_pid = os.fork()
+if child_pid: ## 这个是父进程执行的代码
+    print 'PARENT: Pausing before sending signal...'
+    time.sleep(1)
+    print 'PARENT: Signaling %s' % child_pid
+    os.kill(child_pid, signal.SIGUSR1) #父进程中, 通过 <tt>os.kill()</tt> 发送一个USR1信号之前暂停一段时间. 这短的暂停让子进程有时间去设置信号处理句柄
+else: #在子进程中, 我们设置信号处理句柄后睡眠一段时间来让父进程有时间去发送信号给我们
+    print 'CHILD: Setting up signal handler'
+    signal.signal(signal.SIGUSR1, signal_usr1)
+    print 'CHILD: Pausing to wait for signal'
+    time.sleep(5)
+</pre></p>
+
+<p>执行分析：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Forking&#8230;
+PARENT: Pausing before sending signal&#8230;
+CHILD: Setting up signal handler
+CHILD: Pausing to wait for signal
+PARENT: Signaling 1946
+Received USR1 in process 1946
+<pre class="sh_python">
+child_pid = os.fork()
+if child_pid:
+    os.waitpid(child_pid, 0) #指示父进程等候一个指定的子进程终止
+else:
+    os.execlp('ls', 'ls', '-l', '/tmp/') ## 执行多个子进程.有很多 <tt>exec*()</tt> 的变种, 它们依赖于你可能使用的参数, 如, 你是否想要路径和父进程的环境变量都被复制到子进程中
+os.spawnlp(os.P_WAIT, 'ls', 'ls', '-l', '/tmp/') #方便起见, <tt>os.spawn*()</tt> 系列函数将 <tt>fork()</tt> 和 <tt>exec*()</tt> 调用写在一条语句中
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+import os
+import sys
+import time</p>
+
+<p>for i in range(3):
+    print 'PARENT: Forking %s' % i
+    worker_pid = os.fork()
+    if not worker_pid:
+        print 'WORKER %s: Starting' % i
+        time.sleep(2 + i)
+        print 'WORKER %s: Finishing' % i
+        sys.exit(i)</p>
+
+<p>for i in range(3):
+    print 'PARENT: Waiting for %s' % i
+    done = os.wait() #多个进程来运行各自的任务, 你希望在开始新的进程之前等待其中一个或多个的结束, 以此来避免服务器的超载.
+                     #返回值是包含进程号和退出状态(一个16位的数字, 它的低字节是一个杀死该进程的信号数字, 它的高字节是退出状态)的一个元组.
+    print 'PARENT:', done
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/pythonmo-kuai-yan-jiu/'>python模块研究</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/guanyuosyanjiu/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/guanyuos-pathyanjiu/" title="Previous Post:
+        关于os.path研究">&laquo; 关于os.path研究</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/guanyusocketserveryanjiu/"
+        title="Next Post: 关于SocketServer研究">关于SocketServer研究
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/guanyuosyanjiu/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/guanyuosyanjiu/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

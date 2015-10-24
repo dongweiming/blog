@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: slack | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/slack/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[slack-alert - 把定时任务的结果发送slack消息的微框架]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/"/>
+    <updated>2015-07-26T18:08:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>为什么要做<a href="https://github.com/dongweiming/slack-alert">slack-alert</a>呢? 成因其实是我一直想做的AST相关的一个项目.
+正好是一个机会. 其次也是业务需要:</p>
+
+<p>工程师都比较懒, 在每天的各种问题邮件几百几千封的时候会经常遗漏重要的邮件. 会经常被用户以及公司其他同事发现问题时@到时候才发现.
+现在大家也接受了slack这个工具. 那么我就在想何不把更重要的消息发送到slack里呢.</p>
+
+<p>原来也做过, 就是写一些脚本, 会把运行的结果通过<a href="https://github.com/os/slacker">slacker</a>里面封装的<a href="https://api.slack.com/methods/chat.postMessage">postMessage</a>发消息进来.
+先说一下为什么我不用<a href="https://api.slack.com/incoming-webhooks">Incoming-webhooks</a>. 最主要的, 因为通常slack都是用的免费版, 我担心对webhooks会有限制或者未来会有限制.</p>
+
+<p>但是为什么做这个<code>微框架</code>呢? 一则这样的脚本和任务会越来越多, 脚本需要设置的定时任务的间隔也会各不相同. 用系统自带的crontab, 每次新增修改删除都要去做调整.
+代码还需要做抽象; 用celery, rq这些其实一是很浪费, 二也不怎么应景. 所以我写了这个工具.</p>
+
+<h4 id="section-1">优点和特点</h4>
+
+<ol>
+  <li>只支持python3</li>
+  <li>支持多种调度模式: AsyncIOScheduler, BackgroundScheduler, GeventScheduler, TornadoScheduler. 默认是AsyncIO</li>
+  <li>使用<a href="https://docs.python.org/3/library/ast.html">AST</a>, 而没有直接import代码.</li>
+  <li>代码和项目无关, 没有register. 只需要按格式编写plugin脚本即可, 要被执行的任务加一个装饰器(只需要他是一个装饰器, 不需要存在). 指定运行的间隔就好</li>
+  <li>附带常用的配置</li>
+</ol>
+
+<h4 id="section-2">安装</h4>
+
+<p><code>
+pip install slack-alert
+</code></p>
+
+<p>slack-alert有个默认的配置<a href="https://github.com/dongweiming/slack-alert/blob/master/slack_alert.conf">slack_alert.conf</a>.
+使用<code>OS X</code>或者<code>linux</code>可以拷贝到 <code>~/.config/slack_alert.conf</code></p>
+
+<h4 id="section-3">编写插件</h4>
+
+<p>PS: 插件目录默认是当前目录的<code>plugins</code>子目录下.</p>
+
+<p>```
+tree plugins
+plugins
+├── examples.py</p>
+
+<p>0 directories, 1 files
+```</p>
+
+<p>```python
+# coding=utf-8
+import os</p>
+
+<p>@deco(seconds=2)  # 这个一个正确格式的任务, 因为装饰器里面包含<code>hours|seconds|minutes|days</code>这样的键.
+def a():
+    print(1)  # 插件也需要python3的语法
+    print(os)  # 可以使用外部的变量
+    return 1  # 这个返回值最后会被发送到slack的channel里面</p>
+
+<p>def b():  # 这个函数因为没有对应的格式的装饰器 他不会被当做一个任务
+    print(3)
+    return 2</p>
+
+<p>@deco2(xx=1)
+@deco(minutes=2, seconds=30)
+def c():  # 这个函数也不是一个正确格式的装饰器. 我需要把<code>deco</code>放在最外面
+    print(4)
+    return 3
+```</p>
+
+<p>PS: 大家不要迷惑为什么<code>deco</code>这个函数没有介绍. 因为我只需要这个代码文本. 我其实不直接运行这个脚本. 所以不需要装饰器存在.</p>
+
+<h4 id="section-4">使用</h4>
+
+<p><code>
+slack-alert
+</code></p>
+
+<p>这样就启动了.</p>
+
+<p><code>a</code>这个函数就会每隔2秒运行一次， 运行三次后, 停顿60分钟… 这样循环(高级用法看下面的参数). 并且把结果发送到slack里面</p>
+
+<h4 id="section-5">原理</h4>
+
+<ol>
+  <li>启动<code>slack-alert</code> 我首先加载配置.</li>
+  <li>我会根据配置<code>--path</code>去找我应该去哪个文件目录下(默认是当前目录)的<code>plugins</code>子目录下去找符合的任务程序.</li>
+  <li>加载符合的目录下的每个python文件. 生成一个AST(抽象语法树).</li>
+  <li>遍历这棵树. 找到符合我需要的语法的函数. 去掉这个实际不存在的装饰器. 编译源码并且执行. 生成一个命名空间</li>
+  <li>获取这个命名空间的参数, 通过<a href="http://apscheduler.readthedocs.org/en/latest/">apscheduler</a>. 添加一个任务</li>
+  <li>添加全部任务. 再添加一个监控这些任务的任务(主要是用来在某些时机停掉/启动其他某些任务)</li>
+  <li>启动任务调度. 直到<code>Ctrl+C</code></li>
+</ol>
+
+<h4 id="section-6">高级选项</h4>
+
+<p>可以参照源码的选项:</p>
+
+<ol>
+  <li><a href="https://github.com/dongweiming/slack-alert#config-files-options">Config file”s Options</a></li>
+  <li><a href="https://github.com/dongweiming/slack-alert#command-options">Command Options</a></li>
+</ol>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[slack上的小黄鸡 - SlackBot]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/slackshang-de-xiao-huang-ji-slackbot/"/>
+    <updated>2015-06-23T23:28:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/slackshang-de-xiao-huang-ji-slackbot</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p><a href="http://www.slack.com/">Slack</a>是一个最近一年兴起的团队沟通协作平台. 程序员对工具其实是最有品位和要求的，相信国内很多公司和团队都在使用，豆瓣也算比较早在用.
+相信用过的人会理解本文. 如果你还没有接触它, 尤其是对现有的团队沟通协作工具有些不满, 可以试一下.</p>
+
+<p>本文就是介绍我们在最近做出来的一个bot - <a href="https://github.com/python-cn/slack_bot">slack_bot</a>. 它的口号是: 立志成为一个可被调戏且有用的Bot</p>
+
+<h3 id="section-1">为什么</h3>
+
+<p>无论是运维还是开发, 某些时间都会收到一些邮件/提醒, 可能是固定的时间的定时任务跑出来的结果,
+也可能是某个故障引起的问题邮件. 我们都很烦手头有好几个东西来接收这些消息， 而slack可以使用某些方法让这些问题集中起来.</p>
+
+<p>比如很常用的, 使用<a href="https://api.slack.com/methods/chat.postMessage">chat</a>或者<a href="https://api.slack.com/incoming-webhooks">incoming-webhooks</a>接收消息. 做什么呢?
+我可以把一些昨天的数据汇总或者汇总的地址在今天早上发到某个channel下, 这样想要看这个数据的人直接点进去就好了.
+当然啦, 也可以直接发消息到某个人. 一个具体的例子: 豆瓣的同事都知道, 我们的测试环境时间过期就会被删除, 在某段时间里面每天都有很多人在关注我们要新上的一个测试的地址,
+但是经常被同事@, 说地址怎么找不到了, 那么我就要抽出精力再去创建一个. 后来一想, 索性跑个定时任务, 拉最新的代码, 走逻辑, 生成一个测试环境. 每天都会在channel里面发消息给对应关心这个消息的人.
+一段时间以后, 我们的工作完成了, 同事都有点不适用, 哎， 怎么早上看不到那个消息了…</p>
+
+<p>但是今天说的是什么呢? 我们的slack_bot主要借用<a href="https://api.slack.com/outgoing-webhooks">outgoing-webhooks</a>. incoming表示把消息推到slack里面,
+outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳到我们提供的回调地址, 根据内容返回对应符合的回复. 大家是不是有点懂了, 这就是小黄鸡的原理.</p>
+
+<p>说到这里大家应该明白了. 其实slack给我们提供了很大的想象和实现的空间. 我立刻想起来做运维时候做的一些事情:</p>
+
+<p>比如当时有时候要去机房, 路上没有网(2g上网太慢), 有时候想看个监控状态, 切个负载均衡, 重启个服务什么的, 后来做了一个东西, 就是给某些号码发某些特殊的短信内容就可以获得想要的结果, 执行想做的事情.
+其实slack_bot只是一些爬虫的集合, 一些功能实现的例子. 在实际开发和工作中可以做很多更有意思的, 公司内部的插件. 和公司的业务相关, 和自己做的事情相关. 这样在路上就能用.
+比如我的地图功能, 我可以在网络不好的时候找到行程的最好路线; 我用公交插件可以实时的看我要等的公交需要多久到达, 我可以踩着点去站牌….</p>
+
+<h3 id="section-2">小黄鸡原理</h3>
+
+<p>小黄鸡很火的时候, 我还是一个perl运维…</p>
+
+<p>小黄鸡其实调用的是<a href="http://developer.simsimi.com/">simsim</a>的接口. 大家都可以去注册一个key来玩,也可以用项目自带的.</p>
+
+<p>其实就是post一个数据到simsim的api上, 他会返回你对应的小黄鸡的回复.</p>
+
+<h3 id="section-3">项目介绍</h3>
+
+<p>很多人听过甚至曾经用过<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>. 你可以把本bot理解为<code>增加了很多
+功能</code>, <code>只保留小黄鸡交流的基本逻辑</code>, <code>用于slackchannel里面</code>的<code>小黄鸡</code></p>
+
+<p>项目使用flask, 目前本项目是一个heroku应用. 地址是 https://slack-bot2.herokuapp.com/slack_callback 但是你
+也可以直接裸跑</p>
+
+<p><code>python
+gunicorn wsgi:app localhost:5000 --timeout 240 --log-file -
+</code></p>
+
+<p>你也可以使用heroku创建一个新的应用, 直接用我们的项目代码就可以.</p>
+
+<h3 id="slack">我们使用slack的特性</h3>
+
+<ol>
+  <li>可以把消息私聊发给自己</li>
+  <li>可以使用带图的方式接收结果(支持canvas, 以下会看到例图)</li>
+</ol>
+
+<h3 id="section-4">继承自小黄鸡的模块们, 但是都做了对应的修改:</h3>
+
+<ol>
+  <li>空气插件</li>
+  <li>wikipedia</li>
+  <li>地震了</li>
+  <li>糗百</li>
+  <li>orz  # orz需要自定义emoji</li>
+</ol>
+
+<h3 id="section-5">新加的模块们:</h3>
+
+<h4 id="section-6">地图插件 - 你可以输入我想从哪去哪, 会给你个路线(步行/开车/公交)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map2.png" alt="" /></p>
+
+<h4 id="api-">天气插件 - 使用了百度api, 获得城市的天气情况</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/weather.png" alt="" /></p>
+
+<h4 id="section-7">北京公交插件 - 可以查询北京公交线路, 获取实时的到某站的信息(有些线路站点不准)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus2.png" alt="" /></p>
+
+<h4 id="api---">美食插件 - 使用大众点评网api, 获取附近餐饮信息, 评分, 电话地址,距离等等</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/dianping.png" alt="" /></p>
+
+<h4 id="segmentfaultcsdn">技术活动插件 - 从segmentfault/csdn/车库咖啡/活动行获得最近的活动列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/events.png" alt="" /></p>
+
+<h4 id="githubissue---pull-requests">Github_issue插件 - 获得你个人或者组织下未处理的Pull requests列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/issue.png" alt="" /></p>
+
+<h4 id="section-8">电影信息插件 - 列出最近上映和即将上映的电影信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/movie.png" alt="" /></p>
+
+<h4 id="pycoders---pycoders-weekly">pycoders插件 - 获得<pycoders weekly="">订阅数据</pycoders></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pycoders.png" alt="" /></p>
+
+<h4 id="pythonweekly---pythonweekly">pythonweekly插件 - 获得<pythonweekly>订阅数据</pythonweekly></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pythonweekly.png" alt="" /></p>
+
+<h4 id="section-9">头条插件 - 获得今日头条新闻</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/toutiao.png" alt="" /></p>
+
+<h4 id="travel---">travel插件 - 旅游推荐/景点介绍</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel2.png" alt="" /></p>
+
+<h4 id="v2ex-feed---feed">v2ex feed插件 - 获得一些节点的最新feed</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/v2ex.png" alt="" /></p>
+
+<h4 id="help---">help插件 - 列出所有插件的帮助信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/help.png" alt="" /></p>
+
+<h4 id="simsim">最主要的是小黄鸡(simsim)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/simsim.png" alt="" /></p>
+
+<h4 id="slackbot-channel">也可以直接发到个人的slackbot channel里:</h4>
+
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct2.png" alt="" /></p>
+
+<h3 id="slack-1">配置slack</h3>
+
+<p>去你的slack组织的services页面. 比如我们是 https://pythoncn.slack.com/services/new. 找到<code>Outgoing WebHooks</code>:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311561/9ef87dc2-1a09-11e5-9d87-132d8d534042.png" alt="" /></p>
+
+<p>点击<code>Add+</code>并确认到新建页面:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311562/9efaffa2-1a09-11e5-8584-58894ae6e254.png" alt="" /></p>
+
+<p><code>channel</code> 可以选择any,也可以指定单独一个. <code>Trigger Word(s)</code> 可以不填, 那就是所有的记录都会走.
+也可以找关键词/字, 用逗号隔开. <code>url</code>就是你控制的回调的地址. 本图中的是我们用的herokuapp地址: https://slack-bot2.herokuapp.com/slack_callback</p>
+
+<p>你还可以自定义icon的图标和名字:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311563/9efe2ff6-1a09-11e5-8492-1dd39c4ae1d6.png" alt="" /></p>
+
+<h3 id="section-10">实现原理</h3>
+
+<p>我还是抄袭了<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>的插件思想. 但是完全脱离和小黄鸡的代码关系. 只留下了几个原有的插件并更新.
+<a href="https://github.com/python-cn/slack_bot/tree/master/slack_bot/plugins">plugins</a>目录下有一些插件.
+系统会按照plugins/__init__.py里面的__all__的列表顺序, 挨个插件对比是否符合. 符合即停止. 都不符合最后会使用simsim模块</p>
+
+<p>具体的插件编写可以参看项目的<a href="https://github.com/python-cn/slack_bot/blob/master/README.md#插件编写">插件编写</a></p>
+
+<h3 id="trick">一些trick</h3>
+
+<ol>
+  <li>假如你没有设置<code>Trigger Word</code>. 你要保证你的回复可以被停止, 否者你的回复会被当成下一次的输入. 这样就死循环了. 比如我们使用一个函数,
+只要文本用<code>!</code>开头就不会回调. 表示这个是一个正常的,不想被out-going的记录.</li>
+  <li>这里的天气图片是一个html5的data image. 还有豆瓣电影的海报图片做了防盗链， 不能被slack识别和正常显示.
+我的用法是upload到slack. 获得返回的url.然后在生成附件.</li>
+  <li>direct message其实是被限定了post的长度. 太长的话会报414. 需要对长数据切分. slack_bot已经实现了</li>
+  <li>现在simsim的借口被玩坏了, 有些低级，无聊，带有攻击性的回复. 酌情使用</li>
+</ol>
+]]></content>
+  </entry>
+  
+</feed>

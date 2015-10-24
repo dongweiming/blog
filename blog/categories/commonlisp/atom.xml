@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: commonlisp | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/commonlisp/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[gentoo使用stumpwm做桌面管理器]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/gentoo-use-stumpwm/"/>
+    <updated>2013-11-25T23:52:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/gentoo-use-stumpwm</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>以前一直使用gentoo+gnome的方法使用,说实话,gentoo做个人桌面是在很一般, 尤其是跑起来
+firefox, 虽然依然性能要比其他linux桌面发行版要好,可是我自己清楚.
+尤其是gnome的很多功能对我个人完全没有用处,还浪费了内存. 最近神奇的同事@刘喆告诉我原来还有个神奇的
+<a href="git://github.com/sabetts/stumpwm.git">stumpwm</a>, 基于common lisp的桌面管理.
+我想很多人听过awesome,但是是lua的版本. 我当然希望用我熟悉的语言.这是一篇安装配置过程的博客</p>
+
+<h4 id="section-1">安装遇到了一些问题</h4>
+
+<p>本来一般的软件都是包管理emerge stumpwm 就好啦,但是我安装后依然找不到stumpwm,
+在手动编译stumpwm的过程发现很多奇葩报错. 所以连sbcl也编译了一个</p>
+
+<h4 id="section-2">安装过程</h4>
+
+<p>```python
+# 安装sbcl到/usr/local
+wget http://downloads.sourceforge.net/project/sbcl/sbcl/1.1.13/sbcl-1.1.13-source.tar.bz2
+tar jxvf sbcl-1.1.13-source.tar.bz2
+cd sbcl-1.1.13
+sh make.sh
+unset SBCL_HOME
+unset INSTALL_ROOT
+sudo sh install.sh</p>
+
+<h1 id="commonlispquicklisplisp">使用commonlisp的包管理工具quicklisp.lisp</h1>
+
+<p>curl -O http://beta.quicklisp.org/quicklisp.lisp
+sbcl –load quicklisp.lisp
+(quicklisp-quickstart:install)
+(ql:add-to-init-file)
+# 还需要以下2个依赖
+(ql:quickload “clx”)
+(ql:quickload “cl-ppcre”)</p>
+
+<h1 id="swank">可选安装swank</h1>
+<p>(ql:quickload “swank”)
+(ql:quickload “quicklisp-slime-helper”)</p>
+
+<h1 id="section-3">退出</h1>
+<p>(quit)</p>
+
+<h1 id="stumpwm">下载stumpwm</h1>
+
+<p>git clone git://git.savannah.nongnu.org/stumpwm.git
+cd stumpwm &amp;&amp; ./autogen.sh &amp;&amp; ./configure &amp;&amp; make
+PS: 这个make时候就算报错,也没有太大关系</p>
+
+<h1 id="sbcl">生成2进制文件 再次进入sbcl交互模式</h1>
+
+<p>(asdf:oos ‘asdf:load-op :stumpwm)
+(sb-ext:save-lisp-and-die “stumpwm” :executable t
+    :toplevel #’(lambda () (stumpwm:stumpwm “:0”)))</p>
+
+<h1 id="path">拷贝文件到PATH</h1>
+
+<p>sudo cp -rp stumpwm /usr/bin/</p>
+
+<h1 id="section-4">设置启动 注意是你的普通用户</h1>
+
+<p>$ echo “exec stumpwm” » ~/.xinitrc</p>
+
+<h1 id="startx">这样你就可以使用startx启动啦</h1>
+
+<p>stumpwm的命令都是ctrl+t 开头的
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

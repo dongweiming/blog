@@ -1,0 +1,1028 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>关于gevent的一些理解(一) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieyi-2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">关于gevent的一些理解(一)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-26T00:00:00+08:00" pubdate data-updated="true">Jul 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前言:gevent是python的一个并发框架,以微线程greenlet为核心，使用了epoll事件监听机制以及诸多其他优化而变得高效.而且其中有个monkey类,
+将现有基于Python线程直接转化为greenlet(类似于打patch).他和线程框架性能比高大概4倍(看下图,是gevent和paste的对比):</p>
+
+<p><img class="alignnone" title="性能" src="http://code.mixpanel.com/wp-content/uploads/2010/10/performance2.png" alt="" width="664" height="389" /></p>
+
+<p>工作暂时没有用gevent的地方,这里就简单的对http://sdiehl.github.com/gevent-tutorial的一些例子和内容翻译:</p>
+
+<p><strong>1 同步和异步</strong></p>
+
+<p><pre class="sh_python">
+import gevent</p>
+
+<p>def foo():
+    print('Running in foo')
+    gevent.sleep(0) #让当前的greenlet睡眠N秒,这0标识控制其它协程而不会让其它进程睡眠
+    print('Explicit context switch to foo again')</p>
+
+<p>def bar():
+    print('Explicit context to bar')
+    gevent.sleep(0)
+    print('Implicit context switch back to bar')</p>
+
+<p>gevent.joinall([  #<tt>gevent.Greenlet</tt>实例,直到这个greenlet完成或者超时
+    gevent.spawn(foo),  #spawn可以实现一个grennlet实例并且加到队列并且启动,效果类似于gevent.Greenlet(foo).start()
+    gevent.spawn(bar),
+])
+</pre></p>
+
+<p>执行结果的效果图:</p>
+
+<p><img class="alignnone" title="效果" src="http://sdiehl.github.com/gevent-tutorial/flow.gif" alt="" width="284" height="277" /></p>
+
+<p>dongwm@localhost ~ $ python test.py
+Explicit context to bar
+Running in foo
+Explicit context switch to foo again
+Implicit context switch back to bar</p>
+
+<p><pre class="sh_python">
+import time
+import gevent
+from gevent import select #类似于内置的<tt>select.select()</tt>实现(请关注http://www.dongwm.com/archives/guanyuselectyanjiu/),只是将线程操作改成了greenlet</p>
+
+<p>start = time.time()
+tic = lambda: 'at %1.1f seconds' % (time.time() - start)</p>
+
+<p>def gr1():
+    print('Started Polling: ', tic())
+    select.select([], [], [], 2)  #参数分别是,等待的可读列表,等待的可写列表,等待的可执行列表,超时时间(这里是2秒)
+    print('Ended Polling: ', tic())</p>
+
+<p>def gr2():
+    print('Started Polling: ', tic())
+    select.select([], [], [], 2)
+    print('Ended Polling: ', tic())</p>
+
+<p>def gr3():
+    print("Hey lets do some stuff while the greenlets poll, at", tic())
+    gevent.sleep(1)</p>
+
+<p>gevent.joinall([
+    gevent.spawn(gr1),
+    gevent.spawn(gr2),
+    gevent.spawn(gr3),
+])
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+(&#8216;Hey lets do some stuff while the greenlets poll, at&#8217;, &#8216;at 0.0 seconds&#8217;)  #因为gr1和gr2开始是阻塞的,gr3直接打印
+(&#8216;Started Polling: &#8216;, &#8216;at 0.0 seconds&#8217;)
+(&#8216;Started Polling: &#8216;, &#8216;at 0.0 seconds&#8217;)
+(&#8216;Ended Polling: &#8216;, &#8216;at 2.0 seconds&#8217;)
+(&#8216;Ended Polling: &#8216;, &#8216;at 2.0 seconds&#8217;)
+<pre class="sh_python">
+import gevent
+import random</p>
+
+<p>def task(pid):
+    gevent.sleep(random.randint(0,2)*0.001)
+    print('Task', pid, 'done')</p>
+
+<p>def synchronous():  #同步
+    for i in range(1,10):
+        task(i)</p>
+
+<p>def asynchronous(): #异步
+    threads = [gevent.spawn(task, i) for i in xrange(10)]
+    gevent.joinall(threads)</p>
+
+<p>print('Synchronous:')
+synchronous()</p>
+
+<p>print('Asynchronous:')
+asynchronous()
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+Synchronous:  #协程不会控制其它进程睡眠,所以挨个执行
+(&#8216;Task&#8217;, 1, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 2, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 3, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 4, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 5, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 6, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 7, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 8, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 9, &#8216;done&#8217;)
+Asynchronous:  #他们放在grennlet里面,sleep的时间是随机的,完成顺序也就不同了
+(&#8216;Task&#8217;, 2, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 3, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 5, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 7, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 9, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 6, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 1, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 0, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 8, &#8216;done&#8217;)
+(&#8216;Task&#8217;, 4, &#8216;done&#8217;)
+<pre class="sh_python">
+import gevent
+from gevent import Greenlet</p>
+
+<p>def foo(message, n):
+    gevent.sleep(n)
+    print(message)</p>
+
+<p>thread1 = Greenlet.spawn(foo, "Hello", 1)  #实例化Greenlet
+thread2 = gevent.spawn(foo, "I live!", 2) #实例化gevent,其实也是创建Greenlet实例,只是包装了一下
+thread3 = gevent.spawn(lambda x: (x+1), 2)  #一个lambda表达式</p>
+
+<p>threads = [thread1, thread2, thread3]
+gevent.joinall(threads) #等待所有greenlet完成
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+Hello
+I live!  #打印出来效果不明显,事实上等待一秒打印第一行,再等待一秒打印第二行,然后马上完成(lambda没有显示)</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Greenlet</p>
+
+<p>class MyGreenlet(Greenlet):  #重载Greenlet类</p>
+
+<p>    def __init__(self, message, n):
+        Greenlet.__init__(self)
+        self.message = message
+        self.n = n</p>
+
+<p>    def _run(self): #重写_run方法
+        print(self.message)
+        gevent.sleep(self.n)</p>
+
+<p>g = MyGreenlet("Hi there!", 3)
+g.start()
+g.join()
+</pre></p>
+
+<p><pre class="sh_python">
+import gevent</p>
+
+<p>def win():
+    return 'You win!'</p>
+
+<p>def fail():
+    raise Exception('You fail at failing.')</p>
+
+<p>winner = gevent.spawn(win)
+loser = gevent.spawn(fail)</p>
+
+<p>print(winner.started) # started表示的Greenlet是否已经开始,返回布尔值
+print(loser.started)  # True</p>
+
+<p>try:
+    gevent.joinall([winner, loser])
+except Exception as e:
+    print('This will never be reached')</p>
+
+<p>print(winner.value) # value表示greenlet实例返回值:'You win!'
+print(loser.value)  # None</p>
+
+<p>print(winner.ready()) # 是否已停止Greenlet的布尔值,True
+print(loser.ready())  # True</p>
+
+<p>print(winner.successful()) # 表示的Greenlet是否已成功停止，而不是抛出异常,True
+print(loser.successful())  # False
+print(loser.exception) #打印异常的报错信息
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>dongwm@localhost ~ $ python test.py
+True
+True
+Traceback (most recent call last):
+File &#8220;/usr/lib/python2.7/site-packages/gevent-1.0dev-py2.7-linux-i686.egg/gevent/greenlet.py&#8221;, line 328, in run
+result = self._run(*self.args, **self.kwargs)
+File &#8220;test.py&#8221;, line 7, in fail
+raise Exception(&#8216;You fail at failing.&#8217;)
+Exception: You fail at failing.
+&lt;Greenlet at 0xb73cd39cL: fail&gt; failed with Exception</p>
+
+<p>You win!
+None
+True
+True
+True
+False
+You fail at failing.
+<pre class="sh_python">
+import gevent
+from gevent import Timeout</p>
+
+<p>seconds = 10</p>
+
+<p>timeout = Timeout(seconds)
+timeout.start()</p>
+
+<p>def wait():
+    gevent.sleep(10)</p>
+
+<p>try:
+    gevent.spawn(wait).join()
+except Timeout:
+    print 'Could not complete'
+</pre></p>
+
+<p>上面的例子是可以执行完成的,但是假如修改seconds = 5,让数值少入sleep,那么就会有超时被捕捉到</p>
+
+<p>还可以使用with关键字处理上下文:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Timeout</p>
+
+<p>time_to_wait = 5 # seconds</p>
+
+<p>class TooLong(Exception):
+    pass</p>
+
+<p>with Timeout(time_to_wait, TooLong):
+    gevent.sleep(10)
+</pre></p>
+
+<p>以及其他的方式的:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent import Timeout</p>
+
+<p>def wait():
+    gevent.sleep(2)</p>
+
+<p>timer = Timeout(1).start()
+thread1 = gevent.spawn(wait)  #这种超时类型前面讲过</p>
+
+<p>try:
+    thread1.join(timeout=timer)
+except Timeout:
+    print('Thread 1 timed out')</p>
+
+<p>timer = Timeout.start_new(1) #start_new是一个快捷方式
+thread2 = gevent.spawn(wait)</p>
+
+<p>try:
+    thread2.get(timeout=timer) #get返回greenlet的结果,包含异常
+except Timeout:
+    print('Thread 2 timed out')</p>
+
+<p>try:
+    gevent.with_timeout(1, wait) #如果超时前返回异常,取消这个方法
+except Timeout:
+    print('Thread 3 timed out')
+</pre></p>
+
+<p><strong>2 数据结构</strong></p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.event import AsyncResult</p>
+
+<p>a = AsyncResult() #保存一个值或者一个异常的事件实例</p>
+
+<p>def setter():
+    gevent.sleep(3)  #3秒后唤起所有线程的a的值
+    a.set() #保存值,唤起等待线程</p>
+
+<p>def waiter():
+    a.get() # 3秒后get方法不再阻塞,返回存贮的值或者异常
+    print 'I live!'</p>
+
+<p>gevent.joinall([
+    gevent.spawn(setter),
+    gevent.spawn(waiter),
+])
+</pre></p>
+
+<p>更清晰的例子:</p>
+
+<p><pre class="sh_python">
+import gevent
+from gevent.event import AsyncResult
+a = AsyncResult()</p>
+
+<p>def setter():
+    gevent.sleep(3)
+    a.set('Hello!')</p>
+
+<p>def waiter():
+    print a.get()</p>
+
+<p>gevent.joinall([
+    gevent.spawn(setter),
+    gevent.spawn(waiter),
+])
+</pre>
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue  #类似于内置的Queue</p>
+
+<p>tasks = Queue() #队列实例</p>
+
+<p>def worker(n):
+    while not tasks.empty():
+        task = tasks.get()
+        print('Worker %s got task %s' % (n, task))
+        gevent.sleep(0)</p>
+
+<p>    print('Quitting time!')</p>
+
+<p>def boss():
+    for i in xrange(1,25):
+        tasks.put_nowait(i) #非阻塞的把数据放到队列里面</p>
+
+<p>gevent.spawn(boss).join()</p>
+
+<p>gevent.joinall([
+    gevent.spawn(worker, 'steve'),
+    gevent.spawn(worker, 'john'),
+    gevent.spawn(worker, 'nancy'),
+])
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python !$
+python test.py
+Worker steve got task 1 #3个用户循环的取出数据
+Worker john got task 2
+Worker nancy got task 3
+Worker steve got task 4
+Worker nancy got task 5
+Worker john got task 6
+Worker steve got task 7
+Worker john got task 8
+Worker nancy got task 9
+Worker steve got task 10
+Worker nancy got task 11
+Worker john got task 12
+Worker steve got task 13
+Worker john got task 14
+Worker nancy got task 15
+Worker steve got task 16
+Worker nancy got task 17
+Worker john got task 18
+Worker steve got task 19
+Worker john got task 20
+Worker nancy got task 21
+Worker steve got task 22
+Worker nancy got task 23
+Worker john got task 24
+Quitting time!
+Quitting time!
+Quitting time!</p>
+
+<p>一个更复杂的例子:
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue, Empty</p>
+
+<p>tasks = Queue(maxsize=3)  #限制队列的长度</p>
+
+<p>def worker(n):
+    try:
+        while True:
+            task = tasks.get(timeout=1) # 减少队列,超时为1秒
+            print('Worker %s got task %s' % (n, task))
+            gevent.sleep(0)
+    except Empty:
+        print('Quitting time!')</p>
+
+<p>def boss():
+    """
+    Boss will wait to hand out work until a individual worker is
+    free since the maxsize of the task queue is 3.
+    """</p>
+
+<p>    for i in xrange(1,10):
+        tasks.put(i)  #这里boss没有盲目的不停放入数据,而是在当最大三个队列数有空余才放入数据,事实上方法转换过程中,boss放入三个数据,worker取出三个数据,boss再放入数据....
+    print('Assigned all work in iteration 1')</p>
+
+<p>    for i in xrange(10,20):
+        tasks.put(i)
+    print('Assigned all work in iteration 2')</p>
+
+<p>gevent.joinall([
+    gevent.spawn(boss),
+    gevent.spawn(worker, 'steve'),
+    gevent.spawn(worker, 'john'),
+    gevent.spawn(worker, 'bob'),
+])
+</pre>
+<pre class="sh_python">
+import gevent
+from gevent.pool import Group 
+def talk(msg):
+    for i in xrange(3):
+        print(msg)</p>
+
+<p>g1 = gevent.spawn(talk, 'bar')
+g2 = gevent.spawn(talk, 'foo')
+g3 = gevent.spawn(talk, 'fizz')</p>
+
+<p>group = Group() #保持greenlet实例的组运行,连接到没个项目,在其完成后删除
+group.add(g1)
+group.add(g2)
+group.join()</p>
+
+<p>group.add(g3)
+group.join()
+</pre></p>
+
+<p>看更加明确的例子:
+<pre class="sh_python">
+import gevent
+from gevent import getcurrent
+from gevent.pool import Group</p>
+
+<p>group = Group()</p>
+
+<p>def hello_from(n):
+    print('Size of group', len(group))
+    print('Hello from Greenlet %s' % id(getcurrent()))  #获取当前gevent实例的id</p>
+
+<p>group.map(hello_from, xrange(3)) #map迭代方法,参数为方法和其参数</p>
+
+<p>def intensive(n):
+    gevent.sleep(3 - n)
+    return 'task', n</p>
+
+<p>print('Ordered')</p>
+
+<p>ogroup = Group()
+for i in ogroup.imap(intensive, xrange(3)):  #相当于 itertools.imap,返回一个迭代器, 它是调用了一个其值在输入迭代器上的函数, 返回结果. 它类似于函数 <tt>map()</tt> , 只是前者在
+#任意输入迭代器结束后就停止(而不是插入None值来补全所有的输入)
+    print(i)</p>
+
+<p>print('Unordered')</p>
+
+<p>igroup = Group()
+for i in igroup.imap_unordered(intensive, xrange(3)):
+    print(i)
+</pre></p>
+
+<p>执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+(&#8216;Size of group&#8217;, 3)
+Hello from Greenlet 314818960
+(&#8216;Size of group&#8217;, 3)
+Hello from Greenlet 314819280
+(&#8216;Size of group&#8217;, 3)
+Hello from Greenlet 314819440
+Ordered
+(&#8216;task&#8217;, 0)
+(&#8216;task&#8217;, 1)
+(&#8216;task&#8217;, 2)
+Unordered
+(&#8216;task&#8217;, 2)
+(&#8216;task&#8217;, 1)
+(&#8216;task&#8217;, 0)</p>
+
+<p>还能限制pool池的大小
+<pre class="sh_python">
+import gevent
+from gevent import getcurrent
+from gevent.pool import Pool</p>
+
+<p>pool = Pool(2)</p>
+
+<p>def hello_from(n):
+    print('Size of pool', len(pool))</p>
+
+<p>pool.map(hello_from, xrange(3))
+</pre></p>
+
+<p>返回结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+(&#8216;Size of pool&#8217;, 2)
+(&#8216;Size of pool&#8217;, 2)
+(&#8216;Size of pool&#8217;, 1) #因为上面的pool容纳不了第三个,这是一个新的pool</p>
+
+<p>以下是作者写的一个pool操作类:</p>
+
+<p><pre class="sh_python">
+from gevent.pool import Pool</p>
+
+<p>class SocketPool(object):</p>
+
+<p>    def __init__(self):
+        self.pool = Pool(1000)  #设置池容量1000
+        self.pool.start()</p>
+
+<p>    def listen(self, socket):
+        while True:
+            socket.recv()</p>
+
+<p>    def add_handler(self, socket):
+        if self.pool.full(): #容量慢报错
+            raise Exception("At maximum pool size")
+        else: #否则执行在新的grenlet里面执行listen方法
+            self.pool.spawn(self.listen, socket)</p>
+
+<p>    def shutdown(self):
+        self.pool.kill() #关闭pool
+</pre></p>
+
+<p><pre class="sh_python">
+from gevent import sleep
+from gevent.pool import Pool
+from gevent.coros import BoundedSemaphore</p>
+
+<p>sem = BoundedSemaphore(2) #设定对共享资源的访问数量</p>
+
+<p>def worker1(n):
+    sem.acquire() #获取资源
+    print('Worker %i acquired semaphore' % n)
+    sleep(0)
+    sem.release()  #释放资源
+    print('Worker %i released semaphore' % n)</p>
+
+<p>def worker2(n):
+    with sem: #使用with关键字
+        print('Worker %i acquired semaphore' % n)
+        sleep(0)
+    print('Worker %i released semaphore' % n)</p>
+
+<p>pool = Pool()
+pool.map(worker1, xrange(0,2)) 
+pool.map(worker2, xrange(3,6))
+</pre>
+执行结果:</p>
+
+<p>[root@248_STAT ~]# python test.py
+Worker 0 acquired semaphore
+Worker 1 acquired semaphore  #因为pool能容纳这2个请求,所以同时获取,再释放
+Worker 0 released semaphore
+Worker 1 released semaphore
+Worker 3 acquired semaphore #因为只能接收2个,那么5就要到下一轮
+Worker 4 acquired semaphore
+Worker 3 released semaphore
+Worker 4 released semaphore
+Worker 5 acquired semaphore
+Worker 5 released semaphore</p>
+
+<p>一个gevent教材上面说过的ping pong的那个协程例子的另一个实现:
+<pre class="sh_python">
+import gevent
+from gevent.queue import Queue
+from gevent import Greenlet</p>
+
+<p>class Actor(gevent.Greenlet): #自定义actor类</p>
+
+<p>    def __init__(self):
+        self.inbox = Queue() #收件箱作为一个队列
+        Greenlet.__init__(self) </p>
+
+<p>    def receive(self, message): 
+        raise NotImplemented() #内置常量,表面意为没有实施</p>
+
+<p>    def _run(self): #
+        self.running = True</p>
+
+<p>        while self.running:
+            message = self.inbox.get() #获取队列数据
+            self.receive(message)</p>
+
+<p>class Pinger(Actor):
+    def receive(self, message): #重写方法
+        print message
+        pong.inbox.put('ping') #当获取收件箱有数据,获取数据,再放入数据(注意:是ping中放pong数据),其中pong是一个局部变量,它是Ponger的实例,以下的同理
+        gevent.sleep(0)</p>
+
+<p>class Ponger(Actor):
+    def receive(self, message):
+        print message
+        ping.inbox.put('pong')
+        gevent.sleep(0)</p>
+
+<p>ping = Pinger()
+pong = Ponger()</p>
+
+<p>ping.start()
+pong.start()</p>
+
+<p>ping.inbox.put('start') #最开始都是阻塞的,给一个触发
+gevent.joinall([ping, pong])
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><code data-result="[object Object]"></code></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-26T00:00:00+08:00" pubdate data-updated="true">Jul 26<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/gevent/'>gevent</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieyi-2/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/guanyugeventdeyixielijieer/" title="Previous Post:
+        关于gevent的一些理解(二)">&laquo; 关于gevent的一些理解(二)</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/shiyongsphinxheapachedajianwikiwendangwangzhan/"
+        title="Next Post: 使用sphinx和apache搭建wiki文档网站">使用sphinx和apache搭建wiki文档网站
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieyi-2/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/guanyugeventdeyixielijieyi-2/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

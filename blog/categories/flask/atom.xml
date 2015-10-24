@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: flask | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/flask/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[slack上的小黄鸡 - SlackBot]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/slackshang-de-xiao-huang-ji-slackbot/"/>
+    <updated>2015-06-23T23:28:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/slackshang-de-xiao-huang-ji-slackbot</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p><a href="http://www.slack.com/">Slack</a>是一个最近一年兴起的团队沟通协作平台. 程序员对工具其实是最有品位和要求的，相信国内很多公司和团队都在使用，豆瓣也算比较早在用.
+相信用过的人会理解本文. 如果你还没有接触它, 尤其是对现有的团队沟通协作工具有些不满, 可以试一下.</p>
+
+<p>本文就是介绍我们在最近做出来的一个bot - <a href="https://github.com/python-cn/slack_bot">slack_bot</a>. 它的口号是: 立志成为一个可被调戏且有用的Bot</p>
+
+<h3 id="section-1">为什么</h3>
+
+<p>无论是运维还是开发, 某些时间都会收到一些邮件/提醒, 可能是固定的时间的定时任务跑出来的结果,
+也可能是某个故障引起的问题邮件. 我们都很烦手头有好几个东西来接收这些消息， 而slack可以使用某些方法让这些问题集中起来.</p>
+
+<p>比如很常用的, 使用<a href="https://api.slack.com/methods/chat.postMessage">chat</a>或者<a href="https://api.slack.com/incoming-webhooks">incoming-webhooks</a>接收消息. 做什么呢?
+我可以把一些昨天的数据汇总或者汇总的地址在今天早上发到某个channel下, 这样想要看这个数据的人直接点进去就好了.
+当然啦, 也可以直接发消息到某个人. 一个具体的例子: 豆瓣的同事都知道, 我们的测试环境时间过期就会被删除, 在某段时间里面每天都有很多人在关注我们要新上的一个测试的地址,
+但是经常被同事@, 说地址怎么找不到了, 那么我就要抽出精力再去创建一个. 后来一想, 索性跑个定时任务, 拉最新的代码, 走逻辑, 生成一个测试环境. 每天都会在channel里面发消息给对应关心这个消息的人.
+一段时间以后, 我们的工作完成了, 同事都有点不适用, 哎， 怎么早上看不到那个消息了…</p>
+
+<p>但是今天说的是什么呢? 我们的slack_bot主要借用<a href="https://api.slack.com/outgoing-webhooks">outgoing-webhooks</a>. incoming表示把消息推到slack里面,
+outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳到我们提供的回调地址, 根据内容返回对应符合的回复. 大家是不是有点懂了, 这就是小黄鸡的原理.</p>
+
+<p>说到这里大家应该明白了. 其实slack给我们提供了很大的想象和实现的空间. 我立刻想起来做运维时候做的一些事情:</p>
+
+<p>比如当时有时候要去机房, 路上没有网(2g上网太慢), 有时候想看个监控状态, 切个负载均衡, 重启个服务什么的, 后来做了一个东西, 就是给某些号码发某些特殊的短信内容就可以获得想要的结果, 执行想做的事情.
+其实slack_bot只是一些爬虫的集合, 一些功能实现的例子. 在实际开发和工作中可以做很多更有意思的, 公司内部的插件. 和公司的业务相关, 和自己做的事情相关. 这样在路上就能用.
+比如我的地图功能, 我可以在网络不好的时候找到行程的最好路线; 我用公交插件可以实时的看我要等的公交需要多久到达, 我可以踩着点去站牌….</p>
+
+<h3 id="section-2">小黄鸡原理</h3>
+
+<p>小黄鸡很火的时候, 我还是一个perl运维…</p>
+
+<p>小黄鸡其实调用的是<a href="http://developer.simsimi.com/">simsim</a>的接口. 大家都可以去注册一个key来玩,也可以用项目自带的.</p>
+
+<p>其实就是post一个数据到simsim的api上, 他会返回你对应的小黄鸡的回复.</p>
+
+<h3 id="section-3">项目介绍</h3>
+
+<p>很多人听过甚至曾经用过<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>. 你可以把本bot理解为<code>增加了很多
+功能</code>, <code>只保留小黄鸡交流的基本逻辑</code>, <code>用于slackchannel里面</code>的<code>小黄鸡</code></p>
+
+<p>项目使用flask, 目前本项目是一个heroku应用. 地址是 https://slack-bot2.herokuapp.com/slack_callback 但是你
+也可以直接裸跑</p>
+
+<p><code>python
+gunicorn wsgi:app localhost:5000 --timeout 240 --log-file -
+</code></p>
+
+<p>你也可以使用heroku创建一个新的应用, 直接用我们的项目代码就可以.</p>
+
+<h3 id="slack">我们使用slack的特性</h3>
+
+<ol>
+  <li>可以把消息私聊发给自己</li>
+  <li>可以使用带图的方式接收结果(支持canvas, 以下会看到例图)</li>
+</ol>
+
+<h3 id="section-4">继承自小黄鸡的模块们, 但是都做了对应的修改:</h3>
+
+<ol>
+  <li>空气插件</li>
+  <li>wikipedia</li>
+  <li>地震了</li>
+  <li>糗百</li>
+  <li>orz  # orz需要自定义emoji</li>
+</ol>
+
+<h3 id="section-5">新加的模块们:</h3>
+
+<h4 id="section-6">地图插件 - 你可以输入我想从哪去哪, 会给你个路线(步行/开车/公交)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map2.png" alt="" /></p>
+
+<h4 id="api-">天气插件 - 使用了百度api, 获得城市的天气情况</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/weather.png" alt="" /></p>
+
+<h4 id="section-7">北京公交插件 - 可以查询北京公交线路, 获取实时的到某站的信息(有些线路站点不准)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus2.png" alt="" /></p>
+
+<h4 id="api---">美食插件 - 使用大众点评网api, 获取附近餐饮信息, 评分, 电话地址,距离等等</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/dianping.png" alt="" /></p>
+
+<h4 id="segmentfaultcsdn">技术活动插件 - 从segmentfault/csdn/车库咖啡/活动行获得最近的活动列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/events.png" alt="" /></p>
+
+<h4 id="githubissue---pull-requests">Github_issue插件 - 获得你个人或者组织下未处理的Pull requests列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/issue.png" alt="" /></p>
+
+<h4 id="section-8">电影信息插件 - 列出最近上映和即将上映的电影信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/movie.png" alt="" /></p>
+
+<h4 id="pycoders---pycoders-weekly">pycoders插件 - 获得<pycoders weekly="">订阅数据</pycoders></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pycoders.png" alt="" /></p>
+
+<h4 id="pythonweekly---pythonweekly">pythonweekly插件 - 获得<pythonweekly>订阅数据</pythonweekly></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pythonweekly.png" alt="" /></p>
+
+<h4 id="section-9">头条插件 - 获得今日头条新闻</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/toutiao.png" alt="" /></p>
+
+<h4 id="travel---">travel插件 - 旅游推荐/景点介绍</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel2.png" alt="" /></p>
+
+<h4 id="v2ex-feed---feed">v2ex feed插件 - 获得一些节点的最新feed</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/v2ex.png" alt="" /></p>
+
+<h4 id="help---">help插件 - 列出所有插件的帮助信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/help.png" alt="" /></p>
+
+<h4 id="simsim">最主要的是小黄鸡(simsim)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/simsim.png" alt="" /></p>
+
+<h4 id="slackbot-channel">也可以直接发到个人的slackbot channel里:</h4>
+
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct2.png" alt="" /></p>
+
+<h3 id="slack-1">配置slack</h3>
+
+<p>去你的slack组织的services页面. 比如我们是 https://pythoncn.slack.com/services/new. 找到<code>Outgoing WebHooks</code>:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311561/9ef87dc2-1a09-11e5-9d87-132d8d534042.png" alt="" /></p>
+
+<p>点击<code>Add+</code>并确认到新建页面:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311562/9efaffa2-1a09-11e5-8584-58894ae6e254.png" alt="" /></p>
+
+<p><code>channel</code> 可以选择any,也可以指定单独一个. <code>Trigger Word(s)</code> 可以不填, 那就是所有的记录都会走.
+也可以找关键词/字, 用逗号隔开. <code>url</code>就是你控制的回调的地址. 本图中的是我们用的herokuapp地址: https://slack-bot2.herokuapp.com/slack_callback</p>
+
+<p>你还可以自定义icon的图标和名字:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311563/9efe2ff6-1a09-11e5-8492-1dd39c4ae1d6.png" alt="" /></p>
+
+<h3 id="section-10">实现原理</h3>
+
+<p>我还是抄袭了<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>的插件思想. 但是完全脱离和小黄鸡的代码关系. 只留下了几个原有的插件并更新.
+<a href="https://github.com/python-cn/slack_bot/tree/master/slack_bot/plugins">plugins</a>目录下有一些插件.
+系统会按照plugins/__init__.py里面的__all__的列表顺序, 挨个插件对比是否符合. 符合即停止. 都不符合最后会使用simsim模块</p>
+
+<p>具体的插件编写可以参看项目的<a href="https://github.com/python-cn/slack_bot/blob/master/README.md#插件编写">插件编写</a></p>
+
+<h3 id="trick">一些trick</h3>
+
+<ol>
+  <li>假如你没有设置<code>Trigger Word</code>. 你要保证你的回复可以被停止, 否者你的回复会被当成下一次的输入. 这样就死循环了. 比如我们使用一个函数,
+只要文本用<code>!</code>开头就不会回调. 表示这个是一个正常的,不想被out-going的记录.</li>
+  <li>这里的天气图片是一个html5的data image. 还有豆瓣电影的海报图片做了防盗链， 不能被slack识别和正常显示.
+我的用法是upload到slack. 获得返回的url.然后在生成附件.</li>
+  <li>direct message其实是被限定了post的长度. 太长的话会报414. 需要对长数据切分. slack_bot已经实现了</li>
+  <li>现在simsim的借口被玩坏了, 有些低级，无聊，带有攻击性的回复. 酌情使用</li>
+</ol>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[一个flask+mongoengine的site]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/a-data-analysis-site-by-flask-and-mongoengine/"/>
+    <updated>2013-11-20T17:39:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/a-data-analysis-site-by-flask-and-mongoengine</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>最近一直学习emacs和elisp, 也在做关于mongodb相关的研究,闲来无事就做了个网站,后端使用了flask, mongoengine, 前端css框架用的是
+雅虎的<a href="https://github.com/yui/pure">pure</a>, 还是用了神奇的<a href="https://github.com/gruntjs/grunt">grunt</a>做页面修改的livereload, 然后有d3,
+jquery, amchart和一个最近发现的页面消息弹出<a href="https://github.com/CodeSeven/toastr">toastr</a>.想学习flask和mongoengine的童鞋可直接拿去,开源地址是
+<a href="https://github.com/dongweiming/data-analysis">data-analysis</a></p>
+
+<h4 id="section-1">下载依赖和启动</h4>
+
+<p><code>python
+cd /path/to/data-analysis
+pip install -r requirements.txt
+# 安装grunt
+npm install
+# 我的后端样例数据
+mongorestore -d fetch_data --directoryperdb dump/fetch_data
+cd data_analysis
+# 启动Grunt
+grunt
+# 启动
+python run.py
+# 然后打开 http://Youip:5000
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用http和websocket连接服务器]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/shi-yong-httphe-websocketlian-jie-fu-wu-qi/"/>
+    <updated>2013-07-19T22:53:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/shi-yong-httphe-websocketlian-jie-fu-wu-qi</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p>想想吧，通过网页ssh登录服务器是一件多么酷的事情?今天看了<a href="http://www.vpsee.com/2013/06/invoke-a-linux-shell-with-ssh-account-from-browser">使用浏览器访问 Linux 终端</a>,
+也就是这个<a href="https://github.com/dongweiming/wssh">wssh</a>,你也可以理解为websocket-ssh, 觉得有点意思就拿出来</p>
+
+<h4 id="section-1">原路</h4>
+
+<p>它是一个库，很简单，作者写了2个flask+gevent+websocket+paramiko的例子，其中网页版的使用了bootstrap.
+简单的理解就是不通过ssh连接服务器，而是通过网页或者一个client请求url+相应参数调用
+shell到服务器的方式，但是遗憾的是作者一年没有再维护，bootstrap的网页竟然没有指定ssh端口的选项，但是很多时候为了安全
+都会把ssh端口换成其它端口，这样就不能用了,好吧 我动手给它加了这个功能，也提了pull request.目前大家可以用我的这版:<a href="https://github.com/dongweiming/wssh">wssh</a></p>
+
+<h4 id="update"><strong>update</strong></h4>
+
+<p>wssh作者已经合并了我的修改</p>
+
+<h4 id="section-2">使用说明</h4>
+
+<p>当你使用</p>
+
+<p><code>
+sudo python setup.py install
+</code></p>
+
+<p>安装后，就能直接使用wssh和wsshd,wsshd是一个flask作为httpserver和gevent作为wsgi的服务端，默认启动在你本机的5000端口.
+网页登录就能看见简单大气的选项页面，可以指定用户，服务器ip，端口，以及使用密钥或者密码登录.输入点击连接就会登录到那台服务器,数据通过websocket实时显示到页面上</p>
+
+<p>而wssh是一个命令行登录的带选项的命令，其实就是页面输入的参数通过命令行的方式输入然后直接登录服务器，比如我下面的用法:</p>
+
+<p><code>
+wssh dongwm@dongwm.com -p XXX -s 58404
+</code></p>
+
+<h4 id="section-3">我觉得有空可以基于这个做点好玩的东西</h4>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[仿slid.es的在线PPT编辑网站]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/a-web-based-reveal.js-online-PPT/"/>
+    <updated>2013-05-25T12:22:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/a-web-based-reveal.js-online-PPT</id>
+    <content type="html"><![CDATA[<h4 id="section">前言</h4>
+
+<p><a href="https://slid.es">slid.es</a>是我最喜欢的前端之一<a href="https://github.com/hakimel">hakimel</a>的作品，前身叫做rvl.io, 网站已经改版。源于去年年底在上家公司做年终总结PPT，对我这种不搞office，没有美感的小程序员太痛苦了，然后就找到了<a href="https://github.com/hakimel/reveal.js">reveal.js</a>, 后来萌发做个基于它的网站, 其实也是为了练手学习mongoengine和oauth</p>
+
+<p>项目地址 <a href="https://github.com/dongweiming/flask_reveal">flask_reveal</a></p>
+
+<h4 id="section-1">它能做什么</h4>
+
+<ul>
+  <li>保存漂亮的在线PPT(我认为的)</li>
+  <li>记录浏览次数</li>
+  <li>多种主题和字体</li>
+  <li>可以把PPT私有化(默认是公开的)</li>
+  <li>自动保存修改</li>
+  <li>支持Bitbucket/Google/Github/Instagram/Linkdln/Trello/Tumblr/Stackoverflow oauth/oauth2登陆</li>
+  <li>PPT预览</li>
+</ul>
+
+<h4 id="section-2">使用了什么</h4>
+
+<ul>
+  <li>flask</li>
+  <li>mongoengine (忍不了非orm)</li>
+  <li>flask-script (像django那样的命令行启动)</li>
+  <li>前端js借用我做喜欢的原作者的90%，然后根据我的需要改动，css基本没动</li>
+  <li><a href="https://github.com/omab/python-social-auth">python-social-auth</a>的oauth后端，但是它使用的是flask+sqlalchemy，不支持flask+mongoengine，我改写了这部分</li>
+</ul>
+
+<h4 id="usage">Usage</h4>
+
+<p>设置hosts文件</p>
+
+<p>唉，本来申请了很多oauth想放在sae上面，但是遗憾的是新浪不支持，所以只能本地加hosts，让验证后的回调正确返回 linux 在你的/etc/hosts 文件里面添加一行</p>
+
+<p><code>
+YOURIP   YOURDOMAIN
+</code></p>
+
+<p>复制配置文件然后把你注册的ouauth放进去</p>
+
+<p><code>
+cp settings.py.example settings.py
+</code></p>
+
+<p>象django那样启动</p>
+
+<p><code>
+python manage.py runserver -t 0.0.0.0 -p 80
+</code></p>
+
+<p>And 访问主页<code>http://revealcn.sinaapp.com</code></p>
+
+<h4 id="nginxuwsgi">使用nginx+uwsgi</h4>
+
+<p>这里是我的配置nginx的这段（假设你git clone 后在/home/dongwm/flask_reveal）</p>
+
+<p>```
+server {
+		listen 80;
+		server_name revealcn.sinaapp.com;</p>
+
+<pre><code>	access_log /var/log/nginx/revealcn.access_log main;
+	error_log /var/log/nginx/revealcn.error_log info;
+	location / {
+            include uwsgi_params;
+            uwsgi_pass unix:///tmp/uwsgi.sock;
+    	}
+	location /zongjie {
+	root   /home/dongwm/flask_reveal;
+	index index.html;
+	}
+}
+</code></pre>
+
+<p>```</p>
+
+<p>uwsgi的xml配置</p>
+
+<p>```</p>
+<uwsgi>
+     <pythonpath>/home/dongwm/flask_reveal</pythonpath>
+     <module>manage</module>
+     <socket>/tmp/uwsgi.sock</socket>    
+    <callable>manager</callable>
+     <master />
+     <processes>4</processes>       
+     <memory-report />
+</uwsgi>
+<p>```</p>
+
+<p>这里有个坑，我的gentoo的uwsgi安装后是有插件的，你需要这样启动</p>
+
+<p><code>
+uwsgi_python27 -x uwsgi.xml 
+</code></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[一个flask例子]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/1ge-flaskli-zi/"/>
+    <updated>2013-01-11T14:34:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/1ge-flaskli-zi</id>
+    <content type="html"><![CDATA[<h4 id="section">前言：</h4>
+
+<p>上段时间做了个demo, 使用了flask和mongodb，以及bootstrap, jquery，分享给大家当作入门flask的例子</p>
+
+<h4 id="section-1">启动程序代码</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/env python2
+# encoding=utf-8
+# Version 2 by Dongwm 2012/12/18
+
+import os
+from pymongo import Connection
+
+from flask import Flask, request, render_template, redirect, url_for, jsonify
+from paginate import Pagination
+import setting
+
+def static(filename):
+    filepath = os.path.join(os.path.dirname(__file__), 'static', filename)
+    last_modification = '%d' % os.path.getmtime(filepath)
+    return url_for('.static', filename=filename) + '?' + last_modification  #我这里给每个文件加了一个唯一性质的时间戳
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(setting)  #把一些可以控制的参数放在setting模块里面
+    @app.context_processor
+    def inject_static():
+        return dict(static=static)
+    return app
+
+def conMongo(): #因为我很多地方都需要mongodb的游标，封装了下
+	mongo = Connection(host='127.0.0.1',port=28012)
+	return mongo
+
+app = create_app()
+
+@app.route('/list')  #flask使用装饰器的作为路由方式 表示访问你网站（比如http://localhost/list）的请求都会通过这个函数处理
+def list(): #函数名字不重要，只要你能理解好维护，通过名字了解用途就好
+	pagesize = 100  
+	page = int(request.args.get('page',0))
+	data = get_list_MongoData(page, pagesize) #这个获得mongodb的函数我就不提供了 简单理解就是更具页数和每页条目获取数据
+	pagination = Pagination(total=data[1], per_page=pagesize, page=page)
+	return render_template("list.html", tables=data[0], pagination=pagination) #有点像django的render_to_response,但是flask直接把要渲染的数据用K=V的方式传进来，而django需要放在字典里面，作为第二个参数传
+
+@app.route('/')  
+def index():
+	return redirect(url_for('list')) #到网站跟目录的请求定向到/list
+
+@app.route('/json')  
+def getJson():
+
+	db = conMongo()
+	res = results(db)
+	return jsonify(res)  #类似django的HttpResponse(simplejson.dumps(res), mimetype='application/json') 返回json数据
+
+@app.route('/dev')
+def dev():
+	
+	return render_template("dev.html")
+
+if __name__ == '__main__':
+	app.run(host="0.0.0.0")
+
+</pre></figure></notextile></div>
+
+<h4 id="settingspy">settings.py</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+DEBUG = True  #指定开启debug模式
+PORT = 5000  #指定监听端口
+</pre></figure></notextile></div>
+
+<h4 id="devhtml">dev.html</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+
+<xmp>
+<!-- 注意这段代码我把 {/}和%分开了 为了和octoress生成的模板语法不冲突-->
+{ % extends 'base.html' % }  //这里是先继承base.html模板 
+{ % block title %}Dev{ % endblock % }  //重新设定title块的内容
+{ %- block css % }  //重新设定css块  注意引用静态文件的方式
+    <link rel="stylesheet" href="" />
+    <style>
+	.col_content{ height:500px; }
+	h2 {text-align:center;}
+	</style>
+{ %- endblock % }
+{ %- block js % }
+    <script type="text/javascript" src=""></script>
+    <script type="text/javascript" src=""></script>
+    <script language="javascript" type="text/javascript">
+		</script>
+		{ %- endblock % }
+		{ %- block diejs % }
+			pie2html();  //这个js函数在core.js定义（base.html有引用）
+		{ %- endblock % }
+		{ %- block dev % }
+	<div>
+		<h2>服务器服务信息</h2>
+		<div class="well col_content" id="webserver_content">
+		Loading......
+		</div>
+		<h2>服务器应用信息</h2>
+		<div class="well col_content" id="webapp_content">
+		Loading......
+		</div>
+		<h2>Nginx服务具体版本</h2>
+		<div class="well col_content" id="nginx_content">
+		Loading......
+		</div>
+		<h2>Apache服务具体版本</h2>
+		<div class="well col_content" id="apache_content">
+		Loading......
+		</div>
+		<h2>Asp服务具体版本</h2>
+		<div class="well col_content" id="asp_content">
+		Loading......
+		</div>
+		<h2>网站技术信息</h2>
+		<div class="well col_content" id="tech_content">
+		Loading......
+		</div>
+		<h2>系统分类</h2>
+		<div class="well col_content" id="system_content">
+		Loading......
+		</div>
+		<h2>系统分类</h2>
+		<div class="well col_content" id="version_content">
+		Loading......
+		</div>
+		<h2>os</h2>
+		<div class="well col_content" id="os_content">
+		Loading......
+		</div>
+	</div>
+{ %- endblock % }
+</xmp>
+
+</pre></figure></notextile></div>
+
+<h4 id="basehtml">base.html</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+<xmp>
+&lt;!doctype html&gt;
+<html>
+  <head>
+    <title> { % block title % }{ % endblock % }</title>  //block会设置的一个块，每个模板文件要是重新定义会覆盖，否则继承它的值
+    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="" />  
+    <link rel="stylesheet" href="" />
+    { %- block css % }
+    { %- endblock % }
+    <script type="text/javascript" src=""></script>
+    <script type="text/javascript" src=""></script>
+    { %- block js % }
+    { %- endblock % }
+	<script language="javascript" type="text/javascript">
+		$(document).ready(function() {
+		var i = 0;
+		$('#control').click(function() {
+				if(i%2 == 0) {
+					$('#zt-user').slideDown(500);  //加载完成的一个特效,都在style.css中定义
+					$('#control').removeClass('bkg-control-down').addClass('control-up');
+				}
+				else {
+					$('#zt-user').slideUp(500);
+					$('#control').removeClass('bkg-control-up').addClass('control-down');
+				}
+				i++;
+		});
+		{ %- block diejs % }  //这个块定义在这里是为了每个模板文件都能定义文档加载完成执行的函数，一个页面只能有一个$(document).ready
+		{ %- endblock % }
+		</script>
+</head>
+	<body>
+		<div id="zt-user">
+			<div class="container">
+				<div id="zt-user-inner" class="row-fluid">
+					<div id="zt-top1" class="span12">
+						<div class="zt-box-inside">
+							<div class="moduletable">
+								<div class="modulecontent">
+						<form action="/" method="post">
+							<div class="search">
+								<input name="searchword" maxlength="20" class="inputbox" type="text" size="20" value="Start Searching ... " onblur="if (this.value=='') this.value='Start Searching ... ';" onfocus="if (this.value=='Start Searching ... ') this.value='';" /><input type="submit" value="Search" class="button" onclick="this.form.searchword.focus();" />
+							</div>
+						</form>
+								</div>
+							</div>
+						</div>
+					</div>																		
+				</div>
+			</div>
+		</div>
+		{ %- block dev % }{ %- endblock % }   //上面的dev.html重新声明了这个块，那么数据就会显示在这个位置
+		{ %- block top % }
+		<div id="zt-top">
+			<div class="container">						
+				<div class="row-fluid">
+					<div class="control-up span6" id="control"><span>Search</span></div>
+				<ul id="zt-topright" class="pull-right">
+				<li class="blue" target="_blank"><a title="Demo" href="http://dongweiming.github.com/blog/list">列表</a></li>
+				<li class="green" target="_blank"><a title="Demo" href="http://dongweiming.github.com/blog/dev">画图</a></li>
+				</ul>
+					</div>
+				</div>
+			</div>
+		{ %- endblock % }
+		{ %- block ttable % }{ %- endblock % }
+		{ %- block footer % }
+		<div id="zt-footer">
+			<div class="container">				
+				<p id="copyright">
+				Copyright &copy; 2009 - 2013 <a href="http://www.dongwm.com" title="dongwm">(C)dongwm</a>. All Rights Reserved
+				</p>
+			</div>						
+		</div>
+		{ %- endblock % }
+	</body>
+</html>
+</xmp>
+
+</pre></figure></notextile></div>
+
+]]></content>
+  </entry>
+  
+</feed>

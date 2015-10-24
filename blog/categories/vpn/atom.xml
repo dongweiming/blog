@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[分类: vpn | 小明明s à domicile]]></title>
+  <link href="http://dongweiming.github.com/blog/blog/categories/vpn/atom.xml" rel="self"/>
+  <link href="http://dongweiming.github.com/blog/"/>
+  <updated>2015-10-24T21:27:48+08:00</updated>
+  <id>http://dongweiming.github.com/blog/</id>
+  <author>
+    <name><![CDATA[Dongweiming]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[站到站VPN(预共享密钥)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/zhandaozhanvpnyugongxiangmiyue/"/>
+    <updated>2011-07-30T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/zhandaozhanvpnyugongxiangmiyue</id>
+    <content type="html"><![CDATA[<p><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R1</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>line con 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>logg sy</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>no ip domain-lookup</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int loopback 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 1.1.1.1 255.255.255.255</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int f0/0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.3.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.15.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 0.0.0.0 0.0.0.0 192.168.15.5</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>access-list 100 permit ip 1.1.1.1 0.0.0.0 5.5.5.5 0.0.0.0</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>authentication pre-share</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>encryption aes 128</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>group 2</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>hash sha</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto ipsec transform-set cisco esp-aes 128 esp-sha-hmac<!--more--></strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(cfg-crypto-trans)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp key cisco address 192.168.15.5 no-xauth</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto map mymap 10 ipsec-isakmp </strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>match address 100</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>set transform-set cisco</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>set peer 192.168.15.5</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>set pfs</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto map mymap</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>end</strong></span></span></p>
+
+<p><!--more--></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1#sh cry isa sa</span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">IPv4 Crypto ISAKMP SA</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">dst src state conn-id status</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">192.168.15.5 192.168.15.1 QM_IDLE 1001 ACTIVE</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">IPv6 Crypto ISAKMP SA</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">R1#show crypto session </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Crypto session current status</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">Interface: Ethernet1/3</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Session status: UP-ACTIVE </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Peer: 192.168.15.5 port 500 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">IKE SA: local 192.168.15.1/500 remote 192.168.15.5/500 Active </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">IPSEC FLOW: permit ip host 1.1.1.1 host 5.5.5.5 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Active SAs: 2, origin: crypto map</span></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R5</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>host R5</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="font-family: Arial,sans-serif;"><strong>line con 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>logg sy</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="font-family: Arial,sans-serif;"><strong>no ip domain-lookup</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int loopback 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 5.5.5.5 255.255.255.255</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e0/0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.2.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e0/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.15.5 255.255.255.</strong></span><span style="font-family: Arial,sans-serif;">0</span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 0.0.0.0 0.0.0.0 192.168.15.1</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>access-list 100 permit ip 5.5.5.5 0.0.0.0 1.1.1.1 0.0.0.0</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 20</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>authentication pre-share</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>encryption aes 128</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>group 2</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>hash sha</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto ipsec transform-set cisco esp-aes 128 esp-sha-hmac</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(cfg-crypto-trans)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp key cisco address 192.168.15.1 no-xauth</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto map mymap 10 ipsec-isakmp</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>match address 100</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>set transform-set cisco</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>set peer 192.168.15.1</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-crypto-map)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>set pfs</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-crypto-map)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int e0/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto map mymap</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R5(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>end</strong></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">R5#show crypto isakmp sa</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">dst src state conn-id slot status</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">192.168.15.5 192.168.15.1 QM_IDLE 1 0 ACTIVE</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">R5#show crypto session </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Crypto session current status</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">Interface: Ethernet0/3</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Session status: UP-ACTIVE </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Peer: 192.168.15.1 port 500 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">IKE SA: local 192.168.15.5/500 remote 192.168.15.1/500 Active </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">IPSEC FLOW: permit ip host 5.5.5.5 host 1.1.1.1 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Active SAs: 2, origin: crypto map</span></p>
+
+<p>&nbsp;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[远程接入VPN]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/yuanchengjieruvpn/"/>
+    <updated>2011-07-30T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/yuanchengjieruvpn</id>
+    <content type="html"><![CDATA[<p><span style="color: #c00000;"><span style="font-size: medium;"><strong>服务器端配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(R1)</strong></span></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router&gt;</span><span style="font-family: Arial,sans-serif;"><strong>enable</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router#</span><span style="font-family: Arial,sans-serif;"><strong>configure terminal</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>line console 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>logging synchronous</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>interface fastEthernet 0/0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no shutdown</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip address 192.168.3.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int ethernet 1/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no shutdown</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip address 192.168.15.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>hostname R1</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 192.168.2.0 255.255.255.0 192.168.15.5</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa new-model</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa authentication login default local</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa authentication login ezvpn local</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa authorization network ezvpn local</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>username admin privilege 15 secret admin</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>username cisco secret cisco</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>encryption 3des</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>hash sha</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>authentication pre-shar</strong></span></span><span style="font-family: Arial,sans-serif;">e </span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>group 2</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp keepalive 20 3</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>ip local pool vpn 192.168.3.100 192.168.3.120</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>access-list 100 permit ip 192.168.3.0 0.0.0.255 any</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp client configuration group vpn</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>acl 100</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>include-local-lan</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>key vpn</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>max-users 20</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>max-logins 1</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>pfs</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>pool vpn</strong></span></span></span></p>
+
+<p><!--more--></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>save-password</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #984806;"><span style="font-family: Arial,sans-serif;"><strong>crypto ipsec transform-set cisco esp-3des esp-sha-hmac</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(cfg-crypto-trans)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto dynamic-map mymap 10</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>set transform-set cisco</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>reverse-route</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-crypto-map)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto map ezvpn client authentication list ezvpn</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto map ezvpn client configuration address respond</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto map ezvpn isakmp authorization list ezvpn</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto map ezvpn 65535 ipsec-isakmp dynamic mymap</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto map ezvpn</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>end</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1#</span><span style="font-family: Arial,sans-serif;"><strong>wr</strong></span></span></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><span style="color: #c00000;"><span style="font-size: medium;"><strong>远端配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(R5) – </strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>远端为</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>Cisco</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>设备</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Router&gt;<strong>enable</strong> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Router#<strong>configure terminal</strong> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Router(config)#<strong>host R5</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config)#<strong>line console 0</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-line)#<strong>logging synchronous</strong> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-line)#<strong>exit</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config)#<strong>int e0/3</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>no shutdown</strong> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>ip address 192.168.15.5 255.255.255.0</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>exit</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config)#<strong>int e0/0</strong> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>no shutdown</strong> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>ip address 192.168.2.1 255.255.255.0</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>exit</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config)#<strong>ip route 0.0.0.0 0.0.0.0 192.168.15.1</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config)#<strong>int loopback 0</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>ip add 192.168.3.10 255.255.255.0</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong>exit</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config)#<span style="color: #c00000;"><strong>crypto ipsec client ezvpn vpn</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-crypto-ezvpn)#<span style="color: #c00000;"><strong>connect auto</strong></span> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-crypto-ezvpn)#<span style="color: #c00000;"><strong>group vpn key vpn</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-crypto-ezvpn)#<span style="color: #c00000;"><strong>mode client </strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-crypto-ezvpn)#<span style="color: #c00000;"><strong>peer 192.168.15.1</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-crypto-ezvpn)#<span style="color: #c00000;"><strong>username cisco password cisco</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-crypto-ezvpn)#<span style="color: #c00000;"><strong>xauth userid mode local</strong></span> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-crypto-ezvpn)#<strong>exit</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config)#<strong>interface e0/0</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<span style="color: #0070c0;"><strong>crypto ipsec client ezvpn vpn inside </strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<strong> interface e0/3</strong></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#<span style="color: #0070c0;"><strong>crypto ipsec client ezvpn vpn outside</strong></span> </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5(config-if)#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#sh crypto ipsec client ezvpn </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Easy VPN Remote Phase: 4</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Tunnel name : vpn</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Inside interface list: Ethernet0/0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Outside interface: Ethernet0/3 </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Current State: IPSEC_ACTIVE</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Last Event: SOCKET_UP</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Address: 192.168.3.100</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Mask: 255.255.255.255</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Using PFS Group: 2</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Save Password: Allowed</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Split Tunnel List: 1</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Address : 192.168.3.0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Mask : 255.255.255.0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Protocol : 0x0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Source Port: 0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Dest Port : 0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Current EzVPN Peer: 192.168.15.1</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#sh crypto isakmp sa</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">dst src state conn-id slot status</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">192.168.15.1 192.168.15.5 QM_IDLE 1 0 ACTIVE</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#show crypto session </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Crypto session current status</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">Interface: Ethernet0/3</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Session status: UP-ACTIVE </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Peer: 192.168.15.1 port 500 </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">IKE SA: local 192.168.15.5/500 remote 192.168.15.1/500 Active </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">IPSEC FLOW: permit ip host 192.168.3.100 0.0.0.0/0.0.0.0 </span></p>
+
+<p><span style="font-family: Times New Roman,serif;">Active SAs: 2, origin: crypto map</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R5#</span></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><span style="color: #c00000;"><span style="font-size: medium;"><strong>远端配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(R5) – </strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>远端为</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>Cisco VPN</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>软件客户端</strong></span></span></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[站到站VPN (数字证书)]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/kongzhipingmianheguanlipingmiananquan/"/>
+    <updated>2011-07-10T00:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/kongzhipingmianheguanlipingmiananquan</id>
+    <content type="html"><![CDATA[<p><span style="font-family: Times New Roman,serif;"><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R3 </strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>上的</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>VLAN</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN0035 Fa0/3, Fa0/5</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R3</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(CA)</strong></span></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3#</span><span style="font-family: Arial,sans-serif;"><strong>clock set 18:00:00 8 Aug 2008</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3#</span><span style="font-family: Arial,sans-serif;"><strong>conf t</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int vlan35</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.12.35 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip domain-name dongwm.com</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto pki server vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(cs-server)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>grant auto</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(cs-server)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>no shutdown</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">%Some server settings cannot be changed after CA certificate generation.</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Please enter a passphrase to protect the private key</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% or type Return to exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Password:</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>cisco123</strong></span></span></span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Re-enter password:</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>cisco123</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Generating 1024 bit RSA keys, keys will be non-exportable...[OK]</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Aug 8 18:08:00.395: %SSH-5-ENABLED: SSH 1.99 has been enabled% Exporting</span><span style="font-family: Arial,sans-serif;">Certificate Server signing certificate and keys...</span></span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">% Certificate Server enabled.</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(cs-server)#</span><span style="font-family: Arial,sans-serif;"><strong>end</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3#sh crypto key mypubkey rsa </span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Key pair was generated at: 18:08:00 UTC Aug 8 2008</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key name: vpnca</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Usage: General Purpose Key</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key is not exportable.</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key Data:</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">30819F30 0D06092A 864886F7 0D010101 05000381 8D003081 89028181 00D91167 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">FCA77211 274A2CFC B6CE878E A5015E1C 0AC2F338 453D38B6 691A2B66 8B026E06 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">F08707E8 A87383B7 A4A81638 3A31F66A AFE95C19 E3FD70EE 6BD712EF 0BDD4B67 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">0424F121 81EB3C38 B0C16178 FAC05C47 5FA33A7F 93462187 3FE30098 920A0784 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">268F290F 3E7C0771 CBCC4B53 0CC09D4F 63A7F0E1 E849800C 619EA02F BD020301 0001</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Key pair was generated at: 18:08:01 UTC Aug 8 2008</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key name: vpnca.server</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Usage: Encryption Key</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key is not exportable.</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key Data:</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">307C300D 06092A86 4886F70D 01010105 00036B00 30680261 00D0C4D2 102FDD65 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">53599D63 8689E105 17F85939 6D0E415A 0BE183AE 32435875 6650B178 4D213B10 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">B5ECD8F3 7210CDB5 A6714F8A 3E010F6B 02B3A10D F1779DBA 551CFF2A E67F1062 </span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">E30A163C 0AE61978 A4157C71 A0DF544C 31E807F7 5F549181 F3020301 0001</span></span></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R1</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(VPN)</strong></span></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int loopback 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 1.1.1.1 255.255.255.255</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.12.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 0.0.0.0 0.0.0.0 192.168.12.2</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>ip host vpnca 192.168.12.35</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>clock set 18:00:00 8 Aug 2008</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto pki trustpoint vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(ca-trustpoint)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>password cisco123</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(ca-trustpoint)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>enrollment url http://vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(ca-trustpoint)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto pki authenticate vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Certificate has the following attributes:</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Fingerprint MD5: 1891DCB9 B7896D96 F135D835 B4DB2A3B </span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Fingerprint SHA1: 96249CAB FE0F8666 5420BEBE E6351C77 C036A563</span></span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">% Do you accept this certificate? [yes/no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Trustpoint CA certificate accepted.</span></p>
+
+<p><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>R1(config)#crypto pki enroll vpnca</strong></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">%</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Start certificate enrollment .. </span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">% The subject name in the certificate will include: R1.cisco.com</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">% Include the router serial number in the subject name? [yes/no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% The serial number in the certificate will be: 4294967295</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">% Include an IP address in the subject name? [no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Enter Interface name or IP Address[]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>192.168.12.1</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Request certificate from CA? [yes/no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Certificate request sent to Certificate Authority</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% The 'show crypto pki certificate verbose vpnca' commandwill show the fingerprint.</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>authentication rsa-sig</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>end</strong></span></span></p>
+]]></content>
+  </entry>
+  
+</feed>

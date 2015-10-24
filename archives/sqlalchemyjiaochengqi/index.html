@@ -1,0 +1,554 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>SQLAlchemy教程(七) - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengqi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">SQLAlchemy教程(七)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>本文主要是面向对象的继承映射到关系数据库表的方法</strong></p>
+
+<p>&gt;&gt;&gt; class Product(object):
+&#8230;     def __init__(self, sku, msrp):
+&#8230;         self.sku = sku
+&#8230;         self.msrp = msrp
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;%s %s&gt;&#8217; % (
+&#8230;             self.__class__.__name__, self.sku)
+&#8230;
+&gt;&gt;&gt; class Clothing(Product):
+&#8230;     def __init__(self, sku, msrp, clothing_info):
+&#8230;         Product.__init__(self, sku, msrp) #继承了Product
+&#8230;         self.clothing_info = clothing_info
+&#8230;
+&gt;&gt;&gt; class Accessory(Product):
+&#8230;     def __init__(self, sku, msrp, accessory_info):
+&#8230;         Product.__init__(self, sku, msrp) #继承了Product
+&#8230;         self.accessory_info = accessory_info
+也就是这样的意思:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png"><img class="alignnone  wp-image-1267" title="Screenshot-1" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png" alt="" width="700" height="251" /></a></p>
+
+<p>这个单表继承中(如下图,黑色的表示没有被映射):</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png"><img class="alignnone  wp-image-1270" title="Screenshot-2" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png" alt="" width="683" height="316" /></a></p>
+
+<p>从创建表结构是这样:</p>
+
+<p>&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;clothing_info&#8217;, String),
+&#8230;     Column(&#8216;accessory_info&#8217;, String),
+&#8230;     Column(&#8216;product_type&#8217;, String(1), nullable=False)) #一个新的字段
+&gt;&gt;&gt; mapper(
+&#8230;     Product, product_table,
+&#8230;     polymorphic_on=product_table.c.product_type, #映射继承层次结构使用polymorphic_on表示继承在product_type字段,值是polymorphic_identity指定的标识
+&#8230;     polymorphic_identity=&#8217;P&#8217;) #标识继承 Product ,父类
+&lt;Mapper at 0x85833ec; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, inherits=Product,
+&#8230;        polymorphic_identity=&#8217;C&#8217;)   #标识继承Clothing product
+&lt;Mapper at 0x858362c; Clothing&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt; mapper(Accessory, inherits=Product, #继承至Product
+&#8230;        polymorphic_identity=&#8217;A&#8217;) #标识继承Accessory
+&lt;Mapper at 0x8587d8c; Accessory&gt;
+&gt;&gt;&gt; products = [  #创建一些产品
+&#8230;     Product(&#8216;123&#8217;, 11.22),
+&#8230;     Product(&#8216;456&#8217;, 33.44),
+&#8230;     Clothing(&#8216;789&#8217;, 123.45, &#8220;Nice Pants&#8221;),
+&#8230;     Clothing(&#8216;111&#8217;, 125.45, &#8220;Nicer Pants&#8221;),
+&#8230;     Accessory(&#8216;222&#8217;, 24.99, &#8220;Wallet&#8221;),
+&#8230;     Accessory(&#8216;333&#8217;, 14.99, &#8220;Belt&#8221;) ]
+&gt;&gt;&gt; Session = sessionmaker()
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; for p in products:
+&#8230;     session.add(p)
+&#8230;
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Product).all() #全部都有
+[&lt;Product 123&gt;, &lt;Product 456&gt;, &lt;Clothing 789&gt;, &lt;Clothing 111&gt;, &lt;Accessory 222&gt;, &lt;Accessory 333&gt;]
+&gt;&gt;&gt; print session.query(Clothing).all()  #只显示2个
+[&lt;Clothing 789&gt;, &lt;Clothing 111&gt;]
+&gt;&gt;&gt; print session.query(Accessory).all() #只显示2个,是不是上面的映射效果和创建3个类而分别orm好的多呢?
+[&lt;Accessory 222&gt;, &lt;Accessory 333&gt;]</p>
+
+<p>&gt;&gt;&gt; for row in product_table.select().execute(): #从父类库查询,所有数据都有,只是product_type不同
+&#8230;     print row
+&#8230;
+(u&#8217;123&#8217;, Decimal(&#8216;11.2200000000&#8217;), None, None, u&#8217;P&#8217;)
+(u&#8217;456&#8217;, Decimal(&#8216;33.4400000000&#8217;), None, None, u&#8217;P&#8217;)
+(u&#8217;789&#8217;, Decimal(&#8216;123.4500000000&#8217;), u&#8217;Nice Pants&#8217;, None, u&#8217;C&#8217;)
+(u&#8217;111&#8217;, Decimal(&#8216;125.4500000000&#8217;), u&#8217;Nicer Pants&#8217;, None, u&#8217;C&#8217;)
+(u&#8217;222&#8217;, Decimal(&#8216;24.9900000000&#8217;), None, u&#8217;Wallet&#8217;, u&#8217;A&#8217;)
+(u&#8217;333&#8217;, Decimal(&#8216;14.9900000000&#8217;), None, u&#8217;Belt&#8217;, u&#8217;A&#8217;)</p>
+
+<p>具体的映射见下图:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png"><img class="alignnone  wp-image-1271" title="Screenshot-3" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png" alt="" width="629" height="232" /></a></p>
+
+<p>查询一个没有的不存在的映射:</p>
+
+<p>&gt;&gt;&gt; print session.query(Accessory)[0].clothing_info
+None</p>
+
+<p><strong>具体表的继承</strong></p>
+
+<p><strong></strong>每个表包含的数据量,需要实现它的类;没有浪费的空间</p>
+
+<p>&gt;&gt;&gt; metadata.remove(product_table)
+&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric))
+&gt;&gt;&gt; clothing_table = Table(
+&#8230;     &#8216;clothing&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;clothing_info&#8217;, String))
+&gt;&gt;&gt;
+&gt;&gt;&gt; accessory_table = Table(
+&#8230;     &#8216;accessory&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;accessory_info&#8217;, String))
+&gt;&gt;&gt;
+摄像我们想要获取Product&#8217;sku&#8217;是222的数据(没有其他额外的工作),我们不得不层次型的查询每个类,请看这个例子:</p>
+
+<p>&gt;&gt;&gt; punion = polymorphic_union(
+&#8230;     dict(P=product_table,
+&#8230;     C=clothing_table,
+&#8230;     A=accessory_table),
+&#8230;     &#8216;type_&#8217;)
+&gt;&gt;&gt;
+&gt;&gt;&gt; print punion
+SELECT accessory.sku, accessory.msrp, accessory.accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;A&#8217; AS type_
+FROM accessory UNION ALL SELECT product.sku, product.msrp, CAST(NULL AS VARCHAR) AS accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;P&#8217; AS type_
+FROM product UNION ALL SELECT clothing.sku, clothing.msrp, CAST(NULL AS VARCHAR) AS accessory_info, clothing.clothing_info, &#8216;C&#8217; AS type_
+FROM clothing
+现在我们就有了一个很好的标记了(C,A,P)</p>
+
+<p>&gt;&gt;&gt; mapper(
+&#8230;     Product, product_table, with_polymorphic=(&#8216;*&#8217;, punion),  #使用with_polymorphic=(&#8216;*&#8217;, punion)的方式映射父类,指定不同表选择,实现多态,并且提高了性能(只select了一次)
+&#8230;     polymorphic_on=punion.c.type_,
+&#8230;     polymorphic_identity=&#8217;P&#8217;)
+&lt;Mapper at 0x8605b6c; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, clothing_table, inherits=Product,
+&#8230; polymorphic_identity=&#8217;C&#8217;,
+&#8230; concrete=True)
+&lt;Mapper at 0x84f1bac; Clothing&gt;
+&gt;&gt;&gt; mapper(Accessory, accessory_table, inherits=Product,
+&#8230; polymorphic_identity=&#8217;A&#8217;,
+&#8230; concrete=True)
+&lt;Mapper at 0x858770c; Accessory&gt;</p>
+
+<p>&gt;&gt;&gt; session.query(Product).get(&#8216;222&#8217;)
+&lt;Accessory 222&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/sqlalchemy/'>SQLAlchemy</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengqi/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/sqlalchemyjiaochengliu/" title="Previous Post:
+        SQLAlchemy教程(六)">&laquo; SQLAlchemy教程(六)</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/sqlalchemyjiaochengwu/"
+        title="Next Post: SQLAlchemy教程(五)">SQLAlchemy教程(五)
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengqi/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/sqlalchemyjiaochengqi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

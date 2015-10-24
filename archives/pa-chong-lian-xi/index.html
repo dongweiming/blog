@@ -1,0 +1,795 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>爬虫练习 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery">
+             
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/pa-chong-lian-xi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">爬虫练习</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-23T11:01:00+08:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>20号参加pycon,发现有个招聘公司<a href="http://blog.knownsec.com/2012/02/knownsec-recruitment/">知道创宇</a>, 正好换工作,就去公司网站转了下,发现挺有意思:投简历需要一个网站爬虫程序,基本要求如下(可以直接点开上面网页去看):</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+使用python编写一个网站爬虫程序，支持参数如下：
+
+spider.py -u url -d deep -f logfile -l loglevel(1-5)  --testself -thread number --dbfile  filepath  --key=”HTML5”
+
+
+参数说明：
+
+-u 指定爬虫开始地址
+
+-d 指定爬虫深度
+
+--thread 指定线程池大小，多线程爬取页面，可选参数，默认10
+
+--dbfile 存放结果数据到指定的数据库（sqlite）文件中
+
+--key 页面内的关键词，获取满足该关键词的网页，可选参数，默认为所有页面
+
+-l 日志记录文件记录详细程度，数字越大记录越详细，可选参数，默认spider.log
+
+--testself 程序自测，可选参数
+ 
+功能描述：
+
+1、指定网站爬取指定深度的页面，将包含指定关键词的页面内容存放到sqlite3数据库文件中
+
+2、程序每隔10秒在屏幕上打印进度信息
+
+3、支持线程池机制，并发爬取网页
+
+4、代码需要详尽的注释，自己需要深刻理解该程序所涉及到的各类知识点
+
+5、需要自己实现线程池
+</pre></figure></notextile></div></notextile></div>
+
+<p>搞了2天,根据研究,弄了一个版本(友情提示,仅供学习参考,要是面试这个职位,建议大家用其它方法实现,因为我投递过了,不要拿来主义额^.^)
+#####代码如下(隐藏了个人信息用’XXX’代替)</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/env python
+#coding=utf-8
+
+import urllib2 
+import Queue
+import sys
+import traceback
+import threading
+import re
+import datetime
+import lxml
+import chardet
+import logging
+import logging.handlers
+from time import sleep
+from urlparse import urlparse
+from lxml import etree
+from optparse import OptionParser
+
+try:
+    from sqlite3 import dbapi2 as sqlite
+except:
+    from pysqlite2 import dbapi2 as sqlite 
+
+#__doc__注释  执行脚本 -h 或者 --help  打印输出的内容
+'''
+This script is used to crawl analyzing web!
+
+The Feature: 
+1 可以指定抓取的深度
+2 将抓取到的关键字数据存放在sqlite
+3 使用logging记录日志
+4 并发线程池
+
+Required dependencies: 
+1 chardet #分析抓取页面的字符集 
+sudo easy_install chardet
+
+Usage: 
+spider.py -u url -d deep -f logfile -l loglevel(1-5)  --testself -thread number --dbfile  filepath  --key=”HTML5”
+
+Writer: Dongweiming
+Date: 2012.10.22
+'''
+
+
+lock = threading.Lock() #设置线程锁
+LOGGER = logging.getLogger('Crawler') #设置logging模块的前缀
+LEVELS={   #日志级别
+        1:'CRITICAL',
+        2:'ERROR',
+        3:'WARNING',
+        4:'INFO',
+        5:'DEBUG',#数字越大记录越详细
+        }
+formatter = logging.Formatter('%(name)s %(asctime)s %(levelname)s %(message)s') #自定义日志格式
+
+class mySqlite(object):
+    
+    def __init__(self, path, logger, level):
+        '''初始化数据库连接.
+ 
+           &gt;&gt;&gt; from sqlite3 import dbapi2 as sqlite
+           &gt;&gt;&gt; conn = sqlite.connect('testdb')
+        '''
+        try:
+            self.conn = sqlite.connect(path) #连接sqlite
+            self.cur = self.conn.cursor()  #cursor是一个记录游标，用于一行一行迭代的访问查询返回的结果
+        except Exception, e:
+            myLogger(logger, self.loglevel, e, True)
+            return -1
+        
+        self.logger = logger
+        self.loglevel = level
+
+    def create(self, table): 
+        '''创建table，我这里创建包含2个段 ID（数字型，自增长），Data（char 128字符）'''
+        try:
+            self.cur.execute("CREATE TABLE IF NOT EXISTS %s(Id INTEGER PRIMARY KEY AUTOINCREMENT, Data VARCHAR(40))"% table)
+            self.done()
+        except sqlite.Error ,e: #异常记录日志并且做事务回滚,以下相同
+            myLogger(self.logger, self.loglevel, e, True) 
+            self.conn.rollback()
+        if self.loglevel &gt;3: #设置在日志级别较高才记录,这样级别高的详细
+                myLogger(self.logger, self.loglevel, '创建表%s' % table)
+
+    def insert(self, table, data):
+        '''插入数据，指定表名，设置data的数据'''
+        try:
+            self.cur.execute("INSERT INTO %s(Data) VALUES('%s')" % (table,data))
+            self.done()
+        except sqlite.Error ,e:
+            myLogger(self.logger, self.loglevel, e, True)
+            self.conn.rollback()
+        else:
+            if self.loglevel &gt;4:
+                myLogger(self.logger, self.loglevel, '插入数据成功')
+
+    def done(self):
+        '''事务提交'''
+        self.conn.commit()
+
+    def close(self):
+        '''关闭连接'''
+        self.cur.close()
+        self.conn.close()
+        if self.loglevel &gt;3:
+            myLogger(self.logger, self.loglevel, '关闭sqlite操作')
+
+
+class Crawler(object):
+
+    def __init__(self, args, app, table, logger):
+        self.deep = args.depth  #指定网页的抓取深度        
+        self.url = args.urlpth #指定网站地址
+        self.key = args.key #要搜索的关键字
+        self.logfile = args.logfile #日志文件路径和名字
+        self.loglevel = args.loglevel #日志级别
+        self.dbpth = args.dbpth #指定sqlite数据文件路径和名字
+        self.tp = app #连接池回调实例
+        self.table = table #每次请求的table不同 
+        self.logger = logger #logging模块实例
+        self.visitedUrl = [] #抓取的网页放入列表,防止重复抓取
+
+    def _hasCrawler(self, url): 
+        '''判断是否已经抓取过这个页面'''
+        return (True if url in self.visitedUrl else False)
+     
+    def getPageSource(self, url, key, deep): 
+        ''' 抓取页面,分析,入库.
+        '''
+        headers = {  #设计一个用户代理,更好防止被认为是爬虫
+            'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; \
+            rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6' }
+        #if  urlparse(url).scheme == 'https':
+           #pass
+        if self._hasCrawler(url): #发现重复直接return
+            return
+        else:
+            self.visitedUrl.append(url) #发现新地址假如到这个列表
+        try:
+            request = urllib2.Request(url = url, headers = headers) #创建一个访问请求,指定url,并且把访问请求保存在request 
+            result = urllib2.urlopen(request).read() #打开这个请求,并保存读取数据
+        except urllib2.HTTPError, e:  #触发http异常记录日志并返回
+            myLogger(self.logger, self.loglevel, e, True)
+            return -1
+        try:
+            encoding = chardet.detect(result)['encoding'] #判断页面的编码
+            if encoding.lower() == 'gb2312':
+                encoding = 'gbk'  #今天我抓取新浪是gb2312,但是其中有个'蔡旻佑'不能被识别,所以用gbk去解码gb2312的页面
+            if encoding.lower() != 'utf-8': #发现不是默认编码就用应该的类型解码
+                result = result.decode(encoding)
+        except Exception, e:
+            myLogger(self.logger, self.loglevel, e, True)
+            return -1
+        else:
+            if self.loglevel &gt;3:
+                myLogger(self.logger, self.loglevel, '抓取网页 %s 成功' % url)
+        try:
+            self._xpath(url, result, ['a'], unicode(key, 'utf8'), deep) #分析页面中<a>的连接地址,以及它的内容
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], unicode(key, "utf8"), deep) #分析这几个标签的内容
+        except TypeError: #对编码类型异常处理,有些深度页面和主页的编码不同
+            self._xpath(url, result, ['a'], key, deep)
+            self._xpath(url, result, ['title', 'p', 'li', 'div'], key, deep)
+        except Exception, e:
+            myLogger(self.logger, self.loglevel, e, True)
+            return -1
+        else:
+            if self.loglevel &gt;3:
+                myLogger(self.logger, self.loglevel, '分析网页 %s 成功' % url)
+        return True
+
+    def _xpath(self, weburl, data, xpath, key, deep):
+
+        sq = mySqlite(self.dbpth, self.logger, self.loglevel)
+        page = etree.HTML(data)
+        for i in xpath:
+            hrefs = page.xpath(u"//%s" % i) #根据xpath标签
+            if deep &gt;1:
+                for href in hrefs:
+                    url = href.attrib.get('href','')
+                    if not url.startswith('java') and not  \
+                        url.startswith('mailto'):  #过滤javascript和发送邮件的链接
+                            self.tp.add_job(self.getPageSource,url, key, deep-1) #递归调用,直到符合的深度
+            for href in hrefs:
+                value = href.text  #抓取相应标签的内容
+                if value:
+                    m = re.compile(r'.*%s.*' % key).match(value) #根据key匹配相应内容
+                    if m:
+                        sq.insert(self.table, m.group().strip()) #将匹配的数据插入到sqlite
+        sq.close()
+
+    def work(self):
+        '''主方法调用.
+        
+        &gt;&gt;&gt; import datetime
+        &gt;&gt;&gt; logger = configLogger('test.log')
+        &gt;&gt;&gt; time = datetime.datetime.now().strftime("%m%d%H%M%S")
+        &gt;&gt;&gt; sq = mySqlite('test.db', logger, 1)
+        &gt;&gt;&gt; table = 'd' + str(time)
+        &gt;&gt;&gt; sq.create(table)
+        &gt;&gt;&gt; tp = ThreadPool(5)
+        &gt;&gt;&gt; def t():pass
+        &gt;&gt;&gt; t.depth=1
+        &gt;&gt;&gt; t.urlpth='http://www.baidu.com'
+        &gt;&gt;&gt; t.logfile = 'test.log'
+        &gt;&gt;&gt; t.loglevel = 1
+        &gt;&gt;&gt; t.dbpth = 'test.db'
+        &gt;&gt;&gt; t.key = 'test'
+        &gt;&gt;&gt; d = Crawler(t, tp, table, logger)
+        &gt;&gt;&gt; d.getPageSource(t.urlpth, t.key, t.depth)
+        True
+        '''
+        if not self.url.startswith('http://'): #支持用户直接写域名,当然也支持带前缀
+            self.url = 'http://' + self.url
+        self.tp.add_job(self.getPageSource, self.url, self.key, self.deep)
+        self.tp.wait_for_complete() #等待线程池完成
+
+
+class MyThread(threading.Thread):
+
+    def __init__(self, workQueue, timeout=30, **kwargs):
+        threading.Thread.__init__(self, kwargs=kwargs)
+        self.timeout = timeout #线程在结束前等待任务队列多长时间
+        self.setDaemon(True)  #设置deamon,表示主线程死掉,子线程不跟随死掉
+        self.workQueue = workQueue
+        self.start() #初始化直接启动线程
+ 
+    def run(self):
+        '''重载run方法'''
+        while True:
+            try:
+                lock.acquire()   #线程安全上锁
+                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
+                res = callable(*args)  #执行的任务
+                lock.release()  #执行完,释放锁
+            except Queue.Empty: #任务队列空的时候结束此线程
+                break
+            except Exception, e:
+                myLogger(self.logger, self.loglevel, e, True)
+                return -1
+
+
+class ThreadPool(object):
+
+    def __init__(self, num_of_threads):
+         self.workQueue = Queue.Queue()
+         self.threads = []
+         self.__createThreadPool(num_of_threads)
+ 
+    def __createThreadPool(self, num_of_threads):
+         for i in range(num_of_threads):
+             thread = MyThread(self.workQueue)
+             self.threads.append(thread)
+ 
+    def wait_for_complete(self):
+         '''等待所有线程完成'''
+         while len(self.threads):
+             thread = self.threads.pop()
+         if thread.isAlive():  #判断线程是否还存活来决定是否调用join
+             thread.join()
+     
+    def add_job( self, callable, *args):
+        '''增加任务,放到队列里面'''
+        self.workQueue.put((callable, args))
+   
+
+def configLogger(logfile):
+    '''配置日志文件和记录等级'''
+    try:
+        handler = logging.handlers.RotatingFileHandler(logfile, 
+                                                       maxBytes=10240000, #文件最大字节数
+                                                       backupCount=5, #会轮转5个文件，共6个
+                                                        )
+    except IOError, e:
+        print e
+        return -1
+    else:
+        handler.setFormatter(formatter)  #设置日志格式
+        LOGGER.addHandler(handler) #增加处理器
+        logging.basicConfig(level=logging.NOTSET) #设置,不打印小于4级别的日志
+    return LOGGER #返回logging实例
+
+def myLogger(logger, lv, mes, err=False):
+    '''记录日志函数'''
+    getattr(logger, LEVELS.get(lv, 'WARNING').lower())(mes)
+    if err: #当发现是错误日志,还会记录错误的堆栈信息
+        getattr(logger, LEVELS.get(lv, 'WARNING').lower())(traceback.format_exc())
+
+def parse():
+    parser = OptionParser(
+                  description="This script is used to crawl analyzing web!")
+    parser.add_option("-u", "--url", dest="urlpth", action="store",
+                  help="Path you want to fetch", metavar="www.sina.com.cn")
+    parser.add_option("-d", "--deep", dest="depth", action="store",type="int",
+                  help="Url path's deep, default 1", default=1)
+    parser.add_option("-k", "--key", dest="key", action="store",
+                  help="You want to query keywords, For example 'test'")
+    parser.add_option("-f", "--file", dest="logfile", action="store",
+                  help="Record log file path and name, default spider.log", 
+                  default='spider.log')
+    parser.add_option("-l", "--level", dest="loglevel", action = "store",
+                  type="int",help="Log file level, default 1(CRITICAL)", 
+                  default=1)
+    parser.add_option("-t", "--thread", dest="thread", action="store",
+                  type="int",help="Specify the thread pool, default 10", 
+                  default=10)
+    parser.add_option("-q", "--dbfile", dest="dbpth", action="store",
+                  help="Specify the the sqlite file directory and name, \
+                  default  test.db", metavar='test.db')
+    parser.add_option("-s", "--testself", dest="testself", action="store_true",
+                  help="Test myself", default=False)
+    (options, args) = parser.parse_args()  
+    return options
+
+def main():
+    '''主函数'''
+        
+    options = parse()
+    if options.testself: #如果testself,执行doctest
+        import doctest
+        print doctest.testmod()
+        return
+    if not options.urlpth or not options.key or not options.dbpth: #判断必选项是否存在
+        print 'Need to specify the parameters option "-u " or "-k" or "-q"!'
+        return
+    if '-h' in sys.argv  or '--help' in sys.argv:  #选择帮助信息,打印__doc__
+        print __doc__
+
+    logger = configLogger(options.logfile) #实例化日志调用
+    time = datetime.datetime.now().strftime("%m%d%H%M%S") #每次请求都会根据时间创建table
+    tp = ThreadPool(options.thread) 
+    sq = mySqlite(options.dbpth, logger, options.loglevel)
+    table = 'd' + str(time)
+    sq.create(table) #创建table
+    sq.close()
+    crawler = Crawler(options, tp, table, logger)
+    crawler.work()  #主方法
+ 
+if __name__ == '__main__':
+    main()
+
+</a></pre></figure></notextile></div></notextile></div>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-23T11:01:00+08:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/pa-chong-lian-xi/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/pythonban-ge-ren-jian-li/" title="Previous Post:
+        python版个人简历">&laquo; python版个人简历</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/archives/octopress-de-3D-biao-qian-yun/"
+        title="Next Post: octopress的3D标签云插件">octopress的3D标签云插件
+        &raquo;</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/pa-chong-lian-xi/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/pa-chong-lian-xi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
