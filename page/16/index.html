@@ -142,6 +142,120 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyu-2/">关于cProfile,pstats研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：profile, cProfile, pstats是三个python程序性能分析的模块，cProfile和Profile显示消耗处理器资源的收集和分析统计</p>
+
+<p><pre class="sh_python">
+#coding=utf-8
+def test1():
+    sum = 0
+    for i in range(10000):
+        sum += i
+    sumA = test2()
+    sumB = test2()
+    return sum</p>
+
+<p>def test2():
+    sum = 0
+    for i in range(100000):
+        sum += i
+    return sum</p>
+
+<p>if __name__ == "__main__":
+    import cProfile
+    cProfile.run("test1()")   #直接把分析结果打印到控制台
+    cProfile.run("test1()", "result") #把分析结果保存到文件中,不过内容可读性差...需要调用pstats模块分析结果
+    import pstats
+    p = pstats.Stats("result") #创建Stats对象
+    p.strip_dirs().sort_stats(-1).print_stats()  #这一行的效果和直接运行cProfile.run("test1()")的显示效果是一样的
+    #strip_dirs():从所有模块名中去掉无关的路径信息
+    #sort_stats():把打印信息按照标准的module/name/line字符串进行排序
+    #print_stats():打印出所有分析信息
+    p.strip_dirs().sort_stats("name").print_stats() #按照函数名排序
+    #按照在一个函数中累积的运行时间进行排序
+    #print_stats(3):只打印前3行函数的信息,参数还可为小数,表示前百分之几的函数信息
+    p.strip_dirs().sort_stats("cumulative").print_stats(3)
+    #还有一种用法
+    p.sort_stats('time', 'cum').print_stats(.5, 'test1')
+    #先按time排序,再按cumulative时间排序,然后打倒出前50%中含有函数信息
+    p.print_callers(0.5, "test2") #如果想知道有哪些函数调用了test2
+    p.print_callees("test1") #查看test1()函数中调用了哪些函数
+</pre></p>
+
+<p>运行的结果的一部分：</p>
+
+<p>9 function calls in 0.045 CPU seconds  #9次函数调用</p>
+
+<p>Ordered by: standard name</p>
+
+<p>ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+1    0.000    0.000    0.045    0.045 &lt;string&gt;:1(&lt;module&gt;)
+1    0.000    0.000    0.045    0.045 cProfile.py:132(run)
+1    0.000    0.000    0.045    0.045 cProfile.py:137(runctx)
+1    0.000    0.000    0.045    0.045 cProfile.py:14(run)
+1    0.000    0.000    0.000    0.000 cProfile.py:5(&lt;module&gt;)
+1    0.000    0.000    0.000    0.000 cProfile.py:66(Profile)
+1    0.000    0.000    0.045    0.045 test.py:2(&lt;module&gt;)
+1    0.000    0.000    0.045    0.045 {execfile}
+1    0.045    0.045    0.045    0.045 {method &#8216;enable&#8217; of &#8216;_lsprof.Profiler&#8217; objects}
+注：按列，第一列加起来是9，第二列表示运行时间是0.045，第三列是运行时间除以次数，第四列表示总共运行时间，包含内部所有其他函数运行总时间，</p>
+
+<p>第五列是总共运行时间除以次数，第六列表名某函数或者文件调用</p>
+
+<p>注2：可以使用命令行执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python -m cProfile test.py -o result  #result 这个文件是运行cProfile.run()得到的数据文件</p>
+
+<p>注3：runctx()是在使用复杂表达式的时候使用</p>
+
+<p>当然 还有数据的可视化：</p>
+
+<p><a href="http://code.google.com/p/jrfonseca/wiki/Gprof2Dot" rel="nofollow" target="_blank">Gprof2Dot</a>可将多种Profiler的数据转成<a title="Graphviz（尚未撰写）" href="http://linux-wiki.cn/index.php?title=Graphviz&amp;action=edit&amp;redlink=1">Graphviz</a>可处理的图像表述。配合dot命令，即可得到不同函数所消耗的时间分析图。</p>
+
+<p>dongwm@linux-dongwm:~/jrfonseca.gprof2dot&gt; ./gprof2dot.py -f pstats ../result | dot -Tpng -o output.png
+效果图：</p>
+
+<p><img class="alignnone" title=" " src="http://pic.yupoo.com/dongweiming/C2erL22f/13ZkRd.png" alt="" width="168" height="507" /></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuurlparseyanjiu/">关于urlparse研究</a></h1>
     
     
@@ -975,189 +1089,6 @@ finally:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyu/">关于BaseHTTPServer研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：BaseHTTPServer是一个实现web server的基类</p>
-
-<p>例子1 http get方法：</p>
-
-<p><pre class="sh_python">
-from BaseHTTPServer import BaseHTTPRequestHandler  #BaseHTTPRequestHandler类细分到处理每个协议的方法，这里是‘GET’方法的例子
-import urlparse</p>
-
-<p>class GetHandler(BaseHTTPRequestHandler):
-    def do_GET(self):   #重写这个方法
-        parsed_path = urlparse.urlparse(self.path)
-        message_parts = [  #建立一个想要返回的列表
-                'CLIENT VALUES:',    #客户端信息
-                'client_address=%s (%s)' % (self.client_address,
-                                            self.address_string()),  #返回客户端的地址和端口
-                'command=%s' % self.command,  #返回操作的命令，这里比然是'get'
-                'path=%s' % self.path,  #返回请求的路径
-                'real path=%s' % parsed_path.path, #返回通过urlparse格式化的路径
-                'query=%s' % parsed_path.query, #返回urlparse格式化的查询语句的键值
-                'request_version=%s' % self.request_version, #返回请求的http协议版本号
-                '',
-                'SERVER VALUES:', #服务器段信息
-                'server_version=%s' % self.server_version, #返回服务器端http的信息
-                'sys_version=%s' % self.sys_version, #返回服务器端使用的python版本
-                'protocol_version=%s' % self.protocol_version,  #返回服务器端使用的http协议版本
-                '',
-                'HEADERS RECEIVED:',
-                ]
-        for name, value in sorted(self.headers.items()):  #返回項添加头信息，包含用户的user-agent信息，主机信息等
-            message_parts.append('%s=%s' % (name, value.rstrip()))
-        message_parts.append('')
-        message = '\r\n'.join(message_parts)
-        self.send_response(200)  #返回给客户端结果，这里的响应码是200 OK，并包含一些其他信息
-        self.end_headers() #结束头信息
-        self.wfile.write(message) #返回数据
-        return
-if __name__ == '__main__':
-    from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 8080), GetHandler)  #在本地8080端口上启用httpserver，使用自定义的GetHandler处理
-    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
-    server.serve_forever()  #保存程序一直运行
-</pre></p>
-
-<p>客户端测试（linux的curl即可）</p>
-
-<p>dongwm@linux-dongwm:~&gt; curl -i http://localhost:8080/?arg=value
-HTTP/1.0 200 OK
-Server: BaseHTTP/0.3 Python/2.7
-Date: Mon, 11 Jun 2012 06:59:20 GMT</p>
-
-<p>CLIENT VALUES:
-client_address=(&#8216;127.0.0.1&#8217;, 54016) (localhost)
-command=GET
-path=/?arg=value
-real path=/
-query=arg=value
-request_version=HTTP/1.1</p>
-
-<p>SERVER VALUES:
-server_version=BaseHTTP/0.3
-sys_version=Python/2.7
-protocol_version=HTTP/1.0</p>
-
-<p>HEADERS RECEIVED:
-accept=*/*
-host=localhost:8080
-user-agent=curl/7.21.2 (i686-pc-linux-gnu) libcurl/7.21.2 OpenSSL/1.0.0c zlib/1.2.5 libidn/1.15 libssh2/1.2.7</p>
-
-<p>例子2 http post方法：</p>
-
-<p><pre class="sh_python">
-from BaseHTTPServer import BaseHTTPRequestHandler
-import cgi   #cgi模块，让使用者通过Web服务器来执 行Web程序，并将所执行的结果通过Web服务器返回给浏览器，它产生HTML数据</p>
-
-<p>class PostHandler(BaseHTTPRequestHandler):
-    def do_POST(self): #还是重写这个方法
-        form = cgi.FieldStorage(  #cgi.FieldStorage实例效果类似一个字典，包含键－值和len等内置函数
-            fp=self.rfile,
-            headers=self.headers,
-            environ={'REQUEST_METHOD':'POST',
-                     'CONTENT_TYPE':self.headers['Content-Type'],
-                     })
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write('Client: %s\n' % str(self.client_address))
-        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
-        self.wfile.write('Path: %s\n' % self.path)
-        self.wfile.write('Form data:\n')</p>
-
-<p>        for field in form.keys():
-            field_item = form[field]
-            self.wfile.write('\t%s=%s\n' % (field, form[field].value))
-        return</p>
-
-<p>if __name__ == '__main__':
-    from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 8080), PostHandler)
-    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
-    server.serve_forever()
-</pre></p>
-
-<p>客户端测试（linux的curl）</p>
-
-<p>dongwm@linux-dongwm:~&gt; curl http://localhost:8080/ -F name=dongwm -F site=www.dongwm.com
-Client: (&#8216;127.0.0.1&#8217;, 44314)
-User-agent: curl/7.21.2 (i686-pc-linux-gnu) libcurl/7.21.2 OpenSSL/1.0.0c zlib/1.2.5 libidn/1.15 libssh2/1.2.7
-Path: /
-Form data:
-name=dongwm
-site=www.dongwm.com
-例子3 使用多线程</p>
-
-<p>注：<tt></tt><tt>HTTPServer</tt>是SocketServer.TCPServer的一个简单的子类，不能使用多个线程或进程来处理请求，可以这样使用</p>
-
-<p><pre class="sh_python">
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from SocketServer import ThreadingMixIn
-import threading</p>
-
-<p>class Handler(BaseHTTPRequestHandler):</p>
-
-<p>    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        message =  threading.currentThread().getName()  #换取当前线程的名字
-        self.wfile.write(message)  #返回这个名字
-        self.wfile.write('\n')
-        return</p>
-
-<p>class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    """Handle requests in a separate thread."""</p>
-
-<p>if __name__ == '__main__':
-    server = ThreadedHTTPServer(('localhost', 8080), Handler)
-    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
-    server.serve_forever()
-</pre></p>
-
-<p>客户端测试：</p>
-
-<p>dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
-Thread-1
-dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
-Thread-2
-dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
-Thread-3
-dongwm@linux-dongwm:~&gt; curl http://localhost:8080/
-Thread-4</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1180,6 +1111,10 @@ Thread-4</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1215,10 +1150,6 @@ Thread-4</p>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

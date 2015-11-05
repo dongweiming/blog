@@ -142,6 +142,71 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pythonjiaobenshixianchakanmouqqhaomashifouzaixianjiuchuyinshen/">python脚本实现查看某QQ号码是否在线（揪出隐身）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-08T00:00:00+08:00" pubdate data-updated="true">Jul 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+#!/bin/env python
+# coding=utf-8</p>
+
+<p>import string
+import time
+import datetime
+import urllib2</p>
+
+<p>try:
+    verify = raw_input('请输入QQ号码')
+except KeyboardInterrupt:
+    pass
+def check_qq(verify):
+    if verify.isdigit():
+       checkurl = 'http://wpa.qq.com/pa?p=1:"+verify+":1'
+       c = urllib2.urlopen(checkurl)
+       length=c.headers.get("content-length")
+       c.close()
+    print datetime.datetime.now()
+    if length=='2329':
+        return 'Online'
+    elif length=='2262':
+        return 'Offline'
+    else:
+        return 'Unknown Status!'
+if __name__ == '__main__':
+    check_qq(verify)
+    print 'qq ' + 'is '+ check_qq(verify)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonfasongyoujian/">Python 发送中文邮件</a></h1>
     
     
@@ -754,84 +819,6 @@ root@client /etc/vsftpd&gt; chkconfig vsftpd on</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/fedora-3d%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0/">Fedora 3D效果实现</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-08T00:00:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>很多会觉得这个有什么可写的。。的确，在ubuntu，opensuse下都是很简单就可以实现的。尤其是suse的ymp一键安装^.^，但是fedora有点问题，因为第一他默认已经安装了一个驱动nouveau，需要先把它禁掉，然后安装你的电脑配置的显卡驱动，这个需要自己去找，然后去官网下载再安装：
-过程如下：
-1 查找下载电脑的显卡品牌型号：
-<pre class="sh_bash">[root@dongwm dongwm]# lspci | grep VGA
-00:0d.0 VGA compatible controller: nVidia Corporation C61 [GeForce 6150SE nForce 430] (rev a2)
-这是nvidia驱动，在官网选择以下信息搜索：
-产品类型-GeForce --产品系列-GeForce 6 Series -- 产品家族 GeForce 6150SE nForce 430 --操作系统 Linux32-bit --语言 Chinese
-然后下载。</pre>
-2 禁用nouveau驱动 （网上的方法都是抄人家的，结果还没抄完。。）
-<pre class="sh_bash">1 编辑grub配置
-vi /boot/grub/grub.conf
-在操作系统的kernel 哪行 末尾 加一句:rdblacklist=nouveau
-类似这样 ：
-kernel /boot/vmlinuz-2.6.35.6-45.fc14.i686 ro root=UUID=7e01d298-0882-4484-b9e9-4da41ccb5308 rd_NO_LUKS rd_NO_LVM rd_NO_MD rd_NO_DM LANG=zh_CN.UTF-8 KEYTABLE=us rhgb quiet rdblacklist=nouveau
-2 设置模块加载黑名单：
-vi /etc/modprobe.d/blacklist.conf
-1 注释   blacklist nvidiafb
-#  blacklist nvidiafb
-2 最后添加一行：
-blacklist nouveau
-3 <span style="color: #ff0000;">这里是关键</span>，dracut 在fedora12以后就取代 initrd 成为新的引导系统：
-# mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img
-# dracut /boot/initramfs-$(uname -r).img $(uname -r)  //重新生成引导系统</pre></p>
-
-<p>3 修改为开机自动文本启动，因为不能打开X窗口，这里也可以编辑开机启动文件选项，因为我需要重启2次  就直接了：
-<pre class="sh_bash"> cat /etc/inittab
-id:3:initdefault:   //5是启动Xwindows 3是文本启动</pre>
-4  下载内核头文件和dkms，因为yum环境下kernel-devel永远是最新的版本，这样安装的就和内核版本不一样，安装驱动时候是找不到头文件的，所以需要指定一下具体的版本：
-<pre class="sh_bash">[root@dongwm dongwm]# rpm -qa |grep kernel
-kernel-headers-2.6.35.12-90.fc14.i686
-kernel-2.6.35.6-45.fc14.i686
-然后下载同一个版本的：
-yum install kernel-devel-2.6.35.6-45.fc14.i686  dkms -y</pre>
-5  重启后检查是不是有nouveau
-<pre class="sh_bash">lsmod|grep nouveau</p>
-
-<p></pre>6 没有就可以安装驱动了：
-<pre class="sh_bash">sh /home/dongwm/NVIDIA-Linux-x86-270.41.06.run
-安装后重启</pre>
-7 下载3D需要的compiz等工具：
-<pre class="sh_bash">yum install compiz compiz-fusion* fusion* emerald emerald-themes avant-window-navigator</pre></p>
-
-<p>在系统工具中有那个熟悉的蓝色图标喽</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/26/">&larr; Older</a></li>
@@ -854,6 +841,10 @@ yum install kernel-devel-2.6.35.6-45.fc14.i686  dkms -y</pre>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -889,10 +880,6 @@ yum install kernel-devel-2.6.35.6-45.fc14.i686  dkms -y</pre>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

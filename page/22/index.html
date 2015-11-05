@@ -142,6 +142,87 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pyqt4pythonchengxuqidonghuamiandanrudanchuxiaoguo/">(Pyqt4)python程序启动画面淡入淡出效果</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-04T00:00:00+08:00" pubdate data-updated="true">Nov 4<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：见过很多软件启动程序后会有个启动画面，并且还有个淡入淡出效果。研究了很久终于实现了：</p>
+
+<p><pre class="sh_python">
+class SplashScreen(QSplashScreen):</p>
+
+<p>    def __init__(self):
+        super(SplashScreen, self).__init__(QPixmap("../image/app.jpg"))   ＃启动程序的图片
+        self.setWindowModality(Qt.ApplicationModal)
+    def fadeTicker(self):
+        self.setWindowOpacity(0) 
+        t =0
+        while t &lt;=50:
+            newOpacity = self.windowOpacity() + 0.02     ＃设置淡入
+            if newOpacity &gt; 1:
+           #     self.close()
+                break</p>
+
+<p>            self.setWindowOpacity(newOpacity)
+            self.show()
+            t -= 1
+            time.sleep(0.04)
+        self.show()
+        time.sleep(1)
+        t =0
+        while t &lt;=50:
+            newOpacity = self.windowOpacity() - 0.02         ＃设置淡出
+            if newOpacity &lt; 0:
+                self.close()
+                break</p>
+
+<p>            self.setWindowOpacity(newOpacity)
+            self.show()
+            t += 1
+            time.sleep(0.04)</p>
+
+<p>if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    splash = SplashScreen()
+    splash.fadeTicker()
+    app.processEvents()   ＃设置启动画面不影响其他效果
+    QtGui.QApplication.setQuitOnLastWindowClosed(False)          
+    window = Window(confdict)       ＃这是qt程序的主类 每个人的这个不同
+    window.st()
+    splash.finish(window)            ＃启动画面完成启动qt主类
+    sys.exit(app.exec_())
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shiyongsuperviserangbuwendingchengxusidiaozidongmashangzhongqi/">使用supervise让不稳定程序死掉自动马上重启</a></h1>
     
     
@@ -1368,75 +1449,6 @@ if __name__ == '__main__':
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/debianxiashiyongsshfsfuseguazaiyuanduanwenjianxitong/">Debian下使用sshfs＋fuse挂载远端文件系统</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-16T00:00:00+08:00" pubdate data-updated="true">Sep 16<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：这个想法是因为在linux通过wine安装editplus后发现不能编辑ftp远程服务器的代码。而bluefish也没有提供远程ftp编辑的功能，于是想将远程服务器的文件系统挂载到本地（但是因为某些原因，他没有类似于nfs这样的网络文件系统），于是有了此文－－通过ssh的特性。而fuse,他是Linux 中用于挂载某些网络空间，如SSH，到本地文件系统的模块。</p>
-
-<p>1  安装fuse和sshfs：</p>
-
-<p>dongwm@dongwm:~$sudo apt-get install sshfs fuse-utils</p>
-
-<p>2 将你想要的用户（这里是我的用户dongwm）添加到fuse组里面：</p>
-
-<p>dongwm@dongwm:~$sudo adduser dongwm fuse   ＃为了生效需要注销再进来</p>
-
-<p>3 加载fuse模块：</p>
-
-<p>dongwm@dongwm:~$sudo modprobe fuse</p>
-
-<p>注：如果想开机自动加载这个模块需要编辑t<strong>/etc/modules</strong>   添加 “fuse”到单独的一行</p>
-
-<p>4 创建相应挂载目录，然后挂载远端文件系统，前提是要有很高的权限，比如我要挂载根目录，就需要root的 ssh密码或者信任，格式如下：</p>
-
-<p>dongwm@dongwm:~$mkdir 挂载目录</p>
-
-<p>dongwm@dongwm:~$sshfs  远程服务器用户名称@服务器地址:/服务器目录  挂载目录</p>
-
-<p>看我的挂载：</p>
-
-<p>dongwm@dongwm:~$ df -h
-文件系统          容量  已用  可用 已用%% 挂载点
-/dev/sda1              74G  5.6G   65G   9% /
-tmpfs                 1.9G     0  1.9G   0% /lib/init/rw
-udev                  1.9G  196K  1.9G   1% /dev
-tmpfs                 1.9G     0  1.9G   0% /dev/shm
-/dev/sda2             382G  7.0G  356G   2% /home
-root@192.168.10.89:/ 1000G     0 1000G   0% /home/dongwm/10.89</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/23/">&larr; Older</a></li>
@@ -1459,6 +1471,10 @@ root@192.168.10.89:/ 1000G     0 1000G   0% /home/dongwm/10.89</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1494,10 +1510,6 @@ root@192.168.10.89:/ 1000G     0 1000G   0% /home/dongwm/10.89</p>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

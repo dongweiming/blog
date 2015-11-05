@@ -142,6 +142,103 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyugetoptyanjiu/">关于getopt研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：getopt是一个命令行选项解析模块</p>
+
+<p><pre class="sh_python">
+import getopt
+print getopt.getopt(['-a', '-bval', '-c', 'val'], 'ab:c:')  #其中包含2个参数，前面的是具体想象和参数，后面是相应的选项，因为假如前面的"-bval"，但是怎么知道是'-b','-bv'还是'-bva'
+print                                                       #那么后面指定了 b:
+print getopt.getopt([ '--noarg', '--witharg', 'val', '--witharg2=another' ],'',
+                    [ 'noarg', 'witharg=', 'witharg2=' ])  #长选项
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+([(&#8216;-a&#8217;, &#8221;), (&#8216;-b&#8217;, &#8216;val&#8217;), (&#8216;-c&#8217;, &#8216;val&#8217;)], [])
+([(&#8216;&#8211;noarg&#8217;, &#8221;), (&#8216;&#8211;witharg&#8217;, &#8216;val&#8217;), (&#8216;&#8211;witharg2&#8217;, &#8216;another&#8217;)], [])</p>
+
+<p><pre class="sh_python">
+import getopt
+import sys</p>
+
+<p>version = '1.0'
+verbose = False
+output_filename = 'default.out'</p>
+
+<p>print 'ARGV      :', sys.argv[1:]</p>
+
+<p>options, remainder = getopt.gnu_getopt(sys.argv[1:], 'o:v', ['output=',  #getopt.gnu_getopt命令行中的任何顺序混合选项和非选项参数
+                                                             'verbose',
+                                                             'version=',
+                                                             ])
+print 'OPTIONS   :', options</p>
+
+<p>for opt, arg in options:
+    if opt in ('-o', '--output'):
+        output_filename = arg
+    elif opt in ('-v', '--verbose'):
+        verbose = True
+    elif opt == '--version':
+        version = arg</p>
+
+<p>print 'VERSION   :', version
+print 'VERBOSE   :', verbose
+print 'OUTPUT    :', output_filename
+print 'REMAINING :', remainder
+</pre></p>
+
+<p>一些执行操作：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py -v not_an_option &#8211;output testfile
+ARGV      : [&#8216;-v&#8217;, &#8216;not_an_option&#8217;, &#8216;&#8211;output&#8217;, &#8216;testfile&#8217;]
+OPTIONS   : [(&#8216;-v&#8217;, &#8221;), (&#8216;&#8211;output&#8217;, &#8216;testfile&#8217;)]
+VERSION   : 1.0
+VERBOSE   : True
+OUTPUT    : testfile
+REMAINING : [&#8216;not_an_option&#8217;]
+dongwm@linux-dongwm:~&gt; python test.py -v &#8211; &#8211;output testfile
+ARGV      : [&#8216;-v&#8217;, &#8216;&#8211;&#8217;, &#8216;&#8211;output&#8217;, &#8216;testfile&#8217;]
+OPTIONS   : [(&#8216;-v&#8217;, &#8221;)]
+VERSION   : 1.0
+VERBOSE   : True
+OUTPUT    : default.out
+REMAINING : [&#8216;&#8211;output&#8217;, &#8216;testfile&#8217;]</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyugcyanjiu/">关于gc研究</a></h1>
     
     
@@ -1671,120 +1768,6 @@ e E</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyu-2/">关于cProfile,pstats研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：profile, cProfile, pstats是三个python程序性能分析的模块，cProfile和Profile显示消耗处理器资源的收集和分析统计</p>
-
-<p><pre class="sh_python">
-#coding=utf-8
-def test1():
-    sum = 0
-    for i in range(10000):
-        sum += i
-    sumA = test2()
-    sumB = test2()
-    return sum</p>
-
-<p>def test2():
-    sum = 0
-    for i in range(100000):
-        sum += i
-    return sum</p>
-
-<p>if __name__ == "__main__":
-    import cProfile
-    cProfile.run("test1()")   #直接把分析结果打印到控制台
-    cProfile.run("test1()", "result") #把分析结果保存到文件中,不过内容可读性差...需要调用pstats模块分析结果
-    import pstats
-    p = pstats.Stats("result") #创建Stats对象
-    p.strip_dirs().sort_stats(-1).print_stats()  #这一行的效果和直接运行cProfile.run("test1()")的显示效果是一样的
-    #strip_dirs():从所有模块名中去掉无关的路径信息
-    #sort_stats():把打印信息按照标准的module/name/line字符串进行排序
-    #print_stats():打印出所有分析信息
-    p.strip_dirs().sort_stats("name").print_stats() #按照函数名排序
-    #按照在一个函数中累积的运行时间进行排序
-    #print_stats(3):只打印前3行函数的信息,参数还可为小数,表示前百分之几的函数信息
-    p.strip_dirs().sort_stats("cumulative").print_stats(3)
-    #还有一种用法
-    p.sort_stats('time', 'cum').print_stats(.5, 'test1')
-    #先按time排序,再按cumulative时间排序,然后打倒出前50%中含有函数信息
-    p.print_callers(0.5, "test2") #如果想知道有哪些函数调用了test2
-    p.print_callees("test1") #查看test1()函数中调用了哪些函数
-</pre></p>
-
-<p>运行的结果的一部分：</p>
-
-<p>9 function calls in 0.045 CPU seconds  #9次函数调用</p>
-
-<p>Ordered by: standard name</p>
-
-<p>ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-1    0.000    0.000    0.045    0.045 &lt;string&gt;:1(&lt;module&gt;)
-1    0.000    0.000    0.045    0.045 cProfile.py:132(run)
-1    0.000    0.000    0.045    0.045 cProfile.py:137(runctx)
-1    0.000    0.000    0.045    0.045 cProfile.py:14(run)
-1    0.000    0.000    0.000    0.000 cProfile.py:5(&lt;module&gt;)
-1    0.000    0.000    0.000    0.000 cProfile.py:66(Profile)
-1    0.000    0.000    0.045    0.045 test.py:2(&lt;module&gt;)
-1    0.000    0.000    0.045    0.045 {execfile}
-1    0.045    0.045    0.045    0.045 {method &#8216;enable&#8217; of &#8216;_lsprof.Profiler&#8217; objects}
-注：按列，第一列加起来是9，第二列表示运行时间是0.045，第三列是运行时间除以次数，第四列表示总共运行时间，包含内部所有其他函数运行总时间，</p>
-
-<p>第五列是总共运行时间除以次数，第六列表名某函数或者文件调用</p>
-
-<p>注2：可以使用命令行执行：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python -m cProfile test.py -o result  #result 这个文件是运行cProfile.run()得到的数据文件</p>
-
-<p>注3：runctx()是在使用复杂表达式的时候使用</p>
-
-<p>当然 还有数据的可视化：</p>
-
-<p><a href="http://code.google.com/p/jrfonseca/wiki/Gprof2Dot" rel="nofollow" target="_blank">Gprof2Dot</a>可将多种Profiler的数据转成<a title="Graphviz（尚未撰写）" href="http://linux-wiki.cn/index.php?title=Graphviz&amp;action=edit&amp;redlink=1">Graphviz</a>可处理的图像表述。配合dot命令，即可得到不同函数所消耗的时间分析图。</p>
-
-<p>dongwm@linux-dongwm:~/jrfonseca.gprof2dot&gt; ./gprof2dot.py -f pstats ../result | dot -Tpng -o output.png
-效果图：</p>
-
-<p><img class="alignnone" title=" " src="http://pic.yupoo.com/dongweiming/C2erL22f/13ZkRd.png" alt="" width="168" height="507" /></p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/16/">&larr; Older</a></li>
@@ -1807,6 +1790,10 @@ def test1():
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1842,10 +1829,6 @@ def test1():
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

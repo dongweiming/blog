@@ -142,6 +142,63 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/vmware%E4%B8%8Bips%E5%AE%9E%E7%8E%B0web%E8%BF%9E%E6%8E%A5idm/">VMWARE下IPS实现web连接(IDM)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-25T00:00:00+08:00" pubdate data-updated="true">Mar 25<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1  设置IPS初始化</strong></p>
+
+<p>sensor# conf t
+sensor(config)# service host
+sensor(config-hos)# network-settings
+sensor(config-hos-net)#host-ip 192.168.1.144/24,192.168.1.1 //定义IPS地址 掩码 网关
+sensor(config-hos-net)# telnet-option enabled //支持telnet管理
+sensor(config-hos-net)# access-list 192.168.1.144/32 //定义管理IP
+sensor(config-hos-net)# exit
+sensor(config-hos)# time-zone-settings //设置时区
+sensor(config-hos-tim)# offset 8
+sensor(config-hos-tim)# standard-time-zone-name
+sensor(config-hos-tim)# standard-time-zone-name beijing
+sensor(config-hos-tim)# exit
+sensor(config-hos)# exit Apply C
+hanges:?[yes]: yes
+sensor(config)# service web-server // 启动GUI管理
+sensor(config-web)# enable-tls true
+sensor(config-web)# port 443</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/vmware%E4%B8%8Bips%E5%AE%9E%E7%8E%B0web%E8%BF%9E%E6%8E%A5idm/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Exargs%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">关于xargs命令的研究</a></h1>
     
     
@@ -603,83 +660,6 @@ Sun Mar  6 21:47:38 PST 2011</pre></p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/15%E4%B8%AAbash-shell%E5%86%85%E5%BB%BA%E5%91%BD%E4%BB%A4/">15个Bash Shell内建命令</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><span style="font-family: serif;"><strong></strong></span><strong>Bash Shell内置的命令会快于外部命令，此文用于拓展知识</strong>
-<strong>1  export</strong>
-export用于导出一个变量或者 function到环境变量
-<pre class="sh_bash">
-export varname=value
-export -f functionname # exports function</pre>
-<pre class="sh_bash">[test@9-104 ~]$ export dongwm=www.dongwm
-[test@9-104 ~]$ env
-MAIL=/var/spool/mail/test
-PATH=/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin:/home/test/bin
-dongwm=www.dongwm
-G_BROKEN_FILENAMES=1
-_=/bin/env</pre></p>
-
-<p><strong>2 eval</strong>
-eval我的理解是对一个命令行，执行两次命令行处理
-<pre class="sh_bash">[root@9-104 ~]# pipe="|"
-[root@9-104 ~]# eval ls $pipe wc -l
-29</pre>
-shell第1次扫描命令行时，它替换出pipe的值｜，接着eval使它再次扫描命令行，这时shell把｜作为管道符号了。
-如果变量中包含任何需要shell直接在命令行中看到的字符（不是替换的结果），就可以使用eval。命令行结束符（； ｜ &amp;），I／o重定向符（&lt; &gt;）和引号就属于对shell具有特殊意义的符号，必须直接出现在命令行中。</p>
-
-<p><strong>3 pwd</strong>
-<span>pwd是一个shell内置命令打印当前工作目录。</span> <span><span class="google-src-text" style="direction: ltr; text-align: left;"> </span>它返回值为内置变量$ </span><span><span class="google-src-text" style="direction: ltr; text-align: left;">{PWD}
-</span></span><pre class="sh_bash"><span><span class="google-src-text" style="direction: ltr; text-align: left;">[root@9-104 local]# pwd
-/usr/local
-[root@9-104 local]# echo $PWD
-/usr/local</span></span></pre></p>
-
-<p><span><span class="google-src-text" style="direction: ltr; text-align: left;">其他内置命令：
-hash</span></span>
-readonly
-shift
-test
-getopts
-logout
-umask
-set
-unset
-let
-shopt
-printf</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/29/">&larr; Older</a></li>
@@ -702,6 +682,10 @@ printf</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -737,10 +721,6 @@ printf</p>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

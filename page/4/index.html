@@ -142,6 +142,63 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/a-data-analysis-site-by-flask-and-mongoengine/">一个flask+mongoengine的site</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-20T17:39:00+08:00" pubdate data-updated="true">Nov 20<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>最近一直学习emacs和elisp, 也在做关于mongodb相关的研究,闲来无事就做了个网站,后端使用了flask, mongoengine, 前端css框架用的是
+雅虎的<a href="https://github.com/yui/pure">pure</a>, 还是用了神奇的<a href="https://github.com/gruntjs/grunt">grunt</a>做页面修改的livereload, 然后有d3,
+jquery, amchart和一个最近发现的页面消息弹出<a href="https://github.com/CodeSeven/toastr">toastr</a>.想学习flask和mongoengine的童鞋可直接拿去,开源地址是
+<a href="https://github.com/dongweiming/data-analysis">data-analysis</a></p>
+
+<h4 id="section-1">下载依赖和启动</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">data</span><span class="o">-</span><span class="n">analysis</span>
+</span><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="c"># 安装grunt</span>
+</span><span class="line"><span class="n">npm</span> <span class="n">install</span>
+</span><span class="line"><span class="c"># 我的后端样例数据</span>
+</span><span class="line"><span class="n">mongorestore</span> <span class="o">-</span><span class="n">d</span> <span class="n">fetch_data</span> <span class="o">--</span><span class="n">directoryperdb</span> <span class="n">dump</span><span class="o">/</span><span class="n">fetch_data</span>
+</span><span class="line"><span class="n">cd</span> <span class="n">data_analysis</span>
+</span><span class="line"><span class="c"># 启动Grunt</span>
+</span><span class="line"><span class="n">grunt</span>
+</span><span class="line"><span class="c"># 启动</span>
+</span><span class="line"><span class="n">python</span> <span class="n">run</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="c"># 然后打开 http://Youip:5000</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/vary-dot-vim-zi-dong-qu-diao-xing-wei-kong-ge/">vary.vim-自动去掉行尾空格</a></h1>
     
     
@@ -1634,206 +1691,6 @@ shell到服务器的方式，但是遗憾的是作者一年没有再维护，boo
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentooxia-de-lxche-docker/">Gentoo下的lxc和docker</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-13T20:03:00+08:00" pubdate data-updated="true">Jul 13<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>上次就说要写一篇gentoo下安装使用docker的文章，顺便也学习了下gentoo下的lxc，记录下来</p>
-
-<h4 id="section-1">升级你的内核</h4>
-
-<p>docker要求升级到3.8以上的内核,假如你的已经是3.8.XX,那么你就要重新编译内核,参看<a href="http://wiki.gentoo.org/wiki/LXC">Wiki</a>
-很多人比较怕编译内核，一看那个启动的简陋的页面就不知道该干什么了,出现问题不知道该去选择什么或者去掉什么选项.我来说一些小窍门,简单的说就是
-根据提示去内核界面按’/’搜索这个参数，根据提示的位置找到那个项</p>
-
-<p>问题1: 假如符合项很多怎么判断那个是真正要我选择的呢?</p>
-
-<p>回答: 首先是上下文的判断，一般的情况都是符合某写关键字的项都是某项和它的子项，当你去掉其父项，子项的选项也就消失了，还有个使用的经验的积累.
-比如下面的提示:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">*   CONFIG_NETFILTER_XT_MATCH_ADDRTYPE:  is not set when it should be.</span></pre></figure></notextile></div>
-
-<p>意思就是提示你”NETFILTER_XT_MATCH_ADDRTYPE”, 没有设置，然后你使用/输入”NETFILTER_XT_MATCH_ADDRTYPE”,回车，会显示类似下面的东西:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"> Search Results ─────────────────────────────┐
-</span><span class="line">  │ Symbol: NETFILTER_XT_MATCH_ADDRTYPE [=n]                                │  
-</span><span class="line">  │ Type  : tristate                                                        │  
-</span><span class="line">  │ Prompt: "addrtype" address type match support                           │  
-</span><span class="line">  │   Defined at net/netfilter/Kconfig:798                                  │  
-</span><span class="line">  │   Depends on: NET [=y] &amp;&amp; INET [=y] &amp;&amp; NETFILTER [=y] &amp;&amp; NETFILTER_XTAB │  
-</span><span class="line">  │   Location:                                                             │  
-</span><span class="line">  │     -&gt; Networking support (NET [=y])                                    │  
-</span><span class="line">  │       -&gt; Networking options                                             │  
-</span><span class="line">  │         -&gt; Network packet filtering framework (Netfilter) (NETFILTER [= │  
-</span><span class="line">  │           -&gt; Core Netfilter Configuration                               │  
-</span><span class="line">  │ (1)         -&gt; Netfilter Xtables support (required for ip_tables) (NETF │ </span></pre></figure></notextile></div>
-
-<p>注意其中的’Prompt’,他是帮助你在实际找对应项判断主题的关键字,’Location’告诉你它的位置是
-‘Networking support’下的’Networking options’子项下的’Network packet filtering framework’…</p>
-
-<p>问题2： 为什么我选择了这个项依然还是没有显示成功，比如上面’NETFILTER_XT_MATCH_ADDRTYPE [=n]’ n就是no，y就是yes
-一个严重的问题就是某项其实会有很多依赖，只有这些依赖都是’y’的时候它才生效.比如lxc要求的’USER_NS’,
-默认内核中是没有显示出来的,原因是存在很多依赖和他冲突，必须去掉那些项他才会显示, 你打开它的搜索去看还有那个依赖还是’n’.
-这个过程可能好几次，直到最后，就显示了UIDGID_CONVERTED的bool值为n，这个时候你就要去看这个内核参数的依赖,打开/usr/src/linux/init/Kconfig,
-找到依赖挨个去掉，直到能显示</p>
-
-<h4 id="docker">安装docker</h4>
-
-<p><a href="https://github.com/tianon/gentoo-overlay">tianon</a>做好了一个docker的overlay源，而且docker的gentoo镜像也是他贡献的，感谢.
-把三方layman增加到你的gentoo系统在以前的<a href="http://www.dongwm.com/archives/wo-wei-hu-de-colout">我维护的colout</a>说过就不说了,假设这里你已经添加了tianon的源</p>
-
-<p>然后安装</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo emerge app-emulation/lxc-docker</span></pre></figure></notextile></div>
-
-<p>这个依赖过程当然也会安装lxc</p>
-
-<p>因为docker依赖aufs,但是安装aufs的时候出现问题，我还记得一句:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">You need to apply a patch to your kernel to compile and run the aufs3 module</span></pre></figure></notextile></div>
-
-<p>然后就异常退出了,看了下源码也的确有这些patch,当我手动打了第一个patch,依然报错…只能一个个的补丁手动打进去？
-看它的ebuild,有这样一行:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">IUSE="debug doc fuse hfs inotify kernel-patch nfs pax_kernel ramfs"</span></pre></figure></notextile></div>
-
-<p>可是kernel-patch没有起作用,那么你在你的/etc/make.conf的USE里面添加’kernel-patch’就好了</p>
-
-<h4 id="docker0">增加docker0网卡</h4>
-<p>增加一个配置，这个配置也是创建容器可选的配置，都放在/etc/lxc目录下</p>
-
-<p>cat /etc/lxc/guest.conf</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc.network.type = veth
-</span><span class="line">lxc.network.flags = up
-</span><span class="line">lxc.network.link = docker0</span></pre></figure></notextile></div>
-
-<h4 id="docker-1">启动docker</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">docker -d &amp;</span></pre></figure></notextile></div>
-<p>当提示类似:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">2013/07/13 13:36:46 Listening for HTTP on 127.0.0.1:4243 (tcp)</span></pre></figure></notextile></div>
-
-<p>表示搞定了</p>
-
-<p>但是我这里出现了一个报错</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">iptables v1.4.16.3: can't initialize iptables table `nat': Table does not exist (do you need to insmod?)</span></pre></figure></notextile></div>
-
-<p>iptables的版本够高，但是很明显还是内核模块的问题，查看下,果然如此</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">localhost ~ # zgrep NF_NAT /proc/config.gz
-</span><span class="line"># CONFIG_NF_NAT_IPV4 is not set
-</span><span class="line"># CONFIG_NF_NAT_IPV6 is not set</span></pre></figure></notextile></div>
-
-<p>还是需要设置在重新编译内核,重启生效</p>
-
-<h4 id="lxc">使用lxc</h4>
-
-<p>比如我想创建个debian的容器</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">emerge dev-util/debootstrap #不同的系统依赖不同的这个包，比如fedora/centos就是sys-apps/yum, arch就是sys-apps/pacman...
-</span><span class="line">lxc-create -t debian -n debian_test #也可以加-p 指定配置文件 ，配置类似上面的guest.conf，可以配置ip之类
-</span><span class="line"># 假如想要ubuntu
-</span><span class="line"># lxc-create -t ubuntu -n ubuntu_test
-</span></pre></figure></notextile></div>
-<p>这个时间会下载debian的基础镜像，包含一些基础的包</p>
-
-<p>你要设置root密码,比如我这个debian_test， 相关数据都在/etc/lxc/debian_test</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cd /etc/lxc/debian_test
-</span><span class="line">chroot rootfs /bin/bash</span></pre></figure></notextile></div>
-
-<p>然后登录设置密码</p>
-
-<p>启动和关闭容器的命令是 </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc-start -n debian_test
-</span><span class="line">lxc-stop -n debian_test</span></pre></figure></notextile></div>
-
-<p>当然你也可以设置个开机启动</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">ln -s lxc /etc/init.d/lxc.debian_test
-</span><span class="line">/etc/init.d/lxc.debian_test stop
-</span><span class="line">/etc/init.d/lxc.debian_test start
-</span><span class="line">rc-update add lxc.debian_test default</span></pre></figure></notextile></div>
-
-<p>还可以使用终端连接</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc-console -n debian_test</span></pre></figure></notextile></div>
-
-<h4 id="gentoo">创建gentoo容器</h4>
-
-<p>当我想创建gentoo的容器,可以借用<a href="https://github.com/globalcitizen/lxc-gentoo">lxc-gentoo</a>,它提供一个命令行的选择.简单粗暴，以下是一个例子
-创建一个ip为192.168.0.10，网关为192.168.0.1，容器叫做gentoo_test，主机名为test1的容器</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo lxc-gentoo/lxc-gentoo create -i 192.168.0.10/26 -g 192.168.0.1 -n gentoo_test -u test1 </span></pre></figure></notextile></div>
-
-<p>默认会把容器安装在执行命令的当前目录,这样启动</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo /usr/sbin/lxc-start -f test1.conf -n gentoo_test</span></pre></figure></notextile></div>
-
-<p>你也可以chroot进去， 为什么这样用？比如我经常用到的场景，我安装了gentoo/opensuse的双系统，可能我把其中一个系统玩坏(比如升级产生的问题，我安装或者卸载了某些东西等)
-，我就可以在没有u盘，livecd的前提下进入另外一个系统，chroot到这个系统去修复,而且不影响工作，因为我的很多目录之类都是软连接，修改一个地方切换另外的系统继续用</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">mount -t proc proc ./gentoo_test/proc
-</span><span class="line">mount -o bind /dev ./gentoo_test/dev
-</span><span class="line">chroot ./gentoo_test /bin/bash
-</span><span class="line">export PS1="(gentoo_test) $PS1"
-</span><span class="line"># 现在你就进来了,而不需要启动系统</span></pre></figure></notextile></div>
-
-<h4 id="archlinux">创建Archlinux容器</h4>
-
-<p>我没有用gentoo的lxc自带的/usr/share/lxc/templates/lxc-archlinux,因为它根本用不了,并且存在以下一些问题:</p>
-
-<ol>
-  <li>
-    <p>arch早已不用initscripts，改用systemd</p>
-  </li>
-  <li>
-    <p>安装基础系统不需要chroot到其系统,直接pacman指定系统根目录即可,并且它chroot进去指定根系统,那肯定永远也成功不了</p>
-  </li>
-  <li>
-    <p>在一个新的系统的pacman.conf没有指定XferCommand,那么也就不知道用什么下载了</p>
-  </li>
-</ol>
-
-<p>我新建个一个项目<a href="https://github.com/dongweiming/gentoo-lxc-templates">gentoo-lxc-templates</a>,目前包含了我修改的lxc-archlinux,我很少用arch,有问题欢迎pullme</p>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/5/">&larr; Older</a></li>
@@ -1856,6 +1713,10 @@ shell到服务器的方式，但是遗憾的是作者一年没有再维护，boo
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1891,10 +1752,6 @@ shell到服务器的方式，但是遗憾的是作者一年没有再维护，boo
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

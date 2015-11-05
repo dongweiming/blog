@@ -142,6 +142,151 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusedyanjiuee/">关于sed研究（三）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-17T00:00:00+08:00" pubdate data-updated="true">Apr 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 存储空间</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+dongwm
+ADMIN 1
+ailll
+AILLL
+ccc
+ADMIN 2</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;x;n&#8217; -e &#8216;/ADMIN/{x;p}&#8217; test.txt  #临时存储匹配空间的前一行，x;n 转换匹配空间为临时空间，</p>
+
+<p>#读取下一行；/ADMIN/{x;p}，如果这个行的下一行匹配，那么输出临时空间
+dongwm
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{x;p}&#8217; test.txt  #使用‘h’会让匹配空间和临时空间都缓存这个行，所以使用‘’
+dongwm
+ccc</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{H;x;p}&#8217; test.txt #使用‘H’模式空间没有改变，但是临时空间将包含：下一行\n这一行
+dongwm
+ADMIN 1
+ccc
+ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{H;x;s/\n/:/;p}&#8217; test.txt #这个和上面的意思一样，但是将&#8217;\n&#8217;替换成了&#8217;:&#8217;
+dongwm:ADMIN 1
+ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{g;p}&#8217; test.txt  #使用&#8217;g&#8217;，模式空间改成了下一行，但是临时空间不变，也就是说，</p>
+
+<p>#他从临时空间取到这一行，再把他放在模式空间
+dongwm
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/ADMIN/!h&#8217; -e &#8216;/ADMIN/{x;G;s/\n/:/;p}&#8217; test.txt #简单的说，临时空间不变，模式空间不仅包含以前的行，再添加了临时空间的行
+dongwm:ADMIN 1
+ccc:ADMIN 2<strong></strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -e &#8216;{N;s/\n/:/}&#8217; test.txt  #‘N’表示不仅打印这个模式空间行，还加‘\n’再加文件的下一行，在这里使用&#8217;:&#8217;替换了‘\n’
+dongwm:ADMIN 1
+ailll:AILLL
+ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;=&#8217; test.txt | sed -e &#8216;{N;s/\n/:/}&#8217; #首先打印行号，然后把行号和这行打印在一行
+1:dongwm
+2:ADMIN 1
+3:ailll
+4:AILLL
+5:ccc
+6:ADMIN 2</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;N&#8217; -e &#8216;/ADMIN/p&#8217; test.txt
+dongwm
+ADMIN 1
+ccc
+ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;N&#8217; -e &#8216;/ADMIN/P&#8217; test.txt#这个‘P’会打印多行中的第一行
+dongwm
+ccc
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+dongwm @test1@
+ADMIN 1 @test2@
+ailll
+AILLL @test@
+ccc
+ADMIN 2</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/{/@.*@/{s/@.*@//;p;D}}&#8217; test.txt  #这个不好懂 请看下面的拆解
+dongwm
+AILLL
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/p&#8217; test.txt  #打印匹配行
+dongwm @test1@
+ADMIN 1 @test2@
+AILLL @test@
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/{/@.*@/p}&#8217; test.txt  ＃加了‘N’这样会在模式空间加下面的一行，但是假如下一行也是模式空间就没有下一行
+dongwm @test1@
+ADMIN 1 @test2@
+AILLL @test@
+ccc
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/@/{N;/@.*@/{s/@.*@//;p;D}}&#8217; test.txt   #‘p’打印，‘D’是删除模式空间
+dongwm
+AILLL
+ccc
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/;/ADMIN/!b end;s/^/*/;:end&#8217; test.txt #看不懂还是看以下的拆解
+dongwm
+*dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+*ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/&#8217; test.txt  #这个很好懂，临时空间包含这行和下一行，&#8217;\n&#8217;替换成了‘:’
+dongwm
+dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/;/ADMIN/!b end;s/^/*/;:end&#8217; test.txt #匹配行，使用‘b’，使用这标签，把行首添加&#8217;*&#8217;
+dongwm
+*dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+*ccc:ADMIN 2
+dongwm@linux-dongwm:~&gt; sed -e &#8216;h;n;H;x;s/\n/:/;:repeat;/ADMIN/s/^/*/;/\*\*\*/!t repeat&#8217; test.txt #使用&#8217;t&#8217;以前的替代成功，跳转到行标签标记，并继续执行，否则继续正常执行流程。
+dongwm                                                                                                                                #如果发现模式空间行没有‘＊＊＊’并且赏个替换成功，就会执行
+***dongwm:ADMIN 1
+ailll
+ailll:AILLL
+ccc
+***ccc:ADMIN 2</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusedyanjiuyi/">关于sed研究（一）</a></h1>
     
     
@@ -1700,75 +1845,6 @@ iU  capistrano     2.5.9-1        Executes commands in parallel on m
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoobijishiyioverlayhelayman/">gentoo笔记（十一）Overlay和layman</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：Overlay是包含额外的Gentoo的ebuild的Portage包树，类似于“第三方源”，使用它的原因我以为就是让那些不在Portage包树的软件包，当你修改，开发，测试的时候，不会影响主干包树，直到它稳定到加到主干包树里面。当修改主干包树时候，下一次同步你的修改就没有了，但是Overlay能保存你的自定义修改。layman（英语意为‘门外汉’，意思很明显了把）使用它安装和更新这样的Overlay。他会有自己的一套portage包树，和emerge平齐</p>
-
-<p>1 安装layman</p>
-
-<p>dongwm@localhost ~ $sudo emerge layman
-2 指定layman的Portage库</p>
-
-<p>dongwm@localhost ~ $sudo echo &#8220;source /var/lib/layman/make.conf&#8221; &gt;&gt; /etc/make.conf
-3 列出可用的Overlay源</p>
-
-<p>dongwm@localhost ~ $sudo layman -L
-其中有一行</p>
-
-<p>* gentoo-china              [Subversion] (http://gentoo-china-overlay.google&#8230;)</p>
-
-<p>4 安装Overlay源</p>
-
-<p>dongwm@localhost ~ $sudo layman -a gentoo-china
-5 从Overlay源安装一个软件包</p>
-
-<p>因为gentoo-china的软件包目录在/var/lib/layman/gentoo-china  可以去找你想要安装的软件包名称 我这里是/var/lib/layman/gentoo-china/app-editors/uex</p>
-
-<p>dongwm@localhost ~ $sudo emerge uex # emerge会自动找到
-6 更新Overlay源</p>
-
-<p>dongwm@localhost ~ $sudo layman -S</p>
-
-<p>7 删除Overlay源</p>
-
-<p>dongwm@localhost ~ $sudo layman -d desktop-effects  删除desktop-effects</p>
-
-<p>&nbsp;
-
-&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/19/">&larr; Older</a></li>
@@ -1791,6 +1867,10 @@ iU  capistrano     2.5.9-1        Executes commands in parallel on m
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1826,10 +1906,6 @@ iU  capistrano     2.5.9-1        Executes commands in parallel on m
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

@@ -142,6 +142,206 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentooxia-de-lxche-docker/">Gentoo下的lxc和docker</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-13T20:03:00+08:00" pubdate data-updated="true">Jul 13<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>上次就说要写一篇gentoo下安装使用docker的文章，顺便也学习了下gentoo下的lxc，记录下来</p>
+
+<h4 id="section-1">升级你的内核</h4>
+
+<p>docker要求升级到3.8以上的内核,假如你的已经是3.8.XX,那么你就要重新编译内核,参看<a href="http://wiki.gentoo.org/wiki/LXC">Wiki</a>
+很多人比较怕编译内核，一看那个启动的简陋的页面就不知道该干什么了,出现问题不知道该去选择什么或者去掉什么选项.我来说一些小窍门,简单的说就是
+根据提示去内核界面按’/’搜索这个参数，根据提示的位置找到那个项</p>
+
+<p>问题1: 假如符合项很多怎么判断那个是真正要我选择的呢?</p>
+
+<p>回答: 首先是上下文的判断，一般的情况都是符合某写关键字的项都是某项和它的子项，当你去掉其父项，子项的选项也就消失了，还有个使用的经验的积累.
+比如下面的提示:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">*   CONFIG_NETFILTER_XT_MATCH_ADDRTYPE:  is not set when it should be.</span></pre></figure></notextile></div>
+
+<p>意思就是提示你”NETFILTER_XT_MATCH_ADDRTYPE”, 没有设置，然后你使用/输入”NETFILTER_XT_MATCH_ADDRTYPE”,回车，会显示类似下面的东西:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"> Search Results ─────────────────────────────┐
+</span><span class="line">  │ Symbol: NETFILTER_XT_MATCH_ADDRTYPE [=n]                                │  
+</span><span class="line">  │ Type  : tristate                                                        │  
+</span><span class="line">  │ Prompt: "addrtype" address type match support                           │  
+</span><span class="line">  │   Defined at net/netfilter/Kconfig:798                                  │  
+</span><span class="line">  │   Depends on: NET [=y] &amp;&amp; INET [=y] &amp;&amp; NETFILTER [=y] &amp;&amp; NETFILTER_XTAB │  
+</span><span class="line">  │   Location:                                                             │  
+</span><span class="line">  │     -&gt; Networking support (NET [=y])                                    │  
+</span><span class="line">  │       -&gt; Networking options                                             │  
+</span><span class="line">  │         -&gt; Network packet filtering framework (Netfilter) (NETFILTER [= │  
+</span><span class="line">  │           -&gt; Core Netfilter Configuration                               │  
+</span><span class="line">  │ (1)         -&gt; Netfilter Xtables support (required for ip_tables) (NETF │ </span></pre></figure></notextile></div>
+
+<p>注意其中的’Prompt’,他是帮助你在实际找对应项判断主题的关键字,’Location’告诉你它的位置是
+‘Networking support’下的’Networking options’子项下的’Network packet filtering framework’…</p>
+
+<p>问题2： 为什么我选择了这个项依然还是没有显示成功，比如上面’NETFILTER_XT_MATCH_ADDRTYPE [=n]’ n就是no，y就是yes
+一个严重的问题就是某项其实会有很多依赖，只有这些依赖都是’y’的时候它才生效.比如lxc要求的’USER_NS’,
+默认内核中是没有显示出来的,原因是存在很多依赖和他冲突，必须去掉那些项他才会显示, 你打开它的搜索去看还有那个依赖还是’n’.
+这个过程可能好几次，直到最后，就显示了UIDGID_CONVERTED的bool值为n，这个时候你就要去看这个内核参数的依赖,打开/usr/src/linux/init/Kconfig,
+找到依赖挨个去掉，直到能显示</p>
+
+<h4 id="docker">安装docker</h4>
+
+<p><a href="https://github.com/tianon/gentoo-overlay">tianon</a>做好了一个docker的overlay源，而且docker的gentoo镜像也是他贡献的，感谢.
+把三方layman增加到你的gentoo系统在以前的<a href="http://www.dongwm.com/archives/wo-wei-hu-de-colout">我维护的colout</a>说过就不说了,假设这里你已经添加了tianon的源</p>
+
+<p>然后安装</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo emerge app-emulation/lxc-docker</span></pre></figure></notextile></div>
+
+<p>这个依赖过程当然也会安装lxc</p>
+
+<p>因为docker依赖aufs,但是安装aufs的时候出现问题，我还记得一句:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">You need to apply a patch to your kernel to compile and run the aufs3 module</span></pre></figure></notextile></div>
+
+<p>然后就异常退出了,看了下源码也的确有这些patch,当我手动打了第一个patch,依然报错…只能一个个的补丁手动打进去？
+看它的ebuild,有这样一行:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">IUSE="debug doc fuse hfs inotify kernel-patch nfs pax_kernel ramfs"</span></pre></figure></notextile></div>
+
+<p>可是kernel-patch没有起作用,那么你在你的/etc/make.conf的USE里面添加’kernel-patch’就好了</p>
+
+<h4 id="docker0">增加docker0网卡</h4>
+<p>增加一个配置，这个配置也是创建容器可选的配置，都放在/etc/lxc目录下</p>
+
+<p>cat /etc/lxc/guest.conf</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc.network.type = veth
+</span><span class="line">lxc.network.flags = up
+</span><span class="line">lxc.network.link = docker0</span></pre></figure></notextile></div>
+
+<h4 id="docker-1">启动docker</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">docker -d &amp;</span></pre></figure></notextile></div>
+<p>当提示类似:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">2013/07/13 13:36:46 Listening for HTTP on 127.0.0.1:4243 (tcp)</span></pre></figure></notextile></div>
+
+<p>表示搞定了</p>
+
+<p>但是我这里出现了一个报错</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">iptables v1.4.16.3: can't initialize iptables table `nat': Table does not exist (do you need to insmod?)</span></pre></figure></notextile></div>
+
+<p>iptables的版本够高，但是很明显还是内核模块的问题，查看下,果然如此</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">localhost ~ # zgrep NF_NAT /proc/config.gz
+</span><span class="line"># CONFIG_NF_NAT_IPV4 is not set
+</span><span class="line"># CONFIG_NF_NAT_IPV6 is not set</span></pre></figure></notextile></div>
+
+<p>还是需要设置在重新编译内核,重启生效</p>
+
+<h4 id="lxc">使用lxc</h4>
+
+<p>比如我想创建个debian的容器</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">emerge dev-util/debootstrap #不同的系统依赖不同的这个包，比如fedora/centos就是sys-apps/yum, arch就是sys-apps/pacman...
+</span><span class="line">lxc-create -t debian -n debian_test #也可以加-p 指定配置文件 ，配置类似上面的guest.conf，可以配置ip之类
+</span><span class="line"># 假如想要ubuntu
+</span><span class="line"># lxc-create -t ubuntu -n ubuntu_test
+</span></pre></figure></notextile></div>
+<p>这个时间会下载debian的基础镜像，包含一些基础的包</p>
+
+<p>你要设置root密码,比如我这个debian_test， 相关数据都在/etc/lxc/debian_test</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cd /etc/lxc/debian_test
+</span><span class="line">chroot rootfs /bin/bash</span></pre></figure></notextile></div>
+
+<p>然后登录设置密码</p>
+
+<p>启动和关闭容器的命令是 </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc-start -n debian_test
+</span><span class="line">lxc-stop -n debian_test</span></pre></figure></notextile></div>
+
+<p>当然你也可以设置个开机启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">ln -s lxc /etc/init.d/lxc.debian_test
+</span><span class="line">/etc/init.d/lxc.debian_test stop
+</span><span class="line">/etc/init.d/lxc.debian_test start
+</span><span class="line">rc-update add lxc.debian_test default</span></pre></figure></notextile></div>
+
+<p>还可以使用终端连接</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">lxc-console -n debian_test</span></pre></figure></notextile></div>
+
+<h4 id="gentoo">创建gentoo容器</h4>
+
+<p>当我想创建gentoo的容器,可以借用<a href="https://github.com/globalcitizen/lxc-gentoo">lxc-gentoo</a>,它提供一个命令行的选择.简单粗暴，以下是一个例子
+创建一个ip为192.168.0.10，网关为192.168.0.1，容器叫做gentoo_test，主机名为test1的容器</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo lxc-gentoo/lxc-gentoo create -i 192.168.0.10/26 -g 192.168.0.1 -n gentoo_test -u test1 </span></pre></figure></notextile></div>
+
+<p>默认会把容器安装在执行命令的当前目录,这样启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo /usr/sbin/lxc-start -f test1.conf -n gentoo_test</span></pre></figure></notextile></div>
+
+<p>你也可以chroot进去， 为什么这样用？比如我经常用到的场景，我安装了gentoo/opensuse的双系统，可能我把其中一个系统玩坏(比如升级产生的问题，我安装或者卸载了某些东西等)
+，我就可以在没有u盘，livecd的前提下进入另外一个系统，chroot到这个系统去修复,而且不影响工作，因为我的很多目录之类都是软连接，修改一个地方切换另外的系统继续用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">mount -t proc proc ./gentoo_test/proc
+</span><span class="line">mount -o bind /dev ./gentoo_test/dev
+</span><span class="line">chroot ./gentoo_test /bin/bash
+</span><span class="line">export PS1="(gentoo_test) $PS1"
+</span><span class="line"># 现在你就进来了,而不需要启动系统</span></pre></figure></notextile></div>
+
+<h4 id="archlinux">创建Archlinux容器</h4>
+
+<p>我没有用gentoo的lxc自带的/usr/share/lxc/templates/lxc-archlinux,因为它根本用不了,并且存在以下一些问题:</p>
+
+<ol>
+  <li>
+    <p>arch早已不用initscripts，改用systemd</p>
+  </li>
+  <li>
+    <p>安装基础系统不需要chroot到其系统,直接pacman指定系统根目录即可,并且它chroot进去指定根系统,那肯定永远也成功不了</p>
+  </li>
+  <li>
+    <p>在一个新的系统的pacman.conf没有指定XferCommand,那么也就不知道用什么下载了</p>
+  </li>
+</ol>
+
+<p>我新建个一个项目<a href="https://github.com/dongweiming/gentoo-lxc-templates">gentoo-lxc-templates</a>,目前包含了我修改的lxc-archlinux,我很少用arch,有问题欢迎pullme</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/osxxia-shi-yong-vagranthe-dockerguan-li-chuang-jian-xu-ni-huan-jing/">OSX下使用vagrant和docker管理创建虚拟环境</a></h1>
     
     
@@ -1726,422 +1926,6 @@ password XXX</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shi-yong-docopt-slash-schema-markdownwen-jian-zhi-jie-fa-song-you-jian/">使用docopt/schema:markdown文件直接发送支持python语法的邮件</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-13T17:42:00+08:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2 id="section">前言</h2>
-
-<ol>
-  <li>工作经常写一些东西发邮件，但是渐渐的已经用markdown写东西，每次很纠结，</li>
-  <li>而且还需要我打开邮箱，然后balabala，比如我还要在后面加入公司和自己的一些信息</li>
-  <li>经常邮件或者html都带有python的源码段，想要一个支持python语法的css显示效果</li>
-</ol>
-
-<h2 id="section-1">使用的模块</h2>
-
-<ul>
-  <li><a href="https://github.com/docopt/docopt">docopt</a>  Pythonic的命令行函数解析，只需要把显示的参数列表放在__doc__</li>
-  <li><a href="https://github.com/halst/schema">schema</a> Pythonic的数据结构验证，不需要那么多的异常处理</li>
-  <li><a href="https://pypi.python.org/pypi/Markdown/2.3.1">markdown</a> </li>
-  <li><a href="https://pypi.python.org/pypi/PyYAML/3.10">PyYAML</a>  解析yaml文件</li>
-  <li><a href="https://pypi.python.org/pypi/Pygments/1.6">pygments</a> 借用它对python语法的一些正则匹配</li>
-  <li><a href="https://github.com/kennethreitz/requests">requests</a> 我没有自己实现css，css可以本地自己自定义，也可以从网站下载，这里去爬网站的css文件</li>
-</ul>
-
-<p>PS:安装这些可以 </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo easy_install schema docopt markdown pygments pyyaml</span></pre></figure></notextile></div>
-
-<h2 id="section-2">功能</h2>
-
-<ul>
-  <li>支持python语法</li>
-  <li>支持本地有配置文件，不需要命令行balabala那么多(使用yaml)</li>
-  <li>支持多种颜色方案，方案可选项: pygments-css</li>
-  <li>支持本地自定义css(默认去这个网站爬回来)</li>
-  <li>支持中文</li>
-  <li>支持自定义html模板文件，比如我们公司邮件下部的联系方式等说明，可以放在模板邮件里面</li>
-  <li>可以不发送邮件，只保留和加了css后的html到本地文件</li>
-</ul>
-
-<h2 id="section-3">使用举例</h2>
-
-<ol>
-  <li>默认模式</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">python</span> <span class="n">MarkPygments</span><span class="o">.</span><span class="n">py</span>  <span class="o">--</span><span class="n">mailto</span> <span class="n">mailto</span><span class="nd">@qq.com</span><span class="p">,</span><span class="n">mailto2</span><span class="nd">@qq.com</span>  <span class="o">-</span><span class="n">s</span> <span class="err">标题</span> <span class="o">--</span><span class="n">mailserver</span> <span class="n">smtp</span><span class="o">.</span><span class="n">exmail</span><span class="o">.</span><span class="n">qq</span><span class="o">.</span><span class="n">com</span> <span class="o">-</span><span class="n">u</span> <span class="n">youremailname</span>
-</span><span class="line"><span class="o">-</span><span class="n">p</span> <span class="n">yourpassword</span>   <span class="o">--</span><span class="n">cc</span> <span class="n">cc</span><span class="nd">@qq.com</span> <span class="n">whatever</span><span class="o">.</span><span class="n">md</span> <span class="o">--</span><span class="n">template</span> <span class="n">template</span><span class="o">.</span><span class="n">html</span>
-</span></pre></figure></notextile></div>
-
-<ol>
-  <li>使用本地yaml配置，配置如下, 配置中没有能命令行选项找，配置和终端都有会使用中有文件配置
-这是yaml文件的内容：</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">markemail</span><span class="p">:</span>
-</span><span class="line">    <span class="o">--</span><span class="n">theme</span><span class="p">:</span> <span class="n">autumn</span>
-</span><span class="line">    <span class="o">--</span><span class="n">username</span><span class="p">:</span> <span class="n">XX</span>
-</span><span class="line">    <span class="o">--</span><span class="n">password</span><span class="p">:</span> <span class="n">YY</span>
-</span><span class="line">    <span class="o">--</span><span class="n">mailserver</span><span class="p">:</span> <span class="n">smtp</span><span class="o">.</span><span class="n">exmail</span><span class="o">.</span><span class="n">qq</span><span class="o">.</span><span class="n">com</span>
-</span><span class="line">    <span class="o">--</span><span class="n">mailto</span><span class="p">:</span> <span class="n">to1</span><span class="nd">@qq.com</span><span class="p">,</span><span class="n">to2</span><span class="nd">@qq.com</span>
-</span><span class="line">    <span class="o">--</span><span class="n">subject</span><span class="p">:</span> <span class="s">&#39;周报&#39;</span>
-</span></pre></figure></notextile></div>
-
-<p>然后这样使用：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">python</span> <span class="n">MarkPygments</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="o">~/.</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span> <span class="n">whatever</span><span class="o">.</span><span class="n">md</span> <span class="o">--</span><span class="n">template</span> <span class="n">template</span><span class="o">.</span><span class="n">html</span>
-</span></pre></figure></notextile></div>
-
-<ol>
-  <li>使用本地css目录下的css， 不发送邮件只保存html到本地文件</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">python</span> <span class="n">MarkPygments</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="o">~/.</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span> <span class="n">whatever</span><span class="o">.</span><span class="n">md</span> <span class="o">--</span><span class="n">template</span> <span class="n">template</span><span class="o">.</span><span class="n">html</span>
-</span><span class="line"><span class="o">-</span><span class="n">o</span> <span class="n">out</span><span class="o">.</span><span class="n">html</span> <span class="o">--</span><span class="n">local</span> <span class="n">pygments</span><span class="o">-</span><span class="n">css</span>
-</span></pre></figure></notextile></div>
-
-<p>这里是代码，或者你可以去看<a href="https://github.com/orzrd/mytools/blob/master/MarkPygments.py">MarkPygments.py</a></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># coding=utf-8</span>
-</span><span class="line"><span class="sd">&#39;&#39;&#39;</span>
-</span><span class="line"><span class="sd">Usage:</span>
-</span><span class="line"><span class="sd">MarkPygments.py [options] MDFILE</span>
-</span><span class="line"><span class="sd">MarkPygments.py [options] --local &lt;cssdir&gt; MDFILE</span>
-</span><span class="line"><span class="sd">MarkPygments.py [options] --config &lt;yamlfile&gt; MDFILE</span>
-</span><span class="line">
-</span><span class="line"><span class="sd">Arguments:</span>
-</span><span class="line"><span class="sd">MDFILE the markdown file</span>
-</span><span class="line"><span class="sd">-u --username user your email name</span>
-</span><span class="line"><span class="sd">-p --password pass your email login password</span>
-</span><span class="line"><span class="sd">-mt --mailto tolist mailto list</span>
-</span><span class="line"><span class="sd">--theme theme css style for python syntax [default: monokai]</span>
-</span><span class="line"><span class="sd">-s --subject subject email&#39;s subject</span>
-</span><span class="line"><span class="sd">--mailserver server mail server [default: smtp.exmail.qq.com]</span>
-</span><span class="line">
-</span><span class="line"><span class="sd">Options:</span>
-</span><span class="line"><span class="sd">-h --help show this help message and exit</span>
-</span><span class="line"><span class="sd">--version show version and exit</span>
-</span><span class="line"><span class="sd">--config yamlfile config yaml file path (e.g. .config.yaml)</span>
-</span><span class="line"><span class="sd">--local cssdir use local custom css dir</span>
-</span><span class="line"><span class="sd">-o --output [outhtml] make output to html file</span>
-</span><span class="line"><span class="sd">-c --cc list cc list</span>
-</span><span class="line"><span class="sd">--template html template html</span>
-</span><span class="line">
-</span><span class="line"><span class="sd">&#39;&#39;&#39;</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">re</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">codecs</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">smtplib</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">markdown</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">docopt</span> <span class="kn">import</span> <span class="n">docopt</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">schema</span> <span class="kn">import</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">And</span><span class="p">,</span> <span class="n">Or</span><span class="p">,</span> <span class="n">Use</span><span class="p">,</span> <span class="n">SchemaError</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;终端输出log&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="n">color</span> <span class="o">=</span> <span class="mi">31</span> <span class="k">if</span> <span class="n">error</span> <span class="k">else</span> <span class="mi">32</span>
-</span><span class="line">    <span class="k">print</span> <span class="s">&#39;</span><span class="se">\x1B</span><span class="s">[1;{0}m * {1}</span><span class="se">\x1B</span><span class="s">[0m&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">regex</span><span class="p">():</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;借用pygments对python语法的实现以及自己实现的正则&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="kn">import</span> <span class="n">PythonLexer</span>
-</span><span class="line">    <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span class="line">    <span class="n">lex</span> <span class="o">=</span> <span class="n">PythonLexer</span><span class="p">()</span>
-</span><span class="line">    <span class="n">token</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">tokens</span>
-</span><span class="line">    <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;keywords&#39;</span><span class="p">,</span> <span class="s">&#39;builtins&#39;</span><span class="p">]</span>
-</span><span class="line">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
-</span><span class="line">        <span class="nb">dict</span><span class="p">[</span><span class="n">i</span><span class="p">[:</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</span><span class="line">    <span class="nb">dict</span><span class="p">[</span><span class="s">&#39;fu&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;.*(def)\W+(.*)\((.*)\)&#39;</span>
-</span><span class="line">    <span class="nb">dict</span><span class="p">[</span><span class="s">&#39;cl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;.*(?!&lt;span)(class)(?!=)\W+(?!=)(.*)\((.*)\)&#39;</span>
-</span><span class="line">    <span class="nb">dict</span><span class="p">[</span><span class="s">&#39;fm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;.*(from)\W+(.*)\W+(import)\W+(.*)&#39;</span>
-</span><span class="line">    <span class="nb">dict</span><span class="p">[</span><span class="s">&#39;im&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;.*(import)\W\{,</span><span class="se">\4</span><span class="s">}(.*)&#39;</span>
-</span><span class="line">    <span class="k">return</span> <span class="nb">dict</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">sendMail</span><span class="p">(</span><span class="n">mailserver</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">tolist</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="p">[]):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;发送邮件&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">makeEmail</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
-</span><span class="line">        <span class="n">msg</span><span class="p">[</span><span class="s">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
-</span><span class="line">        <span class="n">msg</span><span class="p">[</span><span class="s">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">username</span>
-</span><span class="line">        <span class="n">msg</span><span class="p">[</span><span class="s">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tolist</span><span class="p">)</span>
-</span><span class="line">        <span class="k">if</span> <span class="n">cc</span><span class="p">:</span>
-</span><span class="line">            <span class="n">msg</span><span class="p">[</span><span class="s">&#39;Cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span>
-</span><span class="line">        <span class="n">html_part</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="s">&#39;html&#39;</span><span class="p">,</span> <span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">html_part</span><span class="p">)</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">msg</span>
-</span><span class="line">    <span class="k">try</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line">        <span class="n">smtp</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;Connect to {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mailserver</span><span class="p">))</span>
-</span><span class="line">        <span class="n">smtp</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">mailserver</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
-</span><span class="line">        <span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;Login Success with {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">))</span>
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;To send this Email...&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="k">if</span> <span class="n">cc</span><span class="p">:</span>
-</span><span class="line">            <span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">tolist</span> <span class="o">+</span> <span class="n">cc</span><span class="p">,</span> <span class="n">makeEmail</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
-</span><span class="line">        <span class="k">else</span><span class="p">:</span>
-</span><span class="line">            <span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">tolist</span><span class="p">,</span> <span class="n">makeEmail</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;Send Success&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">paserYaml</span><span class="p">(</span><span class="n">yamlfile</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;解析yaml文件配置&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="kn">import</span> <span class="nn">yaml</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">yamlfile</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;markemail&#39;</span><span class="p">,</span> <span class="p">{})</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">check_email</span><span class="p">(</span><span class="n">emails</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;检查选项是否是邮件格式&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="k">print</span> <span class="n">emails</span>
-</span><span class="line">    <span class="n">regex</span> <span class="o">=</span> <span class="s">r&#39;&#39;&#39;^[_a-z0-9-]+(\.[a-z0-9-]+)*@[a-z0-9-]+</span>
-</span><span class="line"><span class="s">(\.[a-z0-9-]+)*(\.[a-z]{2,3})$&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="n">rst</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-</span><span class="line">        <span class="n">regex</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">else</span> <span class="bp">False</span><span class="p">,</span> <span class="n">emails</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">))</span>
-</span><span class="line">    <span class="k">return</span> <span class="bp">True</span> <span class="k">if</span> <span class="bp">False</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rst</span> <span class="k">else</span> <span class="bp">False</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">colorClass</span><span class="p">():</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;pygments-css对语法的class对应字典&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-</span><span class="line">        <span class="n">cl</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="s">&#39;nc&#39;</span><span class="p">,</span> <span class="s">&#39;nb&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">fu</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="s">&#39;nf&#39;</span><span class="p">,</span> <span class="s">&#39;bp&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">fm</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;nd&#39;</span><span class="p">,</span> <span class="s">&#39;vi&#39;</span><span class="p">,</span> <span class="s">&#39;nd&#39;</span><span class="p">,</span> <span class="s">&#39;vi&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">im</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;nd&#39;</span><span class="p">,</span> <span class="s">&#39;mi&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">ke</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;kd&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">bu</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;vc&#39;</span><span class="p">]</span>
-</span><span class="line">    <span class="p">)</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">cssStyle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;获取css设置&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">style</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">fusionCss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csshtml</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="n">css</span> <span class="o">=</span> <span class="s">&#39;&lt;style type=&quot;text/css&quot;&gt;&#39;</span>
-</span><span class="line">        <span class="n">css</span> <span class="o">+=</span> <span class="s">&#39;.codehilite {border: 2px solid rgb(225, 225, 225)}&#39;</span>
-</span><span class="line">        <span class="n">css</span> <span class="o">+=</span> <span class="n">csshtml</span>
-</span><span class="line">        <span class="n">css</span> <span class="o">+=</span> <span class="s">&#39;&lt;/style&gt;&#39;</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">css</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cssdir</span><span class="p">,</span> <span class="n">theme</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&#39;&#39;&#39;从本地css文件&#39;&#39;&#39;</span>
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;Fetch css from local dir:{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cssdir</span><span class="p">))</span>
-</span><span class="line">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;{0}/{1}.css&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cssdir</span><span class="p">,</span> <span class="n">theme</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span class="line">            <span class="n">css</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fusionCss</span><span class="p">(</span><span class="n">css</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">crawler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theme</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&#39;&#39;&#39;去这个网站爬回来&#39;&#39;&#39;</span>
-</span><span class="line">        <span class="kn">import</span> <span class="nn">requests</span>
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;Fetch css from site:igniteflow.com&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-</span><span class="line">            <span class="s">&#39;http://igniteflow.com/static/css/pygments/{0}.css&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theme</span><span class="p">))</span>
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fusionCss</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">)(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">FabricHtml</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">md</span><span class="p">,</span> <span class="n">css</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">css</span> <span class="o">=</span> <span class="n">css</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">md_html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">makeToHtml</span><span class="p">(</span><span class="n">md</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">makeToHtml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">md</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;Markdown converted into html&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="n">input_file</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
-</span><span class="line">        <span class="n">text</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">markdown</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">AddCssToHtml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">css_html</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&#39;&#39;&#39;增加css的style&#39;&#39;&#39;</span>
-</span><span class="line">        <span class="n">ohtml</span> <span class="o">=</span> <span class="n">css_html</span>
-</span><span class="line">        <span class="n">c</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;```&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="n">inc</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span class="line">        <span class="n">ohtml</span> <span class="o">+=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span class="line">        <span class="k">for</span> <span class="n">inc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-</span><span class="line">            <span class="k">if</span> <span class="n">inc</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">                <span class="n">ohtml</span> <span class="o">+=</span> <span class="s">&#39;&lt;div class=&quot;codehilite&quot;&gt;&#39;</span>
-</span><span class="line">            <span class="k">else</span><span class="p">:</span>
-</span><span class="line">                <span class="n">ohtml</span> <span class="o">+=</span> <span class="s">&#39;&lt;/div&gt;&#39;</span>
-</span><span class="line">            <span class="n">ohtml</span> <span class="o">+=</span> <span class="n">c</span><span class="p">[</span><span class="n">inc</span><span class="p">]</span>
-</span><span class="line">            <span class="n">inc</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">ohtml</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">makeSpan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&#39;&#39;&#39;构造span包含符合的语法块&#39;&#39;&#39;</span>
-</span><span class="line">        <span class="k">if</span> <span class="ow">not</span> <span class="n">html</span><span class="p">:</span>
-</span><span class="line">            <span class="k">return</span> <span class="s">&#39;&#39;</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;&lt;span class=&quot;{0}&quot;&gt;{1}&lt;/span&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">markHtml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&#39;&#39;&#39;给html加python语法的颜色css&#39;&#39;&#39;</span>
-</span><span class="line">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">regex</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span class="line">            <span class="n">args</span> <span class="o">=</span> <span class="n">colorClass</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span>
-</span><span class="line">            <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-</span><span class="line">            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-</span><span class="line">                <span class="n">match</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-</span><span class="line">                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)):</span>
-</span><span class="line">                    <span class="n">h</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">makeSpan</span><span class="p">(</span>
-</span><span class="line">                        <span class="n">match</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">h</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">h</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="n">has_css_html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AddCssToHtml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">md_html</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">css</span><span class="p">)</span>
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pygments</span><span class="p">(</span><span class="n">has_css_html</span><span class="p">)</span> <span class="o">+</span> <span class="n">template</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">pygments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">        <span class="n">log</span><span class="p">(</span><span class="s">&#39;Mark span label with python syntax&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="n">ohtml</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-</span><span class="line">        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">html</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">):</span>
-</span><span class="line">            <span class="n">ohtml</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markHtml</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-</span><span class="line">            <span class="n">ohtml</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">ohtml</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">checkSchema</span><span class="p">(</span><span class="n">schemadict</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;Pythonic的检查schema&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">schemadict</span><span class="p">)</span>
-</span><span class="line">    <span class="k">try</span><span class="p">:</span>
-</span><span class="line">        <span class="n">args</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span class="line">    <span class="k">except</span> <span class="n">SchemaError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span class="line">        <span class="k">raise</span>
-</span><span class="line">        <span class="nb">exit</span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">args</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">args</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0r1&#39;</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">isLocal</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;--local&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="n">hasConfig</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;--config&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="n">theme</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;--theme&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">hasConfig</span><span class="p">:</span>
-</span><span class="line">        <span class="n">checkSchema</span><span class="p">({</span>
-</span><span class="line">            <span class="s">&#39;--config&#39;</span><span class="p">:</span> <span class="n">And</span><span class="p">(</span><span class="n">Use</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
-</span><span class="line">                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">,</span>
-</span><span class="line">                            <span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid config format or not exists&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="p">},</span> <span class="p">{</span><span class="s">&#39;--config&#39;</span><span class="p">:</span> <span class="n">hasConfig</span><span class="p">}</span>
-</span><span class="line">        <span class="p">)</span>
-</span><span class="line">        <span class="n">yamlConfig</span> <span class="o">=</span> <span class="n">paserYaml</span><span class="p">(</span><span class="n">hasConfig</span><span class="p">)</span>
-</span><span class="line">        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">yamlConfig</span><span class="p">)</span>
-</span><span class="line">    <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;--config&#39;</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">if</span> <span class="n">isLocal</span><span class="p">:</span>
-</span><span class="line">        <span class="n">checkSchema</span><span class="p">({</span>
-</span><span class="line">            <span class="s">&#39;--local&#39;</span><span class="p">:</span> <span class="n">And</span><span class="p">(</span><span class="n">Use</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">,</span>
-</span><span class="line">                           <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&#39;{0}/{1}.css&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-</span><span class="line">                                                    <span class="n">n</span><span class="p">,</span> <span class="n">theme</span><span class="p">)),</span> <span class="n">error</span><span class="o">=</span>
-</span><span class="line">                           <span class="s">&#39;Invalid custom css dir or hasnot this theme&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="p">},</span> <span class="p">{</span><span class="s">&#39;--local&#39;</span><span class="p">:</span> <span class="n">isLocal</span><span class="p">}</span>
-</span><span class="line">        <span class="p">)</span>
-</span><span class="line">        <span class="n">css_dict</span> <span class="o">=</span> <span class="n">cssStyle</span><span class="p">(</span><span class="s">&#39;local&#39;</span><span class="p">,</span> <span class="n">isLocal</span><span class="p">,</span> <span class="n">theme</span><span class="p">)</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</span><span class="line">    <span class="k">else</span><span class="p">:</span>
-</span><span class="line">        <span class="n">css_dict</span> <span class="o">=</span> <span class="n">cssStyle</span><span class="p">(</span><span class="s">&#39;crawler&#39;</span><span class="p">,</span> <span class="n">theme</span><span class="p">)</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</span><span class="line">    <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;--local&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;--theme&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="n">args</span> <span class="o">=</span> <span class="n">checkSchema</span><span class="p">({</span>
-</span><span class="line">        <span class="s">&#39;MDFILE&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">,</span>
-</span><span class="line">        <span class="s">&#39;--mailserver&#39;</span><span class="p">:</span> <span class="n">Use</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid server format&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--mailto&#39;</span><span class="p">:</span> <span class="n">And</span><span class="p">(</span><span class="n">Use</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">check_email</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
-</span><span class="line">                        <span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid email format&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--subject&#39;</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="n">Use</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">Use</span><span class="p">(</span><span class="nb">unicode</span><span class="p">),</span>
-</span><span class="line">                        <span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid suject format&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--password&#39;</span><span class="p">:</span> <span class="n">Use</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid suject format&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--cc&#39;</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Use</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">check_email</span><span class="p">(</span><span class="n">n</span><span class="p">)),</span>
-</span><span class="line">                   <span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid email format&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--output&#39;</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
-</span><span class="line">        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s">&#39;{0}/{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-</span><span class="line">        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">),</span> <span class="n">n</span><span class="p">))),</span>
-</span><span class="line">            <span class="n">error</span><span class="o">=</span><span class="s">&#39;Dir must exists&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--template&#39;</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s">&#39;template must exists&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--username&#39;</span><span class="p">:</span> <span class="n">Use</span><span class="p">(</span><span class="n">check_email</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid username format&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--help&#39;</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
-</span><span class="line">        <span class="s">&#39;--version&#39;</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">    <span class="p">},</span> <span class="n">args</span><span class="p">)</span>
-</span><span class="line">    <span class="n">do</span> <span class="o">=</span> <span class="n">FabricHtml</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;MDFILE&#39;</span><span class="p">],</span> <span class="n">css_dict</span><span class="p">)</span>
-</span><span class="line">    <span class="n">cc</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s">&#39;--cc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s">&#39;--cc&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="p">[]</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s">&#39;--template&#39;</span><span class="p">]:</span>
-</span><span class="line">        <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;--template&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span class="line">            <span class="n">html_content</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-</span><span class="line">    <span class="k">else</span><span class="p">:</span>
-</span><span class="line">        <span class="n">html_content</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s">&#39;--output&#39;</span><span class="p">]:</span>
-</span><span class="line">        <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;--output&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span class="line">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
-</span><span class="line">            <span class="nb">exit</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">sendMail</span><span class="p">(</span>
-</span><span class="line">        <span class="n">args</span><span class="p">[</span><span class="s">&#39;--mailserver&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">args</span><span class="p">[</span><span class="s">&#39;--username&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">args</span><span class="p">[</span><span class="s">&#39;--password&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">args</span><span class="p">[</span><span class="s">&#39;--mailto&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">),</span>
-</span><span class="line">        <span class="n">args</span><span class="p">[</span><span class="s">&#39;--subject&#39;</span><span class="p">],</span>
-</span><span class="line">        <span class="n">html_content</span><span class="p">,</span>
-</span><span class="line">        <span class="n">cc</span>
-</span><span class="line">    <span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">main</span><span class="p">()</span>
-</span></pre></figure></notextile></div>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/6/">&larr; Older</a></li>
@@ -2164,6 +1948,10 @@ password XXX</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -2199,10 +1987,6 @@ password XXX</p>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

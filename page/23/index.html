@@ -142,6 +142,75 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/debianxiashiyongsshfsfuseguazaiyuanduanwenjianxitong/">Debian下使用sshfs＋fuse挂载远端文件系统</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-16T00:00:00+08:00" pubdate data-updated="true">Sep 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：这个想法是因为在linux通过wine安装editplus后发现不能编辑ftp远程服务器的代码。而bluefish也没有提供远程ftp编辑的功能，于是想将远程服务器的文件系统挂载到本地（但是因为某些原因，他没有类似于nfs这样的网络文件系统），于是有了此文－－通过ssh的特性。而fuse,他是Linux 中用于挂载某些网络空间，如SSH，到本地文件系统的模块。</p>
+
+<p>1  安装fuse和sshfs：</p>
+
+<p>dongwm@dongwm:~$sudo apt-get install sshfs fuse-utils</p>
+
+<p>2 将你想要的用户（这里是我的用户dongwm）添加到fuse组里面：</p>
+
+<p>dongwm@dongwm:~$sudo adduser dongwm fuse   ＃为了生效需要注销再进来</p>
+
+<p>3 加载fuse模块：</p>
+
+<p>dongwm@dongwm:~$sudo modprobe fuse</p>
+
+<p>注：如果想开机自动加载这个模块需要编辑t<strong>/etc/modules</strong>   添加 “fuse”到单独的一行</p>
+
+<p>4 创建相应挂载目录，然后挂载远端文件系统，前提是要有很高的权限，比如我要挂载根目录，就需要root的 ssh密码或者信任，格式如下：</p>
+
+<p>dongwm@dongwm:~$mkdir 挂载目录</p>
+
+<p>dongwm@dongwm:~$sshfs  远程服务器用户名称@服务器地址:/服务器目录  挂载目录</p>
+
+<p>看我的挂载：</p>
+
+<p>dongwm@dongwm:~$ df -h
+文件系统          容量  已用  可用 已用%% 挂载点
+/dev/sda1              74G  5.6G   65G   9% /
+tmpfs                 1.9G     0  1.9G   0% /lib/init/rw
+udev                  1.9G  196K  1.9G   1% /dev
+tmpfs                 1.9G     0  1.9G   0% /dev/shm
+/dev/sda2             382G  7.0G  356G   2% /home
+root@192.168.10.89:/ 1000G     0 1000G   0% /home/dongwm/10.89</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/fuzashijiancepchulidexiaoxiduiliezmqzaiserverduandepythonchulijiaoben/">复杂事件(cep)处理的消息队列zmq在server端的python日志记录处理脚本</a></h1>
     
     
@@ -1851,89 +1920,6 @@ Key Data:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/zhandaozhanvpnyugongxiangmiyue/">站到站VPN(预共享密钥)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-30T00:00:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R1</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>line con 0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>logg sy</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>no ip domain-lookup</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int loopback 0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 1.1.1.1 255.255.255.255</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int f0/0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.3.1 255.255.255.0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/3</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.15.1 255.255.255.0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 0.0.0.0 0.0.0.0 192.168.15.5</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>access-list 100 permit ip 1.1.1.1 0.0.0.0 5.5.5.5 0.0.0.0</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>authentication pre-share</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>encryption aes 128</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>group 2</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>hash sha</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto ipsec transform-set cisco esp-aes 128 esp-sha-hmac</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/zhandaozhanvpnyugongxiangmiyue/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/24/">&larr; Older</a></li>
@@ -1956,6 +1942,10 @@ Key Data:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1991,10 +1981,6 @@ Key Data:
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

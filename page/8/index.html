@@ -142,6 +142,152 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengliu/">SQLAlchemy教程(六)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>本文主要是ORM的sission查询和更新</strong></p>
+
+<p>session负责执行内存中的对象和数据库表之间的同步工作,创建session可以这样:</p>
+
+<p>Session = sessionmaker(bind=engine) #sqlalchemy.orm.session.Session类有很多参数,使用sessionmaker是为了简化这个过程</p>
+
+<p>或者:
+Session = sessionmaker()
+Session.configure(bind=engine)</p>
+
+<p>注:sessionmaker的参数:
+autoflush=True  #为True时，session将在执行session的任何查询前自动调用flush()。这将确保返回的结果</p>
+
+<p>transactional=False #为True时，session将自动使用事务commit
+twophase=False #当处理多个数据库实例,当使用flush()但是没有提交事务commit时,给每个数据库一个标识,使整个事务回滚</p>
+
+<p>创建session,添加数据的例子(以前也出现过很多次了)
+dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17)
+[GCC 4.5.3] on linux2
+Type &#8220;help&#8221;, &#8220;copyright&#8221;, &#8220;credits&#8221; or &#8220;license&#8221; for more information.
+&gt;&gt;&gt; from sqlalchemy import *
+&gt;&gt;&gt; from sqlalchemy.orm import *
+&gt;&gt;&gt; engine = create_engine(&#8216;sqlite://&#8217;)
+&gt;&gt;&gt; metadata = MetaData(engine)
+&gt;&gt;&gt; account_table = Table(
+&#8230; &#8216;account&#8217;, metadata,
+&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230; Column(&#8216;balance&#8217;, Numeric))
+&gt;&gt;&gt; class Account(object): pass
+&#8230;
+&gt;&gt;&gt; mapper(Account, account_table)
+&lt;Mapper at 0x84e6f2c; Account&gt;
+&gt;&gt;&gt; account_table.create()
+&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session = sessionmaker(bind=engine)
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session.add(a)
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; session.delete(a) #自动删除 account_table相应条目,但是在1:N和M:N关系中不会自动删除它的级联关系
+&gt;&gt;&gt; session.flush()</p>
+
+<p><strong>注:session的对象状态:</strong></p>
+
+<p>Transient:短暂的,主要指内存中的对象</p>
+
+<p>Pending:挂起的,这样的对象准备插入数据库,等执行了flush就会插入</p>
+
+<p>Persistent:持久的</p>
+
+<p>Detached:对象在数据库里面有记录,但是不属于session</p>
+
+<p>&gt;&gt;&gt; make_transient(a)  #因为标识了已删除,恢复a的状态
+&gt;&gt;&gt; session.add(a) #重新添加
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; print query
+SELECT account.id AS account_id, account.balance AS account_balance
+FROM account
+&gt;&gt;&gt; for obj in query:
+&#8230;     print obj
+&#8230;
+&lt;__main__.Account object at 0x84eef0c&gt;</p>
+
+<p>&gt;&gt;&gt; query.all()  #查询所有
+[&lt;__main__.Account object at 0x84eef0c&gt;]
+&gt;&gt;&gt; query = query.filter(Account.balance &gt; 10.00)  #filter过滤
+&gt;&gt;&gt; for obj in query:
+&#8230;     print obj.balance
+&#8230;</p>
+
+<p>100.00</p>
+
+<p>&gt;&gt;&gt; for i in session.query(Account).filter_by(balance=100.00 ):  #通过条件过滤
+&#8230;     print i
+&gt;&gt;&gt; query = session.query(Account)
+&gt;&gt;&gt; query = query.from_statement(&#8216;select *from account where balance=:bac&#8217;) #通过带通配符的SQL语句其中:bac标识这个参数是bac
+&gt;&gt;&gt; query = query.params(bac=&#8217;100.00&#8217;) #根据bac指定值寻找
+&gt;&gt;&gt; print query.all()
+[&lt;__main__.Account object at 0x84eef0c&gt;]</p>
+
+<p><strong>本地session</strong></p>
+
+<p>&gt;&gt;&gt; Session = scoped_session(sessionmaker(  #设置一个本地的共享session
+&#8230;     bind=engine, autoflush=True))
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; session2 = Session()
+&gt;&gt;&gt; session is session2  #他们是同一个
+True</p>
+
+<p>&gt;&gt;&gt; a = Account()
+&gt;&gt;&gt; a.balance = 100.00
+&gt;&gt;&gt; Session.add(a) #注意 这是的&#8217;S&#8217;是大写
+&gt;&gt;&gt; Session.flush()
+&gt;&gt;&gt; b = Account()
+&gt;&gt;&gt; a.balance = 200.00
+&gt;&gt;&gt; session.add(a)  #其实他们是一个共享的session 名字都可以
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Account).all() #查询到了2个
+[&lt;__main__.Account object at 0x851be0c&gt;, &lt;__main__.Account object at 0x84f7d6c&gt;]</p>
+
+<p>注:这样的映射mapper也可以这样是用:</p>
+
+<p>mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref=&#8217;products&#8217;)))</p>
+
+<p>Session.mapper(Product, product_table, properties=dict(
+categories=relation(Category, secondary=product_category_table,
+backref=&#8217;products&#8217;))) #它的优点是可以初始化参数</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengba/">SQLAlchemy教程(八)</a></h1>
     
     
@@ -3238,483 +3384,6 @@ IOError</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyusysyanjiusan/">关于sys研究（三）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><pre class="sh_python">
-import sys</p>
-
-<p>def my_excepthook(type, value, traceback): #三个参数包含：错误类型，错误值和错误的回调
-    print 'Unhandled error:', type, value</p>
-
-<p>sys.excepthook = my_excepthook #设置一个异常处理方法的通用处理</p>
-
-<p>print 'Before exception'</p>
-
-<p>raise RuntimeError('This is the error message')</p>
-
-<p>print 'After exception'
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Before exception
-Unhandled error: &lt;type &#8216;exceptions.RuntimeError&#8217;&gt; This is the error message  #由这个异常做的处理，因为异常，不再执行后面的print</p>
-
-<p><pre class="sh_python">
-import sys
-import threading
-import time</p>
-
-<p>def do_something_with_exception():
-exc_type, exc_value = sys.exc_info()[:2] #当出现异常，通过sys.exc_info捕获当前异常，返回元组包含错误类型，错误值
-    print 'Handling %s exception with message "%s" in %s' % \
-        (exc_type.__name__, exc_value, threading.current_thread().name)</p>
-
-<p>def cause_exception(delay):
-    time.sleep(delay)
-    raise RuntimeError('This is the error message')</p>
-
-<p>def thread_target(delay):
-    try:
-        cause_exception(delay)
-    except:
-        do_something_with_exception()</p>
-
-<p>threads = [ threading.Thread(target=thread_target, args=(0.3,)),
-            threading.Thread(target=thread_target, args=(0.1,)),
-            ]
-for t in threads:
-    t.start()
-for t in threads:
-    t.join()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Handling RuntimeError exception with message &#8220;This is the error message&#8221; in Thread-2 #因为第2个线程time.sleep时间短，先完成
-Handling RuntimeError exception with message &#8220;This is the error message&#8221; in Thread-1</p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>def trace_calls(frame, event, arg): #调用跟踪函数需要三个参数：正在运行的代码 的堆栈帧，事件通知类型，事件参数
-    if event != 'call':
-        return
-    co = frame.f_code
-    func_name = co.co_name
-    if func_name == 'write':
-        return #放弃write
-    func_line_no = frame.f_lineno
-    func_filename = co.co_filename
-    caller = frame.f_back
-    caller_line_no = caller.f_lineno
-    caller_filename = caller.f_code.co_filename
-    print 'Call to %s on line %s of %s from line %s of %s' % \
-        (func_name, func_line_no, func_filename,
-         caller_line_no, caller_filename)
-    return</p>
-
-<p>def b():
-    print 'in b()'</p>
-
-<p>def a():
-    print 'in a()'
-    b()</p>
-
-<p>sys.settrace(trace_calls) #settrace用来跟踪程序运行
-a()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Call to a on line 24 of test.py from line 29 of test.py #先运行到24行的def a()
-in a()
-Call to b on line 21 of test.py from line 26 of test.py #函数a调用了21行的b()
-in b()</p>
-
-<p>注：正在执行的事件类型：
-<table border="1">
-<thead valign="bottom">
-<tr>
-<th>事件</th>
-<th>时间点</th>
-<th>参数</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr>
-<td><tt>&#8216;call&#8217;</tt></td>
-<td>方法执行前</td>
-<td><tt>None</tt></td>
-</tr>
-<tr>
-<td><tt>&#8216;line&#8217;</tt></td>
-<td>某行被执行前</td>
-<td><tt>None</tt></td>
-</tr>
-<tr>
-<td><tt>&#8216;return&#8217;</tt></td>
-<td>方法返回前</td>
-<td>返回值</td>
-</tr>
-<tr>
-<td><tt>&#8216;exception&#8217;</tt></td>
-<td>异常发生</td>
-<td>包含类型，值，回调的元组</td>
-</tr>
-<tr>
-<td><tt>&#8216;c_call&#8217;</tt></td>
-<td>c方法call前</td>
-<td>c方法对象</td>
-</tr>
-<tr>
-<td><tt>&#8216;c_return&#8217;</tt></td>
-<td>c方法返回后</td>
-<td><tt>None</tt></td>
-</tr>
-<tr>
-<td><tt>&#8216;c_exception&#8217;</tt></td>
-<td>c方法出现错误后</td>
-<td><tt>None</tt></td>
-</tr>
-</tbody>
-</table>
-<pre class="sh_python">
-import sys</p>
-
-<p>def trace_lines(frame, event, arg):
-    if event != 'line':
-        return
-    co = frame.f_code
-    func_name = co.co_name
-    line_no = frame.f_lineno
-    filename = co.co_filename
-    print '  %s line %s' % (func_name, line_no)</p>
-
-<p>def trace_calls(frame, event, arg):
-    if event != 'call':
-        return
-    co = frame.f_code
-    func_name = co.co_name
-    if func_name == 'write':
-        return
-    line_no = frame.f_lineno
-    filename = co.co_filename
-    print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
-    if func_name in TRACE_INTO: #跟踪到新的方法里面，使用一个本地跟踪
-        return trace_lines
-    return</p>
-
-<p>def c(input):
-    print 'input =', input
-    print 'Leaving c()'</p>
-
-<p>def b(arg):
-    val = arg * 5
-    c(val)
-    print 'Leaving b()'</p>
-
-<p>def a():
-    b(2)
-    print 'Leaving a()'</p>
-
-<p>TRACE_INTO = ['b'] #保存在变量函数的全局列表</p>
-
-<p>sys.settrace(trace_calls)
-a()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Call to a on line 37 of test.py
-Call to b on line 32 of test.py
-b line 33
-b line 34
-Call to c on line 28 of test.py
-input = 10
-Leaving c()
-b line 35
-Leaving b()
-Leaving a()
-<pre class="sh_python">
-import sys</p>
-
-<p>def trace_calls_and_returns(frame, event, arg):
-    co = frame.f_code
-    func_name = co.co_name
-    if func_name == 'write':
-        return
-    line_no = frame.f_lineno
-    filename = co.co_filename
-    if event == 'call':
-        print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
-        return trace_calls_and_returns #返回值可以监测 到自身的引用    
-    elif event == 'return':
-        print '%s =&gt; %s' % (func_name, arg)
-    return</p>
-
-<p>def b():
-    print 'in b()'
-    return 'response_from_b '</p>
-
-<p>def a():
-    print 'in a()'
-    val = b()
-    return val * 2</p>
-
-<p>sys.settrace(trace_calls_and_returns)
-a()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Call to a on line 22 of test.py
-in a()
-Call to b on line 18 of test.py
-in b()
-b =&gt; response_from_b
-a =&gt; response_from_b response_from_b</p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>def trace_exceptions(frame, event, arg): #通过寻找一个本地跟踪功能的<tt>异常</tt>事件监控异常，异常发生会返回错误类型，值和回调数据
-    if event != 'exception':
-        return
-    co = frame.f_code
-    func_name = co.co_name
-    line_no = frame.f_lineno
-    filename = co.co_filename
-    exc_type, exc_value, exc_traceback = arg
-    print 'Tracing exception: %s "%s" on line %s of %s' % \
-        (exc_type.__name__, exc_value, line_no, func_name)</p>
-
-<p>def trace_calls(frame, event, arg):
-    if event != 'call':
-        return
-    co = frame.f_code
-    func_name = co.co_name
-    if func_name in TRACE_INTO:
-        return trace_exceptions</p>
-
-<p>def c():
-    raise RuntimeError('generating exception in c()')</p>
-
-<p>def b():
-    c()
-    print 'Leaving b()'</p>
-
-<p>def a():
-    b()
-    print 'Leaving a()'</p>
-
-<p>TRACE_INTO = ['a', 'b', 'c']</p>
-
-<p>sys.settrace(trace_calls)
-try:
-    a()
-except Exception, e:
-    print 'Exception handler:', e
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Tracing exception: RuntimeError &#8220;generating exception in c()&#8221; on line 23 of c
-Tracing exception: RuntimeError &#8220;generating exception in c()&#8221; on line 26 of b
-Tracing exception: RuntimeError &#8220;generating exception in c()&#8221; on line 30 of a
-Exception handler: generating exception in c()
-<pre class="sh_python">
-import sys
-import threading
-from Queue import Queue
-import time</p>
-
-<p>def show_thread(q, extraByteCodes):
-    for i in range(5):
-        for j in range(extraByteCodes):
-            pass
-        q.put(threading.current_thread().name)
-    return</p>
-
-<p>def run_threads(prefix, interval, extraByteCodes):
-    print '%(prefix)s interval = %(interval)s with %(extraByteCodes)s extra operations' % locals()
-    sys.setcheckinterval(interval) #线程执行多任务。在一个固定的时间间隔，暂停字节码执行和解释检查是否需要执行任何信号处理。在相同的时间间隔检查，全局解释器锁释放当前线程，
-#然后获取，给其他线程一个机会执行，setcheckinterval修改这个间隔，但是可能影响性能
-    q = Queue()
-    threads = [ threading.Thread(target=show_thread, name='%s T%s' % (prefix, i), 
-                                 args=(q, extraByteCodes)
-                                 )
-                for i in range(3)
-              ]
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
-    while not q.empty():
-        print q.get()
-    print
-    return</p>
-
-<p>run_threads('Default', interval=10, extraByteCodes=1000)
-run_threads('Custom', interval=10, extraByteCodes=0)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Default interval = 10 with 1000 extra operations #当检查间隔是小于线程字节码的数量，解释可能给另一个线程控制，以便它运行一段时间
-Default T0
-Default T2
-Default T1
-Default T0
-Default T2
-Default T1
-Default T0
-Default T2
-Default T1
-Default T0
-Default T0
-Default T2
-Default T1
-Default T2
-Default T1</p>
-
-<p>Custom interval = 10 with 0 extra operations #当检查间隔是大 于由一个线程正在执行的字节码数时不会释放控制，该线程将在时间间隔出现前完成其工作
-Custom T0
-Custom T0
-Custom T0
-Custom T0
-Custom T0
-Custom T1
-Custom T1
-Custom T2
-Custom T1
-Custom T2
-Custom T1
-Custom T1
-Custom T2
-Custom T2
-Custom T2
-<pre class="sh_python">
-import sys
-import threading
-from Queue import Queue
-import time</p>
-
-<p>def show_thread(q, extraByteCodes):
-    for i in range(5):
-        for j in range(extraByteCodes):
-            pass
-        #q.put(threading.current_thread().name)
-        print threading.current_thread().name ##使该线程打印直接追加到队列中，而不是<tt>sys.stdout</tt>修改。输出是可预测的要少得多
-     return</p>
-
-<p>def run_threads(prefix, interval, extraByteCodes):
-    print '%(prefix)s interval = %(interval)s with %(extraByteCodes)s extra operations' % locals()
-    sys.setcheckinterval(interval)
-    q = Queue()
-    threads = [ threading.Thread(target=show_thread, name='%s T%s' % (prefix, i), 
-                                 args=(q, extraByteCodes)
-                                 )
-                for i in range(3)
-              ]
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
-    while not q.empty():
-        print q.get()
-    print
-    return</p>
-
-<p>run_threads('Default', interval=100, extraByteCodes=1000)
-run_threads('Custom', interval=10, extraByteCodes=0)
-</pre></p>
-
-<p><pre class="sh_python">
-import sys
-import threading
-import time</p>
-
-<p>io_lock = threading.Lock()
-blocker = threading.Lock()</p>
-
-<p>def block(i):
-    t = threading.current_thread()
-    with io_lock:
-        print '%s with ident %s going to sleep' % (t.name, t.ident)
-    if i:
-        blocker.acquire() # 获取但不释放
-        time.sleep(0.2)
-    with io_lock:
-        print t.name, 'finishing'
-    return</p>
-
-<p>threads = [ threading.Thread(target=block, args=(i,)) for i in range(3) ]
-for t in threads:
-    t.setDaemon(True)
-    t.start()</p>
-
-<p>threads_by_ident = dict((t.ident, t) for t in threads) #映射对象和标识</p>
-
-<p>time.sleep(0.01)
-with io_lock:
-    for ident, frame in sys._current_frames().items(): #识别死锁线程工作<tt>很难，sys._current_frames（）</tt>可以帮助准确显示
-        t = threads_by_ident.get(ident)
-        if not t: #主线程忽略
-            continue
-        print t.name, 'stopped in', frame.f_code.co_name, 
-        print 'at line', frame.f_lineno, 'of', frame.f_code.co_filename
-</pre></p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Thread-1 with ident -1221342352 going to sleep
-Thread-1 finishing #线程一没有sleep，完成了
-Thread-2 with ident -1221342352 going to sleep #线程2获取block
-Thread-3 with ident -1229735056 going to sleep
-Thread-3 stopped in block at line 13 of test.py #线程3想获取block，但是被线程2占用
-Thread-2 stopped in block at line 14 of test.py</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/9/">&larr; Older</a></li>
@@ -3737,6 +3406,10 @@ Thread-2 stopped in block at line 14 of test.py</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -3772,10 +3445,6 @@ Thread-2 stopped in block at line 14 of test.py</p>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

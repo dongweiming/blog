@@ -142,6 +142,111 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyutempfileyanjiu/">关于tempfile研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：tempfile可以安全的生成临时文件和目录.许多程序需要将产生的中间数据保存在文件中. 安全地创建一些具有唯一名字的文件, 使得想要中断应用的人无法猜测到这些文件的名字，tempfile就是为了这样产生的模块</p>
+
+<p><pre class="sh_python">
+import os
+import tempfile</p>
+
+<p>print 'Building a file name yourself:'
+filename = '/tmp/guess_my_name.%s.txt' % os.getpid()  #创建一个文件 文件名包含此次进程pid
+temp = open(filename, 'w+b') #创建文件
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close()
+    os.remove(filename)     #删除文件，需要手动</p>
+
+<p>print
+print 'TemporaryFile:'
+temp = tempfile.TemporaryFile() #创建一个临时文件
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close() #关闭的时候自动删除文件
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Building a file name yourself:
+temp: &lt;open file &#8216;/tmp/guess_my_name.20571.txt&#8217;, mode &#8216;w+b&#8217; at 0xb72f62e0&gt;
+temp.name: /tmp/guess_my_name.20571.txt</p>
+
+<p>TemporaryFile:
+temp: &lt;open file &#8216;&lt;fdopen&gt;&#8217;, mode &#8216;w+b&#8217; at 0xb72f6338&gt;  #TemporaryFile()返回的文件不含有名字,因为在文件系统表中没有它的引用
+temp.name: &lt;fdopen&gt;
+<pre class="sh_python">
+import tempfile</p>
+
+<p>f = tempfile.TemporaryFile(mode='w+t') #文件以模式’w+b’方式被创建,这里是文本模式的临时文件
+try:
+    f.writelines(['first\n', 'second\n']) #接受一个列表，按行写入
+    f.seek(0) #将当前文件指针文件最开始以便能够读取所有的数据</p>
+
+<p>    for line in f:
+        print line.rstrip()
+finally:
+    f.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import tempfile</p>
+
+<p>temp = tempfile.NamedTemporaryFile() #创建了一个有名字的, 即可以按名访问的文件，可以设置一下参数：suffix='_suffix'（设置文件结尾内容）,
+                                    # prefix='prefix_'(设置文件开头内容), dir='/tmp' （设置文件所在目录）
+try:
+    print 'temp:', temp
+    print 'temp.name:', temp.name
+finally:
+    temp.close()
+    print 'Exists after close:', os.path.exists(temp.name) #这里肯定是false  因为关闭句柄文件就会删掉
+directory_name = tempfile.mkdtemp()  #需要多个临时文件, 可以创建一个临时目录然后把所有文件放在这个目录中. 使用mkdtemp()函数来创建一个临时目录.
+print directory_name
+os.removedirs(directory_name) #删掉临时目录需要手动
+print
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyutarfileyanjiu/">关于tarfile研究</a></h1>
     
     
@@ -1495,115 +1600,6 @@ closing (&#8216;127.0.0.1&#8217;, 57128) after reading no data</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyu-4/">关于smtpd研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：smtpd？大家是不是一下子想到了smtplib？其实smtpd是一个实现建立简单邮件传输协议服务器的模块，smtplib是一个实现smtp客户端的模块。</p>
-
-<p><pre class="sh_python">
-import smtpd #服务器端
-import asyncore</p>
-
-<p>class CustomSMTPServer(smtpd.SMTPServer): #定一个自己的SMTPServer类</p>
-
-<p>    def process_message(self, peer, mailfrom, rcpttos, data): 
-        print 'Receiving message from:', peer #客户端的ip和端口
-        print 'Message addressed from:', mailfrom  #发件人 
-        print 'Message addressed to  :', rcpttos #手件人列表
-        print 'Message length        :', len(data) #信息长度
-        return</p>
-
-<p>server = CustomSMTPServer(('127.0.0.1', 1025), None) #只需要服务器的ip和端口</p>
-
-<p>asyncore.loop()
-</pre></p>
-
-<p>客户端</p>
-
-<p><pre class="sh_python">
-import smtplib
-import email.utils
-from email.mime.text import MIMEText</p>
-
-<p>msg = MIMEText('This is the body of the message.') #邮件主体
-msg['To'] = email.utils.formataddr(('Recipient', 'recipient@example.com'))  #收件人，这个是邮件内容里面的，就是我们收件会告诉我们，要不然就是一个未定义状态
-msg['From'] = email.utils.formataddr(('Author', 'author@example.com')) #发件人 
-msg['Subject'] = 'Simple test message' #邮件主题</p>
-
-<p>server = smtplib.SMTP('127.0.0.1', 1025)
-server.set_debuglevel(True) # 显示debug
-try:
-    server.sendmail('author@example.com', ['recipient@example.com'], msg.as_string()) #最后一个参数是构建好的邮件的字符串模式
-finally:
-    server.quit()
-</pre></p>
-
-<p><pre class="sh_python">
-import smtpd
-import asyncore</p>
-
-<p>server = smtpd.DebuggingServer(('127.0.0.1', 1025), None) #这是模块自带的调试服务器</p>
-
-<p>asyncore.loop()
-~
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>&#8212;&#8212;&#8212;- MESSAGE FOLLOWS &#8212;&#8212;&#8212;-
-Content-Type: text/plain; charset=&#8221;us-ascii&#8221;
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-To: Recipient &lt;recipient@example.com&gt;
-From: Author &lt;author@example.com&gt;
-Subject: Simple test message
-X-Peer: 127.0.0.1</p>
-
-<p>This is the body of the message.
-&#8212;&#8212;&#8212;&#8212; END MESSAGE &#8212;&#8212;&#8212;&#8212;</p>
-
-<p><pre class="sh_python">
-import smtpd
-import asyncore
-server = smtpd.PureProxy(('127.0.0.1', 1025), ('mail', 25)) #设置成代理，让将数据传到本地25端口发送邮件
-asyncore.loop()
-</pre></p>
-
-<p>查看日志需要读取你的比如postfix或者sendmail的mail日志</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/13/">&larr; Older</a></li>
@@ -1626,6 +1622,10 @@ asyncore.loop()
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1661,10 +1661,6 @@ asyncore.loop()
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

@@ -142,6 +142,75 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentoobijishiyioverlayhelayman/">gentoo笔记（十一）Overlay和layman</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：Overlay是包含额外的Gentoo的ebuild的Portage包树，类似于“第三方源”，使用它的原因我以为就是让那些不在Portage包树的软件包，当你修改，开发，测试的时候，不会影响主干包树，直到它稳定到加到主干包树里面。当修改主干包树时候，下一次同步你的修改就没有了，但是Overlay能保存你的自定义修改。layman（英语意为‘门外汉’，意思很明显了把）使用它安装和更新这样的Overlay。他会有自己的一套portage包树，和emerge平齐</p>
+
+<p>1 安装layman</p>
+
+<p>dongwm@localhost ~ $sudo emerge layman
+2 指定layman的Portage库</p>
+
+<p>dongwm@localhost ~ $sudo echo &#8220;source /var/lib/layman/make.conf&#8221; &gt;&gt; /etc/make.conf
+3 列出可用的Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -L
+其中有一行</p>
+
+<p>* gentoo-china              [Subversion] (http://gentoo-china-overlay.google&#8230;)</p>
+
+<p>4 安装Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -a gentoo-china
+5 从Overlay源安装一个软件包</p>
+
+<p>因为gentoo-china的软件包目录在/var/lib/layman/gentoo-china  可以去找你想要安装的软件包名称 我这里是/var/lib/layman/gentoo-china/app-editors/uex</p>
+
+<p>dongwm@localhost ~ $sudo emerge uex # emerge会自动找到
+6 更新Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -S</p>
+
+<p>7 删除Overlay源</p>
+
+<p>dongwm@localhost ~ $sudo layman -d desktop-effects  删除desktop-effects</p>
+
+<p>&nbsp;
+
+&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/opensuseanzhuanganjuta/">Opensuse安装anjuta</a></h1>
     
     
@@ -1105,54 +1174,6 @@ dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89%E5%AE%89%E8%A3%85google-chrome/">Gentoo笔记（七）安装google-chrome</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-01T00:00:00+08:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>1 /etc/portage/package.keywords</p>
-
-<p>添加一行：www-client/google-chrome</p>
-
-<p>2 /etc/make.conf</p>
-
-<p>添加一行：ACCEPT_LICENSE=&#8221;google-chrome&#8221;</p>
-
-<p>3 安装</p>
-
-<p>dongwm@localhost ~ $sudo emerge www-client/google-chrome</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/20/">&larr; Older</a></li>
@@ -1175,6 +1196,10 @@ dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1210,10 +1235,6 @@ dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>

@@ -142,6 +142,89 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shell%E8%84%9A%E6%9C%AC%E8%B0%83%E8%AF%95%E9%AB%98%E7%BA%A7%E5%AD%A6%E4%B9%A0/">Shell脚本调试高级学习</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-13T00:00:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1  函数调试&#8211;额这个函数使用了shell内置变量$?，执行$?的值可以接着执行命令，调用函数</strong></p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+alert ()
+{ if [ "$1" -ne 0 ]; then echo "WARNING: $2 did not complete successfully." &gt;&amp;2; exit $1; else echo "INFO: $2 completed successfully" &gt;&amp;2; fi;}
+sh test11.sh  //一个我用来测试的脚本,当脚本正确或者不正确输出不一样的调试报错
+alert $?</pre></p>
+
+<p><strong>2 trap</strong></p>
+
+<p>trap命令用于捕获指定的信号并执行预定义的命令。</p>
+
+<p>语法：trap &#8216;command&#8217; signal</p>
+
+<p>转：其中signal是要捕获的信号，command是捕获到指定的信号之后，所要执行的命令。可以用kill –l命令看到系统中全部可用的信号名，捕获信号后所执行的命令可以是任何一条或多条合法的shell语句，也可以是一个函数名。
+shell脚本在执行时，会产生三个所谓的“伪信号”，(之所以称之为“伪信号”是因为这三个信号是由shell产生的，而其它的信号是由操作系统产生的)，通过使用trap命令捕获这三个“伪信号”并输出相关信息对调试非常有帮助。</p>
+
+<p><a name="table1"><span style="background-color: #ffff00;"><strong> shell伪信号</strong></span></a><span style="background-color: #ffff00;"><strong>分类：</strong></span></p>
+
+<p>EXIT
+从一个函数中退出或整个脚本执行完毕</p>
+
+<p>ERR
+当一条命令返回非零状态时(代表命令执行不成功)</p>
+
+<p>DEBUG
+脚本中每一条命令执行之前</p>
+
+<p><pre class="sh_bash">[root@server ~]# cat test.sh
+#!/bin/bash
+trap 'echo “before execute line:$LINENO, a=$a,b=$b,c=$c”' DEBUG
+a=1
+b=$(($a+1))
+c=$(($b+1))
+echo $c</p>
+
+<p>[root@server ~]# sh !$
+sh test.sh
+“before execute line:3, a=,b=,c=”
+“before execute line:4, a=1,b=,c=”
+“before execute line:5, a=1,b=2,c=”
+“before execute line:6, a=1,b=2,c=3”
+3</p>
+
+<p>注：这个调试脚本不需要每句语句都加echo，只要最上面一行trap。本例表示此行执行前执行信号</p>
+
+<p></pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89/">关于expect研究（二）</a></h1>
     
     
@@ -1048,63 +1131,6 @@ send表示接受一个字符串作为参数发送给指定进程，expect 命令
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/vmware%E4%B8%8Bips%E5%AE%9E%E7%8E%B0web%E8%BF%9E%E6%8E%A5idm/">VMWARE下IPS实现web连接(IDM)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-25T00:00:00+08:00" pubdate data-updated="true">Mar 25<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1  设置IPS初始化</strong></p>
-
-<p>sensor# conf t
-sensor(config)# service host
-sensor(config-hos)# network-settings
-sensor(config-hos-net)#host-ip 192.168.1.144/24,192.168.1.1 //定义IPS地址 掩码 网关
-sensor(config-hos-net)# telnet-option enabled //支持telnet管理
-sensor(config-hos-net)# access-list 192.168.1.144/32 //定义管理IP
-sensor(config-hos-net)# exit
-sensor(config-hos)# time-zone-settings //设置时区
-sensor(config-hos-tim)# offset 8
-sensor(config-hos-tim)# standard-time-zone-name
-sensor(config-hos-tim)# standard-time-zone-name beijing
-sensor(config-hos-tim)# exit
-sensor(config-hos)# exit Apply C
-hanges:?[yes]: yes
-sensor(config)# service web-server // 启动GUI管理
-sensor(config-web)# enable-tls true
-sensor(config-web)# port 443</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/vmware%E4%B8%8Bips%E5%AE%9E%E7%8E%B0web%E8%BF%9E%E6%8E%A5idm/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/28/">&larr; Older</a></li>
@@ -1127,6 +1153,10 @@ sensor(config-web)# port 443</div>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
@@ -1162,10 +1192,6 @@ sensor(config-web)# port 443</div>
     
       <li class="post">
         <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a>
       </li>
     
   </ul>
