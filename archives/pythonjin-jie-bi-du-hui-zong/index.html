@@ -1,0 +1,549 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>python进阶必读汇总 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery, python">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Python进阶必读汇总</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-11-08T00:18:00+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3 id="section">前言</h3>
+
+<p>昨天翻到了一本在github开源的书: <a href="http://book.pythontips.com/en/latest/index.html">Intermediate Python</a>. 就有了此文, 梳理了一下一些之前翻到的对python语言细节点的答案, 博文等.</p>
+
+<h3 id="section-1">英文的</h3>
+
+<h4 id="super">super</h4>
+
+<p><a href="https://rhettinger.wordpress.com/2011/05/26/super-considered-super/">Python’s super() considered super!</a></p>
+
+<p>rhettinger是python核心开发者. 这篇博文也是讲super最好最深入的博文了.</p>
+
+<h4 id="section-2">装饰器</h4>
+
+<p><a href="http://stackoverflow.com/questions/739654/how-can-i-make-a-chain-of-function-decorators-in-python/1594484#1594484">Understanding Python Decorators</a></p>
+
+<p>如果你还没有经常性的用装饰器, 你就要思考你的工作需求是不是的太简单了, 或者该考虑下这种AOP模式的开发的作用了</p>
+
+<h4 id="section-3">元类</h4>
+
+<p><a href="http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python/6581949#6581949">What is a metaclass in Python?</a>
+<a href="http://archive.is/8owmb">Metaclasses Demystified</a></p>
+
+<p>元类是python高阶语法. 合理的使用可以减少大量重复性的代码.</p>
+
+<h4 id="lbyleafp">防御性编程中的LBYL和EAFP</h4>
+
+<p><a href="http://stackoverflow.com/questions/5589532/try-catch-or-validation-for-speed/">Try/catch or validation for speed?</a></p>
+
+<p>这其实就是事先检查和异常处理2个方式的讨论</p>
+
+<h4 id="new--init">__new__ 和 __init__</h4>
+
+<p><a href="http://stackoverflow.com/questions/4859129/python-and-python-c-api-new-versus-init/">Python (and Python C API): <strong>new</strong> versus <strong>init</strong></a></p>
+
+<p>这也是一个常见的面试题.</p>
+
+<h4 id="self">self</h4>
+
+<p><a href="http://stackoverflow.com/questions/6019627/python-self-keyword">Python “self” keyword</a></p>
+
+<p>但是注意标题. 其实self不是一个关键词. 这里知识帮助你理解self的用意</p>
+
+<h4 id="section-4">协程和并发</h4>
+
+<p><a href="http://www.dabeaz.com/coroutines/">A Curious Course on Coroutines and Concurrency</a></p>
+
+<h4 id="section-5">生成器</h4>
+
+<p><a href="http://www.dabeaz.com/generators/">Generator Tricks for Systems Programmers</a></p>
+
+<h4 id="python">python开发必读</h4>
+
+<p><a href="http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html">Code Like a Pythonista: Idiomatic Python</a></p>
+
+<h4 id="unicode">unicode必读</h4>
+
+<p><a href="http://farmdev.com/talks/unicode/">Unicode In Python, Completely Demystified</a></p>
+
+<p>之前我曾经非常困惑于各种unicode报错</p>
+
+<h4 id="execeval">exec和eval</h4>
+
+<p><a href="http://lucumr.pocoo.org/2011/2/1/exec-in-python/">Be careful with exec and eval in Python</a></p>
+
+<p>我的观点是从来都不要用exec/eval</p>
+
+<h4 id="python-1">python性能贴士</h4>
+
+<p><a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">PerformanceTips</a>
+<a href="http://www.monitis.com/blog/2012/02/13/python-performance-tips-part-1/">Python Performance Tips, Part 1</a>
+<a href="http://www.monitis.com/blog/2012/03/21/python-performance-tips-part-2/">Python Performance Tips, Part 2</a></p>
+
+<h4 id="section-6">描述符</h4>
+
+<p><a href="http://users.rcn.com/python/download/Descriptor.htm">How-To Guide for Descriptors</a></p>
+
+<h4 id="python-2">python隐藏特性</h4>
+
+<p><a href="http://stackoverflow.com/questions/101268/hidden-features-of-python">Hidden features of Python</a></p>
+
+<h4 id="section-7">设计模式</h4>
+
+<p><a href="https://github.com/faif/python-patterns">python-patterns</a></p>
+
+<h3 id="section-8">中(译)文</h3>
+
+<h4 id="pythonyield">如何理解Python关键字yield</h4>
+
+<p><a href="http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained/231855#231855">What does the yield keyword do in Python</a>
+<a href="https://github.com/lzjun567/note/blob/master/note/python/what-does-the-yield-keyword-do-in-python.md">如何理解Python关键字yield</a></p>
+
+<p>yield 是python语言里面让初学者困惑的关键词之一. 可以参考这2个理解让你对yield入门. 并且之后在正确的场景下使用</p>
+
+<h4 id="iteratorgenerator">迭代器(Iterator)与生成器(Generator)的区别</h4>
+
+<p><a href="http://stackoverflow.com/questions/2776829/difference-between-pythons-generators-and-iterators">Difference between Python’s Generators and Iterators</a>
+<a href="https://github.com/lzjun567/note/blob/master/note/python/iterator_generator.md">迭代器(Iterator)与生成器(Generator)的区别</a></p>
+
+<p>这个是很常见的面试问题.</p>
+
+<h4 id="section-9">设计模式入门</h4>
+
+<p><a href="http://blog.jobbole.com/62023/">写给Python初学者的设计模式入门</a></p>
+
+<p>所谓设计模式其实就是<em>经过总结、优化的，对我们经常会碰到的一些编程问题的可重用解决方案</em>. 其实有时候会发现沃恩日常工作中的一些思考就是<code>设计模式</code></p>
+
+<h4 id="section-10">描述符</h4>
+
+<p><a href="https://docs.python.org/2/howto/descriptor.html">Descriptor HowTo Guide</a>
+<a href="http://pyzh.readthedocs.org/en/latest/Descriptor-HOW-TO-Guide.html">Python描述器引导(翻译)</a></p>
+
+<p>descriptor是python高阶的特性, 可以了解下python设计的优雅. PS: 里面也提到了类方法和静态方法的区别</p>
+
+<h4 id="assert">使用断言(assert)的正确场景</h4>
+
+<p><a href="http://www.oschina.net/translate/when-to-use-assert">Python 使用断言的最佳时机</a>
+<a href="http://stackoverflow.com/questions/944592/best-practice-for-python-assert">Best practice for Python Assert</a></p>
+
+<p><a href="http://courses.cms.caltech.edu/cs11/material/python/misc/python_idioms.html">Python track: python idioms</a>
+<a href="http://pyzh.readthedocs.org/en/latest/python-idioms.html">Python的惯例</a></p>
+
+<h4 id="section-11">提高编码效率</h4>
+
+<p><a href="http://ozkatz.github.io/improving-your-python-productivity.html">Improving Your Python Productivity</a>
+<a href="http://pyzh.readthedocs.org/en/latest/improving-your-python-productivity.html">提高你的Python编码效率</a></p>
+
+<h4 id="stackoverflowpython">Stackoverflow上的Python问题精选</h4>
+
+<p><a href="http://pyzh.readthedocs.org/en/latest/python-questions-on-stackoverflow.html">Stackoverflow上的Python问题精选</a></p>
+
+<h4 id="python-3">Python魔法方法指南</h4>
+
+<p><a href="http://pyzh.readthedocs.org/en/latest/python-magic-methods-guide.html">Python魔法方法指南</a></p>
+
+<h4 id="python---">Python高级编程 - 我写的</h4>
+
+<p><a href="http://dongweiming.github.io/Expert-Python/">Python高级编程</a></p>
+
+<h4 id="ppt">洪强宁的ppt.</h4>
+
+<p><a href="http://www.slideshare.net/hongqn/python-9915982">Python高级编程（二）</a></p>
+
+<p>PS: 这个 <code>二</code> 和上一个没有任何次序关系</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-11-08T00:18:00+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/" title="Previous Post:
+        聊聊python面试这件事儿">&laquo; 聊聊python面试这件事儿</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

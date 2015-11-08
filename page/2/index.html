@@ -142,6 +142,312 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/ack/">Grep, Ack, Ag的搜索效率对比</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-14T22:19:00+08:00" pubdate data-updated="true">Mar 14<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我经常看到很多程序员, 运维在代码搜索上使用ack, 甚至ag(the_silver_searcher
+), 而我工作中95%都是用grep,剩下的是ag. 我觉得很有必要聊一聊这个话题.
+我以前也是一个运维, 我当时也希望找到最好的最快的工具用在工作的方方面面. 但是我很好奇为什么ag和ack没有作为linux发行版的内置部分.
+内置的一直是grep. 我当初的理解是受各种开源协议的限制, 或者发行版的boss个人喜好. 后来我就做了实验, 研究了下他们到底谁快. 当时的做法也无非跑几个真实地线上log看看用时. 然后我也有了我的一个认识: 大部分时候用grep也无妨, 日志很大的时候用ag.</p>
+
+<p>ack原来的域名是betterthangrep.com, 现在是beyondgrep.com. 好吧. 其实我理解使用ack的同学, 也理解ack产生的原因. 这里就有个故事.</p>
+
+<p>最开始我做运维使用shell, 经常做一些分析日志的工作. 那时候经常写比较复杂的shell代码实现一些特定的需求. 后来来了一位会perl的同学. 原来我写shell做一个事情, 写了20多行shell代码, 跑一次大概5分钟, 这位同学来了用perl改写, 4行, 一分钟就能跑完. 亮瞎我们的眼, 从那时候开始, 我就觉得需要学perl,以至于后来的python.</p>
+
+<p>perl是天生用来文本解析的语言, ack的效率确实很高. 我想着可能是大家认为ack要更快更合适的理由吧. 其实这件事要看场景. 我为什么还用比较’土’的grep呢? 看一下这篇文章, 希望给大家点启示</p>
+
+<h4 id="section-1">实验条件</h4>
+
+<p>PS: 严重声明, 本实验经个人实践, 我尽量做到合理. 大家看完觉得有异议可以试着其他的角度来做. 并和我讨论.</p>
+
+<ul>
+  <li>
+    <p>我使用了公司的一台开发机(gentoo)</p>
+  </li>
+  <li>
+    <p>我测试了纯英文和汉语2种， 汉语使用了<a href="https://github.com/fxsjy/jieba">结巴分词</a>的字典, 英语使用了<code>miscfiles</code>中提供的词典</p>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># 假如你是ubuntu: sudo apt-get install miscfiles</span>
+</span><span class="line"><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">fxsjy</span><span class="o">/</span><span class="n">jieba</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">extra_dict</span><span class="o">/</span><span class="nb">dict</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">big</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-2">实验前的准备</h4>
+
+<p>我会分成英语和汉语2种文件, 文件大小为1MB, 10MB, 100MB, 500MB, 1GB, 5GB. 没有更多是我觉得在实际业务里面不会单个日志文件过大的. 也就没有必要测试了(就算有, 可以看下面结果的趋势)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cat</span> <span class="n">make_words</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="c"># coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">random</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">cStringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+</span><span class="line">
+</span><span class="line"><span class="n">EN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;/usr/share/dict/words&#39;</span>
+</span><span class="line"><span class="n">CN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;dict.txt.big&#39;</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">EN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">EN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">CN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">CN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="n">MB</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">SIZE_LIST</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]</span>
+</span><span class="line"><span class="n">EN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_en_MB.txt&#39;</span>
+</span><span class="line"><span class="n">CN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_cn_MB.txt&#39;</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">write_data</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</span><span class="line">    <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class="line">        <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+</span><span class="line">            <span class="n">cho</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class="line">            <span class="n">cho</span> <span class="o">=</span> <span class="n">cho</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cn</span> <span class="k">else</span> <span class="n">cho</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class="line">            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cho</span><span class="p">)</span>
+</span><span class="line">        <span class="n">s</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span>
+</span><span class="line">        <span class="n">total_size</span> <span class="o">+=</span> <span class="n">s</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span class="line">        <span class="n">contents</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class="line">        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">total_size</span> <span class="o">&gt;</span> <span class="n">size</span><span class="p">:</span>
+</span><span class="line">            <span class="k">break</span>
+</span><span class="line">    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span>
+</span><span class="line">        <span class="n">MB</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">500</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]):</span>
+</span><span class="line">    <span class="n">size_name</span> <span class="o">=</span> <span class="n">SIZE_LIST</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+</span><span class="line">    <span class="n">en_f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">EN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="s">&#39;a+&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cn_f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">CN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="s">&#39;a+&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="n">write_data</span><span class="p">(</span><span class="n">en_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">EN_DATA</span><span class="p">)</span>
+</span><span class="line">    <span class="n">write_data</span><span class="p">(</span><span class="n">cn_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">CN_DATA</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>好吧, 效率比较低是吧? 我自己没有vps, 公司服务器我不能没事把全部内核的cpu都占满(不是运维好几年了). 假如你不介意htop的多核cpu飘红, 可以这样，耗时就是各文件生成的时间短板:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"> <span class="c"># coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">random</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">multiprocessing</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">cStringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+</span><span class="line">
+</span><span class="line"><span class="n">EN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;/usr/share/dict/words&#39;</span>
+</span><span class="line"><span class="n">CN_WORD_FILE</span> <span class="o">=</span> <span class="s">&#39;dict.txt.big&#39;</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">EN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">EN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">CN_WORD_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">CN_DATA</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class="line"><span class="n">MB</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">SIZE_LIST</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]</span>
+</span><span class="line"><span class="n">EN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_en_MB.txt&#39;</span>
+</span><span class="line"><span class="n">CN_RESULT_FORMAT</span> <span class="o">=</span> <span class="s">&#39;text_{0}_cn_MB.txt&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">map_func</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">write_data</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</span><span class="line">        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;a+&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class="line">            <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+</span><span class="line">                <span class="n">cho</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class="line">                <span class="n">cho</span> <span class="o">=</span> <span class="n">cho</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cn</span> <span class="k">else</span> <span class="n">cho</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class="line">                <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cho</span><span class="p">)</span>
+</span><span class="line">            <span class="n">s</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span>
+</span><span class="line">            <span class="n">total_size</span> <span class="o">+=</span> <span class="n">s</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span class="line">            <span class="n">contents</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class="line">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class="line">            <span class="k">if</span> <span class="n">total_size</span> <span class="o">&gt;</span> <span class="n">size</span><span class="p">:</span>
+</span><span class="line">                <span class="k">break</span>
+</span><span class="line">        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span> <span class="o">=</span> <span class="n">args</span>
+</span><span class="line">    <span class="n">write_data</span><span class="p">(</span><span class="n">_f</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cn</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span>
+</span><span class="line">        <span class="n">MB</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">500</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
+</span><span class="line">        <span class="n">MB</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]):</span>
+</span><span class="line">    <span class="n">size_name</span> <span class="o">=</span> <span class="n">SIZE_LIST</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+</span><span class="line">    <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">EN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="n">size</span><span class="p">,</span> <span class="n">EN_DATA</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+</span><span class="line">    <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">CN_RESULT_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_name</span><span class="p">),</span> <span class="n">size</span><span class="p">,</span> <span class="n">CN_DATA</span><span class="p">,</span> <span class="bp">True</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line"><span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">()</span>
+</span><span class="line"><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_func</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>等待一段时间后,目录下是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">ls</span> <span class="o">-</span><span class="n">lh</span>
+</span><span class="line"><span class="n">total</span> <span class="mi">14</span><span class="n">G</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">2.2</span><span class="n">K</span> <span class="n">Mar</span> <span class="mi">14</span> <span class="mo">05</span><span class="p">:</span><span class="mi">25</span> <span class="n">benchmarks</span><span class="o">.</span><span class="n">ipynb</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">8.2</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">43</span> <span class="nb">dict</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">big</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.2</span><span class="n">K</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">46</span> <span class="n">make_words</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">101</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_100_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">101</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_100_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">54</span> <span class="n">text_1024_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">51</span> <span class="n">text_1024_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span>  <span class="mi">11</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_10_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span>  <span class="mi">11</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_10_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_1_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">1.1</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span> <span class="n">text_1_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">501</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">49</span> <span class="n">text_500_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mi">501</span><span class="n">M</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">15</span><span class="p">:</span><span class="mi">48</span> <span class="n">text_500_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">5.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">16</span><span class="p">:</span><span class="mi">16</span> <span class="n">text_5120_cn_MB</span><span class="o">.</span><span class="n">txt</span>
+</span><span class="line"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">vagrant</span> <span class="n">vagrant</span> <span class="mf">5.1</span><span class="n">G</span> <span class="n">Mar</span> <span class="mi">12</span> <span class="mi">16</span><span class="p">:</span><span class="mo">04</span> <span class="n">text_5120_en_MB</span><span class="o">.</span><span class="n">txt</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-3">确认版本</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">➜</span>  <span class="n">test</span>  <span class="n">ack</span> <span class="o">--</span><span class="n">version</span> <span class="c"># ack在ubuntu下叫`ack-grep`</span>
+</span><span class="line"><span class="n">ack</span> <span class="mf">2.12</span>
+</span><span class="line"><span class="n">Running</span> <span class="n">under</span> <span class="n">Perl</span> <span class="mf">5.16</span><span class="o">.</span><span class="mi">3</span> <span class="n">at</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">perl</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Copyright</span> <span class="mi">2005</span><span class="o">-</span><span class="mi">2013</span> <span class="n">Andy</span> <span class="n">Lester</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="o">.</span>  <span class="n">You</span> <span class="n">may</span> <span class="n">modify</span> <span class="ow">or</span> <span class="n">distribute</span> <span class="n">it</span>
+</span><span class="line"><span class="n">under</span> <span class="n">the</span> <span class="n">terms</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Artistic</span> <span class="n">License</span> <span class="n">v2</span><span class="o">.</span><span class="mf">0.</span>
+</span><span class="line"><span class="err">➜</span>  <span class="n">test</span>  <span class="n">ag</span> <span class="o">--</span><span class="n">version</span>
+</span><span class="line"><span class="n">ag</span> <span class="n">version</span> <span class="mf">0.21</span><span class="o">.</span><span class="mi">0</span>
+</span><span class="line"><span class="err">➜</span>  <span class="n">test</span>  <span class="n">grep</span> <span class="o">--</span><span class="n">version</span>
+</span><span class="line"><span class="n">grep</span> <span class="p">(</span><span class="n">GNU</span> <span class="n">grep</span><span class="p">)</span> <span class="mf">2.14</span>
+</span><span class="line"><span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2012</span> <span class="n">Free</span> <span class="n">Software</span> <span class="n">Foundation</span><span class="p">,</span> <span class="n">Inc</span><span class="o">.</span>
+</span><span class="line"><span class="n">License</span> <span class="n">GPLv3</span><span class="o">+</span><span class="p">:</span> <span class="n">GNU</span> <span class="n">GPL</span> <span class="n">version</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">later</span> <span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">gnu</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">licenses</span><span class="o">/</span><span class="n">gpl</span><span class="o">.</span><span class="n">html</span><span class="o">&gt;.</span>
+</span><span class="line"><span class="n">This</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="p">:</span> <span class="n">you</span> <span class="n">are</span> <span class="n">free</span> <span class="n">to</span> <span class="n">change</span> <span class="ow">and</span> <span class="n">redistribute</span> <span class="n">it</span><span class="o">.</span>
+</span><span class="line"><span class="n">There</span> <span class="ow">is</span> <span class="n">NO</span> <span class="n">WARRANTY</span><span class="p">,</span> <span class="n">to</span> <span class="n">the</span> <span class="n">extent</span> <span class="n">permitted</span> <span class="n">by</span> <span class="n">law</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Written</span> <span class="n">by</span> <span class="n">Mike</span> <span class="n">Haertel</span> <span class="ow">and</span> <span class="n">others</span><span class="p">,</span> <span class="n">see</span> <span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">sv</span><span class="o">.</span><span class="n">gnu</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">cgit</span><span class="o">/</span><span class="n">grep</span><span class="o">.</span><span class="n">git</span><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">AUTHORS</span><span class="o">&gt;.</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-4">实验设计</h4>
+
+<p>为了不产生并行执行的相互响应, 我还是选择了效率很差的同步执行, 我使用了ipython提供的%timeit. 上代码</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">re</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">glob</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">subprocess</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">cPickle</span> <span class="kn">as</span> <span class="nn">pickle</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+</span><span class="line">
+</span><span class="line"><span class="n">IMAP</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="s">&#39;cn&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;豆瓣&#39;</span><span class="p">,</span> <span class="s">&#39;小明明&#39;</span><span class="p">),</span>
+</span><span class="line">    <span class="s">&#39;en&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;four&#39;</span><span class="p">,</span> <span class="s">&#39;python&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="n">OPTIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;-v&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">FILES</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;text_*_MB.txt&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">EN_RES</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span class="line"><span class="n">CN_RES</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span class="line"><span class="n">RES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">        <span class="s">&#39;en&#39;</span><span class="p">:</span> <span class="n">EN_RES</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&#39;cn&#39;</span><span class="p">:</span> <span class="n">CN_RES</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="n">REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;text_(\d+)_(\w+)_MB.txt&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">CALL_STR</span> <span class="o">=</span> <span class="s">&#39;{command} {option} {word} {filename} &gt; /dev/null 2&gt;&amp;1&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">FILES</span><span class="p">:</span>
+</span><span class="line">    <span class="n">size</span><span class="p">,</span> <span class="n">xn</span> <span class="o">=</span> <span class="n">REGEX</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">IMAP</span><span class="p">[</span><span class="n">xn</span><span class="p">]:</span>
+</span><span class="line">        <span class="n">_r</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;ack&#39;</span><span class="p">,</span> <span class="s">&#39;ag&#39;</span><span class="p">]:</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">OPTIONS</span><span class="p">:</span>
+</span><span class="line">                <span class="n">rs</span> <span class="o">=</span> <span class="o">%</span><span class="n">timeit</span> <span class="o">-</span><span class="n">o</span> <span class="o">-</span><span class="n">n10</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">CALL_STR</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">option</span><span class="p">,</span> <span class="n">word</span><span class="o">=</span><span class="n">word</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class="line">                <span class="n">best</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">best</span>
+</span><span class="line">                <span class="n">_r</span><span class="p">[</span><span class="n">command</span><span class="p">][</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">best</span>
+</span><span class="line">        <span class="n">RES</span><span class="p">[</span><span class="n">xn</span><span class="p">][</span><span class="n">word</span><span class="p">][</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">_r</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 存起来</span>
+</span><span class="line">
+</span><span class="line"><span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">RES</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;result.db&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>温馨提示, 这是一个灰常耗时的测试. 开始执行后 要喝很久的茶…</p>
+
+<p>我来秦皇岛办事完毕(耗时超过1一天), 继续我们的实验.</p>
+
+<h4 id="section-5">我想要的效果</h4>
+
+<p>我想工作的时候一般都是用到不带参数/带-i(忽略大小写)/-v(查找不匹配项)这三种. 所以这里测试了:</p>
+
+<ol>
+  <li>英文搜索/中文搜索</li>
+  <li>选择了2个搜索词(效率太低, 否则可能选择多个)</li>
+  <li>分别测试’’/’-i’/’-v’三种参数的执行</li>
+  <li>使用%timeit, 每种条件执行10遍, 选择效率最好的一次的结果</li>
+  <li><strong>每个图代码一个搜索词, 3搜索命令, 一个选项在搜索不同大小文件时的效率对比</strong></li>
+</ol>
+
+<h4 id="section-6">多图预警, 我先说结论</h4>
+
+<ol>
+  <li><strong>在搜索的总数据量较小的情况下, 使用grep, ack甚至ag在感官上区别不大</strong></li>
+  <li><strong>搜索的总数据量较大时, grep效率下滑的很多, 完全不要选</strong></li>
+  <li><strong>ack在某些场景下没有grep效果高(比如使用-v索索中文的时候)</strong></li>
+  <li><strong>在不使用ag没有实现的选项功能的前提下, ag完全可以替代ack/grep</strong></li>
+</ol>
+
+<p>渲染图片的gist可以看这里<a href="http://nbviewer.ipython.org/gist/dongweiming/6732731444b1e2687c47/benchmarks.ipynb">benchmarks.ipynb</a>. 他的数据来自上面跑的结果在序列化之后存入的文件</p>
+
+<h4 id="section-7">附图(共12张)</h4>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/6660016/8326d7b0-cbcb-11e4-8f2a-cfa5fe27c810.png" alt="chart" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660017/832c12ac-cbcb-11e4-9295-cfdd6d421423.png" alt="chart-1" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660018/832c3034-cbcb-11e4-9a2c-5604bf2bb0c6.png" alt="chart-2" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660019/832df4a0-cbcb-11e4-8d75-538ad527cb4f.png" alt="chart-3" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660020/833372d6-cbcb-11e4-8b96-54ae9ae68f57.png" alt="chart-4" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660021/8335c04a-cbcb-11e4-8401-0c54aa4eb783.png" alt="chart-5" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660022/8362bf96-cbcb-11e4-9ec5-94686e603e3a.png" alt="chart-6" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6690232/488e9af4-ccfa-11e4-8a1f-1fa3667dd74f.png" alt="chart-7" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660024/836b307c-cbcb-11e4-942d-8a395a28984f.png" alt="chart-8" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660025/836f4f5e-cbcb-11e4-8807-d6f561018254.png" alt="chart-9" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660043/fbd42cee-cbcb-11e4-9c1d-b2237194db90.png" alt="chart-10" />
+<img src="https://cloud.githubusercontent.com/assets/841395/6660044/fc5424f8-cbcb-11e4-9bf0-1666cd467239.png" alt="chart-11" /></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/ipython3shi-dai-dao-lai/">IPython3时代到来</a></h1>
     
     
@@ -1893,383 +2199,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonde-mo-fa/">Python的魔法(一): 基本知识</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-08T00:40:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>最近读了一篇<a href="http://nbviewer.ipython.org/github/rasbt/python_reference/blob/master/not_so_obvious_python_stuff.ipynb">A collection of not-so-obvious Python stuff you should know!</a>,感觉受益颇多. 翻译过来(非直接翻译),再加上一些我的理解和注释. 让大家注意python鲜为人知的”魔法”. 我会分2篇</p>
-
-<h5 id="pythonc3">python多继承(C3)</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="k">print</span><span class="p">(</span><span class="s">&quot;class A&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="k">print</span><span class="p">(</span><span class="s">&quot;class B&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">pass</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">C</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
-</span><span class="line"><span class="k">class</span> <span class="nc">A</span> <span class="c"># 例子很好懂, C继承了A和B，从左到右,发现A有foo方法,返回了</span>
-</span></pre></figure></notextile></div>
-
-<p>看起来都是很简单, 有次序的从底向上,从前向后找,找到就返回. 再看例子:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>               <span class="k">print</span><span class="p">(</span><span class="s">&quot;class A&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">pass</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>               <span class="k">print</span><span class="p">(</span><span class="s">&quot;class C&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">pass</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">D</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
-</span><span class="line"><span class="k">class</span> <span class="nc">C</span> <span class="c"># ? 按道理, 顺序是 D-&gt;B-&gt;A,为什么找到了C哪去了</span>
-</span></pre></figure></notextile></div>
-
-<p>这也就涉及了MRO(<a href="http://python-history.blogspot.ru/2010/06/method-resolution-order.html">Method Resolution Order</a>):</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">D</span><span class="o">.</span><span class="n">__mro__</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="p">(</span><span class="n">__main__</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="n">__main__</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">__main__</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">__main__</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<p>简单的理解其实就是新式类是广度优先了， D-&gt;B, 但是发现C也是继承A，就先找C，最后再去找A</p>
-
-<h4 id="appendextend">列表的+和+=, append和extend</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;ID:&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;ID:&#39;</span><span class="p">,</span> <span class="mi">4481323592</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="n">a_list</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;ID (+=):&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;ID (+=):&#39;</span><span class="p">,</span> <span class="mi">4481323592</span><span class="p">)</span> <span class="c"># 使用+= 还是在原来的列表上操作</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="n">a_list</span> <span class="o">=</span> <span class="n">a_list</span> <span class="o">+</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;ID (list = list + ...):&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;ID (list = list + ...):&#39;</span><span class="p">,</span> <span class="mi">4481293056</span><span class="p">)</span> <span class="c"># 简单的+其实已经改变了原有列表</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]:</span> <span class="n">a_list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="mi">4481326976</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]:</span> <span class="n">a_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="mi">4481326976</span> <span class="c"># append 是在原有列表添加</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]:</span> <span class="n">a_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">2</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="mi">4481326976</span> <span class="c"># extend 也是在原有列表上添加</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="datetime">datetime也有布尔值</h4>
-
-<p>这是一个<a href="http://lwn.net/SubscriberLink/590299/bf73fe823974acea/">坑</a></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">datetime</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">35</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;&quot;datetime.time(0,0,0)&quot; (Midnight) -&gt;&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;&quot;datetime.time(0,0,0)&quot; (Midnight) -&gt;&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">36</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;&quot;datetime.time(1,0,0)&quot; (1 am) -&gt;&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;&quot;datetime.time(1,0,0)&quot; (1 am) -&gt;&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="is-">’==’ 和 is 的区别</h4>
-<p>我的理解是”is”是判断2个对象的身份, ==是判断2个对象的值</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">37</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a is b&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">a</span> <span class="ow">is</span> <span class="n">b</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a is b&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">999</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]:</span> <span class="n">d</span> <span class="o">=</span> <span class="mi">999</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">42</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;c is d&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">c</span> <span class="ow">is</span> <span class="n">d</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;c is d&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c"># 原因是python的内存管理,缓存了-5 - 256的对象</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">43</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;256 is 257-1&#39;</span><span class="p">,</span> <span class="mi">256</span> <span class="ow">is</span> <span class="mi">257</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;256 is 257-1&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">44</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;257 is 258-1&#39;</span><span class="p">,</span> <span class="mi">257</span> <span class="ow">is</span> <span class="mi">258</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;257 is 258-1&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">45</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;-5 is -6+1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span> <span class="ow">is</span> <span class="o">-</span><span class="mi">6</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;-5 is -6+1&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">46</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;-7 is -6-1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span> <span class="ow">is</span> <span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;-7 is -6-1&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">47</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#39;hello world!&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">48</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="s">&#39;hello world!&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">49</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a is b,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">b</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a is b,&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c"># 很明显 他们没有被缓存,这是2个字段串的对象</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">50</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a == b,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a == b,&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="c"># 但他们的值相同</span>
-</span><span class="line"><span class="c"># But, 有个特例</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">51</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;nan&#39;</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">52</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a is a,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">a</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a is a,&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">53</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a == a,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="o">==</span> <span class="n">a</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a == a,&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c"># 亮瞎我眼睛了~</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-1">浅拷贝和深拷贝</h4>
-
-<p>我们在实际开发中都可以向对某列表的对象做修改,但是可能不希望改动原来的列表. <strong>浅拷贝只拷贝父对象，深拷贝还会拷贝对象的内部的子对象</strong></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">65</span><span class="p">]:</span> <span class="n">list1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">66</span><span class="p">]:</span> <span class="n">list2</span> <span class="o">=</span> <span class="n">list1</span> <span class="c"># 就是个引用, 你操作list2,其实list1的结果也会变</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">67</span><span class="p">]:</span> <span class="n">list3</span> <span class="o">=</span> <span class="n">list1</span><span class="p">[:]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">69</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">copy</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">70</span><span class="p">]:</span> <span class="n">list4</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">list1</span><span class="p">)</span> <span class="c"># 他和list3一样 都是浅拷贝</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">71</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">list1</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list2</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list3</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list4</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">71</span><span class="p">]:</span> <span class="p">(</span><span class="mi">4480620232</span><span class="p">,</span> <span class="mi">4480620232</span><span class="p">,</span> <span class="mi">4479667880</span><span class="p">,</span> <span class="mi">4494894720</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">72</span><span class="p">]:</span> <span class="n">list2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">73</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">74</span><span class="p">]:</span> <span class="n">list3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">75</span><span class="p">]:</span> <span class="n">list4</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">76</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="c"># 对list3和list4操作都没有对list1有影响</span>
-</span><span class="line">
-</span><span class="line"><span class="c"># 再看看深拷贝和浅拷贝的区别</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">88</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">89</span><span class="p">]:</span> <span class="n">list1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">90</span><span class="p">]:</span> <span class="n">list2</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">list1</span><span class="p">)</span> <span class="c"># 还是浅拷贝</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">91</span><span class="p">]:</span> <span class="n">list3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">list1</span><span class="p">)</span> <span class="c"># 深拷贝</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">list1</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list2</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list3</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="p">(</span><span class="mi">4494896592</span><span class="p">,</span> <span class="mi">4495349160</span><span class="p">,</span> <span class="mi">4494896088</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">93</span><span class="p">]:</span> <span class="n">list2</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">94</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[[</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]])</span> <span class="c"># 看到了吧 假如你操作其子对象 还是和引用一样 影响了源</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">95</span><span class="p">]:</span> <span class="n">list3</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">96</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[[</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]])</span> <span class="c"># 深拷贝就不会影响</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="boolint">bool其实是int的子类</h4>
-
-<p>这篇<a href="http://www.peterbe.com/plog/bool-is-int">bool-is-int</a>很有趣:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">97</span><span class="p">]:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">97</span><span class="p">]:</span> <span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">98</span><span class="p">]:</span> <span class="bp">True</span> <span class="o">+</span> <span class="bp">True</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">98</span><span class="p">]:</span> <span class="mi">2</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">99</span><span class="p">]:</span> <span class="mi">3</span> <span class="o">*</span> <span class="bp">True</span> <span class="o">+</span> <span class="bp">True</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">99</span><span class="p">]:</span> <span class="mi">4</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">100</span><span class="p">]:</span> <span class="mi">3</span> <span class="o">*</span> <span class="bp">True</span> <span class="o">-</span> <span class="bp">False</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">100</span><span class="p">]:</span> <span class="mi">3</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">104</span><span class="p">]:</span> <span class="bp">True</span> <span class="o">&lt;&lt;</span> <span class="mi">10</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">104</span><span class="p">]:</span> <span class="mi">1024</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-2">元组是不是真的不可变?</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">111</span><span class="p">]:</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">([],)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">112</span><span class="p">]:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line"><span class="o">---------------------------------------------------------------------------</span>
-</span><span class="line"><span class="ne">TypeError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
-</span><span class="line"><span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">112</span><span class="o">-</span><span class="n">d4f292cf35de</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
-</span><span class="line"><span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="s">&#39;tuple&#39;</span> <span class="nb">object</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">item</span> <span class="n">assignment</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">113</span><span class="p">]:</span> <span class="n">tup</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">113</span><span class="p">]:</span> <span class="p">([</span><span class="mi">1</span><span class="p">],)</span> <span class="c"># 我靠 又是亮瞎我眼睛,明明抛了异常 还能修改?</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">114</span><span class="p">]:</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">([],)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">115</span><span class="p">]:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">116</span><span class="p">]:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">116</span><span class="p">]:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c"># 好吧,我有点看明白了, 虽然我不能直接操作元组，但是不能阻止我操作元组中可变的子对象(list)</span>
-</span></pre></figure></notextile></div>
-
-<p>这里有个不错的解释<a href="http://emptysqua.re/blog/python-increment-is-weird-part-ii/">Python’s += Is Weird, Part II </a>:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">117</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">118</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">119</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="n">my_tup</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">120</span><span class="p">]:</span> <span class="n">my_tup</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">120</span><span class="p">]:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="c"># ? 嗯 不是不能操作元组嘛?</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">121</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">122</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">my_tup</span><span class="p">))</span>
-</span><span class="line"><span class="mi">4481317904</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">123</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">124</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">my_tup</span><span class="p">))</span>
-</span><span class="line"><span class="mi">4480606864</span> <span class="c"># 操作的不是原来的元组 所以可以</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">125</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="n">my_tup</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">126</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">my_tup</span><span class="p">))</span>
-</span><span class="line"><span class="mi">4474234912</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="python-">python没有私有方法/变量? 但是可以有”伪”的</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">127</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">my_class</span><span class="p">(</span><span class="nb">object</span><span class="o">^</span><span class="n">E</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">public_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello public world!&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">__private_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c"># 私有以双下划线开头</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello private world!&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">call_private_method_in_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">__private_method</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">132</span><span class="p">]:</span> <span class="n">my_instance</span> <span class="o">=</span> <span class="n">my_class</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">133</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">public_method</span><span class="p">()</span>
-</span><span class="line"><span class="n">Hello</span> <span class="n">public</span> <span class="n">world</span><span class="err">!</span> <span class="c"># 普通方法</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">134</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">_my_class__private_method</span><span class="p">()</span>
-</span><span class="line"><span class="n">Hello</span> <span class="n">private</span> <span class="n">world</span><span class="err">!</span> <span class="c"># 私有的可以加&quot;_ + 类名字 + 私有方法名字”</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">135</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">call_private_method_in_class</span><span class="p">()</span>
-</span><span class="line"><span class="n">Hello</span> <span class="n">private</span> <span class="n">world</span><span class="err">!</span> <span class="c"># 还可以通过类提供的公有接口内部访问</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">136</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">_my_class__private_variable</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">136</span><span class="p">]:</span> <span class="mi">1</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="else">异常处理加else</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">150</span><span class="p">]:</span> <span class="k">try</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;third element:&#39;</span><span class="p">,</span> <span class="n">a_list</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;raised IndexError&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;no error in try-block&#39;</span><span class="p">)</span> <span class="c"># 只有在try里面没有异常的时候才会执行else里面的表达式</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="n">raised</span> <span class="ne">IndexError</span> <span class="c"># 抛异常了 没完全完成</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">153</span><span class="p">]:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">154</span><span class="p">]:</span> <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;in else&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span>
-</span><span class="line"><span class="mi">1</span>
-</span><span class="line"><span class="ow">in</span> <span class="k">else</span> <span class="c"># while也支持哦~</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">155</span><span class="p">]:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">156</span><span class="p">]:</span> <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">break</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;completed while-loop&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span> <span class="c"># 被break了 没有完全执行完 就不执行else里面的了</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">158</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;completed for-loop&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span>
-</span><span class="line"><span class="mi">1</span>
-</span><span class="line"><span class="n">completed</span> <span class="k">for</span><span class="o">-</span><span class="n">loop</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">159</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">break</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;completed for-loop&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span> <span class="c"># 也是因为break了</span>
-</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/3/">&larr; Older</a></li>
@@ -2292,6 +2221,10 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
@@ -2327,10 +2260,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
     
       <li class="post">
         <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
       </li>
     
   </ul>

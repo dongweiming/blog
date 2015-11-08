@@ -142,6 +142,81 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentoobijisianzhuangchangyongruanjian/">Gentoo笔记（四）安装常用软件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-25T00:00:00+08:00" pubdate data-updated="true">Dec 25<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：使用linux需要一些工具，比如看视频，分析系统性能，ftp文件等功能，以下是我推荐的</p>
+
+<p><strong>1 ftp上传下载工具</strong></p>
+
+<p>emerge filezilla</p>
+
+<p><strong>2 flash看视频以及一些网站的特效</strong></p>
+
+<p>emerge adobe-flash</p>
+
+<p><strong>3 系统性能工具</strong></p>
+
+<p>emerge htop dstat</p>
+
+<p><strong>4 浏览器</strong></p>
+
+<p>emerge firefox oprea google-chrome  安装火狐相当慢  80M的源码包 我很无语</p>
+
+<p>注：其中的谷歌浏览器需要修改一下make.conf文件 添加授权 ： ACCEPT_LICENSE=&#8221;google-chrome&#8221;</p>
+
+<p><strong>5 邮件客户端</strong></p>
+
+<p>emerge thunderbird  编译也是 相当慢</p>
+
+<p>注：一般kde下有kmail</p>
+
+<p><strong>6编辑器</strong></p>
+
+<p>emerge  vim</p>
+
+<p><strong>7 输入法（我这里是小企鹅输入法，也可以用ibus 但不能用scim： 直接和我内核冲突 ）</strong></p>
+
+<p>字体的存放目录
+/usr/share/fonts</p>
+
+<p>fontconfig配置文件
+/etc/fonts/fonts.conf</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/gentoobijisianzhuangchangyongruanjian/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoobijisananzhuang3dtexiaocompiz/">gentoo笔记（三）安装3D特效compiz</a></h1>
     
     
@@ -1039,78 +1114,6 @@ sudo python setup.py install</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/linuxxiamonixshellscrtdezidongdengluduotaifuwuqicaozuominglingyijiduilinuxzhongduandeweizhikongzhi/">linux下模拟Xshell/Scrt的自动登录多台服务器操作命令以及对linux终端的位置控制</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-08T00:00:00+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：windows下的终端登录软件xshell或者Scrt都有自动登录以及做组操作的功能，linux下好像cssh也能作类似的东西，我闲来体验了linux下类似的操作，简单的原理是expect+gnome终端：</p>
-
-<p>请看我的主脚本：主要实现的是将testex脚本的SSH登录服务器ip修改，然后启动新终端，再执行expect脚本里面的内容，启动一个python脚本</p>
-
-<p><pre class="sh_python">
-dongwm@linux-b8lh:~&gt; cat term
-import time
-import os
-cip = '192.168.1.6'
-i = 0
-list = ［'192.168.1.1','192.168.1.2','192.168.1.3','192.168.1.4','192.168.1.5','192.168.1.6'］
-for ip in list:
-    os.system('sed -i "s/%s/%s/" ~/testex' % (cip,ip))
-    if i &lt;3:                     #这里的move其实就是终端在屏幕上的偏移量，我的屏幕分辨率是1440＊900,根据这个不同下面的值也不同，我设计的是桌面铺满6个，一行三个
-        num = 480*i
-        move = '58x20+%s+0' % num
-    else:
-        num = 480*(i-4)
-        move = '58x20+%s+400' % num
-    cmd = 'gnome-terminal --geometry=%s -e ~/testex' % move   #--geometry选项是窗体的长＊窗体的宽+左右偏移+上下偏移, opensuse默认的效果是80x24+200+200
-    os.system(cmd)
-    cip = ip
-    print '%s done' % ip
-    i +=1
-    time.sleep(0.1)
-</pre>
-#这是一个expect脚本，语法参看我以前的文章：<a href="http://www.dongwm.com/archives/%e5%85%b3%e4%ba%8eexpect%e7%a0%94%e7%a9%b6%ef%bc%88%e4%ba%8c%ef%bc%89/" target="_blank">关于expect研究（二）</a>
-<pre class="sh_tcl">
-dongwm@linux-b8lh:~&gt; cat testex    
-#!/usr/bin/expect
-set timeout 10
-set password 34wsetg6\(\#
-spawn luit -encoding gbk ssh -p 61002 root@192.168.1.6
-expect "#"
-send "python /home/dongwm/RevSocket.py\n"
-interact
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/22/">&larr; Older</a></li>
@@ -1133,6 +1136,10 @@ interact
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
@@ -1168,10 +1175,6 @@ interact
     
       <li class="post">
         <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
       </li>
     
   </ul>

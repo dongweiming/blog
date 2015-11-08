@@ -142,6 +142,137 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/how-to-not-exit-interactive-mode-autoreload/">怎样不退出交互模式自动reload模块</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-24T11:54:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>我想做python开发的人尤其是django开发都会有一种经历:进入python交互模式(直接 执行python回车)或者进入django-shell调试某功能，然后修改源码，退出交互模式或者djangoshell，重新进入在吧那些模块一一import… 问题是什么呢？浪费时间，为啥不像web 框架那样修改源码自动reload？ </p>
+
+<p>本来我花了2个多礼拜一直在做这件事情，其实原理就是封装ipython到我的shell，然后在我的shell加这个autoreload功能，但是昨晚看ipython源码发现：ipython早已经实现了…</p>
+
+<p>我的系统的实现的源码文件是 /usr/lib64/python2.7/site-packages/IPython/Extensions/ipy_autoreload.py</p>
+
+<h4 id="ipython">在ipython交互模式实现</h4>
+
+<p>和ipython版本有关，大于0.11 这样加载</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">%load_ext autoreload
+</span><span class="line">%autoreload 2</span></pre></figure></notextile></div>
+<p>小于0.11的就要这样加载
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;pre class=&#8217;sh_&#8217;&gt;<span class="line">import ipy_autoreload
+</span><span class="line">%autoreload 2</span>&lt;/pre&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4 id="ipython-1">ipython交互模式自动加载</h4>
+
+<p>你总不像每次进入ipython都执行这么2句吧, 那么可以加到ipython的自定义配置里面.因操作系统和ipython版本不同，ipython的用户自定义目录有所不同，增加的配置也 有所不同</p>
+
+<p>首先创建ipython个人配置 </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">ipython profile create</span></pre></figure></notextile></div>
+
+<p>gentoo ~/.ipython  ipython :0.10.2 </p>
+
+<p>配置文件是.ipython/ipy_user_conf.py 添加</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">import ipy_autoreload
+</span><span class="line">o.autoexec.append('%autoreload 2')
+</span></pre></figure></notextile></div>
+
+<p>opensuse ~/.config/ipython  :0.13</p>
+
+<p>配置文件是~/.config/ipython/profile_default/ipython_config.py</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')
+</span><span class="line">c.InteractiveShellApp.exec_lines.append('%autoreload 2')</span></pre></figure></notextile></div>
+
+<h4 id="django-shell">Django shell的实现</h4>
+
+<p>遗憾的是改django源码中的core/management/commands/shell.py,没有提供自动reload,但是当你修改了ipython配置 他也是会起作用(这个操作系统有关，下面我会说不起作用的geek方法)</p>
+
+<p>PS： 你还可以使用<a href="https://github.com/dongweiming/django-extensions">django-extensions</a>中的shell_plus.py</p>
+
+<h4 id="ipythonbpythonpythondjango-shell">当你系统有ipython,bpython和默认的python，django shell选择的顺序</h4>
+
+<ul>
+  <li>
+    <p>当你系统没有ipython和bpython，那么就会选择默认的python</p>
+  </li>
+  <li>
+    <p>上面说的shell_plus的遍历列表顺序是bpython-&gt;ipython  </p>
+  </li>
+  <li>
+    <p>django自带的shell的遍历顺序是ipython-&gt;bpython</p>
+  </li>
+</ul>
+
+<p>上面说djangoshell不起作用怎么办？首先看了django/ipython源码(0.13.2)，其实djangoshell甚至django-extensions里面的shell_plus都没有问题，关键是ipython的问题</p>
+
+<p>我只说在用户配置里面的外部模块为啥没有正确执行</p>
+
+<p>ipython进入交互模式的流程</p>
+
+<ol>
+  <li>当调用ipython，都是通过IPython.frontend.terminal.ipapp的launch_new_instance函数开始</li>
+  <li>通过IPython.core.shellapp的InteractiveShellApp类里面的init_code方法去初始化启动后的加载</li>
+  <li>在init_code方法会执行self._run_exec_lines(),这个就是上面的模块导入执行</li>
+</ol>
+
+<p>djangoshell进入交互模式的流程</p>
+
+<ol>
+  <li>通过IPython.frontend.terminal.embed的TerminalInteractiveShell类开始</li>
+  <li>在TerminalInteractiveShell初始化中,没有执行上面的第三条</li>
+</ol>
+
+<p>解决办法就是暴力修改IPython/frontend/terminal/interactiveshell.py源码 给他加上模块初始化的操作</p>
+
+<p>在326行开始的地方，这样添加一段(包含存在的代码帮你你理解在什么位置添加代码,也就是下面的3-8行)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">self.init_usage(usage)                                                 
+</span><span class="line">self.init_banner(banner1, banner2, display_banner) 
+</span><span class="line">exex_lines = self.config['InteractiveShellApp']['exec_lines']          
+</span><span class="line">for line in exex_lines:                                                
+</span><span class="line">    try:                                                                        
+</span><span class="line">        self.run_cell(line, store_history=False)                       
+</span><span class="line">    except:                                                                     
+</span><span class="line">        pass
+</span><span class="line">#-------------------------------------------------------------------------          
+</span><span class="line"># Overrides of init stages                                                          
+</span><span class="line">#-------------------------------------------------------------------------</span></pre></figure></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shi-yong-docopt-slash-schema-markdownwen-jian-zhi-jie-fa-song-you-jian/">使用docopt/schema:markdown文件直接发送支持python语法的邮件</a></h1>
     
     
@@ -2270,189 +2401,6 @@ dongwm@localhost ~/Crawler $ python common_Crawler.py
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/djangohe-flaskfen-ye/">Django和flask分页</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-12-29T15:37:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
-
-<p>最近搞了一些关于flask和django的东西，尤其是django的模板和admin功能以及这些框架使用bootstrap的东西，没时间更新博客，先说一下flask和django分页吧</p>
-
-<h5 id="flaskbootstrapflask-paginatehttppackagespythonorgflask-paginate">flask的bootstrap分页插件<a href="http://packages.python.org/Flask-paginate">flask-paginate</a></h5>
-
-<p>其实安装很常规，他的思路就是根据你的数据量给每个页面加一个li前缀到最后返回的div里面。因为官网提供的说明很简单，我在这里仔细说说：</p>
-
-<ol>
-  <li>官网说给你的网站页面添加css：</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
-.pagination-page-info {
-    padding: .6em;
-    padding-left: 0;
-    width: 40em;
-    margin: .5em;
-    margin-left: 0;
-    font-size: 12px;
-}
-.pagination-page-info b {
-    color: black;
-    background: #6aa6ed;
-    padding-left: 2px;
-    padding: .1em .25em;
-    font-size: 150%;
-}
-</pre></figure></notextile></div></notextile></div>
-<p>其实这个是给你页面显示统计数据的方法pagination.info提供的样式，默认的class=’pagination’是bootstrap自带的，不需要你添加</p>
-
-<ol>
-  <li>官网的例子使用的是：Blueprint：</li>
-</ol>
-
-<p>我们一般都是： ‘from flask import Flask’，其实Blueprint就是一个可定制的容器，一个应用可以有多个容器，他们都继承于flask.helpers._PackageBoundObject
-可以看我的一个例子：</p>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-@app.route('/')
-def index():
-
-	pagesize = 100 #设定每页显示条目数
-	page = int(request.args.get('page',0)) #获取当前页面页数
-	data = get_MongoData(page, pagesize) #get_MongoData是我自己的函数，根据页数过滤要显示的数据（因为实在太大了）
-	pagination = Pagination(total=data[1], per_page=pagesize, page=page) #total的值是总数据条目，per_page表示每页显示数目，page就是当前页数。还可以设置向前/后页面标签（默认是&lt;&lt;/&gt;&gt;）等
-	return render_template("index.html", pagination=pagination)
-</pre></figure></notextile></div></notextile></div>
-
-<ol>
-  <li>我对他的一点修改：
-    <ol>
-      <li>我发现在我的程序里面，这个分页栏在后部会放不下而换行显示，我就直接把link_css制定的div改成了行内元素span</li>
-      <li>当我默认使用link_size,代码是这样：</li>
-    </ol>
-    <xmp>
-     link_css = &#8217;<span class="pagination{0} green"><ul>&#8217;
-     其实最后页面出来的效果是&#8217;<span class="paginationNone green"><ul>&#8217; 
- 
-		
-     这样就没有符合的bootstrap类，所以我修改了links方法:
-
-     <div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-     @property
-     def links(self):
-         '''get all the pagination links'''
-         if self.total_pages &lt;= 1:
-             return ''
-         if not self.link_size:
-             self.link_size = ''
-         s = [link_css.format(self.link_size)]
-         s.append(self.prev_page)
-         for page in self.pages:
-             s.append(self.single_page(page) if page else gap_marker)
-
-         s.append(self.next_page)
-         s.append('')
-         return ''.join(s)
-     </pre></figure></notextile></div></notextile></div>
-
-</ul></span></ul></span></xmp>
-  </li>
-</ol>
-<p>#####flask的bootstrap分页插件<a href="http://tgdn.github.com/django-bootstrap-pagination/">django-bootstrap-pagination</a></p>
-
-<p>django的插件比较复杂，它自己定义了中间件和标签，这样你需要在模板中load它提供的函数，并且很nb的使用了RequestContext去处理变量,可以看张沈鹏以前写的一个小文章：<a href="http://zsp.iteye.com/blog/115254">django 简化 view 函数的编写</a></p>
-
-<ol>
-  <li>先看我的后台方法：</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-
-def showlist(req):
-
-	t = req.GET.get('type', None)
-	l = req.GET.get('app', None)
-	if t and l:
-		db = getMongo('XXX.XXX.XXX.XXX:XX', 'dc2')
-		if t == 'v':
-			q = re.compile(r'.*%s$' % l)
-			data = db.site.find({'modules.site.level':'v4', 'site':{ '$regex' : q }}, 
-				{'site':1, '_id':0, 'modules.site.links':1, 'modules.site.keywords':1}).sort(
-				'modules.site.site.check_time')
-
-	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
-</pre></figure></notextile></div></notextile></div>
-
-<p>但是运行时候会报错：</p>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-Traceback:
-File "/usr/local/lib/python2.6/dist-packages/django/core/handlers/base.py" in get_response
-  111.                         response = callback(request, *callback_args, **callback_kwargs)
-File "/home/dongwm/centerCon/views.py" in showlist
-  68. 	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
-File "/usr/local/lib/python2.6/dist-packages/django/shortcuts/__init__.py" in render_to_response
-  20.     return HttpResponse(loader.render_to_string(*args, **kwargs), **httpresponse_kwargs)
-File "/usr/local/lib/python2.6/dist-packages/django/template/loader.py" in render_to_string
-  176.         return t.render(context_instance)
-File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
-  140.             return self._render(context)
-File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in _render
-  134.         return self.nodelist.render(context)
-File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
-  823.                 bit = self.render_node(node, context)
-File "/usr/local/lib/python2.6/dist-packages/django/template/debug.py" in render_node
-  74.             return node.render(context)
-File "/home/dongwm/centerCon/templatetags/pagination_tags.py" in render 
-  91.             page_obj = paginator.page(context['request'].page)
-File "/usr/local/lib/python2.6/dist-packages/django/template/context.py" in __getitem__
-  54.         raise KeyError(key)
-
-Exception Type: KeyError at /showlist/
-Exception Value: 'request'
-</pre></figure></notextile></div></notextile></div>
-
-<p>不管你用那个插件都会有这个报错。。。</p>
-
-<p><em>后来发现原因是：</em></p>
-
-<p><em>settings文件没有设置TEMPLATE_CONTEXT_PROCESSORS</em>
-理由：模板上下文处理器会指定了哪些contextprocessors总是默认被使用。这样就省去了每次使用RequestContext都指定processors的麻烦
-在settings加入：
-TEMPLATE_CONTEXT_PROCESSORS = (
-    “django.core.context_processors.media”,
-    “django.core.context_processors.request”
-    )</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/7/">&larr; Older</a></li>
@@ -2475,6 +2423,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
@@ -2510,10 +2462,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     
       <li class="post">
         <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
       </li>
     
   </ul>

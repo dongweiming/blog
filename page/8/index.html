@@ -142,6 +142,186 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengqi/">SQLAlchemy教程(七)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>本文主要是面向对象的继承映射到关系数据库表的方法</strong></p>
+
+<p>&gt;&gt;&gt; class Product(object):
+&#8230;     def __init__(self, sku, msrp):
+&#8230;         self.sku = sku
+&#8230;         self.msrp = msrp
+&#8230;     def __repr__(self):
+&#8230;         return &#8216;&lt;%s %s&gt;&#8217; % (
+&#8230;             self.__class__.__name__, self.sku)
+&#8230;
+&gt;&gt;&gt; class Clothing(Product):
+&#8230;     def __init__(self, sku, msrp, clothing_info):
+&#8230;         Product.__init__(self, sku, msrp) #继承了Product
+&#8230;         self.clothing_info = clothing_info
+&#8230;
+&gt;&gt;&gt; class Accessory(Product):
+&#8230;     def __init__(self, sku, msrp, accessory_info):
+&#8230;         Product.__init__(self, sku, msrp) #继承了Product
+&#8230;         self.accessory_info = accessory_info
+也就是这样的意思:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png"><img class="alignnone  wp-image-1267" title="Screenshot-1" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png" alt="" width="700" height="251" /></a></p>
+
+<p>这个单表继承中(如下图,黑色的表示没有被映射):</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png"><img class="alignnone  wp-image-1270" title="Screenshot-2" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png" alt="" width="683" height="316" /></a></p>
+
+<p>从创建表结构是这样:</p>
+
+<p>&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;clothing_info&#8217;, String),
+&#8230;     Column(&#8216;accessory_info&#8217;, String),
+&#8230;     Column(&#8216;product_type&#8217;, String(1), nullable=False)) #一个新的字段
+&gt;&gt;&gt; mapper(
+&#8230;     Product, product_table,
+&#8230;     polymorphic_on=product_table.c.product_type, #映射继承层次结构使用polymorphic_on表示继承在product_type字段,值是polymorphic_identity指定的标识
+&#8230;     polymorphic_identity=&#8217;P&#8217;) #标识继承 Product ,父类
+&lt;Mapper at 0x85833ec; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, inherits=Product,
+&#8230;        polymorphic_identity=&#8217;C&#8217;)   #标识继承Clothing product
+&lt;Mapper at 0x858362c; Clothing&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt; mapper(Accessory, inherits=Product, #继承至Product
+&#8230;        polymorphic_identity=&#8217;A&#8217;) #标识继承Accessory
+&lt;Mapper at 0x8587d8c; Accessory&gt;
+&gt;&gt;&gt; products = [  #创建一些产品
+&#8230;     Product(&#8216;123&#8217;, 11.22),
+&#8230;     Product(&#8216;456&#8217;, 33.44),
+&#8230;     Clothing(&#8216;789&#8217;, 123.45, &#8220;Nice Pants&#8221;),
+&#8230;     Clothing(&#8216;111&#8217;, 125.45, &#8220;Nicer Pants&#8221;),
+&#8230;     Accessory(&#8216;222&#8217;, 24.99, &#8220;Wallet&#8221;),
+&#8230;     Accessory(&#8216;333&#8217;, 14.99, &#8220;Belt&#8221;) ]
+&gt;&gt;&gt; Session = sessionmaker()
+&gt;&gt;&gt; session = Session()
+&gt;&gt;&gt; for p in products:
+&#8230;     session.add(p)
+&#8230;
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; print session.query(Product).all() #全部都有
+[&lt;Product 123&gt;, &lt;Product 456&gt;, &lt;Clothing 789&gt;, &lt;Clothing 111&gt;, &lt;Accessory 222&gt;, &lt;Accessory 333&gt;]
+&gt;&gt;&gt; print session.query(Clothing).all()  #只显示2个
+[&lt;Clothing 789&gt;, &lt;Clothing 111&gt;]
+&gt;&gt;&gt; print session.query(Accessory).all() #只显示2个,是不是上面的映射效果和创建3个类而分别orm好的多呢?
+[&lt;Accessory 222&gt;, &lt;Accessory 333&gt;]</p>
+
+<p>&gt;&gt;&gt; for row in product_table.select().execute(): #从父类库查询,所有数据都有,只是product_type不同
+&#8230;     print row
+&#8230;
+(u&#8217;123&#8217;, Decimal(&#8216;11.2200000000&#8217;), None, None, u&#8217;P&#8217;)
+(u&#8217;456&#8217;, Decimal(&#8216;33.4400000000&#8217;), None, None, u&#8217;P&#8217;)
+(u&#8217;789&#8217;, Decimal(&#8216;123.4500000000&#8217;), u&#8217;Nice Pants&#8217;, None, u&#8217;C&#8217;)
+(u&#8217;111&#8217;, Decimal(&#8216;125.4500000000&#8217;), u&#8217;Nicer Pants&#8217;, None, u&#8217;C&#8217;)
+(u&#8217;222&#8217;, Decimal(&#8216;24.9900000000&#8217;), None, u&#8217;Wallet&#8217;, u&#8217;A&#8217;)
+(u&#8217;333&#8217;, Decimal(&#8216;14.9900000000&#8217;), None, u&#8217;Belt&#8217;, u&#8217;A&#8217;)</p>
+
+<p>具体的映射见下图:</p>
+
+<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png"><img class="alignnone  wp-image-1271" title="Screenshot-3" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png" alt="" width="629" height="232" /></a></p>
+
+<p>查询一个没有的不存在的映射:</p>
+
+<p>&gt;&gt;&gt; print session.query(Accessory)[0].clothing_info
+None</p>
+
+<p><strong>具体表的继承</strong></p>
+
+<p><strong></strong>每个表包含的数据量,需要实现它的类;没有浪费的空间</p>
+
+<p>&gt;&gt;&gt; metadata.remove(product_table)
+&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric))
+&gt;&gt;&gt; clothing_table = Table(
+&#8230;     &#8216;clothing&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;clothing_info&#8217;, String))
+&gt;&gt;&gt;
+&gt;&gt;&gt; accessory_table = Table(
+&#8230;     &#8216;accessory&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric),
+&#8230;     Column(&#8216;accessory_info&#8217;, String))
+&gt;&gt;&gt;
+摄像我们想要获取Product&#8217;sku&#8217;是222的数据(没有其他额外的工作),我们不得不层次型的查询每个类,请看这个例子:</p>
+
+<p>&gt;&gt;&gt; punion = polymorphic_union(
+&#8230;     dict(P=product_table,
+&#8230;     C=clothing_table,
+&#8230;     A=accessory_table),
+&#8230;     &#8216;type_&#8217;)
+&gt;&gt;&gt;
+&gt;&gt;&gt; print punion
+SELECT accessory.sku, accessory.msrp, accessory.accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;A&#8217; AS type_
+FROM accessory UNION ALL SELECT product.sku, product.msrp, CAST(NULL AS VARCHAR) AS accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;P&#8217; AS type_
+FROM product UNION ALL SELECT clothing.sku, clothing.msrp, CAST(NULL AS VARCHAR) AS accessory_info, clothing.clothing_info, &#8216;C&#8217; AS type_
+FROM clothing
+现在我们就有了一个很好的标记了(C,A,P)</p>
+
+<p>&gt;&gt;&gt; mapper(
+&#8230;     Product, product_table, with_polymorphic=(&#8216;*&#8217;, punion),  #使用with_polymorphic=(&#8216;*&#8217;, punion)的方式映射父类,指定不同表选择,实现多态,并且提高了性能(只select了一次)
+&#8230;     polymorphic_on=punion.c.type_,
+&#8230;     polymorphic_identity=&#8217;P&#8217;)
+&lt;Mapper at 0x8605b6c; Product&gt;
+&gt;&gt;&gt; mapper(Clothing, clothing_table, inherits=Product,
+&#8230; polymorphic_identity=&#8217;C&#8217;,
+&#8230; concrete=True)
+&lt;Mapper at 0x84f1bac; Clothing&gt;
+&gt;&gt;&gt; mapper(Accessory, accessory_table, inherits=Product,
+&#8230; polymorphic_identity=&#8217;A&#8217;,
+&#8230; concrete=True)
+&lt;Mapper at 0x858770c; Accessory&gt;</p>
+
+<p>&gt;&gt;&gt; session.query(Product).get(&#8216;222&#8217;)
+&lt;Accessory 222&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengliu/">SQLAlchemy教程(六)</a></h1>
     
     
@@ -2842,548 +3022,6 @@ installing
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyusysyanjiusi/">关于sys研究（四）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><pre class="sh_python">
-import sys
-import textwrap</p>
-
-<p>names = sorted(sys.modules.keys()) #sys.modules是模块名和模块路径信息的字典集合
-name_text = ', '.join(names)</p>
-
-<p>print textwrap.fill(name_text)
-for name in sys.builtin_module_names: #内建模块就是不用import进来就能使用的模块，这些模块不再上面的sys.modules里面
-    print name
-for d in sys.path: # sys.path是管理模块的搜索路径的列表集合，包含当前目录，<tt>site-packages</tt>目录列在最后
-    print d    #注：当在执行程序时前面设置：PYTHONPATH=XXX:xxx，则首先输出它指定的目录
-</pre></p>
-
-<p><pre class="sh_python">
-import sys
-import os</p>
-
-<p>base_dir = os.path.dirname(__file__) or '.' #dirname(__file__)表示当前程序文件所在目录
-print 'Base directory:', base_dir</p>
-
-<p>package_dir_a = os.path.join(base_dir, 'package_dir_a')
-sys.path.insert(0, package_dir_a)  #在当前目录插入一个python目录路径</p>
-
-<p>import example
-print 'Imported example from:', example.__file__
-print '\t', example.DATA  #比如这里是的数据是A</p>
-
-<p>package_dir_b = os.path.join(base_dir, 'package_dir_b')
-sys.path.insert(0, package_dir_b) #在当前目录再插入一个python目录路径
-reload(example) #reload这个模块，但是首先搜索的是package_dir_b下的这个模块数据
-print 'Reloaded example from:', example.__file__
-print '\t', example.DATA #这里的数据就是B了
-</pre></p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>class NoisyImportFinder(object):</p>
-
-<p>    PATH_TRIGGER = 'NoisyImportFinder_PATH_TRIGGER' #设定一个数据，方便识别
-    def __init__(self, path_entry):
-        print 'Checking NoisyImportFinder support for %s' % path_entry
-        if path_entry != self.PATH_TRIGGER:
-            print 'NoisyImportFinder does not work for %s' % path_entry
-            raise ImportError()
-        return</p>
-
-<p>    def find_module(self, fullname, path=None):
-        print 'NoisyImportFinder looking for "%s"' % fullname
-        return None</p>
-
-<p>sys.path_hooks.append(NoisyImportFinder) #添加自定义的import的发现者</p>
-
-<p>sys.path.insert(0, NoisyImportFinder.PATH_TRIGGER) #将数据路径插入到python路径</p>
-
-<p>try:
-    import target_module
-except Exception, e:
-    print 'Import failed:', e
-</pre></p>
-
-<p>执行：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Checking NoisyImportFinder support for NoisyImportFinder_PATH_TRIGGER #首先import使用我们自定义的import发现类
-NoisyImportFinder looking for &#8220;target_module&#8221;
-Checking NoisyImportFinder support for /home/dongwm #使用下一个python路径（当前目录）搜索
-NoisyImportFinder does not work for /home/dongwm #不工作
-Import failed: No module named target_module #使用系统的import发现</p>
-
-<p><pre class="sh_python">
-import sys #这事一个脚本,用来生成shelve对象
-import shelve
-import os</p>
-
-<p>filename = './import_example.shelve'
-if os.path.exists(filename):
-    os.unlink(filename)
-db = shelve.open(filename)
-try:
-    db['data:README'] = """
-==============
-package README
-==============</p>
-
-<p>This is the README for ``package``.
-"""
-    db['package.__init__'] = """
-print 'package imported'
-message = 'This message is in package.__init__'
-"""
-    db['package.module1'] = """
-print 'package.module1 imported'
-message = 'This message is in package.module1'
-"""
-    db['package.subpackage.__init__'] = """
-print 'package.subpackage imported'
-message = 'This message is in package.subpackage.__init__'
-"""
-    db['package.subpackage.module2'] = """
-print 'package.subpackage.module2 imported'
-message = 'This message is in package.subpackage.module2'
-"""
-    db['package.with_error'] = """
-print 'package.with_error being imported'
-raise ValueError('raising exception to break import')
-"""
-    print 'Created %s with:' % filename
-    for key in sorted(db.keys()):
-        print '\t', key
-finally:
-    db.close()
-</pre></p>
-
-<p>执行：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Created ./import_example.shelve with:
-data:README
-package.__init__
-package.module1
-package.subpackage.__init__
-package.subpackage.module2
-package.with_error
-<pre class="sh_python">
-import contextlib
-import imp
-import os
-import shelve
-import sys</p>
-
-<p>@contextlib.contextmanager
-def shelve_context(filename, flag='r'): #创建上下文管理方法，让shelves使用with
-    db = shelve.open(filename, flag)
-    try:
-        yield db
-    finally:
-        db.close()</p>
-
-<p>def _mk_init_name(fullname): #返回被定义了包名字的__init__ module的名字
-    if fullname.endswith('.__init__'):
-        return fullname
-    return fullname + '.__init__'</p>
-
-<p>def _get_key_name(fullname, db): #在shelves里面寻找fullname或者fullname.__init__，返回名字
-    if fullname in db:
-        return fullname
-    init_name = _mk_init_name(fullname)
-    if init_name in db:
-        return init_name
-    return None</p>
-
-<p>class ShelveFinder(object): #shelve归档里面寻找模块
-    def __init__(self, path_entry):
-        if not os.path.isfile(path_entry):
-            raise ImportError
-        try:
-            with shelve_context(path_entry): 
-                pass
-        except Exception, e:
-            raise ImportError(str(e))
-        else:
-            print 'new shelf added to import path:', path_entry
-            self.path_entry = path_entry
-        return</p>
-
-<p>    def __str__(self):
-        return '&lt;%s for "%s"&gt;' % (self.__class__.__name__, self.path_entry)</p>
-
-<p>    def find_module(self, fullname, path=None):
-        path = path or self.path_entry
-        print 'looking for "%s" in %s ...' % (fullname, path),
-        with shelve_context(path) as db:
-            key_name = _get_key_name(fullname, db)
-            if key_name:
-                print 'found it as %s' % key_name
-                return ShelveLoader(path)
-        print 'not found'
-        return None</p>
-
-<p>class ShelveLoader(object): #从shelve数据里面为模块加载源</p>
-
-<p>    def __init__(self, path_entry):
-        self.path_entry = path_entry
-        return</p>
-
-<p>    def _get_filename(self, fullname):
-        # Make up a fake filename that starts with the path entry
-        # so pkgutil.get_data() works correctly.
-return os.path.join(self.path_entry, fullname) #设置假文件，pkgutil.get_data()正常
-    def get_source(self, fullname):
-        print 'loading source for "%s" from shelf' % fullname
-        try:
-            with shelve_context(self.path_entry) as db:
-                key_name = _get_key_name(fullname, db)
-                if key_name:
-                    return db[key_name]
-                raise ImportError('could not find source for %s' % fullname)
-        except Exception, e:
-            print 'could not load source:', e
-            raise ImportError(str(e))</p>
-
-<p>    def get_code(self, fullname):
-        source = self.get_source(fullname)
-        print 'compiling code for "%s"' % fullname
-        return compile(source, self._get_filename(fullname), 'exec', dont_inherit=True)</p>
-
-<p>    def get_data(self, path):
-        print 'looking for data in %s for "%s"' % (self.path_entry, path)
-        if not path.startswith(self.path_entry):
-            raise IOError
-        path = path[len(self.path_entry)+1:]
-        key_name = 'data:' + path
-        try:
-            with shelve_context(self.path_entry) as db:
-                return db[key_name]
-        except Exception, e:
-            # Convert all errors to IOError
-            raise IOError</p>
-
-<p>    def is_package(self, fullname):
-        init_name = _mk_init_name(fullname)
-        with shelve_context(self.path_entry) as db:
-            return init_name in db</p>
-
-<p>    def load_module(self, fullname):
-        source = self.get_source(fullname)</p>
-
-<p>        if fullname in sys.modules:
-            print 'reusing existing module from previous import of "%s"' % fullname
-            mod = sys.modules[fullname]
-        else:
-            print 'creating a new module object for "%s"' % fullname
-            mod = sys.modules.setdefault(fullname, imp.new_module(fullname))
-        mod.__file__ = self._get_filename(fullname)
-        mod.__name__ = fullname
-        mod.__path__ = self.path_entry
-        mod.__loader__ = self
-        mod.__package__ = '.'.join(fullname.split('.')[:-1])</p>
-
-<p>        if self.is_package(fullname):
-            print 'adding path for package'
-            # Set __path__ for packages
-            # so we can find the sub-modules.
-            mod.__path__ = [ self.path_entry ]
-        else:
-            print 'imported as regular module'</p>
-
-<p>        print 'execing source...'
-        exec source in mod.__dict__
-        print 'done'
-        return mod
-</pre></p>
-
-<p><pre class="sh_python">
-import sys
-import sys_shelve_importer</p>
-
-<p>def show_module_details(module):
-    print '  message    :', module.message
-    print '  __name__   :', module.__name__
-    print '  __package__:', module.__package__
-    print '  __file__   :', module.__file__
-    print '  __path__   :', module.__path__
-    print '  __loader__ :', module.__loader__</p>
-
-<p>filename = '/tmp/pymotw_import_example.shelve'
-sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
-sys.path.insert(0, filename) #导入shelve文件</p>
-
-<p>print 'Import of "package":'
-import package #import这个包</p>
-
-<p>print
-print 'Examine package details:'
-show_module_details(package)</p>
-
-<p>print
-print 'Global settings:'
-print 'sys.modules entry:', sys.modules['package']
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Import of &#8220;package&#8221;:
-new shelf added to import path: import_example.shelve
-looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
-loading source for &#8220;package&#8221; from shelf
-creating a new module object for &#8220;package&#8221;
-adding path for package
-execing source&#8230;
-package imported
-done</p>
-
-<p>Examine package details:
-message    : This message is in package.__init__
-__name__   : package
-__package__:
-__file__   : import_example.shelve/package
-__path__   : [&#8216;import_example.shelve&#8217;]
-__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x80aed0c&gt;</p>
-
-<p>Global settings:
-sys.modules entry: &lt;module &#8216;package&#8217; from &#8216;import_example.shelve/package&#8217;&gt;
-<pre class="sh_python">
-import sys
-import sys_shelve_importer</p>
-
-<p>def show_module_details(module):
-    print '  message    :', module.message
-    print '  __name__   :', module.__name__
-    print '  __package__:', module.__package__
-    print '  __file__   :', module.__file__
-    print '  __path__   :', module.__path__
-    print '  __loader__ :', module.__loader__</p>
-
-<p>filename = 'import_example.shelve'
-sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
-sys.path.insert(0, filename)</p>
-
-<p>print
-print 'Import of "package.module1":'
-import package.module1 #import子模块</p>
-
-<p>print
-print 'Examine package.module1 details:'
-show_module_details(package.module1)</p>
-
-<p>print
-print 'Import of "package.subpackage.module2":'
-import package.subpackage.module2</p>
-
-<p>print
-print 'Examine package.subpackage.module2 details:'
-show_module_details(package.subpackage.module2)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py</p>
-
-<p>Import of &#8220;package.module1&#8221;:
-new shelf added to import path: import_example.shelve
-looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
-loading source for &#8220;package&#8221; from shelf
-creating a new module object for &#8220;package&#8221;
-adding path for package
-execing source&#8230;
-package imported
-done
-looking for &#8220;package.module1&#8221; in import_example.shelve &#8230; found it as package.module1
-loading source for &#8220;package.module1&#8221; from shelf
-creating a new module object for &#8220;package.module1&#8221;
-imported as regular module
-execing source&#8230;
-package.module1 imported
-done</p>
-
-<p>Examine package.module1 details:
-message    : This message is in package.module1
-__name__   : package.module1
-__package__: package
-__file__   : import_example.shelve/package.module1
-__path__   : import_example.shelve
-__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x8119d6c&gt;</p>
-
-<p>Import of &#8220;package.subpackage.module2&#8221;:
-looking for &#8220;package.subpackage&#8221; in import_example.shelve &#8230; found it as package.subpackage.__init__
-loading source for &#8220;package.subpackage&#8221; from shelf
-creating a new module object for &#8220;package.subpackage&#8221;
-adding path for package
-execing source&#8230;
-package.subpackage imported
-done
-looking for &#8220;package.subpackage.module2&#8221; in import_example.shelve &#8230; found it as package.subpackage.module2
-loading source for &#8220;package.subpackage.module2&#8221; from shelf
-creating a new module object for &#8220;package.subpackage.module2&#8221;
-imported as regular module
-execing source&#8230;
-package.subpackage.module2 imported
-done</p>
-
-<p>Examine package.subpackage.module2 details:
-message    : This message is in package.subpackage.module2
-__name__   : package.subpackage.module2
-__package__: package.subpackage
-__file__   : import_example.shelve/package.subpackage.module2
-__path__   : import_example.shelve
-__loader__ : &lt;sys_shelve_importer.ShelveLoader object at 0x8119e0c&gt;
-<pre class="sh_python">
-import sys
-import sys_shelve_importer</p>
-
-<p>filename = 'import_example.shelve'
-sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
-sys.path.insert(0, filename)</p>
-
-<p>print 'First import of "package":'
-import package</p>
-
-<p>print
-print 'Reloading "package":'
-reload(package) #创建一个新的模块对象，而不是现有的模块被重新使用
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-First import of &#8220;package&#8221;:
-new shelf added to import path: import_example.shelve
-looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
-loading source for &#8220;package&#8221; from shelf
-creating a new module object for &#8220;package&#8221;
-adding path for package
-execing source&#8230;
-package imported
-done</p>
-
-<p>Reloading &#8220;package&#8221;:
-looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
-loading source for &#8220;package&#8221; from shelf
-reusing existing module from previous import of &#8220;package&#8221;
-adding path for package
-execing source&#8230;
-package imported
-done
-<pre class="sh_python">
-import sys
-import sys_shelve_importer</p>
-
-<p>filename = 'import_example.shelve'
-sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
-sys.path.insert(0, filename)</p>
-
-<p>try:
-    import package.module3
-except ImportError, e:
-    print 'Failed to import:', e
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-new shelf added to import path: import_example.shelve
-looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
-loading source for &#8220;package&#8221; from shelf
-creating a new module object for &#8220;package&#8221;
-adding path for package
-execing source&#8230;
-package imported
-done
-looking for &#8220;package.module3&#8221; in import_example.shelve &#8230; not found
-Failed to import: No module named module3
-<pre class="sh_python">
-import sys
-import sys_shelve_importer
-import os
-import pkgutil</p>
-
-<p>filename = '/tmp/pymotw_import_example.shelve'
-sys.path_hooks.append(sys_shelve_importer.ShelveFinder)
-sys.path.insert(0, filename)</p>
-
-<p>import package</p>
-
-<p>readme_path = os.path.join(package.__path__[0], 'README')</p>
-
-<p>#readme = package.__loader__.get_data(readme_path)
-readme = pkgutil.get_data('package', 'README') #返回文件内容
-print readme</p>
-
-<p>foo_path = os.path.join(package.__path__[0], 'foo')
-#foo = package.__loader__.get_data(foo_path)
-foo = pkgutil.get_data('package', 'foo')
-print foo
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-new shelf added to import path: import_example.shelve
-looking for &#8220;package&#8221; in import_example.shelve &#8230; found it as package.__init__
-loading source for &#8220;package&#8221; from shelf
-creating a new module object for &#8220;package&#8221;
-adding path for package
-execing source&#8230;
-package imported
-done
-looking for data in import_example.shelve for &#8220;import_example.shelve/README&#8221;</p>
-
-<p>==============
-package README
-==============</p>
-
-<p>This is the README for &#8220;package&#8220;.</p>
-
-<p>looking for data in import_example.shelve for &#8220;import_example.shelve/foo&#8221;
-Traceback (most recent call last):
-File &#8220;test.py&#8221;, line 20, in &lt;module&gt;
-foo = pkgutil.get_data(&#8216;package&#8217;, &#8216;foo&#8217;)
-File &#8220;/usr/lib/python2.6/pkgutil.py&#8221;, line 583, in get_data
-return loader.get_data(resource_name)
-File &#8220;/home/dongwm/sys_shelve_importer.py&#8221;, line 107, in get_data
-raise IOError
-IOError</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/9/">&larr; Older</a></li>
@@ -3406,6 +3044,10 @@ IOError</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
@@ -3441,10 +3083,6 @@ IOError</p>
     
       <li class="post">
         <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
       </li>
     
   </ul>

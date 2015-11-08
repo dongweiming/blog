@@ -142,6 +142,206 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyujsonyanjiu/">关于json研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：json模块全称JavaScript对象符号的序列话，他是理想的数据交换语言。易于人阅读和编写，同时也易于机器解析和生成，在python2.6之前是<em>simplejson</em>，需要安装。有点像<tt>pickle,但是广泛使用在Web服务器和客户端AJAX应用程序之间的通信</tt></p>
+
+<p><pre class="sh_python">
+import json</p>
+
+<p>data = [ { 'x':'A', 'y':(2, 4), 'z':3.0 } ]
+print 'DATA:', repr(data)</p>
+
+<p>unsorted = json.dumps(data)
+print 'JSON:', json.dumps(data)  #编码为json，支持string, unicode, int, float, list, tuple, dict，还可以设定separators，设定分割符，
+                                #当key不是字符串会引发<em>ValueError</em>,skipkeys=True的话会过滤掉
+print 'SORT:', json.dumps(data, sort_keys=True) #编码并且按键排序</p>
+
+<p>first = json.dumps(data, sort_keys=True)
+second = json.dumps(data, sort_keys=True)
+print 'INDENT:', json.dumps(data, sort_keys=True, indent=2) #指定缩进值，输出类似于pprint</p>
+
+<p>
+print 'UNSORTED MATCH:', unsorted == first
+print 'SORTED MATCH  :', first == second
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+DATA: [{&#8216;y&#8217;: (2, 4), &#8216;x&#8217;: &#8216;A&#8217;, &#8216;z&#8217;: 3.0}]
+JSON: [{&#8220;y&#8221;: [2, 4], &#8220;x&#8221;: &#8220;A&#8221;, &#8220;z&#8221;: 3.0}]
+SORT: [{&#8220;x&#8221;: &#8220;A&#8221;, &#8220;y&#8221;: [2, 4], &#8220;z&#8221;: 3.0}]</p>
+
+<p>INDENT: [
+{
+&#8220;x&#8221;: &#8220;A&#8221;,
+&#8220;y&#8221;: [
+2,
+4
+],
+&#8220;z&#8221;: 3.0
+}
+]
+UNSORTED MATCH: False
+SORTED MATCH  : True
+<pre class="sh_python">
+import json</p>
+
+<p>class MyObj(object):
+    def __init__(self, s):
+        self.s = s
+    def __repr__(self):  #设置元类，触发打印初始化的self.s
+        return '&lt;MyObj(%s)&gt;' % self.s
+obj = MyObj('instance value goes here')</p>
+
+<p>print 'First attempt'
+try:
+    print json.dumps(obj)  #因为我们设计的不是内置支持的类型
+except TypeError, err:
+    print 'ERROR:', err</p>
+
+<p>def convert_to_builtin_type(obj):  #定义自己的类型
+    print 'default(', repr(obj), ')'
+    d = { '__class__':obj.__class__.__name__, 
+          '__module__':obj.__module__,
+          }
+    d.update(obj.__dict__)  #保持以前的内置属性
+    return d
+def dict_to_object(d):
+    if '__class__' in d:
+        class_name = d.pop('__class__')
+        module_name = d.pop('__module__')
+        module = __import__(module_name)
+        print 'MODULE:', module
+        class_ = getattr(module, class_name)
+        print 'CLASS:', class_
+        args = dict( (key.encode('ascii'), value) for key, value in d.items())
+        print 'INSTANCE ARGS:', args
+        inst = class_(**args)
+    else:
+        inst = d
+    return inst
+print
+print 'With default'
+encode = json.dumps(obj, default=convert_to_builtin_type)  #根据自己的类型编码
+print encode
+print json.loads(encode, object_hook=dict_to_object)  #根据hook解码</p>
+
+<p>
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>First attempt
+ERROR: &lt;MyObj(instance value goes here)&gt; is not JSON serializable</p>
+
+<p>With default
+default( &lt;MyObj(instance value goes here)&gt; )  #触发__repr__
+{&#8221;s&#8221;: &#8220;instance value goes here&#8221;, &#8220;__module__&#8221;: &#8220;__main__&#8221;, &#8220;__class__&#8221;: &#8220;MyObj&#8221;} #打印属性
+MODULE: &lt;module &#8216;__main__&#8217; from &#8216;test.py&#8217;&gt;
+CLASS: &lt;class &#8216;__main__.MyObj&#8217;&gt;
+INSTANCE ARGS: {&#8217;s&#8217;: &#8216;instance value goes here&#8217;}
+&lt;MyObj(instance value goes here)&gt;
+<pre class="sh_python">
+import json</p>
+
+<p>encoder = json.JSONEncoder()  
+data = [ { 'a':'A', 'b':(2, 4), 'c':3.0 } ]</p>
+
+<p>for part in encoder.iterencode(data): #生成生产编码数据的 “chunks”的迭代器
+    print 'PART:', part</p>
+
+<p>print 
+class MyObj(object):
+    def __init__(self, s):
+        self.s = s
+    def __repr__(self):
+        return '&lt;MyObj(%s)&gt;' % self.s
+class MyEncoder(json.JSONEncoder):  #通过使用类，可以创建子类来定制自己的行为，就和上面一样，他继承了json.JSONEncode</p>
+
+<p>    def default(self, obj):   #和上面的莉子效果一样，但是使用了类API,重写了default方法
+        print 'default(', repr(obj), ')'
+        d = { '__class__':obj.__class__.__name__, 
+              '__module__':obj.__module__,
+              }
+        d.update(obj.__dict__)
+        return d
+class MyDecoder(json.JSONDecoder):</p>
+
+<p>    def __init__(self):
+        json.JSONDecoder.__init__(self, object_hook=self.dict_to_object)  #和上面一行，指定hook的初始化</p>
+
+<p>    def dict_to_object(self, d):
+        if '__class__' in d:
+            class_name = d.pop('__class__')
+            module_name = d.pop('__module__')
+            module = __import__(module_name)
+            print 'MODULE:', module
+            class_ = getattr(module, class_name)
+            print 'CLASS:', class_
+            args = dict( (key.encode('ascii'), value) for key, value in d.items())
+            print 'INSTANCE ARGS:', args
+            inst = class_(**args)
+        else:
+            inst = d
+        return inst
+obj = MyObj('internal data')
+print obj
+encode = MyEncoder().encode(obj)
+print encode
+print '-'*30
+myobj_instance = MyDecoder().decode(encode)
+print myobj_instance
+</pre>
+<pre class="sh_python">
+import json
+import tempfile</p>
+
+<p>f = tempfile.NamedTemporaryFile(mode='w+')  #用随机文件模块生成一个随机文件，在操作完后自动删除这个文件
+f.write('[{"a": "A", "c": 3.0, "b": [2, 4]}]') 
+f.flush() #<span>写入缓冲区的任何数据都复制到文件中，并且缓冲区被清除</span>
+f.seek(0)  #把指针指到文件最开始的位置</p>
+
+<p>print json.load(f)
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuitertoolsyanjiu/">关于itertools研究</a></h1>
     
     
@@ -1354,82 +1554,6 @@ for name in glob.glob('test/*[0-9]'): #匹配一个数字范围0－9
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyugetpassyanjiu/">关于getpass研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：通过终端与用户交互时，getpass提示用户输入密码，并且不明文显示输入的数据</p>
-
-<p><pre class="sh_python">
-import getpass</p>
-
-<p>p = getpass.getpass(prompt='Do you love me?')
-if p.lower() == 'yes':
-    print 'Right.'
-else:
-    print 'oh! no'
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Do you love me?
-Right.
-dongwm@linux-dongwm:~&gt; python test.py
-Do you love me?
-oh! no
-<pre class="sh_python">
-import getpass
-import sys</p>
-
-<p>if sys.stdin.isatty(): #当发现这是一个终端的时候 
-    p = getpass.getpass('Using getpass: ')
-else:  #当非终端，比如伪终端
-    print 'Using readline'
-    p = sys.stdin.readline().rstrip()</p>
-
-<p>print 'Read: ', p
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; echo &#8216;sdds&#8217; |python test.py
-Using readline
-Read:  sdds
-dongwm@linux-dongwm:~&gt; python test.py
-Using getpass:
-Read:  sdds</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/15/">&larr; Older</a></li>
@@ -1452,6 +1576,10 @@ Read:  sdds</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
@@ -1487,10 +1615,6 @@ Read:  sdds</p>
     
       <li class="post">
         <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
       </li>
     
   </ul>

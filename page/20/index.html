@@ -142,6 +142,183 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%80%EF%BC%89/">Pymongo教程（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-01T00:00:00+08:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：本文是一些简单的使用python模块的例子，主旨是帮助使用本模块的朋友找到使用方法</p>
+
+<p>1 一个MongoDB的文档</p>
+
+<p>本质上是附带了一些额外功能一个JSON文件</p>
+
+<p><pre class="sh_python">
+from datetime import datetime
+user_doc = {
+    "username" : "weiming",
+    "firstname" : "dong",
+    "surname" : "Chris",
+    "dateofbirth" : datetime(1985, 4, 18),
+    "email" : "ciici1234@.hotmail.com",
+    "score" : 0
+}
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>2   使用python连接mongodb</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>from pymongo import Connection
+from pymongo.errors import ConnectionFailure</p>
+
+<p>def main():
+    """ Connect to MongoDB """
+    try:
+        c = Connection(host="localhost", port=27017)  #端口可能不同，看你的配置文件
+        print "Connected successfully"
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)</p>
+
+<p>if __name__ == "__main__":
+    main()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>3 插入数据（文档）到集合</p>
+
+<p><pre class="sh_python">
+import sys
+from datetime import datetime
+from pymongo import Connection
+from pymongo.errors import ConnectionFailure</p>
+
+<p>def main():
+    try:
+        c = Connection(host="localhost", port=27017)
+    except ConnectionFailure, e:
+        sys.stderr.write("Could not connect to MongoDB: %s" % e)
+        sys.exit(1)
+    dbh = c["mydb"]
+    assert dbh.connection == c
+    user_doc = {
+        "username" : "weiming",
+        "firstname" : "dong",
+        "surname" : "Chris",
+        "dateofbirth" : datetime(1985, 4, 18),
+        "email" : "ciici1234@hotmail.com",
+        "score" : 0
+    }</p>
+
+<p>    dbh.users.insert(user_doc, safe=True)   #可确保写成功，或将抛出一个异常
+    print "Successfully inserted document: %s" % user_doc</p>
+
+<p>if __name__ == "__main__":
+    main()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>4 保障写入到多个数据库节点</p>
+
+<p>dbh.users.insert(user_doc, w=2)    #它被写入到至少有一个 replica set的2个服务器才算成功</p>
+
+<p>5 MongoDB的查询语言简介</p>
+
+<p>如果我们想检索firstname是“dong”</p>
+
+<p>q = {
+&#8220;firstname&#8221; : &#8220;jane&#8221;
+}
+如果我们想检索firstname是“dong” 和username是 &#8220;weiming&#8221;</p>
+
+<p>q = {
+ &#8220;username&#8221; : &#8220;weiming&#8221;,
+ &#8220;firstname&#8221; : &#8220;dong&#8221;,}
+}
+如果我们想检索score大于0
+q = {
+&#8220;score&#8221; : { &#8220;$gt&#8221; : 0 }
+}
+5 查找单个文档;
+user_doc = dbh.users.find_one({&#8220;username&#8221; : &#8220;weiming&#8221;})
+if not user_doc:
+    print &#8220;no document found for username janedoe&#8221;
+6 查找多个文档：
+users = dbh.users.find({&#8220;firstname&#8221;:&#8221;dong&#8221;})
+for user in users:
+    print user.get(&#8220;email&#8221;)
+7 检索单个字段：
+users = dbh.users.find({&#8220;firstname&#8221;:&#8221;dong&#8221;}, {&#8220;email&#8221;:1})  #只检索邮件字段 但是也包含_id
+for user in users:
+    print user.get(&#8220;email&#8221;)
+8 查看有多少文件在用户的集合
+userscount = dbh.users.find().count()
+print &#8220;There are %d documents in users collection&#8221; % userscount
+9 排序（查找firstname是“dong”的文档，然后根据生日排序）
+users = dbh.users.find(
+    {&#8220;firstname&#8221;:&#8221;dong&#8221;}).sort((&#8220;dateofbirth&#8221;, pymongo.DESCENDING))
+for user in users:
+    print user.get(&#8220;email&#8221;）
+也可以这样：
+users = dbh.users.find({&#8220;firstname&#8221;:&#8221;dong&#8221;},
+    sort=[(&#8220;dateofbirth&#8221;, pymongo.DESCENDING)])
+for user in users:
+    print user.get(&#8220;email&#8221;) 
+10 排序+限制（如果符合的文档太多，假如我想取分数前十）： 
+users = dbh.users.find().sort((&#8220;score&#8221;, pymongo.DESCENDING)).limit(10)
+for user in users:
+    print user.get(&#8220;username&#8221;), user.get(&#8220;score&#8221;, 0)
+11 可用于翻页，就是排序后跳过一定数量的结果
+users = dbh.users.find().sort(
+    (&#8220;surname&#8221;, pymongo.ASCENDING)).limit(20).skip(20)
+12 我的理解是，当数据库很繁忙，为了防止重复查询一个可能会修改的结果，遍历整个用户集合，使用快照方式
+for user in dbh.users.find(snapshot=True):
+    print user.get(&#8220;username&#8221;), user.get(&#8220;score&#8221;, 0)
+13 更新修改集合数据
+dbh.users.update({&#8220;username&#8221;:&#8221;janedoe&#8221;},
+    {&#8220;$set&#8221;:{&#8220;email&#8221;:&#8221;admin@dongwm.com&#8221;}}, safe=True)
+dbh.users.update({&#8220;username&#8221;:&#8221;dong&#8221;},
+    {&#8220;$set&#8221;:{&#8220;email&#8221;:&#8221;admin@dongwm.com&#8221;, &#8220;score&#8221;:1}}, safe=True)  #更新多个条件
+dbh.users.update({&#8220;score&#8221;:0},{&#8220;$set&#8221;:{&#8220;flagged&#8221;:True}}, multi=True, safe=True)  #所有符合条件&#8221;score&#8221;:0的文档将被更新
+14 删除用户集合中的文档
+dbh.users.remove({&#8220;score&#8221;:1}, safe=True)    #删除用户集合中的符合&#8221;score&#8221;:1文档
+dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89%E5%AE%89%E8%A3%85google-chrome/">Gentoo笔记（七）安装google-chrome</a></h1>
     
     
@@ -771,81 +948,6 @@ ${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoobijisianzhuangchangyongruanjian/">Gentoo笔记（四）安装常用软件</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-25T00:00:00+08:00" pubdate data-updated="true">Dec 25<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：使用linux需要一些工具，比如看视频，分析系统性能，ftp文件等功能，以下是我推荐的</p>
-
-<p><strong>1 ftp上传下载工具</strong></p>
-
-<p>emerge filezilla</p>
-
-<p><strong>2 flash看视频以及一些网站的特效</strong></p>
-
-<p>emerge adobe-flash</p>
-
-<p><strong>3 系统性能工具</strong></p>
-
-<p>emerge htop dstat</p>
-
-<p><strong>4 浏览器</strong></p>
-
-<p>emerge firefox oprea google-chrome  安装火狐相当慢  80M的源码包 我很无语</p>
-
-<p>注：其中的谷歌浏览器需要修改一下make.conf文件 添加授权 ： ACCEPT_LICENSE=&#8221;google-chrome&#8221;</p>
-
-<p><strong>5 邮件客户端</strong></p>
-
-<p>emerge thunderbird  编译也是 相当慢</p>
-
-<p>注：一般kde下有kmail</p>
-
-<p><strong>6编辑器</strong></p>
-
-<p>emerge  vim</p>
-
-<p><strong>7 输入法（我这里是小企鹅输入法，也可以用ibus 但不能用scim： 直接和我内核冲突 ）</strong></p>
-
-<p>字体的存放目录
-/usr/share/fonts</p>
-
-<p>fontconfig配置文件
-/etc/fonts/fonts.conf</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/gentoobijisianzhuangchangyongruanjian/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/21/">&larr; Older</a></li>
@@ -868,6 +970,10 @@ ${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
@@ -903,10 +1009,6 @@ ${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对�
     
       <li class="post">
         <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
       </li>
     
   </ul>

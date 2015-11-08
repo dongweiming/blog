@@ -142,6 +142,71 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shi-yong-httphe-websocketlian-jie-fu-wu-qi/">使用http和websocket连接服务器</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-19T22:53:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>想想吧，通过网页ssh登录服务器是一件多么酷的事情?今天看了<a href="http://www.vpsee.com/2013/06/invoke-a-linux-shell-with-ssh-account-from-browser">使用浏览器访问 Linux 终端</a>,
+也就是这个<a href="https://github.com/dongweiming/wssh">wssh</a>,你也可以理解为websocket-ssh, 觉得有点意思就拿出来</p>
+
+<h4 id="section-1">原路</h4>
+
+<p>它是一个库，很简单，作者写了2个flask+gevent+websocket+paramiko的例子，其中网页版的使用了bootstrap.
+简单的理解就是不通过ssh连接服务器，而是通过网页或者一个client请求url+相应参数调用
+shell到服务器的方式，但是遗憾的是作者一年没有再维护，bootstrap的网页竟然没有指定ssh端口的选项，但是很多时候为了安全
+都会把ssh端口换成其它端口，这样就不能用了,好吧 我动手给它加了这个功能，也提了pull request.目前大家可以用我的这版:<a href="https://github.com/dongweiming/wssh">wssh</a></p>
+
+<h4 id="update"><strong>update</strong></h4>
+
+<p>wssh作者已经合并了我的修改</p>
+
+<h4 id="section-2">使用说明</h4>
+
+<p>当你使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo python setup.py install</span></pre></figure></notextile></div>
+
+<p>安装后，就能直接使用wssh和wsshd,wsshd是一个flask作为httpserver和gevent作为wsgi的服务端，默认启动在你本机的5000端口.
+网页登录就能看见简单大气的选项页面，可以指定用户，服务器ip，端口，以及使用密钥或者密码登录.输入点击连接就会登录到那台服务器,数据通过websocket实时显示到页面上</p>
+
+<p>而wssh是一个命令行登录的带选项的命令，其实就是页面输入的参数通过命令行的方式输入然后直接登录服务器，比如我下面的用法:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">wssh dongwm@dongwm.com -p XXX -s 58404</span></pre></figure></notextile></div>
+
+<h4 id="section-3">我觉得有空可以基于这个做点好玩的东西</h4>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentooxia-de-lxche-docker/">Gentoo下的lxc和docker</a></h1>
     
     
@@ -1795,137 +1860,6 @@ password XXX</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/how-to-not-exit-interactive-mode-autoreload/">怎样不退出交互模式自动reload模块</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-24T11:54:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
-
-<p>我想做python开发的人尤其是django开发都会有一种经历:进入python交互模式(直接 执行python回车)或者进入django-shell调试某功能，然后修改源码，退出交互模式或者djangoshell，重新进入在吧那些模块一一import… 问题是什么呢？浪费时间，为啥不像web 框架那样修改源码自动reload？ </p>
-
-<p>本来我花了2个多礼拜一直在做这件事情，其实原理就是封装ipython到我的shell，然后在我的shell加这个autoreload功能，但是昨晚看ipython源码发现：ipython早已经实现了…</p>
-
-<p>我的系统的实现的源码文件是 /usr/lib64/python2.7/site-packages/IPython/Extensions/ipy_autoreload.py</p>
-
-<h4 id="ipython">在ipython交互模式实现</h4>
-
-<p>和ipython版本有关，大于0.11 这样加载</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">%load_ext autoreload
-</span><span class="line">%autoreload 2</span></pre></figure></notextile></div>
-<p>小于0.11的就要这样加载
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;pre class=&#8217;sh_&#8217;&gt;<span class="line">import ipy_autoreload
-</span><span class="line">%autoreload 2</span>&lt;/pre&gt;</figure></notextile>&lt;/div&gt;</p>
-
-<h4 id="ipython-1">ipython交互模式自动加载</h4>
-
-<p>你总不像每次进入ipython都执行这么2句吧, 那么可以加到ipython的自定义配置里面.因操作系统和ipython版本不同，ipython的用户自定义目录有所不同，增加的配置也 有所不同</p>
-
-<p>首先创建ipython个人配置 </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">ipython profile create</span></pre></figure></notextile></div>
-
-<p>gentoo ~/.ipython  ipython :0.10.2 </p>
-
-<p>配置文件是.ipython/ipy_user_conf.py 添加</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">import ipy_autoreload
-</span><span class="line">o.autoexec.append('%autoreload 2')
-</span></pre></figure></notextile></div>
-
-<p>opensuse ~/.config/ipython  :0.13</p>
-
-<p>配置文件是~/.config/ipython/profile_default/ipython_config.py</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')
-</span><span class="line">c.InteractiveShellApp.exec_lines.append('%autoreload 2')</span></pre></figure></notextile></div>
-
-<h4 id="django-shell">Django shell的实现</h4>
-
-<p>遗憾的是改django源码中的core/management/commands/shell.py,没有提供自动reload,但是当你修改了ipython配置 他也是会起作用(这个操作系统有关，下面我会说不起作用的geek方法)</p>
-
-<p>PS： 你还可以使用<a href="https://github.com/dongweiming/django-extensions">django-extensions</a>中的shell_plus.py</p>
-
-<h4 id="ipythonbpythonpythondjango-shell">当你系统有ipython,bpython和默认的python，django shell选择的顺序</h4>
-
-<ul>
-  <li>
-    <p>当你系统没有ipython和bpython，那么就会选择默认的python</p>
-  </li>
-  <li>
-    <p>上面说的shell_plus的遍历列表顺序是bpython-&gt;ipython  </p>
-  </li>
-  <li>
-    <p>django自带的shell的遍历顺序是ipython-&gt;bpython</p>
-  </li>
-</ul>
-
-<p>上面说djangoshell不起作用怎么办？首先看了django/ipython源码(0.13.2)，其实djangoshell甚至django-extensions里面的shell_plus都没有问题，关键是ipython的问题</p>
-
-<p>我只说在用户配置里面的外部模块为啥没有正确执行</p>
-
-<p>ipython进入交互模式的流程</p>
-
-<ol>
-  <li>当调用ipython，都是通过IPython.frontend.terminal.ipapp的launch_new_instance函数开始</li>
-  <li>通过IPython.core.shellapp的InteractiveShellApp类里面的init_code方法去初始化启动后的加载</li>
-  <li>在init_code方法会执行self._run_exec_lines(),这个就是上面的模块导入执行</li>
-</ol>
-
-<p>djangoshell进入交互模式的流程</p>
-
-<ol>
-  <li>通过IPython.frontend.terminal.embed的TerminalInteractiveShell类开始</li>
-  <li>在TerminalInteractiveShell初始化中,没有执行上面的第三条</li>
-</ol>
-
-<p>解决办法就是暴力修改IPython/frontend/terminal/interactiveshell.py源码 给他加上模块初始化的操作</p>
-
-<p>在326行开始的地方，这样添加一段(包含存在的代码帮你你理解在什么位置添加代码,也就是下面的3-8行)</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">self.init_usage(usage)                                                 
-</span><span class="line">self.init_banner(banner1, banner2, display_banner) 
-</span><span class="line">exex_lines = self.config['InteractiveShellApp']['exec_lines']          
-</span><span class="line">for line in exex_lines:                                                
-</span><span class="line">    try:                                                                        
-</span><span class="line">        self.run_cell(line, store_history=False)                       
-</span><span class="line">    except:                                                                     
-</span><span class="line">        pass
-</span><span class="line">#-------------------------------------------------------------------------          
-</span><span class="line"># Overrides of init stages                                                          
-</span><span class="line">#-------------------------------------------------------------------------</span></pre></figure></notextile></div>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/6/">&larr; Older</a></li>
@@ -1948,6 +1882,10 @@ password XXX</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
@@ -1983,10 +1921,6 @@ password XXX</p>
     
       <li class="post">
         <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ack/">grep, ack, ag的搜索效率对比</a>
       </li>
     
   </ul>

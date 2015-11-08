@@ -4,7 +4,7 @@
   <title><![CDATA[分类: python | 小明明s à domicile]]></title>
   <link href="http://dongweiming.github.com/blog/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://dongweiming.github.com/blog/"/>
-  <updated>2015-11-06T08:48:00+08:00</updated>
+  <updated>2015-11-08T20:04:51+08:00</updated>
   <id>http://dongweiming.github.com/blog/</id>
   <author>
     <name><![CDATA[Dongweiming]]></name>
@@ -12,6 +12,158 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[python进阶必读汇总]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong/"/>
+    <updated>2015-11-08T00:18:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p>昨天翻到了一本在github开源的书: <a href="http://book.pythontips.com/en/latest/index.html">Intermediate Python</a>. 就有了此文, 梳理了一下一些之前翻到的对python语言细节点的答案, 博文等.</p>
+
+<h3 id="section-1">英文的</h3>
+
+<h4 id="super">super</h4>
+
+<p><a href="https://rhettinger.wordpress.com/2011/05/26/super-considered-super/">Python’s super() considered super!</a></p>
+
+<p>rhettinger是python核心开发者. 这篇博文也是讲super最好最深入的博文了.</p>
+
+<h4 id="section-2">装饰器</h4>
+
+<p><a href="http://stackoverflow.com/questions/739654/how-can-i-make-a-chain-of-function-decorators-in-python/1594484#1594484">Understanding Python Decorators</a></p>
+
+<p>如果你还没有经常性的用装饰器, 你就要思考你的工作需求是不是的太简单了, 或者该考虑下这种AOP模式的开发的作用了</p>
+
+<h4 id="section-3">元类</h4>
+
+<p><a href="http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python/6581949#6581949">What is a metaclass in Python?</a>
+<a href="http://archive.is/8owmb">Metaclasses Demystified</a></p>
+
+<p>元类是python高阶语法. 合理的使用可以减少大量重复性的代码.</p>
+
+<h4 id="lbyleafp">防御性编程中的LBYL和EAFP</h4>
+
+<p><a href="http://stackoverflow.com/questions/5589532/try-catch-or-validation-for-speed/">Try/catch or validation for speed?</a></p>
+
+<p>这其实就是事先检查和异常处理2个方式的讨论</p>
+
+<h4 id="new--init">__new__ 和 __init__</h4>
+
+<p><a href="http://stackoverflow.com/questions/4859129/python-and-python-c-api-new-versus-init/">Python (and Python C API): <strong>new</strong> versus <strong>init</strong></a></p>
+
+<p>这也是一个常见的面试题.</p>
+
+<h4 id="self">self</h4>
+
+<p><a href="http://stackoverflow.com/questions/6019627/python-self-keyword">Python “self” keyword</a></p>
+
+<p>但是注意标题. 其实self不是一个关键词. 这里知识帮助你理解self的用意</p>
+
+<h4 id="section-4">协程和并发</h4>
+
+<p><a href="http://www.dabeaz.com/coroutines/">A Curious Course on Coroutines and Concurrency</a></p>
+
+<h4 id="section-5">生成器</h4>
+
+<p><a href="http://www.dabeaz.com/generators/">Generator Tricks for Systems Programmers</a></p>
+
+<h4 id="python">python开发必读</h4>
+
+<p><a href="http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html">Code Like a Pythonista: Idiomatic Python</a></p>
+
+<h4 id="unicode">unicode必读</h4>
+
+<p><a href="http://farmdev.com/talks/unicode/">Unicode In Python, Completely Demystified</a></p>
+
+<p>之前我曾经非常困惑于各种unicode报错</p>
+
+<h4 id="execeval">exec和eval</h4>
+
+<p><a href="http://lucumr.pocoo.org/2011/2/1/exec-in-python/">Be careful with exec and eval in Python</a></p>
+
+<p>我的观点是从来都不要用exec/eval</p>
+
+<h4 id="python-1">python性能贴士</h4>
+
+<p><a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">PerformanceTips</a>
+<a href="http://www.monitis.com/blog/2012/02/13/python-performance-tips-part-1/">Python Performance Tips, Part 1</a>
+<a href="http://www.monitis.com/blog/2012/03/21/python-performance-tips-part-2/">Python Performance Tips, Part 2</a></p>
+
+<h4 id="section-6">描述符</h4>
+
+<p><a href="http://users.rcn.com/python/download/Descriptor.htm">How-To Guide for Descriptors</a></p>
+
+<h4 id="python-2">python隐藏特性</h4>
+
+<p><a href="http://stackoverflow.com/questions/101268/hidden-features-of-python">Hidden features of Python</a></p>
+
+<h4 id="section-7">设计模式</h4>
+
+<p><a href="https://github.com/faif/python-patterns">python-patterns</a></p>
+
+<h3 id="section-8">中(译)文</h3>
+
+<h4 id="pythonyield">如何理解Python关键字yield</h4>
+
+<p><a href="http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained/231855#231855">What does the yield keyword do in Python</a>
+<a href="https://github.com/lzjun567/note/blob/master/note/python/what-does-the-yield-keyword-do-in-python.md">如何理解Python关键字yield</a></p>
+
+<p>yield 是python语言里面让初学者困惑的关键词之一. 可以参考这2个理解让你对yield入门. 并且之后在正确的场景下使用</p>
+
+<h4 id="iteratorgenerator">迭代器(Iterator)与生成器(Generator)的区别</h4>
+
+<p><a href="http://stackoverflow.com/questions/2776829/difference-between-pythons-generators-and-iterators">Difference between Python’s Generators and Iterators</a>
+<a href="https://github.com/lzjun567/note/blob/master/note/python/iterator_generator.md">迭代器(Iterator)与生成器(Generator)的区别</a></p>
+
+<p>这个是很常见的面试问题.</p>
+
+<h4 id="section-9">设计模式入门</h4>
+
+<p><a href="http://blog.jobbole.com/62023/">写给Python初学者的设计模式入门</a></p>
+
+<p>所谓设计模式其实就是<em>经过总结、优化的，对我们经常会碰到的一些编程问题的可重用解决方案</em>. 其实有时候会发现沃恩日常工作中的一些思考就是<code>设计模式</code></p>
+
+<h4 id="section-10">描述符</h4>
+
+<p><a href="https://docs.python.org/2/howto/descriptor.html">Descriptor HowTo Guide</a>
+<a href="http://pyzh.readthedocs.org/en/latest/Descriptor-HOW-TO-Guide.html">Python描述器引导(翻译)</a></p>
+
+<p>descriptor是python高阶的特性, 可以了解下python设计的优雅. PS: 里面也提到了类方法和静态方法的区别</p>
+
+<h4 id="assert">使用断言(assert)的正确场景</h4>
+
+<p><a href="http://www.oschina.net/translate/when-to-use-assert">Python 使用断言的最佳时机</a>
+<a href="http://stackoverflow.com/questions/944592/best-practice-for-python-assert">Best practice for Python Assert</a></p>
+
+<p><a href="http://courses.cms.caltech.edu/cs11/material/python/misc/python_idioms.html">Python track: python idioms</a>
+<a href="http://pyzh.readthedocs.org/en/latest/python-idioms.html">Python的惯例</a></p>
+
+<h4 id="section-11">提高编码效率</h4>
+
+<p><a href="http://ozkatz.github.io/improving-your-python-productivity.html">Improving Your Python Productivity</a>
+<a href="http://pyzh.readthedocs.org/en/latest/improving-your-python-productivity.html">提高你的Python编码效率</a></p>
+
+<h4 id="stackoverflowpython">Stackoverflow上的Python问题精选</h4>
+
+<p><a href="http://pyzh.readthedocs.org/en/latest/python-questions-on-stackoverflow.html">Stackoverflow上的Python问题精选</a></p>
+
+<h4 id="python-3">Python魔法方法指南</h4>
+
+<p><a href="http://pyzh.readthedocs.org/en/latest/python-magic-methods-guide.html">Python魔法方法指南</a></p>
+
+<h4 id="python---">Python高级编程 - 我写的</h4>
+
+<p><a href="http://dongweiming.github.io/Expert-Python/">Python高级编程</a></p>
+
+<h4 id="ppt">洪强宁的ppt.</h4>
+
+<p><a href="http://www.slideshare.net/hongqn/python-9915982">Python高级编程（二）</a></p>
+
+<p>PS: 这个 <code>二</code> 和上一个没有任何次序关系</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[聊聊python面试这件事儿]]></title>
@@ -739,253 +891,6 @@ def debug(self, line='', cell=None):
 </code></p>
 
 <p>还有个magic方法集: 用于并行计算的magics: <a href="https://github.com/ipython/ipython/blob/master/IPython/parallel/client/magics.py">IPython/parallel/client/magics.py</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ipython的一些高级用法(一)]]></title>
-    <link href="http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/"/>
-    <updated>2014-12-07T09:56:00+08:00</updated>
-    <id>http://dongweiming.github.com/blog/archives/ipythonde-[?]-xie-gao-ji-yong-fa</id>
-    <content type="html"><![CDATA[<h4 id="section">前言</h4>
-
-<p>以前在我的PPT<a href="http://dongweiming.github.io/Expert-Python/">python高级编程</a>也提到了一些关于ipython的用法. 今天继续由浅入深的看看ipython,
-本文作为读者的你已经知道ipython并且用了一段时间了.</p>
-
-<h5 id="run">%run</h5>
-
-<p>这是一个magic命令, 能把你的脚本里面的代码运行, 并且把对应的运行结果存入ipython的环境变量中:</p>
-
-<p>```
-$cat t.py
-# coding=utf-8
-l = range(5)</p>
-
-<p>$ipython
-In [1]: %run t.py # <code>%</code>可加可不加</p>
-
-<p>In [2]: l # 这个l本来是t.py里面的变量, 这里直接可以使用了
-Out[2]: [0, 1, 2, 3, 4]
-```</p>
-
-<h5 id="alias">alias</h5>
-
-<p><code>python
-In [3]: %alias largest ls -1sSh | grep %s
-In [4]: largest to
-total 42M
- 20K tokenize.py
- 16K tokenize.pyc
-8.0K story.html
-4.0K autopep8
-4.0K autopep8.bak
-4.0K story_layout.html
-</code></p>
-
-<p>PS 别名需要存储的, 否则重启ipython就不存在了:</p>
-
-<p><code>
-In [5]: %store largest
-Alias stored: largest (ls -1sSh | grep %s)
-</code></p>
-
-<p>下次进入的时候<code>%store -r</code></p>
-
-<h5 id="bookmark---">bookmark - 对目录做别名</h5>
-
-<p>```python
-In [2]: %pwd
-Out[2]: u’/home/vagrant’</p>
-
-<p>In [3]: %bookmark dongxi ~/shire/dongxi</p>
-
-<p>In [4]: %cd dongxi
-/home/vagrant/shire/dongxi_code</p>
-
-<p>In [5]: %pwd
-Out[5]: u’/home/vagrant/shire/dongxi_code’
-```</p>
-
-<h5 id="ipcluster---">ipcluster - 并行计算</h5>
-
-<p>其实ipython提供的方便的并行计算的功能. 先回答ipython做并行计算的特点:</p>
-
-<p>1.</p>
-
-<p><code>bash
-$wget http://www.gutenberg.org/files/27287/27287-0.txt
-</code></p>
-
-<p>第一个版本是直接的, 大家习惯的用法.</p>
-
-<p>```python
-In [1]: import re</p>
-
-<p>In [2]: import io</p>
-
-<p>In [3]: non_word = re.compile(r’[\W\d]+’, re.UNICODE)</p>
-
-<p>In [4]: common_words = {
-   …: ‘the’,’of’,’and’,’in’,’to’,’a’,’is’,’it’,’that’,’which’,’as’,’on’,’by’,
-   …: ‘be’,’this’,’with’,’are’,’from’,’will’,’at’,’you’,’not’,’for’,’no’,’have’,
-   …: ‘i’,’or’,’if’,’his’,’its’,’they’,’but’,’their’,’one’,’all’,’he’,’when’,
-   …: ‘than’,’so’,’these’,’them’,’may’,’see’,’other’,’was’,’has’,’an’,’there’,
-   …: ‘more’,’we’,’footnote’, ‘who’, ‘had’, ‘been’,  ‘she’, ‘do’, ‘what’,
-   …: ‘her’, ‘him’, ‘my’, ‘me’, ‘would’, ‘could’, ‘said’, ‘am’, ‘were’, ‘very’,
-   …: ‘your’, ‘did’, ‘not’,
-   …: }</p>
-
-<p>In [5]: def yield_words(filename):
-   …:     import io
-   …:     with io.open(filename, encoding=’latin-1’) as f:
-   …:         for line in f:
-   …:             for word in line.split():
-   …:                 word = non_word.sub(‘’, word.lower())
-   …:                 if word and word not in common_words:
-   …:                     yield word
-   …:</p>
-
-<p>In [6]: def word_count(filename):
-   …:     word_iterator = yield_words(filename)
-   …:     counts = {}
-   …:     counts = defaultdict(int)
-   …:     while True:
-   …:         try:
-   …:             word = next(word_iterator)
-   …:         except StopIteration:
-   …:             break
-   …:         else:
-   …:             counts[word] += 1
-   …:     return counts
-   …:</p>
-
-<p>In [6]: from collections import defaultdict # 脑残了 忘记放进去了..
-In [7]: %time counts = word_count(filename)
-CPU times: user 88.5 ms, sys: 2.48 ms, total: 91 ms
-Wall time: 89.3 ms
-```</p>
-
-<p>现在用ipython来跑一下:</p>
-
-<p><code>python
-ipcluster start -n 2 # 好吧, 我的Mac是双核的
-</code></p>
-
-<p>先讲下ipython 并行计算的用法:</p>
-
-<p>```python
-In [1]: from IPython.parallel import Client # import之后才能用%px*的magic</p>
-
-<p>In [2]: rc = Client()</p>
-
-<p>In [3]: rc.ids # 因为我启动了2个进程
-Out[3]: [0, 1]</p>
-
-<p>In [4]: %autopx # 如果不自动 每句都需要: <code>%px xxx</code>
-%autopx enabled</p>
-
-<p>In [5]: import os # 这里没autopx的话 需要: <code>%px import os</code></p>
-
-<p>In [6]: print os.getpid() # 2个进程的pid
-[stdout:0] 62638
-[stdout:1] 62636</p>
-
-<p>In [7]: %pxconfig –targets 1 # 在autopx下 这个magic不可用
-[stderr:0] ERROR: Line magic function <code>%pxconfig</code> not found.
-[stderr:1] ERROR: Line magic function <code>%pxconfig</code> not found.</p>
-
-<p>In [8]: %autopx # 再执行一次就会关闭autopx
-%autopx disabled</p>
-
-<p>In [10]: %pxconfig –targets 1 # 指定目标对象, 这样下面执行的代码就会只在第2个进程下运行</p>
-
-<p>In [11]: %%px –noblock # 其实就是执行一段非阻塞的代码
-   ….: import time
-   ….: time.sleep(1)
-   ….: os.getpid()
-   ….:
-Out[11]: <asyncresult: execute="" /></p>
-
-<p>In [12]: %pxresult # 看 只返回了第二个进程的pid
-Out[1:21]: 62636</p>
-
-<p>In [13]: v = rc[:] # 使用全部的进程, ipython可以细粒度的控制那个engine执行的内容</p>
-
-<p>In [14]: with v.sync_imports(): # 每个进程都导入time模块
-   ….:     import time
-   ….:
-importing time on engine(s)</p>
-
-<p>In [15]: def f(x):
-   ….:     time.sleep(1)
-   ….:     return x * x
-   ….:</p>
-
-<p>In [16]: v.map_sync(f, range(10)) # 同步的执行</p>
-
-<p>Out[16]: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</p>
-
-<p>In [17]: r = v.map(f, range(10)) # 异步的执行</p>
-
-<p>In [18]: r.ready(), r.elapsed # celery的用法
-Out[18]: (True, 5.87735)</p>
-
-<p>In [19]: r.get() # 获得执行的结果
-Out[19]: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
-```</p>
-
-<p>入正题:</p>
-
-<p>```python
-In [20]: def split_text(filename):
-….:    text = open(filename).read()
-….:    lines = text.splitlines()
-….:    nlines = len(lines)
-….:    n = 10
-….:    block = nlines//n
-….:    for i in range(n):
-….:        chunk = lines[i<em>block:(i+1)</em>(block)]
-….:        with open(‘count_file%i.txt’ % i, ‘w’) as f:
-….:            f.write(‘\n’.join(chunk))
-….:    cwd = os.path.abspath(os.getcwd())
-….:    fnames = [ os.path.join(cwd, ‘count_file%i.txt’ % i) for i in range(n)] # 不用glob是为了精准
-….:    return fnames</p>
-
-<p>In [21]: from IPython import parallel</p>
-
-<p>In [22]: rc = parallel.Client()</p>
-
-<p>In [23]: view = rc.load_balanced_view()</p>
-
-<p>In [24]: v = rc[:]</p>
-
-<p>In [25]: v.push(dict(
-   ….:     non_word=non_word,
-   ….:     yield_words=yield_words,
-   ….:     common_words=common_words
-   ….: ))
-Out[25]: <asyncresult: _push="" /></p>
-
-<p>In [26]: fnames = split_text(filename)</p>
-
-<p>In [27]: def count_parallel():
-   …..:     pcounts = view.map(word_count, fnames)
-   …..:     counts = defaultdict(int)
-   …..:     for pcount in pcounts.get():
-   …..:         for k, v in pcount.iteritems():
-   …..:             counts[k] += v
-   …..:     return counts, pcounts
-   …..:</p>
-
-<p>In [28]: %time counts, pcounts = count_parallel() # 这个时间包含了我再聚合的时间
-CPU times: user 47.6 ms, sys: 6.67 ms, total: 54.3 ms # 是不是比直接运行少了很多时间?
-Wall time: 106 ms # 这个时间是</p>
-
-<p>In [29]: pcounts.elapsed, pcounts.serial_time, pcounts.wall_time
-Out[29]: (0.104384, 0.13980499999999998, 0.104384)
-```</p>
-
-<p>更多地关于并行计算请看这里: <a href="http://nbviewer.ipython.org/url/www.astro.washington.edu/users/vanderplas/Astr599/notebooks/21_IPythonParallel.ipynb">Parallel Computing with IPython</a></p>
 ]]></content>
   </entry>
   

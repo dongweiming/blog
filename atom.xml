@@ -4,7 +4,7 @@
   <title><![CDATA[小明明s à domicile]]></title>
   <link href="http://dongweiming.github.com/blog/atom.xml" rel="self"/>
   <link href="http://dongweiming.github.com/blog/"/>
-  <updated>2015-11-06T08:48:00+08:00</updated>
+  <updated>2015-11-08T20:04:51+08:00</updated>
   <id>http://dongweiming.github.com/blog/</id>
   <author>
     <name><![CDATA[Dongweiming]]></name>
@@ -12,6 +12,158 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[python进阶必读汇总]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong/"/>
+    <updated>2015-11-08T00:18:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/pythonjin-jie-bi-du-hui-zong</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p>昨天翻到了一本在github开源的书: <a href="http://book.pythontips.com/en/latest/index.html">Intermediate Python</a>. 就有了此文, 梳理了一下一些之前翻到的对python语言细节点的答案, 博文等.</p>
+
+<h3 id="section-1">英文的</h3>
+
+<h4 id="super">super</h4>
+
+<p><a href="https://rhettinger.wordpress.com/2011/05/26/super-considered-super/">Python’s super() considered super!</a></p>
+
+<p>rhettinger是python核心开发者. 这篇博文也是讲super最好最深入的博文了.</p>
+
+<h4 id="section-2">装饰器</h4>
+
+<p><a href="http://stackoverflow.com/questions/739654/how-can-i-make-a-chain-of-function-decorators-in-python/1594484#1594484">Understanding Python Decorators</a></p>
+
+<p>如果你还没有经常性的用装饰器, 你就要思考你的工作需求是不是的太简单了, 或者该考虑下这种AOP模式的开发的作用了</p>
+
+<h4 id="section-3">元类</h4>
+
+<p><a href="http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python/6581949#6581949">What is a metaclass in Python?</a>
+<a href="http://archive.is/8owmb">Metaclasses Demystified</a></p>
+
+<p>元类是python高阶语法. 合理的使用可以减少大量重复性的代码.</p>
+
+<h4 id="lbyleafp">防御性编程中的LBYL和EAFP</h4>
+
+<p><a href="http://stackoverflow.com/questions/5589532/try-catch-or-validation-for-speed/">Try/catch or validation for speed?</a></p>
+
+<p>这其实就是事先检查和异常处理2个方式的讨论</p>
+
+<h4 id="new--init">__new__ 和 __init__</h4>
+
+<p><a href="http://stackoverflow.com/questions/4859129/python-and-python-c-api-new-versus-init/">Python (and Python C API): <strong>new</strong> versus <strong>init</strong></a></p>
+
+<p>这也是一个常见的面试题.</p>
+
+<h4 id="self">self</h4>
+
+<p><a href="http://stackoverflow.com/questions/6019627/python-self-keyword">Python “self” keyword</a></p>
+
+<p>但是注意标题. 其实self不是一个关键词. 这里知识帮助你理解self的用意</p>
+
+<h4 id="section-4">协程和并发</h4>
+
+<p><a href="http://www.dabeaz.com/coroutines/">A Curious Course on Coroutines and Concurrency</a></p>
+
+<h4 id="section-5">生成器</h4>
+
+<p><a href="http://www.dabeaz.com/generators/">Generator Tricks for Systems Programmers</a></p>
+
+<h4 id="python">python开发必读</h4>
+
+<p><a href="http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html">Code Like a Pythonista: Idiomatic Python</a></p>
+
+<h4 id="unicode">unicode必读</h4>
+
+<p><a href="http://farmdev.com/talks/unicode/">Unicode In Python, Completely Demystified</a></p>
+
+<p>之前我曾经非常困惑于各种unicode报错</p>
+
+<h4 id="execeval">exec和eval</h4>
+
+<p><a href="http://lucumr.pocoo.org/2011/2/1/exec-in-python/">Be careful with exec and eval in Python</a></p>
+
+<p>我的观点是从来都不要用exec/eval</p>
+
+<h4 id="python-1">python性能贴士</h4>
+
+<p><a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">PerformanceTips</a>
+<a href="http://www.monitis.com/blog/2012/02/13/python-performance-tips-part-1/">Python Performance Tips, Part 1</a>
+<a href="http://www.monitis.com/blog/2012/03/21/python-performance-tips-part-2/">Python Performance Tips, Part 2</a></p>
+
+<h4 id="section-6">描述符</h4>
+
+<p><a href="http://users.rcn.com/python/download/Descriptor.htm">How-To Guide for Descriptors</a></p>
+
+<h4 id="python-2">python隐藏特性</h4>
+
+<p><a href="http://stackoverflow.com/questions/101268/hidden-features-of-python">Hidden features of Python</a></p>
+
+<h4 id="section-7">设计模式</h4>
+
+<p><a href="https://github.com/faif/python-patterns">python-patterns</a></p>
+
+<h3 id="section-8">中(译)文</h3>
+
+<h4 id="pythonyield">如何理解Python关键字yield</h4>
+
+<p><a href="http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained/231855#231855">What does the yield keyword do in Python</a>
+<a href="https://github.com/lzjun567/note/blob/master/note/python/what-does-the-yield-keyword-do-in-python.md">如何理解Python关键字yield</a></p>
+
+<p>yield 是python语言里面让初学者困惑的关键词之一. 可以参考这2个理解让你对yield入门. 并且之后在正确的场景下使用</p>
+
+<h4 id="iteratorgenerator">迭代器(Iterator)与生成器(Generator)的区别</h4>
+
+<p><a href="http://stackoverflow.com/questions/2776829/difference-between-pythons-generators-and-iterators">Difference between Python’s Generators and Iterators</a>
+<a href="https://github.com/lzjun567/note/blob/master/note/python/iterator_generator.md">迭代器(Iterator)与生成器(Generator)的区别</a></p>
+
+<p>这个是很常见的面试问题.</p>
+
+<h4 id="section-9">设计模式入门</h4>
+
+<p><a href="http://blog.jobbole.com/62023/">写给Python初学者的设计模式入门</a></p>
+
+<p>所谓设计模式其实就是<em>经过总结、优化的，对我们经常会碰到的一些编程问题的可重用解决方案</em>. 其实有时候会发现沃恩日常工作中的一些思考就是<code>设计模式</code></p>
+
+<h4 id="section-10">描述符</h4>
+
+<p><a href="https://docs.python.org/2/howto/descriptor.html">Descriptor HowTo Guide</a>
+<a href="http://pyzh.readthedocs.org/en/latest/Descriptor-HOW-TO-Guide.html">Python描述器引导(翻译)</a></p>
+
+<p>descriptor是python高阶的特性, 可以了解下python设计的优雅. PS: 里面也提到了类方法和静态方法的区别</p>
+
+<h4 id="assert">使用断言(assert)的正确场景</h4>
+
+<p><a href="http://www.oschina.net/translate/when-to-use-assert">Python 使用断言的最佳时机</a>
+<a href="http://stackoverflow.com/questions/944592/best-practice-for-python-assert">Best practice for Python Assert</a></p>
+
+<p><a href="http://courses.cms.caltech.edu/cs11/material/python/misc/python_idioms.html">Python track: python idioms</a>
+<a href="http://pyzh.readthedocs.org/en/latest/python-idioms.html">Python的惯例</a></p>
+
+<h4 id="section-11">提高编码效率</h4>
+
+<p><a href="http://ozkatz.github.io/improving-your-python-productivity.html">Improving Your Python Productivity</a>
+<a href="http://pyzh.readthedocs.org/en/latest/improving-your-python-productivity.html">提高你的Python编码效率</a></p>
+
+<h4 id="stackoverflowpython">Stackoverflow上的Python问题精选</h4>
+
+<p><a href="http://pyzh.readthedocs.org/en/latest/python-questions-on-stackoverflow.html">Stackoverflow上的Python问题精选</a></p>
+
+<h4 id="python-3">Python魔法方法指南</h4>
+
+<p><a href="http://pyzh.readthedocs.org/en/latest/python-magic-methods-guide.html">Python魔法方法指南</a></p>
+
+<h4 id="python---">Python高级编程 - 我写的</h4>
+
+<p><a href="http://dongweiming.github.io/Expert-Python/">Python高级编程</a></p>
+
+<h4 id="ppt">洪强宁的ppt.</h4>
+
+<p><a href="http://www.slideshare.net/hongqn/python-9915982">Python高级编程（二）</a></p>
+
+<p>PS: 这个 <code>二</code> 和上一个没有任何次序关系</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[聊聊python面试这件事儿]]></title>
@@ -2662,356 +2814,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 </span><span class="line">
 </span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="n">my_list2</span>
 </span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
-</span></pre></figure></notextile></div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[python的魔法(一): 基本知识]]></title>
-    <link href="http://dongweiming.github.com/blog/archives/pythonde-mo-fa/"/>
-    <updated>2014-05-08T00:40:00+08:00</updated>
-    <id>http://dongweiming.github.com/blog/archives/pythonde-mo-fa</id>
-    <content type="html"><![CDATA[<h4 id="section">前言</h4>
-
-<p>最近读了一篇<a href="http://nbviewer.ipython.org/github/rasbt/python_reference/blob/master/not_so_obvious_python_stuff.ipynb">A collection of not-so-obvious Python stuff you should know!</a>,感觉受益颇多. 翻译过来(非直接翻译),再加上一些我的理解和注释. 让大家注意python鲜为人知的”魔法”. 我会分2篇</p>
-
-<h5 id="pythonc3">python多继承(C3)</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="k">print</span><span class="p">(</span><span class="s">&quot;class A&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="k">print</span><span class="p">(</span><span class="s">&quot;class B&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">pass</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">C</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
-</span><span class="line"><span class="k">class</span> <span class="nc">A</span> <span class="c"># 例子很好懂, C继承了A和B，从左到右,发现A有foo方法,返回了</span>
-</span></pre></figure></notextile></div>
-
-<p>看起来都是很简单, 有次序的从底向上,从前向后找,找到就返回. 再看例子:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>               <span class="k">print</span><span class="p">(</span><span class="s">&quot;class A&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">pass</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>               <span class="k">print</span><span class="p">(</span><span class="s">&quot;class C&quot;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>        <span class="k">pass</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">D</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
-</span><span class="line"><span class="k">class</span> <span class="nc">C</span> <span class="c"># ? 按道理, 顺序是 D-&gt;B-&gt;A,为什么找到了C哪去了</span>
-</span></pre></figure></notextile></div>
-
-<p>这也就涉及了MRO(<a href="http://python-history.blogspot.ru/2010/06/method-resolution-order.html">Method Resolution Order</a>):</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">D</span><span class="o">.</span><span class="n">__mro__</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="p">(</span><span class="n">__main__</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="n">__main__</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">__main__</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">__main__</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<p>简单的理解其实就是新式类是广度优先了， D-&gt;B, 但是发现C也是继承A，就先找C，最后再去找A</p>
-
-<h4 id="appendextend">列表的+和+=, append和extend</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;ID:&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;ID:&#39;</span><span class="p">,</span> <span class="mi">4481323592</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="n">a_list</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;ID (+=):&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;ID (+=):&#39;</span><span class="p">,</span> <span class="mi">4481323592</span><span class="p">)</span> <span class="c"># 使用+= 还是在原来的列表上操作</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="n">a_list</span> <span class="o">=</span> <span class="n">a_list</span> <span class="o">+</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;ID (list = list + ...):&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;ID (list = list + ...):&#39;</span><span class="p">,</span> <span class="mi">4481293056</span><span class="p">)</span> <span class="c"># 简单的+其实已经改变了原有列表</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]:</span> <span class="n">a_list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="mi">4481326976</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]:</span> <span class="n">a_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="mi">4481326976</span> <span class="c"># append 是在原有列表添加</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]:</span> <span class="n">a_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">2</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">a_list</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="mi">4481326976</span> <span class="c"># extend 也是在原有列表上添加</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="datetime">datetime也有布尔值</h4>
-
-<p>这是一个<a href="http://lwn.net/SubscriberLink/590299/bf73fe823974acea/">坑</a></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">datetime</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">35</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;&quot;datetime.time(0,0,0)&quot; (Midnight) -&gt;&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;&quot;datetime.time(0,0,0)&quot; (Midnight) -&gt;&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">36</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;&quot;datetime.time(1,0,0)&quot; (1 am) -&gt;&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;&quot;datetime.time(1,0,0)&quot; (1 am) -&gt;&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="is-">’==’ 和 is 的区别</h4>
-<p>我的理解是”is”是判断2个对象的身份, ==是判断2个对象的值</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">37</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a is b&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">a</span> <span class="ow">is</span> <span class="n">b</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a is b&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">999</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]:</span> <span class="n">d</span> <span class="o">=</span> <span class="mi">999</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">42</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;c is d&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">c</span> <span class="ow">is</span> <span class="n">d</span><span class="p">))</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;c is d&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c"># 原因是python的内存管理,缓存了-5 - 256的对象</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">43</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;256 is 257-1&#39;</span><span class="p">,</span> <span class="mi">256</span> <span class="ow">is</span> <span class="mi">257</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;256 is 257-1&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">44</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;257 is 258-1&#39;</span><span class="p">,</span> <span class="mi">257</span> <span class="ow">is</span> <span class="mi">258</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;257 is 258-1&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">45</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;-5 is -6+1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span> <span class="ow">is</span> <span class="o">-</span><span class="mi">6</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;-5 is -6+1&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">46</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;-7 is -6-1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span> <span class="ow">is</span> <span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;-7 is -6-1&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">47</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#39;hello world!&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">48</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="s">&#39;hello world!&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">49</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a is b,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">b</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a is b,&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c"># 很明显 他们没有被缓存,这是2个字段串的对象</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">50</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a == b,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a == b,&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="c"># 但他们的值相同</span>
-</span><span class="line"><span class="c"># But, 有个特例</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">51</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;nan&#39;</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">52</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a is a,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">a</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a is a,&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">53</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;a == a,&#39;</span><span class="p">,</span> <span class="n">a</span> <span class="o">==</span> <span class="n">a</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;a == a,&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c"># 亮瞎我眼睛了~</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-1">浅拷贝和深拷贝</h4>
-
-<p>我们在实际开发中都可以向对某列表的对象做修改,但是可能不希望改动原来的列表. <strong>浅拷贝只拷贝父对象，深拷贝还会拷贝对象的内部的子对象</strong></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">65</span><span class="p">]:</span> <span class="n">list1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">66</span><span class="p">]:</span> <span class="n">list2</span> <span class="o">=</span> <span class="n">list1</span> <span class="c"># 就是个引用, 你操作list2,其实list1的结果也会变</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">67</span><span class="p">]:</span> <span class="n">list3</span> <span class="o">=</span> <span class="n">list1</span><span class="p">[:]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">69</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">copy</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">70</span><span class="p">]:</span> <span class="n">list4</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">list1</span><span class="p">)</span> <span class="c"># 他和list3一样 都是浅拷贝</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">71</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">list1</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list2</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list3</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list4</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">71</span><span class="p">]:</span> <span class="p">(</span><span class="mi">4480620232</span><span class="p">,</span> <span class="mi">4480620232</span><span class="p">,</span> <span class="mi">4479667880</span><span class="p">,</span> <span class="mi">4494894720</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">72</span><span class="p">]:</span> <span class="n">list2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">73</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">74</span><span class="p">]:</span> <span class="n">list3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">75</span><span class="p">]:</span> <span class="n">list4</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">76</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="c"># 对list3和list4操作都没有对list1有影响</span>
-</span><span class="line">
-</span><span class="line"><span class="c"># 再看看深拷贝和浅拷贝的区别</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">88</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">89</span><span class="p">]:</span> <span class="n">list1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">90</span><span class="p">]:</span> <span class="n">list2</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">list1</span><span class="p">)</span> <span class="c"># 还是浅拷贝</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">91</span><span class="p">]:</span> <span class="n">list3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">list1</span><span class="p">)</span> <span class="c"># 深拷贝</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="nb">id</span><span class="p">(</span><span class="n">list1</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list2</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">list3</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="p">(</span><span class="mi">4494896592</span><span class="p">,</span> <span class="mi">4495349160</span><span class="p">,</span> <span class="mi">4494896088</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">93</span><span class="p">]:</span> <span class="n">list2</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">94</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[[</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]])</span> <span class="c"># 看到了吧 假如你操作其子对象 还是和引用一样 影响了源</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">95</span><span class="p">]:</span> <span class="n">list3</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">96</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="n">list1</span><span class="p">)</span>
-</span><span class="line"><span class="p">(</span><span class="s">&#39;list1:&#39;</span><span class="p">,</span> <span class="p">[[</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]])</span> <span class="c"># 深拷贝就不会影响</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="boolint">bool其实是int的子类</h4>
-
-<p>这篇<a href="http://www.peterbe.com/plog/bool-is-int">bool-is-int</a>很有趣:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">97</span><span class="p">]:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">97</span><span class="p">]:</span> <span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">98</span><span class="p">]:</span> <span class="bp">True</span> <span class="o">+</span> <span class="bp">True</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">98</span><span class="p">]:</span> <span class="mi">2</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">99</span><span class="p">]:</span> <span class="mi">3</span> <span class="o">*</span> <span class="bp">True</span> <span class="o">+</span> <span class="bp">True</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">99</span><span class="p">]:</span> <span class="mi">4</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">100</span><span class="p">]:</span> <span class="mi">3</span> <span class="o">*</span> <span class="bp">True</span> <span class="o">-</span> <span class="bp">False</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">100</span><span class="p">]:</span> <span class="mi">3</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">104</span><span class="p">]:</span> <span class="bp">True</span> <span class="o">&lt;&lt;</span> <span class="mi">10</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">104</span><span class="p">]:</span> <span class="mi">1024</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-2">元组是不是真的不可变?</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">111</span><span class="p">]:</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">([],)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">112</span><span class="p">]:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line"><span class="o">---------------------------------------------------------------------------</span>
-</span><span class="line"><span class="ne">TypeError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
-</span><span class="line"><span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">112</span><span class="o">-</span><span class="n">d4f292cf35de</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
-</span><span class="line"><span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="s">&#39;tuple&#39;</span> <span class="nb">object</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">item</span> <span class="n">assignment</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">113</span><span class="p">]:</span> <span class="n">tup</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">113</span><span class="p">]:</span> <span class="p">([</span><span class="mi">1</span><span class="p">],)</span> <span class="c"># 我靠 又是亮瞎我眼睛,明明抛了异常 还能修改?</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">114</span><span class="p">]:</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">([],)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">115</span><span class="p">]:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">116</span><span class="p">]:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">116</span><span class="p">]:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c"># 好吧,我有点看明白了, 虽然我不能直接操作元组，但是不能阻止我操作元组中可变的子对象(list)</span>
-</span></pre></figure></notextile></div>
-
-<p>这里有个不错的解释<a href="http://emptysqua.re/blog/python-increment-is-weird-part-ii/">Python’s += Is Weird, Part II </a>:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">117</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">118</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">119</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="n">my_tup</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">120</span><span class="p">]:</span> <span class="n">my_tup</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">120</span><span class="p">]:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="c"># ? 嗯 不是不能操作元组嘛?</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">121</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">122</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">my_tup</span><span class="p">))</span>
-</span><span class="line"><span class="mi">4481317904</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">123</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">124</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">my_tup</span><span class="p">))</span>
-</span><span class="line"><span class="mi">4480606864</span> <span class="c"># 操作的不是原来的元组 所以可以</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">125</span><span class="p">]:</span> <span class="n">my_tup</span> <span class="o">=</span> <span class="n">my_tup</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">126</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">my_tup</span><span class="p">))</span>
-</span><span class="line"><span class="mi">4474234912</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="python-">python没有私有方法/变量? 但是可以有”伪”的</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">127</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">my_class</span><span class="p">(</span><span class="nb">object</span><span class="o">^</span><span class="n">E</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">public_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello public world!&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">__private_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c"># 私有以双下划线开头</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello private world!&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">call_private_method_in_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">__private_method</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">132</span><span class="p">]:</span> <span class="n">my_instance</span> <span class="o">=</span> <span class="n">my_class</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">133</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">public_method</span><span class="p">()</span>
-</span><span class="line"><span class="n">Hello</span> <span class="n">public</span> <span class="n">world</span><span class="err">!</span> <span class="c"># 普通方法</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">134</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">_my_class__private_method</span><span class="p">()</span>
-</span><span class="line"><span class="n">Hello</span> <span class="n">private</span> <span class="n">world</span><span class="err">!</span> <span class="c"># 私有的可以加&quot;_ + 类名字 + 私有方法名字”</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">135</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">call_private_method_in_class</span><span class="p">()</span>
-</span><span class="line"><span class="n">Hello</span> <span class="n">private</span> <span class="n">world</span><span class="err">!</span> <span class="c"># 还可以通过类提供的公有接口内部访问</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">136</span><span class="p">]:</span> <span class="n">my_instance</span><span class="o">.</span><span class="n">_my_class__private_variable</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">136</span><span class="p">]:</span> <span class="mi">1</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="else">异常处理加else</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">150</span><span class="p">]:</span> <span class="k">try</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;third element:&#39;</span><span class="p">,</span> <span class="n">a_list</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;raised IndexError&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;no error in try-block&#39;</span><span class="p">)</span> <span class="c"># 只有在try里面没有异常的时候才会执行else里面的表达式</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="n">raised</span> <span class="ne">IndexError</span> <span class="c"># 抛异常了 没完全完成</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">153</span><span class="p">]:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">154</span><span class="p">]:</span> <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="s">&#39;in else&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span>
-</span><span class="line"><span class="mi">1</span>
-</span><span class="line"><span class="ow">in</span> <span class="k">else</span> <span class="c"># while也支持哦~</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">155</span><span class="p">]:</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">156</span><span class="p">]:</span> <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">break</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;completed while-loop&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span> <span class="c"># 被break了 没有完全执行完 就不执行else里面的了</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">158</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;completed for-loop&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span>
-</span><span class="line"><span class="mi">1</span>
-</span><span class="line"><span class="n">completed</span> <span class="k">for</span><span class="o">-</span><span class="n">loop</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">159</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">break</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span> <span class="k">else</span><span class="p">:</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="s">&#39;completed for-loop&#39;</span><span class="p">)</span>
-</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span> <span class="c"># 也是因为break了</span>
 </span></pre></figure></notextile></div>
 ]]></content>
   </entry>
