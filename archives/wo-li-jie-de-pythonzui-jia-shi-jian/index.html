@@ -370,24 +370,24 @@
 </span><span class="line">                <span class="n">alonglonglonglonglonglong</span><span class="p">)</span>
 </span><span class="line"><span class="kn">from</span> <span class="nn">aa</span> <span class="kn">import</span> <span class="p">(</span><span class="n">alonglonglonglonglong</span><span class="p">,</span> <span class="n">alonglonglonglonglonglonglonglonglong</span><span class="p">,</span>
 </span><span class="line">    <span class="n">alonglonglonglonglonglong</span><span class="p">,</span> <span class="n">alonglonglonglonglonglonglong</span><span class="p">,</span>
-</span><span class="line">    <span class="n">alonglonglonglonglonglong2</span><span class="p">)</span>  <span class="c"># Good。 当引入的函数/类/变量很多时， 也可以选择空 4 个空格的方式， 而不需要和首行的左括号后对齐```</span>
-</span><span class="line">
-</span><span class="line"><span class="c">#### 相对引用(relative import) 和 绝对引用(absolute import)</span>
+</span><span class="line">    <span class="n">alonglonglonglonglonglong2</span><span class="p">)</span>  <span class="c"># Good。 当引入的函数/类/变量很多时， 也可以选择空 4 个空格的方式， 而不需要和首行的左括号后对齐</span>
 </span></pre></figure></notextile></div>
-<p>python
-$cat xx/models/user/consts.py  # 如果想引用这个变量
-TMP = 1</p>
 
-<p>$cat xx/views/user.py
-from xx.models.user.consts import TMP  # recommended。</p>
+<h4 id="relative-import--absolute-import">相对引用(relative import) 和 绝对引用(absolute import)</h4>
 
-<h1 id="xxmodelsuserconstspy--3---">假如模块层级&gt;=3。 比如 xx/models/user/consts.py 就在根目录下的第 3 级。 如果其他当前目录下源文件需要调用它的内容。 也可以选择相对引用</h1>
-<p>$cat xx/models/user/main.py  # 需要和 consts.py 在一个目录下才可以
-from consts import TMP  # Bad
-from .consts import TMP  # Good</p>
-
-<h1 id="section-7">而且只能在包内相对引用。 包外都需要绝对引用</h1>
-<p>&#8220;`</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">cat</span> <span class="n">xx</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">py</span>  <span class="c"># 如果想引用这个变量</span>
+</span><span class="line"><span class="n">TMP</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class="line">
+</span><span class="line"><span class="err">$</span><span class="n">cat</span> <span class="n">xx</span><span class="o">/</span><span class="n">views</span><span class="o">/</span><span class="n">user</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">xx.models.user.consts</span> <span class="kn">import</span> <span class="n">TMP</span>  <span class="c"># recommended。</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 假如模块层级&gt;=3。 比如 xx/models/user/consts.py 就在根目录下的第 3 级。 如果其他当前目录下源文件需要调用它的内容。 也可以选择相对引用</span>
+</span><span class="line"><span class="err">$</span><span class="n">cat</span> <span class="n">xx</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span>  <span class="c"># 需要和 consts.py 在一个目录下才可以</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">consts</span> <span class="kn">import</span> <span class="n">TMP</span>  <span class="c"># Bad</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">.consts</span> <span class="kn">import</span> <span class="n">TMP</span>  <span class="c"># Good</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 而且只能在包内相对引用。 包外都需要绝对引用</span>
+</span></pre></figure></notextile></div>
 </div>
 
 
