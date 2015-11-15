@@ -4,7 +4,7 @@
   <title><![CDATA[分类: python | 小明明s à domicile]]></title>
   <link href="http://dongweiming.github.com/blog/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://dongweiming.github.com/blog/"/>
-  <updated>2015-11-09T00:07:53+08:00</updated>
+  <updated>2015-11-15T18:43:48+08:00</updated>
   <id>http://dongweiming.github.com/blog/</id>
   <author>
     <name><![CDATA[Dongweiming]]></name>
@@ -12,6 +12,247 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[我理解的python最佳实践]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/wo-li-jie-de-pythonzui-jia-shi-jian/"/>
+    <updated>2015-11-15T17:00:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/wo-li-jie-de-pythonzui-jia-shi-jian</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p>对我来说, 以前每次面试是我审视自己, 检验自己的一种方式. 每次准备面试, 以及被面试官问住的时候才会发现,
+其实我python我学的还不够好; 工作中也是, 可以从其他的同事那里获得成长. 但是我今天说的是, 我也在自己总结和思考<code>最佳实践</code>这件事.</p>
+
+<p>我想很多人都会有意识的去读一些PEP(Python Enhancement Proposals). 了解语言设计者当时的考虑, 这些文案也是经过很长时间的讨论最后才实施的.
+既然想用好这门语言, 必然需要理解设计之美. 比如我听说gvanrossum使用emacs作为编辑器, 我也使用emacs, 就是希望我可以更贴近一些python</p>
+
+<p>本文根据 <a href="https://gist.github.com/sloria/7001839">The Best of the Best Practices (BOBP) Guide for Python</a> 和 <a href="https://github.com/Khan/style-guides/blob/master/style/python.md">Khan’s style-guides</a>中对于开发中一些事物的理解和看法, 有出至PEP, 也有一些python界知名开发者, 我加入了一些我自己的理解和看法.</p>
+
+<h3 id="section-1">价值观</h3>
+
+<h4 id="build-tools-for-others-that-you-want-to-be-built-for-you---kenneth-reitz-requests">“Build tools for others that you want to be built for you.” - Kenneth Reitz (requests等知名库作者)</h4>
+
+<p>你自己都不想用的东西做出来有什么意义呢?</p>
+
+<h4 id="simplicity-is-alway-better-than-functionality---pieter-hintjens-zeromq">“Simplicity is alway better than functionality.” - Pieter Hintjens (ZeroMQ)</h4>
+
+<p>我对函数式编程的看法一直是<code>看场景</code>, 甚至于我经常会对比性能, 义无反顾的使用性能最好的, 但是代码又不难懂和繁琐的</p>
+
+<h4 id="fit-the-90-use-case-ignore-the-nay-sayers---kenneth-reitz">“Fit the 90% use-case. Ignore the nay sayers.” - Kenneth Reitz</h4>
+
+<p>程序员都有完美主义情怀, 但是其实往往我们是在偏激的看事情 - 用户其实不case</p>
+
+<h4 id="beautiful-is-better-than-ugly---pep-20httpwwwpythonorgdevpepspep-0020">“Beautiful is better than ugly.” - <a href="http://www.python.org/dev/peps/pep-0020/">PEP 20</a></h4>
+
+<h3 id="section-2">开发参考</h3>
+
+<h4 id="explicit-is-better-than-implicit---pep-20explicit-is-better-than-implicit---pep-20">“Explicit is better than implicit” - <a href="&quot;Explicit is better than implicit&quot; - PEP 20">PEP 20</a></h4>
+
+<p>不要留坑, 我经常看到一些复杂的代码, 这些代码的作者写的时候明显知道自己在做什么, 但是别人很难维护和看懂.
+所以我对自己的职业的基本要求就是: 那天我离职了, 后来接手的人不会经常骂我</p>
+
+<h4 id="readability-counts---pep-20httpwwwpythonorgdevpepspep-0020">“Readability counts.” - <a href="http://www.python.org/dev/peps/pep-0020">PEP 20</a></h4>
+
+<h4 id="anybody-can-fix-anything---khans-style-guideshttpsgithubcomkhanstyle-guidesblobmasterstylepythonmd">“Anybody can fix anything.” - <a href="https://github.com/Khan/style-guides/blob/master/style/python.md">Khan’s style-guides</a></h4>
+
+<p>我现在更多不是代码炫技, 我经常思考的怎么让最少的代码, 最简单的设计结构满足当前需求, 也能给未来一段时间里也有扩展性</p>
+
+<h4 id="fix-each-broken-window-bad-design-wrong-decision-or-poor-code-as-soon-as-it-is-discovered">Fix each broken window (bad design, wrong decision, or poor code) as soon as it is discovered.</h4>
+
+<p>我们改bug有个原则 - 测试要覆盖到出bug的地方. 每个人内心都有很高的代码质量的要求</p>
+
+<h4 id="now-is-better-than-never---pep-20httpwwwpythonorgdevpepspep-0020">“Now is better than never.” - <a href="http://www.python.org/dev/peps/pep-0020/">PEP 20</a></h4>
+
+<p>明日复明日, 明日何其多. 我们在代码review的时候, 问题需要在提出的时候就去改, 永远不会说下一次再说, 因为下一次大多时候是没有下一次了</p>
+
+<h4 id="test-ruthlessly-write-docs-for-new-features">Test ruthlessly. Write docs for new features.</h4>
+
+<h4 id="even-more-important-that-test-driven-development--human-driven-development">Even more important that Test-Driven Development–Human-Driven Development</h4>
+
+<h3 id="section-3">一些细节</h3>
+
+<h4 id="pep8">PEP8</h4>
+
+<p>很多人是排斥的, 假如你想让未来部门有自己的风格, 习惯. 让新人马上上手接受, PEP8是一个非常明智的选择</p>
+
+<h4 id="section-4">文件开头</h4>
+
+<p>新的文件的开头需要加一些docstring. 描述文件的作用, 编辑者, 修改原因和日期等帮助阅读者的描述.</p>
+
+<p>不要添加<code>#!/usr/bin/python</code>(除非这个文件未来是一个可执行的文件), copyright, __author__或者其他内容.</p>
+
+<p>第一行建议添加<code># coding-utf-8</code></p>
+
+<h4 id="section-5">命名</h4>
+
+<ol>
+  <li>
+    <p>Variables, functions, methods, packages, modules</p>
+
+    <p>lower_case_with_underscores</p>
+  </li>
+  <li>
+    <p>Classes and Exceptions</p>
+
+    <p>CapWords</p>
+  </li>
+  <li>
+    <p>Protected methods and internal functions</p>
+
+    <p>_single_leading_underscore(self, …)</p>
+  </li>
+  <li>
+    <p>Private methods</p>
+
+    <p>__double_leading_underscore(self, …)</p>
+  </li>
+  <li>
+    <p>Constants</p>
+
+    <p>ALL_CAPS_WITH_UNDERSCORES</p>
+  </li>
+  <li>
+    <p>Avoid one-letter variables (esp. l, O, I).</p>
+
+    <p>永远不要使用没有意义的单字符作为变量名</p>
+  </li>
+</ol>
+
+<p>PS: 这点可以折中, 假如一个代码块代码逻辑很清晰, 而 这个短的便令也只是过程中的一个间接变量之类的情况下是可以接受的</p>
+
+<h3 id="good-or-bad">Good or Bad</h3>
+
+<p>列举一些正确和错误的用法.</p>
+
+<h4 id="avoid-redundant-labeling">Avoid redundant labeling.</h4>
+
+<p>```python
+# Good
+import audio</p>
+
+<p>core = audio.Core()
+controller = audio.Controller()</p>
+
+<h1 id="bad">Bad</h1>
+<p>import audio</p>
+
+<p>core = audio.AudioCore()
+controller = audio.AudioController()
+```</p>
+
+<p>不要使用重复意义的标签</p>
+
+<h4 id="prefer-reverse-notation">Prefer “reverse notation”.</h4>
+
+<p>```python
+# Good
+elements = …
+elements_active = …
+elements_defunct = …</p>
+
+<h1 id="bad-1">Bad</h1>
+<p>elements = …
+active_elements = …
+defunct_elements …
+```</p>
+
+<h4 id="avoid-getter-and-setter-methods">Avoid getter and setter methods.</h4>
+
+<p>```python
+# Good
+person.age = 42</p>
+
+<h1 id="bad-2">Bad</h1>
+<p>person.set_age(42)
+```</p>
+
+<h4 id="indentation">Indentation</h4>
+
+<p>永远不要Tab和空格混用. 使用4个空格作为python缩进</p>
+
+<h4 id="imports">Imports</h4>
+
+<p>Import entire modules instead of individual symbols within a module.</p>
+
+<p>PS: 这个时候可以参考tornado的代码用法.</p>
+
+<p>比如现在有这样一个包</p>
+
+<p><code>bash
+$ tree
+└── canteen
+    ├── __init__.py
+    ├── sessions.py
+   </code></p>
+
+<p>```python
+# Good
+import canteen
+import canteen.sessions
+from canteen import sessions</p>
+
+<h1 id="bad-3">Bad</h1>
+<p>from canteen import get_user  # Symbol from canteen/<strong>init</strong>.py
+from canteen.sessions import get_session  # Symbol from canteen/sessions.py
+```</p>
+
+<p>PS: 除非这个第三方模块的文档显式的要求这些写</p>
+
+<h4 id="splitting-tricky-lines">Splitting tricky lines</h4>
+
+<p>```python
+# Bad:
+badge_name = badges.topic_exercise_badges.TopicExerciseBadge.name_for_topic_key_name(self.key().name())
+# Good:
+badge_name = (badges.topic_exercise_badges.TopicExerciseBadge
+              .name_for_topic_key_name(self.key().name()))</p>
+
+<h1 id="bad-4">Bad:</h1>
+<p>self.redirect(“/class_profile?selected_graph_type=%s&amp;coach_email=%s&amp;graph_query_params=%s” %
+    (self.GRAPH_TYPE, urllib.quote(coach.email), urllib.quote(urllib.quote(self.request.query_string))))
+# Good:
+self.redirect(
+    “/class_profile?selected_graph_type=%s&amp;coach_email=%s”
+    “&amp;graph_query_params=%s” % (
+        self.GRAPH_TYPE,
+        urllib.quote(coach.email),
+        urllib.quote(urllib.quote(self.request.query_string))))
+```</p>
+
+<h3 id="section-6">我添加的规则</h3>
+
+<h4 id="from--import-">from … import …</h4>
+
+<p>```python
+# Bad
+from aa import alonglonglonglonglong, alonglonglonglonglonglonglonglonglong, \
+               alonglonglonglonglonglong</p>
+
+<h1 id="good">Good</h1>
+<p>from aa import (alonglonglonglonglong, alonglonglonglonglonglonglonglonglong,
+                alonglonglonglonglonglong)
+from aa import (alonglonglonglonglong, alonglonglonglonglonglonglonglonglong,
+    alonglonglonglonglonglong, alonglonglonglonglonglonglong,
+    alonglonglonglonglonglong2)  # Good。 当引入的函数/类/变量很多时， 也可以选择空 4 个空格的方式， 而不需要和首行的左括号后对齐```</p>
+
+<h4 id="relative-import--absolute-import">相对引用(relative import) 和 绝对引用(absolute import)</h4>
+
+<p>```python
+$cat xx/models/user/consts.py  # 如果想引用这个变量
+TMP = 1</p>
+
+<p>$cat xx/views/user.py
+from xx.models.user.consts import TMP  # recommended。</p>
+
+<h1 id="xxmodelsuserconstspy--3---">假如模块层级&gt;=3。 比如 xx/models/user/consts.py 就在根目录下的第 3 级。 如果其他当前目录下源文件需要调用它的内容。 也可以选择相对引用</h1>
+<p>$cat xx/models/user/main.py  # 需要和 consts.py 在一个目录下才可以
+from consts import TMP  # Bad
+from .consts import TMP  # Good</p>
+
+<h1 id="section-7">而且只能在包内相对引用。 包外都需要绝对引用</h1>
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[python进阶必读汇总]]></title>
@@ -673,232 +914,6 @@ gunicorn wsgi:app localhost:5000 --timeout 240 --log-file -
   <li>direct message其实是被限定了post的长度. 太长的话会报414. 需要对长数据切分. slack_bot已经实现了</li>
   <li>现在simsim的借口被玩坏了, 有些低级，无聊，带有攻击性的回复. 酌情使用</li>
 </ol>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ipython的一些高级用法(二)]]></title>
-    <link href="http://dongweiming.github.com/blog/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa-er/"/>
-    <updated>2014-12-11T17:04:00+08:00</updated>
-    <id>http://dongweiming.github.com/blog/archives/ipythonde-[?]-xie-gao-ji-yong-fa-er</id>
-    <content type="html"><![CDATA[<h4 id="ipythonmagic--magic-ipython-history-prun-logstart">今天我们学习下写ipython的magic命令. 好, magic是什么? 它是ipython自带的一些扩展命令, 类似%history, %prun, %logstart..</h4>
-<p>想查看全部的magic可以使用ismagic, 列出可用的全部magics</p>
-
-<p><code>python
-%lsmagic
-</code></p>
-
-<p>magic分为2类:</p>
-
-<ul>
-  <li>line magic: 一些功能命令</li>
-  <li>cell magic: 主要是渲染ipython notebook页面效果以及执行某语言的代码</li>
-</ul>
-
-<h5 id="idbhttpsgithubcomdongweimingidb---python-dbpy-shell-extension"><a href="https://github.com/dongweiming/idb">idb</a> - python db.py shell extension</h5>
-
-<p>idb是我最近写的一个magic. 主要是给ipython提供<a href="https://github.com/yhat/db.py">db.py</a>的接口,我们直接分析代码(我只截取有代表性的一段):</p>
-
-<p>```python
-import os.path
-from functools import wraps
-from operator import attrgetter
-from urlparse import urlparse</p>
-
-<p>from db import DB # db.py提供的接口
-from IPython.core.magic import Magics, magics_class, line_magic # 这三个就是我们需要做magic插件的组件</p>
-
-<p>def get_or_none(attr):
-    return attr if attr else None</p>
-
-<p>def check_db(func):
-    @wraps(func)
-    def deco(<em>args):
-        if args[0]._db is None: # 每个magic都需要首页实例化过db，so 直接加装饰器来判断
-            print ‘[ERROR]Please make connection: <code>con = %db_connect xx</code> or <code>%use_credentials xx</code> first!’  # noqa
-            return
-        return func(</em>args)
-    return deco</p>
-
-<p>@magics_class  # 每个magic都需要加这个magics_class装饰器
-class SQLDB(Magics): # 要继承至Magics
-    _db = None # 每次打开ipython都是一次实例化</p>
-
-<pre><code>@line_magic('db_connect') # 这里用了line_magic 表示它是一个line magic.(其他2种一会再说) magic的名字是db_connect. 注意 函数名不重要
-                          # 最后我们用 %db_connect而不是%conn
-def conn(self, parameter_s): # 每个这样的方法都接收一个参数 就是你在ipython里输入的内容
-    """Conenct to database in ipython shell.
-    Examples::
-        %db_connect
-        %db_connect postgresql://user:pass@localhost:port/database
-    """
-    uri = urlparse(parameter_s) # 剩下的都是解析parameter_s的逻辑
-
-    if not uri.scheme:
-        params = {
-            'dbtype': 'sqlite',
-            'filename': os.path.join(os.path.expanduser('~'), 'db.sqlite')
-        }
-    elif uri.scheme == 'sqlite':
-        params = {
-            'dbtype': 'sqlite',
-            'filename': uri.path
-        }
-    else:
-        params = {
-            'username': get_or_none(uri.username),
-            'password': get_or_none(uri.password),
-            'hostname': get_or_none(uri.hostname),
-            'port': get_or_none(uri.port),
-            'dbname': get_or_none(uri.path[1:])
-        }
-
-    self._db = DB(**params) # 这里给_db赋值
-
-    return self._db # return的结果就会被ipython接收,显示出来
-
-@line_magic('db') # 一个新的magic 叫做%db -- 谨防取名冲突
-def db(self, parameter_s):
-    return self._db
-
-@line_magic('table')
-@check_db
-def table(self, parameter_s):
-    p = parameter_s.split() # 可能传进来的是多个参数,但是对ipython来说,传进来的就是一堆字符串，所以需要按空格分隔下
-    l = len(p)
-    if l == 1:
-        if not p[0]:
-            return self._db.tables
-        else:
-            return attrgetter(p[0])(self._db.tables)
-    else:
-        data = self._db.tables
-        for c in p:
-            if c in ['head', 'sample', 'unique', 'count', 'all', 'query']:
-                data = attrgetter(c)(data)()
-            else:
-                data = attrgetter(c)(data)
-        return data
-</code></pre>
-
-<p>def load_ipython_extension(ipython): # 注册一下. 假如你直接去ipython里面加 就不需要这个了
-    ipython.register_magics(SQLDB)
-```</p>
-
-<p>PS:</p>
-
-<ol>
-  <li>调试中可以使用%reloa_ext idb 的方式重启magic</li>
-  <li>%install_ext 之后默认放在你的ipython自定义目录/extensions里. 我这里是~/.ipython/extensions</li>
-</ol>
-
-<p>好了,大家是不是觉得ipython的magic也不是很难嘛</p>
-
-<h5 id="ipython">来了解ipython都提供了什么?</h5>
-
-<ol>
-  <li>magic装饰器的类型:</li>
-</ol>
-
-<ul>
-  <li>line_magic # 刚才我们见识了, 就是%xx, xx就是magic的名字</li>
-  <li>cell_magic # 就是%%xx</li>
-  <li>line_cell_magic # 可以是%xx, 也可以是%%xx</li>
-</ul>
-
-<p>先说cell_magic 来个例子，假如我想执行个ruby,本来应该是:</p>
-
-<p>```python
-In [1]: !ruby -e ‘p “hello”’
-“hello”</p>
-
-<p>In [2]: %%ruby # 也可以这样
-   …: p “hello”
-      …:
-      “hello”</p>
-
-<p>再说个notebook的:</p>
-
-<p>In [3]: %%javascript
-   …: require.config({
-   …:     paths: {
-   …:         chartjs: ‘//code.highcharts.com/highcharts’
-   …:     }
-   …: });
-   …:
-   <ipython.core.display.javascript object="">
-});
-```</ipython.core.display.javascript></p>
-
-<p>然后再说line_cell_magic:</p>
-
-<p>```python
-In [4]: %time 2**128
-CPU times: user 2 µs, sys: 1 µs, total: 3 µs
-Wall time: 5.01 µs
-Out[4]: 340282366920938463463374607431768211456L</p>
-
-<p>In [5]: %%time
-   …: 2**128
-   …:
-   CPU times: user 4 µs, sys: 0 ns, total: 4 µs
-   Wall time: 9.06 µs
-   Out[5]: 340282366920938463463374607431768211456L
-```</p>
-
-<p>Ps: line_cell_magic方法的参数是2个:</p>
-
-<p><code>python
-@line_cell_magic
-def xx(self, line='', cell=None):
-</code></p>
-
-<h5 id="magicipythonmagic">带参数的magic（我直接拿ipython源码提供的magic来说明):</h5>
-
-<p>一共2种风格:</p>
-
-<ul>
-  <li>使用getopt: self.parse_options</li>
-  <li>使用argparse: magic_arguments</li>
-</ul>
-
-<h6 id="selfparseoptions">self.parse_options</h6>
-
-<p><code>python
-@line_cell_magic
-def prun(self, parameter_s='', cell=None):
-    opts, arg_str = self.parse_options(parameter_s, 'D:l:rs:T:q',
-                                       list_all=True, posix=False)
-    ...
-</code></p>
-
-<p>getopt用法可以看这里 http://pymotw.com/2/getopt/index.html#module-getopt</p>
-
-<p>我简单介绍下’D:l:rs:T:q’就是可以使用 -D, -l, -r, -s, -T, -q这些选项. <code>:</code>号是告诉你是否需要参数,split下就是:
-D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %prun -D <filename /></p>
-
-<h6 id="magicarguments">magic_arguments</h6>
-
-<p><code>python
-@magic_arguments.magic_arguments() # 最上面
-@magic_arguments.argument('--breakpoint', '-b', metavar='FILE:LINE',
-    help="""
-    Set break point at LINE in FILE.
-    """
-) # 这种argument可以有多个
-@magic_arguments.argument('statement', nargs='*',
-    help="""
-    Code to run in debugger.
-    You can omit this in cell magic mode.
-    """
-)
-@line_cell_magic
-def debug(self, line='', cell=None):
-    args = magic_arguments.parse_argstring(self.debug, line) # 要保持第一个参数等于这个方法名字,这里就是self.debug
-    ...
-</code></p>
-
-<p>还有个magic方法集: 用于并行计算的magics: <a href="https://github.com/ipython/ipython/blob/master/IPython/parallel/client/magics.py">IPython/parallel/client/magics.py</a></p>
 ]]></content>
   </entry>
   

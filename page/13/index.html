@@ -142,6 +142,62 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyushelveyanjiu/">关于shelve研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：shelve模块实现了对任意可被pickle的Python对象进行持久性存储, 也提供类字典API给我们使用，当使用关系数据库是一种浪费的时候, shelve模块可以为Python对象提供一个简单的持久性存储选择. 就像使用字典一样, 通过关键字访问shelf对象. 其值经过pickle, 写入到由anydbm创建和管理的数据库.</p>
+
+<p><pre class="sh_python">
+import shelve</p>
+
+<p>s = shelve.open('test.db')   #创建Shelf对象,
+try:
+    s['key1'] = { 'int': 10, 'float':9.5, 'string':'Sample data' }  #写入key－value
+finally:
+    s.close()
+s = shelve.open('test.db')   #这里读取，可以设置 flag='r'  表示值是只读
+try:
+    print s['key1']
+finally:
+    s.close()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+{&#8216;int&#8217;: 10, &#8216;float&#8217;: 9.5, &#8216;string&#8217;: &#8216;Sample data&#8217;}</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuselectyanjiu/">关于select研究</a></h1>
     
     
@@ -1678,84 +1734,6 @@ for filename in logfiles:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyulinecacheyanjiu/">关于linecache研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：linecache是一个被广泛使用的，从文件或者导入模块中检索文本行, 对结果采用缓冲来提高读文件的效率的模块。缓冲的实现是读取文件的内容, 并解析成行, 保存在内存的字典中. API 根据索引返回列表中的请求行. 在读取文件和寻找需要的行信息上可以节省一定时间. 这对于从同一个文件中查询多行内容是非常有用的, 比如为一个error report产生trackback.</p>
-
-<p><pre class="sh_python">
-import linecache
-import os
-import tempfile
-text='''The design of all built-in operating system dependent modules of Python is such that as long as the same
-functionality is available, it uses the same interface; for example, the function <tt>os.stat(path)</tt> returns stat
-information about <em>path</em> in the same format (which happens to have originated with the POSIX interface)
-Extensions peculiar to a particular operating system are also available through the <a title="os: Miscellaneous operating system interfaces." href="http://docs.python.org/library/os.html#module-os"><tt>os</tt></a> module, 
-but using them is of course a threat to portability.</p>
-
-<p>An “Availability: Unix” note means that this function is commonly found on Unix systems. It does not make any claims 
-about its existence on a specific operating system.If not separately noted, all functions that claim “Availability: 
-Unix” are supported on Mac OS X, which builds on a Unix core
-'''
-def make_tempfile():
-    fd, temp_file_name = tempfile.mkstemp()  #创建一个临时文件
-    os.close(fd)
-    f = open(temp_file_name, 'wt')
-    try:
-        f.write(text)
-    finally:
-        f.close()
-    return temp_file_name #返回文件地址</p>
-
-<p>def cleanup(filename):
-    os.unlink(filename) #类似删除文件</p>
-
-<p>filename = make_tempfile()
-print 'SOURCE: ', text.split('\n')[4]  #显示第5行  从0开始计数
-print 'CACHE : ', linecache.getline(filename, 5).rstrip() #显示第5行，从1开始计数
-print '\nBLANK : "%s"' % linecache.getline(filename, 6)  #第六行为空行  显示空行
-not_there = linecache.getline(filename, 500) #文件没有500行，所以返回空
-print '\nNOT THERE: "%s" includes %d characters' %  (not_there, len(not_there)) 
-no_such_file = linecache.getline('this_file_does_not_exist.txt', 1) #没有这个文件，但是不会出现异常，返回空
-print '\nNO FILE: ', no_such_file
-module_line = linecache.getline('linecache.py', 3) #用在输出tracebacks上, 另一个重要特性是可以通过指定模块名在sys.path中寻找python模块源码. 
-                                      #如果在当前路径中无法找到文件, 那么linecache中的缓冲直接搜索sys.path中的模块
-print '\nMODULE : ', module_line</p>
-
-<p>cleanup(filename)
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/14/">&larr; Older</a></li>
@@ -1778,6 +1756,10 @@ print '\nMODULE : ', module_line</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1813,10 +1795,6 @@ print '\nMODULE : ', module_line</p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

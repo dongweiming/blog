@@ -142,6 +142,57 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89%E5%AE%89%E8%A3%85%E4%BA%A6%E6%AD%8C%E5%9C%A8%E7%BA%BF%E5%90%AC%E6%AD%8C%E8%BD%AF%E4%BB%B6%EF%BC%881g1g%EF%BC%89/">Gentoo笔记（八）安装亦歌在线听歌软件（1g1g）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-02T00:00:00+08:00" pubdate data-updated="true">Feb 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以下是简要过程</p>
+
+<p>tar jxvf linux1g1g-0.9-2-src.tar.bz2
+cd linux1g1g
+sudo emerge xbindkeys
+qmake -o Makefile
+make
+./bindkeys.sh</p>
+
+<p>sudo cp linux1g1g /usr/bin/
+然后执行：</p>
+
+<p>dongwm@localhost ~ $linux1g1g
+就能打开了</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%80%EF%BC%89/">Pymongo教程（一）</a></h1>
     
     
@@ -885,69 +936,6 @@ UnicodeEncodeError: &#8216;latin-1&#8217; codec can&#8217;t encode characters in
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEconky/">Gentoo笔记（五）安装配置conky</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-29T00:00:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：这是一个很cool的桌面监控显示软件并可以自定义实现你想要监控的所有</p>
-
-<p>首先上图：</p>
-
-<p><img class="alignnone" title="conky" src="http://farm8.staticflickr.com/7003/6592961307_c888ee70c4_z.jpg" alt="" width="163" height="640" /></p>
-
-<p><img class="alignnone" title="conky2" src="http://farm8.staticflickr.com/7020/6598839395_4a9dab05b9_z.jpg" alt="" width="640" height="400" /></p>
-
-<p><strong>1 安装相应工具</strong>
-echo app-admin/conky truetype audacious -ipv6 &gt;&gt; /etc/portage/package.use
-echo app-admin/conkyforecast  &gt;&gt; /etc/portage/package.keywords
-sudo  emerge app-admin/conkyapp-admin/conkyforecast  #conky是主程序，conkyforecast是
-conky天气预报的脚本 其实也有一个叫做 conky-colors 的软件。
-里面集成了很多功能 包括天气预报，检查邮件 视频，照片预览等功能。作者是在ubuntu下开发的
-<strong>2 支持中文字体显示</strong>
-首先需要下载一个中文字体 我这里是simhei字体，然后拷贝simhei.ttf到/usr/share/fonts/TTF/conky/
-在需要显示中文的text部分需要utf-8编码 这个地方使用这个字体就可以显示了
-<strong>3 配置文件</strong>
-每一行可以分为样式属性、文字和元素。其中样式属性和元素都以“$”开头，并包含在“{}”里面，
-“${}”应该放在应用目标的前面。
-一些变量的解释：
-${color #XXXXXX} 设计显示的颜色 （在/etc/X11/rgb.txt中找到全部颜色的列表）
-${font Monospace:style=Bold:size=10} 字体属性的定义格式
-${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对齐，${alignc}表示居中对齐
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEconky/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/21/">&larr; Older</a></li>
@@ -970,6 +958,10 @@ ${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1005,10 +997,6 @@ ${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对�
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

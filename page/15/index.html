@@ -142,6 +142,93 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuglobyanjiu/">关于glob研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：glob使用shell规则进行模式匹配</p>
+
+<p>dongwm@linux-dongwm:~&gt; ls test/*   #shell 查找文件
+test/file1  test/file2  test/file3</p>
+
+<p>test/testdir:
+file</p>
+
+<p><pre class="sh_python">
+import glob
+for name in glob.glob('test/*'):  #类似于  ls test/*
+    print name
+</pre></p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python !$
+python test.py
+test/file3
+test/testdir
+test/file2
+test/file1</p>
+
+<p><pre class="sh_python">
+import glob</p>
+
+<p>print 'Named explicitly:'
+for name in glob.glob('test/testdir/*'):
+    print '\t', name</p>
+
+<p>print 'Named with wildcard:'
+for name in glob.glob('test/*/*'):  #通配符*
+    print '\t', name
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Named explicitly:
+test/testdir/file
+Named with wildcard:
+test/testdir/file
+<pre class="sh_python">
+import glob
+print 'Single Character Wildcard'
+for name in glob.glob('test/file?'):  #'?'匹配一个字符
+    print name
+print 'Character Ranges'
+for name in glob.glob('test/*[0-9]'): #匹配一个数字范围0－9
+    print name
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyugetpassyanjiu/">关于getpass研究</a></h1>
     
     
@@ -1384,150 +1471,6 @@ document.cookie = &#8220;mycookie=cookie_value&#8221;;
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuconfigparseryanjiu/">关于ConfigParser研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：ConfigParser很经常使用，主要是解析和修改类似于windows的ini文件的模块。，配置项使用［］，每个具体项为 key=value，这里有个配置例子(test.cfg)：
-<pre class="sh_ini">
-[test]
-url = http://localhost:8080
-username = dongwm
-password = passwd
-</pre>
-<pre class="sh_python">
-from ConfigParser import SafeConfigParser  #建议不要用子类ConfigParser
-parser = SafeConfigParser()
-parser.read('test.cfg')  #加载要分析的配置文件
-print parser.get('test', 'url')  #获取 test 端 key为‘url’的值
-</pre>
-注：read（）支持多个配置文件：
-<pre class="sh_python">
-from ConfigParser import SafeConfigParser
-parser = SafeConfigParser()
-list = ['does_not_exist.cfg', 'also-does-not-exist.cfg','test.cfg' ]
-found = parser.read(list)</p>
-
-<p>missing = set(list) - set(found)</p>
-
-<p>print 'Found config files:', sorted(found)
-print 'Missing files     :', sorted(missing)
-</pre>
-dongwm@linux-dongwm:~&gt; python test.py
-Found config files: [&#8216;test.cfg&#8217;]
-Missing files     : [&#8216;also-does-not-exist.cfg&#8217;, &#8216;does_not_exist.cfg&#8217;]
-注2：假如配置文件有其他不可被直接识别的字符呢：
-dongwm@linux-dongwm:~&gt; cat !$
-cat test.cfg
-[test]
-url = http://localhost:8080
-username = dongwm
-password = ßéç®é†
-<pre class="sh_python">
-from ConfigParser import SafeConfigParser
-import codecs</p>
-
-<p>parser = SafeConfigParser()</p>
-
-<p>with codecs.open('test.cfg', 'r', encoding='utf-8') as f:
-    parser.readfp(f)</p>
-
-<p>password = parser.get('test', 'password')</p>
-
-<p>print 'Password:', password.encode('utf-8')
-print 'Type    :', type(password)
-print 'repr()  :', repr(password)
-</pre>
-执行结果：
-dongwm@linux-dongwm:~&gt; python test.py
-Password: ßéç®é†
-Type    : &lt;type &#8216;unicode&#8217;&gt;
-repr()  : u&#8217;\xdf\xe9\xe7\xae\xe9\u2020&#8217;
-<pre class="sh_python">
-from ConfigParser import SafeConfigParser</p>
-
-<p>parser = SafeConfigParser()
-parser.read('test.cfg')</p>
-
-<p>for candidate in [ 'test-1', 'test' ]:
-    print '%-12s: %s' % (candidate, parser.has_section(candidate))  #has_section 判断是不是有这个setion 没有为 false
-</pre>
-dongwm@linux-dongwm:~&gt; python test.py
-test-1      : False
-test        : True</p>
-
-<p><pre class="sh_python">
-import ConfigParser
-import sys
-parser = ConfigParser.SafeConfigParser()</p>
-
-<p>parser.add_section('test')  #添加一个setion
-parser.set('test', 'url', 'http://localhost:8080')
-parser.set('test', 'username', 'dongwm')
-parser.set('test', 'password', 'passwd')</p>
-
-<p>for section in parser.sections():
-    print section
-    for name, value in parser.items(section):
-        print '  %s = %r' % (name, value)
-parser.remove_option('test', 'password') #移出一个option  也可以使用 remove_section 移出整个section
-print '\nModified values:\n'
-for section in parser.sections():
-    print section
-    for name, value in parser.items(section):
-        print '  %s = %r' % (name, value)
-print '\nSave :\n'
-parser.write(sys.stdout)   #修改了只是临时的想要保存下来必须使用write
-</pre>
-执行过程：
-dongwm@linux-dongwm:~&gt; python test.py
-test
-  url = &#8216;http://localhost:8080&#8217;
-  username = &#8216;dongwm&#8217;
-  password = &#8216;passwd&#8217;</p>
-
-<p>Modified values:</p>
-
-<p>test
-  url = &#8216;http://localhost:8080&#8217;
-  username = &#8216;dongwm&#8217;</p>
-
-<p>Save :</p>
-
-<p>[test]
-url = http://localhost:8080
-username = dongwm</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/16/">&larr; Older</a></li>
@@ -1550,6 +1493,10 @@ username = dongwm</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1585,10 +1532,6 @@ username = dongwm</p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

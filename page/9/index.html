@@ -142,6 +142,156 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusysyanjiuyi/">关于sys研究（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：sys是一个关系系统配置使用的模块，和os一样经常被使用</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>print 'Version info:'
+print
+print 'sys.version      =', repr(sys.version) #这些是编译python时候的一些系统信息，这事python版本
+print 'sys.version_info =', sys.version_info #python版本号元组格式
+print 'sys.hexversion   =', hex(sys.hexversion) #版本标识为一个整数
+print 'sys.subversion   =', sys.subversion #python分支，修订号等信息
+print 'sys.api_version  =', sys.api_version #C的api版本
+print 'This interpreter was built for:', sys.platform #系统版本，比如linux，windows等类似于命令uname -s的结果
+print 'Interpreter executable:', sys.executable #编译器的位置 /usr/bin/python
+print 'Installation prefix   :', sys.prefix #包含bin,lib目录的服目录，这里是/usr
+print <tt>sys.flags</tt> #当执行python -h 出现很多选项，当执行某选项和参数，那么sys.flag就包含了这个项
+print 'Default encoding    :', sys.getdefaultencoding()  #默认文件Unicode编码
+print 'Filesystem encoding :', sys.getfilesystemencoding() #默认文件系统编码
+#reload(sys) #当想要修改文件编码，先reloadsys模块（否则没有setdefaultencoding函数），再set
+#sys.setdefaultencoding('utf-8')
+</pre></p>
+
+<p><pre class="sh_python">
+&gt;&gt;&gt; sys.ps1
+'&gt;&gt;&gt; ' #ps1是交互模式中的提示符，效果类似于linux的PS1
+&gt;&gt;&gt; sys.ps2
+'... ' #ps2是交互模式中，当出现":"等需要多行输入的数据时候的提示符
+&gt;&gt;&gt; sys.ps1='--&gt;'
+--&gt;sys.ps2='~~~'
+--&gt;for i in xrange(2): 
+~~~    print i
+~~~
+0
+1
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class LineCounter(object): #修改PS1修饰符还可以定义类的方式，假设本文件是test.py
+    def __init__(self):
+        self.count = 0 #对命令计数，初始为0
+    def __str__(self):
+        self.count += 1 #使用一次触发一次计数增加      
+        return '(%3d)&gt; ' % self.count
+</pre></p>
+
+<p>进入交互模式：</p>
+
+<p><pre class="sh_python">
+&gt;&gt;&gt; from test import LineCounter
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; sys.ps1 = LineCounter()
+(  1)&gt; 
+(  2)&gt; #点击一次增加1
+(  3)&gt;
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class ExpressionCounter(object):</p>
+
+<p>    def __init__(self):
+        self.count = 0
+        self.previous_value = self</p>
+
+<p>    def __call__(self, value):
+        print
+        print '  Previous:', self.previous_value
+        print '  New     :', value
+        print
+        if value != self.previous_value:
+            self.count += 1
+            sys.ps1 = '(%3d)&gt; ' % self.count
+        self.previous_value = value
+        sys.__displayhook__(value) #默认值保存在这里
+print 'installing'
+sys.displayhook = ExpressionCounter()#钩子，我的理解是每次使用都要触发的表达式  假设本文件是test
+</pre></p>
+
+<p><pre class="sh_python">
+dongwm@linux-vkmz:~&gt; python
+Python 2.6.5 (r265:79063, Jul  5 2010, 11:47:21) 
+[GCC 4.5.0 20100604 [gcc-4_5-branch revision 160292]] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import test
+installing
+&gt;&gt;&gt; 1+2</p>
+
+<p>  Previous: &lt;test.ExpressionCounter object at 0x80ab2ac&gt;
+  New     : 3</p>
+
+<p>3
+(  1)&gt; 'abc'</p>
+
+<p>  Previous: 3
+  New     : abc</p>
+
+<p>'abc'
+(  2)&gt; 'abc'</p>
+
+<p>  Previous: abc
+  New     : abc</p>
+
+<p>'abc'
+(  2)&gt; 'abc'*3</p>
+
+<p>  Previous: abc
+  New     : abcabcabc</p>
+
+<p>'abcabcabc'
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusysyanjiusi/">关于sys研究（四）</a></h1>
     
     
@@ -2869,240 +3019,6 @@ print 'Unpacked:', socket.inet_ntop(socket.AF_INET6, packed) ##从网络字节�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonzhuabaochengxupypcap/">Python抓包程序（pypcap）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：网上好像抓包例子就是那么几个，我这里提供一个抓包例子，但是请注意，如果网卡流量&gt;200M，由于性能原因，建议使用c源码编译的程序：</p>
-
-<p><pre class="sh_python">
-#/usr/bin/env python
-#-*-coding:utf8-*-</p>
-
-<p>#抓包脚本
-"""
-This script is used to Capture and Analysis packets</p>
-
-<p>Required dependencies:
-1 libpcap-devel
-Installation:
-rpm -ivh ../libpcap-devel-0.9.4-14.el5.i386.rpm
-2 pypcap 
-Installation:
-tar zxvf pypcap-1.1.tar.gz 
-cd pypcap-1.1
-CFLAGS=-m32 python setup.py config 
-CFLAGS=-m32 python setup.py build 
-CFLAGS=-m32 python setup.py install </p>
-
-<p>3 iplist Format
-iplist＝ 'ip/mask','ip/mask'  OR iplist＝ 'ip/mask',    #本脚本主要根据ip段分析内外网流量数据，我自定义一个函数用来解析子网掩码方式的ip段，这里支持多个ip段，也支持一个段，但是要加‘,’</p>
-
-<p>Writer:Dongweiming</p>
-
-<p>"""</p>
-
-<p>import pcap
-import socket
-import struct
-import ctypes
-import datetime
-import threading
-import inspect
-import traceback
-from optparse import OptionParser
-from subprocess import *
-import sys,os
-import time</p>
-
-<p>iplist = '115.12.1.0/24','219.213.232.192/26'  #设置解析这2个段的ip列表</p>
-
-<p>def _async_raise(tid, exctype):
-    if not inspect.isclass(exctype):
-        raise TypeError("Only types can be raised (not instances)")
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-    if res == 0:
-        raise ValueError("invalid thread id")
-    elif res != 1:
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, 0)
-        raise SystemError("PyThreadState_SetAsyncExc failed")
-def ipto(ip,ti):
-    d = ti/8
-    c = 256/(2**(ti%8))
-    ip_items = ip.split('.')
-    if len(ip_items[d:]) == 1:
-        if ti%8 == 0:
-            cmin = '%s.%s' % ('.'.join(ip_items[:d]),'0')
-            cmax = '%s.%s' % ('.'.join(ip_items[:d]),'255')
-        else:
-            for i in range(2**(ti%8)):
-	        mymax = (i+1)*c-1
-	        mymin=  i*c
-	        data =  int(''.join(ip_items[d:]))
-	        if data &lt; mymax and data &gt;= mymin:
-	            cmin = '%s.%s' % ('.'.join(ip_items[:d]),mymin)
-  	            cmax = '%s.%s' % ('.'.join(ip_items[:d]),mymax)
-    else:
-        if ti%8 == 0:
-             cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),'0',('0.'*(len(ip_items)-d-1))[:-1])
-             cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),'255',('255.'*(len(ip_items)-d-1))[:-1])
-        else:
-	    for i in range(2**(ti%8)):
-                mymax = (i+1)*c-1
-                mymin=  i*c
-	        data =  int(''.join(ip_items[d]))
-	        if data &lt; mymax and data &gt;= mymin:
-		    cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymin,('0.'*(len(ip_items)-d-1))[:-1])
-		    cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymax,('255.'*(len(ip_items)-d-1))[:-1])
-    return cmin,cmax  #返回ip段中可用的最小ip和最大ip</p>
-
-<p>class MYthread(threading.Thread):  #自定义theading.Thread类，能够产生线程并且杀掉线程
-    def _get_my_tid(self):
-        if not self.isAlive():
-            raise threading.ThreadError("the thread is not active")
-        if hasattr(self, "_thread_id"):
-            return self._thread_id</p>
-
-<p>        for tid, tobj in threading._active.items():
-            if tobj is self:
-                self._thread_id = tid
-                return tid
-        raise AssertionError("could not determine the thread's id")
-    def raise_exc(self, exctype):
-        _async_raise(self._get_my_tid(), exctype)</p>
-
-<p>    def terminate(self):
-        self.raise_exc(SystemExit)
-class Crawl():  #解析主函数
-    def __init__(self,eth,mytime,flag):
-        self.bytes = 0
-        self.bytes_out = 0
-        self.packets = 0
-        self.packets_out = 0
-        self.eth = eth
-        self.mytime = mytime
-        self.flag = flag
-    def myntohl(self,ip):
-        return socket.ntohl(struct.unpack("I",socket.inet_aton(ip))[0])  #inet_aton 将ip地址的4段地址分别进行2进制转化，输出用16进制表示，
-                                                     #unpack的处理是按16进制（4bit）将2进制字符，从后向前读入的，低位入
-                                                     #ntohl, htonl 表示的是网络地址和主机地址之间的转换（network byte &lt;==&gt; host byte）
-                                                     #由于unpack/pack的解/打包的颠倒顺序，必须通过htonl 或者 ntohl 进行处理
-                                                     #比如从’192.168.1.235’ 可以转换为数字’3120670912’，此数字为网络字节序
-    def check(self,dict,uip):
-        flag = 0
-        for i in dict.keys():
-            if uip &gt; self.myntohl(i) and uip &lt; self.myntohl(dict[i]):  #如果抓取的uip属于ip段，flag＝1，否则为0
-#       if (uip &gt; self.myntohl('1941307648') and uip &lt; self.myntohl('1941307903')) or (self.myntohl('3689867456') and uip &lt; self.myntohl('3689867519')):
-                 flag =1
-        return flag
-    def run(self):  #设置的抓取时间里pcap一直抓包，各个队列累加数值，最后除以时间，即平均
-        dict = {}
-        for i in iplist:
-             d = i.split('/')
-             cmin,cmax = ipto(d[0],int(d[1]))
-             dict[cmin]=cmax  #这里记录一个字典，key是ip段最小的的ip，value是最大的ip</p>
-
-<p>        if self.eth == 'all':
-            pc = pcap.pcap()
-        else:
-            pc = pcap.pcap(self.eth)
-        for ptime,pdata in pc:
-            #try:
-            #    ip_type = socket.ntohs(struct.unpack("H",pdata[12:14])[0])  #
-            #except:
-            #     pass 
-      	    #if ip_type != 2048: 
-	    #    continue
- 	    s_uip = socket.ntohl(struct.unpack("I",pdata[14+12:14+16])[0]) #源ip的网络字节序
-	    #d_uip = socket.ntohl(struct.unpack("I",pdata[14+16:14+20])[0])  #目的ip的网络字节序
-            bytes = socket.ntohs(struct.unpack("H",pdata[14+2:14+4])[0])+14 #数据的字节数
-            if self.check(dict,s_uip):
-	        self.bytes_out += bytes
-                self.packets_out += 1
- 	    else:
-	        self.bytes += bytes
-                self.packets += 1
-    def withtime(self):
-        pid =  os.getpid()
-        name = sys.argv[0]
-        Popen("kill -9 `ps -ef |grep %s|grep -v grep |awk '{print $2}'|grep -v %d`" % (name,pid),stdout=PIPE, stderr=PIPE,shell=True) #这里是
-                                     #在启动时候主动杀掉系统中存在的残留程序,使用中发现有时候（极少）执行时间到没有杀掉程序，为了定时任务安全
-        self.t = MYthread(target = self.run)
-        self.t.setDaemon(1)
-        self.t.start()
-        curtime = time.ctime(time.time())
-        t = 0
-        while t&lt;int(self.mytime):
-           t +=1
-           time.sleep(1)
-        nowtime = time.ctime(time.time())
-        data = "From[%s]To[%s]%s\n%s%s%s%s\n%s%s%s%s\n" \
-        % (curtime,nowtime,u'数据统计'.encode('utf8'),u'出网总流量/s'.encode('utf8').ljust(22,' '),\
-           u'出网总数据包/s'.encode('utf8').ljust(22,' '),u'进网总流量/s'.encode('utf8').ljust(22,' '),\
-           u'进网总数据包/s'.encode('utf8').ljust(22,' '),str(int(self.bytes_out)/int(self.mytime)).ljust(18,' '),\
-           str(int(self.packets_out)/int(self.mytime)).ljust(18,' '),str(int(self.bytes)/int(self.mytime)).ljust(18,' '),\
-           str(int(self.packets)/int(self.mytime)).ljust(18,' '))
-        if self.flag:
-            print data
-        self.log(data)
-        self.t.terminate()
-        self.t.join()</p>
-
-<p>    def log(self,log):  #记录日志，使用－p选项只在记录，不在终端打印，用于定时任务等需求时（定时任务执行没必要输出）
-        path = os.path.split(os.path.realpath(__file__))[0]
-        log_file = "%s/common.log" % path
-        if not os.path.exists(log_file):
-            f=open(log_file,'w')
-            f.close()
-        try:
-            fr = open(log_file, "a+")
-            fr.write(log+"\r\n")
-	    fr.close()
-	except Exception, e:
-            pass</p>
-
-<p>if __name__ == '__main__':
-    argc = len(sys.argv)
-    parser = OptionParser(description="Use For Capture and Analysis packets",add_help_option=False,prog="sniffer.py",usage="%prog [ -e &lt;ethname&gt;][ -t &lt;time&gt;]")
-    parser.add_option("-e", "--eth",action = "store",default = "all",help = "Select the card, the default is 'all'") #选择网卡，默认是all
-    parser.add_option("-t", "--time",action = "store",default = 5,help = "Select the capture time,the default is 5s")  #设置要抓包的时间，单位秒，时间越长越精确
-    parser.add_option("-p", "--myprint",action = "store_false",default = True,help = "Print data, the default is true")
-    parser.add_option("-h", "--help",action = "help",help="print help")
-    options, arguments=parser.parse_args()
-    a = Crawl(options.eth,options.time,options.myprint)
-    a.withtime()
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/10/">&larr; Older</a></li>
@@ -3125,6 +3041,10 @@ class Crawl():  #解析主函数
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -3160,10 +3080,6 @@ class Crawl():  #解析主函数
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

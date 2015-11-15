@@ -142,6 +142,108 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/debianxidpkgheredhatxirpmminglingzongjie/">Debian系dpkg和redhat系rpm命令总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-13T00:00:00+08:00" pubdate data-updated="true">Mar 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：最近突然用ubuntu，发现好多包管理命令dpkg的用法很生疏了，在这里正好总结一下，以及和rpm作一些相似作用的列举</p>
+
+<p>1 软件包的信息  将会列出这个软件包的详细资料</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpi rubygem-capistrano-2.11.2-1.2.i586.rpm
+dongwm@dongwm-pc:~$ dpkg-deb -I capistrano_2.5.9-1_all.deb</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -s  capistrano
+或者</p>
+
+<p>dongwm@dongwm-pc:~$  dpkg-query -s capistrano
+2 软件包内文件内容  列出安装后的所有文件的全路径</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpl rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg-deb -c capistrano_2.5.9-1_all.deb |more</p>
+
+<p>或者</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg &#8211;contents capistrano_2.5.9-1_all.deb</p>
+
+<p>3 软件包的依赖关系</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm  -qpR rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg-deb -f capistrano_2.5.9-1_all.deb depends //depends
+Depends: ruby1.8, libnet-ssh2-ruby1.8, libnet-ssh-gateway-ruby1.8, libnet-sftp2-ruby1.8, libnet-scp-ruby1.8, libhighline-ruby1.8</p>
+
+<p>4 数据库查询 当每个软件包安装在Linux系统后，安装文件都会列到数据库</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -qa capistrano</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -l capistrano
+期望状态=未知(u)/安装(i)/删除(r)/清除(p)/保持(h)
+| 状态=未安装(n)/已安装(i)/仅存配置(c)/仅解压缩(U)/配置失败(F)/不完全安装(H)/触发器等待(W)/触发器未决(T)
+|/ 错误?=(无)/须重装(R) (状态，错误：大写=故障)
+||/ 名称         版本         描述
++++-==============-==============-============================================
+iU  capistrano     2.5.9-1        Executes commands in parallel on multiples s   #这里的 iu表示想安装，但是只是解压缩没有安装成功  debian系的查询显示比较复杂</p>
+
+<p>5 安装软件包</p>
+
+<p>dongwm@linux-dongwm:~&gt; sudo rpm -ivh rubygem-capistrano-2.11.2-1.2.i586.rpm</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg -i capistrano_2.5.9-1_all.deb</p>
+
+<p>6 软件卸载</p>
+
+<p>dongwm@linux-dongwm:~&gt; sudo rpm -e rubygem-capistrano-2.11.2-1.2</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg -r capistrano</p>
+
+<p>或者</p>
+
+<p>dongwm@dongwm-pc:~$ sudo dpkg &#8211;purge capistrano</p>
+
+<p>7 查询文件归属</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -qf /usr/bin/vim  查询 /usr/bin/vim  属于那个包</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg &#8211;search /usr/bin/mawk</p>
+
+<p>7 查询软件包都安装到了那里</p>
+
+<p>dongwm@linux-dongwm:~&gt; rpm -ql gawk</p>
+
+<p>dongwm@dongwm-pc:~$ dpkg -S mawk</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/jiejuelinuxxiadakaideyingyongchengxubuzaignomezhuomianmianbanshangmianxianshi/">解决Linux下打开的应用程序不在gnome桌面面板上面显示</a></h1>
     
     
@@ -990,57 +1092,6 @@ $rename 属性重命名 “$rename”:{&#8220;emails”:&#8221;old_emails&#8221;
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89%E5%AE%89%E8%A3%85%E4%BA%A6%E6%AD%8C%E5%9C%A8%E7%BA%BF%E5%90%AC%E6%AD%8C%E8%BD%AF%E4%BB%B6%EF%BC%881g1g%EF%BC%89/">Gentoo笔记（八）安装亦歌在线听歌软件（1g1g）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-02T00:00:00+08:00" pubdate data-updated="true">Feb 2<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>以下是简要过程</p>
-
-<p>tar jxvf linux1g1g-0.9-2-src.tar.bz2
-cd linux1g1g
-sudo emerge xbindkeys
-qmake -o Makefile
-make
-./bindkeys.sh</p>
-
-<p>sudo cp linux1g1g /usr/bin/
-然后执行：</p>
-
-<p>dongwm@localhost ~ $linux1g1g
-就能打开了</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/20/">&larr; Older</a></li>
@@ -1063,6 +1114,10 @@ make
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1098,10 +1153,6 @@ make
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

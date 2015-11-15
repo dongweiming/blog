@@ -142,6 +142,106 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentoo-use-stumpwm/">Gentoo使用stumpwm做桌面管理器</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-25T23:52:00+08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>以前一直使用gentoo+gnome的方法使用,说实话,gentoo做个人桌面是在很一般, 尤其是跑起来
+firefox, 虽然依然性能要比其他linux桌面发行版要好,可是我自己清楚.
+尤其是gnome的很多功能对我个人完全没有用处,还浪费了内存. 最近神奇的同事@刘喆告诉我原来还有个神奇的
+<a href="git://github.com/sabetts/stumpwm.git">stumpwm</a>, 基于common lisp的桌面管理.
+我想很多人听过awesome,但是是lua的版本. 我当然希望用我熟悉的语言.这是一篇安装配置过程的博客</p>
+
+<h4 id="section-1">安装遇到了一些问题</h4>
+
+<p>本来一般的软件都是包管理emerge stumpwm 就好啦,但是我安装后依然找不到stumpwm,
+在手动编译stumpwm的过程发现很多奇葩报错. 所以连sbcl也编译了一个</p>
+
+<h4 id="section-2">安装过程</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># 安装sbcl到/usr/local</span>
+</span><span class="line"><span class="n">wget</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">downloads</span><span class="o">.</span><span class="n">sourceforge</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">sbcl</span><span class="o">/</span><span class="n">sbcl</span><span class="o">/</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span><span class="o">/</span><span class="n">sbcl</span><span class="o">-</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span><span class="o">-</span><span class="n">source</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
+</span><span class="line"><span class="n">tar</span> <span class="n">jxvf</span> <span class="n">sbcl</span><span class="o">-</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span><span class="o">-</span><span class="n">source</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
+</span><span class="line"><span class="n">cd</span> <span class="n">sbcl</span><span class="o">-</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">13</span>
+</span><span class="line"><span class="n">sh</span> <span class="n">make</span><span class="o">.</span><span class="n">sh</span>
+</span><span class="line"><span class="n">unset</span> <span class="n">SBCL_HOME</span>
+</span><span class="line"><span class="n">unset</span> <span class="n">INSTALL_ROOT</span>
+</span><span class="line"><span class="n">sudo</span> <span class="n">sh</span> <span class="n">install</span><span class="o">.</span><span class="n">sh</span>
+</span><span class="line">
+</span><span class="line"><span class="c">#使用commonlisp的包管理工具quicklisp.lisp</span>
+</span><span class="line">
+</span><span class="line"><span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">beta</span><span class="o">.</span><span class="n">quicklisp</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">quicklisp</span><span class="o">.</span><span class="n">lisp</span>
+</span><span class="line"><span class="n">sbcl</span> <span class="o">--</span><span class="n">load</span> <span class="n">quicklisp</span><span class="o">.</span><span class="n">lisp</span>
+</span><span class="line"><span class="p">(</span><span class="n">quicklisp</span><span class="o">-</span><span class="n">quickstart</span><span class="p">:</span><span class="n">install</span><span class="p">)</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">add</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">init</span><span class="o">-</span><span class="nb">file</span><span class="p">)</span>
+</span><span class="line"><span class="c"># 还需要以下2个依赖</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;clx&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;cl-ppcre&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 可选安装swank</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;swank&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="p">(</span><span class="n">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;quicklisp-slime-helper&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 退出</span>
+</span><span class="line"><span class="p">(</span><span class="n">quit</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 下载stumpwm</span>
+</span><span class="line">
+</span><span class="line"><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">savannah</span><span class="o">.</span><span class="n">nongnu</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">stumpwm</span><span class="o">.</span><span class="n">git</span>
+</span><span class="line"><span class="n">cd</span> <span class="n">stumpwm</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">autogen</span><span class="o">.</span><span class="n">sh</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">configure</span> <span class="o">&amp;&amp;</span> <span class="n">make</span>
+</span><span class="line"><span class="n">PS</span><span class="p">:</span> <span class="err">这个</span><span class="n">make</span><span class="err">时候就算报错</span><span class="p">,</span><span class="err">也没有太大关系</span>
+</span><span class="line">
+</span><span class="line"><span class="c">#生成2进制文件 再次进入sbcl交互模式</span>
+</span><span class="line">
+</span><span class="line"><span class="p">(</span><span class="n">asdf</span><span class="p">:</span><span class="n">oos</span> <span class="s">&#39;asdf:load-op :stumpwm)</span>
+</span><span class="line"><span class="p">(</span><span class="n">sb</span><span class="o">-</span><span class="n">ext</span><span class="p">:</span><span class="n">save</span><span class="o">-</span><span class="n">lisp</span><span class="o">-</span><span class="ow">and</span><span class="o">-</span><span class="n">die</span> <span class="s">&quot;stumpwm&quot;</span> <span class="p">:</span><span class="n">executable</span> <span class="n">t</span>
+</span><span class="line">    <span class="p">:</span><span class="n">toplevel</span> <span class="c">#&#39;(lambda () (stumpwm:stumpwm &quot;:0&quot;)))</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 拷贝文件到PATH</span>
+</span><span class="line">
+</span><span class="line"><span class="n">sudo</span> <span class="n">cp</span> <span class="o">-</span><span class="n">rp</span> <span class="n">stumpwm</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 设置启动 注意是你的普通用户</span>
+</span><span class="line">
+</span><span class="line"><span class="err">$</span> <span class="n">echo</span> <span class="s">&quot;exec stumpwm&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">~/.</span><span class="n">xinitrc</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 这样你就可以使用startx启动啦</span>
+</span><span class="line">
+</span><span class="line"><span class="n">stumpwm</span><span class="err">的命令都是</span><span class="n">ctrl</span><span class="o">+</span><span class="n">t</span> <span class="err">开头的</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/how-to-use-celery/">使用celery之怎么让celery跑起来</a></h1>
     
     
@@ -1786,63 +1886,6 @@ io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%5B%3F%5D-qi-xue-xi-common-lispba/">一起学习common Lisp吧</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-28T11:28:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>我记得在什么地方说过一个程序员要学什么语言:汇编,C,lisp,还有一门脚本语言(python或者ruby).遗憾的是我只会一点python和一点点ruby. 
-最近关注到google出品了<a href="https://github.com/google/lisp-koans">lisp_koans</a>-一个给初学者学习commonlisp的好东西,也许你也没有听过ruby_koans
-和python_koans,假如你已经回了这2门语言可以忽略假如你想学习这2门语言,从koans入手是一个很好地途径.
-最近几天花了些时间完成了lisp_koans,把答案分享出来<a href="https://github.com/dongweiming/lisp-koans-answer">lisp-koans-answer</a></p>
-
-<p>我也给python_koans贡献了几行代码,在入职培训要求通过几种koans,xx_koans其实是一些测试用例,就像过关题目,他涉及这个语言的方方面面.只能你提供了正确的答案
-才能继续下一个题目</p>
-
-<h4 id="section-1">为啥分享答案</h4>
-
-<ol>
-  <li>
-    <p>做过python_koans的都记得，当某一题目你的答案不是期望的值的时候，这个测试没有通过，但是会提示你正确的结果,但是lisp_koans不会，你可以在不明所以的情况下需要研究很久</p>
-  </li>
-  <li>
-    <p>lisp_koans还很新(2013.05), 而且本来lisp语言就很小众. 不像ruby和python那样广泛.你不能从stackoverflow或者stackexchange找到答案</p>
-  </li>
-</ol>
-
-<h4 id="common-lisp">让我们一起学习common lisp吧</h4>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/5/">&larr; Older</a></li>
@@ -1865,6 +1908,10 @@ io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1900,10 +1947,6 @@ io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温�
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

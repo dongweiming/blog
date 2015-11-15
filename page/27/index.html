@@ -142,6 +142,68 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E4%BF%AE%E6%94%B9opensuse%E4%BF%AE%E6%94%B9%E5%BC%80%E6%9C%BA%E8%BF%87%E7%A8%8B%E8%83%8C%E6%99%AF%E7%94%BB%E9%9D%A2%E5%92%8Cgrub%E5%BC%80%E5%90%AF%E4%BC%81%E9%B9%85%E5%8A%A8%E7%94%BB%E6%8A%80/">修改opensuse修改开机过程背景画面和Grub开启企鹅动画技巧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-14T00:00:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>类似于XP开机那个来回循环走的小进度条的方式,opensuse其实也是可以修改的
+1  制作注意事项:
+使用GIMP编辑注意保存时候参数设置:另存为-&gt;保存-&gt;高级选项.其中质量的参数能控制图片大小,子采样需要<em><strong>2x2,1x1,1x1</strong></em> DCT方法 需要&#8221;整数&#8221;
+2 备份复制图片
+<pre class="sh_bash">linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/silent-1024x768.jpg
+linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/bootsplash-bootsplash-1024x768.jpg </pre>
+3 生成新的initrd
+<pre class="sh_bash">mkinitrd -s 1024x768</pre></p>
+
+<p>企鹅动态画面是openSUSE发行的Grub自带的启动画面，只需要修改gfxboot的配置文件就可以开启企鹅动态画面。
+<pre class="sh_bash">
+linux-3qd1:/home/dongwm #  gfxboot --change-config base::penguin=100
+还可以自己修改gfxboot.cfg文件，启用企鹅画面：
+linux-3qd1:/home/dongwm # vi /etc/bootsplash/themes/openSUSE/cdrom/gfxboot.cfg</p>
+
+<p>; penguin theme likelihood (in percent, -1 = auto)
+penguin=-1
+</pre></p>
+
+<p>修改peguin变量的值为企鹅画面显示的几率（从0-100选个数字，代表出现几率为0%-100%）:</p>
+
+<p>; penguin theme likelihood (in percent, -1 = auto)
+penguin=100</p>
+
+<p>&nbsp;
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=670cf740-daf0-8a3f-ab8a-79decfa2c7a8" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E4%BF%AE%E6%94%B9opensuse%E5%BC%80%E6%9C%BAgrub%E7%94%BB%E9%9D%A2/">修改opensuse开机grub画面</a></h1>
     
     
@@ -1079,60 +1141,6 @@ OSPF: Key 1 already exists
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%8D%87%E7%BA%A7puppet%E7%89%88%E6%9C%AC/">升级puppet版本</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-29T00:00:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><p><strong>目前最新版puppet是2.6.7，我的版本是2.6.3，以下是升级过程（本例只适合编译安装puppet）：</strong></p>
-<p><strong>思路：</strong></p>
-<p><strong>1  先升级server端，后升级client端</strong></p>
-<p><strong>2  先删除就版本库文件和程序文件，再安装新版本文件，而默认的/var/lib/puppet和/etc/puppet目录不要动</strong></p>
-<p><strong>1 删除旧相关文件：</strong></p>
-<p><pre class="sh_bash">#rm /usr/local/sbin/puppet* –rf
-#rm /usr/local/lib/ruby/site_ruby/1.8/puppet –rf
-#rm /usr/local/bin/puppet* –rf</pre></p>
-<p><strong>2 安装新版本：
-</strong><pre class="sh_bash">#tar zxvf puppet-2.6.7.tar.gz
-#cd puppet-2.6.7
-#ruby install.rb</pre></p>
-<p><strong>3  测试：</strong></p>
-<p><pre class="sh_bash">[root@dongwm puppet-2.6.7]# puppet -V
-2.6.7</p>
-<p>使用debug模式启动puppet会出现下面的信息：</p>
-<p>&nbsp;</p>
-<p>notice: Starting Puppet client version 2.6.7</pre></p>
-</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/28/">&larr; Older</a></li>
@@ -1155,6 +1163,10 @@ OSPF: Key 1 already exists
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1190,10 +1202,6 @@ OSPF: Key 1 already exists
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

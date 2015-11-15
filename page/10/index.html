@@ -142,6 +142,240 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pythonzhuabaochengxupypcap/">Python抓包程序（pypcap）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：网上好像抓包例子就是那么几个，我这里提供一个抓包例子，但是请注意，如果网卡流量&gt;200M，由于性能原因，建议使用c源码编译的程序：</p>
+
+<p><pre class="sh_python">
+#/usr/bin/env python
+#-*-coding:utf8-*-</p>
+
+<p>#抓包脚本
+"""
+This script is used to Capture and Analysis packets</p>
+
+<p>Required dependencies:
+1 libpcap-devel
+Installation:
+rpm -ivh ../libpcap-devel-0.9.4-14.el5.i386.rpm
+2 pypcap 
+Installation:
+tar zxvf pypcap-1.1.tar.gz 
+cd pypcap-1.1
+CFLAGS=-m32 python setup.py config 
+CFLAGS=-m32 python setup.py build 
+CFLAGS=-m32 python setup.py install </p>
+
+<p>3 iplist Format
+iplist＝ 'ip/mask','ip/mask'  OR iplist＝ 'ip/mask',    #本脚本主要根据ip段分析内外网流量数据，我自定义一个函数用来解析子网掩码方式的ip段，这里支持多个ip段，也支持一个段，但是要加‘,’</p>
+
+<p>Writer:Dongweiming</p>
+
+<p>"""</p>
+
+<p>import pcap
+import socket
+import struct
+import ctypes
+import datetime
+import threading
+import inspect
+import traceback
+from optparse import OptionParser
+from subprocess import *
+import sys,os
+import time</p>
+
+<p>iplist = '115.12.1.0/24','219.213.232.192/26'  #设置解析这2个段的ip列表</p>
+
+<p>def _async_raise(tid, exctype):
+    if not inspect.isclass(exctype):
+        raise TypeError("Only types can be raised (not instances)")
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, 0)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+def ipto(ip,ti):
+    d = ti/8
+    c = 256/(2**(ti%8))
+    ip_items = ip.split('.')
+    if len(ip_items[d:]) == 1:
+        if ti%8 == 0:
+            cmin = '%s.%s' % ('.'.join(ip_items[:d]),'0')
+            cmax = '%s.%s' % ('.'.join(ip_items[:d]),'255')
+        else:
+            for i in range(2**(ti%8)):
+	        mymax = (i+1)*c-1
+	        mymin=  i*c
+	        data =  int(''.join(ip_items[d:]))
+	        if data &lt; mymax and data &gt;= mymin:
+	            cmin = '%s.%s' % ('.'.join(ip_items[:d]),mymin)
+  	            cmax = '%s.%s' % ('.'.join(ip_items[:d]),mymax)
+    else:
+        if ti%8 == 0:
+             cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),'0',('0.'*(len(ip_items)-d-1))[:-1])
+             cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),'255',('255.'*(len(ip_items)-d-1))[:-1])
+        else:
+	    for i in range(2**(ti%8)):
+                mymax = (i+1)*c-1
+                mymin=  i*c
+	        data =  int(''.join(ip_items[d]))
+	        if data &lt; mymax and data &gt;= mymin:
+		    cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymin,('0.'*(len(ip_items)-d-1))[:-1])
+		    cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymax,('255.'*(len(ip_items)-d-1))[:-1])
+    return cmin,cmax  #返回ip段中可用的最小ip和最大ip</p>
+
+<p>class MYthread(threading.Thread):  #自定义theading.Thread类，能够产生线程并且杀掉线程
+    def _get_my_tid(self):
+        if not self.isAlive():
+            raise threading.ThreadError("the thread is not active")
+        if hasattr(self, "_thread_id"):
+            return self._thread_id</p>
+
+<p>        for tid, tobj in threading._active.items():
+            if tobj is self:
+                self._thread_id = tid
+                return tid
+        raise AssertionError("could not determine the thread's id")
+    def raise_exc(self, exctype):
+        _async_raise(self._get_my_tid(), exctype)</p>
+
+<p>    def terminate(self):
+        self.raise_exc(SystemExit)
+class Crawl():  #解析主函数
+    def __init__(self,eth,mytime,flag):
+        self.bytes = 0
+        self.bytes_out = 0
+        self.packets = 0
+        self.packets_out = 0
+        self.eth = eth
+        self.mytime = mytime
+        self.flag = flag
+    def myntohl(self,ip):
+        return socket.ntohl(struct.unpack("I",socket.inet_aton(ip))[0])  #inet_aton 将ip地址的4段地址分别进行2进制转化，输出用16进制表示，
+                                                     #unpack的处理是按16进制（4bit）将2进制字符，从后向前读入的，低位入
+                                                     #ntohl, htonl 表示的是网络地址和主机地址之间的转换（network byte &lt;==&gt; host byte）
+                                                     #由于unpack/pack的解/打包的颠倒顺序，必须通过htonl 或者 ntohl 进行处理
+                                                     #比如从’192.168.1.235’ 可以转换为数字’3120670912’，此数字为网络字节序
+    def check(self,dict,uip):
+        flag = 0
+        for i in dict.keys():
+            if uip &gt; self.myntohl(i) and uip &lt; self.myntohl(dict[i]):  #如果抓取的uip属于ip段，flag＝1，否则为0
+#       if (uip &gt; self.myntohl('1941307648') and uip &lt; self.myntohl('1941307903')) or (self.myntohl('3689867456') and uip &lt; self.myntohl('3689867519')):
+                 flag =1
+        return flag
+    def run(self):  #设置的抓取时间里pcap一直抓包，各个队列累加数值，最后除以时间，即平均
+        dict = {}
+        for i in iplist:
+             d = i.split('/')
+             cmin,cmax = ipto(d[0],int(d[1]))
+             dict[cmin]=cmax  #这里记录一个字典，key是ip段最小的的ip，value是最大的ip</p>
+
+<p>        if self.eth == 'all':
+            pc = pcap.pcap()
+        else:
+            pc = pcap.pcap(self.eth)
+        for ptime,pdata in pc:
+            #try:
+            #    ip_type = socket.ntohs(struct.unpack("H",pdata[12:14])[0])  #
+            #except:
+            #     pass 
+      	    #if ip_type != 2048: 
+	    #    continue
+ 	    s_uip = socket.ntohl(struct.unpack("I",pdata[14+12:14+16])[0]) #源ip的网络字节序
+	    #d_uip = socket.ntohl(struct.unpack("I",pdata[14+16:14+20])[0])  #目的ip的网络字节序
+            bytes = socket.ntohs(struct.unpack("H",pdata[14+2:14+4])[0])+14 #数据的字节数
+            if self.check(dict,s_uip):
+	        self.bytes_out += bytes
+                self.packets_out += 1
+ 	    else:
+	        self.bytes += bytes
+                self.packets += 1
+    def withtime(self):
+        pid =  os.getpid()
+        name = sys.argv[0]
+        Popen("kill -9 `ps -ef |grep %s|grep -v grep |awk '{print $2}'|grep -v %d`" % (name,pid),stdout=PIPE, stderr=PIPE,shell=True) #这里是
+                                     #在启动时候主动杀掉系统中存在的残留程序,使用中发现有时候（极少）执行时间到没有杀掉程序，为了定时任务安全
+        self.t = MYthread(target = self.run)
+        self.t.setDaemon(1)
+        self.t.start()
+        curtime = time.ctime(time.time())
+        t = 0
+        while t&lt;int(self.mytime):
+           t +=1
+           time.sleep(1)
+        nowtime = time.ctime(time.time())
+        data = "From[%s]To[%s]%s\n%s%s%s%s\n%s%s%s%s\n" \
+        % (curtime,nowtime,u'数据统计'.encode('utf8'),u'出网总流量/s'.encode('utf8').ljust(22,' '),\
+           u'出网总数据包/s'.encode('utf8').ljust(22,' '),u'进网总流量/s'.encode('utf8').ljust(22,' '),\
+           u'进网总数据包/s'.encode('utf8').ljust(22,' '),str(int(self.bytes_out)/int(self.mytime)).ljust(18,' '),\
+           str(int(self.packets_out)/int(self.mytime)).ljust(18,' '),str(int(self.bytes)/int(self.mytime)).ljust(18,' '),\
+           str(int(self.packets)/int(self.mytime)).ljust(18,' '))
+        if self.flag:
+            print data
+        self.log(data)
+        self.t.terminate()
+        self.t.join()</p>
+
+<p>    def log(self,log):  #记录日志，使用－p选项只在记录，不在终端打印，用于定时任务等需求时（定时任务执行没必要输出）
+        path = os.path.split(os.path.realpath(__file__))[0]
+        log_file = "%s/common.log" % path
+        if not os.path.exists(log_file):
+            f=open(log_file,'w')
+            f.close()
+        try:
+            fr = open(log_file, "a+")
+            fr.write(log+"\r\n")
+	    fr.close()
+	except Exception, e:
+            pass</p>
+
+<p>if __name__ == '__main__':
+    argc = len(sys.argv)
+    parser = OptionParser(description="Use For Capture and Analysis packets",add_help_option=False,prog="sniffer.py",usage="%prog [ -e &lt;ethname&gt;][ -t &lt;time&gt;]")
+    parser.add_option("-e", "--eth",action = "store",default = "all",help = "Select the card, the default is 'all'") #选择网卡，默认是all
+    parser.add_option("-t", "--time",action = "store",default = 5,help = "Select the capture time,the default is 5s")  #设置要抓包的时间，单位秒，时间越长越精确
+    parser.add_option("-p", "--myprint",action = "store_false",default = True,help = "Print data, the default is true")
+    parser.add_option("-h", "--help",action = "help",help="print help")
+    options, arguments=parser.parse_args()
+    a = Crawl(options.eth,options.time,options.myprint)
+    a.withtime()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusubprocessyanjiu/">关于subprocess研究</a></h1>
     
     
@@ -2261,503 +2495,6 @@ multicall.show_type('string')</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuxml-etree-elementtreeyanjiujiexipian/">关于xml.etree.ElementTree研究(解析篇)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>&nbsp;</p>
-
-<p>前言：xml.etree.ElementTree是xml模块中的一部分，从python2.5开始添加，是一个处理xml的接口模块</p>
-
-<p>这里有一个需要解析的opml文件（<a href="http://www.opml.org/">OPML</a>(Outline Processor Markup Language)是建立在XML基础上的“大纲处理标记语言”，</p>
-
-<p>主要用于描述一份资料的结构。它的优势是订阅集中及分享）：</p>
-
-<p><pre class="sh_xml">
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是podcasts.opml
-&lt;opml version="1.0"&gt;
-&lt;head&gt;
-	&lt;title&gt;My Podcasts&lt;/title&gt;
-	&lt;dateCreated&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateCreated&gt;
-	&lt;dateModified&gt;Sun, 07 Mar 2010 15:53:26 GMT&lt;/dateModified&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;outline text="Science and Tech"&gt;
-    &lt;outline text="APM: Future Tense" type="rss" 
-             xmlUrl="http://www.publicradio.org/columns/futuretense/podcast.xml" 
-             htmlUrl="http://www.publicradio.org/columns/futuretense/" /&gt;
-	&lt;outline text="Engines Of Our Ingenuity Podcast" type="rss" 
-             xmlUrl="http://www.npr.org/rss/podcast.php?id=510030" 
-             htmlUrl="http://www.uh.edu/engines/engines.htm" /&gt;
-	&lt;outline text="Science &amp;#38; the City" type="rss" 
-             xmlUrl="http://www.nyas.org/Podcasts/Atom.axd" 
-             htmlUrl="http://www.nyas.org/WhatWeDo/SciencetheCity.aspx" /&gt;
-  &lt;/outline&gt;
-  &lt;outline text="Books and Fiction"&gt;
-	&lt;outline text="Podiobooker" type="rss" 
-             xmlUrl="http://feeds.feedburner.com/podiobooks" 
-             htmlUrl="http://www.podiobooks.com/blog" /&gt;
-	&lt;outline text="The Drabblecast" type="rss" 
-             xmlUrl="http://web.me.com/normsherman/Site/Podcast/rss.xml" 
-             htmlUrl="http://web.me.com/normsherman/Site/Podcast/Podcast.html" /&gt;
-	&lt;outline text="tor.com / category / tordotstories" type="rss" 
-             xmlUrl="http://www.tor.com/rss/category/TorDotStories" 
-             htmlUrl="http://www.tor.com/" /&gt;
-  &lt;/outline&gt;
-  &lt;outline text="Computers and Programming"&gt;
-	&lt;outline text="MacBreak Weekly" type="rss" 
-             xmlUrl="http://leo.am/podcasts/mbw" 
-             htmlUrl="http://twit.tv/mbw" /&gt;
-	&lt;outline text="FLOSS Weekly" type="rss" 
-             xmlUrl="http://leo.am/podcasts/floss" 
-             htmlUrl="http://twit.tv" /&gt;
-	&lt;outline text="Core Intuition" type="rss" 
-             xmlUrl="http://www.coreint.org/podcast.xml" 
-             htmlUrl="http://www.coreint.org/" /&gt;
-  &lt;/outline&gt;
-  &lt;outline text="Python"&gt;
-    &lt;outline text="PyCon Podcast" type="rss" 
-             xmlUrl="http://advocacy.python.org/podcasts/pycon.rss" 
-             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
-	&lt;outline text="A Little Bit of Python" type="rss" 
-             xmlUrl="http://advocacy.python.org/podcasts/littlebit.rss" 
-             htmlUrl="http://advocacy.python.org/podcasts/" /&gt;
-	&lt;outline text="Django Dose Everything Feed" type="rss" 
-             xmlUrl="http://djangodose.com/everything/feed/" /&gt;
-  &lt;/outline&gt;
-  &lt;outline text="Miscelaneous"&gt;
-	&lt;outline text="dhellmann's CastSampler Feed" type="rss" 
-             xmlUrl="http://www.castsampler.com/cast/feed/rss/dhellmann/" 
-             htmlUrl="http://www.castsampler.com/users/dhellmann/" /&gt;
-  &lt;/outline&gt;
-&lt;/body&gt;
-&lt;/opml&gt;
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_xml">
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;  #这个例子是data.xml
-&lt;top&gt;
-  &lt;child&gt;This child contains text.&lt;/child&gt;
-  &lt;child_with_tail&gt;This child has regular text.&lt;/child_with_tail&gt;And "tail" text.
-  &lt;with_attributes name="value" foo="bar" /&gt;
-  &lt;entity_expansion attribute="This &amp;#38; That"&gt;That &amp;#38; This&lt;/entity_expansion&gt;
-&lt;/top&gt;
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_python">
-from xml.etree import ElementTree</p>
-
-<p>with open('podcasts.opml', 'rt') as f:
-    tree = ElementTree.parse(f)  #返回一个ElementTree的对象</p>
-
-<p>print tree</p>
-
-<p>for node in tree.iter():  #遍历解析树
-    print node.tag, node.attrib #标签和值 </p>
-
-<p>for node in tree.iter('outline'): #遍历outline部分
-    name = node.attrib.get('text') 
-    url = node.attrib.get('xmlUrl')
-    if name and url:
-        print '  %s :: %s' % (name, url)
-    else:
-        print name</p>
-
-<p>for node in tree.findall('.//outline'): #没有用getiterator()，而是findall出一个列表迭代 outline是node的名字
-    url = node.attrib.get('xmlUrl')
-    if url:
-        print url
-for node in tree.findall('.//outline/outline'): #寻找2级层次的node 就是node'outline'的子node是'outline'的过滤
-    url = node.attrib.get('xmlUrl')
-    print url
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-&lt;xml.etree.ElementTree.ElementTree object at 0xb748e58c&gt;
-opml {&#8216;version&#8217;: &#8216;1.0&#8217;}
-head {}
-title {}
-dateCreated {}
-dateModified {}
-body {}
-outline {&#8216;text&#8217;: &#8216;Science and Tech&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://www.publicradio.org/columns/futuretense/podcast.xml&#8217;, &#8216;text&#8217;: &#8216;APM: Future Tense&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.publicradio.org/columns/futuretense/&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://www.npr.org/rss/podcast.php?id=510030&#8217;, &#8216;text&#8217;: &#8216;Engines Of Our Ingenuity Podcast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.uh.edu/engines/engines.htm&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://www.nyas.org/Podcasts/Atom.axd&#8217;, &#8216;text&#8217;: &#8216;Science &amp; the City&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8217;}
-outline {&#8216;text&#8217;: &#8216;Books and Fiction&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://feeds.feedburner.com/podiobooks&#8217;, &#8216;text&#8217;: &#8216;Podiobooker&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.podiobooks.com/blog&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8217;, &#8216;text&#8217;: &#8216;The Drabblecast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://www.tor.com/rss/category/TorDotStories&#8217;, &#8216;text&#8217;: &#8216;tor.com / category / tordotstories&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.tor.com/&#8217;}
-outline {&#8216;text&#8217;: &#8216;Computers and Programming&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://leo.am/podcasts/mbw&#8217;, &#8216;text&#8217;: &#8216;MacBreak Weekly&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://twit.tv/mbw&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://leo.am/podcasts/floss&#8217;, &#8216;text&#8217;: &#8216;FLOSS Weekly&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://twit.tv&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://www.coreint.org/podcast.xml&#8217;, &#8216;text&#8217;: &#8216;Core Intuition&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.coreint.org/&#8217;}
-outline {&#8216;text&#8217;: &#8216;Python&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/pycon.rss&#8217;, &#8216;text&#8217;: &#8216;PyCon Podcast&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/littlebit.rss&#8217;, &#8216;text&#8217;: &#8216;A Little Bit of Python&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://advocacy.python.org/podcasts/&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://djangodose.com/everything/feed/&#8217;, &#8216;text&#8217;: &#8216;Django Dose Everything Feed&#8217;, &#8216;type&#8217;: &#8216;rss&#8217;}
-outline {&#8216;text&#8217;: &#8216;Miscelaneous&#8217;}
-outline {&#8216;xmlUrl&#8217;: &#8216;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8217;, &#8216;text&#8217;: &#8220;dhellmann&#8217;s CastSampler Feed&#8221;, &#8216;type&#8217;: &#8216;rss&#8217;, &#8216;htmlUrl&#8217;: &#8216;http://www.castsampler.com/users/dhellmann/&#8217;}
-Science and Tech
-APM: Future Tense :: http://www.publicradio.org/columns/futuretense/podcast.xml
-Engines Of Our Ingenuity Podcast :: http://www.npr.org/rss/podcast.php?id=510030
-Science &amp; the City :: http://www.nyas.org/Podcasts/Atom.axd
-Books and Fiction
-Podiobooker :: http://feeds.feedburner.com/podiobooks
-The Drabblecast :: http://web.me.com/normsherman/Site/Podcast/rss.xml
-tor.com / category / tordotstories :: http://www.tor.com/rss/category/TorDotStories
-Computers and Programming
-MacBreak Weekly :: http://leo.am/podcasts/mbw
-FLOSS Weekly :: http://leo.am/podcasts/floss
-Core Intuition :: http://www.coreint.org/podcast.xml
-Python
-PyCon Podcast :: http://advocacy.python.org/podcasts/pycon.rss
-A Little Bit of Python :: http://advocacy.python.org/podcasts/littlebit.rss
-Django Dose Everything Feed :: http://djangodose.com/everything/feed/
-Miscelaneous
-dhellmann&#8217;s CastSampler Feed :: http://www.castsampler.com/cast/feed/rss/dhellmann/
-http://www.publicradio.org/columns/futuretense/podcast.xml
-http://www.npr.org/rss/podcast.php?id=510030
-http://www.nyas.org/Podcasts/Atom.axd
-http://feeds.feedburner.com/podiobooks
-http://web.me.com/normsherman/Site/Podcast/rss.xml
-http://www.tor.com/rss/category/TorDotStories
-http://leo.am/podcasts/mbw
-http://leo.am/podcasts/floss
-http://www.coreint.org/podcast.xml
-http://advocacy.python.org/podcasts/pycon.rss
-http://advocacy.python.org/podcasts/littlebit.rss
-http://djangodose.com/everything/feed/
-http://www.castsampler.com/cast/feed/rss/dhellmann/
-http://www.publicradio.org/columns/futuretense/podcast.xml
-http://www.npr.org/rss/podcast.php?id=510030
-http://www.nyas.org/Podcasts/Atom.axd
-http://feeds.feedburner.com/podiobooks
-http://web.me.com/normsherman/Site/Podcast/rss.xml
-http://www.tor.com/rss/category/TorDotStories
-http://leo.am/podcasts/mbw
-http://leo.am/podcasts/floss
-http://www.coreint.org/podcast.xml
-http://advocacy.python.org/podcasts/pycon.rss
-http://advocacy.python.org/podcasts/littlebit.rss
-http://djangodose.com/everything/feed/
-http://www.castsampler.com/cast/feed/rss/dhellmann/
-<pre class="sh_python">
-from xml.etree import ElementTree</p>
-
-<p>with open('data.xml', 'rt') as f:
-    tree = ElementTree.parse(f)</p>
-
-<p>node = tree.find('./with_attributes') #找到这个节点
-print node.tag #打印这个节点的值
-for name, value in sorted(node.attrib.items()): #
-    print '  %-4s = "%s"' % (name, value)</p>
-
-<p>for path in [ './child', './child_with_tail' ]:
-    node = tree.find(path)
-    print node.tag
-    print '  child node text:', node.text  #标签中间部分
-    print '  and tail text  :', node.tail  #标签结束后的那部分</p>
-
-<p>node = tree.find('entity_expansion')
-print node.tag
-print '  in attribute:', node.attrib['attribute']  #获取这个标签的属性
-print '  in text     :', node.text #获取这个标签的值
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>with_attributes
-foo  = &#8220;bar&#8221;
-name = &#8220;value&#8221;
-child
-child node text: This child contains text.
-and tail text  :</p>
-
-<p>child_with_tail
-child node text: This child has regular text.
-and tail text  : And &#8220;tail&#8221; text.</p>
-
-<p>entity_expansion
-in attribute: This &amp; That  #转换为适当的字符值返回
-in text     : That &amp; This</p>
-
-<p><pre class="sh_python">
-from xml.etree.ElementTree import iterparse</p>
-
-<p>depth = 0
-prefix_width = 8
-prefix_dots = '.' * prefix_width
-line_template = '{prefix:&lt;0.{prefix_len}}{event:&lt;8}{suffix:&lt;{suffix_len}} {node.tag:&lt;12} {node_id}'  #模式匹配</p>
-
-<p>for (event, node) in iterparse('podcasts.opml', ['start', 'end', 'start-ns', 'end-ns']): #iterparse返回一个迭代产生的元组
-                                   #包含事件的名称和触发事件的节点，这些事件：包含在参数第二个参数的列表
-    if event == 'end':
-        depth -= 1  #当事件结束深度－1</p>
-
-<p>    prefix_len = depth * 2</p>
-
-<p>    print line_template.format(prefix=prefix_dots,  #解析格式化  前缀使用设定的一定位数的'.'
-                               prefix_len=prefix_len,
-                               suffix='',
-                               suffix_len=(prefix_width - prefix_len),
-                               node=node,
-                               node_id=id(node),
-                               event=event,
-                               )</p>
-
-<p>    if event == 'start':
-        depth += 1
-
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-start            opml         3074976588
-..start          head         3074976748
-&#8230;.start        title        3074976908
-&#8230;.end          title        3074976908
-&#8230;.start        dateCreated  3074977228
-&#8230;.end          dateCreated  3074977228
-&#8230;.start        dateModified 3074977292
-&#8230;.end          dateModified 3074977292
-..end            head         3074976748
-..start          body         3074977324
-&#8230;.start        outline      3074977420
-&#8230;&#8230;start      outline      3074977644
-&#8230;&#8230;end        outline      3074977644
-&#8230;&#8230;start      outline      3074977676
-&#8230;&#8230;end        outline      3074977676
-&#8230;&#8230;start      outline      3074990124
-&#8230;&#8230;end        outline      3074990124
-&#8230;.end          outline      3074977420
-&#8230;.start        outline      3074990188
-&#8230;&#8230;start      outline      3074990220
-&#8230;&#8230;end        outline      3074990220
-&#8230;&#8230;start      outline      3074990156
-&#8230;&#8230;end        outline      3074990156
-&#8230;&#8230;start      outline      3074990284
-&#8230;&#8230;end        outline      3074990284
-&#8230;.end          outline      3074990188
-&#8230;.start        outline      3074990348
-&#8230;&#8230;start      outline      3074990380
-&#8230;&#8230;end        outline      3074990380
-&#8230;&#8230;start      outline      3074990316
-&#8230;&#8230;end        outline      3074990316
-&#8230;&#8230;start      outline      3074990412
-&#8230;&#8230;end        outline      3074990412
-&#8230;.end          outline      3074990348
-&#8230;.start        outline      3074990508
-&#8230;&#8230;start      outline      3074990444
-&#8230;&#8230;end        outline      3074990444
-&#8230;&#8230;start      outline      3074990476
-&#8230;&#8230;end        outline      3074990476
-&#8230;&#8230;start      outline      3074990636
-&#8230;&#8230;end        outline      3074990636
-&#8230;.end          outline      3074990508
-&#8230;.start        outline      3074990700
-&#8230;&#8230;start      outline      3074990604
-&#8230;&#8230;end        outline      3074990604
-&#8230;.end          outline      3074990700
-..end            body         3074977324
-end              opml         3074976588</p>
-
-<p><pre class="sh_python">
-import csv
-from xml.etree.ElementTree import iterparse
-import sys</p>
-
-<p>writer = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)  #将xml解析成csv文件格式</p>
-
-<p>group_name = ''</p>
-
-<p>for (event, node) in iterparse('podcasts.opml', events=['start']):  
-    if node.tag != 'outline':
-        continue
-    if not node.attrib.get('xmlUrl'):
-        group_name = node.attrib['text']
-    else:
-        # Output a podcast entry
-        writer.writerow( (group_name, node.attrib['text'],
-                          node.attrib['xmlUrl'],
-                          node.attrib.get('htmlUrl', ''),
-                          )
-                         )
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-&#8220;Science and Tech&#8221;,&#8221;APM: Future Tense&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/podcast.xml&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/&#8221;
-&#8220;Science and Tech&#8221;,&#8221;Engines Of Our Ingenuity Podcast&#8221;,&#8221;http://www.npr.org/rss/podcast.php?id=510030&#8221;,&#8221;http://www.uh.edu/engines/engines.htm&#8221;
-&#8220;Science and Tech&#8221;,&#8221;Science &amp; the City&#8221;,&#8221;http://www.nyas.org/Podcasts/Atom.axd&#8221;,&#8221;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8221;
-&#8220;Books and Fiction&#8221;,&#8221;Podiobooker&#8221;,&#8221;http://feeds.feedburner.com/podiobooks&#8221;,&#8221;http://www.podiobooks.com/blog&#8221;
-&#8220;Books and Fiction&#8221;,&#8221;The Drabblecast&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8221;
-&#8220;Books and Fiction&#8221;,&#8221;tor.com / category / tordotstories&#8221;,&#8221;http://www.tor.com/rss/category/TorDotStories&#8221;,&#8221;http://www.tor.com/&#8221;
-&#8220;Computers and Programming&#8221;,&#8221;MacBreak Weekly&#8221;,&#8221;http://leo.am/podcasts/mbw&#8221;,&#8221;http://twit.tv/mbw&#8221;
-&#8220;Computers and Programming&#8221;,&#8221;FLOSS Weekly&#8221;,&#8221;http://leo.am/podcasts/floss&#8221;,&#8221;http://twit.tv&#8221;
-&#8220;Computers and Programming&#8221;,&#8221;Core Intuition&#8221;,&#8221;http://www.coreint.org/podcast.xml&#8221;,&#8221;http://www.coreint.org/&#8221;
-&#8220;Python&#8221;,&#8221;PyCon Podcast&#8221;,&#8221;http://advocacy.python.org/podcasts/pycon.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
-&#8220;Python&#8221;,&#8221;A Little Bit of Python&#8221;,&#8221;http://advocacy.python.org/podcasts/littlebit.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
-&#8220;Python&#8221;,&#8221;Django Dose Everything Feed&#8221;,&#8221;http://djangodose.com/everything/feed/&#8221;,&#8221;&#8221;
-&#8220;Miscelaneous&#8221;,&#8221;dhellmann&#8217;s CastSampler Feed&#8221;,&#8221;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8221;,&#8221;http://www.castsampler.com/users/dhellmann/&#8221;
-<pre class="sh_python">
-import csv
-from xml.etree.ElementTree import XMLTreeBuilder  #创建一个自定义的xml数建构
-import sys</p>
-
-<p>class PodcastListToCSV(object):</p>
-
-<p>    def __init__(self, outputFile):
-        self.writer = csv.writer(outputFile, quoting=csv.QUOTE_NONNUMERIC)
-        self.group_name = ''
-        return</p>
-
-<p>    def start(self, tag, attrib):
-        if tag != 'outline':
-            return
-        if not attrib.get('xmlUrl'):
-            self.group_name = attrib['text']
-        else:
-            self.writer.writerow( (self.group_name, attrib['text'],
-                                   attrib['xmlUrl'],
-                                   attrib.get('htmlUrl', ''),
-                                   )
-                                  )</p>
-
-<p>    def end(self, tag):
-        pass  #放弃关闭标签
-    def data(self, data):
-        pass  #放弃node数据
-    def close(self):
-        return #什么都不做</p>
-
-<p>target = PodcastListToCSV(sys.stdout)
-parser = XMLTreeBuilder(target=target)
-with open('podcasts.opml', 'rt') as f:
-    for line in f:
-        parser.feed(line)
-parser.close()
-</pre>
-执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-&#8220;Science and Tech&#8221;,&#8221;APM: Future Tense&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/podcast.xml&#8221;,&#8221;http://www.publicradio.org/columns/futuretense/&#8221;
-&#8220;Science and Tech&#8221;,&#8221;Engines Of Our Ingenuity Podcast&#8221;,&#8221;http://www.npr.org/rss/podcast.php?id=510030&#8221;,&#8221;http://www.uh.edu/engines/engines.htm&#8221;
-&#8220;Science and Tech&#8221;,&#8221;Science &amp; the City&#8221;,&#8221;http://www.nyas.org/Podcasts/Atom.axd&#8221;,&#8221;http://www.nyas.org/WhatWeDo/SciencetheCity.aspx&#8221;
-&#8220;Books and Fiction&#8221;,&#8221;Podiobooker&#8221;,&#8221;http://feeds.feedburner.com/podiobooks&#8221;,&#8221;http://www.podiobooks.com/blog&#8221;
-&#8220;Books and Fiction&#8221;,&#8221;The Drabblecast&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/rss.xml&#8221;,&#8221;http://web.me.com/normsherman/Site/Podcast/Podcast.html&#8221;
-&#8220;Books and Fiction&#8221;,&#8221;tor.com / category / tordotstories&#8221;,&#8221;http://www.tor.com/rss/category/TorDotStories&#8221;,&#8221;http://www.tor.com/&#8221;
-&#8220;Computers and Programming&#8221;,&#8221;MacBreak Weekly&#8221;,&#8221;http://leo.am/podcasts/mbw&#8221;,&#8221;http://twit.tv/mbw&#8221;
-&#8220;Computers and Programming&#8221;,&#8221;FLOSS Weekly&#8221;,&#8221;http://leo.am/podcasts/floss&#8221;,&#8221;http://twit.tv&#8221;
-&#8220;Computers and Programming&#8221;,&#8221;Core Intuition&#8221;,&#8221;http://www.coreint.org/podcast.xml&#8221;,&#8221;http://www.coreint.org/&#8221;
-&#8220;Python&#8221;,&#8221;PyCon Podcast&#8221;,&#8221;http://advocacy.python.org/podcasts/pycon.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
-&#8220;Python&#8221;,&#8221;A Little Bit of Python&#8221;,&#8221;http://advocacy.python.org/podcasts/littlebit.rss&#8221;,&#8221;http://advocacy.python.org/podcasts/&#8221;
-&#8220;Python&#8221;,&#8221;Django Dose Everything Feed&#8221;,&#8221;http://djangodose.com/everything/feed/&#8221;,&#8221;&#8221;
-&#8220;Miscelaneous&#8221;,&#8221;dhellmann&#8217;s CastSampler Feed&#8221;,&#8221;http://www.castsampler.com/cast/feed/rss/dhellmann/&#8221;,&#8221;http://www.castsampler.com/users/dhellmann/&#8221;
-<pre class="sh_python">
-from xml.etree.ElementTree import XML,XMLID</p>
-
-<p>parsed = XML('''  参数是一段xml文本
-&lt;root&gt;
-  &lt;group&gt;
-    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
-    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
-  &lt;/group&gt;
-  &lt;group&gt;
-    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
-  &lt;/group&gt;
-&lt;/root&gt;
-''')</p>
-
-<p>print 'parsed =', parsed</p>
-
-<p>for elem in parsed:
-    print elem.tag
-    if elem.text is not None and elem.text.strip():
-        print '  text: "%s"' % elem.text
-    if elem.tail is not None and elem.tail.strip():
-        print '  tail: "%s"' % elem.tail
-    for name, value in sorted(elem.attrib.items()):
-        print '  %-4s = "%s"' % (name, value)
-    print
-tree, id_map = XMLID('''  #使用<tt>id</tt>属性分析xml文本
-&lt;root&gt;
-  &lt;group&gt;
-    &lt;child id="a"&gt;This is child "a".&lt;/child&gt;
-    &lt;child id="b"&gt;This is child "b".&lt;/child&gt;
-  &lt;/group&gt;
-  &lt;group&gt;
-    &lt;child id="c"&gt;This is child "c".&lt;/child&gt;
-  &lt;/group&gt;
-&lt;/root&gt;
-''')</p>
-
-<p>for key, value in sorted(id_map.items()):
-    print '%s = %s' % (key, value)
-</pre></p>
-
-<p>执行：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-parsed = &lt;Element &#8216;root&#8217; at 0xb738fa2c&gt;
-group</p>
-
-<p>group</p>
-
-<p>a = &lt;Element &#8216;child&#8217; at 0xb738fdcc&gt;
-b = &lt;Element &#8216;child&#8217; at 0xb738fcec&gt;
-c = &lt;Element &#8216;child&#8217; at 0xb738fe2c&gt;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/11/">&larr; Older</a></li>
@@ -2780,6 +2517,10 @@ c = &lt;Element &#8216;child&#8217; at 0xb738fe2c&gt;</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -2815,10 +2556,6 @@ c = &lt;Element &#8216;child&#8217; at 0xb738fe2c&gt;</p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

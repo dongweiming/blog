@@ -142,6 +142,63 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%5B%3F%5D-qi-xue-xi-common-lispba/">一起学习common Lisp吧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-28T11:28:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我记得在什么地方说过一个程序员要学什么语言:汇编,C,lisp,还有一门脚本语言(python或者ruby).遗憾的是我只会一点python和一点点ruby. 
+最近关注到google出品了<a href="https://github.com/google/lisp-koans">lisp_koans</a>-一个给初学者学习commonlisp的好东西,也许你也没有听过ruby_koans
+和python_koans,假如你已经回了这2门语言可以忽略假如你想学习这2门语言,从koans入手是一个很好地途径.
+最近几天花了些时间完成了lisp_koans,把答案分享出来<a href="https://github.com/dongweiming/lisp-koans-answer">lisp-koans-answer</a></p>
+
+<p>我也给python_koans贡献了几行代码,在入职培训要求通过几种koans,xx_koans其实是一些测试用例,就像过关题目,他涉及这个语言的方方面面.只能你提供了正确的答案
+才能继续下一个题目</p>
+
+<h4 id="section-1">为啥分享答案</h4>
+
+<ol>
+  <li>
+    <p>做过python_koans的都记得，当某一题目你的答案不是期望的值的时候，这个测试没有通过，但是会提示你正确的结果,但是lisp_koans不会，你可以在不明所以的情况下需要研究很久</p>
+  </li>
+  <li>
+    <p>lisp_koans还很新(2013.05), 而且本来lisp语言就很小众. 不像ruby和python那样广泛.你不能从stackoverflow或者stackexchange找到答案</p>
+  </li>
+</ol>
+
+<h4 id="common-lisp">让我们一起学习common lisp吧</h4>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shi-yong-httphe-websocketlian-jie-fu-wu-qi/">使用http和websocket连接服务器</a></h1>
     
     
@@ -1742,124 +1799,6 @@ password XXX</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/a-web-based-reveal.js-online-PPT/">仿slid.es的在线PPT编辑网站</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-25T12:22:00+08:00" pubdate data-updated="true">May 25<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p><a href="https://slid.es">slid.es</a>是我最喜欢的前端之一<a href="https://github.com/hakimel">hakimel</a>的作品，前身叫做rvl.io, 网站已经改版。源于去年年底在上家公司做年终总结PPT，对我这种不搞office，没有美感的小程序员太痛苦了，然后就找到了<a href="https://github.com/hakimel/reveal.js">reveal.js</a>, 后来萌发做个基于它的网站, 其实也是为了练手学习mongoengine和oauth</p>
-
-<p>项目地址 <a href="https://github.com/dongweiming/flask_reveal">flask_reveal</a></p>
-
-<h4 id="section-1">它能做什么</h4>
-
-<ul>
-  <li>保存漂亮的在线PPT(我认为的)</li>
-  <li>记录浏览次数</li>
-  <li>多种主题和字体</li>
-  <li>可以把PPT私有化(默认是公开的)</li>
-  <li>自动保存修改</li>
-  <li>支持Bitbucket/Google/Github/Instagram/Linkdln/Trello/Tumblr/Stackoverflow oauth/oauth2登陆</li>
-  <li>PPT预览</li>
-</ul>
-
-<h4 id="section-2">使用了什么</h4>
-
-<ul>
-  <li>flask</li>
-  <li>mongoengine (忍不了非orm)</li>
-  <li>flask-script (像django那样的命令行启动)</li>
-  <li>前端js借用我做喜欢的原作者的90%，然后根据我的需要改动，css基本没动</li>
-  <li><a href="https://github.com/omab/python-social-auth">python-social-auth</a>的oauth后端，但是它使用的是flask+sqlalchemy，不支持flask+mongoengine，我改写了这部分</li>
-</ul>
-
-<h4 id="usage">Usage</h4>
-
-<p>设置hosts文件</p>
-
-<p>唉，本来申请了很多oauth想放在sae上面，但是遗憾的是新浪不支持，所以只能本地加hosts，让验证后的回调正确返回 linux 在你的/etc/hosts 文件里面添加一行</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">YOURIP   YOURDOMAIN</span></pre></figure></notextile></div>
-
-<p>复制配置文件然后把你注册的ouauth放进去</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cp settings.py.example settings.py</span></pre></figure></notextile></div>
-
-<p>象django那样启动</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">python manage.py runserver -t 0.0.0.0 -p 80</span></pre></figure></notextile></div>
-
-<p>And 访问主页<code>http://revealcn.sinaapp.com</code></p>
-
-<h4 id="nginxuwsgi">使用nginx+uwsgi</h4>
-
-<p>这里是我的配置nginx的这段（假设你git clone 后在/home/dongwm/flask_reveal）</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">server {
-</span><span class="line">		listen 80;
-</span><span class="line">		server_name revealcn.sinaapp.com;
-</span><span class="line">
-</span><span class="line">		access_log /var/log/nginx/revealcn.access_log main;
-</span><span class="line">		error_log /var/log/nginx/revealcn.error_log info;
-</span><span class="line">		location / {
-</span><span class="line">                include uwsgi_params;
-</span><span class="line">                uwsgi_pass unix:///tmp/uwsgi.sock;
-</span><span class="line">        	}
-</span><span class="line">		location /zongjie {
-</span><span class="line">		root   /home/dongwm/flask_reveal;
-</span><span class="line">		index index.html;
-</span><span class="line">		}
-</span><span class="line">	}
-</span></pre></figure></notextile></div>
-
-<p>uwsgi的xml配置</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">&lt;uwsgi&gt;
-</span><span class="line">     &lt;pythonpath&gt;/home/dongwm/flask_reveal&lt;/pythonpath&gt;
-</span><span class="line">     &lt;module&gt;manage&lt;/module&gt;
-</span><span class="line">     &lt;socket&gt;/tmp/uwsgi.sock&lt;/socket&gt;    
-</span><span class="line">    &lt;callable&gt;manager&lt;/callable&gt;
-</span><span class="line">     &lt;master/&gt;
-</span><span class="line">     &lt;processes&gt;4&lt;/processes&gt;       
-</span><span class="line">     &lt;memory-report/&gt;
-</span><span class="line">&lt;/uwsgi&gt;</span></pre></figure></notextile></div>
-
-<p>这里有个坑，我的gentoo的uwsgi安装后是有插件的，你需要这样启动</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">uwsgi_python27 -x uwsgi.xml </span></pre></figure></notextile></div>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/6/">&larr; Older</a></li>
@@ -1882,6 +1821,10 @@ password XXX</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1917,10 +1860,6 @@ password XXX</p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

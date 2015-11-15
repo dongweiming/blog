@@ -142,6 +142,74 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuargparseyanjiu/">关于argparse研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：argparse模块存在于python2.7和以上版本，它<span>用来解析命令行参数</span>，用来更换<a title="optparse: Command line option parser to replace :mod:`getopt`." href="http://www.doughellmann.com/PyMOTW/optparse/index.html#module-optparse"><tt>optparse</tt></a>模块。</p>
+
+<p>以下是一些例子：</p>
+
+<p><pre class="sh_python">
+import argparse
+parser = argparse.ArgumentParser(prog='PROG',   #设置一个分析器，prog默认是sys.argv[0],这里修改成PRDG 这四个字母表示
+                    description='Process some integers.',  #打印help时候 描述信息
+                    epilog="Just a text.",  #再执行完后的打印信息
+                    formatter_class=argparse.ArgumentDefaultsHelpFormatter,#修改默认格式，把每个默认值都打印出来，还可以用<tt>RawDescriptionHelpFormatter</tt>和<tt>RawTextHelpFormatter</tt>
+                    conflict_handler='resolve', #假如不设置这个，不能使用相同参数，比如一个叫'-foo',还有一个叫做'-foo'，那么这样可以都用：'-foo xx -foo newxx'
+                    usage='%(prog)s [options]', #默认是列出所有参数，每个参数用列表列出来，这里修改成 只列出来[options]
+                     ) 
+parser.add_argument('ng','--noarg', action="store_true", default=False,help='noarg')#help打印信息‘noarg’，action指定布尔值默认是false，可以用'-ng'和'--noatg'，
+parser.add_argument('--witharg', action="store", dest="witharg",nargs=2,required=True,metavar=('y','z'))  #action指定参数值可以存储成任何类型,narg表示参数是2个，并且这个是必须的参数
+                                                                                                 #打印信息时会提示这2个参数的一个参考值'y'和'z'
+parser.add_argument('--witharg2', action="store", dest="witharg2", type=int,choices=[1,2])  #action指定成int类型,可选值是1和2，在help时候会用{}打印出来
+parser.add_argument('-c', action='store_const', dest='constant_value', #假如指定'-c'，那么value＝value-to-store，并且设定一个自定义的属性名字constant_value
+                    const='value-to-store',
+                    help='Store a constant value')
+parser.add_argument('-a', action='append', dest='collection', #如果参数重复，参数值的列表叠加，比如'-a 1 -a 2'，那么值就是[1,2]
+                    default=[],
+                    help='Add repeated values to a list',
+                    )
+parser.add_argument('-A', action='append_const', dest='const_collection',  #包含这个'-A',那么值就是['value-1-to-append']
+                    const='value-1-to-append',
+                    default=[],
+                    help='Add different values to list')
+parser.add_argument('--version', action='version', version='%(prog)s 1.0') # 使用'--version' 那么输出：PROG 1.0
+results = parser.parse_args()
+</pre></p>
+
+<p>其他更多使用例子请参看：http://docs.python.org/library/argparse.html</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuanydbmyanjiu/">关于anydbm研究</a></h1>
     
     
@@ -1425,241 +1493,6 @@ DONGWMDONGMCOM</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiuyi/">关于awk研究（一）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-18T00:00:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：我想sed是对于行操作，而awk算是对于列操作</p>
-
-<p><strong>1 基本语法</strong></p>
-
-<p>awk -Fs &#8216;/pattern/ {action}&#8217; input-file
-或者</p>
-
-<p>awk -Fs &#8216;{action}&#8217; intput-file
-其中：－F是字段分割符，没有指定的话就是空字符</p>
-
-<p>/pattern/ 假如不存在这个模式匹配，指全文</p>
-
-<p>{action}是要执行的活动</p>
-
-<p>比如：awk -F: &#8216;/dongwm/ {print $1}&#8217; /etc/passwd 就是寻找 /etc/passwd匹配‘dongwm’的行，然后的操作（action）是用&#8217;:&#8217;分割，打印第一列</p>
-
-<p>或者</p>
-
-<p>awk -Fs -f myscript.awk input-file  指定一个文件 和sed类似
-<strong>2 awk结构（BEGIN, body, END）</strong>
-1 BEGIN  它可以初始化变量，这个结构是可选的</p>
-
-<p>语法：BEGIN { awk-commands }
-2 body 也就是awk的主体</p>
-
-<p>语法：/pattern/ {action}
-3 END 结束块</p>
-
-<p>语法：END { awk-commands } 也是可选的
-例子：</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; } /dongwm/{print $1} END { print &#8220;&#8212;footer&#8212;&#8221;}&#8217; /etc/passwd
-&#8212;header&#8212;                              #这个例子，首先执行BEGIN里面的，设定分割符‘:’，打印header，然后匹配行打印分割的第一段，但后执行END，打印footer
-dongwm
-&#8212;footer&#8212;
-或者：</p>
-
-<p>dongwm@linux-dongwm:~&gt; cat test.awk
-BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; }
-/dongwm/{print $1}
-END { print &#8220;&#8212;footer&#8212;&#8221;}
-dongwm@linux-dongwm:~&gt; awk -f test.awk /etc/passwd
-&#8212;header&#8212;
-dongwm
-&#8212;footer&#8212;</p>
-
-<p>例子2：</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -F: &#8216;BEGIN { print &#8220;UID&#8221;} { print $3 }&#8217; /etc/passwd  #awk 的打印都是‘print’
-UID
-25
-103
-1
-2
-102
-40
-12
-107
-109
-<strong>3 awk处理多个文件</strong>
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;:&#8221;;print &#8220;&#8212;header&#8212;&#8221; } /dongwm/ {print $1} END { print &#8220;&#8212;footer&#8212;&#8221;}&#8217; /etc/passwd /etc/group
-&#8212;header&#8212;
-dongwm
-video   #这个video组包含dongwm
-&#8212;footer&#8212;
-<strong>4 print(打印功能)</strong>
-先看一个例子</p>
-
-<p>dongwm@linux-dongwm:~&gt; cat test.txt
-112,dongwm,dongwm.com
-113,ailll,ailll.com
-114,ccc,ccc.com
-dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;BEGIN \
-{ print &#8220;&#8212;&#8212;&#8212;&#8212;-\nName\tTitle\n&#8212;&#8212;&#8212;&#8212;-&#8220;} \
-{ print $2,&#8221;\t&#8221;,$3;} \
-END { print &#8220;&#8212;&#8212;&#8212;&#8212;-&#8220;; }&#8217; test.txt  注：你也是格式化文件了
-&#8212;&#8212;&#8212;&#8212;-
-Name    Title
-&#8212;&#8212;&#8212;&#8212;-
-dongwm      dongwm.com
-ailll      ailll.com
-ccc      ccc.com
-&#8212;&#8212;&#8212;&#8212;-
-<strong>5 模式匹配</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;/dongwm/ {print $2, $3}&#8217; test.txt  寻找匹配行
-dongwm dongwm.com
-dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;/^112/ {print &#8220;Test id 112 is&#8221;, $2}&#8217; test.txt</p>
-
-<p>Test id 112 is dongwm  #选找开头是112的，然后自定义一些打印字符</p>
-
-<p><strong>6 内建变量</strong>
-1 FS :输入字段分隔符，模认的是空格
-看下面的例子：</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;{print $2, $3}&#8217; test.txt
-dongwm dongwm.com
-ailll ailll.com
-ccc ccc.com
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} {print $2, $3}&#8217; test.txt
-dongwm dongwm.com
-ailll ailll.com
-ccc ccc.com
-注：这2个是一样的效果</p>
-
-<p>dongwm@linux-dongwm:~&gt; cat test.txt
-112,dongwm,dongwm.com%1120
-113,ailll,ailll.com%1130
-114,ccc,ccc.com%1140
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;[,:%]&#8221;} {print $2, $3}&#8217; test.txt  #在这里会匹配‘,’,‘:’,&#8217;%&#8217;这三个分割符，三者是或者的关系
-dongwm dongwm.com
-ailll ailll.com
-ccc ccc.com
-2 OFS 输出字段分隔符，模认的是空格
-dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;{print $2, &#8220;:&#8221;, $3}&#8217; test.txt
-dongwm : dongwm.com
-ailll : ailll.com
-ccc : ccc.com
-其实这个例子可以用下面的语句实现
-dongwm@linux-dongwm:~&gt; awk -F &#8216;,&#8217; &#8216;BEGIN { OFS=&#8221;:&#8221; } { print $2, $3 }&#8217; test.txt
-dongwm:dongwm.com
-ailll:ailll.com
-ccc:ccc.com
-3 RS 记录分隔符
-dongwm@linux-dongwm:~&gt; cat test.txt
-112,dongwm:113,ailll:114,ccc
-dongwm@linux-dongwm:~&gt; awk -F, &#8216;{print $2}&#8217; test.txt
-dongwm:113  #因为在一行里面，没有实现取出所有符合要求的值
-dongwm@linux-dongwm:~&gt; awk -F, &#8216;BEGIN { RS=&#8221;:&#8221; } {print $2}&#8217; test.txt  #s使用RS可以实现
-dongwm
-ailll
-ccc
-一个复杂的例子：</p>
-
-<p>dongwm@linux-dongwm:~&gt; cat test.txt
-112
-dongwm
-dongwm.com
--
-113
-ailll
-ailll.com
--
-114
-ccc
-ccc.com
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;\n&#8221;; RS=&#8221;-\n&#8221;; OFS=&#8221;:&#8221; } {print $2, $3}&#8217; test.txt
-dongwm:dongwm.com
-ailll:ailll.com
-ccc:ccc.com
-4 ORS 输出记录分割符</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { FS=&#8221;,&#8221;; ORS=&#8221;\n&#8212;\n&#8221; } {print $2, $3}&#8217; test.txt #在输出的时候，每行都添加了一段‘\n&#8212;\n’
-dongwm dongwm.com
-&#8212;
-ailll ailll.com
-&#8212;
-ccc ccc.com
-&#8212;
-5 NR 对数量的记录
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
-{print &#8220;Test Id of record number&#8221;,NR,&#8221;is&#8221;,$1;} \
-END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt
-Test Id of record number 1 is 112
-Test Id of record number 2 is 113
-Test Id of record number 3 is 114
-Total number of records: 3
-6 FILENAME  当前的文件名</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;{ print FILENAME }&#8217; test.txt
-test.txt
-test.txt
-test.txt  #因为有三行数据，每行打印了一次</p>
-
-<p>7 FNR 记录的数量的文件  NR会保存数据在多文件中一直增长，但FNR不会，他只是记录当前文件的数量记录</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
-{print FILENAME &#8220;: record number&#8221;,NR,&#8221;is&#8221;,$1;} \
-END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt test.txt.bak
-test.txt: record number 1 is 112
-test.txt: record number 2 is 113
-test.txt: record number 3 is 114
-test.txt.bak: record number 4 is 112
-test.txt.bak: record number 5 is 113
-test.txt.bak: record number 6 is 114
-Total number of records: 6
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;} \
-{print FILENAME &#8220;: record number&#8221;,FNR,&#8221;is&#8221;,$1;} \
-END {print &#8220;Total number of records:&#8221;,NR}&#8217; test.txt test.txt.bak
-test.txt: record number 1 is 112
-test.txt: record number 2 is 113
-test.txt: record number 3 is 114
-test.txt.bak: record number 1 is 112
-test.txt.bak: record number 2 is 113
-test.txt.bak: record number 3 is 114
-Total number of records: 6</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/18/">&larr; Older</a></li>
@@ -1682,6 +1515,10 @@ Total number of records: 6</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -1717,10 +1554,6 @@ Total number of records: 6</p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

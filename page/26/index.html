@@ -142,6 +142,109 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/peizhiautopagpdeyitaixindao/">配置auto Pagp的以太信道</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-11T00:00:00+08:00" pubdate data-updated="true">May 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>SW1(config)#int range f0/13 -15
+Creating a port-channel interface Port-channel1
+SW1(config-if-range)#
+*Mar  1 00:01:59.131: %EC-5-BUNDLE: Interface Fa0/13 joined port-channel Po1
+*Mar  1 00:01:59.375: %EC-5-BUNDLE: Interface Fa0/14 joined port-channel Po1
+*Mar  1 00:01:59.479: %EC-5-BUNDLE: Interface Fa0/15 joined port-channel Po1
+SW1(config-if-range)#
+*Mar  1 00:02:01.971: %LINEPROTO-5-UPDOWN: Line protocol on Interface Port-channel1, changed state to up
+SW1(config-if-range)#int port-channel1
+SW1(config-if)#switchport mode</p>
+
+<p>SW2(config)#int range f0/13 -15
+Creating a port-channel interface Port-channel1
+SW2(config-if-range)#int port-channel1
+SW2(config-if)#switchport mode  SW1(config)#int range f0/13 -15
+SW2(config-if-range)#channel-group 1 mode auto
+Creating a port-channel interface Port-channel1
+SW2(config-if-range)#
+SW2(config-if-range)#int port-channel1
+SW2(config-if)#switchport mode  dynamic desirable</p>
+
+<p>注：desirable和auto是PAGP协议主动协商和被动协商专用词
+SW1#show etherchannel summary
+Flags: D - down P - in port-channel
+I - stand-alone s - suspended
+H - Hot-standby (LACP only)
+R - Layer3 S - Layer2
+u - unsuitable for bundling
+U - in use f - failed to allocate aggregator
+d - default port
+Number of channel-groups in use: 1
+Number of aggregators: 1
+Group Port-channel Protocol Ports
+&#8212;&#8212;+&#8212;&#8212;&#8212;&#8212;-+&#8212;&#8212;&#8212;&#8211;+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;
+1 Po1(SU) PAgP Fa0/13(P) Fa0/14(P) Fa0/15(P)
+SW1#show interface port-channel1 switchport
+Name: Po1
+Switchport: Enabled
+Administrative Mode: dynamic desirable
+Operational Mode: trunk
+Administrative Trunking Encapsulation: negotiate
+Operational Trunking Encapsulation: isl
+Negotiation of Trunking: On
+Access Mode VLAN: 1 (default)
+Trunking Native Mode VLAN: 1 (default)
+SW1#show interface trunk
+Port Mode Encapsulation Status Native vlan
+Po1 desirable n-isl trunking 1
+Port Vlans allowed on trunk
+Po1 1-4094
+Port Vlans allowed and active in management domain
+Po1 1
+Port Vlans in spanning tree forwarding state and not pruned
+Po1 1
+SW1#show spanning-tree vlan 1
+VLAN0001
+Spanning tree enabled protocol ieee
+Root ID Priority 32769
+Address 000a.f411.0e00
+This bridge is the root
+Hello Time 2 sec Max Age 20 sec Forward Delay 15 sec
+Bridge ID Priority 32769 (priority 32768 sys-id-ext 1)
+Address 000a.f411.0e00
+Hello Time 2 sec Max Age 20 sec Forward Delay 15 sec
+Aging Time 15
+Interface Role Sts Cost Prio.Nbr Type
+&#8212;&#8212;&#8212;&#8212;&#8212;- &#8212;- &#8212; &#8212;&#8212;&#8212; &#8212;&#8212;&#8211; &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;
+Po1 Desg FWD 9 128.65 P2p</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8vsftpd%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%90%AD%E5%BB%BAftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">使用vsftpd虚拟用户搭建FTP服务器</a></h1>
     
     
@@ -843,68 +946,6 @@ root@client ~&gt; /sbin/chkconfig chef-client on</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E4%BF%AE%E6%94%B9opensuse%E4%BF%AE%E6%94%B9%E5%BC%80%E6%9C%BA%E8%BF%87%E7%A8%8B%E8%83%8C%E6%99%AF%E7%94%BB%E9%9D%A2%E5%92%8Cgrub%E5%BC%80%E5%90%AF%E4%BC%81%E9%B9%85%E5%8A%A8%E7%94%BB%E6%8A%80/">修改opensuse修改开机过程背景画面和Grub开启企鹅动画技巧</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-14T00:00:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>类似于XP开机那个来回循环走的小进度条的方式,opensuse其实也是可以修改的
-1  制作注意事项:
-使用GIMP编辑注意保存时候参数设置:另存为-&gt;保存-&gt;高级选项.其中质量的参数能控制图片大小,子采样需要<em><strong>2x2,1x1,1x1</strong></em> DCT方法 需要&#8221;整数&#8221;
-2 备份复制图片
-<pre class="sh_bash">linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/silent-1024x768.jpg
-linux-3qd1:/home/dongwm # cp 桌面/桌面\ Background.jpg /etc/bootsplash/themes/openSUSE/images/bootsplash-bootsplash-1024x768.jpg </pre>
-3 生成新的initrd
-<pre class="sh_bash">mkinitrd -s 1024x768</pre></p>
-
-<p>企鹅动态画面是openSUSE发行的Grub自带的启动画面，只需要修改gfxboot的配置文件就可以开启企鹅动态画面。
-<pre class="sh_bash">
-linux-3qd1:/home/dongwm #  gfxboot --change-config base::penguin=100
-还可以自己修改gfxboot.cfg文件，启用企鹅画面：
-linux-3qd1:/home/dongwm # vi /etc/bootsplash/themes/openSUSE/cdrom/gfxboot.cfg</p>
-
-<p>; penguin theme likelihood (in percent, -1 = auto)
-penguin=-1
-</pre></p>
-
-<p>修改peguin变量的值为企鹅画面显示的几率（从0-100选个数字，代表出现几率为0%-100%）:</p>
-
-<p>; penguin theme likelihood (in percent, -1 = auto)
-penguin=100</p>
-
-<p>&nbsp;
-<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
-<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=670cf740-daf0-8a3f-ab8a-79decfa2c7a8" alt="" /></div></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/27/">&larr; Older</a></li>
@@ -927,6 +968,10 @@ penguin=100</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -962,10 +1007,6 @@ penguin=100</p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

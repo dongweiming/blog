@@ -142,6 +142,125 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengwu/">SQLAlchemy教程(五)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong> 本文主要说删除</strong></p>
+
+<p>metadata.drop_all(engine) #删除某引擎的全部表</p>
+
+<p>metadata.remove(test_table)  #删除某一个table</p>
+
+<p>clear_mappers() #取消所有的映射</p>
+
+<p>在relation中有一个参数cascade,它是基于session的操作,包括把对象放入session,从session删除对象等,如果指定cascade=&#8221;all&#8221;表示做的任何session操作给映射类都能很好的工作,默认包含save-update, merge
+mapper(ParentClass, parent, properties=dict(
+children=relation(ChildClass, backref=&#8217;parent&#8217;,
+cascade=&#8217;all,delete-orphan&#8217;) )) #delete-orphan表示如果曾经是子类(childclass)实例但是却没有和父类连接的情况下,假如要删除这个子类,而不想挂空父类引用了的实例,
+额看个例子就懂了:
+photo = Table(
+&#8230; &#8216;photo&#8217;, metadata,
+&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True))
+tag = Table(
+&#8230; &#8216;tag&#8217;, metadata,
+&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230; Column(&#8216;photo_id&#8217;, None, ForeignKey(&#8216;photo.id&#8217;)),
+&#8230; Column(&#8216;tag&#8217;, String(80)))
+class Photo(object):
+&#8230; pass
+&#8230;
+class Tag(object):
+&#8230; def __init__(self, tag):
+&#8230; self.tag = tag
+&#8230;
+mapper(Photo, photo, properties=dict(
+&#8230; tags=relation(Tag, backref=&#8217;photo&#8217;, cascade=&#8221;all&#8221;)))
+&lt;Mapper at 0x851504c; Photo&gt;
+&gt;&gt;&gt; mapper(Tag, tag)
+&lt;Mapper at 0x8515dac; Tag&gt;
+&gt;&gt;&gt; p1 = Photo()
+&gt;&gt;&gt; p2 = Photo()
+&gt;&gt;&gt; p1.tags = [Tag(tag=&#8217;foo&#8217;),Tag(tag=&#8217;bar&#8217;),Tag(tag=&#8217;baz&#8217;)]
+&gt;&gt;&gt; p2.tags = [Tag(tag=&#8217;foo&#8217;),Tag(tag=&#8217;bar&#8217;),Tag(tag=&#8217;baz&#8217;)]
+&gt;&gt;&gt; session.add(p1)
+&gt;&gt;&gt; session.add(p2)
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id,t.photo_id, t.tag
+&#8230;
+1 1 foo #出现以下关联数据
+2 1 bar
+3 1 baz
+4 2 foo
+5 2 bar
+6 2 baz
+&gt;&gt;&gt; session.delete(session.query(Photo).get(1)) #删除一个tag的数据
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id, t.photo_id, t.tag
+&#8230;
+4 2 foo #他会删除关联所有t.photo_id为1的数据,在这里relation(ChildClass, backref=&#8217;parent&#8217;, cascade=&#8217;all,delete-orphan&#8217;)<span class="fullpost">指定delete-orphan</span>没什么,关键看下面
+5 2 bar
+6 2 baz
+&gt;&gt;&gt; p3 = session.query(Photo).get(2)
+&gt;&gt;&gt; del p3.tags[0] #如果我只是删除关联点&#8230;
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id, t.photo_id, t.tag
+&#8230;
+4 None foo #关联点photo_id成了none,但是条目存在 &#8211;他不会影响其它关联表
+5 2 bar
+6 2 baz</p>
+
+<p>&gt;&gt;&gt; p3 = session.query(Photo).get(2) #假如没有设置delete-orphan
+&gt;&gt;&gt; del p3.tags[0]
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; for t in session.query(Tag):
+&#8230; print t.id, t.photo_id, t.tag
+5 2 bar #自动删除了关联的其它表的项
+6 2 baz
+<strong>注:可用的cascade参数包含:</strong>
+<ul>
+	<li><tt>save-update</tt> -我的理解是调用session.add()会自动将项目添加到相应级联关系上,也适用于已经从关系中删除的项目嗨没有来得及刷新的情况</li>
+	<li><tt>merge</tt> - 它是session.merge的实现,复制状态到具有相同标识符的持久化实例的实例,如果没有持久的实例和当前session相关联，返回的持久化实例。如果给定的实例未保存，他会保存一个副本，并返回这个副本作为一个新的持久化实例</li>
+	<li><tt>expunge</tt> - 从session中删除实例</li>
+	<li><tt>delete</tt> - 标记一个实例被删除,执行flush()会执行删除操作</li>
+	<li><tt>delete-orphan</tt>-如果子类从母类删除,标记之,但是不影响母类</li>
+	<li><tt>refresh-expire</tt> - 定期刷新在给定的实例的属性,查询并刷新数据库</li>
+	<li><tt>all</tt> - 以上全部属性的集合:“save-update,merge, refresh-expire, expunge, delete</li>
+</ul></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengqi/">SQLAlchemy教程(七)</a></h1>
     
     
@@ -2872,156 +2991,6 @@ linux-vkmz:~ #cp -rp firefox/* /usr/lib/firefox/   #拷贝lib文件到系统�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyusysyanjiuyi/">关于sys研究（一）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：sys是一个关系系统配置使用的模块，和os一样经常被使用</p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>print 'Version info:'
-print
-print 'sys.version      =', repr(sys.version) #这些是编译python时候的一些系统信息，这事python版本
-print 'sys.version_info =', sys.version_info #python版本号元组格式
-print 'sys.hexversion   =', hex(sys.hexversion) #版本标识为一个整数
-print 'sys.subversion   =', sys.subversion #python分支，修订号等信息
-print 'sys.api_version  =', sys.api_version #C的api版本
-print 'This interpreter was built for:', sys.platform #系统版本，比如linux，windows等类似于命令uname -s的结果
-print 'Interpreter executable:', sys.executable #编译器的位置 /usr/bin/python
-print 'Installation prefix   :', sys.prefix #包含bin,lib目录的服目录，这里是/usr
-print <tt>sys.flags</tt> #当执行python -h 出现很多选项，当执行某选项和参数，那么sys.flag就包含了这个项
-print 'Default encoding    :', sys.getdefaultencoding()  #默认文件Unicode编码
-print 'Filesystem encoding :', sys.getfilesystemencoding() #默认文件系统编码
-#reload(sys) #当想要修改文件编码，先reloadsys模块（否则没有setdefaultencoding函数），再set
-#sys.setdefaultencoding('utf-8')
-</pre></p>
-
-<p><pre class="sh_python">
-&gt;&gt;&gt; sys.ps1
-'&gt;&gt;&gt; ' #ps1是交互模式中的提示符，效果类似于linux的PS1
-&gt;&gt;&gt; sys.ps2
-'... ' #ps2是交互模式中，当出现":"等需要多行输入的数据时候的提示符
-&gt;&gt;&gt; sys.ps1='--&gt;'
---&gt;sys.ps2='~~~'
---&gt;for i in xrange(2): 
-~~~    print i
-~~~
-0
-1
-</pre></p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>class LineCounter(object): #修改PS1修饰符还可以定义类的方式，假设本文件是test.py
-    def __init__(self):
-        self.count = 0 #对命令计数，初始为0
-    def __str__(self):
-        self.count += 1 #使用一次触发一次计数增加      
-        return '(%3d)&gt; ' % self.count
-</pre></p>
-
-<p>进入交互模式：</p>
-
-<p><pre class="sh_python">
-&gt;&gt;&gt; from test import LineCounter
-&gt;&gt;&gt; import sys
-&gt;&gt;&gt; sys.ps1 = LineCounter()
-(  1)&gt; 
-(  2)&gt; #点击一次增加1
-(  3)&gt;
-</pre></p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>class ExpressionCounter(object):</p>
-
-<p>    def __init__(self):
-        self.count = 0
-        self.previous_value = self</p>
-
-<p>    def __call__(self, value):
-        print
-        print '  Previous:', self.previous_value
-        print '  New     :', value
-        print
-        if value != self.previous_value:
-            self.count += 1
-            sys.ps1 = '(%3d)&gt; ' % self.count
-        self.previous_value = value
-        sys.__displayhook__(value) #默认值保存在这里
-print 'installing'
-sys.displayhook = ExpressionCounter()#钩子，我的理解是每次使用都要触发的表达式  假设本文件是test
-</pre></p>
-
-<p><pre class="sh_python">
-dongwm@linux-vkmz:~&gt; python
-Python 2.6.5 (r265:79063, Jul  5 2010, 11:47:21) 
-[GCC 4.5.0 20100604 [gcc-4_5-branch revision 160292]] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
-&gt;&gt;&gt; import test
-installing
-&gt;&gt;&gt; 1+2</p>
-
-<p>  Previous: &lt;test.ExpressionCounter object at 0x80ab2ac&gt;
-  New     : 3</p>
-
-<p>3
-(  1)&gt; 'abc'</p>
-
-<p>  Previous: 3
-  New     : abc</p>
-
-<p>'abc'
-(  2)&gt; 'abc'</p>
-
-<p>  Previous: abc
-  New     : abc</p>
-
-<p>'abc'
-(  2)&gt; 'abc'*3</p>
-
-<p>  Previous: abc
-  New     : abcabcabc</p>
-
-<p>'abcabcabc'
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/9/">&larr; Older</a></li>
@@ -3044,6 +3013,10 @@ installing
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -3079,10 +3052,6 @@ installing
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

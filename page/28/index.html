@@ -142,6 +142,60 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%8D%87%E7%BA%A7puppet%E7%89%88%E6%9C%AC/">升级puppet版本</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-29T00:00:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p><strong>目前最新版puppet是2.6.7，我的版本是2.6.3，以下是升级过程（本例只适合编译安装puppet）：</strong></p>
+<p><strong>思路：</strong></p>
+<p><strong>1  先升级server端，后升级client端</strong></p>
+<p><strong>2  先删除就版本库文件和程序文件，再安装新版本文件，而默认的/var/lib/puppet和/etc/puppet目录不要动</strong></p>
+<p><strong>1 删除旧相关文件：</strong></p>
+<p><pre class="sh_bash">#rm /usr/local/sbin/puppet* –rf
+#rm /usr/local/lib/ruby/site_ruby/1.8/puppet –rf
+#rm /usr/local/bin/puppet* –rf</pre></p>
+<p><strong>2 安装新版本：
+</strong><pre class="sh_bash">#tar zxvf puppet-2.6.7.tar.gz
+#cd puppet-2.6.7
+#ruby install.rb</pre></p>
+<p><strong>3  测试：</strong></p>
+<p><pre class="sh_bash">[root@dongwm puppet-2.6.7]# puppet -V
+2.6.7</p>
+<p>使用debug模式启动puppet会出现下面的信息：</p>
+<p>&nbsp;</p>
+<p>notice: Starting Puppet client version 2.6.7</pre></p>
+</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">关于expect研究（一）</a></h1>
     
     
@@ -593,65 +647,6 @@ diff -u file1 file2 | colordiff</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E8%A7%A3%E5%86%B3usrbinld-cannot-find-lxxx%E9%94%99%E8%AF%AF/">解决/usr/bin/ld: Cannot Find -lxxx错误</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>编译安装时候可能会出现类似于以下的这样报错，简单地说是可能是在安装系统中选择的包的问题：
-<pre class="bbcodeblock" style="margin: 0px -99999px 0px 0px; padding: 3px; border: 1px inset; width: 98%; height: 50px; text-align: left; overflow: auto;" dir="ltr">/usr/bin/ld: cannot find -lltdl
-collect2: ld returned 1 exit status
-解决办法是：
-<pre class="sh_bash">[root@9-104 php-5.2.8]# updatedb
-[root@9-104 php-5.2.8]# locate libltdl  //提示/usr/bin/ld: cannot find -lxxx ，查找时候前面加lib：libxxx  住一 第一个l去掉
-/usr/lib64/libltdl.so.3
-/usr/lib64/libltdl.so.3.1.4
-/usr/share/libtool/libltdl
-/usr/share/libtool/libltdl/COPYING.LIB
-/usr/share/libtool/libltdl/Makefile.am
-/usr/share/libtool/libltdl/Makefile.in
-/usr/share/libtool/libltdl/README
-/usr/share/libtool/libltdl/acinclude.m4
-/usr/share/libtool/libltdl/aclocal.m4
-/usr/share/libtool/libltdl/config-h.in
-/usr/share/libtool/libltdl/config.guess
-...
-注意拉：
-[root@9-104 php-5.2.8]# ln -s /usr/lib64/libltdl.so.3 /usr/lib64/libltdl.so
-原理：给查找到的libxxx文件做软链接
-ln -s /usr/lib64/libxxx.so.X（X代表数字） /usr/lib64/lxxx.so</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/29/">&larr; Older</a></li>
@@ -674,6 +669,10 @@ ln -s /usr/lib64/libxxx.so.X（X代表数字） /usr/lib64/lxxx.so</pre></p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -709,10 +708,6 @@ ln -s /usr/lib64/libxxx.so.X（X代表数字） /usr/lib64/lxxx.so</pre></p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

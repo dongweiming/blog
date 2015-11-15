@@ -142,6 +142,73 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-24T01:00:00+08:00" pubdate data-updated="true">Mar 24<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">我来做广告</h4>
+
+<p>豆瓣是国内python应用最广泛的公司. 没有其二. 我们条目组随着业务变更, 也需要更多地优秀工程师的加入.
+条目是指什么? 豆瓣的电影/读书/音乐, 以及豆瓣东西都是我们在维护和迭代开发(对, 你没有听错, 你不是在一个产品线).</p>
+
+<p>我先列一下作为一个厂公在技术层面, 我对豆瓣的感想(其他层面大家都懂):</p>
+
+<ol>
+  <li>豆瓣有很多知名的工程师, 包括但是不限于前后端以及IOS/Android, 你会他们协作, 吐槽他们的代码以及被他们吐槽</li>
+  <li>豆瓣多年积累了很多对工作有帮助的工具. 比如CODE, dae, 还有很多的用于运维支持, 数据分析和统计, 爬虫等项目.</li>
+  <li>豆瓣有很多开源项目, 被其他公司使用, 比如dpark, OzJS. 你有机会参与到这样的项目中</li>
+</ol>
+
+<h4 id="section-1">招聘内容</h4>
+
+<p>简单地需求都在这里: <a href="http://jobs.douban.com/#position-cpkf">产品开发工程师</a></p>
+
+<p>我来解读下(以下方面能帮你提高面试通过的几率):</p>
+
+<ol>
+  <li>豆瓣希望你是一个倾向于全栈工程师. 比如你会python, 还能写前端, 或者有移动开发经验. 你可以想到, 我们大多是同时支持多个
+产品线, 任务重的时候如果你独当一面很好, 要是可以再别的领域帮个忙就更好了</li>
+  <li>假如你python初学,但是很熟悉其他语言, 我们相信你很快会上手, 不要害怕. 我组之前就有一个原来是ruby的实习生.</li>
+  <li>希望你能有个github/stackoverflow账号, 或者个人博客. 尤其是能看到你的作品, 了解你的代码, 希望看到你对代码的热爱. 我相信你有主动的态度会走的更远</li>
+  <li>如果你曾经是某个/些开源项目的贡献者甚至是多次贡献者, 或者你曾经做过分享, 也请记得一并告诉我们.</li>
+</ol>
+
+<h4 id="section-2">联系我们</h4>
+
+<p>想想还是先联系我吧. 我会给大家转发到组内. 或者直接<code>在线申请</code></p>
+
+<p>我的邮箱是: ciici123#gmail.com. 请在标题中注明[豆瓣求职]</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/ack/">Grep, Ack, Ag的搜索效率对比</a></h1>
     
     
@@ -1890,315 +1957,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonmo-fa-er/">Python的魔法二:开发的&#8217;坑&#8217;</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-08T23:15:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="python-httpwwwdongwmcomarchivespythonde-mo-fa-python">有了第一篇<a href="http://www.dongwm.com/archives/pythonde-mo-fa/">python的魔法(-)之基础知识</a>, 我们再来说说python开发中的坑</h4>
-
-<h4 id="section">不要使用可变对象作为函数默认值</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">append_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">def_list</span><span class="o">=</span><span class="p">[]):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="n">def_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">return</span> <span class="n">def_list</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">my_list</span> <span class="o">=</span> <span class="n">append_to_list</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">my_list</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">my_other_list</span> <span class="o">=</span> <span class="n">append_to_list</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">my_other_list</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="c"># 看到了吧，其实我们本来只想生成[2] 但是却把第一次运行的效果页带了进来</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">time</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">report_arg</span><span class="p">(</span><span class="n">my_default</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">my_default</span><span class="p">)</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">report_arg</span><span class="p">()</span> <span class="c"># 第一次执行</span>
-</span><span class="line"><span class="mf">1399562371.32</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c"># 隔了2秒</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">report_arg</span><span class="p">()</span>
-</span><span class="line"><span class="mf">1399562371.32</span> <span class="c"># 时间竟然没有变</span>
-</span></pre></figure></notextile></div>
-
-<p>这2个例子说明了什么? 字典,集合,列表等等对象是不适合作为函数默认值的. 因为这个默认值实在函数建立的时候就生成了, 每次调用都是用了这个对象的”缓存”. 我在上段时间的分享<a href="http://dongweiming.github.io/Expert-Python/">python高级编程</a>也说到了这个问题,这个是实际开发遇到的问题，好好检查你学过的代码, 也许只是问题没有暴露</p>
-
-<p>可以这样改:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">append_to_list</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">to</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-</span><span class="line">        <span class="n">to</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span class="line">    <span class="n">to</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">to</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-1">生成器不保留迭代过后的结果</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="n">gen</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">gen</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">gen</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">gen</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="bp">False</span> <span class="c"># 1为什么不在gen里面了? 因为调用1-&gt;2,这个时候1已经不在迭代器里面了,被按需生成过了</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="n">gen</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="n">a_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span> <span class="c"># 可以转化成列表，当然a_tuple = tuple(gen) 也可以</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">a_list</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">a_list</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">a_list</span> <span class="c"># 就算循环过,值还在</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="bp">True</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="lambda">lambda在闭包中会保存局部变量</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]:</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">my_list</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">l</span><span class="p">())</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">4</span>
-</span><span class="line"><span class="mi">4</span>
-</span><span class="line"><span class="mi">4</span>
-</span><span class="line"><span class="mi">4</span>
-</span><span class="line"><span class="mi">4</span>
-</span></pre></figure></notextile></div>
-
-<p>这个问题还是上面说的<a href="http://dongweiming.github.io/Expert-Python/">python高级编程</a>中说过具体原因. 其实就是当我赋值给my_list的时候,lambda表达式就执行了i会循环,直到 i =4,i会保留</p>
-
-<p>但是可以用生成器</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="n">my_gen</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]:</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">my_gen</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">l</span><span class="p">())</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span>
-</span><span class="line"><span class="mi">1</span>
-</span><span class="line"><span class="mi">2</span>
-</span><span class="line"><span class="mi">3</span>
-</span><span class="line"><span class="mi">4</span>
-</span></pre></figure></notextile></div>
-
-<p>也可以坚持用list：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span> <span class="c"># 看我给每个lambda表达式赋了默认值</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]:</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">my_list</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">l</span><span class="p">())</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line"><span class="mi">0</span>
-</span><span class="line"><span class="mi">1</span>
-</span><span class="line"><span class="mi">2</span>
-</span><span class="line"><span class="mi">3</span>
-</span><span class="line"><span class="mi">4</span>
-</span></pre></figure></notextile></div>
-
-<p>有点不好懂是吧,在看看python的另外一个魔法:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">35</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">groupby</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">iter</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">36</span><span class="p">]:</span> <span class="n">groupby</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">36</span><span class="p">]:</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
-</span></pre></figure></notextile></div>
-
-<p>一个分组的函数,看起来很不好懂,对吧? 我们来解析下这里</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="p">[</span><span class="nb">iter</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span><span class="o">*</span><span class="mi">3</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">39</span><span class="p">]:</span>
-</span><span class="line"><span class="p">[</span><span class="o">&lt;</span><span class="n">listiterator</span> <span class="n">at</span> <span class="mh">0x10e155fd0</span><span class="o">&gt;</span><span class="p">,</span>
-</span><span class="line"> <span class="o">&lt;</span><span class="n">listiterator</span> <span class="n">at</span> <span class="mh">0x10e155fd0</span><span class="o">&gt;</span><span class="p">,</span>
-</span><span class="line"> <span class="o">&lt;</span><span class="n">listiterator</span> <span class="n">at</span> <span class="mh">0x10e155fd0</span><span class="o">&gt;</span><span class="p">]</span> <span class="c"># 看到了吧, 其实就是把items变成可迭代的, 重复三回（同一个对象哦）, 但是别忘了,每次都.next(), 所以起到了分组的作用</span>
-</span><span class="line"> <span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">40</span><span class="p">]:</span>
-</span><span class="line"><span class="p">[</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.&lt;</span><span class="k">lambda</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-</span><span class="line"> <span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.&lt;</span><span class="k">lambda</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-</span><span class="line"> <span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.&lt;</span><span class="k">lambda</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-</span><span class="line"> <span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.&lt;</span><span class="k">lambda</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-</span><span class="line"> <span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.&lt;</span><span class="k">lambda</span><span class="o">&gt;&gt;</span><span class="p">]</span> <span class="c"># 看懂了吗?</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-2">在循环中修改列表项</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">44</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">45</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="n">a</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">46</span><span class="p">]:</span> <span class="n">a</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">46</span><span class="p">]:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="c"># 没有问题</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">50</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">51</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>      <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>          <span class="n">b</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">52</span><span class="p">]:</span> <span class="n">b</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">52</span><span class="p">]:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="c"># 本来我想要的结果应该是去除偶数的列表</span>
-</span></pre></figure></notextile></div>
-
-<p>思考一下,为什么 – 是因为你对列表的remove,影响了它的index</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">53</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">54</span><span class="p">]:</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="n">b</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line"><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c"># 这里没有问题 2被删除了</span>
-</span><span class="line"><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="c"># 因为2被删除目前的列表是[4, 5, 6], 所以索引list[1]直接去找5, 忽略了4</span>
-</span><span class="line"><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="indexerror---">IndexError - 列表取值超出了他的索引数</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">55</span><span class="p">]:</span> <span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">56</span><span class="p">]:</span> <span class="n">my_list</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c"># 根本没有这个元素</span>
-</span><span class="line"><span class="o">---------------------------------------------------------------------------</span>
-</span><span class="line"><span class="ne">IndexError</span>                                <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
-</span><span class="line"><span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">56</span><span class="o">-</span><span class="mo">037</span><span class="n">d00de8360</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
-</span><span class="line"><span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">my_list</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="ne">IndexError</span><span class="p">:</span> <span class="nb">list</span> <span class="n">index</span> <span class="n">out</span> <span class="n">of</span> <span class="nb">range</span> <span class="c"># 抛异常了</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">57</span><span class="p">]:</span> <span class="n">my_list</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span> <span class="c"># 但是可以这样， 一定要注意, 用好了是trick,用错了就是坑啊</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">57</span><span class="p">]:</span> <span class="p">[]</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-3">重用全局变量</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">58</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="c"># 我可以先调用一个未定义的变量</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">59</span><span class="p">]:</span> <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;global&#39;</span> <span class="c"># 后赋值</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">60</span><span class="p">]:</span> <span class="n">my_func</span><span class="p">()</span> <span class="c"># 反正只要调用函数时候变量被定义了就可以了</span>
-</span><span class="line"><span class="k">global</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">61</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;locally changed&#39;</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">62</span><span class="p">]:</span> <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;global&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">63</span><span class="p">]:</span> <span class="n">my_func</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">64</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-</span><span class="line"><span class="k">global</span> <span class="c"># 局部变量没有影响到全局变量</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">65</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="c"># 虽然你全局设置这个变量, 但是局部变量有同名的, python以为你忘了定义本地变量了</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;locally changed&#39;</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">66</span><span class="p">]:</span> <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;global&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">67</span><span class="p">]:</span> <span class="n">my_func</span><span class="p">()</span>
-</span><span class="line"><span class="o">---------------------------------------------------------------------------</span>
-</span><span class="line"><span class="ne">UnboundLocalError</span>                         <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
-</span><span class="line"><span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">67</span><span class="o">-</span><span class="n">d82eda95de40</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
-</span><span class="line"><span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">my_func</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">65</span><span class="o">-</span><span class="mi">0</span><span class="n">ad11d690936</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="n">my_func</span><span class="p">()</span>
-</span><span class="line">      <span class="mi">1</span> <span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
-</span><span class="line"><span class="o">----&gt;</span> <span class="mi">2</span>         <span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-</span><span class="line">      <span class="mi">3</span>         <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;locally changed&#39;</span>
-</span><span class="line">      <span class="mi">4</span>
-</span><span class="line">
-</span><span class="line"><span class="ne">UnboundLocalError</span><span class="p">:</span> <span class="n">local</span> <span class="n">variable</span> <span class="s">&#39;var&#39;</span> <span class="n">referenced</span> <span class="n">before</span> <span class="n">assignment</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">68</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="k">global</span> <span class="n">var</span> <span class="c"># 这个时候得加全局了</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="c"># 这样就能正常使用</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>         <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;locally changed&#39;</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">69</span><span class="p">]:</span> <span class="n">var</span> <span class="o">=</span> <span class="s">&#39;global&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">70</span><span class="p">]:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">70</span><span class="p">]:</span> <span class="n">my_func</span><span class="p">()</span>
-</span><span class="line"><span class="k">global</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">71</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-</span><span class="line"><span class="n">locally</span> <span class="n">changed</span> <span class="c"># 但是使用了global就改变了全局变量</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-4">拷贝可变对象</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">72</span><span class="p">]:</span> <span class="n">my_list1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">2</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">73</span><span class="p">]:</span> <span class="n">my_list1</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">73</span><span class="p">]:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">74</span><span class="p">]:</span> <span class="n">my_list1</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;a&#39;</span> <span class="c"># 我只修改子列表中的一项</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">75</span><span class="p">]:</span> <span class="n">my_list1</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">75</span><span class="p">]:</span> <span class="p">[[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span> <span class="c"># 但是都影响到了</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">76</span><span class="p">]:</span> <span class="n">my_list2</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span> <span class="c"># 用这种循环生成不同对象的方法就不影响了</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">77</span><span class="p">]:</span> <span class="n">my_list2</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;a&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="n">my_list2</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
-</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/3/">&larr; Older</a></li>
@@ -2221,6 +1979,10 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -2256,10 +2018,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

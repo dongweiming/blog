@@ -142,6 +142,124 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/a-web-based-reveal.js-online-PPT/">仿slid.es的在线PPT编辑网站</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-25T12:22:00+08:00" pubdate data-updated="true">May 25<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p><a href="https://slid.es">slid.es</a>是我最喜欢的前端之一<a href="https://github.com/hakimel">hakimel</a>的作品，前身叫做rvl.io, 网站已经改版。源于去年年底在上家公司做年终总结PPT，对我这种不搞office，没有美感的小程序员太痛苦了，然后就找到了<a href="https://github.com/hakimel/reveal.js">reveal.js</a>, 后来萌发做个基于它的网站, 其实也是为了练手学习mongoengine和oauth</p>
+
+<p>项目地址 <a href="https://github.com/dongweiming/flask_reveal">flask_reveal</a></p>
+
+<h4 id="section-1">它能做什么</h4>
+
+<ul>
+  <li>保存漂亮的在线PPT(我认为的)</li>
+  <li>记录浏览次数</li>
+  <li>多种主题和字体</li>
+  <li>可以把PPT私有化(默认是公开的)</li>
+  <li>自动保存修改</li>
+  <li>支持Bitbucket/Google/Github/Instagram/Linkdln/Trello/Tumblr/Stackoverflow oauth/oauth2登陆</li>
+  <li>PPT预览</li>
+</ul>
+
+<h4 id="section-2">使用了什么</h4>
+
+<ul>
+  <li>flask</li>
+  <li>mongoengine (忍不了非orm)</li>
+  <li>flask-script (像django那样的命令行启动)</li>
+  <li>前端js借用我做喜欢的原作者的90%，然后根据我的需要改动，css基本没动</li>
+  <li><a href="https://github.com/omab/python-social-auth">python-social-auth</a>的oauth后端，但是它使用的是flask+sqlalchemy，不支持flask+mongoengine，我改写了这部分</li>
+</ul>
+
+<h4 id="usage">Usage</h4>
+
+<p>设置hosts文件</p>
+
+<p>唉，本来申请了很多oauth想放在sae上面，但是遗憾的是新浪不支持，所以只能本地加hosts，让验证后的回调正确返回 linux 在你的/etc/hosts 文件里面添加一行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">YOURIP   YOURDOMAIN</span></pre></figure></notextile></div>
+
+<p>复制配置文件然后把你注册的ouauth放进去</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cp settings.py.example settings.py</span></pre></figure></notextile></div>
+
+<p>象django那样启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">python manage.py runserver -t 0.0.0.0 -p 80</span></pre></figure></notextile></div>
+
+<p>And 访问主页<code>http://revealcn.sinaapp.com</code></p>
+
+<h4 id="nginxuwsgi">使用nginx+uwsgi</h4>
+
+<p>这里是我的配置nginx的这段（假设你git clone 后在/home/dongwm/flask_reveal）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">server {
+</span><span class="line">		listen 80;
+</span><span class="line">		server_name revealcn.sinaapp.com;
+</span><span class="line">
+</span><span class="line">		access_log /var/log/nginx/revealcn.access_log main;
+</span><span class="line">		error_log /var/log/nginx/revealcn.error_log info;
+</span><span class="line">		location / {
+</span><span class="line">                include uwsgi_params;
+</span><span class="line">                uwsgi_pass unix:///tmp/uwsgi.sock;
+</span><span class="line">        	}
+</span><span class="line">		location /zongjie {
+</span><span class="line">		root   /home/dongwm/flask_reveal;
+</span><span class="line">		index index.html;
+</span><span class="line">		}
+</span><span class="line">	}
+</span></pre></figure></notextile></div>
+
+<p>uwsgi的xml配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">&lt;uwsgi&gt;
+</span><span class="line">     &lt;pythonpath&gt;/home/dongwm/flask_reveal&lt;/pythonpath&gt;
+</span><span class="line">     &lt;module&gt;manage&lt;/module&gt;
+</span><span class="line">     &lt;socket&gt;/tmp/uwsgi.sock&lt;/socket&gt;    
+</span><span class="line">    &lt;callable&gt;manager&lt;/callable&gt;
+</span><span class="line">     &lt;master/&gt;
+</span><span class="line">     &lt;processes&gt;4&lt;/processes&gt;       
+</span><span class="line">     &lt;memory-report/&gt;
+</span><span class="line">&lt;/uwsgi&gt;</span></pre></figure></notextile></div>
+
+<p>这里有个坑，我的gentoo的uwsgi安装后是有插件的，你需要这样启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">uwsgi_python27 -x uwsgi.xml </span></pre></figure></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/how-to-not-exit-interactive-mode-autoreload/">怎样不退出交互模式自动reload模块</a></h1>
     
     
@@ -1837,570 +1955,6 @@ PORT = 5000  #指定监听端口
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gevent-twisted-duo-xian-cheng-shui-geng-kuai/">Gevent-twisted-多线程谁更快?</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-01-11T13:54:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
-
-<p>标题有点唬人，以前了解过研究gevent，twisted，scrapy（基于twisted）。最近有个想法：这些东西比如做爬虫，谁的效率更好呢？
-我就写了以下程序（附件）测试然后用timeit（跑3次，每次10遍，时间有限）看效果</p>
-
-<h4 id="section-1">原理：</h4>
-
-<ol>
-  <li>为了防止远程网络的问题，从一个网站爬下网页代码（html），页面下载本地放在了我的本机（gentoo+apache）</li>
-  <li>然后爬虫去分析这些页面上面的链接（开始是主页），再挖掘其他页面，抓取页面关键字（我这里就是个‘py’）
-程序打包<a href="http://www.dongwm.com/Crawler.tar.bz2">Crawler.tar.bz2</a></li>
-</ol>
-
-<p>先看代码树：</p>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
-dongwm@localhost ~ $ tree Crawler/
-Crawler/
-├── common_Crawler.py  #标准爬虫，里面只是多线程编程，抓取分析类在common.py
-├── common.py  #共用函数，里面只是抓取页面分析页面关键字
-├── common.pyc #你懂得
-├── Crawler #scrapy和django框架差不多的用法
-│   ├── __init__.py
-│   ├── __init__.pyc
-│   ├── items.py #不需要利用，默认
-│   ├── pipelines.py
-│   ├── settings.py
-│   ├── settings.pyc
-│   └── spiders #抓取脚本文件夹
-│       ├── __init__.py
-│       ├── __init__.pyc
-│       ├── spiders.py #我做的分析页面，这个和多线程/gevent调用的抓取分析类不同，我使用了内置方法（大家可以修改共用函数改成scrapy的方式，这样三种效果就更准确了）
-│       └── spiders.pyc
-├── gevent_Crawler.py #gevent版本爬虫，效果和标准版一样，抓取分析类也是common.py 保证其他环节相同，只是一个多线程，一个用协程
-├── scrapy.cfg
-└── scrapy_Crawler.py #因为scrapy使用是命令行，我用subproess封装了命令，然后使用timeit计算效果
-
-2 directories, 16 files
-</pre></figure></notextile></div></notextile></div>
-
-<h4 id="section-2">实验前准备：</h4>
-<p>停掉我本机使用的耗费资源的进程 firefox，vmware，compiz等，直到负载保持一个相对拨波动平衡</p>
-
-<h4 id="section-3">测试程序：</h4>
-
-<ol>
-  <li>common.py </li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-#!/usr/bin/python
-#coding=utf-8
-
-# Version 1 by Dongwm 2013/01/10
-# 脚本作用：多线程抓取
-# 方式： lxml + xpath + requests
-
-import requests
-from  cStringIO import StringIO
-from lxml import etree
-
-class Crawler(object):
-
-    def __init__(self, app):
-        self.deep = 2  #指定网页的抓取深度        
-        self.url = '' #指定网站地址
-        self.key = 'by' #搜索这个词
-        self.tp = app #连接池回调实例
-        self.visitedUrl = [] #抓取的网页放入列表,防止重复抓取
-
-    def _hasCrawler(self, url): 
-        '''判断是否已经抓取过这个页面'''
-        return (True if url in self.visitedUrl else False)
-     
-    def getPageSource(self, url, key, deep): 
-        ''' 抓取页面,分析,入库.
-        '''
-        if self._hasCrawler(url): #发现重复直接return
-            return 
-        else:
-            self.visitedUrl.append(url) #发现新地址假如到这个列
-        r = requests.get('http://localhost/%s' % url)
-        encoding = r.encoding #判断页面的编码
-        result = r.text.encode('utf-8').decode(encoding)
-	    #f = StringIO(r.text.encode('utf-8'))
-        try:  
-            self._xpath(url, result, ['a'], unicode(key, 'utf8'), deep) #分析页面中的连接地址,以及它的内容
-            self._xpath(url, result, ['title', 'p', 'li', 'div'], unicode(key, "utf8"), deep) #分析这几个标签的内容
-        except TypeError: #对编码类型异常处理,有些深度页面和主页的编码不同
-            self._xpath(url, result, ['a'], key, deep)
-            self._xpath(url, result, ['title', 'p', 'li', 'div'], key, deep)
-        return True
-
-    def _xpath(self, weburl, data, xpath, key, deep):
-        page = etree.HTML(data)
-        for i in xpath:
-            hrefs = page.xpath(u"//%s" % i) #根据xpath标签
-            if deep &gt;1:
-                for href in hrefs:
-                    url = href.attrib.get('href','')
-                    if not url.startswith('java') and not url.startswith('#') and not \
-                        url.startswith('mailto') and url.endswith('html'):  #过滤javascript和发送邮件的链接
-                            self.tp.add_job(self.getPageSource,url, key, deep-1) #递归调用,直到符合的深
-            for href in hrefs:
-                value = href.text  #抓取相应标签的内容
-                if value:
-                    m = re.compile(r'.*%s.*' % key).match(value) #根据key匹配相应内容
-
-    def work(self):
-        self.tp.add_job(self.getPageSource, self.url, self.key, self.deep)
-        self.tp.wait_for_complete() #等待线程池完成
-</pre></figure></notextile></div></notextile></div>
-
-<ol>
-  <li>common_Crawler.py</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-#!/usr/bin/python
-#coding=utf-8
-
-# Version 1 by Dongwm 2013/01/10
-# 脚本作用：多线程
-
-
-
-import time
-import threading
-import Queue
-from common import Crawler
-
-#lock = threading.Lock()   #设置线程锁
-
-
-class MyThread(threading.Thread):
-
-    def __init__(self, workQueue, timeout=1, **kwargs):
-        threading.Thread.__init__(self, kwargs=kwargs)
-        self.timeout = timeout #线程在结束前等待任务队列多长时间
-        self.setDaemon(True)  #设置deamon,表示主线程死掉,子线程不跟随死掉
-        self.workQueue = workQueue
-        self.start() #初始化直接启动线程
-
-    def run(self):
-        '''重载run方法'''
-        while True:
-            try:
-                #lock.acquire() #线程安全上锁 PS:queue 实现就是线程安全的，没有必要上锁 ,否者可以put/get_nowait
-                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
-                res = callable(*args)  #执行的任务
-                #lock.release()  #执行完,释放锁 
-            except Queue.Empty: #任务队列空的时候结束此线程
-                break
-            except Exception, e:
-                return -1
-
-
-class ThreadPool(object):
-
-    def __init__(self, num_of_threads):
-         self.workQueue = Queue.Queue()
-         self.threads = []
-         self.__createThreadPool(num_of_threads)
- 
-    def __createThreadPool(self, num_of_threads):
-        for i in range(num_of_threads):
-             thread = MyThread(self.workQueue)
-             self.threads.append(thread)
-
-    def wait_for_complete(self):
-        '''等待所有线程完成'''
-        while len(self.threads):
-            thread = self.threads.pop()
-            if thread.isAlive():  #判断线程是否还存活来决定是否调用join
-                thread.join()
-     
-    def add_job( self, callable, *args):
-        '''增加任务,放到队列里面'''
-        self.workQueue.put((callable, args))
-def main():
-
-    tp = ThreadPool(10) 
-    crawler = Crawler(tp)
-    crawler.work()
-
-if __name__ == '__main__':
-
-    import timeit
-    t = timeit.Timer("main()") 
-    t.repeat(3, 10)
-</pre></figure></notextile></div></notextile></div>
-
-<ol>
-  <li>gevent_Crawler.py</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-#!/usr/bin/python
-#coding=utf-8
-
-# Version 1 by Dongwm 2013/01/10
-# 脚本作用：gevent
-
-import gevent.monkey
-gevent.monkey.patch_all()
-from gevent.queue import Empty, Queue
-import gevent
-from common import Crawler
-
-class GeventLine(object):
-
-    def __init__(self, workQueue, timeout=1, **kwargs):
-        self.timeout = timeout #线程在结束前等待任务队列多长时间
-        self.workQueue = workQueue
-
-    def run(self):
-        '''重载run方法'''
-        while True:
-            try:
-                callable, args = self.workQueue.get(timeout=self.timeout) #从工作队列中获取一个任务
-                res = callable(*args)  #执行的任务
-                print res
-            except Empty:
-                break
-            except Exception, e:
-            	print e
-                return -1
-
-class GeventPool(object):
-
-	def __init__(self, num_of_threads):
-	         self.workQueue = Queue()
-	         self.threads = []
-	         self.__createThreadPool(num_of_threads)
-	 
-	def __createThreadPool(self, num_of_threads):
-	    for i in range(num_of_threads):
-	         thread = GeventLine(self.workQueue)
-	         self.threads.append(gevent.spawn(thread.run))
-
-
-	def wait_for_complete(self):
-	    '''等待所有线程完成'''
-
-	    while len(self.threads):
-	        thread = self.threads.pop()
-	        thread.join()
-	    gevent.shutdown()
-	 
-	def add_job( self, callable, *args):
-	    '''增加任务,放到队列里面'''
-	    self.workQueue.put((callable, args))
-
-def main():
-	tp = GeventPool(10) 
-	crawler = Crawler(tp)
-	crawler.work()
-
-if __name__ == '__main__':
-
-    import timeit
-    t = timeit.Timer("main()") 
-    t.repeat(3, 10)
-
-</pre></figure></notextile></div></notextile></div>
-
-<ol>
-  <li>Crawler/spiders/spiders.py</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-from scrapy.contrib.spiders import CrawlSpider, Rule
-from scrapy.selector import HtmlXPathSelector
-from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
-from scrapy.item import Item
-
-class MySpider(CrawlSpider):
-    name = 'localhost'
-    allowed_domains = ['localhost']
-    start_urls = ['http://localhost']
-    rules = ( 
-        Rule(SgmlLinkExtractor(allow=(r'http://localhost/.*')), callback="parse_item"),  
-    )  
-    def parse_item(self, response):
-        hxs = HtmlXPathSelector(response)
-        hxs.select('//*[@*]/text()').re(r'py')  #实现了common.py里面的抓取和分析，但是common.py是抓取五种标签，分2次抓取，这里是抓取所有标签，不够严禁
-
-</pre></figure></notextile></div></notextile></div>
-
-<ol>
-  <li>scrapy_Crawler.py #时间有限，没有研究模块调用，也不够严禁</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-
-#!/usr/bin/python
-#coding=utf-8
-
-# Version 1 by Dongwm 2013/01/10
-# 脚本作用：scrapy
-
-from subprocess import call
-
-def main():
-	call('scrapy crawl localhost --nolog', shell=True)
-
-if __name__ == '__main__':
-
-    import timeit
-    t = timeit.Timer("main()") 
-    t.repeat(3, 10)
-</pre></figure></notextile></div></notextile></div>
-
-<h4 id="section-4">实验过程</h4>
-
-<h5 id="section-5">1. 同时启动三个终端，一起跑（手点回车，肯定有点延迟）</h5>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
-dongwm@localhost ~/Crawler $ python scrapy_Crawler.py
-10000000 loops, best of 3: 0.024 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0223 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0223 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0223 usec per loop
-10000000 loops, best of 3: 0.0222 usec per loop
-10000000 loops, best of 3: 0.0223 usec per loop #他是最快跑完的，非常快～～  数据很稳定
-
-dongwm@localhost ~/Crawler $ python gevent_Crawler.py
-100000000 loops, best of 3: 0.0134 usec per loop
-100000000 loops, best of 3: 0.0131 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0134 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0133 usec per loop
-100000000 loops, best of 3: 0.0133 usec per loop
-100000000 loops, best of 3: 0.0133 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0133 usec per loop
-100000000 loops, best of 3: 0.0132 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0123 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0123 usec per loop  #跑得很慢，不知道是不是timeit的原因(或者调用的优先级太低，抢资源能力不行)，很奇怪，但是它的数据最快，数据稳定在0.0123-0.0133
-
-
-dongwm@localhost ~/Crawler $ python common_Crawler.py
-100000000 loops, best of 3: 0.0274 usec per loop
-10000000 loops, best of 3: 0.0245 usec per loop
-10000000 loops, best of 3: 0.0252 usec per loop
-10000000 loops, best of 3: 0.0239 usec per loop
-10000000 loops, best of 3: 0.025 usec per loop
-10000000 loops, best of 3: 0.0273 usec per loop
-10000000 loops, best of 3: 0.0255 usec per loop
-10000000 loops, best of 3: 0.0261 usec per loop
-10000000 loops, best of 3: 0.0275 usec per loop
-10000000 loops, best of 3: 0.0261 usec per loop
-10000000 loops, best of 3: 0.0257 usec per loop
-10000000 loops, best of 3: 0.0273 usec per loop
-10000000 loops, best of 3: 0.0241 usec per loop
-10000000 loops, best of 3: 0.0257 usec per loop
-10000000 loops, best of 3: 0.0275 usec per loop
-10000000 loops, best of 3: 0.0241 usec per loop
-10000000 loops, best of 3: 0.0259 usec per loop
-10000000 loops, best of 3: 0.0251 usec per loop
-10000000 loops, best of 3: 0.0193 usec per loop
-10000000 loops, best of 3: 0.0176 usec per loop
-100000000 loops, best of 3: 0.0199 usec per loop
-100000000 loops, best of 3: 0.0167 usec per loop
-100000000 loops, best of 3: 0.018 usec per loop
-10000000 loops, best of 3: 0.0179 usec per loop
-100000000 loops, best of 3: 0.0173 usec per loop
-100000000 loops, best of 3: 0.0172 usec per loop
-100000000 loops, best of 3: 0.018 usec per loop
-100000000 loops, best of 3: 0.0162 usec per loop
-100000000 loops, best of 3: 0.0179 usec per loop
-100000000 loops, best of 3: 0.0171 usec per loop  #第二跑得快，但是还是数据不稳定，时间在0.017-0.026之间
-</pre></figure></notextile></div></notextile></div>
-<p>#####2. 挨个启动，待负载保持一个相对拨波动平衡 在换另一个</p>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
-dongwm@localhost ~/Crawler $ python scrapy_Crawler.py
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0122 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0123 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0123 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0122 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0123 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0122 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0122 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop   #数据很稳定，在0.0122-0.0126之间 机器负载在1.3左右,最高超过了1.4（闲暇0.6左右）
-</pre></figure></notextile></div></notextile></div>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
-dongwm@localhost ~/Crawler $ python gevent_Crawler.py
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0126 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop
-100000000 loops, best of 3: 0.0125 usec per loop
-100000000 loops, best of 3: 0.0124 usec per loop  #数据很稳定，在0.0124-0.0126之间 机器负载在1.2左右（闲暇0.6左右）
-</pre></figure></notextile></div></notextile></div>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
-dongwm@localhost ~/Crawler $ python common_Crawler.py
-10000000 loops, best of 3: 0.0135 usec per loop
-100000000 loops, best of 3: 0.0185 usec per loop
-10000000 loops, best of 3: 0.0174 usec per loop
-100000000 loops, best of 3: 0.019 usec per loop
-10000000 loops, best of 3: 0.016 usec per loop
-10000000 loops, best of 3: 0.0181 usec per loop
-10000000 loops, best of 3: 0.0146 usec per loop
-100000000 loops, best of 3: 0.0192 usec per loop
-10000000 loops, best of 3: 0.0165 usec per loop
-10000000 loops, best of 3: 0.0176 usec per loop
-10000000 loops, best of 3: 0.0177 usec per loop
-10000000 loops, best of 3: 0.0182 usec per loop
-100000000 loops, best of 3: 0.0195 usec per loop
-10000000 loops, best of 3: 0.0163 usec per loop
-10000000 loops, best of 3: 0.0161 usec per loop
-100000000 loops, best of 3: 0.0191 usec per loop
-100000000 loops, best of 3: 0.0193 usec per loop
-10000000 loops, best of 3: 0.0147 usec per loop
-100000000 loops, best of 3: 0.0197 usec per loop
-10000000 loops, best of 3: 0.0178 usec per loop
-10000000 loops, best of 3: 0.0172 usec per loop
-100000000 loops, best of 3: 0.022 usec per loop
-100000000 loops, best of 3: 0.0191 usec per loop
-10000000 loops, best of 3: 0.0208 usec per loop
-10000000 loops, best of 3: 0.0144 usec per loop
-10000000 loops, best of 3: 0.0201 usec per loop
-100000000 loops, best of 3: 0.0195 usec per loop
-100000000 loops, best of 3: 0.0231 usec per loop
-10000000 loops, best of 3: 0.0149 usec per loop
-100000000 loops, best of 3: 0.0211 usec per loop #数据有点不稳定，浮动较大，但是最要在0.016-0.019  机器负载曾经长时间在1.01,最高未超过1.1 （闲暇0.6左右）
-</pre></figure></notextile></div></notextile></div>
-
-<h4 id="section-6">一些我的看法</h4>
-
-<p>虽然我的实验有不够严禁的地方，我的代码能力也有限（希望有朋友看见代码能提供修改意见或更NB的版本），但是效果还是比较明显的，我总结下</p>
-
-<ol>
-  <li>gevent确实性能很好，并且很稳定，占用io一般(据说长时间使用有内存泄露的问题？我不理解)</li>
-  <li>scrapy这个框架把爬虫封装的很好，只需要最少的代码就能实现，性能也不差gevent</li>
-  <li>多线程编程确实有瓶颈，并且不稳定</li>
-</ol>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/7/">&larr; Older</a></li>
@@ -2423,6 +1977,10 @@ dongwm@localhost ~/Crawler $ python common_Crawler.py
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -2458,10 +2016,6 @@ dongwm@localhost ~/Crawler $ python common_Crawler.py
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

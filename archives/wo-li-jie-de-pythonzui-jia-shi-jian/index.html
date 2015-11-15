@@ -1,0 +1,627 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>我理解的python最佳实践 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery, python">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/wo-li-jie-de-pythonzui-jia-shi-jian">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/jimdoclockzip.js"></script>
+<script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">我理解的python最佳实践</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-11-15T17:00:00+08:00" pubdate data-updated="true">Nov 15<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3 id="section">前言</h3>
+
+<p>对我来说, 以前每次面试是我审视自己, 检验自己的一种方式. 每次准备面试, 以及被面试官问住的时候才会发现,
+其实我python我学的还不够好; 工作中也是, 可以从其他的同事那里获得成长. 但是我今天说的是, 我也在自己总结和思考<code>最佳实践</code>这件事.</p>
+
+<p>我想很多人都会有意识的去读一些PEP(Python Enhancement Proposals). 了解语言设计者当时的考虑, 这些文案也是经过很长时间的讨论最后才实施的.
+既然想用好这门语言, 必然需要理解设计之美. 比如我听说gvanrossum使用emacs作为编辑器, 我也使用emacs, 就是希望我可以更贴近一些python</p>
+
+<p>本文根据 <a href="https://gist.github.com/sloria/7001839">The Best of the Best Practices (BOBP) Guide for Python</a> 和 <a href="https://github.com/Khan/style-guides/blob/master/style/python.md">Khan’s style-guides</a>中对于开发中一些事物的理解和看法, 有出至PEP, 也有一些python界知名开发者, 我加入了一些我自己的理解和看法.</p>
+
+<h3 id="section-1">价值观</h3>
+
+<h4 id="build-tools-for-others-that-you-want-to-be-built-for-you---kenneth-reitz-requests">“Build tools for others that you want to be built for you.” - Kenneth Reitz (requests等知名库作者)</h4>
+
+<p>你自己都不想用的东西做出来有什么意义呢?</p>
+
+<h4 id="simplicity-is-alway-better-than-functionality---pieter-hintjens-zeromq">“Simplicity is alway better than functionality.” - Pieter Hintjens (ZeroMQ)</h4>
+
+<p>我对函数式编程的看法一直是<code>看场景</code>, 甚至于我经常会对比性能, 义无反顾的使用性能最好的, 但是代码又不难懂和繁琐的</p>
+
+<h4 id="fit-the-90-use-case-ignore-the-nay-sayers---kenneth-reitz">“Fit the 90% use-case. Ignore the nay sayers.” - Kenneth Reitz</h4>
+
+<p>程序员都有完美主义情怀, 但是其实往往我们是在偏激的看事情 - 用户其实不case</p>
+
+<h4 id="beautiful-is-better-than-ugly---pep-20httpwwwpythonorgdevpepspep-0020">“Beautiful is better than ugly.” - <a href="http://www.python.org/dev/peps/pep-0020/">PEP 20</a></h4>
+
+<h3 id="section-2">开发参考</h3>
+
+<h4 id="explicit-is-better-than-implicit---pep-20explicit-is-better-than-implicit---pep-20">“Explicit is better than implicit” - <a href="&quot;Explicit is better than implicit&quot; - PEP 20">PEP 20</a></h4>
+
+<p>不要留坑, 我经常看到一些复杂的代码, 这些代码的作者写的时候明显知道自己在做什么, 但是别人很难维护和看懂.
+所以我对自己的职业的基本要求就是: 那天我离职了, 后来接手的人不会经常骂我</p>
+
+<h4 id="readability-counts---pep-20httpwwwpythonorgdevpepspep-0020">“Readability counts.” - <a href="http://www.python.org/dev/peps/pep-0020">PEP 20</a></h4>
+
+<h4 id="anybody-can-fix-anything---khans-style-guideshttpsgithubcomkhanstyle-guidesblobmasterstylepythonmd">“Anybody can fix anything.” - <a href="https://github.com/Khan/style-guides/blob/master/style/python.md">Khan’s style-guides</a></h4>
+
+<p>我现在更多不是代码炫技, 我经常思考的怎么让最少的代码, 最简单的设计结构满足当前需求, 也能给未来一段时间里也有扩展性</p>
+
+<h4 id="fix-each-broken-window-bad-design-wrong-decision-or-poor-code-as-soon-as-it-is-discovered">Fix each broken window (bad design, wrong decision, or poor code) as soon as it is discovered.</h4>
+
+<p>我们改bug有个原则 - 测试要覆盖到出bug的地方. 每个人内心都有很高的代码质量的要求</p>
+
+<h4 id="now-is-better-than-never---pep-20httpwwwpythonorgdevpepspep-0020">“Now is better than never.” - <a href="http://www.python.org/dev/peps/pep-0020/">PEP 20</a></h4>
+
+<p>明日复明日, 明日何其多. 我们在代码review的时候, 问题需要在提出的时候就去改, 永远不会说下一次再说, 因为下一次大多时候是没有下一次了</p>
+
+<h4 id="test-ruthlessly-write-docs-for-new-features">Test ruthlessly. Write docs for new features.</h4>
+
+<h4 id="even-more-important-that-test-driven-development--human-driven-development">Even more important that Test-Driven Development–Human-Driven Development</h4>
+
+<h3 id="section-3">一些细节</h3>
+
+<h4 id="pep8">PEP8</h4>
+
+<p>很多人是排斥的, 假如你想让未来部门有自己的风格, 习惯. 让新人马上上手接受, PEP8是一个非常明智的选择</p>
+
+<h4 id="section-4">文件开头</h4>
+
+<p>新的文件的开头需要加一些docstring. 描述文件的作用, 编辑者, 修改原因和日期等帮助阅读者的描述.</p>
+
+<p>不要添加<code>#!/usr/bin/python</code>(除非这个文件未来是一个可执行的文件), copyright, __author__或者其他内容.</p>
+
+<p>第一行建议添加<code># coding-utf-8</code></p>
+
+<h4 id="section-5">命名</h4>
+
+<ol>
+  <li>
+    <p>Variables, functions, methods, packages, modules</p>
+
+    <p>lower_case_with_underscores</p>
+  </li>
+  <li>
+    <p>Classes and Exceptions</p>
+
+    <p>CapWords</p>
+  </li>
+  <li>
+    <p>Protected methods and internal functions</p>
+
+    <p>_single_leading_underscore(self, …)</p>
+  </li>
+  <li>
+    <p>Private methods</p>
+
+    <p>__double_leading_underscore(self, …)</p>
+  </li>
+  <li>
+    <p>Constants</p>
+
+    <p>ALL_CAPS_WITH_UNDERSCORES</p>
+  </li>
+  <li>
+    <p>Avoid one-letter variables (esp. l, O, I).</p>
+
+    <p>永远不要使用没有意义的单字符作为变量名</p>
+  </li>
+</ol>
+
+<p>PS: 这点可以折中, 假如一个代码块代码逻辑很清晰, 而 这个短的便令也只是过程中的一个间接变量之类的情况下是可以接受的</p>
+
+<h3 id="good-or-bad">Good or Bad</h3>
+
+<p>列举一些正确和错误的用法.</p>
+
+<h4 id="avoid-redundant-labeling">Avoid redundant labeling.</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># Good</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">audio</span>
+</span><span class="line">
+</span><span class="line"><span class="n">core</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">Core</span><span class="p">()</span>
+</span><span class="line"><span class="n">controller</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">Controller</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># Bad</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">audio</span>
+</span><span class="line">
+</span><span class="line"><span class="n">core</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">AudioCore</span><span class="p">()</span>
+</span><span class="line"><span class="n">controller</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">AudioController</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>不要使用重复意义的标签</p>
+
+<h4 id="prefer-reverse-notation">Prefer “reverse notation”.</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># Good</span>
+</span><span class="line"><span class="n">elements</span> <span class="o">=</span> <span class="o">...</span>
+</span><span class="line"><span class="n">elements_active</span> <span class="o">=</span> <span class="o">...</span>
+</span><span class="line"><span class="n">elements_defunct</span> <span class="o">=</span> <span class="o">...</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># Bad</span>
+</span><span class="line"><span class="n">elements</span> <span class="o">=</span> <span class="o">...</span>
+</span><span class="line"><span class="n">active_elements</span> <span class="o">=</span> <span class="o">...</span>
+</span><span class="line"><span class="n">defunct_elements</span> <span class="o">...</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="avoid-getter-and-setter-methods">Avoid getter and setter methods.</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># Good</span>
+</span><span class="line"><span class="n">person</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">42</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># Bad</span>
+</span><span class="line"><span class="n">person</span><span class="o">.</span><span class="n">set_age</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="indentation">Indentation</h4>
+
+<p>永远不要Tab和空格混用. 使用4个空格作为python缩进</p>
+
+<h4 id="imports">Imports</h4>
+
+<p>Import entire modules instead of individual symbols within a module.</p>
+
+<p>PS: 这个时候可以参考tornado的代码用法.</p>
+
+<p>比如现在有这样一个包</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line"><span class="nv">$ </span>tree
+</span><span class="line">└── canteen
+</span><span class="line">    ├── __init__.py
+</span><span class="line">    ├── sessions.py
+</span><span class="line">    <span class="sb">```</span>
+</span></pre></figure></notextile></div>
+<p>python
+# Good
+import canteen
+import canteen.sessions
+from canteen import sessions</p>
+
+<h1 id="bad">Bad</h1>
+<p>from canteen import get_user  # Symbol from canteen/<strong>init</strong>.py
+from canteen.sessions import get_session  # Symbol from canteen/sessions.py
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;pre class=&#8217;sh_bash&#8217;&gt;<span class="line">PS: 除非这个第三方模块的文档显式的要求这些写
+</span><span class="line">
+</span><span class="line"><span class="c">#### Splitting tricky lines</span>
+</span>&lt;/pre&gt;</figure></notextile>&lt;/div&gt;python
+# Bad:
+badge_name = badges.topic_exercise_badges.TopicExerciseBadge.name_for_topic_key_name(self.key().name())
+# Good:
+badge_name = (badges.topic_exercise_badges.TopicExerciseBadge
+              .name_for_topic_key_name(self.key().name()))</p>
+
+<h1 id="bad-1">Bad:</h1>
+<p>self.redirect(“/class_profile?selected_graph_type=%s&amp;coach_email=%s&amp;graph_query_params=%s” %
+    (self.GRAPH_TYPE, urllib.quote(coach.email), urllib.quote(urllib.quote(self.request.query_string))))
+# Good:
+self.redirect(
+    “/class_profile?selected_graph_type=%s&amp;coach_email=%s”
+    “&amp;graph_query_params=%s” % (
+        self.GRAPH_TYPE,
+        urllib.quote(coach.email),
+        urllib.quote(urllib.quote(self.request.query_string))))
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;pre class=&#8217;sh_bash&#8217;&gt;<span class="line"><span class="c">### 我添加的规则</span>
+</span><span class="line">
+</span><span class="line"><span class="c">#### from &#8230; import &#8230;</span>
+</span>&lt;/pre&gt;</figure></notextile>&lt;/div&gt;python
+# Bad
+from aa import alonglonglonglonglong, alonglonglonglonglonglonglonglonglong, \
+               alonglonglonglonglonglong</p>
+
+<h1 id="good">Good</h1>
+<p>from aa import (alonglonglonglonglong, alonglonglonglonglonglonglonglonglong,
+                alonglonglonglonglonglong)
+from aa import (alonglonglonglonglong, alonglonglonglonglonglonglonglonglong,
+    alonglonglonglonglonglong, alonglonglonglonglonglonglong,
+    alonglonglonglonglonglong2)  # Good。 当引入的函数/类/变量很多时， 也可以选择空 4 个空格的方式， 而不需要和首行的左括号后对齐&#8220;`</p>
+
+<h4 id="relative-import--absolute-import">相对引用(relative import) 和 绝对引用(absolute import)</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">cat</span> <span class="n">xx</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">py</span>  <span class="c"># 如果想引用这个变量</span>
+</span><span class="line"><span class="n">TMP</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class="line">
+</span><span class="line"><span class="err">$</span><span class="n">cat</span> <span class="n">xx</span><span class="o">/</span><span class="n">views</span><span class="o">/</span><span class="n">user</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">xx.models.user.consts</span> <span class="kn">import</span> <span class="n">TMP</span>  <span class="c"># recommended。</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 假如模块层级&gt;=3。 比如 xx/models/user/consts.py 就在根目录下的第 3 级。 如果其他当前目录下源文件需要调用它的内容。 也可以选择相对引用</span>
+</span><span class="line"><span class="err">$</span><span class="n">cat</span> <span class="n">xx</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span>  <span class="c"># 需要和 consts.py 在一个目录下才可以</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">consts</span> <span class="kn">import</span> <span class="n">TMP</span>  <span class="c"># Bad</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">.consts</span> <span class="kn">import</span> <span class="n">TMP</span>  <span class="c"># Good</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># 而且只能在包内相对引用。 包外都需要绝对引用</span>
+</span></pre></figure></notextile></div>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-11-15T17:00:00+08:00" pubdate data-updated="true">Nov 15<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/wo-li-jie-de-pythonzui-jia-shi-jian/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/pythonjin-jie-bi-du-hui-zong/" title="Previous Post:
+        python进阶必读汇总">&laquo; python进阶必读汇总</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/wo-li-jie-de-pythonzui-jia-shi-jian/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/wo-li-jie-de-pythonzui-jia-shi-jian/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

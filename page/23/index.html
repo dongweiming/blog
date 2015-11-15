@@ -142,6 +142,282 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/jiyuconsolezhongduandejiaohusocketliaotianchengxukehuduan/">基于console终端的交互socket聊天程序（客户端）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-16T00:00:00+08:00" pubdate data-updated="true">Sep 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：这是初步学习的一个练习，需要实现多线程池，使用MySQLdb模块，并发等。但是实际工作发现，不能使用多进程将接受和发送socket分离，因为raw_input需要console支持，所以只能通过多线程+多线程实现。文中还实现了一个显示进度的“旋转竖线”效果，解决了多线程无法CTRL＋C 退出的问题</p>
+
+<p><pre class="sh_python">
+#!/usr/bin/env python
+#-*- coding: utf8 -*-</p>
+
+<p>import os,socket, sys, time,traceback,signal
+from time import ctime
+from threading import *
+from optparse import OptionParser
+import MySQLdb
+#from multiprocessing import Process</p>
+
+<p>host = '192.168.8.46'
+textport = '8888'
+cv = Condition()  #Condition比lock功能多
+spinners = '|/-\\'
+spinpos = 0
+equeue = []</p>
+
+<p>class MYmsg:
+    '''主要是一些信息输出的线程定义以及线程模板'''
+    #接受用户input信息
+    def fwrite(self,buf):
+        sys.stdout.write(buf)
+        sys.stdout.flush()
+#旋转竖线定义
+    def spin(self):
+        global spinners, spinpos
+        self.fwrite(spinners[spinpos] + "\b")
+        spinpos += 1
+        if spinpos &gt;= len(spinners):
+            spinpos = 0
+#把旋转竖线放入线程，运行用户接口,调用wait()使竖线旋转
+    def uithread(self):
+        global cv, equeue
+        while 1:
+            cv.acquire()
+            while not len(equeue):
+                cv.wait(0.15)
+                self.spin()</p>
+
+<p>            msg = equeue.pop(0)
+            cv.release()
+            if msg == 'QUIT':
+                self.fwrite("\n")
+                sys.exit(0)
+            self.fwrite(" \n  %s\r" % msg)
+#把打印信息放入线程，调用notify(),添加队列通知其他线程
+    def msg(self,message):
+        global cv, equeue
+        cv.acquire()
+        equeue.append(message)
+        cv.notify()
+        cv.release()
+#定义的线程模板方法
+    def mythread(self,myth,flag=0):
+        if flag:
+            t = Thread(target = myth,args = [arg])
+        else:
+            t = Thread(target = myth)
+        t.setDaemon(True)
+        t.start()</p>
+
+<p>class Watcher:
+    '''用新进程来接受信号后杀掉执行任务进程,主要解决多线程只能杀掉主线程的问题，无法ctrl +c 退出'''
+#创建一个子线程，它返回父线程等待一个KeyboardInterrupt，然后杀死子线程
+    def __init__(self):
+        self.child = os.fork()
+        if self.child == 0:
+            return
+        else:
+            self.watch()
+    def watch(self):
+        try:
+            os.wait()
+        except KeyboardInterrupt:
+            print 'KeyBoardInterrupt'
+            self.kill()
+        sys.exit()
+    def kill(self):
+        try:
+            os.kill(self.child, signal.SIGKILL)
+        except OSError:
+            pass</p>
+
+<p>class MYconnt(MYmsg):
+    '''
+    socket连接，打印信息，异常处理
+    '''
+    def __init__(self):
+        self.msg=MYmsg()
+    def connt(self):
+        self.msg.mythread(self.uithread)  #使用旋转竖线
+        try:
+            self.msg.msg('Creating socket object')
+            time.sleep(3)</p>
+
+<p>            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error, e:
+            print "Strange error creating socket: %s" % e
+            sys.exit(1)</p>
+
+<p>        try:
+            port = int(textport)
+        except ValueError:
+            try:
+                port = socket.getservbyname(textport, 'tcp')
+            except socket.error, e:
+                print "Couldn't find your port: %s" % e
+                sys.exit(1)</p>
+
+<p>        self.msg.msg('Connecting to %s:%d' % (host, port))
+        time.sleep(2)
+        try:
+            s.connect((host, port))
+        except socket.gaierror, e:
+            print "Address-related error connecting to server: %s" % e
+            sys.exit(1)
+        except socket.error, e:
+            print "Connection error: %s" % e
+            sys.exit(1)
+        self.msg.msg("QUIT")
+        return s</p>
+
+<p>class MYtalk(MYconnt):
+    '''
+    聊天程序接受和发送
+    '''
+    def __init__(self):
+        self.myconnt=MYconnt()
+        self.s = self.myconnt.connt()
+#根据参数选择发送或者接收socket信息
+    def choice(self,th):
+        self.mysqlconnt = mysqldb()
+        if th == 'sed':
+            while 1:
+                try:
+                    buf = self.s.recv(2048)
+                except socket.error, e:
+                    print "Error receiving data: %s" % e
+                    sys.exit(1)
+                except KeyboardInterrupt:
+                    raise
+                    self.mysqlconnt.close()
+                if not len(buf):
+                    break
+                print "%s says: %s" % (self.s.getpeername(),buf)
+                self.mysqlconnt.insert('Client',self.s.getpeername()[0],buf.split(']')[0][1:],buf.split(']')[1])
+        elif th == 'rev':
+            while 1:</p>
+
+<p>                try:
+                    sys.stdout.write('&gt;')
+                    self.data = sys.stdin.readline()
+                    sys.stdout.flush()
+                    if not self.data:
+                        break
+                    elif self.data == "quit":
+                        try:
+                            self.s.shutdown(1)
+                        except socket.error, e:
+                            print "Error sending data (detected by shutdown): %s" % e
+                            sys.exit(1)</p>
+
+<p>                    self.s.sendall('[%s] %s' % (ctime(),self.data))
+                    self.mysqlconnt.insert('Client',socket.gethostbyname(socket.gethostname()),ctime(),self.data)
+                except KeyboardInterrupt:
+                    raise</p>
+
+<p>                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    sys.exit(1)
+#将接收和发送放在不同的进程
+    def process(self):
+        plist = []
+        for th in ['rev','sed']:
+            p = Process(target=self.choice,args = [th])
+            plist.append(p)
+            p.start()
+        for p in plist:
+            p.join()
+#将接收和发送放在不同的线程
+    def mthread(self):
+         mlist = []
+         for th in ['rev','sed']:
+             Watcher()
+             t = Thread(target = self.choice,args = [th])
+             mlist.append(t)
+             t.setDaemon(1)
+             t.start()
+         for t in mlist:
+             t.join()</p>
+
+<p>class mysqldb:
+    def __init__(self):
+        try :
+            self.conn = MySQLdb.connect(host = "192.168.8.46",user = "dongwm",passwd = "test123",db = "talk")
+        except MySQLdb.Error, e:
+            print "Error %d: %s" % (e.args[0], e.args[1])
+            sys.exit (1)
+        try :
+            self.cursor = self.conn.cursor()
+        except :
+            raise
+    def insert(self,table,ip,time,text):
+        sql = "insert into %s(ip,time,text) values('%s','%s','%s');" % (table,ip,time,text)
+        try:
+            self.cursor.execute(sql)
+        except Exception,e:
+            print  e
+    def select(self,table):
+        sql = "select * from %s;" % table
+        try:
+            self.cursor.execute(sql)
+        except Exception,e:
+            print e
+        for data in self.cursor.fetchall():
+            print '%s\t%s\t%s' % data
+    def close():
+        self.cursor.close()
+        self.conn.commit()
+        self.conn.close()
+#主函数
+if __name__ == '__main__':
+    argc = len(sys.argv)
+    parser = OptionParser(description="Socket Talk Shell",add_help_option=False,prog="Client.py",version="1.0",usage="%prog")
+    parser.add_option("-h", "--help",action = "help",help="print help")
+    parser.add_option("-p", "--print",action="store_true",help="print data in mysql")
+    options, arguments=parser.parse_args()
+    if argc == 1:
+        mytalk=MYtalk()
+        mytalk.mthread()
+    if '-h' in sys.argv  or '--help' in sys.argv:
+        print __doc__
+    elif '-p'  in sys.argv  or '--print' in sys.argv:
+        mysqldbconnt=mysqldb()
+        mysqldbconnt.select('Client')
+    else:
+       print 'Please run this script without parameters'
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/jiyuconsolezhongduandejiaohusocketliaotianchengxufuwuqiduan/">基于console终端的交互socket聊天程序（服务器端）</a></h1>
     
     
@@ -1985,86 +2261,6 @@ if __name__ == '__main__':
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/luyouqishangmianqiyonganquanshellssh/">路由器上面启用安全Shell（ssh）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-31T00:00:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>R1(config)#ip domain-name dongwm.com</p>
-
-<p>R1(config)#crypto key zeroize rsa
-% No Signature RSA Keys found in configuration.  //想把配置中的rsa清除 但是发现配置中没有配置 呵呵</p>
-
-<p>R1(config)#crypto key generate rsa general-keys modulus 1024  //产生SSH所用安全密钥 长度为1024 类型为rsa</p>
-
-<p>% You already have RSA keys defined named R1.dongwm.com.
-% They will be replaced.</p>
-
-<p>% The key modulus size is 1024 bits
-% Generating 1024 bit RSA keys, keys will be non-exportable&#8230;
-*Mar  1 00:06:14.043: %SSH-5-DISABLED: SSH 1.99 has been disabled[OK]
-*Mar  1 00:06:20.631: %SSH-5-ENABLED: SSH 1.99 has been enabled</p>
-
-<p>R1(config)#ip ssh time-out 90  //设置ssh超市时间为90s</p>
-
-<p>R1(config)#ip ssh authentication-retries 4  //重置ssh验证的错误尝试次数</p>
-
-<p>R1(config)#line vty 0 15</p>
-
-<p>R1(config-line)#transport input ssh //容许vty线路使用ssh</p>
-
-<p>R1#sh crypto key mypubkey rsa
-% Key pair was generated at: 00:06:20 UTC Mar 1 2002
-Key name: R1.dongwm.com
-Usage: General Purpose Key
-Key is not exportable.
-Key Data:
-30819F30 0D06092A 864886F7 0D010101 05000381 8D003081 89028181 00C04D5B
-EA7876B0 DAD6D615 6F2B7DC6 8A6DB09A FA3C1EA0 36173B5C ACCC56C2 796D814B
-9F27CECF C48FD5D9 F9547F96 4623BDD2 D53CA81D D95B426F 64DB1D2B 01CD2BD0
-6C7223BB 3DDA577A 7E1D9AA8 7D48080E A9EB69E5 93A3E851 41F22715 27961027
-E254956F 7E6C23F3 4D314CF9 75E99F1B 1A0F287D 1AC4D83A 2AA7BD8F 55020301 0001
-% Key pair was generated at: 00:06:21 UTC Mar 1 2002
-Key name: R1.dongwm.com.server
-Usage: Encryption Key
-Key is not exportable.
-Key Data:
-307C300D 06092A86 4886F70D 01010105 00036B00 30680261 00D36FB0 D8F4A184
-7C8CAEAB C5F0155F B7FA5BEB 65096F81 18359560 53D5F9C9 CF2C0470 F04EE42B
-773E4E4F 7B181E2E BC83D77B 2C9A6C54 247D4ECA 77E53770 D440F979 A7A327CE
-5B35A59C 61EE0AD9 9A4D0C09 EE108B57 F906A97E FF24BE90 CF020301 0001</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/24/">&larr; Older</a></li>
@@ -2087,6 +2283,10 @@ Key Data:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -2122,10 +2322,6 @@ Key Data:
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>

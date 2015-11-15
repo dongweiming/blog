@@ -142,6 +142,65 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E8%A7%A3%E5%86%B3usrbinld-cannot-find-lxxx%E9%94%99%E8%AF%AF/">解决/usr/bin/ld: Cannot Find -lxxx错误</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>编译安装时候可能会出现类似于以下的这样报错，简单地说是可能是在安装系统中选择的包的问题：
+<pre class="bbcodeblock" style="margin: 0px -99999px 0px 0px; padding: 3px; border: 1px inset; width: 98%; height: 50px; text-align: left; overflow: auto;" dir="ltr">/usr/bin/ld: cannot find -lltdl
+collect2: ld returned 1 exit status
+解决办法是：
+<pre class="sh_bash">[root@9-104 php-5.2.8]# updatedb
+[root@9-104 php-5.2.8]# locate libltdl  //提示/usr/bin/ld: cannot find -lxxx ，查找时候前面加lib：libxxx  住一 第一个l去掉
+/usr/lib64/libltdl.so.3
+/usr/lib64/libltdl.so.3.1.4
+/usr/share/libtool/libltdl
+/usr/share/libtool/libltdl/COPYING.LIB
+/usr/share/libtool/libltdl/Makefile.am
+/usr/share/libtool/libltdl/Makefile.in
+/usr/share/libtool/libltdl/README
+/usr/share/libtool/libltdl/acinclude.m4
+/usr/share/libtool/libltdl/aclocal.m4
+/usr/share/libtool/libltdl/config-h.in
+/usr/share/libtool/libltdl/config.guess
+...
+注意拉：
+[root@9-104 php-5.2.8]# ln -s /usr/lib64/libltdl.so.3 /usr/lib64/libltdl.so
+原理：给查找到的libxxx文件做软链接
+ln -s /usr/lib64/libxxx.so.X（X代表数字） /usr/lib64/lxxx.so</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/linux%E7%B3%BB%E7%BB%9F%E4%B8%8B%E6%9B%B4%E6%94%B9%E6%97%B6%E5%8C%BA%EF%BC%88timezone%EF%BC%89/">linux系统下更改时区（TimeZone）</a></h1>
     
     
@@ -720,145 +779,6 @@ warning: VirtualBox-4.0-4.0.2_69518_openSUSE113-1.i586.rpm: Header V4 DSA/SHA1 S
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/ok/">使用crush-tools分析apache访问日志</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-21T00:00:00+08:00" pubdate data-updated="true">Feb 21<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>crush（Custom Reporting Utilities for SHell）是用于处理数据的工具包，在这里我用来分析apache访问日志，它的网址是http://code.google.com/p/crush-tools/，我所要说的是其强大的性能和功能。</strong></p>
-
-<p><strong>1  下载安装：</strong></p>
-
-<p><pre class="sh_bash"># wget http://crush-tools.googlecode.com/files/crush-tools-2010-03.tar.gz &amp;&amp; tar zxvf crush-tools-2010-03.tar.gz &amp;&amp; cd crush-tools-2010-03  &amp;&amp; ./configure --prefix=/opt/dongwm &amp;&amp; make &amp;&amp; make install</pre></p>
-
-<p>将其加入$PATH以便操作：</p>
-
-<p>#export PATH=$PATH:/opt/dongwm/bin</p>
-
-<p><strong>2  介绍本文使用到的工具包主要的命令：</strong></p>
-
-<p>aggregates 将分离数据集合，比如想知道某网页某段时间的访问量</p>
-
-<p>csvformat  将文件转换成csv格式</p>
-
-<p><tt>convdate  将数据转换日期格式，比如我们想按天统计</tt></p>
-
-<p>cutfield    当取得的数据有些不重要,可以使用此参数去掉那些列</p>
-
-<p><strong>3  设置：</strong></p>
-
-<p><strong>1  设置apache访问日志格式：</strong></p>
-
-<p>我使用默认的apache访问日志格式（httpd.conf中定义）：
-<pre class="sh_bash">LogFormat "%h %l %u %t \"%r\" %&gt;s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
-LogFormat "%h %l %u %t \"%r\" %&gt;s %b" common
-LogFormat "%{Referer}i -&gt; %U" referer
-LogFormat "%{User-agent}i" agent</pre>
-<strong>2  以下是perl脚本，用来格式化日志文件：</strong></p>
-
-<p><pre class="sh_bash">[root@dongwm tmp]# cat  Format.pl
-#!/usr/bin/perl -w
-use strict;
-if (! open LOGFILE,"$ARGV[0]"){
-die "logfile not exists!($!)"
-}
-my $output_delim = $ENV{DELIMITER} || chr(0xfe);
-my $VirtualName=$ARGV[1];
-# (dropping the RFC 1413 identity field)
-print join($output_delim,
-qw(IP 日期 时间 方式 页面 返回时间 平均处理时间)),qq(\n);
-while (&lt;LOGFILE&gt;) {
-if (/((?:\d{1,3})(?:\.\d{1,3}){3}|-)   # 1 IP
-(?:,.*)?\s+(\d+-\d+-\d+)\s+       # 2 日期
-(\d+:\d+:\d+)\s+                   # 3 时
-(GET|POST)\s+                     # 4 方法
-"(.*?\.php?)\??.*"\s+             # 5 URL
-(\d{3})\s+                        # 6 返回码
-(\d+.\d+).*$/x                    # 7 处理时间
-)
-{
-print join($output_delim, ($1,$2,$3,$4,$5,$6,$7,$VirtualName)),qq(\n);
-}
-}
-exit(0);</pre></p>
-
-<p><strong>3 从ZXTM负载均衡设备上提取apache日志，我这里只一行用来说明：</strong></p>
-
-<p><pre class="sh_bash">48.29.102.43 2011-03-15 00:00:22 GET "/Lifeonline/NewIndex.php?MatchType=DWMet" 200 0.025989 7860 "http://www.dongwm.com/Test/DWMetIndex.php?ThisType=Lift" "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; MDDC; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)"</p>
-
-<p>格式化后：</p>
-
-<p>#./Format.pl zxtm.log www|csvformat</p>
-
-<p>"48.29.102.43","2011-03-15","00:00:22","GET","/Lifeonline/NewIndex.php","200","0.025989","www"</pre></p>
-
-<p>4 几种对网站内容性能测试体验：</p>
-
-<p><strong>1 查看用户访问各页面的数量：</strong></p>
-
-<p><pre class="sh_bash"># ./Format.pl zxtm.log www|aggregate -k 5 -c 5 |csvformat  //其中-k 表示选择第五列作为key选择的主键，输出结果会显示此列，-c表示对第五列的主键进行统计次数，根据上面格式化后的信息可以知道，第五列也就是/Lifeonline/NewIndex.php，计算这个页面访问的次数</p>
-
-<p>输出如下：</p>
-
-<p>"/Lifeonline/NewIndex.php","7"</pre></p>
-
-<p><strong>2 查看网站每页面响应时间最慢时间：</strong></p>
-
-<p><pre class="sh_bash"># ./Format.pl zxtm.log www |aggregate -k 3,5 -x 7</p>
-
-<p>"00:00:20","/OKAdmin/index.php","0.038450"
-"00:00:20","/Remoting/gateway.php","0.104104"
-"00:00:20","/Remoting/json.php","0.247292"
-"00:00:20","/User/UserCenter.php","0.492700"
-"00:00:20","/WapAPI/v1.php","0.297009"</pre></p>
-
-<p><strong>3 查找页面影响最慢的页面:</strong></p>
-
-<p><pre class="sh_bash"># ./Format.pl zxtm.log www|aggregate -p  -K 平均处理时间,页面|csvformat</p>
-
-<p>"0.766413","/Buy/UserBetList.php"
-"0.871648","/Lottery06/SportterySoccer/SportteryTest.php"
-"1.021357","/Lottery06/SportterySoccer/SportteryTest.php"
-"2.170618","/Buy/UserBetList.php"
-"3.906909","/Buy06/PassStat.php"</p>
-
-<p>注:命令中-k -c -s等小学字母是以前的版本 新版支持大写+相对应的标签  这个命令 最初使用小写参数选项时候出现了一定的报错,但是使用大写参数就可以了,并且再去用小写也可以了,一个BUG</pre></p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/30/">&larr; Older</a></li>
@@ -881,6 +801,10 @@ exit(0);</pre></p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
@@ -916,10 +840,6 @@ exit(0);</pre></p>
     
       <li class="post">
         <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">豆瓣条目组招聘</a>
       </li>
     
   </ul>
