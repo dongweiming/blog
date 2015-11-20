@@ -141,6 +141,269 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/1ge-flaskli-zi/">一个flask例子</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-11T14:34:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言：</h4>
+
+<p>上段时间做了个demo, 使用了flask和mongodb，以及bootstrap, jquery，分享给大家当作入门flask的例子</p>
+
+<h4 id="section-1">启动程序代码</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+#!/usr/bin/env python2
+# encoding=utf-8
+# Version 2 by Dongwm 2012/12/18
+
+import os
+from pymongo import Connection
+
+from flask import Flask, request, render_template, redirect, url_for, jsonify
+from paginate import Pagination
+import setting
+
+def static(filename):
+    filepath = os.path.join(os.path.dirname(__file__), 'static', filename)
+    last_modification = '%d' % os.path.getmtime(filepath)
+    return url_for('.static', filename=filename) + '?' + last_modification  #我这里给每个文件加了一个唯一性质的时间戳
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(setting)  #把一些可以控制的参数放在setting模块里面
+    @app.context_processor
+    def inject_static():
+        return dict(static=static)
+    return app
+
+def conMongo(): #因为我很多地方都需要mongodb的游标，封装了下
+	mongo = Connection(host='127.0.0.1',port=28012)
+	return mongo
+
+app = create_app()
+
+@app.route('/list')  #flask使用装饰器的作为路由方式 表示访问你网站（比如http://localhost/list）的请求都会通过这个函数处理
+def list(): #函数名字不重要，只要你能理解好维护，通过名字了解用途就好
+	pagesize = 100  
+	page = int(request.args.get('page',0))
+	data = get_list_MongoData(page, pagesize) #这个获得mongodb的函数我就不提供了 简单理解就是更具页数和每页条目获取数据
+	pagination = Pagination(total=data[1], per_page=pagesize, page=page)
+	return render_template("list.html", tables=data[0], pagination=pagination) #有点像django的render_to_response,但是flask直接把要渲染的数据用K=V的方式传进来，而django需要放在字典里面，作为第二个参数传
+
+@app.route('/')  
+def index():
+	return redirect(url_for('list')) #到网站跟目录的请求定向到/list
+
+@app.route('/json')  
+def getJson():
+
+	db = conMongo()
+	res = results(db)
+	return jsonify(res)  #类似django的HttpResponse(simplejson.dumps(res), mimetype='application/json') 返回json数据
+
+@app.route('/dev')
+def dev():
+	
+	return render_template("dev.html")
+
+if __name__ == '__main__':
+	app.run(host="0.0.0.0")
+
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="settingspy">settings.py</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+DEBUG = True  #指定开启debug模式
+PORT = 5000  #指定监听端口
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="devhtml">dev.html</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+
+<xmp>
+<!-- 注意这段代码我把 {/}和%分开了 为了和octoress生成的模板语法不冲突-->
+{ % extends 'base.html' % }  //这里是先继承base.html模板 
+{ % block title %}Dev{ % endblock % }  //重新设定title块的内容
+{ %- block css % }  //重新设定css块  注意引用静态文件的方式
+    <link rel="stylesheet" href="" />
+    <style>
+	.col_content{ height:500px; }
+	h2 {text-align:center;}
+	</style>
+{ %- endblock % }
+{ %- block js % }
+    <script type="text/javascript" src=""></script>
+    <script type="text/javascript" src=""></script>
+    <script language="javascript" type="text/javascript">
+		</script>
+		{ %- endblock % }
+		{ %- block diejs % }
+			pie2html();  //这个js函数在core.js定义（base.html有引用）
+		{ %- endblock % }
+		{ %- block dev % }
+	<div>
+		<h2>服务器服务信息</h2>
+		<div class="well col_content" id="webserver_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>服务器应用信息</h2>
+		<div class="well col_content" id="webapp_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>Nginx服务具体版本</h2>
+		<div class="well col_content" id="nginx_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>Apache服务具体版本</h2>
+		<div class="well col_content" id="apache_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>Asp服务具体版本</h2>
+		<div class="well col_content" id="asp_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>网站技术信息</h2>
+		<div class="well col_content" id="tech_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>系统分类</h2>
+		<div class="well col_content" id="system_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>系统分类</h2>
+		<div class="well col_content" id="version_content">
+		Loading&#8230;&#8230;
+		</div>
+		<h2>os</h2>
+		<div class="well col_content" id="os_content">
+		Loading&#8230;&#8230;
+		</div>
+	</div>
+{ %- endblock % }
+</xmp>
+
+</pre></figure></notextile></div></notextile></div>
+
+<h4 id="basehtml">base.html</h4>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+<xmp>
+&lt;!doctype html&gt;
+<html>
+  <head>
+    <title> { % block title % }{ % endblock % }</title>  //block会设置的一个块，每个模板文件要是重新定义会覆盖，否则继承它的值
+    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="" />  
+    <link rel="stylesheet" href="" />
+    { %- block css % }
+    { %- endblock % }
+    <script type="text/javascript" src=""></script>
+    <script type="text/javascript" src=""></script>
+    { %- block js % }
+    { %- endblock % }
+	<script language="javascript" type="text/javascript">
+		$(document).ready(function() {
+		var i = 0;
+		$('#control').click(function() {
+				if(i%2 == 0) {
+					$('#zt-user').slideDown(500);  //加载完成的一个特效,都在style.css中定义
+					$('#control').removeClass('bkg-control-down').addClass('control-up');
+				}
+				else {
+					$('#zt-user').slideUp(500);
+					$('#control').removeClass('bkg-control-up').addClass('control-down');
+				}
+				i++;
+		});
+		{ %- block diejs % }  //这个块定义在这里是为了每个模板文件都能定义文档加载完成执行的函数，一个页面只能有一个$(document).ready
+		{ %- endblock % }
+		</script>
+</head>
+	<body>
+		<div id="zt-user">
+			<div class="container">
+				<div id="zt-user-inner" class="row-fluid">
+					<div id="zt-top1" class="span12">
+						<div class="zt-box-inside">
+							<div class="moduletable">
+								<div class="modulecontent">
+						<form action="/" method="post">
+							<div class="search">
+								<input name="searchword" maxlength="20" class="inputbox" type="text" size="20" value="Start Searching ... " onblur="if (this.value=='') this.value='Start Searching ... ';" onfocus="if (this.value=='Start Searching ... ') this.value='';" /><input type="submit" value="Search" class="button" onclick="this.form.searchword.focus();" />
+							</div>
+						</form>
+								</div>
+							</div>
+						</div>
+					</div>																		
+				</div>
+			</div>
+		</div>
+		{ %- block dev % }{ %- endblock % }   //上面的dev.html重新声明了这个块，那么数据就会显示在这个位置
+		{ %- block top % }
+		<div id="zt-top">
+			<div class="container">						
+				<div class="row-fluid">
+					<div class="control-up span6" id="control"><span>Search</span></div>
+				<ul id="zt-topright" class="pull-right">
+				<li class="blue" target="_blank"><a title="Demo" href="/list">列表</a></li>
+				<li class="green" target="_blank"><a title="Demo" href="/dev">画图</a></li>
+				</ul>
+					</div>
+				</div>
+			</div>
+		{ %- endblock % }
+		{ %- block ttable % }{ %- endblock % }
+		{ %- block footer % }
+		<div id="zt-footer">
+			<div class="container">				
+				<p id="copyright">
+				Copyright &copy; 2009 - 2013 <a href="http://www.dongwm.com" title="dongwm">(C)dongwm</a>. All Rights Reserved
+				</p>
+			</div>						
+		</div>
+		{ %- endblock % }
+	</body>
+</html>
+</xmp>
+
+</pre></figure></notextile></div></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gevent-twisted-duo-xian-cheng-shui-geng-kuai/">Gevent-twisted-多线程谁更快?</a></h1>
     
     
@@ -2659,583 +2922,6 @@ gevent.joinall([ping, pong])
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyugeventdeyixielijieer/">关于gevent的一些理解(二)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-26T00:00:00+08:00" pubdate data-updated="true">Jul 26<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>3 实际应用</strong></p>
-
-<p>1 zeromq和gevent:</p>
-
-<p>zeromq的介绍请参看:http://www.infoq.com/cn/news/2010/09/introduction-zero-mq</p>
-
-<p>假设你已经安装了zeromq,gevent_zeromq(https://github.com/traviscline/gevent-zeromq.git)和pyzmq</p>
-
-<p>一个很基础的例子:</p>
-
-<p><pre class="sh_python">
-import gevent
-from gevent_zeromq import zmq</p>
-
-<p># Global Context
-context = zmq.Context() #它是GreenContext的一个简写,确保greenlet化socket</p>
-
-<p>def server():
-    server_socket = context.socket(zmq.REQ) #创建一个socket,使用mq类型模式REQ/REP(请求/回复,服务器是请求),还有PUB/SUB(发布/订阅),push/pull等
-    server_socket.bind("tcp://127.0.0.1:5000") #绑定socket</p>
-
-<p>    for request in range(1,10):
-        server_socket.send("Hello")
-        print('Switched to Server for ', request)
-        server_socket.recv()  #这里发生上下文切换</p>
-
-<p>def client():
-    client_socket = context.socket(zmq.REP)  (客户端是回复)
-    client_socket.connect("tcp://127.0.0.1:5000")  #连接server的socket端口</p>
-
-<p>    for request in range(1,10):</p>
-
-<p>        client_socket.recv()
-        print('Switched to Client for ', request)
-        client_socket.send("World")</p>
-
-<p>publisher = gevent.spawn(server)
-client    = gevent.spawn(client)</p>
-
-<p>gevent.joinall([publisher, client])
-</pre></p>
-
-<p>执行结果:</p>
-
-<p>[root@248_STAT ~]# python test.py
-(&#8216;Switched to Server for &#8216;, 1)
-(&#8216;Switched to Client for &#8216;, 1)
-(&#8216;Switched to Server for &#8216;, 2)
-(&#8216;Switched to Client for &#8216;, 2)
-(&#8216;Switched to Server for &#8216;, 3)
-(&#8216;Switched to Client for &#8216;, 3)
-(&#8216;Switched to Server for &#8216;, 4)
-(&#8216;Switched to Client for &#8216;, 4)
-(&#8216;Switched to Server for &#8216;, 5)
-(&#8216;Switched to Client for &#8216;, 5)
-(&#8216;Switched to Server for &#8216;, 6)
-(&#8216;Switched to Client for &#8216;, 6)
-(&#8216;Switched to Server for &#8216;, 7)
-(&#8216;Switched to Client for &#8216;, 7)
-(&#8216;Switched to Server for &#8216;, 8)
-(&#8216;Switched to Client for &#8216;, 8)
-(&#8216;Switched to Server for &#8216;, 9)
-(&#8216;Switched to Client for &#8216;, 9)</p>
-
-<p>&nbsp;</p>
-
-<p>2 telnet 服务器</p>
-
-<p><pre class="sh_python">
-from gevent.server import StreamServer #StreamServer是一个通用的TCP服务器</p>
-
-<p>def handle(socket, address):
-    socket.send("Hello from a telnet!\n")
-    for i in range(5):
-        socket.send(str(i) + '\n') #给socket客户端发送数据
-    socket.close() #关闭客户端连接</p>
-
-<p>server = StreamServer(('127.0.0.1', 5000), handle) #当出现连接调用定义的方法handle
-server.serve_forever()
-</pre></p>
-
-<p>执行结果:</p>
-
-<p>dongwm@localhost ~ $ nc 127.0.0.1 5000
-Hello from a telnet!
-0
-1
-2
-3
-4
-dongwm@localhost ~ $ telnet 127.0.0.1 5000
-Trying 127.0.0.1&#8230;
-Connected to 127.0.0.1.
-Escape character is &#8216;^]&#8217;.
-Hello from a telnet!
-0
-1
-2
-3
-4
-Connection closed by foreign host.
-<strong>3 wsgi服务器</strong></p>
-
-<p><pre class="sh_python">
-from gevent.wsgi import WSGIServer</p>
-
-<p>def application(environ, start_response):
-    status = '200 OK' #页面状态指定为200 ok
-    body = '&lt;p&gt;Hello World&lt;/p&gt;'</p>
-
-<p>    headers = [
-        ('Content-Type', 'text/html')
-    ]</p>
-
-<p>    start_response(status, headers)
-    return [body]</p>
-
-<p>WSGIServer(('', 8000), application).serve_forever() #启动一个占用8000端口的wsgi服务器
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_python">
-from gevent.pywsgi import WSGIServer #使用pywsgi可以我们自己定义产生结果的处理引擎</p>
-
-<p>def application(environ, start_response):
-    status = '200 OK'</p>
-
-<p>    headers = [
-        ('Content-Type', 'text/html')
-    ]</p>
-
-<p>    start_response(status, headers)
-    yield "&lt;p&gt;Hello" #yield出数据
-    yield "World&lt;/p&gt;"</p>
-
-<p>WSGIServer(('', 8000), application).serve_forever()
-</pre></p>
-
-<p>我们看一个用ab(Apache Benchmark)的性能测试(更多信息请查看http://nichol.as/benchmark-of-python-web-servers),我这里只</p>
-
-<p>对比了gevent和paste的性能比(没做系统优化,只是在同样条件下看性能差距):</p>
-
-<p>paste的wsgi程序:</p>
-
-<p><pre class="sh_python">
-from gevent.wsgi import WSGIServer</p>
-
-<p>def application(environ, start_response):
-    status = '200 OK'
-    body = '&lt;p&gt;Hello World&lt;/p&gt;'</p>
-
-<p>    headers = [
-        ('Content-Type', 'text/html')
-    ]</p>
-
-<p>    start_response(status, headers)
-    return [body]</p>
-
-<p>#WSGIServer(('', 8000), application).serve_forever()
-from paste import httpserver
-httpserver.serve(application, '0.0.0.0', request_queue_size=500)
-</pre></p>
-
-<p>dongwm@localhost ~ $ /usr/sbin/ab2 -n 10000 -c 100 http://127.0.0.1:8000/ #gevent的性能,条件是:并发100,请求1W
-This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
-Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-Licensed to The Apache Software Foundation, http://www.apache.org/</p>
-
-<p>Benchmarking 127.0.0.1 (be patient)
-Completed 1000 requests
-Completed 2000 requests
-Completed 3000 requests
-Completed 4000 requests
-Completed 5000 requests
-Completed 6000 requests
-Completed 7000 requests
-Completed 8000 requests
-Completed 9000 requests
-Completed 10000 requests
-Finished 10000 requests</p>
-
-<p>Server Software:
-Server Hostname:        127.0.0.1
-Server Port:            8000</p>
-
-<p>Document Path:          /
-Document Length:        18 bytes</p>
-
-<p>Concurrency Level:      100
-Time taken for tests:   2.805 seconds
-Complete requests:      10000
-Failed requests:        0
-Write errors:           0
-Total transferred:      1380000 bytes
-HTML transferred:       180000 bytes
-Requests per second:    3564.90 [#/sec] (mean)
-Time per request:       28.051 [ms] (mean)
-Time per request:       0.281 [ms] (mean, across all concurrent requests)
-Transfer rate:          480.43 [Kbytes/sec] received</p>
-
-<p>Connection Times (ms)
-min  mean[+/-sd] median   max
-Connect:        0    0   0.2      0       2
-Processing:     2   28  15.1     27      69
-Waiting:        1   28  15.1     27      69
-Total:          2   28  15.1     27      69</p>
-
-<p>Percentage of the requests served within a certain time (ms)
-50%     27
-66%     35
-75%     40
-80%     42
-90%     48
-95%     54
-98%     59
-99%     62
-100%     69 (longest request)</p>
-
-<p>dongwm@localhost ~ $ /usr/sbin/ab2 -n 10000 -c 100 http://127.0.0.1:8080/  #paste的性能
-This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
-Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-Licensed to The Apache Software Foundation, http://www.apache.org/</p>
-
-<p>Benchmarking 127.0.0.1 (be patient)
-Completed 1000 requests
-Completed 2000 requests
-Completed 3000 requests
-Completed 4000 requests
-Completed 5000 requests
-Completed 6000 requests
-Completed 7000 requests
-Completed 8000 requests
-Completed 9000 requests
-Completed 10000 requests
-Finished 10000 requests</p>
-
-<p>Server Software:        PasteWSGIServer/0.5
-Server Hostname:        127.0.0.1
-Server Port:            8080</p>
-
-<p>Document Path:          /
-Document Length:        18 bytes</p>
-
-<p>Concurrency Level:      100
-Time taken for tests:   4.119 seconds
-Complete requests:      10000
-Failed requests:        0
-Write errors:           0
-Total transferred:      1600000 bytes
-HTML transferred:       180000 bytes
-Requests per second:    2427.52 [#/sec] (mean)
-Time per request:       41.194 [ms] (mean)
-Time per request:       0.412 [ms] (mean, across all concurrent requests)
-Transfer rate:          379.30 [Kbytes/sec] received</p>
-
-<p>Connection Times (ms)
-min  mean[+/-sd] median   max
-Connect:        0    0   0.2      0       2
-Processing:     2   41   5.4     41     107
-Waiting:        1   41   5.2     40      97
-Total:          4   41   5.3     41     107</p>
-
-<p>Percentage of the requests served within a certain time (ms)
-50%     41
-66%     41
-75%     42
-80%     43
-90%     46
-95%     50
-98%     56
-99%     59
-100%    107 (longest request)</p>
-
-<p><strong>很不好理解吧,那我把数据直接整理下:</strong></p>
-
-<p>1 测试用时:</p>
-
-<p>Time taken for tests:   2.805 seconds #gevent</p>
-
-<p>Time taken for tests:   4.119 seconds #paste 花费时间更长
-2 每秒请求数:</p>
-
-<p>Requests per second:    3564.90 [#/sec] (mean) #gevent的嘛,每秒请求数大的多
-Requests per second:    2427.52 [#/sec] (mean) #paste</p>
-
-<p>3 每请求数耗时:</p>
-
-<p>Time per request:       28.051 [ms] (mean) #gevent耗时少
-Time per request:       0.281 [ms] (mean, across all concurrent requests) #gevent并发请求时耗时少
-Time per request:       41.194 [ms] (mean) #paste
-Time per request:       0.412 [ms] (mean, across all concurrent requests) #paste</p>
-
-<p>4 传输效率:</p>
-
-<p>Transfer rate:          448.26 [Kbytes/sec] received #gevent的效率更高
-Transfer rate:          379.30 [Kbytes/sec] received #paste</p>
-
-<p>5 连接消耗的时间的分解:</p>
-
-<p>Connection Times (ms)
-min  mean[+/-sd] median   max
-Connect:        0    0   0.2      0       2
-Processing:     2   28  15.1     27      69
-Waiting:        1   28  15.1     27      69
-Total:          2   28  15.1     27      69</p>
-
-<p>Connection Times (ms) #paste
-min  mean[+/-sd] median   max
-Connect:        0    0   0.2      0       2
-Processing:     2   41   5.4     41     107
-Waiting:        1   41   5.2     40      97
-Total:          4   41   5.3     41     107 #明显其中最大用时107/97都大于gevent的69ms,最小用时gevent略强</p>
-
-<p>6 整个场景中所有请求的响应情况。在场景中每个请求都有一个响应时间</p>
-
-<p>Percentage of the requests served within a certain time (ms) #gevent
-50%     29
-66%     31
-75%     34
-80%     34
-90%     36
-95%     38
-98%     42
-99%     44
-100%     71 (longest request)</p>
-
-<p>可以这样理解:50%用户效应小于29ms,60%用户响应小于31ms,最长的访问响应为71ms
-Percentage of the requests served within a certain time (ms) #paste
-50%     41
-66%     41
-75%     42
-80%     43
-90%     46
-95%     50
-98%     56
-99%     59
-100%    107 (longest request)  #很明显,无论那个区间,paste性能都略差</p>
-
-<p><strong>4 长轮询</strong></p>
-
-<p><pre class="sh_python">
-import gevent
-from gevent.queue import Queue, Empty
-from gevent.pywsgi import WSGIServer
-import json</p>
-
-<p>data_source = Queue()</p>
-
-<p>def producer():
-    while True:
-        data_source.put_nowait('Hello World') #往队列非阻塞的放入数据
-        gevent.sleep(1)</p>
-
-<p>def ajax_endpoint(environ, start_response):
-    status = '200 OK'
-    headers = [
-        ('Content-Type', 'application/json') #设定<span>网络文件的类型</span>是json
-    ]
-    try:
-        datum = data_source.get(timeout=5)
-    except Empty:
-        datum = [] #假如gevent.sleep的时间设置的长一些(比如5s),在不停刷新过程中会获得空列表</p>
-
-<p>    start_response(status, headers)
-    return json.dumps(datum) #返回数据,打印出来的数据是一个带引号的字符串</p>
-
-<p>gevent.spawn(producer)</p>
-
-<p>WSGIServer(('', 8000), ajax_endpoint).serve_forever()
-</pre>
-<strong>4 聊天室</strong>(源码在这里https://github.com/sdiehl/minichat.git):</p>
-
-<p><pre class="sh_python">
-from gevent import monkey
-monkey.patch_all() #给模块打包
-from flask import Flask, render_template, request, json #作者在这里使用了flask框架,当然你也可以用其它比如django.tornado,bottle等</p>
-
-<p>from gevent import queue
-from gevent.pywsgi import WSGIServer</p>
-
-<p>app = Flask(__name__) 
-app.debug = True</p>
-
-<p>class Room(object):</p>
-
-<p>    def __init__(self):
-        self.users = set()
-        self.messages = []</p>
-
-<p>    def backlog(self, size=25):
-        return self.messages[-size:]</p>
-
-<p>    def subscribe(self, user):
-        self.users.add(user)</p>
-
-<p>    def add(self, message):
-        for user in self.users:
-            print user
-            user.queue.put_nowait(message)
-        self.messages.append(message)</p>
-
-<p>class User(object):</p>
-
-<p>    def __init__(self):
-        self.queue = queue.Queue()</p>
-
-<p>rooms = {
-    'python': Room(),
-    'django': Room(),
-}</p>
-
-<p>users = {}</p>
-
-<p>@app.route('/') #flask指定url的处理使用路由的方式,访问页面地址根目录就会执行choose_name
-def choose_name():
-    return render_template('choose.html') #然后调用模板choose.html,这个html文件最后使用了GET方法提交了一个uid页面(/&lt;uid&gt;)</p>
-
-<p>@app.route('/&lt;uid&gt;') #请求被转到了这里
-def main(uid):
-    return render_template('main.html', #调用模板提供几个room的连接
-        uid=uid,
-        rooms=rooms.keys() #格局选择的连接,通过GET方法转到那个相应url:/&lt;room&gt;/&lt;uid&gt;
-    )</p>
-
-<p>@app.route('/&lt;room&gt;/&lt;uid&gt;') #请求被转到了这里
-def join(room, uid):
-    user = users.get(uid, None)</p>
-
-<p>    if not user:
-        users[uid] = user = User()</p>
-
-<p>    active_room = rooms[room]
-    active_room.subscribe(user)
-    print 'subscribe', active_room, user</p>
-
-<p>    messages = active_room.backlog()</p>
-
-<p>    return render_template('room.html', #room.html包含一个POST提交方式,把你的聊天数据提交,并且更新页面(通过jquery的ajax调用url/poll/&lt;uid&gt;)
-        room=room, uid=uid, messages=messages)</p>
-
-<p>@app.route("/put/&lt;room&gt;/&lt;uid&gt;", methods=["POST"]) #通过这个url
-def put(room, uid):
-    user = users[uid]
-    room = rooms[room]</p>
-
-<p>    message = request.form['message']
-    room.add(':'.join([uid, message]))</p>
-
-<p>    return ''</p>
-
-<p>@app.route("/poll/&lt;uid&gt;", methods=["POST"])
-def poll(uid):
-    try:
-        msg = users[uid].queue.get(timeout=10)
-    except queue.Empty:
-        msg = []
-    return json.dumps(msg) #返回队列中包含的聊天记录</p>
-
-<p>if __name__ == "__main__":
-    http = WSGIServer(('', 5000), app)
-    http.serve_forever()
-</pre></p>
-
-<p>来一个更复杂带有前台后端的模型(例子来自http://blog.pythonisito.com/2011/07/gevent-zeromq-websockets-and-flot-ftw.html):</p>
-
-<p>源码在:http://dl.dropbox.com/u/24086834/blog/20110723/zmq_websocket.tar.gz</p>
-
-<p>其中需要修改graph.js第二行:</p>
-
-<p>var ws = new WebSocket(&#8220;ws://localhost:9999/test&#8221;);</p>
-
-<p>为:</p>
-
-<p>var ws = new MozWebSocket(&#8220;ws://localhost:9999/test&#8221;);  #因为我的火狐用的websocket不同</p>
-
-<p>这个demo.py,我来解析下:</p>
-
-<p><pre class="sh_python">
-import os
-import time
-import math
-import json
-import webbrowser</p>
-
-<p>import paste.urlparser #paste是一个WSGI工具包，在WSGI的基础上包装了几层，让应用管理和实现变得方便</p>
-
-<p>import gevent
-from gevent_zeromq import zmq
-from geventwebsocket.handler import WebSocketHandler #基于gevent的pywsgi的WebSocket的处理程序</p>
-
-<p>def main(): #主方法
-    context = zmq.Context()
-    gevent.spawn(zmq_server, context) #上个例子使用joinall,这个例子是spawn+start,context是参数,也就是实例化的GreenContext
-    ws_server = gevent.pywsgi.WSGIServer(
-        ('', 9999), WebSocketApp(context),
-        handler_class=WebSocketHandler)
-    http_server = gevent.pywsgi.WSGIServer(
-        ('', 8000),
-        paste.urlparser.StaticURLParser(os.path.dirname(__file__))) # paste.urlparser用来处理url和静态文件
-    http_server.start()  #启动grennlet实例
-    ws_server.start()
-    webbrowser.open('http://localhost:8000/graph.html') #启动浏览器看这个页面,当正常启动后js会画图
-    zmq_producer(context)</p>
-
-<p>def zmq_server(context):
-    sock_incoming = context.socket(zmq.SUB)
-    sock_outgoing = context.socket(zmq.PUB)
-    sock_incoming.bind('tcp://*:5000') #发布绑定
-    sock_outgoing.bind('inproc://queue') #订阅绑定,本地(通过内存)进程（线程间）通信传输
-    sock_incoming.setsockopt(zmq.SUBSCRIBE, "") #这里表示对发布的所有信息都订阅
-    while True:
-        msg = sock_incoming.recv()
-        sock_outgoing.send(msg)</p>
-
-<p>class WebSocketApp(object):</p>
-
-<p>    def __init__(self, context):
-        self.context = context</p>
-
-<p>    def __call__(self, environ, start_response): 
-        ws = environ['wsgi.websocket']
-        sock = self.context.socket(zmq.SUB) 
-        sock.setsockopt(zmq.SUBSCRIBE, "") #订阅所有信息
-        sock.connect('inproc://queue') #websocket连接到订阅的地址
-        while True:
-            msg = sock.recv()
-            ws.send(msg)</p>
-
-<p>def zmq_producer(context):  #发布的方法
-    socket = context.socket(zmq.PUB)
-    socket.connect('tcp://127.0.0.1:5000') #绑定到发布的socket</p>
-
-<p>    while True:
-        x = time.time() * 1000
-        y = 2.5 * (1 + math.sin(x / 500))
-        socket.send(json.dumps(dict(x=x, y=y))) #往发布socket发送数据,这样,数据会被inproc://queue订阅,而被websocket获取,根据数据展示
-        gevent.sleep(0.05)</p>
-
-<p>if __name__ == '__main__':
-    main()
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/8/">&larr; Older</a></li>
@@ -3258,6 +2944,10 @@ from geventwebsocket.handler import WebSocketHandler #基于gevent的pywsgi的We
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -3293,10 +2983,6 @@ from geventwebsocket.handler import WebSocketHandler #基于gevent的pywsgi的We
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

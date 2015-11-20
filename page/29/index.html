@@ -141,6 +141,70 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/colordiff-%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA-diff-%E8%BE%93%E5%87%BA/">ColorDiff&#8211;高亮显示 Diff 输出</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-10T00:00:00+08:00" pubdate data-updated="true">Mar 10<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>linux下有diff命令对文件进行对比。但是差异对比不够强烈，在此介绍ColorDiff，它是一个perl脚本：</strong></p>
+
+<p><strong>1  下载安装：</strong>
+<pre class="sh_bash"># wget http://colordiff.sourceforge.net/colordiff-1.0.9.tar.gz
+# tar zxvf colordiff-1.0.9.tar.gz
+# cd colordiff-1.0.9
+# make install</pre></p>
+
+<p><strong>2  使用格式：</strong></p>
+
+<p><pre class="sh_bash">colordiff file1 file2
+diff -u file1 file2 | colordiff</pre>
+<pre class="sh_bash">[root@client ~]# cat line-1.txt
+1
+2
+3
+[root@client ~]# cat line-2.txt
+1
+2
+4</p>
+
+<p>[root@client ~]# colordiff line-1.txt line-2.txt
+3c3,4
+&lt; 3
+---
+&gt; 4
+&gt; </pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E8%A7%A3%E5%86%B3usrbinld-cannot-find-lxxx%E9%94%99%E8%AF%AF/">解决/usr/bin/ld: Cannot Find -lxxx错误</a></h1>
     
     
@@ -731,53 +795,6 @@ warning: VirtualBox-4.0-4.0.2_69518_openSUSE113-1.i586.rpm: Header V4 DSA/SHA1 S
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/zxtm%E4%B8%93%E9%A2%98%E4%B8%80%EF%BC%9A%E4%BB%8B%E7%BB%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8zxtm-lb/">ZXTM专题一：介绍负载均衡器ZXTM LB</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-23T00:00:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1 什么是ZXTM：</strong></p>
-
-<p>总是在说ZXTM，什么是ZXTM呢？其实它是Zeus Technology（官网www.zeus.com）的产品<a href="http://www.zeus.com/products/traffic-manager"><strong>Zeus Traffic Manager</strong></a>以前的称呼，是一个基于J2EE运行，为一些网络服务（比如web server，邮件服务器等）应用提供复杂的负载均衡商业软件。</p>
-
-<p><strong>2  ZXTM和ZXTM LB：</strong></p>
-
-<p>其实ZXTM LB 就是为客户提供一个基础的负载均衡功能的解决方案，在ZXTM“cut”了一部分就成了ZXTM LB 呵呵，请看下图：</p>
-
-<p><strong>3  为什么要选择ZXTM LB</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/zxtm%E4%B8%93%E9%A2%98%E4%B8%80%EF%BC%9A%E4%BB%8B%E7%BB%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8zxtm-lb/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/30/">&larr; Older</a></li>
@@ -800,6 +817,10 @@ warning: VirtualBox-4.0-4.0.2_69518_openSUSE113-1.i586.rpm: Header V4 DSA/SHA1 S
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -835,10 +856,6 @@ warning: VirtualBox-4.0-4.0.2_69518_openSUSE113-1.i586.rpm: Header V4 DSA/SHA1 S
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

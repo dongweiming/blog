@@ -141,6 +141,202 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusignalyanjiu/">关于signal研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：signal是接收异步系统事件通知的模块，</p>
+
+<p>信号是操作系统的功能，它提供了一个通知你事件的方案，并异步处理的手段。 他们可以通过系统本身产生或从一个过程发送到另一个（一个进程一旦接收到信号就会打断原来的程序执行流程来处理信号）。常用信号包括SIGINT （终止进程  中断进程  (control+c)），SIGTERM   （终止进程     软件终止信号），SIGKILL   （终止进程     杀死进程）等</p>
+
+<p><pre class="sh_python">
+import signal
+import os
+import time</p>
+
+<p>def receive_signal(signum, stack):#接收信号是通过建立一个回调函数，称为一个<em>信号处理</em> ，信号发生时被调用
+    print 'Received:', signum</p>
+
+<p>signal.signal(signal.SIGUSR1, receive_signal) 
+signal.signal(signal.SIGUSR2, receive_signal)</p>
+
+<p>print 'My PID is:', os.getpid()</p>
+
+<p>while True:
+    print 'Waiting...'
+    time.sleep(3) #每次暂停3秒钟。 当一个信号到来时，呼叫中断唤醒并用receive_signal做信号处理
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+My PID is: 5418
+Waiting&#8230;
+Received: 12  #kill -USR2 5418  杀死USR2的信号  5418是PID号码
+Waiting&#8230;
+Received: 12 #再执行一遍
+Waiting&#8230;
+Waiting&#8230;
+Waiting&#8230;
+Waiting&#8230;
+Received: 10 #kill -USR1 5418  杀死USR1的信号
+Waiting&#8230;
+Waiting&#8230;
+Traceback (most recent call last):  #kill -INT 5418 中断进程  (相当于control+c)
+File &#8220;test.py&#8221;, line 15, in &lt;module&gt;
+time.sleep(3)
+KeyboardInterrupt</p>
+
+<p><pre class="sh_python">
+import signal
+import time</p>
+
+<p>def receive_alarm(signum, stack):
+    print 'Alarm :', time.ctime()</p>
+
+<p>signal.signal(signal.SIGALRM, receive_alarm)
+signal.alarm(2) #2秒后受到报警，它避免无限期阻塞的I / O操作或其他系统调用</p>
+
+<p>print 'Before:', time.ctime()
+time.sleep(4)
+print 'After :', time.ctime()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before: Fri Jun 15 11:57:16 2012
+Alarm : Fri Jun 15 11:57:18 2012 #报警
+After : Fri Jun 15 11:57:18 2012  #本来应该11.57.20才打印</p>
+
+<p><pre class="sh_python">
+import signal
+import os
+import time</p>
+
+<p>def do_exit(sig, stack):  #设置一个处理器
+    raise SystemExit('Exiting')</p>
+
+<p>signal.signal(signal.SIGINT, signal.SIG_IGN) #使用SIG_IGN忽略信息，代替默认的SIGINT
+signal.signal(signal.SIGUSR1, do_exit)  #设置当使用kill －USR1 时候调用do_exit</p>
+
+<p>print 'My PID:', os.getpid()</p>
+
+<p>signal.pause() #等待接收信号
+</pre></p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python test.py
+My PID: 6647
+^CExiting  #kill -INT 6647没管用，使用ctrl+c也不管事，使用kill -USR1 6647 杀掉</p>
+
+<p><pre class="sh_python">
+import signal
+import threading
+import os
+import time</p>
+
+<p>def signal_handler(num, stack):  
+    print 'Received signal %d in %s' % (num, threading.currentThread())</p>
+
+<p>signal.signal(signal.SIGUSR1, signal_handler)</p>
+
+<p>def wait_for_signal():
+    print 'Waiting for signal in', threading.currentThread()
+    signal.pause()
+    print 'Done waiting'</p>
+
+<p>receiver = threading.Thread(target=wait_for_signal, name='receiver') #将做等待接受信号处理放到线程里面
+receiver.start()
+time.sleep(0.1)</p>
+
+<p>def send_signal():
+    print 'Sending signal in', threading.currentThread()
+    os.kill(os.getpid(), signal.SIGUSR1)</p>
+
+<p>sender = threading.Thread(target=send_signal, name='sender') ##将做发送信号处理放到另外的线程里面
+sender.start()
+sender.join()</p>
+
+<p>print 'Waiting for', receiver
+signal.alarm(2) #接收线程将永远不会退出，这里设置非阻塞
+receiver.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>Waiting for signal in &lt;Thread(receiver, started -1221059728)&gt;
+Sending signal in &lt;Thread(sender, started -1229456528)&gt;
+Received signal 10 in &lt;_MainThread(MainThread, started -1219656000)&gt; #主线程接收信号
+Waiting for &lt;Thread(receiver, started -1221059728)&gt;
+闹钟
+<pre class="sh_python">
+import signal
+import time
+import threading</p>
+
+<p>def signal_handler(num, stack):
+    print time.ctime(), 'Alarm in', threading.currentThread()</p>
+
+<p>signal.signal(signal.SIGALRM, signal_handler)</p>
+
+<p>def use_alarm():
+    print time.ctime(), 'Setting alarm in', threading.currentThread()
+    signal.alarm(1)
+    print time.ctime(), 'Sleeping in', threading.currentThread()
+    time.sleep(3)
+    print time.ctime(), 'Done with sleep'</p>
+
+<p>alarm_thread = threading.Thread(target=use_alarm, name='alarm_thread') #启动一个线程，将不会收到信号
+alarm_thread.start()
+time.sleep(0.1)</p>
+
+<p>print time.ctime(), 'Waiting for', alarm_thread
+alarm_thread.join()</p>
+
+<p>print time.ctime(), 'Exiting normally'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Fri Jun 15 12:16:22 2012 Setting alarm in &lt;Thread(alarm_thread, started -1220539536)&gt;
+Fri Jun 15 12:16:22 2012 Sleeping in &lt;Thread(alarm_thread, started -1220539536)&gt;
+Fri Jun 15 12:16:22 2012 Waiting for &lt;Thread(alarm_thread, started -1220539536)&gt;
+Fri Jun 15 12:16:25 2012 Done with sleep
+Fri Jun 15 12:16:25 2012 Alarm in &lt;_MainThread(MainThread, started -1219135808)&gt; #子线程报警被主线程收到
+Fri Jun 15 12:16:25 2012 Exiting normally</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyushelveyanjiu/">关于shelve研究</a></h1>
     
     
@@ -1644,95 +1840,6 @@ print 'Replacing with :', reversed</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyulogging/">关于logging</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：logging为python模块提供状态、错误、信息输出的标准接口</p>
-
-<p><pre class="sh_python">
-import logging</p>
-
-<p>LOG_FILENAME = 'logging.out'
-logging.basicConfig(filename=LOG_FILENAME,  #将信息输入到一个文件
-                    level=logging.DEBUG, #级别是DEBUG
-                    )
-logging.debug('This message should go to the log file') #给文件添加一条信息，如果重复运行就会在文件尾部添加一行一行
-f = open(LOG_FILENAME, 'rt')
-try:
-    body = f.read()
-finally:
-    f.close()</p>
-
-<p>print body
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-DEBUG:root:This message should go to the log file  #前面的&#8217;DEBUG&#8217;是因为设定的级别，root是默认的。后面会修改</p>
-
-<p><pre class="sh_python">
-import glob
-import logging
-import logging.handlers</p>
-
-<p>LOG_FILENAME = 'logging.out'</p>
-
-<p>my_logger = logging.getLogger('MyLogger')  #默认是数据是'root'，这里修改这个标识
-my_logger.setLevel(logging.DEBUG)</p>
-
-<p>handler = logging.handlers.RotatingFileHandler(LOG_FILENAME,
-                                               maxBytes=20, #文件最大字节数
-                                               backupCount=5, #会轮转5个文件，共6个
-                                               ) #最新的文件总是logging.out，每次达到大小限制，它更名为后缀<tt>.1</tt>，然后.1变成.2，.5删掉
-my_logger.addHandler(handler)</p>
-
-<p>for i in range(20):  
-    my_logger.debug('i = %d' % i)</p>
-
-<p>logfiles = glob.glob('%s*' % LOG_FILENAME) #查看建立的文件
-for filename in logfiles:
-    print filename
-</pre>
-详细级别：CRITICAL 50 ERROR 40 WARNING 30 INFO 20 DEBUG 10 UNSET 0，这个数值比如是10的debug，但是设置日志调试记录模式是INFO，那么这个信息不被打印</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/14/">&larr; Older</a></li>
@@ -1755,6 +1862,10 @@ for filename in logfiles:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1790,10 +1901,6 @@ for filename in logfiles:
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

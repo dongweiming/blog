@@ -141,6 +141,150 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuxmlrpclibyanjiu/">关于xmlrpclib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>&nbsp;</p>
+
+<p>前言：xmlrpclib是python中用于xmlrpc调用的模块</p>
+
+<p>以下例子的服务器端：</p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
+import cPickle as pickle
+import datetime</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True, allow_none=True)
+server.register_introspection_functions()
+server.register_multicall_functions()</p>
+
+<p>class ExampleService:</p>
+
+<p>    def ping(self):
+        return True </p>
+
+<p>    def now(self):
+        return datetime.datetime.now()  #返回当前时间</p>
+
+<p>    def show_type(self, arg):
+        return (str(arg), str(type(arg)), arg)</p>
+
+<p>    def raises_exception(self, msg):
+        raise RuntimeError(msg)</p>
+
+<p>    def send_back_binary(self, bin):
+        data = bin.data
+        response = Binary(data)
+        return response</p>
+
+<p>server.register_instance(ExampleService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p><pre class="sh_python">
+import xmlrpclib
+import datetime</p>
+
+<p>server = xmlrpclib.ServerProxy('http://localhost:9000', verbose=True) #返回一个连接服务器的实例,verbose=True显示调试信息，否则直接输出结果
+                                                #encoding='gbk':默认的编码是utf－8，这里可以修改成'gbk'。
+print 'Ping:', server.ping()   #上面定义 返回True  这里就会显示：True
+server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=True) #allow_none=True便表示容许把none自动转化成'nil'
+print 'Allowed:', server.show_type(None)</p>
+
+<p>server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=False) 
+print 'Not allowed:', server.show_type(None) #触发TypeError
+for t, v in [ ('boolean', True),   #XML-RPC协议识别有限的常见的数据类型
+              ('integer', 1),
+              ('floating-point number', 2.5),
+              ('string', 'some text'), 
+              ('datetime', datetime.datetime.now()),
+              ('array', ['a', 'list']),
+              ('array', ('a', 'tuple')),
+              ('structure', {'a':'dictionary'}),
+            ]:
+    print '%-22s:' % t, server.show_type(v)
+class MyObj:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+    def __repr__(self):
+        return 'MyObj(%s, %s)' % (repr(self.a), repr(self.b))
+o = MyObj(1, 'b goes here')
+print 'o=', o
+print server.show_type(o)
+o2 = MyObj(2, o)  #传递对象给o2 ，把{'a': 1, 'b': 'b goes here'} 传递给key：b的值
+print 'o2=', o2
+print server.show_type(o2)
+o = MyObj(1, 'b goes here')
+print 'Local:', o, id(o) 
+print 'As object:', server.show_type(o) 
+p = pickle.dumps(o) #数据持久化
+b = xmlrpclib.Binary(p)  #二进制模式传送
+r = server.send_back_binary(b) #返回数据
+o2 = pickle.loads(r.data)  #还原持久化
+print 'From pickle:', o2, id(o2)  #数据相同，但是id不同 因为是不一样的对象
+try:
+    server.raises_exception('A message')
+except Exception, err:
+    print 'Fault code:', err.faultCode  #触发异常的code
+    print 'Message   :', err.faultString #触发异常相应的内容
+s = 'This is a string with control characters' + '\0' #包含无效的XML字符
+print 'Local string:', s</p>
+
+<p>data = xmlrpclib.Binary(s) #需要传递二进制数据，最好是使用<tt>二进制</tt>类编码
+print 'As binary:', server.send_back_binary(data)  #正常打印</p>
+
+<p>print 'As string:', server.show_type(s) #但是xml不识别  触发异常
+multicall = xmlrpclib.MultiCall(server)  #同时查询某一个连接对象的返回
+multicall.ping()  #返回：  0：True   前面的数值自增长
+multicall.show_type(1)
+multicall.raises_exception('Next to last call stops execution') #这里一个触发，multicall就不再继续了
+multicall.show_type('string')</p>
+
+<p>for i, r in enumerate(multicall()):
+    print i, r
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuxml-etree-elementtreeyanjiujiexipian/">关于xml.etree.ElementTree研究(解析篇)</a></h1>
     
     
@@ -1998,175 +2142,6 @@ pprint(stack)
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyutimeityanjiu/">关于timeit研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：timeit是一个计时工具模块</p>
-
-<p><pre class="sh_python">
-import timeit</p>
-
-<p>t = timeit.Timer("print 'main statement'", "print 'setup'")  #第一个参数是要计时的语句，第二个参数是为第一个参数语句构建环境的导入语句</p>
-
-<p>print 'TIMEIT:'
-print t.timeit(2)</p>
-
-<p>print 'REPEAT:'
-print t.repeat(3, 3) #第一个参数是重复整个测试的次数，第2个参数是每个测试中调用被计时语句的次数
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-TIMEIT:
-setup
-main statement
-main statement
-5.00679016113e-06
-REPEAT:
-setup
-main statement
-main statement
-main statement
-setup
-main statement
-main statement
-main statement
-setup
-main statement
-main statement
-main statement
-[5.0067901611328125e-06, 5.0067901611328125e-06, 5.0067901611328125e-06]
-<pre class="sh_python">
-import timeit
-import sys</p>
-
-<p>range_size=1000
-count=1000
-setup_statement="l = [ (str(x), x) for x in range(%d) ]; d = {}" % range_size
-def show_results(result):
-    "Print results in terms of microseconds per pass and per item."
-    global count, range_size
-    per_pass = 1000000 * (result / count) #每次计数占用的微秒
-    print '%.2f usec/pass' % per_pass,
-    per_item = per_pass / range_size  #每次项目迭代占用的微秒
-    print '%.2f usec/item' % per_item</p>
-
-<p>print "%d items" % range_size
-print "%d iterations" % count
-print
-print '__setitem__:\t',
-sys.stdout.flush()
-# using setitem
-t = timeit.Timer("""
-for s, i in l:
-    d[s] = i
-""",
-setup_statement)
-show_results(t.timeit(number=count)) #返回使用<tt>__setitem__</tt>函数（避免覆盖已在字典中的值）的效果计算，这个最快
-print 'setdefault:\t',
-sys.stdout.flush()
-t = timeit.Timer("""
-for s, i in l:
-    d.setdefault(s, i) #
-""",
-setup_statement)
-show_results(t.timeit(number=count)) #返回setdefault函数（假如字典存在不覆盖，不存在赋值)已的效果计算
-print 'has_key:\t',
-sys.stdout.flush()
-# using setitem
-t = timeit.Timer("""
-for s, i in l:
-    if not d.has_key(s):
-        d[s] = i
-""",
-setup_statement)
-show_results(t.timeit(number=count))#返回<tt>has_key函数（判断字典存在key不覆盖，不存在赋值）</tt>的效果计算
-print 'KeyError:\t',
-sys.stdout.flush()
-# using setitem
-t = timeit.Timer("""
-for s, i in l:
-    try:
-        existing = d[s]
-    except KeyError:
-        d[s] = i
-""",
-setup_statement)
-show_results(t.timeit(number=count)) #返回<em>判断不存在赋值时候异常引起KeyError</em>的效果计算
-print '"not in":\t',
-sys.stdout.flush()
-# using setitem
-t = timeit.Timer("""
-for s, i in l:
-    if s not in d:
-        d[s] = i
-""",
-setup_statement)
-show_results(t.timeit(number=count)) #返回'not in'的方式的效果计算
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-1000 items
-1000 iterations</p>
-
-<p>__setitem__:    80.00 usec/pass 0.08 usec/item
-setdefault:    175.76 usec/pass 0.18 usec/item
-has_key:    116.62 usec/pass 0.12 usec/item
-KeyError:    86.06 usec/pass 0.09 usec/item
-&#8220;not in&#8221;:    60.73 usec/pass 0.06 usec/item
-注：还可以从终端直接导入模块执行：</p>
-
-<p>dongwm@linux-dongwm:~&gt;  python -m timeit -s &#8220;d={}&#8221; &#8220;for i in range(1000):&#8221; &#8220;  d[str(i)] = i&#8221;
-1000 loops, best of 3: 296 usec per loop
-还可以创建一个py文件 import进来的方式(假设这个文件叫做：timeit_setitem.py)：</p>
-
-<p><pre class="sh_python">
-def test_setitem(range_size=1000):
-    l = [ (str(x), x) for x in range(range_size) ]
-    d = {}
-    for s, i in l:
-        d[s] = i
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python -m timeit &#8220;import timeit_setitem; timeit_setitem.test_setitem()&#8221;
-1000 loops, best of 3: 384 usec per loop</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/12/">&larr; Older</a></li>
@@ -2189,6 +2164,10 @@ def test_setitem(range_size=1000):
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -2224,10 +2203,6 @@ def test_setitem(range_size=1000):
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

@@ -141,6 +141,86 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/">OSPF验证配置 (MD5验证)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-30T00:00:00+08:00" pubdate data-updated="true">Mar 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>实验要求</strong></p>
+
+<p><strong>1. 完成路由器的基本配置和连通性配置</strong>
+<strong> 2．根据拓扑图的示意，分成两个区域 area 0和area 100 OSPF的进程号为100</strong>
+<strong> 3. 完成OSPF路由协议的MD5验证功能</strong>
+<strong> 4．完成以上配置后进行测试，从R1 ping通 R3上的S1、loopback0以及loopback1；反之，R3 ping 通 R1上的S0、loopback0以及loopback1</strong></p>
+
+<p><strong>R1 配置</strong></p>
+
+<p><pre class="sh_bash">Router&gt;enable
+Router#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname 01r1
+01r1(config)#line console 0
+01r1(config-line)#logging synchronous
+01r1(config-line)#exit
+01r1(config)#no ip domain-lookup
+01r1(config)#int s0/0
+01r1(config-if)#no shutdown
+01r1(config-if)#ip address 210.1.12.1 255.255.255.0
+01r1(config-if)#clock rate 64000
+01r1(config-if)#int loopback 0
+01r1(config-if)#ip address 1.1.1.1 255.255.255.255
+01r1(config-if)#int loopback 1
+01r1(config-if)#ip address 11.11.11.11 255.255.255.255
+01r1(config-if)#exit
+01r1(config)#router ospf 100
+01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
+01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
+01r1(config-router)#network 1.1.1.1 0.0.0.0 area 0
+01r1(config-router)#network 11.11.11.11 0.0.0.0 area 0
+01r1(config-router)#end
+01r1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+01r1(config)#int s0/0
+01r1(config-if)#ip ospf authentication message-digest
+*Mar  1 00:06:46.503: %SYS-5-CONFIG_I: Configured from console by console
+01r1(config-if)#ip ospf message-digest-key 1 md5 cisco123
+OSPF: Key 1 already exists
+01r1(config-if)#
+*Mar  1 00:07:25.543: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/0, changed state to up
+*Mar  1 00:07:26.003: %OSPF-5-ADJCHG: Process 100, Nbr 22.22.22.22 on Serial0/0 from LOADING to FULL, Loading Done</pre></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%8D%87%E7%BA%A7puppet%E7%89%88%E6%9C%AC/">升级puppet版本</a></h1>
     
     
@@ -582,70 +662,6 @@ f1-line3&lt;tab&gt;f2-line3&lt;tab&gt;f3-line3
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/colordiff-%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA-diff-%E8%BE%93%E5%87%BA/">ColorDiff&#8211;高亮显示 Diff 输出</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-10T00:00:00+08:00" pubdate data-updated="true">Mar 10<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>linux下有diff命令对文件进行对比。但是差异对比不够强烈，在此介绍ColorDiff，它是一个perl脚本：</strong></p>
-
-<p><strong>1  下载安装：</strong>
-<pre class="sh_bash"># wget http://colordiff.sourceforge.net/colordiff-1.0.9.tar.gz
-# tar zxvf colordiff-1.0.9.tar.gz
-# cd colordiff-1.0.9
-# make install</pre></p>
-
-<p><strong>2  使用格式：</strong></p>
-
-<p><pre class="sh_bash">colordiff file1 file2
-diff -u file1 file2 | colordiff</pre>
-<pre class="sh_bash">[root@client ~]# cat line-1.txt
-1
-2
-3
-[root@client ~]# cat line-2.txt
-1
-2
-4</p>
-
-<p>[root@client ~]# colordiff line-1.txt line-2.txt
-3c3,4
-&lt; 3
----
-&gt; 4
-&gt; </pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/29/">&larr; Older</a></li>
@@ -668,6 +684,10 @@ diff -u file1 file2 | colordiff</pre>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -703,10 +723,6 @@ diff -u file1 file2 | colordiff</pre>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

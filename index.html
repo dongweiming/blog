@@ -141,6 +141,218 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-11-19T22:37:00+08:00" pubdate data-updated="true">Nov 19<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="section">前言</h3>
+
+<p>什么? 你已经很了解python了? 好.</p>
+
+<p>我们开始做个测验. 下面有12个题目. 填个空, 让这个代码片段变的可能.</p>
+
+<h3 id="section-1">先做个例子</h3>
+
+<p>例子1:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">==</span> <span class="n">y</span> <span class="o">+</span> <span class="n">x</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<p>其中有个<code>???</code>. 把它替换成什么就可以让这段代码成立呢?</p>
+
+<p>揭晓答案:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">==</span> <span class="n">y</span> <span class="o">+</span> <span class="n">x</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<p>这个还是蛮简单的. 好继续</p>
+
+<p>例子2:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x</span>
+</span><span class="line"><span class="bp">True</span>
+</span></pre></figure></notextile></div>
+
+<p>答案呢?</p>
+
+<p>如果使用python内置的数据结构, 确实是不可能的. 唯一可以<code>硬造</code>一个例子</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{</span><span class="s">&quot;__lt__&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="bp">True</span><span class="p">})()</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x</span>
+</span><span class="line"><span class="bp">True</span>
+</span></pre></figure></notextile></div>
+
+<p>但是这里不需要这么复杂的去想<code>trick</code>出结果, 只考虑python已经实现的设计</p>
+
+<h3 id="section-2">发考卷</h3>
+
+<ol>
+  <li>难度3星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度4星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度3星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">s</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度3星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">a</span> <span class="o">&gt;=</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+</span><span class="line"><span class="bp">True</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度4星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">0</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">y</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度5星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">min</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度3星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">z</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度3星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">z</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度4星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span>
+</span><span class="line"><span class="bp">True</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度5星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</span><span class="line"><span class="bp">True</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度3星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度5星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">all</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+</span><span class="line"><span class="bp">False</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>难度4星</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="err">???</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">:</span><span class="n">c</span><span class="p">])</span>
+</span><span class="line"><span class="bp">True</span>
+</span></pre></figure></notextile></div>
+
+<h3 id="section-3">答案呢</h3>
+
+<p>这是最近我觉得蛮有趣的一个项目 <a href="https://github.com/cosmologicon/pywat/blob/master/quiz.md">pywat</a></p>
+
+<p>上面的评星是我加上去. 也体现了我做这些题目花费的精力和时间:</p>
+
+<p>3星: 很快就想到, 实验出来了
+4星: 花了蛮长时间, 终于找到答案了
+5星: 最后实在找不倒答案, 看了答案恍然大悟啊啊啊啊</p>
+
+<p>你能做到什么程度呢?</p>
+
+<p>请慎重点击: <a href="https://github.com/cosmologicon/pywat/blob/master/quiz-answers.md">答案地址</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a></h1>
     
     
@@ -1577,50 +1789,6 @@ outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">Python-cn社区欢迎大家来贡献代码</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-04-22T23:47:00+08:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>一次QQ群随意一说,得到大家的认同. 所有我想把这件事坚持下去, 做完.</p>
-
-<p>具体的可以看 http://python-cn.org. 在社区没有上线前, 保持低调，欢迎你来参观.</p>
-
-<h4 id="section-1">社区项目</h4>
-
-<p><a href="https://github.com/python-cn/firefly">firefly</a>. 欢迎star, 欢迎PR - 其实我要star没用, 但是我希望你能来给我提个Pull request.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/2/">&larr; Older</a></li>
@@ -1641,6 +1809,10 @@ outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1676,10 +1848,6 @@ outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

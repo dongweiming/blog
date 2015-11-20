@@ -141,6 +141,175 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyutimeityanjiu/">关于timeit研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：timeit是一个计时工具模块</p>
+
+<p><pre class="sh_python">
+import timeit</p>
+
+<p>t = timeit.Timer("print 'main statement'", "print 'setup'")  #第一个参数是要计时的语句，第二个参数是为第一个参数语句构建环境的导入语句</p>
+
+<p>print 'TIMEIT:'
+print t.timeit(2)</p>
+
+<p>print 'REPEAT:'
+print t.repeat(3, 3) #第一个参数是重复整个测试的次数，第2个参数是每个测试中调用被计时语句的次数
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+TIMEIT:
+setup
+main statement
+main statement
+5.00679016113e-06
+REPEAT:
+setup
+main statement
+main statement
+main statement
+setup
+main statement
+main statement
+main statement
+setup
+main statement
+main statement
+main statement
+[5.0067901611328125e-06, 5.0067901611328125e-06, 5.0067901611328125e-06]
+<pre class="sh_python">
+import timeit
+import sys</p>
+
+<p>range_size=1000
+count=1000
+setup_statement="l = [ (str(x), x) for x in range(%d) ]; d = {}" % range_size
+def show_results(result):
+    "Print results in terms of microseconds per pass and per item."
+    global count, range_size
+    per_pass = 1000000 * (result / count) #每次计数占用的微秒
+    print '%.2f usec/pass' % per_pass,
+    per_item = per_pass / range_size  #每次项目迭代占用的微秒
+    print '%.2f usec/item' % per_item</p>
+
+<p>print "%d items" % range_size
+print "%d iterations" % count
+print
+print '__setitem__:\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回使用<tt>__setitem__</tt>函数（避免覆盖已在字典中的值）的效果计算，这个最快
+print 'setdefault:\t',
+sys.stdout.flush()
+t = timeit.Timer("""
+for s, i in l:
+    d.setdefault(s, i) #
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回setdefault函数（假如字典存在不覆盖，不存在赋值)已的效果计算
+print 'has_key:\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    if not d.has_key(s):
+        d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count))#返回<tt>has_key函数（判断字典存在key不覆盖，不存在赋值）</tt>的效果计算
+print 'KeyError:\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    try:
+        existing = d[s]
+    except KeyError:
+        d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回<em>判断不存在赋值时候异常引起KeyError</em>的效果计算
+print '"not in":\t',
+sys.stdout.flush()
+# using setitem
+t = timeit.Timer("""
+for s, i in l:
+    if s not in d:
+        d[s] = i
+""",
+setup_statement)
+show_results(t.timeit(number=count)) #返回'not in'的方式的效果计算
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+1000 items
+1000 iterations</p>
+
+<p>__setitem__:    80.00 usec/pass 0.08 usec/item
+setdefault:    175.76 usec/pass 0.18 usec/item
+has_key:    116.62 usec/pass 0.12 usec/item
+KeyError:    86.06 usec/pass 0.09 usec/item
+&#8220;not in&#8221;:    60.73 usec/pass 0.06 usec/item
+注：还可以从终端直接导入模块执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt;  python -m timeit -s &#8220;d={}&#8221; &#8220;for i in range(1000):&#8221; &#8220;  d[str(i)] = i&#8221;
+1000 loops, best of 3: 296 usec per loop
+还可以创建一个py文件 import进来的方式(假设这个文件叫做：timeit_setitem.py)：</p>
+
+<p><pre class="sh_python">
+def test_setitem(range_size=1000):
+    l = [ (str(x), x) for x in range(range_size) ]
+    d = {}
+    for s, i in l:
+        d[s] = i
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python -m timeit &#8220;import timeit_setitem; timeit_setitem.test_setitem()&#8221;
+1000 loops, best of 3: 384 usec per loop</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyutimeyanjiu/">关于time研究</a></h1>
     
     
@@ -1285,202 +1454,6 @@ for method_name in proxy.system.listMethods():  #返回支持的方法列表
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyusignalyanjiu/">关于signal研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：signal是接收异步系统事件通知的模块，</p>
-
-<p>信号是操作系统的功能，它提供了一个通知你事件的方案，并异步处理的手段。 他们可以通过系统本身产生或从一个过程发送到另一个（一个进程一旦接收到信号就会打断原来的程序执行流程来处理信号）。常用信号包括SIGINT （终止进程  中断进程  (control+c)），SIGTERM   （终止进程     软件终止信号），SIGKILL   （终止进程     杀死进程）等</p>
-
-<p><pre class="sh_python">
-import signal
-import os
-import time</p>
-
-<p>def receive_signal(signum, stack):#接收信号是通过建立一个回调函数，称为一个<em>信号处理</em> ，信号发生时被调用
-    print 'Received:', signum</p>
-
-<p>signal.signal(signal.SIGUSR1, receive_signal) 
-signal.signal(signal.SIGUSR2, receive_signal)</p>
-
-<p>print 'My PID is:', os.getpid()</p>
-
-<p>while True:
-    print 'Waiting...'
-    time.sleep(3) #每次暂停3秒钟。 当一个信号到来时，呼叫中断唤醒并用receive_signal做信号处理
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-My PID is: 5418
-Waiting&#8230;
-Received: 12  #kill -USR2 5418  杀死USR2的信号  5418是PID号码
-Waiting&#8230;
-Received: 12 #再执行一遍
-Waiting&#8230;
-Waiting&#8230;
-Waiting&#8230;
-Waiting&#8230;
-Received: 10 #kill -USR1 5418  杀死USR1的信号
-Waiting&#8230;
-Waiting&#8230;
-Traceback (most recent call last):  #kill -INT 5418 中断进程  (相当于control+c)
-File &#8220;test.py&#8221;, line 15, in &lt;module&gt;
-time.sleep(3)
-KeyboardInterrupt</p>
-
-<p><pre class="sh_python">
-import signal
-import time</p>
-
-<p>def receive_alarm(signum, stack):
-    print 'Alarm :', time.ctime()</p>
-
-<p>signal.signal(signal.SIGALRM, receive_alarm)
-signal.alarm(2) #2秒后受到报警，它避免无限期阻塞的I / O操作或其他系统调用</p>
-
-<p>print 'Before:', time.ctime()
-time.sleep(4)
-print 'After :', time.ctime()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Before: Fri Jun 15 11:57:16 2012
-Alarm : Fri Jun 15 11:57:18 2012 #报警
-After : Fri Jun 15 11:57:18 2012  #本来应该11.57.20才打印</p>
-
-<p><pre class="sh_python">
-import signal
-import os
-import time</p>
-
-<p>def do_exit(sig, stack):  #设置一个处理器
-    raise SystemExit('Exiting')</p>
-
-<p>signal.signal(signal.SIGINT, signal.SIG_IGN) #使用SIG_IGN忽略信息，代替默认的SIGINT
-signal.signal(signal.SIGUSR1, do_exit)  #设置当使用kill －USR1 时候调用do_exit</p>
-
-<p>print 'My PID:', os.getpid()</p>
-
-<p>signal.pause() #等待接收信号
-</pre></p>
-
-<p>执行结果：
-dongwm@linux-dongwm:~&gt; python test.py
-My PID: 6647
-^CExiting  #kill -INT 6647没管用，使用ctrl+c也不管事，使用kill -USR1 6647 杀掉</p>
-
-<p><pre class="sh_python">
-import signal
-import threading
-import os
-import time</p>
-
-<p>def signal_handler(num, stack):  
-    print 'Received signal %d in %s' % (num, threading.currentThread())</p>
-
-<p>signal.signal(signal.SIGUSR1, signal_handler)</p>
-
-<p>def wait_for_signal():
-    print 'Waiting for signal in', threading.currentThread()
-    signal.pause()
-    print 'Done waiting'</p>
-
-<p>receiver = threading.Thread(target=wait_for_signal, name='receiver') #将做等待接受信号处理放到线程里面
-receiver.start()
-time.sleep(0.1)</p>
-
-<p>def send_signal():
-    print 'Sending signal in', threading.currentThread()
-    os.kill(os.getpid(), signal.SIGUSR1)</p>
-
-<p>sender = threading.Thread(target=send_signal, name='sender') ##将做发送信号处理放到另外的线程里面
-sender.start()
-sender.join()</p>
-
-<p>print 'Waiting for', receiver
-signal.alarm(2) #接收线程将永远不会退出，这里设置非阻塞
-receiver.join()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>Waiting for signal in &lt;Thread(receiver, started -1221059728)&gt;
-Sending signal in &lt;Thread(sender, started -1229456528)&gt;
-Received signal 10 in &lt;_MainThread(MainThread, started -1219656000)&gt; #主线程接收信号
-Waiting for &lt;Thread(receiver, started -1221059728)&gt;
-闹钟
-<pre class="sh_python">
-import signal
-import time
-import threading</p>
-
-<p>def signal_handler(num, stack):
-    print time.ctime(), 'Alarm in', threading.currentThread()</p>
-
-<p>signal.signal(signal.SIGALRM, signal_handler)</p>
-
-<p>def use_alarm():
-    print time.ctime(), 'Setting alarm in', threading.currentThread()
-    signal.alarm(1)
-    print time.ctime(), 'Sleeping in', threading.currentThread()
-    time.sleep(3)
-    print time.ctime(), 'Done with sleep'</p>
-
-<p>alarm_thread = threading.Thread(target=use_alarm, name='alarm_thread') #启动一个线程，将不会收到信号
-alarm_thread.start()
-time.sleep(0.1)</p>
-
-<p>print time.ctime(), 'Waiting for', alarm_thread
-alarm_thread.join()</p>
-
-<p>print time.ctime(), 'Exiting normally'
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Fri Jun 15 12:16:22 2012 Setting alarm in &lt;Thread(alarm_thread, started -1220539536)&gt;
-Fri Jun 15 12:16:22 2012 Sleeping in &lt;Thread(alarm_thread, started -1220539536)&gt;
-Fri Jun 15 12:16:22 2012 Waiting for &lt;Thread(alarm_thread, started -1220539536)&gt;
-Fri Jun 15 12:16:25 2012 Done with sleep
-Fri Jun 15 12:16:25 2012 Alarm in &lt;_MainThread(MainThread, started -1219135808)&gt; #子线程报警被主线程收到
-Fri Jun 15 12:16:25 2012 Exiting normally</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/13/">&larr; Older</a></li>
@@ -1503,6 +1476,10 @@ Fri Jun 15 12:16:25 2012 Exiting normally</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1538,10 +1515,6 @@ Fri Jun 15 12:16:25 2012 Exiting normally</p>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

@@ -4999,6 +4999,21 @@
     }
   },
   {
+    "id": 316,
+    "title": "12个python填空题",
+    "category": "python",
+    "tags": [
+
+    ],
+    "url": "/archives/12ge-pythonnao-jin-ji-zhuan-wan/",
+    "content": "### 前言\n\n什么? 你已经很了解python了? 好.\n\n我们开始做个测验. 下面有12个题目. 填个空, 让这个代码片段变的可能.\n\n### 先做个例子\n\n例子1:\n\n```python\n>>> x, y = ???\n>>> x + y == y + x\nFalse\n```\n\n其中有个`???`. 把它替换成什么就可以让这段代码成立呢?\n\n揭晓答案:\n\n```python\n>>> x, y = [0], [1]\n>>> x + y == y + x\nFalse\n```\n\n这个还是蛮简单的. 好继续\n\n例子2:\n\n```python\n>>> x = ???\n>>> x < x\nTrue\n```\n\n答案呢?\n\n如果使用python内置的数据结构, 确实是不可能的. 唯一可以`硬造`一个例子\n\n```python\n>>> x = type(\"\", (), {\"__lt__\": lambda a, b: True})()\n>>> x < x\nTrue\n```\n\n但是这里不需要这么复杂的去想`trick`出结果, 只考虑python已经实现的设计\n\n### 发考卷\n\n1. 难度3星\n\n```python\n>>> x, y = ???\n>>> min(x, y) == min(y, x)\nFalse\n```\n\n2. 难度4星\n\n```python\n>>> x = ???\n>>> len(set(list(x))) == len(list(set(x)))\nFalse\n```\n\n3. 难度3星\n\n```python\n>>> x, s = ???\n>>> s.add(x)\n>>> type(x) in map(type, s)\nFalse\n```\n\n4. 难度3星\n\n```python\n>>> x, y = ???\n>>> x < y and all(a >= b for a, b in zip(x, y))\nTrue\n```\n\n5. 难度4星\n\n```python\n>>> x, y = ???\n>>> sum(0 * x, y) == y\nFalse\n```\n\n5. 难度5星\n\n```python\n>>> x = ???\n>>> min(x) == min(*x)\nFalse\n```\n\n6. 难度3星\n\n```python\n>>> x, y, z = ???\n>>> x * (y * z) == (x * y) * z\nFalse\n```\n\n7. 难度3星\n\n```python\n>>> x, y, z = ???\n>>> x * (y * z) == (x * y) * z\nFalse\n```\n\n8. 难度4星\n\n```python\n>>> x, y = ???\n>>> y > max(x) and y in x\nTrue\n```\n\n9. 难度5星\n\n```python\n>>> x, y = ???\n>>> any(x) and not any(x + y)\nTrue\n```\n\n10. 难度3星\n\n```python\n>>> x, y = ???\n>>> x.count(y) <= len(x)\nFalse\n```\n\n11. 难度5星\n\n```python\n>>> x = ???\n>>> all(filter(None, x))\nFalse\n```\n\n12. 难度4星\n\n```python\n>>> x, a, b, c = ???\n>>> max(x) < max(x[a:b:c])\nTrue\n```\n\n### 答案呢\n\n这是最近我觉得蛮有趣的一个项目 [pywat](https://github.com/cosmologicon/pywat/blob/master/quiz.md)\n\n上面的评星是我加上去. 也体现了我做这些题目花费的精力和时间:\n\n3星: 很快就想到, 实验出来了\n4星: 花了蛮长时间, 终于找到答案了\n5星: 最后实在找不倒答案, 看了答案恍然大悟啊啊啊啊\n\n你能做到什么程度呢?\n\n请慎重点击: [答案地址](https://github.com/cosmologicon/pywat/blob/master/quiz-answers.md)\n",
+    "date": {
+      "year": "2015",
+      "month": "November",
+      "day": "19"
+    }
+  },
+  {
     "id": 0,
     "title": "出错了",
     "url": "/404.html",

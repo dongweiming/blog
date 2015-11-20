@@ -141,6 +141,72 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%89%EF%BC%89/">Pymongo教程（三）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-06T00:00:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1 MongoDB 队列查询
+$gt 大于 例子：“score”:{&#8220;$gt”:0}
+$lt小于 例子：“score”:{&#8220;$lt”:0}
+$gte 大于等于例子： “score”:{&#8220;$gte”:0}
+$lte 小于等于 例子：“score”:{&#8220;$lte”:0} ⇐
+$all all  例子：“skills”:{&#8220;$all”:[&#8220;mongodb”,&#8221;python&#8221;]}
+$exists 属性必须存在 例子：“email”:{&#8220;$exists”:True}
+$mod 模块X等于Y 例子： “seconds”:{&#8220;$mod”:[60,0]}
+$ne 不等于 例子：“seconds”:{&#8220;$ne”:60}
+$in In 例子： “skills”:{&#8220;$in”:[&#8220;c”,&#8221;c++&#8221;]}
+$nin Not In 例子：“skills”:{&#8220;$nin”:[&#8220;php”,&#8221;ruby”,&#8221;perl&#8221;]}
+$nor Nor例子： “$nor”:[{&#8220;language”:&#8221;english&#8221;},{&#8220;coun- N/A
+try”:&#8221;usa&#8221;}]
+$or Or 例子：“$or”:[{&#8220;language”:&#8221;english&#8221;},{&#8220;coun- OR
+try”:&#8221;usa&#8221;}]
+$size 数组个数 例子： “skills”:{&#8220;$size”:3}</p>
+
+<p>2 MongoDB更新修改</p>
+
+<p>$inc 子增长 “$inc”:{&#8220;score”:1}
+$set 设置属性值 “$set”:{&#8220;username”:&#8221;niall&#8221;}
+$unset 取消（删除）属性值 “$unset”:{&#8220;username”:1}
+$push 增加  “$push”:{&#8220;emails”:&#8221;foo@example.com&#8221;}
+$pushAll 增加多个 “$pushall”:{&#8220;emails”:[&#8220;foo@example.com”,&#8221;foo2@ex-
+ample.com&#8221;]}
+$addToSet 不存在增加 “$addToSet”:{&#8220;emails”:&#8221;foo@example.com&#8221;}
+$pop 数组尾部去除 “$pop”:{&#8220;emails”:1}
+$pull  数组删除项 “$pull”:{&#8220;emails”:&#8221;foo@example.com&#8221;}
+$pullAll 删除数组all项 “$pullAll”:{&#8220;emails”:[&#8220;foo@example.com”, “foo2@ex-
+moval ample.com&#8221;]}
+$rename 属性重命名 “$rename”:{&#8220;emails”:&#8221;old_emails&#8221;}</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89%E5%AE%89%E8%A3%85%E4%BA%A6%E6%AD%8C%E5%9C%A8%E7%BA%BF%E5%90%AC%E6%AD%8C%E8%BD%AF%E4%BB%B6%EF%BC%881g1g%EF%BC%89/">Gentoo笔记（八）安装亦歌在线听歌软件（1g1g）</a></h1>
     
     
@@ -887,54 +953,6 @@ interact
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/unicodeencodeerror-latin-1-codec-cant-encode-characters-in-position-%E6%8A%A5%E9%94%99%E8%A7%A3%E5%86%B3/">UnicodeEncodeError: &#8216;Latin-1&#8217; Codec Can&#8217;t Encode Characters in Position 报错解决</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-30T00:00:00+08:00" pubdate data-updated="true">Dec 30<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：使用mysqldb查询数据库有一个报错：</p>
-
-<p>Traceback (most recent call last):
-File &#8220;/home/dongwm/RevSocket.py&#8221;, line 52, in &lt;module&gt;
-main.run()
-File &#8220;/home/dongwm/RevSocket.py&#8221;, line 47, in run
-print base.decode(buf,&#8217;sde#*df&#8221;)
-UnicodeEncodeError: &#8216;latin-1&#8217; codec can&#8217;t encode characters in position 96-119: ordinal not in range(256)</p>
-
-<p>后来群里面也有人遇见这样的问题，我正好仔细研究了一下 是本地locale变量的问题：</p>
-
-<p>export LANG=en_US.UTF-8
-执行上述语句即可</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/21/">&larr; Older</a></li>
@@ -957,6 +975,10 @@ UnicodeEncodeError: &#8216;latin-1&#8217; codec can&#8217;t encode characters in
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -992,10 +1014,6 @@ UnicodeEncodeError: &#8216;latin-1&#8217; codec can&#8217;t encode characters in
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

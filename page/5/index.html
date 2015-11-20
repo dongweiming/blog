@@ -141,6 +141,196 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shi-yong-glancesjian-kong-ben-di-he-yuan-cheng-fu-wu-qi-de-xing-neng-zhuang-tai-%2Cyi-ji-wo-dui-ta-de-xiu-gai/">使用glances监控本地和远程服务器的性能状态，以及我对它的修改</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-01T11:43:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>首先开始感谢<a href="http://www.vpsee.com">Vpsee</a>的那篇<a href="http://www.vpsee.com/2013/07/a-new-system-monitoring-tool-glances-installation-and-usage/">安装和使用系统监控工具 Glances</a>，让我发现了<a href="https://github.com/nicolargo/glances">glances</a>这个新的系统监控工具.并且可以通过xml-rpc
+监控远程服务器的系统情况显示到本地.它其实类似于top,支持键盘按键.使用了psutil库获取了硬盘分区，负载，内存使用，交换分区使用，进程(支持根据cpu占用,内存占用，进程名和
+io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温度.记录日志,高亮显示可配置的阀值的预警颜色.就像一个超级版的top,但是它的优点其实就是2个:</p>
+
+<ol>
+  <li>它是python的，你可以定制化</li>
+  <li>它可以使用rpc获取其他服务端的系统信息,top可不行额</li>
+</ol>
+
+<h4 id="section-1">我对它做了些贡献</h4>
+
+<ol>
+  <li>首先我给他添加了中文的国际化,但是因为显示英文比汉语占用得长度要小，我没有在太多的地方全部显示中文，而且我觉得作为运维本来就应该好好用英语…如果有必要我可以做一个glance-cn，完全汉化</li>
+  <li>我读了它的源码,发现它的代码已经超过4000行，但是好几个地方其实有很大的优化空间,比如它的glancesScreen类，有下面这样的代码:</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">__getMemAlert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="c"># If current &lt; CAREFUL of max then alert = OK                          </span>
+</span><span class="line">    <span class="c"># If current &gt; CAREFUL of max then alert = CAREFUL                     </span>
+</span><span class="line">    <span class="c"># If current &gt; WARNING of max then alert = WARNING                     </span>
+</span><span class="line">    <span class="c"># If current &gt; CRITICAL of max then alert = CRITICAL                   </span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="n">variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span>
+</span><span class="line">    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;DEFAULT&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMCritical</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CRITICAL&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMWarning</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;WARNING&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMCareful</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CAREFUL&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="s">&#39;OK&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getMemColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getMemAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getMemColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getMemAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapAlert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="c"># If current &lt; CAREFUL of max then alert = OK                          </span>
+</span><span class="line">    <span class="c"># If current &gt; CAREFUL of max then alert = CAREFUL                     </span>
+</span><span class="line">    <span class="c"># If current &gt; WARNING of max then alert = WARNING                     </span>
+</span><span class="line">    <span class="c"># If current &gt; CRITICAL of max then alert = CRITICAL                   </span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="n">variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span>
+</span><span class="line">    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;DEFAULT&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPCritical</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CRITICAL&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPWarning</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;WARNING&#39;</span>
+</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPCareful</span><span class="p">():</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CAREFUL&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="s">&#39;OK&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getSwapAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getSwapAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
+</span></pre></figure></notextile></div>
+
+<p>我来分析下,每种模块都有__getXXXAlert，__getXXXColor， __getxxxColor2，其中__getXXXColor， __getxxxColor2都会调用__getXXXAlert,他们的参数可能不同</p>
+
+<p>你看到了很多好相似的代码了嘛?其实待遇代码的可读性和可理解性已经代码的紧凑和不易懂一直就需要一个折中，我提了一个pull request，其实对这个类的属性做了下拦截</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># 使用__getattr__是为了只获取类中没有定义的属性</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class="line">        <span class="n">base_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Mem&#39;</span><span class="p">,</span> <span class="s">&#39;Swap&#39;</span><span class="p">,</span> <span class="s">&#39;Fs&#39;</span><span class="p">,</span> <span class="s">&#39;HDDTemp&#39;</span><span class="p">,</span> <span class="s">&#39;Sensors&#39;</span><span class="p">]</span>
+</span><span class="line">        <span class="n">get_alert_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Alert&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
+</span><span class="line">        <span class="n">base_type</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&#39;Load&#39;</span><span class="p">,</span> <span class="s">&#39;Cpu&#39;</span><span class="p">])</span> <span class="c">#我没有也处理_getCpu/LoadAlert,因为他们的调用略有不同,保留了</span>
+</span><span class="line">        <span class="n">get_color_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Color&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
+</span><span class="line">        <span class="n">get_color_list2</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Color2&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_alert_list</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAlert</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_color_list</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getColor</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_color_list2</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getColor2</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">getColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&quot;&quot;&quot;                                                                    </span>
+</span><span class="line"><span class="sd">        default: current=0, max=100, stat=&#39;&#39;, core=1                           </span>
+</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
+</span><span class="line">            <span class="bp">self</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_glancesScreen__get&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="s">&#39;Alert&#39;</span><span class="p">]))(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">getColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&quot;&quot;&quot;                                                                    </span>
+</span><span class="line"><span class="sd">        default: current=0, max=100, stat=&#39;&#39;, core=1                           </span>
+</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
+</span><span class="line">            <span class="bp">self</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_glancesScreen__get&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="s">&#39;Alert&#39;</span><span class="p">]))(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
+</span></pre></figure></notextile></div>
+
+<p>— update 2013-08-10 —– </p>
+
+<p>它已经接收了我的代码</p>
+
+<ol>
+  <li>我在服务器用pip，安装的是1.6.1，而本地是1.7.1a，但是有一个功能hddtemp支持实在1.6.1之后添加的,我用本地使用-c连接远程服务器,本
+地有-y选项，但是远程是没有的，按’h’就会报错,我修改了这个问题</li>
+</ol>
+
+<h4 id="section-2">如何使用国际化</h4>
+
+<ol>
+  <li>
+    <p>它自带了这个脚本i18n-gen.sh</p>
+  </li>
+  <li>
+    <p>我在我的gentoo和mac下都实验了,没有作用，难道是我理解有问题?</p>
+  </li>
+</ol>
+
+<p>首先我先把本地的locale换成中文:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">export</span> <span class="n">LANG</span><span class="o">=</span><span class="n">zh_CN</span><span class="o">.</span><span class="n">UTF</span><span class="o">-</span><span class="mi">8</span>
+</span></pre></figure></notextile></div>
+<p>后来我发现它使用国际化的原理是:</p>
+
+<ol>
+  <li>在安装的时候将.mo文件一起拷贝到glances的安装目录下得share/locale/XX/LC_MESSAGES下(XX代表你的生成的国际化名字)</li>
+  <li>它使用了这样的方法加载国际化</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">__appname__</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>但是没有去作用，因为没有找到.mo文件</p>
+
+<p>我提了pull req, 这样修改(其实就是去目录下找到那个语言的.mo):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="line"><span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">__appname__</span><span class="p">,</span> <span class="s">&#39;{0}/../share/locale&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">))</span>
+</span></pre></figure></notextile></div>
+
+<p>— update 2013-08-10 —–</p>
+
+<p>它没有采用我的方法而是比较复杂的实现了</p>
+
+<p>我在想，难道以前得几种语言是可以实现的?其实原来的方式在程序目录下是可以的，但是setup.py install后目录结构变化了</p>
+
+<h4 id="section-3">远程连接服务器</h4>
+
+<p>这是glances最大的一个特点，但是不能让谁都可以使用serverproxy链接查看你的状态吧?所以你需要指定-P选项，加一个随机密码(其实账号是glances，没有提供参数，在程序里面写死了)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%5B%3F%5D-qi-xue-xi-common-lispba/">一起学习common Lisp吧</a></h1>
     
     
@@ -1412,392 +1602,6 @@ password XXX</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/duo-master-slash-developfen-zhi-shi-yong-gitflow/">多master/develop分支使用gitflow</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-04T20:30:00+08:00" pubdate data-updated="true">Jun 4<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
-
-<p>公司都是git作为版本控制，公司一些项目组在用gitflow，但是我们组没有强制，
-但是我上月出了一次事故，总结就是分支管理问题，所以开始强迫自己使用gitflow,
-以前的项目是一个master和一个develop，自己checkout一个分支，然后merge(不理解的可以看看<a href="http://nvie.com/posts/a-successful-git-branching-model/">a-successful-git-branching-model</a>).</p>
-
-<p>问题出现了: 项目有几个主分支和开发分支，比如master_sina, master_qq. master_buzz ,而gitflow的时候只能指定一个master/develop, 这样你start一个feature/hotfix之前就要去.git/config里面修改
-[gitflow “branch”]项的相关主分支和开发分支，so不方便。看了下源码，给gitflow加点料</p>
-
-<h4 id="section-1">添加功能</h4>
-
-<ul>
-  <li>当你打开了feature/hotfix分支，但是你不想要它了(当然你可以直接git branch -D xx)，使用git flow hotfix/feature delete ,自动帮你删除这个分支，以便你新建其他分支(git flow只容许你一次存在一个hotfix/feature分支)</li>
-  <li>你想使用gitflow删除其它存在分支嘛？不需要 git branch -D ，你还可以git flow hotfix/feature delete XX </li>
-  <li>比如我在init的时候指定了master为master_sina,  而当我想创建master_qq的hotfix，我只需要在start的是否给它取名字是’qq_‘开头的即可，要是有其它的需要你可以直接在源码里面添加对应的内容</li>
-</ul>
-
-<h4 id="git-flow-hotfix--">例子 git-flow-hotfix  我主要标记我修改的部分</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">init() {
-</span><span class="line">  require_git_repo
-</span><span class="line">  require_gitflow_initialized
-</span><span class="line">  gitflow_load_settings
-</span><span class="line">  VERSION_PREFIX=$(eval "echo `git config --get gitflow.prefix.versiontag`")
-</span><span class="line">  PREFIX=$(git config --get gitflow.prefix.hotfix)
-</span><span class="line">}
-</span><span class="line"># 增加help的选项说明
-</span><span class="line">usage() {
-</span><span class="line">    echo "usage: git flow hotfix [list] [-v]"
-</span><span class="line">    echo "       git flow hotfix start [-F] &lt;version&gt; [&lt;base&gt;]"
-</span><span class="line">    echo "       git flow hotfix finish [-Fsumpk] &lt;version&gt;"
-</span><span class="line">    echo "       git flow hotfix publish &lt;version&gt;"
-</span><span class="line">    echo "       git flow hotfix delete [branch]"
-</span><span class="line">    echo "       git flow hotfix track &lt;version&gt;"
-</span><span class="line">}
-</span><span class="line">cmd_default() {
-</span><span class="line">    cmd_list "$@"
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">cmd_list() {
-</span><span class="line">    DEFINE_boolean verbose false 'verbose (more) output' v
-</span><span class="line">    parse_args "$@"
-</span><span class="line">
-</span><span class="line">    local hotfix_branches
-</span><span class="line">    local current_branch
-</span><span class="line">    local short_names
-</span><span class="line">    hotfix_branches=$(echo "$(git_local_branches)" | grep "^$PREFIX")
-</span><span class="line">    if [ -z "$hotfix_branches" ]; then
-</span><span class="line">        warn "No hotfix branches exist."
-</span><span class="line">                warn ""
-</span><span class="line">                warn "You can start a new hotfix branch:"
-</span><span class="line">                warn ""
-</span><span class="line">                warn "    git flow hotfix start &lt;version&gt; [&lt;base&gt;]"
-</span><span class="line">                warn ""
-</span><span class="line">        exit 0
-</span><span class="line">    fi
-</span><span class="line">    current_branch=$(git branch --no-color | grep '^\* ' | grep -v 'no branch' | sed 's/^* //g')
-</span><span class="line">    short_names=$(echo "$hotfix_branches" | sed "s ^$PREFIX  g")
-</span><span class="line">
-</span><span class="line">    # determine column width first
-</span><span class="line">    local width=0
-</span><span class="line">    local branch
-</span><span class="line">    for branch in $short_names; do
-</span><span class="line">        local len=${#branch}
-</span><span class="line">        width=$(max $width $len)
-</span><span class="line">    done
-</span><span class="line">    width=$(($width+3))
-</span><span class="line">
-</span><span class="line">    local branch
-</span><span class="line">    for branch in $short_names; do
-</span><span class="line">        local fullname=$PREFIX$branch
-</span><span class="line">        local base=$(git merge-base "$fullname" "$MASTER_BRANCH")
-</span><span class="line">        local master_sha=$(git rev-parse "$MASTER_BRANCH")
-</span><span class="line">        local branch_sha=$(git rev-parse "$fullname")
-</span><span class="line">        if [ "$fullname" = "$current_branch" ]; then
-</span><span class="line">            printf "* "
-</span><span class="line">        else
-</span><span class="line">            printf "  "
-</span><span class="line">        fi
-</span><span class="line">        if flag verbose; then
-</span><span class="line">            printf "%-${width}s" "$branch"
-</span><span class="line">            if [ "$branch_sha" = "$master_sha" ]; then
-</span><span class="line">                printf "(no commits yet)"
-</span><span class="line">            else
-</span><span class="line">                local tagname=$(git name-rev --tags --no-undefined --name-only "$base")
-</span><span class="line">                local nicename
-</span><span class="line">                if [ "$tagname" != "" ]; then
-</span><span class="line">                    nicename=$tagname
-</span><span class="line">                else
-</span><span class="line">                    nicename=$(git rev-parse --short "$base")
-</span><span class="line">                fi
-</span><span class="line">                printf "(based on $nicename)"
-</span><span class="line">            fi
-</span><span class="line">        else
-</span><span class="line">            printf "%s" "$branch"
-</span><span class="line">        fi
-</span><span class="line">        echo
-</span><span class="line">    done
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">cmd_help() {
-</span><span class="line">    usage
-</span><span class="line">    exit 0
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">parse_args() {
-</span><span class="line">    # parse options
-</span><span class="line">    FLAGS "$@" || exit $?
-</span><span class="line">    eval set -- "${FLAGS_ARGV}"
-</span><span class="line">    # read arguments into global variables
-</span><span class="line">    VERSION=$1
-</span><span class="line">    BRANCH=$PREFIX$VERSION
-</span><span class="line">    # 这里就是我多master/develop的技巧，我这里会判断要新建的分支的前缀，
-</span><span class="line">    # 要是qq_开头就会基于master_qq和develop_qq创建分支。所以你可以根据你的需要在这里加一些方法
-</span><span class="line">    test `expr match "$@" "qq_"` -ne 0 &amp;&amp; MASTER_BRANCH="$MASTER_BRANCH"_qq &amp;&amp;
-</span><span class="line">    DEVELOP_BRANCH="$DEVELOP_BRANCH"_qq
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">require_version_arg() {
-</span><span class="line">    if [ "$VERSION" = "" ]; then
-</span><span class="line">        warn "Missing argument &lt;version&gt;"
-</span><span class="line">        usage
-</span><span class="line">        exit 1
-</span><span class="line">    fi
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">require_base_is_on_master() {
-</span><span class="line">    if ! git branch --no-color --contains "$BASE" 2&gt;/dev/null \
-</span><span class="line">            | sed 's/[* ] //g' \
-</span><span class="line">            | grep -q "^$MASTER_BRANCH\$"; then
-</span><span class="line">        die "fatal: Given base '$BASE' is not a valid commit on '$MASTER_BRANCH'."
-</span><span class="line">    fi
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">require_no_existing_hotfix_branches() {
-</span><span class="line">    local hotfix_branches=$(echo "$(git_local_branches)" | grep "^$PREFIX")
-</span><span class="line">    local first_branch=$(echo ${hotfix_branches} | head -n1)
-</span><span class="line">    first_branch=${first_branch#$PREFIX}
-</span><span class="line">    [ -z "$hotfix_branches" ] || \
-</span><span class="line">        die "There is an existing hotfix branch ($first_branch). Finish that one first."
-</span><span class="line">}
-</span><span class="line"># 添加delete 参数，函数需要cmd_开头
-</span><span class="line">cmd_delete() {
-</span><span class="line">    if [ "$1" = "" ]; then
-</span><span class="line">        # 当不指定参数自动去找存在的未关闭的gitflow分支
-</span><span class="line">        local hotfix_branches=$(echo "$(git_local_branches)" | grep "^$PREFIX")
-</span><span class="line">        test "$hotfix_branches" = "" &amp;&amp; die "There has not existing hotfix branch can delete" &amp;&amp; exit 1
-</span><span class="line">    else
-</span><span class="line">        # 指定参数先判断参数是不是的数量格式
-</span><span class="line">        test $# != 1 &amp;&amp; die "There only need one parameter indicates the branch to be deleted" &amp;&amp; exit 1
-</span><span class="line">        hotfix_branches="$1"
-</span><span class="line">    fi
-</span><span class="line">    # 当要删除的分支就是当前分支，先checkout到develop分支
-</span><span class="line">    test "$hotfix_branches" = "$(git_current_branch)" &amp;&amp; echo 'First checkout develp branch'; git_do checkout "$DEVELOP_BRANCH"
-</span><span class="line">    git branch -D  ${hotfix_branches} &gt; /dev/null 2&gt;&amp;1&amp;&amp; echo 'Delete Successed'|| die "Did not find branch: [$hotfix_branches]"
-</span><span class="line">
-</span><span class="line">}
-</span><span class="line">cmd_start() {
-</span><span class="line">    DEFINE_boolean fetch false "fetch from $ORIGIN before performing finish" F
-</span><span class="line">    parse_args "$@"
-</span><span class="line">    BASE=${2:-$MASTER_BRANCH}
-</span><span class="line">    require_version_arg
-</span><span class="line">    require_base_is_on_master
-</span><span class="line">    require_no_existing_hotfix_branches
-</span><span class="line">
-</span><span class="line">    # sanity checks
-</span><span class="line">    require_clean_working_tree
-</span><span class="line">    require_branch_absent "$BRANCH"
-</span><span class="line">    require_tag_absent "$VERSION_PREFIX$VERSION"
-</span><span class="line">    if flag fetch; then
-</span><span class="line">        git_do fetch -q "$ORIGIN" "$MASTER_BRANCH"
-</span><span class="line">    fi
-</span><span class="line">    if has "$ORIGIN/$MASTER_BRANCH" $(git_remote_branches); then
-</span><span class="line">        require_branches_equal "$MASTER_BRANCH" "$ORIGIN/$MASTER_BRANCH"
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    # create branch
-</span><span class="line">    git_do checkout -b "$BRANCH" "$BASE"
-</span><span class="line">
-</span><span class="line">    echo
-</span><span class="line">    echo "Summary of actions:"
-</span><span class="line">    echo "- A new branch '$BRANCH' was created, based on '$BASE'"
-</span><span class="line">    echo "- You are now on branch '$BRANCH'"
-</span><span class="line">    echo
-</span><span class="line">    echo "Follow-up actions:"
-</span><span class="line">    echo "- Bump the version number now!"
-</span><span class="line">    echo "- Start committing your hot fixes"
-</span><span class="line">    echo "- When done, run:"
-</span><span class="line">    echo
-</span><span class="line">    echo "     git flow hotfix finish '$VERSION'"
-</span><span class="line">    echo
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">cmd_publish() {
-</span><span class="line">    parse_args "$@"
-</span><span class="line">    require_version_arg
-</span><span class="line">
-</span><span class="line">    # sanity checks
-</span><span class="line">    require_clean_working_tree
-</span><span class="line">    require_branch "$BRANCH"
-</span><span class="line">    git_do fetch -q "$ORIGIN"
-</span><span class="line">    require_branch_absent "$ORIGIN/$BRANCH"
-</span><span class="line">
-</span><span class="line">    # create remote branch
-</span><span class="line">    git_do push "$ORIGIN" "$BRANCH:refs/heads/$BRANCH"
-</span><span class="line">    git_do fetch -q "$ORIGIN"
-</span><span class="line">
-</span><span class="line">    # configure remote tracking
-</span><span class="line">    git config "branch.$BRANCH.remote" "$ORIGIN"
-</span><span class="line">    git config "branch.$BRANCH.merge" "refs/heads/$BRANCH"
-</span><span class="line">    git_do checkout "$BRANCH"
-</span><span class="line">
-</span><span class="line">    echo
-</span><span class="line">    echo "Summary of actions:"
-</span><span class="line">    echo "- A new remote branch '$BRANCH' was created"
-</span><span class="line">    echo "- The local branch '$BRANCH' was configured to track the remote branch"
-</span><span class="line">    echo "- You are now on branch '$BRANCH'"
-</span><span class="line">    echo
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">cmd_track() {
-</span><span class="line">    parse_args "$@"
-</span><span class="line">    require_version_arg
-</span><span class="line">
-</span><span class="line">    # sanity checks
-</span><span class="line">    require_clean_working_tree
-</span><span class="line">    require_branch_absent "$BRANCH"
-</span><span class="line">    git_do fetch -q "$ORIGIN"
-</span><span class="line">    require_branch "$ORIGIN/$BRANCH"
-</span><span class="line">
-</span><span class="line">    # create tracking branch
-</span><span class="line">    git_do checkout -b "$BRANCH" "$ORIGIN/$BRANCH"
-</span><span class="line">
-</span><span class="line">    echo
-</span><span class="line">    echo "Summary of actions:"
-</span><span class="line">    echo "- A new remote tracking branch '$BRANCH' was created"
-</span><span class="line">    echo "- You are now on branch '$BRANCH'"
-</span><span class="line">    echo
-</span><span class="line">}
-</span><span class="line">
-</span><span class="line">cmd_finish() {
-</span><span class="line">    DEFINE_boolean fetch false "fetch from $ORIGIN before performing finish" F
-</span><span class="line">    DEFINE_boolean sign false "sign the release tag cryptographically" s
-</span><span class="line">    DEFINE_string signingkey "" "use the given GPG-key for the digital signature (implies -s)" u
-</span><span class="line">    DEFINE_string message "" "use the given tag message" m
-</span><span class="line">    DEFINE_string messagefile "" "use the contents of the given file as tag message" f
-</span><span class="line">    DEFINE_boolean push false "push to $ORIGIN after performing finish" p
-</span><span class="line">    DEFINE_boolean keep false "keep branch after performing finish" k
-</span><span class="line">    DEFINE_boolean notag false "don't tag this release" n
-</span><span class="line">    parse_args "$@"
-</span><span class="line">    require_version_arg
-</span><span class="line">
-</span><span class="line">    # handle flags that imply other flags
-</span><span class="line">    if [ "$FLAGS_signingkey" != "" ]; then
-</span><span class="line">        FLAGS_sign=$FLAGS_TRUE
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    # sanity checks
-</span><span class="line">    require_branch "$BRANCH"
-</span><span class="line">    require_clean_working_tree
-</span><span class="line">    if flag fetch; then
-</span><span class="line">        git_do fetch -q "$ORIGIN" "$MASTER_BRANCH" || \
-</span><span class="line">          die "Could not fetch $MASTER_BRANCH from $ORIGIN."
-</span><span class="line">        git_do fetch -q "$ORIGIN" "$DEVELOP_BRANCH" || \
-</span><span class="line">          die "Could not fetch $DEVELOP_BRANCH from $ORIGIN."
-</span><span class="line">    fi
-</span><span class="line">    if has "$ORIGIN/$MASTER_BRANCH" $(git_remote_branches); then
-</span><span class="line">        require_branches_equal "$MASTER_BRANCH" "$ORIGIN/$MASTER_BRANCH"
-</span><span class="line">    fi
-</span><span class="line">    if has "$ORIGIN/$DEVELOP_BRANCH" $(git_remote_branches); then
-</span><span class="line">        require_branches_equal "$DEVELOP_BRANCH" "$ORIGIN/$DEVELOP_BRANCH"
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    # try to merge into master
-</span><span class="line">    # in case a previous attempt to finish this release branch has failed,
-</span><span class="line">    # but the merge into master was successful, we skip it now
-</span><span class="line">    if ! git_is_branch_merged_into "$BRANCH" "$MASTER_BRANCH"; then
-</span><span class="line">        git_do checkout "$MASTER_BRANCH" || \
-</span><span class="line">          die "Could not check out $MASTER_BRANCH."
-</span><span class="line">        git_do merge --no-ff "$BRANCH" || \
-</span><span class="line">          die "There were merge conflicts."
-</span><span class="line">          # TODO: What do we do now?
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    if noflag notag; then
-</span><span class="line">        # try to tag the release
-</span><span class="line">        # in case a previous attempt to finish this release branch has failed,
-</span><span class="line">        # but the tag was set successful, we skip it now
-</span><span class="line">        local tagname=$VERSION_PREFIX$VERSION
-</span><span class="line">        if ! git_tag_exists "$tagname"; then
-</span><span class="line">            local opts="-a"
-</span><span class="line">            flag sign &amp;&amp; opts="$opts -s"
-</span><span class="line">            [ "$FLAGS_signingkey" != "" ] &amp;&amp; opts="$opts -u '$FLAGS_signingkey'"
-</span><span class="line">            [ "$FLAGS_message" != "" ] &amp;&amp; opts="$opts -m '$FLAGS_message'"
-</span><span class="line">            [ "$FLAGS_messagefile" != "" ] &amp;&amp; opts="$opts -F '$FLAGS_messagefile'"
-</span><span class="line">            eval git_do tag $opts "$VERSION_PREFIX$VERSION" "$BRANCH" || \
-</span><span class="line">            die "Tagging failed. Please run finish again to retry."
-</span><span class="line">        fi
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    # try to merge into develop
-</span><span class="line">    # in case a previous attempt to finish this release branch has failed,
-</span><span class="line">    # but the merge into develop was successful, we skip it now
-</span><span class="line">    if ! git_is_branch_merged_into "$BRANCH" "$DEVELOP_BRANCH"; then
-</span><span class="line">        git_do checkout "$DEVELOP_BRANCH" || \
-</span><span class="line">          die "Could not check out $DEVELOP_BRANCH."
-</span><span class="line">
-</span><span class="line">        # TODO: Actually, accounting for 'git describe' pays, so we should
-</span><span class="line">        # ideally git merge --no-ff $tagname here, instead!
-</span><span class="line">        git_do merge --no-ff "$BRANCH" || \
-</span><span class="line">          die "There were merge conflicts."
-</span><span class="line">          # TODO: What do we do now?
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    # delete branch
-</span><span class="line">    if noflag keep; then
-</span><span class="line">        # 这个问题很奇怪，在完成分支删除它也会存在当前分支是
-</span><span class="line">        # 要删除的分支删除报错的问题，所以先切换走
-</span><span class="line">        test "$BRANCH" = "$(git_current_branch)" &amp;&amp; git_do checkout "$DEVELOP_BRANCH"
-</span><span class="line">        git_do branch -d "$BRANCH"
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    if flag push; then
-</span><span class="line">        git_do push "$ORIGIN" "$DEVELOP_BRANCH" || \
-</span><span class="line">            die "Could not push to $DEVELOP_BRANCH from $ORIGIN."
-</span><span class="line">        git_do push "$ORIGIN" "$MASTER_BRANCH" || \
-</span><span class="line">            die "Could not push to $MASTER_BRANCH from $ORIGIN."
-</span><span class="line">        if noflag notag; then
-</span><span class="line">            git_do push --tags "$ORIGIN" || \
-</span><span class="line">                die "Could not push tags to $ORIGIN."
-</span><span class="line">        fi
-</span><span class="line">    fi
-</span><span class="line">
-</span><span class="line">    echo
-</span><span class="line">    echo "Summary of actions:"
-</span><span class="line">    echo "- Latest objects have been fetched from '$ORIGIN'"
-</span><span class="line">    echo "- Hotfix branch has been merged into '$MASTER_BRANCH'"
-</span><span class="line">    if noflag notag; then
-</span><span class="line">        echo "- The hotfix was tagged '$VERSION_PREFIX$VERSION'"
-</span><span class="line">    fi
-</span><span class="line">    echo "- Hotfix branch has been back-merged into '$DEVELOP_BRANCH'"
-</span><span class="line">    if flag keep; then
-</span><span class="line">        echo "- Hotfix branch '$BRANCH' is still available"
-</span><span class="line">    else
-</span><span class="line">        echo "- Hotfix branch '$BRANCH' has been deleted"
-</span><span class="line">    fi
-</span><span class="line">    if flag push; then
-</span><span class="line">        echo "- '$DEVELOP_BRANCH', '$MASTER_BRANCH' and tags have been pushed to '$ORIGIN'"
-</span><span class="line">    fi
-</span><span class="line">    echo
-</span><span class="line">    }</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/6/">&larr; Older</a></li>
@@ -1820,6 +1624,10 @@ password XXX</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1855,10 +1663,6 @@ password XXX</p>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

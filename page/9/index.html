@@ -141,6 +141,73 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/linuxxiashengjidaozuixinbanbenfirefoxlanqi/">Linux下升级到最新版本firefox浏览器</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-11T00:00:00+08:00" pubdate data-updated="true">Jul 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：一直是firefox忠实用户，本文是普及篇，系统是opensuse11.3，其他系统请借鉴方法</p>
+
+<p>1 首先查看当前系统firefox信息：</p>
+
+<p>linux-vkmz:~ # rpm -qa|grep -i firefox
+MozillaFirefox-3.6.6-1.2.i586  #这里就是firefox的版本3.6.6，而现在最新版本已经是firefox13.0.1，可是系统源没有更高版本
+MozillaFirefox-branding-openSUSE-3.5-16.2.i586
+MozillaFirefox-translations-common-3.6.6-1.2.i586
+2 下载最新版本firefox：</p>
+
+<p>linux-vkmz:~ # wget http://download.firefox.com.cn/releases/firefox/13.0/zh-CN/Firefox-latest.tar.bz2</p>
+
+<p>linux-vkmz:~ #tar jxf Firefox-latest.tar.bz2 #解压缩</p>
+
+<p>3 查看系统firefox被安装到了那里</p>
+
+<p>linux-vkmz:~ # rpm -ql MozillaFirefox-3.6.6-1.2.i586</p>
+
+<p>/usr/bin/firefox  #我只截取了一部分，可以看见库文件在/usr/lib，可执行文件在/usr/bin
+/usr/lib/firefox
+/usr/lib/firefox/application.ini
+/usr/lib/firefox/blocklist.xml
+/usr/lib/firefox/chrome
+/usr/lib/firefox/chrome/browser.jar
+/usr/lib/firefox/chrome/browser.m</p>
+
+<p>&#8230;
+linux-vkmz:~ #cp -rp firefox/* /usr/lib/firefox/   #拷贝lib文件到系统安装的firefox路径下</p>
+
+<p>linux-vkmz:~ #cp -rp firefox/firefox* /usr/bin/ #拷贝2个可执行文件到/usr/bin下</p>
+
+<p>OK了</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusysyanjiuyi/">关于sys研究（一）</a></h1>
     
     
@@ -2787,237 +2854,6 @@ logging.debug('Counter: %d', counter.value)
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyusocketyanjiuyi/">关于socket研究(一)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言；socket是python网络通讯的模块，socket用于描述IP地址和端口，是一个通信链的句柄。在Internet上的主机一般运行了多个服务软件，同时提供几种服务。每种服务都打开一个Socket，并绑定到一个端口上，不同的端口对应于不同的服务。Socket正如其英文原意那样，象一个多孔插座。</p>
-
-<p><pre class="sh_python">
-import socket
-print socket.gethostname()  #获取linux主机的hostname
-print socket.gethostbyname('www.dongwm.com')  #获取www.dongwm.com的ip
-hostname, aliases, addresses = socket.gethostbyname_ex('www.baidu.com')  #获取主机名，别名和ip地址
-print hostname, aliases, addresses
-print socket.getfqdn('www.dongwm.com')  #获取<span><em>FQDN</em></span>(<span>全称域名</span>)
-hostname, aliases, addresses = socket.gethostbyaddr('61.135.169.105')  #通过ip获取主机名，别名和ip地址
-print hostname, aliases, addresses
-
-</pre></p>
-
-<p><pre class="sh_python">
-import socket
-from urlparse import urlparse,urlunparse</p>
-
-<p>for url in [ 'http://www.python.org',
-             'https://www.mybank.com',
-             'ftp://prep.ai.mit.edu',
-             'gopher://gopher.micro.umn.edu',
-             'smtp://mail.example.com',
-             'imap://mail.example.com',
-             'imaps://mail.example.com',
-             'pop3://pop.example.com',
-             'pop3s://pop.example.com',
-             ]:
-    parsed_url = urlparse(url)
-    port = socket.getservbyname(parsed_url.scheme)  #通过urlparse解析协议端口
-    print '%6s : %s' % (parsed_url.scheme, port)
-for port in [ 80, 443, 21, 70, 25, 143, 993, 110, 995 ]:
-    print urlunparse(
-        (socket.getservbyport(port), 'example.com', '/', '', '', '')  #通过端口返回协议前缀
-        )
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-http : 80
-https : 443
-ftp : 21
-gopher : 70
-smtp : 25
-imap : 143
-imaps : 993
-pop3 : 110
-pop3s : 995
-http://example.com/
-https://example.com/
-ftp://example.com/
-gopher://example.com/
-smtp://example.com/
-imap://example.com/
-imaps://example.com/
-pop3://example.com/
-pop3s://example.com/</p>
-
-<p><pre class="sh_python">
-import socket</p>
-
-<p>def get_constants(prefix):
-    """Create a dictionary mapping socket module constants to their names."""
-    return dict( (getattr(socket, n), n)
-                 for n in dir(socket)
-                 if n.startswith(prefix)
-                 )</p>
-
-<p>protocols = get_constants('IPPROTO_')</p>
-
-<p>for name in [ 'icmp', 'udp', 'tcp' ]:
-    proto_num = socket.getprotobyname(name)  #获取协议号
-    const_name = protocols[proto_num]  #协议标识
-    print '%4s -&gt; %2d (socket.%-12s = %2d)' % \
-        (name, proto_num, const_name, getattr(socket, const_name))
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-icmp -&gt;  1 (socket.IPPROTO_ICMP =  1)
-udp -&gt; 17 (socket.IPPROTO_UDP  = 17)
-tcp -&gt;  6 (socket.IPPROTO_TCP  =  6)
-<pre class="sh_python">
-import socket</p>
-
-<p>def get_constants(prefix):
-    """Create a dictionary mapping socket module constants to their names."""
-    return dict( (getattr(socket, n), n)  #返回一个<span>模块定义的标识符</span>符合某前缀标识号和名字的字典
-                 for n in dir(socket)
-                 if n.startswith(prefix)
-                 )</p>
-
-<p>families = get_constants('AF_')  #返回协议簇
-types = get_constants('SOCK_')  #套接字类型
-protocols = get_constants('IPPROTO_')  #协议类型</p>
-
-<p>for response in socket.getaddrinfo('www.python.org', 'http'): #gethostbyname和gethostbyaddr这两个函数仅仅支持IPv4，
-                                       #getaddrinfo函数能够处理名字到地址以及服务到端口这两 种转换</p>
-
-<p>    family, socktype, proto, canonname, sockaddr = response</p>
-
-<p>    print 'Family        :', families[family]
-    print 'Type          :', types[socktype]
-    print 'Protocol      :', protocols[proto]
-    print 'Canonical name:', canonname
-    print 'Socket address:', sockaddr
-    print
-for response in socket.getaddrinfo('www.python.org', 'http',  
-                                   socket.AF_INET,      # 添加筛选添加，family
-                                   socket.SOCK_STREAM,  # socktype
-                                   socket.IPPROTO_TCP,  # protocol
-                                   socket.AI_CANONNAME, # flags
-                                   ):</p>
-
-<p>    family, socktype, proto, canonname, sockaddr = response</p>
-
-<p>    print 'Family        :', families[family]
-    print 'Type          :', types[socktype]
-    print 'Protocol      :', protocols[proto]
-    print 'Canonical name:', canonname
-    print 'Socket address:', sockaddr
-    print
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Family        : AF_INET
-Type          : SOCK_DGRAM
-Protocol      : IPPROTO_UDP
-Canonical name:
-Socket address: (&#8216;82.94.164.162&#8217;, 80)</p>
-
-<p>Family        : AF_INET
-Type          : SOCK_STREAM
-Protocol      : IPPROTO_TCP
-Canonical name:
-Socket address: (&#8216;82.94.164.162&#8217;, 80)</p>
-
-<p>Family        : AF_INET6
-Type          : SOCK_DGRAM
-Protocol      : IPPROTO_UDP
-Canonical name:
-Socket address: (&#8216;2001:888:2000:d::a2&#8217;, 80, 0, 0)</p>
-
-<p>Family        : AF_INET6
-Type          : SOCK_STREAM
-Protocol      : IPPROTO_TCP
-Canonical name:
-Socket address: (&#8216;2001:888:2000:d::a2&#8217;, 80, 0, 0)</p>
-
-<p>
-Family        : AF_INET
-Type          : SOCK_STREAM
-Protocol      : IPPROTO_TCP
-Canonical name: dinsdale.python.org
-Socket address: (&#8216;82.94.164.162&#8217;, 80)
-<pre class="sh_python">
-import binascii
-import socket
-import struct
-import sys</p>
-
-<p>string_address = sys.argv[1]
-packed = socket.inet_aton(string_address)  #将ip地址的4段地址分别进行2进制转化，但输出用16进制表示</p>
-
-<p>print 'Original:', string_address
-print 'Packed  :', binascii.hexlify(packed)
-print 'Unpacked:', socket.inet_ntoa(packed) #从网络字节序的数字’’转换为ip
-</pre>
-执行结果：
-dongwm@linux-dongwm:~&gt; python test.py 192.168.1.1
-Original: 192.168.1.1
-Packed  : c0a80101
-Unpacked: 192.168.1.1
-dongwm@linux-dongwm:~&gt; python test.py 127.0.0.1
-Original: 127.0.0.1
-Packed  : 7f000001
-Unpacked: 127.0.0.1
-<pre class="sh_python">
-import binascii
-import socket
-import struct
-import sys</p>
-
-<p>string_address = sys.argv[1]
-packed = socket.inet_pton(socket.AF_INET6, string_address)  #socket.inet_pton代替socket.inet_aton指定参数处理ipv6地址
-
-print 'Original:', string_address
-print 'Packed  :', binascii.hexlify(packed)
-print 'Unpacked:', socket.inet_ntop(socket.AF_INET6, packed) ##从网络字节序的数字’’转换为ipv6
-</pre></p>
-
-<p></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/10/">&larr; Older</a></li>
@@ -3040,6 +2876,10 @@ print 'Unpacked:', socket.inet_ntop(socket.AF_INET6, packed) ##从网络字节�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -3075,10 +2915,6 @@ print 'Unpacked:', socket.inet_ntop(socket.AF_INET6, packed) ##从网络字节�
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

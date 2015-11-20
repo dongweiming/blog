@@ -141,6 +141,87 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuatexityanjiu/">关于atexit研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：atexit是一个用于一个执行某程序后触发的，执行一个方法的模块，当正常执行后会调用这个回调函数。</p>
+
+<p>下面是一个例子，因为一场退出不触发这个方法：</p>
+
+<p><pre class="sh_python">
+import atexit
+import os</p>
+
+<p>def not_called():  #这个就是想触发的方法
+    print 'This should not be called'  </p>
+
+<p>print 'Registering'
+atexit.register(not_called)  #注册这个方法
+print 'Registered'</p>
+
+<p>print 'Exiting...'
+os._exit(0)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Registering
+Registered
+Exiting&#8230;
+而且atexit还支持装饰器用法:</p>
+
+<p><pre class="sh_python">
+import atexit
+import os
+print 'Registering'
+@atexit.register
+def not_called():
+    print 'This should be called'
+print 'Registered'
+</pre></p>
+
+<p>执行结果是：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Registering
+Registered
+This should be called</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuargparseyanjiu/">关于argparse研究</a></h1>
     
     
@@ -1282,216 +1363,6 @@ dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print strftime(&#8220;%c&#8221;,sys
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiusi/">关于awk研究（四）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-20T00:00:00+08:00" pubdate data-updated="true">Apr 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1 printf</strong></p>
-
-<p>&#8220;print format&#8221;, variable1, variable2, etc.
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;Field 1\t\tField 2\tField 3\tField 4\n&#8221; }&#8217;
-Field 1        Field 2    Field 3    Field 4  #格式化输出
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;Field 1\vField 2\vField 3\vField 4\n&#8221; }&#8217;
-Field 1
-Field 2
-Field 3
-Field 4
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN \
-&gt; { printf &#8220;Field 1\bField 2\bField 3\bField 4\n&#8221; }&#8217;   #\b退格
-Field Field Field Field 4</p>
-
-<p>下面2个例子：</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {print $2,$3}&#8217; test.txt
-dongwm:dongwm.com
-&#8211;
-ailll:ailll.com
-&#8211;
-ccc:ccc.com
-&#8211;
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {printf &#8220;%s:%s\n\n&#8221;,$2,$3}&#8217; test.txt #这里就是格式化输出，%s就是字符串 ，前台2个%s,就是后面的$2 $3
-dongwm:dongwm.com</p>
-
-<p>ailll:ailll.com</p>
-
-<p>ccc:ccc.com</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {printf &#8220;%10s:%3s:%10s:%-7s\n\n&#8221;,$1,$2,$3,$4}&#8217; test.txt
-112:dongwm:dongwm.com:1120   #固定列宽，正数是右对其，负数左对齐</p>
-
-<p>113:ailll: ailll.com:1130</p>
-
-<p>114:ccc:   ccc.com:1140
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%6s\n&#8221;, &#8220;Good Boy!&#8221; }&#8217;
-Good Boy!
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%.6s\n&#8221;, &#8220;Good Boy!&#8221; }&#8217;  #这个‘.’说明这里只保留6个字符
-Good B
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%6s\n&#8221;, substr(&#8220;Good Boy!&#8221;,1,6) }&#8217;  #效果是一样的
-Good B
-<strong>2 内置数值函数</strong>
-1 int</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print int(3.534);print int(4);print int(-5.223);print int(-5);}&#8217;
-3
-4
--5
--5
-<strong>2 log  #对数，不记得了可以翻翻高中数学课本^.^</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print log(13);print log(0);print log(1);print log(-5);}&#8217; #
-2.56495
--inf
-0
-awk: 警告: log: 收到负数参数 -5
-nan
-<strong>3 sqrt #平方根</strong>
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print sqrt(64);print sqrt(0);print sqrt(-5);}&#8217;
-8
-0
-awk: 警告: sqrt: 收到负数参数 -5
--nan
-<strong>4 exp ＃e的N次方</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print exp(123456789);print exp(0);print exp(-12);}&#8217;
-awk: 警告: exp: 参数 1.23457e+08 超出范围
-inf
-1
-6.14421e-06
-<strong>3 随机数</strong></p>
-
-<p>1 rand #0-1之间的随机数</p>
-
-<p>cat test.awk
-BEGIN {
-while(i&lt;1000)
-{
-n = int(rand()*100);
-rnd[n]++;
-i++;
-}
-for(i=0;i&lt;=5;i++) {
-print i,&#8221;Occured&#8221;, rnd[i], &#8220;times&#8221;;
-}
-}</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
-0 Occured 11 times
-1 Occured 8 times
-2 Occured 9 times
-3 Occured 15 times
-4 Occured 16 times
-5 Occured 5 times
-2  srand #初始化随机数的开始
-dongwm@linux-dongwm:~&gt; cat test.awk
-BEGIN {
-srand(5);
-total=5;
-max=50;
-count=0;  #随机数从5－50
-while(count &lt; total) {
-rnd = int(rand() * max);
-if ( array[rnd] == 0 ) {
-count++;
-array[rnd]++;
-}
-}
-for ( i=5; i&lt;=max; i++) {
-if ( array[i] )
-print i;
-}
-}</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
-14
-16
-23
-33
-35
-<strong>4 字符串函数</strong>
-<strong>1 index #字符串索引</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {dongwm=&#8221;dongwm.com&#8221;;print &#8220;string start at&#8221;,index(dongwm,&#8221;wm&#8221;);}&#8217;  #找到‘wm’的索引
-string start at 5</p>
-
-<p><strong>2 length</strong> #字符串长度
-dongwm@linux-dongwm:~&gt; awk &#8216;{print length($0)}&#8217; test.txt
-26
-24
-20
-<strong>3 split  #分隔</strong></p>
-
-<p>语法：split(input-string,output-array,separator)
-dongwm@linux-dongwm:~&gt; awk &#8216;{split($0,qu,&#8221;,&#8221;);for (x in qu) print qu[x];}&#8217; test.txt
-1120
-112
-dongwm
-dongwm.com
-1130
-113
-ailll
-ailll.com
-1140
-114
-ccc
-ccc.com
-<strong>4 Substr</strong>
-语法：substr(input-string, location, length)
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{FS=&#8221;,&#8221;} {print substr($1,3)}&#8217; test.txt #
-2
-3
-4
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{FS=&#8221;,&#8221;} {print substr($1,1,3)}&#8217; test.txt  #第一个字段，从第一个字符开始打印3个字符
-112
-113
-114
-<strong>5 nawk和gwak特有字符串函数：</strong></p>
-
-<p>语法：sub(original-string,replacement-string,string-variable)
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;sub(&#8220;[Dd]o&#8221;,&#8221;CC&#8221;,dongwm);print dongwm;}&#8217;  test.txt #用‘CC’替换‘Do‘或者’do‘
-CCngwmDongmcom  #只题换了第一个</p>
-
-<p>语法：gsub(original-string,replacement-string,string-variable)</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;gsub(&#8220;[Dd]o&#8221;,&#8221;CC&#8221;,dongwm);print dongwm;}&#8217;  test.txt
-CCngwmCCngmcom  #替换了所有符合的
-语法：match(input-string,search-string)
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;if(match(dongwm,&#8221;dongwm&#8221;));{print &#8220;match!&#8221;}}&#8217;  test.txt
-match! #搜索发现匹配
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;print tolower(dongwm)}&#8217; #转化成小写
-dongwmdongmcom
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;print toupper(dongwm)}&#8217; #转化成大写
-DONGWMDONGMCOM</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/18/">&larr; Older</a></li>
@@ -1514,6 +1385,10 @@ DONGWMDONGMCOM</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1549,10 +1424,6 @@ DONGWMDONGMCOM</p>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

@@ -141,6 +141,216 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiusi/">关于awk研究（四）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-20T00:00:00+08:00" pubdate data-updated="true">Apr 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 printf</strong></p>
+
+<p>&#8220;print format&#8221;, variable1, variable2, etc.
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;Field 1\t\tField 2\tField 3\tField 4\n&#8221; }&#8217;
+Field 1        Field 2    Field 3    Field 4  #格式化输出
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;Field 1\vField 2\vField 3\vField 4\n&#8221; }&#8217;
+Field 1
+Field 2
+Field 3
+Field 4
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN \
+&gt; { printf &#8220;Field 1\bField 2\bField 3\bField 4\n&#8221; }&#8217;   #\b退格
+Field Field Field Field 4</p>
+
+<p>下面2个例子：</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {print $2,$3}&#8217; test.txt
+dongwm:dongwm.com
+&#8211;
+ailll:ailll.com
+&#8211;
+ccc:ccc.com
+&#8211;
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {printf &#8220;%s:%s\n\n&#8221;,$2,$3}&#8217; test.txt #这里就是格式化输出，%s就是字符串 ，前台2个%s,就是后面的$2 $3
+dongwm:dongwm.com</p>
+
+<p>ailll:ailll.com</p>
+
+<p>ccc:ccc.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {FS=&#8221;,&#8221;;OFS=&#8221;:&#8221;;ORS=&#8221;\n&#8211;\n&#8221;;} {printf &#8220;%10s:%3s:%10s:%-7s\n\n&#8221;,$1,$2,$3,$4}&#8217; test.txt
+112:dongwm:dongwm.com:1120   #固定列宽，正数是右对其，负数左对齐</p>
+
+<p>113:ailll: ailll.com:1130</p>
+
+<p>114:ccc:   ccc.com:1140
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%6s\n&#8221;, &#8220;Good Boy!&#8221; }&#8217;
+Good Boy!
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%.6s\n&#8221;, &#8220;Good Boy!&#8221; }&#8217;  #这个‘.’说明这里只保留6个字符
+Good B
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { printf &#8220;%6s\n&#8221;, substr(&#8220;Good Boy!&#8221;,1,6) }&#8217;  #效果是一样的
+Good B
+<strong>2 内置数值函数</strong>
+1 int</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print int(3.534);print int(4);print int(-5.223);print int(-5);}&#8217;
+3
+4
+-5
+-5
+<strong>2 log  #对数，不记得了可以翻翻高中数学课本^.^</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print log(13);print log(0);print log(1);print log(-5);}&#8217; #
+2.56495
+-inf
+0
+awk: 警告: log: 收到负数参数 -5
+nan
+<strong>3 sqrt #平方根</strong>
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print sqrt(64);print sqrt(0);print sqrt(-5);}&#8217;
+8
+0
+awk: 警告: sqrt: 收到负数参数 -5
+-nan
+<strong>4 exp ＃e的N次方</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{print exp(123456789);print exp(0);print exp(-12);}&#8217;
+awk: 警告: exp: 参数 1.23457e+08 超出范围
+inf
+1
+6.14421e-06
+<strong>3 随机数</strong></p>
+
+<p>1 rand #0-1之间的随机数</p>
+
+<p>cat test.awk
+BEGIN {
+while(i&lt;1000)
+{
+n = int(rand()*100);
+rnd[n]++;
+i++;
+}
+for(i=0;i&lt;=5;i++) {
+print i,&#8221;Occured&#8221;, rnd[i], &#8220;times&#8221;;
+}
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
+0 Occured 11 times
+1 Occured 8 times
+2 Occured 9 times
+3 Occured 15 times
+4 Occured 16 times
+5 Occured 5 times
+2  srand #初始化随机数的开始
+dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+srand(5);
+total=5;
+max=50;
+count=0;  #随机数从5－50
+while(count &lt; total) {
+rnd = int(rand() * max);
+if ( array[rnd] == 0 ) {
+count++;
+array[rnd]++;
+}
+}
+for ( i=5; i&lt;=max; i++) {
+if ( array[i] )
+print i;
+}
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk
+14
+16
+23
+33
+35
+<strong>4 字符串函数</strong>
+<strong>1 index #字符串索引</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN {dongwm=&#8221;dongwm.com&#8221;;print &#8220;string start at&#8221;,index(dongwm,&#8221;wm&#8221;);}&#8217;  #找到‘wm’的索引
+string start at 5</p>
+
+<p><strong>2 length</strong> #字符串长度
+dongwm@linux-dongwm:~&gt; awk &#8216;{print length($0)}&#8217; test.txt
+26
+24
+20
+<strong>3 split  #分隔</strong></p>
+
+<p>语法：split(input-string,output-array,separator)
+dongwm@linux-dongwm:~&gt; awk &#8216;{split($0,qu,&#8221;,&#8221;);for (x in qu) print qu[x];}&#8217; test.txt
+1120
+112
+dongwm
+dongwm.com
+1130
+113
+ailll
+ailll.com
+1140
+114
+ccc
+ccc.com
+<strong>4 Substr</strong>
+语法：substr(input-string, location, length)
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{FS=&#8221;,&#8221;} {print substr($1,3)}&#8217; test.txt #
+2
+3
+4
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{FS=&#8221;,&#8221;} {print substr($1,1,3)}&#8217; test.txt  #第一个字段，从第一个字符开始打印3个字符
+112
+113
+114
+<strong>5 nawk和gwak特有字符串函数：</strong></p>
+
+<p>语法：sub(original-string,replacement-string,string-variable)
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;sub(&#8220;[Dd]o&#8221;,&#8221;CC&#8221;,dongwm);print dongwm;}&#8217;  test.txt #用‘CC’替换‘Do‘或者’do‘
+CCngwmDongmcom  #只题换了第一个</p>
+
+<p>语法：gsub(original-string,replacement-string,string-variable)</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;gsub(&#8220;[Dd]o&#8221;,&#8221;CC&#8221;,dongwm);print dongwm;}&#8217;  test.txt
+CCngwmCCngmcom  #替换了所有符合的
+语法：match(input-string,search-string)
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;if(match(dongwm,&#8221;dongwm&#8221;));{print &#8220;match!&#8221;}}&#8217;  test.txt
+match! #搜索发现匹配
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;print tolower(dongwm)}&#8217; #转化成小写
+dongwmdongmcom
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{dongwm=&#8221;dongwmDongmcom&#8221;;print toupper(dongwm)}&#8217; #转化成大写
+DONGWMDONGMCOM</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuawkyanjiuyi/">关于awk研究（一）</a></h1>
     
     
@@ -1561,577 +1771,6 @@ class SendPostHandler(MyRequestHandler):
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/tornadoyingyonglizi/">Tornado应用例子</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-23T00:00:00+08:00" pubdate data-updated="true">Mar 23<span>rd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：网上有的tornado的例子基本都是来源于其官网，下面是一个我以前弄得一个例子，包含基本tornado所有常用功能 ：</p>
-
-<p>1 mysql数据库相关功能</p>
-
-<p>2 StaticFileHandler 静态文件处理</p>
-
-<p>3 为自己的应用自定义tornado源码实现不一样的功能（get_current_user，check_xsrf_cookie，RequestHandler）</p>
-
-<p>4 地址重定向和地址render</p>
-
-<p>5 上传文件及目标服务器保存</p>
-
-<p>6 相关html，js，get，post效果，以及将tornado数据存放到html模板以及js文件变量中</p>
-
-<p>7 xsrf策略</p>
-
-<p>8 cookies策略</p>
-
-<p>9 ssl 加密</p>
-
-<p><pre class="sh_python">
-#!/bin/env python
-#coding = utf-8</p>
-
-<p>from __future__ import division  #因为有个计算比率的除法
-import os
-import sys
-import time
-import re
-import captcha
-import base
-import urllib2
-from subprocess import call
-import tornado.ioloop
-import tornado.httpserver
-from tornado.web import StaticFileHandler,authenticated,HTTPError,asynchronous,RequestHandler,Application
-from tornado import escape  #因为我定义了很多操作，其中html文件都在本脚本实现，隐藏属性_xsrf 需要自定义获取 所以根据源码修改了获取方式
-from tornado.options import define, options
-import tornado.autoreload
-import tornado.database
-from  parse import Parse
-sys.path.append( os.path.join( os.getcwd(), '..' ) )
-from sql import gymysql</p>
-
-<p>#define("debug", default=True, type=bool)</p>
-
-<p>def err(app, log): #定义一个跳转到错误页面的函数，app表示那个RequestHandler类
-    app.render("static/jump.html", mylog=log, myclass='outageCent', mes='Error')</p>
-
-<p>def log(app,log):  #其实可以把这个和上面的函数合并成一个函数
-    app.render("static/jump.html", mylog=log, myclass='outageTitle', mes='Message')</p>
-
-<p>def view(app,data,op): #定义跳转到view.html页面的函数，这里是为了减少重复代码
-    app.render("static/view.html", data=data, op=op)</p>
-
-<p>def createt(app,src): 
-    d = Parse(src)
-    table = os.path.splitext(os.path.basename(src))[0]
-    if not d.work():  #当返回不为0，跳转到错误页面
-        err(app, "Possible format problems, the database operation fails")
-        return -1
-    else:  #当执行成功跳转到view页面，其中DBbutton是一个js调用的按键
-        view(app, table, 'DBButton')  </p>
-
-<p>class BaseHandler(RequestHandler): #继承至RequestHandler</p>
-
-<p>    def get_current_user(self):  #获取cookie用户
-        return self.get_secure_cookie("user")</p>
-
-<p>    def check_user(self):
-        if not self.current_user: #当用户不存在，自动跳转到根目录：为了防止用户直接在不登陆情况访问某页面
-            self.redirect("/")
-            return</p>
-
-<p>class LogoutHandler(RequestHandler): #这个类主要是在退出登录触发</p>
-
-<p>    @asynchronous #加上异步装饰器请求就不会被等待阻塞，可以并发请求了
-    def get(self):
-        self.clear_cookie("user") #清除用户cookie
-        #self.db.redis.rpop("saved_names")
-        self.redirect("/")</p>
-
-<p>class MyRequestHandler(RequestHandler): #主要是去掉了xsrf的验证，因为我有一些url是给客户端post数据回来用的，如果需要xsrf验证很麻烦（只是post数据，没有登录）</p>
-
-<p>    def check_xsrf_cookie(self):
-        pass</p>
-
-<p>class RootHandler(RequestHandler): #当访问根目录触发</p>
-
-<p>    @asynchronous
-    def get(self):  #访问根目录的请求会被引导至login.html文件，上面包含需要登录的帐号，密码以及验证框，输入完成点击登录
-        self.render("static/login.html")</p>
-
-<p>class HomeHandler(BaseHandler): #当用户登录被验证通过跳转到url的http://xxx/home</p>
-
-<p>    @asynchronous
-    def get(self):
-        self.check_user() #跳转到home前还是要验证用户
-        self.render("static/home.html")</p>
-
-<p>class MysqlHander:  #处理数据库操作，使用tornado自带的database，当然也可以使用其他的，比如sqlalchemy</p>
-
-<p>    def __init__(self):
-        self.db = tornado.database.Connection("localhost", \
-                  "mail", "testuser", "test623")  </p>
-
-<p>    def delete(self, table):
-        self.db.execute("drop table %s" % table)</p>
-
-<p>   def login(self, name): #验证登录用户是否在数据库中记录
-        if self.db.execute_rowcount("select * from user where User = '%s'" % name) == 1:
-            return 1
-        else:
-            return 0
-    def passwd(self,passwd): #验证用户输入的密码是否正确
-        if self.db.execute_rowcount("select * from user where Passwd = '%s'" % passwd) == 1:
-            return 1
-        else:
-            return 0</p>
-
-<p>    def update(self, table, dict): #修改table的数据
-        for i in dict.keys():
-            self.db.execute("UPDATE %s SET Sended = %d WHERE Email = '%s'" % (table,dict[i],i)) 
-    def taprint(self,table,flag=1,send=6):  #返回一个字符串，包含符合要求的条目结果，这个会传给js格式化
-        str = ''
-        for i in self.db.query("select * from %s where Flag = %d and Sended !=%d" % (table,flag,send)):
-            str+='%s,%s,' % (i['Email'],i['Sended'])
-        return str[:-1] 
-    def gettotal(self,table,flag=0):
-        count = self.db.execute_rowcount("select * from %s" % table)
-        if not flag:
-            flagcount = self.db.execute_rowcount("select * from %s where Flag =1" % table)
-            send={}
-            for i in range(6):
-                data = self.db.execute_rowcount("select * from %s where Flag =1 and Sended =%d" % (table,i))
-                send[i]=data
-            return count,flagcount,send
-        else:
-            return count</p>
-
-<p>    def getdb(self,table):
-        str = ''
-        for i in self.db.query("select Email from %s" % table):
-            str+=i['Email']+','
-        return str[:-1]</p>
-
-<p>    def check(self,table):
-        flag =0
-        for i in self.db.query("check table %s" % table):
-            if i['Msg_type']=='status' and i['Msg_text']=='OK':
-                flag =1
-        return flag 
-    def domain(self,table,domain):
-        return self.db.execute_rowcount("select * from %s where Email REGEXP '^.*@%s$'" %(table,domain)) #正则匹配</p>
-
-<p>class UploadDbCheckHandler(BaseHandler):  #提供数据库的table检查和页面显示
-    @asynchronous
-    def get(self, id): #id表示数据库table的名字
-        self.check_user()
-        if id == '':
-            err(self,"Please use the correct address") #当没有输入的时候 触发报错
-            return -1
-        try:
-            db = MysqlHander()
-            data = db.getdb(id) 
-            self.render("static/print.html", num='1', str=data)  #通过print页面展示
-        except:
-           log(self, "Database Error!") </p>
-
-<p>class WebgetHandler(BaseHandler): 
-    @asynchronous
-    def get(self, id):
-        self.check_user()
-        try:
-            db = MysqlHander()
-            str = db.taprint(id)
-            self.render("static/print.html", num='2', str=str)
-        except:
-            self.write("Don't have this table!") </p>
-
-<p>class PostHandler(MyRequestHandler): #post方法的处理 
-    @asynchronous
-    def post(self):
-        sql = gymysql()
-        uri = self.request.body
-        try:
-            mydict= eval(base.decode(uri, 'fmT0,magsqne31t')) #在这里我把数据进行了加密（使用自定义base模块），这里解密
-        except SyntaxError:
-            return -1
-        for key in mydict.keys():
-            for i in mydict[key].keys():
-                sql.update(key, i, mydict[key][i])
-        self.write("chenggong")  #告诉客户端post数据完成 </p>
-
-<p>class DomainHandler(BaseHandler): 
-    @asynchronous
-    def get(self, id):
-        self.check_user()
-        db = MysqlHander()
-        item = []
-        item2 = ''
-        try:
-            total = db.gettotal(id, flag=1)
-            for i in ['qq.com', '126.com', '163.com', '163.net', 'sina.com',\
-                  'sina.com.cn', 'sohu.com', 'gmail.com', 'yahoo.com',\
-                  'yahoo.com.cn', 'live.com', 'hotmail.com']:
-                num = int(db.domain(id, i))
-                item.append('%s rate:%6.2f%s' % (i, num/total*100, '%'))
-                t = total - num
-                dat = i + '@' + str(num)
-                item2 += dat + ','
-            dat = 'Other'+'@'+str(t)
-            item2 += dat
-            call('python chart2.py %s' % item2, shell=True)
-            title = '%s Table Statistics' % id
-            self.render("static/total.html", title=title, ontitle=title, items=item)
-        except:
-            raise
-            self.write("Don't have this table!")</p>
-
-<p>class WebHandler(BaseHandler): 
-    @asynchronous
-    def get(self, id):
-        self.check_user()
-        try:
-            db = MysqlHander()
-            total = db.gettotal(id)
-            totalmail = total[0]
-            sendedmail = total[1]
-            if sendedmail==0:
-                sendedmail=1
-            items = [] 
-            item2 = ''
-            items.append("Total Mails:%d" % totalmail)
-            items.append("Process Mails:%d" % sendedmail)
-            items.append("Success Send Mails:%d  Send success rate:%6.2f" \
-                         % (total[2][1],total[2][1]/sendedmail))
-            item2+='Success@'+str(total[2][1]) + ','
-            items.append("Deferred Send Mails:%d  Send deferred rate:%6.2f" \
-                         % (total[2][2],total[2][2]/sendedmail))
-            item2+='Deferred@'+str(total[2][2]) + ','
-            items.append("Bounced Send Mails:%d  Send bounced rate:%6.2f" \
-                         % (total[2][3],total[2][3]/sendedmail))
-            item2+='Bounced@'+str(total[2][3]) + ','
-            items.append("Deferral Send Mails:%d  Send deferral rate:%6.2f"\
-                         % (total[2][4],total[2][4]/sendedmail))
-            item2+='Deferral@'+str(total[2][4]) + ',' 
-            items.append("Reject Send Mails:%d  Send reject rate:%6.2f"\
-                         % (total[2][5],total[2][5]/sendedmail))
-            item2+='Reject@' + str(total[2][5])
-            title = '%s Mail Statistics' % id
-            call('python chart2.py %s' % item2, shell=True) #这个chart.py是pychat模块，画图类，生成一个图表 可能更加直观。
-                                                         #但是我使用import chart时候没有起效果，所以将数据作为命令参数方式直接执行脚本以
-                                                         #实现每次先更新图像，再展示展示html
-            self.render("static/total.html", title=title, ontitle=title, items=items)
-        except:
-            raise
-            self.write("Don't have this table!")</p>
-
-<p>class DeleteHandler(MyRequestHandler): #一个删除的处理</p>
-
-<p>    def get_argument(self, name, strip=True): 
-        default =[]
-        args = self.get_arguments(name, strip=strip)
-        if not args:
-            return default
-        return args[-1] 
-    @asynchronous
-    def post(self):
-        try:
-            data = self.get_argument("delete")
-        except:
-            err(self, "Please enter the information you want to delete !")
-            return -1
-        if self.get_argument("opert"):  #当post返回的参数包含opert，删掉数据库table
-            d =MysqlHander()
-            if not d.check(data):  #验证是否存在这个table
-                err(self, "Don't have this table!")
-                return -1
-            try:
-                d.delete(data)
-            except:
-                err(self, "Database Error!")
-            log(self,"Table has been deleted!") #跳转到成功页面</p>
-
-<p>        if self.get_argument("operf"):
-            try:
-                os.remove("uphtml/"+ data)  #参数包含operf，删除这个文件
-            except:
-                err(self, "Error!")
-                return -1
-            log(self, "Html File has been deleted!") </p>
-
-<p>class LoginHandler(BaseHandler): #登录处理
-    @asynchronous
-    def post(self):
-        if not self.request.headers.get("Cookie"): #验证浏览器是否支持cookie
-            self.write("Does not support Cookie!")
-        uri = self.request.body
-        mydict = {}
-        for i in uri.split('&amp;'):
-            data = i.split('=')
-            if data[0] =='login':
-                data[1] = urllib2.unquote(urllib2.unquote(urllib2.unquote(data[1])))  #这个一直没修改，就是把页面url解码
-            mydict[data[0]] = data[1]
-        db = MysqlHander()
-        for i in ['login', 'passwd']:  #根据用户名和密码双重验证，和一起验证比，输出的警告不同：会明确的告诉你是用户名错误还是密码错误
-            flag = getattr(db, i)(mydict[i])
-            if not flag:
-                self.write("%s error!" % i)
-                return -1
-        remote_ip = self.request.remote_ip
-        challenge = self.get_argument('recaptcha_challenge_field', None)
-        response =  self.get_argument('recaptcha_response_field', None)
-        rsp = captcha.check_google_captcha(self,remote_ip,challenge,response)
-        if not rsp.is_valid:  #以上的这些都是验证图片来验证输入字符是不是图片上面的字符
-             self.write('Verification code error!')
-             return -1
-        self.set_secure_cookie("user", mydict['login'])
-        self.write("Login Success") </p>
-
-<p>class CatchHandler(MyRequestHandler):  #这是一个远程操作的处理，根据参数，对一些可以直接ssh信任登陆的机器执行一些操作（使用paramiko）
-    @asynchronous
-    def post(self):
-        import ConfigParser
-        uri = self.request.body
-        num =  int(uri.split('=')[1])
-        conf = ConfigParser.ConfigParser()
-        conf.read('config.interval') 
-        cur_num = conf.getint("config","SendInterval")
-        if cur_num == num:
-            self.write('The current interval has been %d' % num)
-            return -1
-        else:
-            conf.set("config", "SendInterval",num)
-        conf.write(open("config.interval", "w")) 
-        data = call('sh deploy.sh config.interval &gt; /dev/null 2&gt;&amp;1', shell=True)
-        if data:
-            self.write('ssh Connect to the server error!')
-        import paramiko
-        for i in range(12,26):
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            try:
-                ssh.connect('mta%d' % i, 61012, timeout=10)
-            except:
-                continue
-            ssh.exec_command("kill -9 `ps -ef |grep Re|grep -v grep |awk '{print $2}'`")
-            ssh.exec_command("kill -9 `ps -ef |grep eventhandler|grep -v grep |awk '{print $2}'`")
-            ssh.exec_command("python /home/dongwm/RevSocket.py")
-            #ssh.exec_command("if [ `ps -ef |grep -v grep |grep RevS|wc -l` == 0 ]; then python /home/dongwm/RevSocket.py ;fi")
-            ssh.close()
-        for i in range(1,6):
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            try:
-                ssh.connect('cmta%d' % i, 22, timeout=10)
-            except:
-                continue
-            ssh.exec_command("kill -9 `ps -ef |grep Re|grep -v grep |awk '{print $2}'`")
-            ssh.exec_command("kill -9 `ps -ef |grep eventhandler|grep -v grep |awk '{print $2}'`")</p>
-
-<p>            ssh.exec_command("python /home/dongwm/RevSocket.py")
-            #ssh.exec_command("if [ `ps -ef |grep -v grep |grep RevS|wc -l` == 0 ]; then python /home/dongwm/RevSocket.py ;fi")
-            ssh.close()
-        self.write('Operation is complete!')  #这里是ajax的，操作完成，前台弹出alert框</p>
-
-<p>class UploadHtmlHandler(MyRequestHandler): #上传文件处理
-    @asynchronous
-    def post(self):
-        try:
-            try:
-                myfile = self.request.files['myfile']
-            except:
-                err(self, "Please enter the file's address!")
-                return -1
-            for f in myfile:
-                hz = os.path.splitext(f['filename'])[1][1:]
-                if  hz != 'html':
-                    err(self,"Temporarily only to receive the  formats of the html file!")
-                    return -1
-                src = "uphtml/" + f['filename']
-                with open(src, 'w+') as c:
-                    c.write(f['body'])
-                view(self, f['filename'], 'HTMLButton')
-        except:
-            err(self, "file upload ERROR! try again")
-            return -1 </p>
-
-<p>class SendPostHandler(MyRequestHandler): 
-    @asynchronous
-    def post(self):
-        uri = self.request.body
-        sql = MysqlHander()
-        mydict = {}
-        for i in uri.split('&amp;'):
-            data = i.split('=')
-            mydict[data[0]]=data[1]
-        htmlpath = 'uphtml/' + mydict['html']
-        if not os.path.exists(htmlpath):
-            self.write('This html file does not exist!')
-            return -1
-        #if int(sql.gettotal(mydict['table'], flag=1)) &lt; int(mydict['sendnum']):
-        #    mydict['sendnum'] = sql.gettotal(mydict['table'], flag=1)
-        #elif int(mydict['sendnum']) == 0:
-        #    mydict['sendnum'] = sql.gettotal(mydict['table'], flag=1)
-        if not sql.check(mydict['table']):
-            self.write('This table does not exist!')
-            return -1
-        m = re.compile('^\w+([-+.]\w+)*@(ailll|dongwm).com') 
-        sender = urllib2.unquote(mydict['sender'])
-        if not m.match(sender):
-            self.write('E-mail address only to support ailll.com or dongwm.com')
-            return -1
-        senderid = urllib2.unquote(mydict['senderid'])
-        head = urllib2.unquote(mydict['head']) 
-        import Main
-        d = Main.Send()
-        d.General('mail', mydict['table'], sender, head, senderid, mydict['html']) 
-        self.write('Sender Done!') </p>
-
-<p>class ChoosetHandler(MyRequestHandler): #一个包含选择的处理 
-    @asynchronous
-    def post(self):
-        try:
-            ch = int(self.get_argument("ch"))
-        except:
-            err(self, "Please choose how!")
-            return -1
-        try:
-            src = self.get_argument("src")
-        except:
-            err(self, "error!")
-            return -1
-        if ch == 2:  #选择2  直接创建table
-           createt(self, src) 
-        elif ch == 1:  #选择1 删除table，在重新创建：相当于覆盖
-            d = MysqlHander()
-            d.delete(os.path.splitext(os.path.basename(src))[0])
-            createt(self, src)
-        else:
-           err(self, "Cancel!")  </p>
-
-<p>class RadomDbHandler(MyRequestHandler):  
-    @asynchronous
-    def post(self):
-        num = int(self.get_argument("num")) 
-        import rt
-        rt.work(self, num) </p>
-
-<p>class UploadDbHandler(MyRequestHandler):  
-    def choose(self,flag,table):
-       if flag ==1:
-           d = MysqlHander()
-           d.delete(table)  
-    @asynchronous
-    def post(self):
-        try:
-            choose = int(self.get_argument("choose"))  #这里是radio方式的选择，单选。但是不选会异常处理
-        except:
-            err(self, "Please choose whether or not to create a database!") 
-            return -1
-        try:
-            myfile = self.request.files['myfile']
-        except:
-            err(self, "Please enter the file's address!")
-            return -1
-        if choose:
-            try:
-                for f in myfile:
-                    hz = os.path.splitext(f['filename'])[1][1:]
-                    if  (hz != 'txt') and (hz != 'xls') and (hz !='csv'): 
-                        err(self,"Temporarily only to receive the three \
-                        formats of the csv / txt / xls file!")
-                        return -1
-                    src = "upload/" + f['filename'] 
-                    with open(src, 'w+') as c:
-                        c.write(f['body'])
-            except:
-                err(self, "file upload ERROR! try again")
-                return -1
-            sql = MysqlHander()
-            table = os.path.splitext(os.path.basename(src))[0]
-            check = sql.check(table)
-            if check:
-                self.render("static/choose.html", src=src)
-            else:
-                createt(self, src)
-        else:
-            log(self,"no create!")  
-    def data(self):
-       log(self,"Has been uploaded files:")
-       for root, dirs, files in os.walk('./upload'):
-            log(self, "%s" % files) </p>
-
-<p>class Application(tornado.web.Application): #子类化Application 
-    def __init__(self):
-        settings = {
-        "static_path": os.path.join(os.path.dirname(__file__), "static"),
-        "upload_path": os.path.join(os.path.dirname(__file__), "uphtml"),
-        "cookie_secret":"24oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=", 
-        "login_url": "/login",
-        "xsrf_cookies": True,
-       # "autoescape":None,
-         }
-        handlers = [
-        (r"/post_path", PostHandler),
-        (r"/sendinterval", CatchHandler),
-        (r"/uploadt", UploadDbHandler),
-        (r"/uploadrt", RadomDbHandler),
-        (r"/uploadh", UploadHtmlHandler),
-        (r"/chooset", ChoosetHandler),
-        (r"/del", DeleteHandler),
-        (r"/mail/(.*)", WebHandler),
-        (r"/domain/(.*)", DomainHandler),
-        (r"/check/(.*)", WebgetHandler),
-        (r"/home",HomeHandler),
-        (r"/",RootHandler),
-        (r"/login", LoginHandler),
-        (r"/logout", LogoutHandler),
-        (r"/path", SendPostHandler),
-        (r"/db/(.*)", UploadDbCheckHandler),
-        (r"/uphtml/(.*)", StaticFileHandler,dict(path=settings['upload_path'])),
-         ]
-        tornado.web.Application.__init__(self, handlers, **settings) </p>
-
-<p>if __name__ == "__main__":
-    http_server = tornado.httpserver.HTTPServer(Application(), ssl_options={ #指定使用ssl加密，具体加密方法以及自己的参考其他资料
-           "certfile": os.path.join(os.path.abspath("."), "server.crt"),
-           "keyfile": os.path.join(os.path.abspath("."), "server.key"),
-       })
-    http_server.listen(443)
-    loop = tornado.ioloop.IOLoop.instance()
- #   tornado.autoreload.start(loop)
-    loop.start()
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/19/">&larr; Older</a></li>
@@ -2154,6 +1793,10 @@ from sql import gymysql</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -2189,10 +1832,6 @@ from sql import gymysql</p>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

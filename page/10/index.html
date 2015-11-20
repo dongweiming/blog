@@ -141,6 +141,237 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusocketyanjiuyi/">关于socket研究(一)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言；socket是python网络通讯的模块，socket用于描述IP地址和端口，是一个通信链的句柄。在Internet上的主机一般运行了多个服务软件，同时提供几种服务。每种服务都打开一个Socket，并绑定到一个端口上，不同的端口对应于不同的服务。Socket正如其英文原意那样，象一个多孔插座。</p>
+
+<p><pre class="sh_python">
+import socket
+print socket.gethostname()  #获取linux主机的hostname
+print socket.gethostbyname('www.dongwm.com')  #获取www.dongwm.com的ip
+hostname, aliases, addresses = socket.gethostbyname_ex('www.baidu.com')  #获取主机名，别名和ip地址
+print hostname, aliases, addresses
+print socket.getfqdn('www.dongwm.com')  #获取<span><em>FQDN</em></span>(<span>全称域名</span>)
+hostname, aliases, addresses = socket.gethostbyaddr('61.135.169.105')  #通过ip获取主机名，别名和ip地址
+print hostname, aliases, addresses
+
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+from urlparse import urlparse,urlunparse</p>
+
+<p>for url in [ 'http://www.python.org',
+             'https://www.mybank.com',
+             'ftp://prep.ai.mit.edu',
+             'gopher://gopher.micro.umn.edu',
+             'smtp://mail.example.com',
+             'imap://mail.example.com',
+             'imaps://mail.example.com',
+             'pop3://pop.example.com',
+             'pop3s://pop.example.com',
+             ]:
+    parsed_url = urlparse(url)
+    port = socket.getservbyname(parsed_url.scheme)  #通过urlparse解析协议端口
+    print '%6s : %s' % (parsed_url.scheme, port)
+for port in [ 80, 443, 21, 70, 25, 143, 993, 110, 995 ]:
+    print urlunparse(
+        (socket.getservbyport(port), 'example.com', '/', '', '', '')  #通过端口返回协议前缀
+        )
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+http : 80
+https : 443
+ftp : 21
+gopher : 70
+smtp : 25
+imap : 143
+imaps : 993
+pop3 : 110
+pop3s : 995
+http://example.com/
+https://example.com/
+ftp://example.com/
+gopher://example.com/
+smtp://example.com/
+imap://example.com/
+imaps://example.com/
+pop3://example.com/
+pop3s://example.com/</p>
+
+<p><pre class="sh_python">
+import socket</p>
+
+<p>def get_constants(prefix):
+    """Create a dictionary mapping socket module constants to their names."""
+    return dict( (getattr(socket, n), n)
+                 for n in dir(socket)
+                 if n.startswith(prefix)
+                 )</p>
+
+<p>protocols = get_constants('IPPROTO_')</p>
+
+<p>for name in [ 'icmp', 'udp', 'tcp' ]:
+    proto_num = socket.getprotobyname(name)  #获取协议号
+    const_name = protocols[proto_num]  #协议标识
+    print '%4s -&gt; %2d (socket.%-12s = %2d)' % \
+        (name, proto_num, const_name, getattr(socket, const_name))
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+icmp -&gt;  1 (socket.IPPROTO_ICMP =  1)
+udp -&gt; 17 (socket.IPPROTO_UDP  = 17)
+tcp -&gt;  6 (socket.IPPROTO_TCP  =  6)
+<pre class="sh_python">
+import socket</p>
+
+<p>def get_constants(prefix):
+    """Create a dictionary mapping socket module constants to their names."""
+    return dict( (getattr(socket, n), n)  #返回一个<span>模块定义的标识符</span>符合某前缀标识号和名字的字典
+                 for n in dir(socket)
+                 if n.startswith(prefix)
+                 )</p>
+
+<p>families = get_constants('AF_')  #返回协议簇
+types = get_constants('SOCK_')  #套接字类型
+protocols = get_constants('IPPROTO_')  #协议类型</p>
+
+<p>for response in socket.getaddrinfo('www.python.org', 'http'): #gethostbyname和gethostbyaddr这两个函数仅仅支持IPv4，
+                                       #getaddrinfo函数能够处理名字到地址以及服务到端口这两 种转换</p>
+
+<p>    family, socktype, proto, canonname, sockaddr = response</p>
+
+<p>    print 'Family        :', families[family]
+    print 'Type          :', types[socktype]
+    print 'Protocol      :', protocols[proto]
+    print 'Canonical name:', canonname
+    print 'Socket address:', sockaddr
+    print
+for response in socket.getaddrinfo('www.python.org', 'http',  
+                                   socket.AF_INET,      # 添加筛选添加，family
+                                   socket.SOCK_STREAM,  # socktype
+                                   socket.IPPROTO_TCP,  # protocol
+                                   socket.AI_CANONNAME, # flags
+                                   ):</p>
+
+<p>    family, socktype, proto, canonname, sockaddr = response</p>
+
+<p>    print 'Family        :', families[family]
+    print 'Type          :', types[socktype]
+    print 'Protocol      :', protocols[proto]
+    print 'Canonical name:', canonname
+    print 'Socket address:', sockaddr
+    print
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Family        : AF_INET
+Type          : SOCK_DGRAM
+Protocol      : IPPROTO_UDP
+Canonical name:
+Socket address: (&#8216;82.94.164.162&#8217;, 80)</p>
+
+<p>Family        : AF_INET
+Type          : SOCK_STREAM
+Protocol      : IPPROTO_TCP
+Canonical name:
+Socket address: (&#8216;82.94.164.162&#8217;, 80)</p>
+
+<p>Family        : AF_INET6
+Type          : SOCK_DGRAM
+Protocol      : IPPROTO_UDP
+Canonical name:
+Socket address: (&#8216;2001:888:2000:d::a2&#8217;, 80, 0, 0)</p>
+
+<p>Family        : AF_INET6
+Type          : SOCK_STREAM
+Protocol      : IPPROTO_TCP
+Canonical name:
+Socket address: (&#8216;2001:888:2000:d::a2&#8217;, 80, 0, 0)</p>
+
+<p>
+Family        : AF_INET
+Type          : SOCK_STREAM
+Protocol      : IPPROTO_TCP
+Canonical name: dinsdale.python.org
+Socket address: (&#8216;82.94.164.162&#8217;, 80)
+<pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>string_address = sys.argv[1]
+packed = socket.inet_aton(string_address)  #将ip地址的4段地址分别进行2进制转化，但输出用16进制表示</p>
+
+<p>print 'Original:', string_address
+print 'Packed  :', binascii.hexlify(packed)
+print 'Unpacked:', socket.inet_ntoa(packed) #从网络字节序的数字’’转换为ip
+</pre>
+执行结果：
+dongwm@linux-dongwm:~&gt; python test.py 192.168.1.1
+Original: 192.168.1.1
+Packed  : c0a80101
+Unpacked: 192.168.1.1
+dongwm@linux-dongwm:~&gt; python test.py 127.0.0.1
+Original: 127.0.0.1
+Packed  : 7f000001
+Unpacked: 127.0.0.1
+<pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>string_address = sys.argv[1]
+packed = socket.inet_pton(socket.AF_INET6, string_address)  #socket.inet_pton代替socket.inet_aton指定参数处理ipv6地址
+
+print 'Original:', string_address
+print 'Packed  :', binascii.hexlify(packed)
+print 'Unpacked:', socket.inet_ntop(socket.AF_INET6, packed) ##从网络字节序的数字’’转换为ipv6
+</pre></p>
+
+<p></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonzhuabaochengxupypcap/">Python抓包程序（pypcap）</a></h1>
     
     
@@ -2350,150 +2581,6 @@ zf = zipfile.PyZipFile('zipfile_pyzipfile.zip', mode='w') #直接将当前目录
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuxmlrpclibyanjiu/">关于xmlrpclib研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>&nbsp;</p>
-
-<p>前言：xmlrpclib是python中用于xmlrpc调用的模块</p>
-
-<p>以下例子的服务器端：</p>
-
-<p><pre class="sh_python">
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-from xmlrpclib import Binary
-import cPickle as pickle
-import datetime</p>
-
-<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True, allow_none=True)
-server.register_introspection_functions()
-server.register_multicall_functions()</p>
-
-<p>class ExampleService:</p>
-
-<p>    def ping(self):
-        return True </p>
-
-<p>    def now(self):
-        return datetime.datetime.now()  #返回当前时间</p>
-
-<p>    def show_type(self, arg):
-        return (str(arg), str(type(arg)), arg)</p>
-
-<p>    def raises_exception(self, msg):
-        raise RuntimeError(msg)</p>
-
-<p>    def send_back_binary(self, bin):
-        data = bin.data
-        response = Binary(data)
-        return response</p>
-
-<p>server.register_instance(ExampleService())</p>
-
-<p>try:
-    print 'Use Control-C to exit'
-    server.serve_forever()
-except KeyboardInterrupt:
-    print 'Exiting'
-</pre></p>
-
-<p><pre class="sh_python">
-import xmlrpclib
-import datetime</p>
-
-<p>server = xmlrpclib.ServerProxy('http://localhost:9000', verbose=True) #返回一个连接服务器的实例,verbose=True显示调试信息，否则直接输出结果
-                                                #encoding='gbk':默认的编码是utf－8，这里可以修改成'gbk'。
-print 'Ping:', server.ping()   #上面定义 返回True  这里就会显示：True
-server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=True) #allow_none=True便表示容许把none自动转化成'nil'
-print 'Allowed:', server.show_type(None)</p>
-
-<p>server = xmlrpclib.ServerProxy('http://localhost:9000', allow_none=False) 
-print 'Not allowed:', server.show_type(None) #触发TypeError
-for t, v in [ ('boolean', True),   #XML-RPC协议识别有限的常见的数据类型
-              ('integer', 1),
-              ('floating-point number', 2.5),
-              ('string', 'some text'), 
-              ('datetime', datetime.datetime.now()),
-              ('array', ['a', 'list']),
-              ('array', ('a', 'tuple')),
-              ('structure', {'a':'dictionary'}),
-            ]:
-    print '%-22s:' % t, server.show_type(v)
-class MyObj:
-    def __init__(self, a, b):
-        self.a = a
-        self.b = b
-    def __repr__(self):
-        return 'MyObj(%s, %s)' % (repr(self.a), repr(self.b))
-o = MyObj(1, 'b goes here')
-print 'o=', o
-print server.show_type(o)
-o2 = MyObj(2, o)  #传递对象给o2 ，把{'a': 1, 'b': 'b goes here'} 传递给key：b的值
-print 'o2=', o2
-print server.show_type(o2)
-o = MyObj(1, 'b goes here')
-print 'Local:', o, id(o) 
-print 'As object:', server.show_type(o) 
-p = pickle.dumps(o) #数据持久化
-b = xmlrpclib.Binary(p)  #二进制模式传送
-r = server.send_back_binary(b) #返回数据
-o2 = pickle.loads(r.data)  #还原持久化
-print 'From pickle:', o2, id(o2)  #数据相同，但是id不同 因为是不一样的对象
-try:
-    server.raises_exception('A message')
-except Exception, err:
-    print 'Fault code:', err.faultCode  #触发异常的code
-    print 'Message   :', err.faultString #触发异常相应的内容
-s = 'This is a string with control characters' + '\0' #包含无效的XML字符
-print 'Local string:', s</p>
-
-<p>data = xmlrpclib.Binary(s) #需要传递二进制数据，最好是使用<tt>二进制</tt>类编码
-print 'As binary:', server.send_back_binary(data)  #正常打印</p>
-
-<p>print 'As string:', server.show_type(s) #但是xml不识别  触发异常
-multicall = xmlrpclib.MultiCall(server)  #同时查询某一个连接对象的返回
-multicall.ping()  #返回：  0：True   前面的数值自增长
-multicall.show_type(1)
-multicall.raises_exception('Next to last call stops execution') #这里一个触发，multicall就不再继续了
-multicall.show_type('string')</p>
-
-<p>for i, r in enumerate(multicall()):
-    print i, r
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/11/">&larr; Older</a></li>
@@ -2516,6 +2603,10 @@ multicall.show_type('string')</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -2551,10 +2642,6 @@ multicall.show_type('string')</p>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

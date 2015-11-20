@@ -141,6 +141,116 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyucookieyanjiu/">关于cookie研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：cookie主要用于解析和创建HTTP Cookie标头的模块，cookie通常是用来对站点管理，由服务器存储，客户端返回</p>
+
+<p><pre class="sh_python">
+import Cookie
+import datetime</p>
+
+<p>c = Cookie.SimpleCookie()  </p>
+
+<p>c['encoded_value_cookie'] = '"cookie_value"'
+c['encoded_value_cookie']['comment'] = 'Notice that this cookie value has escaped quotes'  #cookie 的目标用途,客户端可以检查此注释，并决定是否接受此 cookie</p>
+
+<p>c['restricted_cookie'] = 'cookie_value'
+c['restricted_cookie']['path'] = '/some/path' #<span style="font-family: 宋体,宋体,宋体;">则 cookie 将只发送到对该路径的请求中。如果未设置该属性，则使用应用程序的路径</span>
+c['restricted_cookie']['domain'] = 'dongwm'  #<span style="font-family: 宋体,宋体,宋体;">cookie 将被发送到对该域的请求中去</span>
+c['restricted_cookie']['secure'] = True #<span style="font-family: 宋体,宋体,宋体;">指定 cookie 是否安全</span> 为真时，cookie 只能通过安全通道传输（目前即SSL通道）。否则，浏览器将忽略此Cookie</p>
+
+<p>c['with_max_age'] = 'expires in 5 minutes'
+c['with_max_age']['max-age'] = 300  #用秒来设置cookie的生存期</p>
+
+<p>c['expires_at_time'] = 'cookie_value'
+expires = datetime.datetime(2013, 2, 14, 00, 30, 12) + datetime.timedelta(hours=1)
+c['expires_at_time']['expires'] = expires.strftime('%a, %d %b %Y %H:%M:%S') #<span style="font-family: 宋体,宋体,宋体;">cookie 的过期日期。为了在会话结束后将 cookie 存储在客户端磁盘上，必须设置该日期。
+ #若此项属性的设置未超过当前日期，则在任务结束后 cookie 将到期</span>
+</pre></p>
+
+<p><pre class="sh_python">
+import Cookie</p>
+
+<p>HTTP_COOKIE = r'integer=5; string_with_quotes="He said, \"Hello, World!\""'</p>
+
+<p>print 'From constructor:'
+c = Cookie.SimpleCookie(HTTP_COOKIE)
+print c</p>
+
+<p>print
+print 'From load():'
+c = Cookie.SimpleCookie()
+c.load(HTTP_COOKIE) #接受解析cookie
+print c
+</pre></p>
+
+<p>操作过程：</p>
+
+<p>From constructor:
+Set-Cookie: integer=5
+Set-Cookie: string_with_quotes=&#8221;He said, &#34;Hello, World!&#34;&#8221;</p>
+
+<p>From load():
+Set-Cookie: integer=5
+Set-Cookie: string_with_quotes=&#8221;He said, &#34;Hello, World!&#34;&#8221;</p>
+
+<p><pre class="sh_python">
+import Cookie
+c = Cookie.SimpleCookie()
+c['mycookie'] = 'cookie_value'
+c['another_cookie'] = 'second value'
+print c.js_output() #除了使用Set-Cookie头，它是可以使用JavaScript将Cookie添加到客户端
+</pre>
+结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py</p>
+
+<p>&lt;script type=&#8221;text/javascript&#8221;&gt;
+&lt;!&#8211; begin hiding
+document.cookie = &#8220;another_cookie=&#34;second value&#34;&#8221;;
+// end hiding &#8211;&gt;
+&lt;/script&gt;</p>
+
+<p>&lt;script type=&#8221;text/javascript&#8221;&gt;
+&lt;!&#8211; begin hiding
+document.cookie = &#8220;mycookie=cookie_value&#8221;;
+// end hiding &#8211;&gt;
+&lt;/script&gt;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuconfigparseryanjiu/">关于ConfigParser研究</a></h1>
     
     
@@ -1328,87 +1438,6 @@ print 'Decoded :', decoded_string  #将编码后数据解码
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuatexityanjiu/">关于atexit研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：atexit是一个用于一个执行某程序后触发的，执行一个方法的模块，当正常执行后会调用这个回调函数。</p>
-
-<p>下面是一个例子，因为一场退出不触发这个方法：</p>
-
-<p><pre class="sh_python">
-import atexit
-import os</p>
-
-<p>def not_called():  #这个就是想触发的方法
-    print 'This should not be called'  </p>
-
-<p>print 'Registering'
-atexit.register(not_called)  #注册这个方法
-print 'Registered'</p>
-
-<p>print 'Exiting...'
-os._exit(0)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python !$
-python test.py
-Registering
-Registered
-Exiting&#8230;
-而且atexit还支持装饰器用法:</p>
-
-<p><pre class="sh_python">
-import atexit
-import os
-print 'Registering'
-@atexit.register
-def not_called():
-    print 'This should be called'
-print 'Registered'
-</pre></p>
-
-<p>执行结果是：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Registering
-Registered
-This should be called</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1431,6 +1460,10 @@ This should be called</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1466,10 +1499,6 @@ This should be called</p>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

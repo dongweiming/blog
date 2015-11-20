@@ -141,6 +141,68 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%AE%89%E8%A3%85debian%E5%90%8E%E6%97%A0%E6%B3%95%E8%BF%9B%E5%85%A5windows-7-%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">安装debian后无法进入windows 7 解决办法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-14T00:00:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近安装了debian6.1版本，发现grub没有了windows7 菜单选项，这个grub是debian的天下。。。研究后感觉应该是debian使用了grub2的缘故，解决办法如下：</p>
+
+<p><pre class="sh_bash">sudo vi /boot/grub/grub.cfg</p>
+
+<p>将 windows 7 信息写进去：</p>
+
+<p>### BEGIN /etc/grub.d/30_os-prober ###</p>
+
+<p>menuentry "Windows 7 (loader) (on /dev/sda2)" {</p>
+
+<p>insmod part_msdos</p>
+
+<p>insmod ntfs</p>
+
+<p>set root='(hd0,msdos2)'</p>
+
+<p>search --no-floppy --fs-uuid --set 2e40f57240f540df</p>
+
+<p>chainloader +1</p>
+
+<p>}</p>
+
+<p>### END /etc/grub.d/30_os-prober ###</pre></p>
+
+<p>注：其中分区信息可以使用在开机进入grub菜单按“c”，然后在grub&gt;下输入 root （hd0，X）（实在不懂X可以从0开始试 ） –&gt; chainloader +1 –&gt; boot 要是启动到windows  说明这个就是需要找的</p>
+
+<p>然后 执行 sudo update-grub    重启电脑就可以了</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E4%BF%AE%E6%94%B9opensuse%E4%BF%AE%E6%94%B9%E5%BC%80%E6%9C%BA%E8%BF%87%E7%A8%8B%E8%83%8C%E6%99%AF%E7%94%BB%E9%9D%A2%E5%92%8Cgrub%E5%BC%80%E5%90%AF%E4%BC%81%E9%B9%85%E5%8A%A8%E7%94%BB%E6%8A%80/">修改opensuse修改开机过程背景画面和Grub开启企鹅动画技巧</a></h1>
     
     
@@ -1060,86 +1122,6 @@ ps -ef |grep httpd|grep -v grep |wc -l</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/">OSPF验证配置 (MD5验证)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-30T00:00:00+08:00" pubdate data-updated="true">Mar 30<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>实验要求</strong></p>
-
-<p><strong>1. 完成路由器的基本配置和连通性配置</strong>
-<strong> 2．根据拓扑图的示意，分成两个区域 area 0和area 100 OSPF的进程号为100</strong>
-<strong> 3. 完成OSPF路由协议的MD5验证功能</strong>
-<strong> 4．完成以上配置后进行测试，从R1 ping通 R3上的S1、loopback0以及loopback1；反之，R3 ping 通 R1上的S0、loopback0以及loopback1</strong></p>
-
-<p><strong>R1 配置</strong></p>
-
-<p><pre class="sh_bash">Router&gt;enable
-Router#configure terminal
-Enter configuration commands, one per line.  End with CNTL/Z.
-Router(config)#hostname 01r1
-01r1(config)#line console 0
-01r1(config-line)#logging synchronous
-01r1(config-line)#exit
-01r1(config)#no ip domain-lookup
-01r1(config)#int s0/0
-01r1(config-if)#no shutdown
-01r1(config-if)#ip address 210.1.12.1 255.255.255.0
-01r1(config-if)#clock rate 64000
-01r1(config-if)#int loopback 0
-01r1(config-if)#ip address 1.1.1.1 255.255.255.255
-01r1(config-if)#int loopback 1
-01r1(config-if)#ip address 11.11.11.11 255.255.255.255
-01r1(config-if)#exit
-01r1(config)#router ospf 100
-01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
-01r1(config-router)#network 210.1.12.1 0.0.0.255 area 0
-01r1(config-router)#network 1.1.1.1 0.0.0.0 area 0
-01r1(config-router)#network 11.11.11.11 0.0.0.0 area 0
-01r1(config-router)#end
-01r1#conf t
-Enter configuration commands, one per line.  End with CNTL/Z.
-01r1(config)#int s0/0
-01r1(config-if)#ip ospf authentication message-digest
-*Mar  1 00:06:46.503: %SYS-5-CONFIG_I: Configured from console by console
-01r1(config-if)#ip ospf message-digest-key 1 md5 cisco123
-OSPF: Key 1 already exists
-01r1(config-if)#
-*Mar  1 00:07:25.543: %LINEPROTO-5-UPDOWN: Line protocol on Interface Serial0/0, changed state to up
-*Mar  1 00:07:26.003: %OSPF-5-ADJCHG: Process 100, Nbr 22.22.22.22 on Serial0/0 from LOADING to FULL, Loading Done</pre></div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/ospf%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE-md5%E9%AA%8C%E8%AF%81/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/28/">&larr; Older</a></li>
@@ -1162,6 +1144,10 @@ OSPF: Key 1 already exists
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1197,10 +1183,6 @@ OSPF: Key 1 already exists
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

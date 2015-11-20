@@ -141,6 +141,80 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/compiz-%E5%A4%96%E6%8C%82%E6%8F%92%E4%BB%B6%E6%AC%A3%E8%B5%8F%E5%92%8C%E5%AE%89%E8%A3%85/">Compiz 外挂插件欣赏和安装</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-27T00:00:00+08:00" pubdate data-updated="true">May 27<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>其实很早就想写一篇关于compiz一个不为人知的插件的安装使用文章。很多人以为compiz就是那一些，其实在http://gitweb.compiz.org/上面有很多插件。不过有一些年代久远没人维护。网上可能有一些介绍这些插件的文章，只是停留在截图和简单地说明，包括ubuntu社区也没有相关的解释。作为一个菜鸟 呵呵 我来写一下：</strong>
+<strong>视频地址：http://v.youku.com/v_show/id_XMjcwNDUyODQ0.html
+视频顺序：wizard，trip，freewins，autumn，stars，snow，fireslies，bubbles，screensaver，dodge（非</strong>
+<strong> “动画”里面的选项），ghost，贯穿始终的包括peek和mousetrails。因为我的电脑比较卡，显卡性能不行，没有展示立体效果的</strong>
+<strong> photowheel和snowglobe以及extra-animations，anaglyph（需要3D眼镜）</strong>
+<strong>1 前提知识准备：</strong>
+cmake：和make类似，全名&#8221;cross platform make”。好像compiz在0.9.0以后编译系统都从automake换成cmake。
+boost库：因为compiz再0.9.0以后重写了C 使用C++ 需要这个C++库
+git：版本控制工具，linux之父所作！一般更新包文件都使用这个工具，我们要下载的compiz插件都是git版本控制</p>
+
+<p><strong>2 前期准备：</strong>
+dongwm@dongwm:~$sudo apt-get install git-core cmake libcairo2-dev librsvg2-dev libglib2.0-dev libpng12-dev libdbus-1-dev libboost-dev libxml2-dev libgl1-mesa-dev libglu1-mesa-dev libwnck-dev libgconf2-dev libx11-xcb-dev libxslt1-dev libnotify-dev libmetacity-dev libgnome-window-settings-dev libgnome-desktop-dev gnome-control-center-dev intltool cython  git
+注 等以后安装过程中要是提示boost不存在或者怎么样 那就是libboost的库没有装全，我没有挨个研究，就把新立得关于boost相关的勾选了
+<strong>3 安装思路</strong></p>
+
+<p>所有的插件地址都在http://gitweb.compiz.org/ 点开每个链接 里面会有类似的地址：git://URL（一个地址）
+然后我们在本地执行：
+dongwm@dongwm:~$git clone git://URL
+一下过程也可以实现：
+dongwm@dongwm:~$cd 下载的插件的英文名称
+dongwm@dongwm:~$mkdir build &amp;&amp; cd build &amp;&amp; cmake .. &amp;&amp; make &amp;&amp; make install
+其中的autumn，snow，气泡等插件都是compiz/plugins-unsupported里面集成了！但是默认不在compiz目录下需要执行以下命令（注意  修改为你实际的家目录，我的用户是dongwm 所以家目录是/home/dongwm，而.compiz-1目录不知道是不是也是同名，反正是“.”开头的compiz目录，如果下面的目录有plugins，metadata等说明就是这个目录）：</p>
+
+<p>cp /usr/local/lib/compiz/lib* /home/dongwm/.compiz-1/plugins/
+cp /usr/local/share/compiz/* /home/dongwm/.compiz-1/metadata/ -rp</p>
+
+<p>问题解决：</p>
+
+<p>/usr/bin/ld: cannot find -lGL
+/usr/bin/ld: cannot find -lGL
+collect2: ld returned 1 exit status
+make[2]: *** [libfreewins.so] 错误 1
+make[1]: *** [CMakeFiles/freewins.dir/all] 错误 2</p>
+
+<p>cd  /usr/lib/
+sudo mv libGL.so libGL.so.bak
+sudo ln -s libGL.so.1 libGL.so</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/peizhiautopagpdeyitaixindao/">配置auto Pagp的以太信道</a></h1>
     
     
@@ -883,68 +957,6 @@ root@client ~&gt; /sbin/chkconfig chef-client on</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%AE%89%E8%A3%85debian%E5%90%8E%E6%97%A0%E6%B3%95%E8%BF%9B%E5%85%A5windows-7-%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">安装debian后无法进入windows 7 解决办法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-14T00:00:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近安装了debian6.1版本，发现grub没有了windows7 菜单选项，这个grub是debian的天下。。。研究后感觉应该是debian使用了grub2的缘故，解决办法如下：</p>
-
-<p><pre class="sh_bash">sudo vi /boot/grub/grub.cfg</p>
-
-<p>将 windows 7 信息写进去：</p>
-
-<p>### BEGIN /etc/grub.d/30_os-prober ###</p>
-
-<p>menuentry "Windows 7 (loader) (on /dev/sda2)" {</p>
-
-<p>insmod part_msdos</p>
-
-<p>insmod ntfs</p>
-
-<p>set root='(hd0,msdos2)'</p>
-
-<p>search --no-floppy --fs-uuid --set 2e40f57240f540df</p>
-
-<p>chainloader +1</p>
-
-<p>}</p>
-
-<p>### END /etc/grub.d/30_os-prober ###</pre></p>
-
-<p>注：其中分区信息可以使用在开机进入grub菜单按“c”，然后在grub&gt;下输入 root （hd0，X）（实在不懂X可以从0开始试 ） –&gt; chainloader +1 –&gt; boot 要是启动到windows  说明这个就是需要找的</p>
-
-<p>然后 执行 sudo update-grub    重启电脑就可以了</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/27/">&larr; Older</a></li>
@@ -967,6 +979,10 @@ root@client ~&gt; /sbin/chkconfig chef-client on</pre>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1002,10 +1018,6 @@ root@client ~&gt; /sbin/chkconfig chef-client on</pre>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

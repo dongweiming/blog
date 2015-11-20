@@ -141,6 +141,161 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentle-quickly-submit-code-to-the-test-environment-tools/">Gentle - 帮助你快速部署代码到测试环境</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-02T21:58:00+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>我想很多开发的同学都经历过这样的开发流程:</p>
+
+<ul>
+  <li>本地修改代码</li>
+  <li>把代码推到测试环境</li>
+  <li>重启测试环境需要的服务</li>
+  <li>本地看效果,改bug重复1-3</li>
+  <li>功能稳定后上线</li>
+</ul>
+
+<p>这个过程有什问题呢?</p>
+
+<ul>
+  <li>
+    <p>假设你是一个做过运维或者能力很强的人,比如我这种,本地跑测试环境,但是假如一个新人,或者对测试环境中的某些
+部分不是很了解的人, 甚至需要和生产环境完全一样的条件下, 本地可能就不好使了. 那么这需要一个测试服务器</p>
+  </li>
+  <li>首先你每次修改代码, push ,重启环境都需要你登陆测试环境,至少不够自动化.然后退回本地看效果,这个过程有点浪费时间和经理</li>
+  <li>其次是你可能有好几个项目,他们之间可能都没什么共通点. 你需要多个测试环境</li>
+  <li>当然你可以写几个脚本,为你每个测试环境写一个东西去自动化这些，未尝不可. 只是需要重复造很多轮子</li>
+  <li>假如为了安全有跳板机,你需要登陆跳板机才能跳到你的测试服务器,你可能要写很复杂的expect脚本</li>
+</ul>
+
+<p>然后是我认为最重要的:</p>
+
+<p><strong>凡是屁大点事就放个deamon的运维都是耍流氓, 就拿小屁几台服务器还搞神马salt, ansible之类的事情,真是太无聊了.</strong></p>
+
+<p>这些东西帮助你做了很多事情,但是会让你变得更懒.而且重要的是-它们写的并不一定只符合你的需要或者就不符合你的需要. 我喜欢简单粗暴的实现,最近在看<a href="https://github.com/fabric/fabric">fabric</a>的代码, 作为做过op,也给<a href="https://github.com/saltstack/salt">salt</a>贡献过代码的我,写了这个东西: <a href="https://github.com/dongweiming/gentle">gentle</a>, 帮助我自动化提交代码到我的测试环境. 这个东西是我认为符合我需要，或者大部分开发同学需要的小东西,基于fabric, <a href="https://github.com/docopt/docopt">docopt</a> 和yaml.</p>
+
+<h4 id="section-1">我的工作的一些特点</h4>
+
+<p>我负责几个项目, 它们有以下特点</p>
+
+<ul>
+  <li>项目在不同的机房, 有完整的测试环境和相关数据</li>
+  <li>项目依赖的服务基本不同,比如有的使用了supervisor, 有的是程序fork后退出了父进程;有的使用了nginx+uwsgi,有的就是nginx+服务等.</li>
+  <li>项目之间需要的依赖应用不同,且启动顺序有区别. 这个很好理解, 启动需要先启动A,再启动B,才能启动C</li>
+  <li>项目有的需要登陆跳板机</li>
+</ul>
+
+<h4 id="section-2">我以前的个人的开发习惯和流程</h4>
+
+<ul>
+  <li>我有一个专门的存放服务配置的目录, 后缀是ip或者项目的名字. git版本库, 每次更新后上传到测试环境</li>
+  <li>我有专门的op PATH, 做了很多alias, 都是一些python或者shell的脚本,用来同步测试环境,登陆测试环境撑起服务的脚本</li>
+</ul>
+
+<p>看起来以前用的也不错. 但是gentle能怎么样提高呢?</p>
+
+<h4 id="gentle">gentle的开发流程</h4>
+
+<ul>
+  <li>切换到你要开发的目录</li>
+  <li>初始化这个目录,其实就是在当前目录增加一个.gentle.yaml</li>
+  <li>根据你的需要配置测试环境账号ip密码, 想要同步的目录, 需要重启的服务和优先级已经命令</li>
+  <li>以后每次只需在这个目录下,使用<code>gt publish</code> 或者更懒 <code>gt p</code>, 他就会帮你自动rsync然后重启相关服务.</li>
+</ul>
+
+<p>具体使用可以去我的github或者<a href="http://gentle.readthedocs.org/en/latest/">readthedocs.org</a></p>
+
+<h4 id="section-3">安装和依赖</h4>
+
+<p>我已经放到了pypi, 你可以使用pip或者easy_install</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">gentle</span>
+</span></pre></figure></notextile></div>
+
+<p>这样在系统环境下会有一个<code>gt</code>命令</p>
+
+<p>fabric有2个对于项目更新的函数,一个是rsync_project,一个是upload_project, upload是把项目压缩在服务器上解压缩,实际上很浪费时间,但是rsync_project不能使用env.password,需要手动输入一次密码,都很不爽,我找到一个解决办法就是<code>sshpass</code>, 帮助自动输入rsync的密码, 我也给fabric提了PR. 我的项目使用了我个人的改进版的rsync_project</p>
+
+<p>如果你是ubuntu 直接:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">sshpass</span>
+</span></pre></figure></notextile></div>
+
+<p>其他操作系统可以在这里下载 http://sourceforge.net/projects/sshpass/ 然后编译</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">sshpass</span><span class="o">-</span><span class="mf">1.05</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">sshpass</span><span class="o">-</span><span class="mf">1.05</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">configure</span> <span class="o">&amp;&amp;</span>
+</span><span class="line"><span class="n">make</span> <span class="o">&amp;&amp;</span> <span class="n">sudo</span> <span class="n">make</span> <span class="n">install</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-4">一个我的测试环境的例子, 我加注释说明</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">host</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">3.11</span> <span class="c">#测试服务器, 格式是user@host:port</span>
+</span><span class="line"><span class="n">password</span><span class="p">:</span> <span class="n">dongwmspassword</span> <span class="c">#登录服务器需要的密码</span>
+</span><span class="line"><span class="n">gateway</span><span class="p">:</span> <span class="c">#可以不存在,中间服务器,格式是user@host:port</span>
+</span><span class="line"><span class="n">gatewaypassword</span><span class="p">:</span> <span class="c">#中间服务器(jump跳板机)的密码</span>
+</span><span class="line"><span class="n">rsync</span><span class="p">:</span> <span class="c">#这个操作是rsync</span>
+</span><span class="line">  <span class="n">lpath</span><span class="p">:</span> <span class="err">$</span><span class="n">ROOT</span> <span class="c">#你可以使用全路径, $ROOT表示当前路径,本地目录</span>
+</span><span class="line">  <span class="n">rpath</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">tornado</span> <span class="c"># 测试环境的目录</span>
+</span><span class="line"><span class="n">services</span><span class="p">:</span> <span class="c"># 每个段落就是一个服务,这里有nginx和supervisor</span>
+</span><span class="line">  <span class="n">nginx</span><span class="p">:</span>
+</span><span class="line">    <span class="n">command</span><span class="p">:</span> <span class="n">kill</span> <span class="o">-</span><span class="mi">9</span> <span class="sb">`ps -ef |grep nginx|grep -v grep|awk &#39;{print $2}&#39;`</span> <span class="o">&amp;&amp;</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nginx</span> <span class="c">#启动的命令</span>
+</span><span class="line">    <span class="n">lpath</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="c">#nginx.conf的本地地址</span>
+</span><span class="line">    <span class="n">priority</span><span class="p">:</span> <span class="mi">1</span> <span class="c">#优先级越高越先执行</span>
+</span><span class="line">    <span class="n">rpath</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span> <span class="c">#测试环境的nginx.conf路径</span>
+</span><span class="line">    <span class="n">sudo</span><span class="p">:</span> <span class="n">false</span> <span class="c"># 因为这个环境很宽松 不需要sudo</span>
+</span><span class="line">    <span class="n">user</span><span class="p">:</span> <span class="c">#sudo使用的用户,默认是登陆的用户</span>
+</span><span class="line">  <span class="n">supervisor</span><span class="p">:</span>
+</span><span class="line">    <span class="n">command</span><span class="p">:</span> <span class="n">supervisorctl</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">supervisor</span><span class="o">/</span><span class="n">supervisord</span><span class="o">.</span><span class="n">conf</span> <span class="nb">reload</span>
+</span><span class="line">    <span class="n">lpath</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">settings</span><span class="o">/</span><span class="n">supervisord</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="mi">31</span>
+</span><span class="line">    <span class="n">priority</span><span class="p">:</span> <span class="mi">2</span>
+</span><span class="line">    <span class="n">rpath</span><span class="p">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">supervisor</span><span class="o">/</span><span class="n">supervisord</span><span class="o">.</span><span class="n">conf</span>
+</span><span class="line">    <span class="n">sudo</span><span class="p">:</span> <span class="n">false</span>
+</span><span class="line">    <span class="n">user</span><span class="p">:</span>
+</span><span class="line"><span class="n">username</span><span class="p">:</span> <span class="n">root</span> <span class="c">#登陆服务器的默认用户, 你可以在使用host的时候指定用户</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="issuepr">欢迎给我issue和PR</h4>
+
+<h4 id="todo">TODO</h4>
+
+<ul>
+  <li>因为很多人会用到跳板机,我想加入跳板机的用法, 看起来就像直接在本地操作远程一样 # 更新2013-12-03 完成</li>
+  <li>设置输出是否隐藏,目前保留就是为了让我看到执行的过程</li>
+  <li>设置支持多测试环境一起部署,或者说让生成环境的部署一样方便</li>
+</ul>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoo-use-stumpwm/">Gentoo使用stumpwm做桌面管理器</a></h1>
     
     
@@ -1695,196 +1850,6 @@ celery代码写的不好这样的安慰似的评论…但是我不这样认为,�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shi-yong-glancesjian-kong-ben-di-he-yuan-cheng-fu-wu-qi-de-xing-neng-zhuang-tai-%2Cyi-ji-wo-dui-ta-de-xiu-gai/">使用glances监控本地和远程服务器的性能状态，以及我对它的修改</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-01T11:43:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>首先开始感谢<a href="http://www.vpsee.com">Vpsee</a>的那篇<a href="http://www.vpsee.com/2013/07/a-new-system-monitoring-tool-glances-installation-and-usage/">安装和使用系统监控工具 Glances</a>，让我发现了<a href="https://github.com/nicolargo/glances">glances</a>这个新的系统监控工具.并且可以通过xml-rpc
-监控远程服务器的系统情况显示到本地.它其实类似于top,支持键盘按键.使用了psutil库获取了硬盘分区，负载，内存使用，交换分区使用，进程(支持根据cpu占用,内存占用，进程名和
-io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温度.记录日志,高亮显示可配置的阀值的预警颜色.就像一个超级版的top,但是它的优点其实就是2个:</p>
-
-<ol>
-  <li>它是python的，你可以定制化</li>
-  <li>它可以使用rpc获取其他服务端的系统信息,top可不行额</li>
-</ol>
-
-<h4 id="section-1">我对它做了些贡献</h4>
-
-<ol>
-  <li>首先我给他添加了中文的国际化,但是因为显示英文比汉语占用得长度要小，我没有在太多的地方全部显示中文，而且我觉得作为运维本来就应该好好用英语…如果有必要我可以做一个glance-cn，完全汉化</li>
-  <li>我读了它的源码,发现它的代码已经超过4000行，但是好几个地方其实有很大的优化空间,比如它的glancesScreen类，有下面这样的代码:</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">__getMemAlert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-</span><span class="line">    <span class="c"># If current &lt; CAREFUL of max then alert = OK                          </span>
-</span><span class="line">    <span class="c"># If current &gt; CAREFUL of max then alert = CAREFUL                     </span>
-</span><span class="line">    <span class="c"># If current &gt; WARNING of max then alert = WARNING                     </span>
-</span><span class="line">    <span class="c"># If current &gt; CRITICAL of max then alert = CRITICAL                   </span>
-</span><span class="line">    <span class="k">try</span><span class="p">:</span>
-</span><span class="line">        <span class="n">variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span>
-</span><span class="line">    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;DEFAULT&#39;</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">if</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMCritical</span><span class="p">():</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CRITICAL&#39;</span>
-</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMWarning</span><span class="p">():</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;WARNING&#39;</span>
-</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getMEMCareful</span><span class="p">():</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CAREFUL&#39;</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">return</span> <span class="s">&#39;OK&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">__getMemColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getMemAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">__getMemColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getMemAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapAlert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-</span><span class="line">    <span class="c"># If current &lt; CAREFUL of max then alert = OK                          </span>
-</span><span class="line">    <span class="c"># If current &gt; CAREFUL of max then alert = CAREFUL                     </span>
-</span><span class="line">    <span class="c"># If current &gt; WARNING of max then alert = WARNING                     </span>
-</span><span class="line">    <span class="c"># If current &gt; CRITICAL of max then alert = CRITICAL                   </span>
-</span><span class="line">    <span class="k">try</span><span class="p">:</span>
-</span><span class="line">        <span class="n">variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span>
-</span><span class="line">    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;DEFAULT&#39;</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">if</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPCritical</span><span class="p">():</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CRITICAL&#39;</span>
-</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPWarning</span><span class="p">():</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;WARNING&#39;</span>
-</span><span class="line">    <span class="k">elif</span> <span class="n">variable</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="o">.</span><span class="n">getSWAPCareful</span><span class="p">():</span>
-</span><span class="line">        <span class="k">return</span> <span class="s">&#39;CAREFUL&#39;</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">return</span> <span class="s">&#39;OK&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getSwapAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">__getSwapColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-</span><span class="line">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getSwapAlert</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">max</span><span class="p">)]</span>
-</span></pre></figure></notextile></div>
-
-<p>我来分析下,每种模块都有__getXXXAlert，__getXXXColor， __getxxxColor2，其中__getXXXColor， __getxxxColor2都会调用__getXXXAlert,他们的参数可能不同</p>
-
-<p>你看到了很多好相似的代码了嘛?其实待遇代码的可读性和可理解性已经代码的紧凑和不易懂一直就需要一个折中，我提了一个pull request，其实对这个类的属性做了下拦截</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># 使用__getattr__是为了只获取类中没有定义的属性</span>
-</span><span class="line"><span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-</span><span class="line">        <span class="n">base_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Mem&#39;</span><span class="p">,</span> <span class="s">&#39;Swap&#39;</span><span class="p">,</span> <span class="s">&#39;Fs&#39;</span><span class="p">,</span> <span class="s">&#39;HDDTemp&#39;</span><span class="p">,</span> <span class="s">&#39;Sensors&#39;</span><span class="p">]</span>
-</span><span class="line">        <span class="n">get_alert_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Alert&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
-</span><span class="line">        <span class="n">base_type</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&#39;Load&#39;</span><span class="p">,</span> <span class="s">&#39;Cpu&#39;</span><span class="p">])</span> <span class="c">#我没有也处理_getCpu/LoadAlert,因为他们的调用略有不同,保留了</span>
-</span><span class="line">        <span class="n">get_color_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Color&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
-</span><span class="line">        <span class="n">get_color_list2</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_glancesScreen__get&#39;</span> <span class="o">+</span> <span class="n">m</span> <span class="o">+</span> <span class="s">&#39;Color2&#39;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">base_type</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_alert_list</span><span class="p">:</span>
-</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAlert</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-</span><span class="line">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_color_list</span><span class="p">:</span>
-</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getColor</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
-</span><span class="line">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_color_list2</span><span class="p">:</span>
-</span><span class="line">            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getColor2</span><span class="p">,</span> <span class="n">name</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">getColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&quot;&quot;&quot;                                                                    </span>
-</span><span class="line"><span class="sd">        default: current=0, max=100, stat=&#39;&#39;, core=1                           </span>
-</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
-</span><span class="line">            <span class="bp">self</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_glancesScreen__get&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="s">&#39;Alert&#39;</span><span class="p">]))(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">getColor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&quot;&quot;&quot;                                                                    </span>
-</span><span class="line"><span class="sd">        default: current=0, max=100, stat=&#39;&#39;, core=1                           </span>
-</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__colors_list2</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
-</span><span class="line">            <span class="bp">self</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_glancesScreen__get&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="s">&#39;Alert&#39;</span><span class="p">]))(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
-</span></pre></figure></notextile></div>
-
-<p>— update 2013-08-10 —– </p>
-
-<p>它已经接收了我的代码</p>
-
-<ol>
-  <li>我在服务器用pip，安装的是1.6.1，而本地是1.7.1a，但是有一个功能hddtemp支持实在1.6.1之后添加的,我用本地使用-c连接远程服务器,本
-地有-y选项，但是远程是没有的，按’h’就会报错,我修改了这个问题</li>
-</ol>
-
-<h4 id="section-2">如何使用国际化</h4>
-
-<ol>
-  <li>
-    <p>它自带了这个脚本i18n-gen.sh</p>
-  </li>
-  <li>
-    <p>我在我的gentoo和mac下都实验了,没有作用，难道是我理解有问题?</p>
-  </li>
-</ol>
-
-<p>首先我先把本地的locale换成中文:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">export</span> <span class="n">LANG</span><span class="o">=</span><span class="n">zh_CN</span><span class="o">.</span><span class="n">UTF</span><span class="o">-</span><span class="mi">8</span>
-</span></pre></figure></notextile></div>
-<p>后来我发现它使用国际化的原理是:</p>
-
-<ol>
-  <li>在安装的时候将.mo文件一起拷贝到glances的安装目录下得share/locale/XX/LC_MESSAGES下(XX代表你的生成的国际化名字)</li>
-  <li>它使用了这样的方法加载国际化</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
-</span><span class="line"><span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">__appname__</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<p>但是没有去作用，因为没有找到.mo文件</p>
-
-<p>我提了pull req, 这样修改(其实就是去目录下找到那个语言的.mo):</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-</span><span class="line"><span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">__appname__</span><span class="p">,</span> <span class="s">&#39;{0}/../share/locale&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">))</span>
-</span></pre></figure></notextile></div>
-
-<p>— update 2013-08-10 —–</p>
-
-<p>它没有采用我的方法而是比较复杂的实现了</p>
-
-<p>我在想，难道以前得几种语言是可以实现的?其实原来的方式在程序目录下是可以的，但是setup.py install后目录结构变化了</p>
-
-<h4 id="section-3">远程连接服务器</h4>
-
-<p>这是glances最大的一个特点，但是不能让谁都可以使用serverproxy链接查看你的状态吧?所以你需要指定-P选项，加一个随机密码(其实账号是glances，没有提供参数，在程序里面写死了)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/5/">&larr; Older</a></li>
@@ -1907,6 +1872,10 @@ io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1942,10 +1911,6 @@ io使用的排序).并且在安装了lm-sensor后还可以监控服务器的温�
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

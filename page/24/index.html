@@ -141,6 +141,66 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/sikewangluoanquanzhuantierguanyuluyouqianquan/">思科网络安全专题（二）:关于路由器安全</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-01T00:00:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>怎么说我也是ccsp出生，呵呵也看过很多IE级别的关于安全的书 ，所以最近准备做一个基于配置的关于安全的专题。</p>
+
+<p>1  vty访问</p>
+
+<p>虚拟终端访问当然需要一些安全</p>
+
+<p>3640_M(config)#aaa new-model
+3640_M(config)#aaa authentication login for-ssh local</p>
+
+<p>3640_M(config)#username dongwm password dongwmtest</p>
+
+<p>3640_M(config)#line vty 0 4
+3640_M(config-line)#transport input ssh
+3640_M(config-line)#exec-timeout 3 30  //超时时间为3分30秒
+3640_M(config-line)#login authentication for-ssh</p>
+
+<p>2 记录路由器事件</p>
+
+<p>3640_M(config)#service timestamps debug datetime msec localtime show-timezone
+3640_M(config)#service timestamps log datetime msec localtime show-timezone   //用Log信息和Debug信息的时间戳，格式为Datetime：，并且支持毫秒显示
+3640_M(config)#no logging console  //<span>禁止在控制台上打印日志报文</span>
+3640_M(config)#logging buffered 16384  //将日志信息记录到内存缓冲区的大小</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/sikewangluoanquanzhuantierguanyuluyouqianquan/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/luyouqishangmianqiyonganquanshellssh/">路由器上面启用安全Shell（ssh）</a></h1>
     
     
@@ -881,83 +941,6 @@ PING 192.168.120.120 (192.168.120.120) 56(84) bytes of data.
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E4%BD%BFnagios%E4%BD%BF%E7%94%A8ldap%E5%B8%90%E5%8F%B7%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95/">使nagios使用LDAP帐号密码登录</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-14T00:00:00+08:00" pubdate data-updated="true">Jul 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>生产环境中使用了LDAP的OSS（单点登录），后来觉得nagios也就放到了ldap里面。</p>
-
-<p>1修改apache配置文件/etc/httpd/conf.d/nagios.conf
-&lt;VirtualHost *:6060&gt;
-DocumentRoot /ops/dongwm/nagios/share
-ServerName nagios.dongwm.com</p>
-
-<p>ScriptAlias /nagios/cgi-bin &#8220;/ops/dongwm/nagios/sbin&#8221;</p>
-
-<p>&lt;Directory &#8220;/ops/dongwm/nagios/sbin&#8221;&gt;
-Options ExecCGI
-AllowOverride None
-Order allow,deny
-Allow from all</p>
-
-<p>AuthType Basic
-AuthBasicProvider ldap
-AuthName &#8220;Please input user info:&#8221;
-AuthzLDAPAuthoritative off
-AuthLDAPURL ldap://你的ldap服务器IP/cn=Manager,dc=你的域名,dc=com?uid?sub?(objectClass=*)
-Require ldap-user dongwm dongwm1
-&lt;/Directory&gt;</p>
-
-<p>Alias /nagios &#8220;/opt/dongwm/nagios/share&#8221;</p>
-
-<p>&lt;Directory &#8220;/opt/dongwm/nagios/share&#8221;&gt;
-Options None
-AllowOverride None
-Order allow,deny
-Allow from all</p>
-
-<p>AuthType Basic
-AuthBasicProvider ldap
-AuthName &#8220;Please input user info:&#8221;
-AuthzLDAPAuthoritative off
-AuthLDAPURL ldap://你的ldap服务器IP/cn=Manager,dc=你的域名,dc=com?uid?sub?(objectClass=*)
-Require ldap-user dongwm dongwm1
-&lt;/Directory&gt;
-2  修改nagios.conf的权限为apache用户 文件属性400
-3  增加apache的ldap模块
-LoadModule ldap_module modules/mod_ldap.so
-LoadModule authnz_ldap_module modules/mod_authnz_ldap.so</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/25/">&larr; Older</a></li>
@@ -980,6 +963,10 @@ LoadModule authnz_ldap_module modules/mod_authnz_ldap.so</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1015,10 +1002,6 @@ LoadModule authnz_ldap_module modules/mod_authnz_ldap.so</p>
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>

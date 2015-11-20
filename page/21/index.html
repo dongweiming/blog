@@ -141,6 +141,54 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/unicodeencodeerror-latin-1-codec-cant-encode-characters-in-position-%E6%8A%A5%E9%94%99%E8%A7%A3%E5%86%B3/">UnicodeEncodeError: &#8216;Latin-1&#8217; Codec Can&#8217;t Encode Characters in Position 报错解决</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-30T00:00:00+08:00" pubdate data-updated="true">Dec 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：使用mysqldb查询数据库有一个报错：</p>
+
+<p>Traceback (most recent call last):
+File &#8220;/home/dongwm/RevSocket.py&#8221;, line 52, in &lt;module&gt;
+main.run()
+File &#8220;/home/dongwm/RevSocket.py&#8221;, line 47, in run
+print base.decode(buf,&#8217;sde#*df&#8221;)
+UnicodeEncodeError: &#8216;latin-1&#8217; codec can&#8217;t encode characters in position 96-119: ordinal not in range(256)</p>
+
+<p>后来群里面也有人遇见这样的问题，我正好仔细研究了一下 是本地locale变量的问题：</p>
+
+<p>export LANG=en_US.UTF-8
+执行上述语句即可</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEconky/">Gentoo笔记（五）安装配置conky</a></h1>
     
     
@@ -982,142 +1030,6 @@ b748d000   1344K     24K      2K      0K      0K r&#8211;p 
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongju/">Linux运维不可不知的性能监控和调试工具（一）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-14T00:00:00+08:00" pubdate data-updated="true">Dec 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>前言：献给现在正在作运维或者立志作运维的朋友</strong></p>
-
-<p><strong>sysstat组件，包含了：sar，iostat，mpstat，pidstat，nfsiostat 等命令</strong></p>
-
-<p>wget http://pagesperso-orange.fr/sebastien.godard/sysstat-10.0.3.tar.gz
-tar zxvf sysstat-10.0.3.tar.gz
-cd sysstat-10.0.3/
-./configure  &#8211;enable-install-cron &amp;&amp; make &amp;&amp; sudo make install</p>
-
-<p><strong>1 sar 主要用来监控系统实时性能（CPU，内存，I / O等），以及在一个持续的基础上上，在后台性能数据收集并分析历史数据，以确定瓶颈问题</strong></p>
-
-<p><strong> 1 所有CPU的CPU使用率</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -u 1 3
-Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
-
-<p>09时23分00秒     CPU     %user     %nice   %system   %iowait    %steal     %idle
-09时23分01秒     all     23.87      0.00      3.27      0.00      0.00     72.86
-09时23分02秒     all     22.94      0.00      2.49      0.00      0.00     74.56
-09时23分03秒     all     23.50      0.00      3.00      2.00      0.00     71.50
-平均时间:     all     23.44      0.00      2.92      0.67      0.00     72.98
-<ul>
-	<li><strong>sar -u </strong>显示CPU使用率，目前每天收集到这一点。</li>
-	<li><strong>sar -u 1 3</strong>显示实时CPU使用率每隔1秒,3次。</li>
-	<li><strong>sar -u  ALL 1 3“</strong>和 “sar -u 1 3”相同，还显示了附加 ​​字段。</li>
-	<li><strong></strong><strong>sar -u -f /var/log/sa/sa10 </strong><strong></strong>显示sa10文件中10天的CPU使用率。</li>
-</ul>
-<strong>2 单个CPU或核心的CPU使用率</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -P ALL 1 1
-Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
-
-<p>09时27分08秒     CPU     %user     %nice   %system   %iowait    %steal     %idle
-09时27分09秒     all     24.31      0.00      2.51      0.00      0.00     73.18
-09时27分09秒       0     34.00      0.00      4.00      0.00      0.00     62.00
-09时27分09秒       1     47.00      0.00      3.00      0.00      0.00     50.00
-09时27分09秒       2     12.00      0.00      1.00      0.00      0.00     87.00
-09时27分09秒       3      4.00      0.00      2.00      0.00      0.00     94.00</p>
-
-<p>平均时间:     CPU     %user     %nice   %system   %iowait    %steal     %idle
-平均时间:     all     24.31      0.00      2.51      0.00      0.00     73.18
-平均时间:       0     34.00      0.00      4.00      0.00      0.00     62.00
-平均时间:       1     47.00      0.00      3.00      0.00      0.00     50.00
-平均时间:       2     12.00      0.00      1.00      0.00      0.00     87.00
-<ul>
-	<li><strong>sar -P ALL </strong>显示当天所有核心CPU使用率。</li>
-	<li><strong>sar -P ALL 1 3 </strong>实时显示的时间为每1秒3次的所有核心的CPU使用率。</li>
-	<li><strong>sar -P 1，</strong>显示当前日期的CPU数1使用。</li>
-	<li><strong>sar- P 1 1 3</strong> 实时显示的时间为核心的数字1，每1秒3次的CPU使用率。</li>
-	<li><strong>sar  -P ALL &#8211;f  / var/log/sa/sa10</strong>显示CPU使用率，和上面解释类似</li>
-</ul>
-<strong>3 内存使用和空闲</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -r 1 3  ＃表示实时显示的时间为每1秒,3次的内存情况
-Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
-
-<p>09时31分59秒 kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit  kbactive   kbinact
-09时32分00秒   1282240   1991048     60.83    189256    979120   2308156     42.93   1091840    771404
-09时32分01秒   1284348   1988940     60.76    189256    979120   2304796     42.87   1089208    771404
-09时32分02秒   1282364   1990924     60.82    189272    979112   2308156     42.93   1091828    771412
-平均时间:   1282984   1990304     60.80    189261    979117   2307036     42.91   1090959    771407</p>
-
-<p><strong>4 交换分区的使用情况</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -S 1 3  ＃表示实时显示的时间为每1秒,3次的sawp使用情况
-Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
-
-<p>09时33分26秒 kbswpfree kbswpused  %swpused  kbswpcad   %swpcad
-09时33分27秒   2011680     91612      4.36      3076      3.36
-09时33分28秒   2011680     91612      4.36      3076      3.36
-09时33分29秒   2011680     91612      4.36      3076      3.36
-平均时间:   2011680     91612      4.36      3076      3.36</p>
-
-<p><strong>5 I/O状态 ＃表示实时显示的时间为每1秒3次的I/O使用情况</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -b 1 3
-Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</p>
-
-<p>09时35分43秒       tps      rtps      wtps   bread/s   bwrtn/s
-09时35分44秒      2.00      0.00      2.00      0.00     32.00
-09时35分45秒     97.00      0.00     97.00      0.00   1192.00
-09时35分46秒      6.00      0.00      6.00      0.00    144.00
-平均时间:     35.00      0.00     35.00      0.00    456.00
-<strong>6 单个dev设备的I／O状态</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -d 1 3</p>
-
-<p>注：也可以显示成sda，sdb这样的形式：</p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -p -d 1 3
-<strong>7 显示每秒的上下文切换</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -w 1 3</p>
-
-<p><strong>8 报告运行队列和平均负载(个人最喜欢)</strong></p>
-
-<p>dongwm@linux-b8lh:~/sysstat-10.0.3&gt; sar -q 1 3
-Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_    (4 CPU)</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongju/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/22/">&larr; Older</a></li>
@@ -1140,6 +1052,10 @@ Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_ 
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
@@ -1175,10 +1091,6 @@ Linux 2.6.37.6-0.7-default (linux-b8lh)     2011年12月14日     _i686_ 
     
       <li class="post">
         <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">python-cn社区欢迎大家来贡献代码</a>
       </li>
     
   </ul>
