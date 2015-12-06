@@ -141,6 +141,78 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyummapyanjiu/">关于mmap研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：mmap全称内存映射文件，需要在<a href="http://en.wikipedia.org/wiki/Python_%28programming_">Python<img src="http://i.ixnp.com/images/v3.45/t.gif" alt="" /></a>程序中存取一个很大的数组，数组的每一项是(int, int, float, int)的记录。如果直接用list来存放，占据的内存巨大（因为不仅所有这些数都是对象，且tuple本身也是对象），或者要将正则表达式应用于匹配整个文件，但又不想将整个文件内容全部读入内存（特别是对于大文件而言，更是如此），那么就是mmap的作用了，Memory-mapped文件可以被当作可变的字符串或类似文件的对象</p>
+
+<p><pre class="sh_python">
+import mmap
+import contextlib</p>
+
+<p>with open('text', 'r') as f:  #创建的一个文件text
+    with contextlib.closing(mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)) as m:  #mmap.mmap创建一个内存映射文件,第一个参数是文件描述符，第二个参数要是0，表示隐射全部文件
+                                                #第三个参数可选，ACCESS_READ表示只读，<tt>ACCESS_WRITE</tt>内存直接写文件 <tt>ACCESS_COPY</tt>不会真的修改到源文件
+        print 'First 10 bytes via read :', m.read(10)
+        print 'First 10 bytes via slice:', m[:10]
+        print '2nd   10 bytes via read :', m.read(10)
+</pre></p>
+
+<p><pre class="sh_python">
+import mmap
+import contextlib</p>
+
+<p>word = 'Icinga'
+reversed = word[::-1]
+print 'Looking for    :', word
+print 'Replacing with :', reversed</p>
+
+<p>with open('text', 'r+') as f:  #'r+'不能只是写，而是追加
+    with contextlib.closing(mmap.mmap(f.fileno(), 0)) as m:
+        print 'Before:', m.readline().rstrip()   #替换前的源文件
+        m.seek(0)  #指针到文件开头</p>
+
+<p>        loc = m.find(word)   #在内存中找到'Icinga'
+        m[loc:loc+len(word)] = reversed #替换
+        m.flush()</p>
+
+<p>        m.seek(0) 
+        print 'After :', m.readline().rstrip()
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyulogging/">关于logging</a></h1>
     
     
@@ -1433,98 +1505,6 @@ print h.hexdigest()
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyugzipyanjiu/">关于gzip研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：gzip是一个读，写GNU zip文件的模块，使用<tt>zlib的</tt>数据压缩和解压</p>
-
-<p><pre class="sh_python">
-import gzip
-import os</p>
-
-<p>outfilename = 'example.txt.gz'  #输出的gz文件
-output = gzip.open(outfilename, 'wb')    #可以有个compresslevel=i i越大压缩率越高，但是越慢
-try:
-    output.write('Contents of the example file go here.\n')  #这个其实是写在example.txt文件中
-finally:
-    output.close()</p>
-
-<p>print outfilename, 'contains', os.stat(outfilename).st_size, 'bytes of compressed data'
-os.system('file -b --mime %s' % outfilename)
-</pre></p>
-
-<p><pre class="sh_python">
-import gzip
-from cStringIO import StringIO
-import binascii</p>
-
-<p>uncompressed_data = 'The same line, over and over.\n' * 10
-print 'UNCOMPRESSED:', len(uncompressed_data)</p>
-
-<p>buf = StringIO()  #基于流
-f = gzip.GzipFile(mode='wb', fileobj=buf)
-try:
-    f.write(uncompressed_data)
-finally:
-    f.close()</p>
-
-<p>compressed_data = buf.getvalue()
-print 'COMPRESSED:', len(compressed_data)  #压缩后的大小
-print binascii.hexlify(compressed_data)</p>
-
-<p>inbuffer = StringIO(compressed_data)
-f = gzip.GzipFile(mode='rb', fileobj=inbuffer)
-try:
-    reread_data = f.read(len(uncompressed_data))
-finally:
-    f.close()</p>
-
-<p>print
-print 'RE-READ:', len(reread_data)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-UNCOMPRESSED: 300
-COMPRESSED: 51
-1f8b08007112d84f02ff0bc94855284ecc4d55c8c9cc4bd551c82f4b2d5248cc4b0133f4b8424665916401d3e717802c010000</p>
-
-<p>RE-READ: 300</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/15/">&larr; Older</a></li>
@@ -1547,6 +1527,10 @@ COMPRESSED: 51
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1582,10 +1566,6 @@ COMPRESSED: 51
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

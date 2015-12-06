@@ -141,6 +141,56 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyubase64yanjiu/">关于base64研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：这事一个很常用的模块，主要用来将二进制数据编码成ASCII字符。其实base64，base32和base16就是把8位字节值转化成可用的每字节6，5，4位的数据，容许非ascii字节编码为ascii字符，比如stmp协议数据</p>
+
+<p>一个简单的例子：</p>
+
+<p><pre class="sh_python">
+import base64
+original_string = 'This is the data, in the clear.'
+print 'Original:', original_string   #原文
+encoded_string = base64.b64encode(original_string)
+print 'Encoded :', encoded_string  #编码后的数据
+decoded_string = base64.b64decode(encoded_string)
+print 'Decoded :', decoded_string  #将编码后数据解码
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuatexityanjiu/">关于atexit研究</a></h1>
     
     
@@ -1192,177 +1242,6 @@ def ipto(iplist):
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiuwu/">关于AWK研究（五）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-23T00:00:00+08:00" pubdate data-updated="true">Apr 23<span>rd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1 IGNORECASE忽略大小写</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;/aaa/{print}&#8217; test.txt   #默认IGNORECASE是0
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{IGNORECASE=1}/aaa/{print}&#8217; test.txt
-115,AAA
-<strong>2 ERRNO  错误输出</strong>
-dongwm@linux-dongwm:~&gt; cat test.awk
-{
-print $0;
-x = getline &lt; &#8220;dummy-file.txt&#8221;
-if ( x == -1 )
-print ERRNO   #当出现一个I／O错误，会把ERRNO变成输出信息
-else
-print $0;
-}</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
-112,dongwm,dongwm.com,1120
-没有那个文件或目录
-113,ailll,ailll.com,1130
-没有那个文件或目录
-114,ccc,ccc.com,1140
-没有那个文件或目录
-<strong>3 用户自定义方法</strong></p>
-
-<p>语法：</p>
-
-<p>function fn-name(parameters)
-{
-function-body
-}
-dongwm@linux-dongwm:~&gt; cat test.awk
-{
-i=1; total=0;
-while (i &lt;= NF) {
-mydebug(&#8220;quantity is &#8221; $i);
-total = total + $i;
-i++;
-}
-print &#8220;Item&#8221;, $1, &#8220;:&#8221;,&#8221;num is&#8221;,total;
-}
-function mydebug ( message ) {
-printf(&#8220;DEBUG[%d]&gt;%s\n&#8221;, NR, message )
-}</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
-DEBUG[1]&gt;quantity is 112,dongwm,dongwm.com,1120
-Item 112,dongwm,dongwm.com,1120 : num is 112
-DEBUG[2]&gt;quantity is 113,ailll,ailll.com,1130
-Item 113,ailll,ailll.com,1130 : num is 113
-DEBUG[3]&gt;quantity is 114,ccc,ccc.com,1140
-Item 114,ccc,ccc.com,1140 : num is 114</p>
-
-<p><strong>4 其他语言输出</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; cat test.awk   # 第一步 建立文件域
-BEGIN {
-FS=&#8221;,&#8221;
-TEXTDOMAIN = &#8220;test&#8221;   #这个很重要 最后的.mo文件要一样
-bindtextdomain(&#8220;.&#8221;)
-print _&#8221;START_TIME:&#8221; strftime(&#8220;%a %b %d %H:%M:%S %Z%Y&#8221;,systime());
-printf &#8220;%-3s\t&#8221;, _&#8221;Num&#8221;;   #‘_’表示定制，打印时候是不显示的
-printf &#8220;%-10s\t&#8221;, _&#8221;Description&#8221;
-printf &#8220;%-10s\t&#8221;, _&#8221;Domain&#8221;
-printf &#8220;%-5s\t&#8221;, _&#8221;Price&#8221;
-printf&#8221;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;\n&#8221;
-}
-{
-printf &#8220;%-3d\t%-10s\t%-10s\t$%-.2f\n&#8221;,
-$1,$2,$3,$4
-}</p>
-
-<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt  #格式化输出为下面
-START_TIME:一  4月 23 10:19:29 CST2012
-Num    Description    Domain        Price    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;
-112    dongwm        dongwm.com    $1120.00
-113    ailll         ailll.com     $1130.00
-114    ccc           ccc.com       $1140.00
-dongwm@linux-dongwm:~&gt; gawk &#8211;gen-po -f test.awk &gt; test.po  #第二步  创建.po文件(portable object file  便携式对象文件)
-dongwm@linux-dongwm:~&gt; cat !$
-cat test.po
-#: test.awk:5
-msgid &#8220;START_TIME:&#8221;
-msgstr &#8220;&#8221;</p>
-
-<p>#: test.awk:6
-msgid &#8220;Num&#8221;
-msgstr &#8220;&#8221;</p>
-
-<p>#: test.awk:7
-msgid &#8220;Description&#8221;
-msgstr &#8220;&#8221;</p>
-
-<p>#: test.awk:8
-msgid &#8220;Domain&#8221;
-msgstr &#8220;&#8221;</p>
-
-<p>#: test.awk:9
-msgid &#8220;Price&#8221;
-msgstr &#8220;&#8221;
-第三步 修改.po文件，比如有一行：msgid &#8220;START_TIME:&#8221;，假如想显示成“Report Generated On:” 可以这样：</p>
-
-<p>#: test.awk:5
-msgid &#8220;START_TIME:&#8221;
-msgstr &#8220;Report Generated On:&#8221;
-dongwm@linux-dongwm:~&gt; msgfmt -v test.po  #第四步 建立消息对象
-1 条已翻译消息，4 条未翻译消息.
-dongwm@linux-dongwm:~&gt; ll messages.mo   #生成了这个文件
--rw-r&#8211;r&#8211; 1 dongwm users 89  4月 23 10:25 messages.mo
-dongwm@linux-dongwm:~&gt; mkdir -p en_US/LC_MESSAGES   #拷贝这个文件到你想要的语言目录
-dongwm@linux-dongwm:~&gt; mv messages.mo en_US/LC_MESSAGES/test.mo
-<strong>5 双向通讯</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; cat test.awk
-BEGIN {
-command = &#8220;sed &#8216;s/Awk/Sed and Awk/&#8217;&#8221;
-print &#8220;Awk is Great!&#8221; |&amp; command                #“|&amp;”表明它是一个双向的沟通。
-close(command,&#8221;to&#8221;);
-command |&amp; getline tmp  #进程完成，按行输出显示
-print tmp;
-close(command);
-}
-dongwm@linux-dongwm:~&gt; awk -f test.awk
-Sed and Awk is Great!
-<strong>6使用系统命令方法</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { system(&#8220;pwd&#8221;) }&#8217;
-/home/dongwm
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { system(&#8220;date&#8221;) }&#8217;
-2012年 04月 23日 星期一 10:49:10 CST
-<strong>7 时间戳方法</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print systime() }&#8217;
-1335149444
-dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print strftime(&#8220;%c&#8221;,systime()) }&#8217;
-2012年04月23日 星期一 10时50分53秒<strong></strong></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/18/">&larr; Older</a></li>
@@ -1385,6 +1264,10 @@ dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print strftime(&#8220;%c&#8221;,sys
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1420,10 +1303,6 @@ dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print strftime(&#8220;%c&#8221;,sys
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

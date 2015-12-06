@@ -141,6 +141,420 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuthreadingyanjiuer/">关于threading研究（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：threading是python的管理多线程模块，实际工作中很常用，很多功能类似于multiprocessing（多进程模块）</p>
+
+<p><pre class="sh_python">
+import threading</p>
+
+<p>def worker(num):   #带参数的函数
+    print 'Worker: %s' % num
+    return</p>
+
+<p>threads = []
+for i in range(5):
+    t = threading.Thread(target=worker, args=(i,))  #实例化，多线程操作
+    threads.append(t)
+    t.start()  #启动多线程，还可以继承threading.Thread类，重写run()函数为worker函数内容，实现一样的效果
+</pre></p>
+
+<p><pre class="sh_python">
+import threading
+import time</p>
+
+<p>def worker():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(2)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>def my_service():
+    print threading.currentThread().getName(), 'Starting'
+    time.sleep(3)
+    print threading.currentThread().getName(), 'Exiting'</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)  #设置实现的线程函数的名字
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) # 使用线程函数的默认的名字，这里就是Thread-1，Thread-2，这样的累加</p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,   #打印日志使用logging模块
+                    format='[%(levelname)s] (%(threadName)-10s) %(message)s',  #格式格式，前面是logging的级别，因为上面指定DEBUG模式，threadName表示线程的名字
+                    )</p>
+
+<p>def worker():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>def my_service():
+    logging.debug('Starting')
+    time.sleep(3)
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='my_service', target=my_service)
+w = threading.Thread(name='worker', target=worker)
+w2 = threading.Thread(target=worker) </p>
+
+<p>w.start()
+w2.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+[DEBUG] (worker    ) Starting
+[DEBUG] (Thread-1  ) Starting
+[DEBUG] (my_service) Starting
+[DEBUG] (worker    ) Exiting
+[DEBUG] (Thread-1  ) Exiting
+[DEBUG] (my_service) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)  #设置daemon模式，主程序结束，这个子线程依然存在</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)  #默认deamon是false，也就是不使用守护模式，子线程跟随主程序结束</p>
+
+<p>d.start()
+t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def daemon():
+    logging.debug('Starting')
+    time.sleep(2)
+    logging.debug('Exiting')</p>
+
+<p>d = threading.Thread(name='daemon', target=daemon)
+d.setDaemon(True)</p>
+
+<p>def non_daemon():
+    logging.debug('Starting')
+    logging.debug('Exiting')</p>
+
+<p>t = threading.Thread(name='non-daemon', target=non_daemon)</p>
+
+<p>d.start()
+t.start()</p>
+
+<p>d.join()  #表示等待子线程死掉再退出，也可以设置超时，超时会返回，不等待子线程结束 d.join(1) 这样sleep的2秒还不够， d.isAlive()得出线程还是存在的
+t.join()  #，但是程序也结束。
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(daemon    ) Starting
+(non-daemon) Starting
+(non-daemon) Exiting
+(daemon    ) Exiting  #等待那个deamon的子线程结束才结束</p>
+
+<p><pre class="sh_python">
+import random
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def worker():
+    t = threading.currentThread()
+    pause = random.randint(1,5)
+    logging.debug('sleeping %s', pause)
+    time.sleep(pause)  #sleep一个随机值
+    logging.debug('ending')
+    return</p>
+
+<p>for i in range(3):
+    t = threading.Thread(target=worker)
+    t.setDaemon(True)  
+    t.start()</p>
+
+<p>main_thread = threading.currentThread()  #获取当前线程
+for t in threading.enumerate():  #enumerate返回线程实例的列表
+    if t is main_thread:  #因为join当前线程会引起死锁，需要过滤
+        continue
+    logging.debug('joining %s', t.getName())
+    t.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) sleeping 3
+(Thread-2  ) sleeping 5
+(Thread-3  ) sleeping 1
+(MainThread) joining Thread-1
+(Thread-3  ) ending
+(Thread-1  ) ending
+(MainThread) joining Thread-3
+(MainThread) joining Thread-2
+(Thread-2  ) ending
+<pre class="sh_python">
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class MyThreadWithArgs(threading.Thread):  #和第一个例子说的继承threading.Thread类，实例化，重写run，然后调用start()启动</p>
+
+<p>    def __init__(self, group=None, target=None, name=None,  #初始化
+                 args=(), kwargs=None, verbose=None):
+        threading.Thread.__init__(self, group=group, target=target, name=name,  #初始化threading.Thread类，因为这个类初始化有很多参数需要设定
+                                  verbose=verbose)
+        self.args = args
+        self.kwargs = kwargs
+        return</p>
+
+<p>    def run(self):
+        logging.debug('running with %s and %s', self.args, self.kwargs)
+        return</p>
+
+<p>for i in range(5):
+    t = MyThreadWithArgs(args=(i,), kwargs={'a':'A', 'b':'B'}) #kwargs被初始化
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) running with (0,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-2  ) running with (1,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-3  ) running with (2,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-4  ) running with (3,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+(Thread-5  ) running with (4,) and {&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: &#8216;B&#8217;}
+<pre class="sh_python">
+import threading
+import time
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def delayed():
+    logging.debug('worker running')
+    return</p>
+
+<p>t1 = threading.Timer(3, delayed)   #Timer主要是计时器用来延迟
+t1.setName('t1')
+t2 = threading.Timer(3, delayed)
+t2.setName('t2')</p>
+
+<p>logging.debug('starting timers')
+t1.start()
+t2.start()</p>
+
+<p>logging.debug('waiting before canceling %s', t2.getName())
+time.sleep(2)
+logging.debug('canceling %s', t2.getName())
+t2.cancel()  #取消线程
+logging.debug('done')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) starting timers
+(MainThread) waiting before canceling t2
+(MainThread) canceling t2
+(MainThread) done
+(t1        ) worker running
+<pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def wait_for_event(e):
+    logging.debug('wait_for_event starting')
+    event_is_set = e.wait()  #主线程将被阻塞，它将不会 再被分配时间片 直到现有的一些线程退出运行
+    logging.debug('event set: %s', event_is_set)  ##返回事件是否设置的布尔值</p>
+
+<p>def wait_for_event_timeout(e, t):
+    while not e.isSet():
+        logging.debug('wait_for_event_timeout starting')
+        event_is_set = e.wait(t)  #设置等待超时
+        logging.debug('event set: %s', event_is_set)
+        if event_is_set:
+            logging.debug('processing event')
+        else:
+            logging.debug('doing other work')</p>
+
+<p>e = threading.Event()  #替代time.sleep(),用wait()和set()来精确控制线程，2个或者多个线程同步操作
+t1 = threading.Thread(name='block', 
+                      target=wait_for_event,
+                      args=(e,))
+t1.start()</p>
+
+<p>t2 = threading.Thread(name='non-block', 
+                      target=wait_for_event_timeout, 
+                      args=(e, 2))
+t2.start()</p>
+
+<p>logging.debug('Waiting before calling Event.set()')
+time.sleep(3)
+e.set()
+logging.debug('Event is set')
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(block     ) wait_for_event starting
+(MainThread) Waiting before calling Event.set()
+(non-block ) wait_for_event_timeout starting
+(non-block ) event set: False
+(non-block ) doing other work
+(non-block ) wait_for_event_timeout starting
+(MainThread) Event is set
+(block     ) event set: True
+(non-block ) event set: True
+(non-block ) processing event
+<pre class="sh_python">
+import logging
+import random
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>class Counter(object):
+    def __init__(self, start=0):
+        self.lock = threading.Lock()  #锁资源，防止同时访问对象
+        self.value = start
+    def increment(self):
+        logging.debug('Waiting for lock')
+        self.lock.acquire()  #获得资源
+        try:
+            logging.debug('Acquired lock')
+            self.value = self.value + 1
+        finally:
+            self.lock.release()  #释放资源</p>
+
+<p>def worker(c):
+    for i in range(2):
+        pause = random.random()
+        logging.debug('Sleeping %0.02f', pause)
+        time.sleep(pause)
+        c.increment()
+    logging.debug('Done')</p>
+
+<p>counter = Counter()
+for i in range(2):
+    t = threading.Thread(target=worker, args=(counter,))
+    t.start()</p>
+
+<p>logging.debug('Waiting for worker threads')
+main_thread = threading.currentThread()
+for t in threading.enumerate():
+    if t is not main_thread:
+        t.join()
+logging.debug('Counter: %d', counter.value)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Thread-1  ) Sleeping 0.85
+(Thread-2  ) Sleeping 0.12
+(MainThread) Waiting for worker threads
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Sleeping 0.04
+(Thread-2  ) Waiting for lock
+(Thread-2  ) Acquired lock
+(Thread-2  ) Done
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Sleeping 0.47
+(Thread-1  ) Waiting for lock
+(Thread-1  ) Acquired lock
+(Thread-1  ) Done
+(MainThread) Counter: 4</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusocketyanjiuyi/">关于socket研究(一)</a></h1>
     
     
@@ -2404,183 +2818,6 @@ print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuzipfileyanjiu/">关于zipfile研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：zipfile是一个读写ZIP档案文件的模块</p>
-
-<p><pre class="sh_python">
-import zipfile
-import datetime</p>
-
-<p>for filename in [ 'README.txt', 'example.zip', 'bad_example.zip', 'notthere.zip' ]:
-    print '%20s %s' % (filename, zipfile.is_zipfile(filename))  #返回一个布尔值, 判断给定的文件是否是一个有效的ZIP文件.
-zf = zipfile.ZipFile('example.zip', 'r')  
-print zf.namelist() #读取现有存档中所有文件的名字  返回一个列表
-def print_info(archive_name):
-    zf = zipfile.ZipFile(archive_name)
-    for info in zf.infolist(): #访问存档内容的所有元数据
-        print info.filename
-        print '\tComment:\t', info.comment  #注释信息
-        print '\tModified:\t', datetime.datetime(*info.date_time) #修改时间
-        print '\tSystem:\t\t', info.create_system, '(0 = Windows, 3 = Unix)' #系统  3便是linux
-        print '\tZIP version:\t', info.create_version
-        print '\tCompressed:\t', info.compress_size, 'bytes' #压缩后的大小
-        print '\tUncompressed:\t', info.file_size, 'bytes' #压缩前大小
-        print
-print_info('example.zip')
-zf = zipfile.ZipFile('example.zip') 
-for filename in [ 'README.txt', 'notthere.txt' ]:
-    try:
-        info = zf.getinfo(filename) #通过文件名获取ZipInfo对象
-    except KeyError:
-        print 'ERROR: Did not find %s in zip file' % filename
-    else:
-        print '%s is %d bytes' % (info.filename, info.file_size)</p>
-
-<p>    try:
-        data = zf.read(filename) #读取访问存档文件的数据，必要时, 数据会自动解压缩.
-    except KeyError:
-        print 'ERROR: Did not find %s in zip file' % filename
-    else:
-        print filename, ':'
-        print repr(data)
-        print
-print 'creating archive'
-zf = zipfile.ZipFile('zipfile_write.zip', mode='w')  #创建zip存档文件，档案中任何现有文件会被清空, 开始新档案
-try:
-    print 'adding README.txt'
-    zf.write('README.txt')  #增加文件
-finally:
-    print 'closing'
-    zf.close()</p>
-
-<p>print
-</pre></p>
-
-<p>执行结果：
-dongwm@linux-dongwm:~&gt; python test.py
-README.txt False
-example.zip True
-bad_example.zip False
-notthere.zip False
-[&#8216;README.txt&#8217;]
-README.txt
-Comment:
-Modified:    2012-06-18 15:40:00
-System:        3 (0 = Windows, 3 = Unix)
-ZIP version:    20
-Compressed:    9 bytes
-Uncompressed:    9 bytes</p>
-
-<p>README.txt is 9 bytes
-README.txt :
-&#8216;test mes\n&#8217;</p>
-
-<p>ERROR: Did not find notthere.txt in zip file
-ERROR: Did not find notthere.txt in zip file
-creating archive
-adding README.txt
-closing
-<pre class="sh_python">
-import zipfile
-import sys 
-try:
-    import zlib
-    compression = zipfile.ZIP_DEFLATED #zlib模块提供压缩功能. 如果zlib是可用的, 你能使用zipfile.ZIP_DEFLATED对个人文件或者整个档案设置压缩模式.
-except:
-    compression = zipfile.ZIP_STORED #默认压缩模式为zipfile.ZIP_STORED.</p>
-
-<p>modes = { zipfile.ZIP_DEFLATED: 'deflated',
-    zipfile.ZIP_STORED: 'stored',
-}</p>
-
-<p>print 'creating archive'
-zf = zipfile.ZipFile('zipfile_write_compression.zip', mode='w')
-try:
-    print 'adding README.txt with compression mode', modes[compression]
-    zf.write('README.txt', compress_type=compression)
-finally:
-    print 'closing'
-    zf.close()</p>
-
-<p>print
-zf = zipfile.ZipFile('zipfile_write_arcname.zip', mode='w')
-try:
-    zf.write('README.txt', arcname='NOT_README.txt') #将一个文件添加到存档中, 但命名不能是原始文件名,而是重命名为'NOT_README.txt'
-finally:
-    zf.close()
-msg = 'This data did not exist in a file before being added to the ZIP file'
-zf = zipfile.ZipFile('zipfile_writestr.zip',
- mode='w',
- compression=zipfile.ZIP_DEFLATED,
-)
-try:
-    zf.writestr('from_string.txt', msg)  #将数据直接写到存档zip的这个文件里
-finally:
-    zf.close()
-msg = 'This data did not exist in a file before being added to the ZIP file'
-zf = zipfile.ZipFile('zipfile_writestr_zipinfo.zip', mode='w',)
-try:
-    info = zipfile.ZipInfo('from_string.txt', date_time=time.localtime(time.time()),) #创建一个ZipInfo实例，修改时间
-    info.compress_type=zipfile.ZIP_DEFLATED #修改压缩方式
-    info.comment='Remarks go here' #添加文件注释
-    info.create_system=0 #修改文件的系统信息 这里变成了windows系统
-    zf.writestr(info, msg) #将数据写道这个ZipInfo实例 也就是把from_string.txt的属性和内容都修改了
-finally:
-    zf.close()
-zf = zipfile.ZipFile('zipfile_append.zip', mode='a')  #模式'a'是追加模式，追加一个文件或在一个现有文件的末尾增加一个档案文件
-try:
-    zf.write('README.txt', arcname='README2.txt')
-finally:
-    zf.close()
-zf = zipfile.PyZipFile('zipfile_pyzipfile.zip', mode='w') #直接将当前目录压缩打包，还能编译py脚本
-    try:
-        zf.debug = 3
-        print 'Adding python files'
-        zf.writepy('.') #PyZipFile浏览目录寻找.py文件, 并且将关联文件 <tt>.pyo</tt> 或 <tt>.pyc</tt> 加入到档案中. 如果两者都不存在, 则生成一个.pyc文件, 并将其加入到档案中.
-    finally:
-        zf.close()
-        for name in zf.namelist():
-            print name</p>
-
-<p>    print
-    sys.path.insert(0, 'zipfile_pyzipfile.zip')
-    import zipfile_pyzipfile
-    print 'Imported from:', zipfile_pyzipfile.__file__
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/11/">&larr; Older</a></li>
@@ -2603,6 +2840,10 @@ zf = zipfile.PyZipFile('zipfile_pyzipfile.zip', mode='w') #直接将当前目录
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -2638,10 +2879,6 @@ zf = zipfile.PyZipFile('zipfile_pyzipfile.zip', mode='w') #直接将当前目录
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

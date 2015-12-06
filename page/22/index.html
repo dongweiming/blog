@@ -141,6 +141,74 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongjuer/">Linux运维不可不知的性能监控和调试工具（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-14T00:00:00+08:00" pubdate data-updated="true">Dec 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 nagios</strong></p>
+
+<p>Nagios是一个开源监控解决方案，我觉得他可以监控一切 ，可以看一下我以前的文章：<a href="http://www.dongwm.com/archives/category/%e7%b3%bb%e7%bb%9f%e7%9b%91%e6%8e%a7/nagios/">NAGIOS</a></p>
+
+<p><strong>2 ps #用来查看程序的运行情况</strong></p>
+
+<p>ps -ef |grep svr.py|grep -v grep |awk &#8216;{print $2}&#8217; #查看svr.py的进程pid号
+14554</p>
+
+<p>dongwm@linux-b8lh:~&gt; ps -e -o pid,args &#8211;forest #层次结构中的进程ID</p>
+
+<p><strong>3 free #查看系统的物理（RAM）和交换内存的信息</strong>
+dongwm@linux-b8lh:~&gt;  free -mto #MB值显示，显示总计
+total       used       free     shared    buffers     cached
+Mem:          3196       2947        249          0        264       1436
+Swap:         2053         88       1965
+Total:        5250       3035       2215
+<strong>4 top #显示所有正在运行的进程的信息，类似于windows的资源管理器 详细的清参看：</strong><a href="http://www.dongwm.com/archives/%e5%85%b3%e4%ba%8etop%e7%81%b5%e5%91%bd%e7%9a%84%e7%a0%94%e7%a9%b6/"><strong>关于top命令的研究</strong>
+</a>5 pmap #显示一个给定的进程的内存映射</p>
+
+<p>dongwm@linux-b8lh:~&gt; pmap 14443
+14443: bash
+START       SIZE     RSS     PSS   DIRTY    SWAP PERM MAPPING
+08048000    580K    476K     74K      0K      0K r-xp /bin/bash
+080d9000      4K      4K      4K      4K      0K r&#8211;p /bin/bash
+080da000      8K      8K      8K      8K      0K rw-p /bin/bash
+080dc000   1076K    976K    976K    976K      0K rw-p [heap]
+b744c000      8K      8K      8K      8K      0K rw-p [anon]
+b744e000    252K     32K      6K      0K      0K r&#8211;p /usr/lib/locale/zh_CN.utf8/LC_CTYPE
+b748d000   1344K     24K      2K      0K      0K r&#8211;p /usr/lib/locale/zh_CN.utf8/LC_COLLATE</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongjuer/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongju/">Linux运维不可不知的性能监控和调试工具（一）</a></h1>
     
     
@@ -874,81 +942,6 @@ class Window(QtGui.QMainWindow):
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shiyongsvntexingshipythonchengxuzidonggengxin/">使用svn特性使python程序自动更新</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-10-23T00:00:00+08:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：本例借用pysvn这个第三方模块实现。原理是对比某2个svn版本的不同的文件列表，根据增加，删除和修改的不同座不同的操作，达到程序的自动更新</p>
-
-<p><pre class="sh_python">
-class Svnup:
-    def __init__(self,minv,maxv):
-        import pysvn
-        import getopt, sys, time, string
-        import os, urllib
-        from urlparse import urlparse
-        client = pysvn.Client()
-        revision_min = pysvn.Revision( pysvn.opt_revision_kind.number,minv)
-        revision_max = pysvn.Revision( pysvn.opt_revision_kind.number,maxv)
-        urlObject = urlparse('http://172.16.180.129/project/svnup')
-        url = urlObject.scheme+"://"+urlObject.netloc+urllib.quote(urlObject.path.decode(sys.stdin.encoding).encode('utf8'))
-    def get_login(self,realm, user, may_save ):
-        return True,'dongwm','password', False
-    def run(self):
-        client.callback_get_login = get_login
-        summary = client.diff_summarize(url, revision_min, url, revision_max)
-        for changed in summary:
-            print changed['summarize_kind']
-            if pysvn.diff_summarize_kind.delete == changed['summarize_kind']:
-              fullPath = "../"+changed['path']
-              if os.path.exists(fullPath):
-                os.remove(fullPath)</p>
-
-<p>            if pysvn.diff_summarize_kind.added == changed['summarize_kind'] or pysvn.diff_summarize_kind.modified == changed['summarize_kind']:
-                print changed['summarize_kind'], changed['path']
-                if changed['node_kind'] == pysvn.node_kind.file:
-                    file_text = client.cat(url+urllib.quote(changed['path'].encode('utf8')), revision_max)
-                    fullPath = "../"+changed['path']
-                    dirPath = fullPath[0:fullPath.rfind("/")]
-                    if not os.path.exists(dirPath):
-                        os.makedirs(dirPath)
-                    f = open(fullPath,'wb')
-                    f.write(file_text)
-                    f.close
-svnup =Svnup(svn-min,svn-max)
-svnup.run()
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/23/">&larr; Older</a></li>
@@ -971,6 +964,10 @@ svnup.run()
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1006,10 +1003,6 @@ svnup.run()
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

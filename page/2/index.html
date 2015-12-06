@@ -141,6 +141,193 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">Slack上的小黄鸡 - SlackBot</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-06-23T23:28:00+08:00" pubdate data-updated="true">Jun 23<span>rd</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="section">前言</h3>
+
+<p><a href="http://www.slack.com/">Slack</a>是一个最近一年兴起的团队沟通协作平台. 程序员对工具其实是最有品位和要求的，相信国内很多公司和团队都在使用，豆瓣也算比较早在用.
+相信用过的人会理解本文. 如果你还没有接触它, 尤其是对现有的团队沟通协作工具有些不满, 可以试一下.</p>
+
+<p>本文就是介绍我们在最近做出来的一个bot - <a href="https://github.com/python-cn/slack_bot">slack_bot</a>. 它的口号是: 立志成为一个可被调戏且有用的Bot</p>
+
+<h3 id="section-1">为什么</h3>
+
+<p>无论是运维还是开发, 某些时间都会收到一些邮件/提醒, 可能是固定的时间的定时任务跑出来的结果,
+也可能是某个故障引起的问题邮件. 我们都很烦手头有好几个东西来接收这些消息， 而slack可以使用某些方法让这些问题集中起来.</p>
+
+<p>比如很常用的, 使用<a href="https://api.slack.com/methods/chat.postMessage">chat</a>或者<a href="https://api.slack.com/incoming-webhooks">incoming-webhooks</a>接收消息. 做什么呢?
+我可以把一些昨天的数据汇总或者汇总的地址在今天早上发到某个channel下, 这样想要看这个数据的人直接点进去就好了.
+当然啦, 也可以直接发消息到某个人. 一个具体的例子: 豆瓣的同事都知道, 我们的测试环境时间过期就会被删除, 在某段时间里面每天都有很多人在关注我们要新上的一个测试的地址,
+但是经常被同事@, 说地址怎么找不到了, 那么我就要抽出精力再去创建一个. 后来一想, 索性跑个定时任务, 拉最新的代码, 走逻辑, 生成一个测试环境. 每天都会在channel里面发消息给对应关心这个消息的人.
+一段时间以后, 我们的工作完成了, 同事都有点不适用, 哎， 怎么早上看不到那个消息了…</p>
+
+<p>但是今天说的是什么呢? 我们的slack_bot主要借用<a href="https://api.slack.com/outgoing-webhooks">outgoing-webhooks</a>. incoming表示把消息推到slack里面,
+outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳到我们提供的回调地址, 根据内容返回对应符合的回复. 大家是不是有点懂了, 这就是小黄鸡的原理.</p>
+
+<p>说到这里大家应该明白了. 其实slack给我们提供了很大的想象和实现的空间. 我立刻想起来做运维时候做的一些事情:</p>
+
+<p>比如当时有时候要去机房, 路上没有网(2g上网太慢), 有时候想看个监控状态, 切个负载均衡, 重启个服务什么的, 后来做了一个东西, 就是给某些号码发某些特殊的短信内容就可以获得想要的结果, 执行想做的事情.
+其实slack_bot只是一些爬虫的集合, 一些功能实现的例子. 在实际开发和工作中可以做很多更有意思的, 公司内部的插件. 和公司的业务相关, 和自己做的事情相关. 这样在路上就能用.
+比如我的地图功能, 我可以在网络不好的时候找到行程的最好路线; 我用公交插件可以实时的看我要等的公交需要多久到达, 我可以踩着点去站牌….</p>
+
+<h3 id="section-2">小黄鸡原理</h3>
+
+<p>小黄鸡很火的时候, 我还是一个perl运维…</p>
+
+<p>小黄鸡其实调用的是<a href="http://developer.simsimi.com/">simsim</a>的接口. 大家都可以去注册一个key来玩,也可以用项目自带的.</p>
+
+<p>其实就是post一个数据到simsim的api上, 他会返回你对应的小黄鸡的回复.</p>
+
+<h3 id="section-3">项目介绍</h3>
+
+<p>很多人听过甚至曾经用过<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>. 你可以把本bot理解为<code>增加了很多
+功能</code>, <code>只保留小黄鸡交流的基本逻辑</code>, <code>用于slackchannel里面</code>的<code>小黄鸡</code></p>
+
+<p>项目使用flask, 目前本项目是一个heroku应用. 地址是 https://slack-bot2.herokuapp.com/slack_callback 但是你
+也可以直接裸跑</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">gunicorn</span> <span class="n">wsgi</span><span class="p">:</span><span class="n">app</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span> <span class="o">--</span><span class="n">timeout</span> <span class="mi">240</span> <span class="o">--</span><span class="n">log</span><span class="o">-</span><span class="nb">file</span> <span class="o">-</span>
+</span></pre></figure></notextile></div>
+
+<p>你也可以使用heroku创建一个新的应用, 直接用我们的项目代码就可以.</p>
+
+<h3 id="slack">我们使用slack的特性</h3>
+
+<ol>
+  <li>可以把消息私聊发给自己</li>
+  <li>可以使用带图的方式接收结果(支持canvas, 以下会看到例图)</li>
+</ol>
+
+<h3 id="section-4">继承自小黄鸡的模块们, 但是都做了对应的修改:</h3>
+
+<ol>
+  <li>空气插件</li>
+  <li>wikipedia</li>
+  <li>地震了</li>
+  <li>糗百</li>
+  <li>orz  # orz需要自定义emoji</li>
+</ol>
+
+<h3 id="section-5">新加的模块们:</h3>
+
+<h4 id="section-6">地图插件 - 你可以输入我想从哪去哪, 会给你个路线(步行/开车/公交)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/map2.png" alt="" /></p>
+
+<h4 id="api-">天气插件 - 使用了百度api, 获得城市的天气情况</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/weather.png" alt="" /></p>
+
+<h4 id="section-7">北京公交插件 - 可以查询北京公交线路, 获取实时的到某站的信息(有些线路站点不准)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/bus2.png" alt="" /></p>
+
+<h4 id="api---">美食插件 - 使用大众点评网api, 获取附近餐饮信息, 评分, 电话地址,距离等等</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/dianping.png" alt="" /></p>
+
+<h4 id="segmentfaultcsdn">技术活动插件 - 从segmentfault/csdn/车库咖啡/活动行获得最近的活动列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/events.png" alt="" /></p>
+
+<h4 id="githubissue---pull-requests">Github_issue插件 - 获得你个人或者组织下未处理的Pull requests列表</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/issue.png" alt="" /></p>
+
+<h4 id="section-8">电影信息插件 - 列出最近上映和即将上映的电影信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/movie.png" alt="" /></p>
+
+<h4 id="pycoders---pycoders-weekly">pycoders插件 - 获得<pycoders weekly="">订阅数据</pycoders></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pycoders.png" alt="" /></p>
+
+<h4 id="pythonweekly---pythonweekly">pythonweekly插件 - 获得<pythonweekly>订阅数据</pythonweekly></h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/pythonweekly.png" alt="" /></p>
+
+<h4 id="section-9">头条插件 - 获得今日头条新闻</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/toutiao.png" alt="" /></p>
+
+<h4 id="travel---">travel插件 - 旅游推荐/景点介绍</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/travel2.png" alt="" /></p>
+
+<h4 id="v2ex-feed---feed">v2ex feed插件 - 获得一些节点的最新feed</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/v2ex.png" alt="" /></p>
+
+<h4 id="help---">help插件 - 列出所有插件的帮助信息</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/help.png" alt="" /></p>
+
+<h4 id="simsim">最主要的是小黄鸡(simsim)</h4>
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/simsim.png" alt="" /></p>
+
+<h4 id="slackbot-channel">也可以直接发到个人的slackbot channel里:</h4>
+
+<p><img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct.png" alt="" />
+<img src="https://raw.githubusercontent.com/python-cn/slack_bot/master/screenshots/direct2.png" alt="" /></p>
+
+<h3 id="slack-1">配置slack</h3>
+
+<p>去你的slack组织的services页面. 比如我们是 https://pythoncn.slack.com/services/new. 找到<code>Outgoing WebHooks</code>:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311561/9ef87dc2-1a09-11e5-9d87-132d8d534042.png" alt="" /></p>
+
+<p>点击<code>Add+</code>并确认到新建页面:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311562/9efaffa2-1a09-11e5-8584-58894ae6e254.png" alt="" /></p>
+
+<p><code>channel</code> 可以选择any,也可以指定单独一个. <code>Trigger Word(s)</code> 可以不填, 那就是所有的记录都会走.
+也可以找关键词/字, 用逗号隔开. <code>url</code>就是你控制的回调的地址. 本图中的是我们用的herokuapp地址: https://slack-bot2.herokuapp.com/slack_callback</p>
+
+<p>你还可以自定义icon的图标和名字:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/8311563/9efe2ff6-1a09-11e5-8492-1dd39c4ae1d6.png" alt="" /></p>
+
+<h3 id="section-10">实现原理</h3>
+
+<p>我还是抄袭了<a href="https://github.com/wong2/xiaohuangji-new">小黄鸡</a>的插件思想. 但是完全脱离和小黄鸡的代码关系. 只留下了几个原有的插件并更新.
+<a href="https://github.com/python-cn/slack_bot/tree/master/slack_bot/plugins">plugins</a>目录下有一些插件.
+系统会按照plugins/__init__.py里面的__all__的列表顺序, 挨个插件对比是否符合. 符合即停止. 都不符合最后会使用simsim模块</p>
+
+<p>具体的插件编写可以参看项目的<a href="https://github.com/python-cn/slack_bot/blob/master/README.md#插件编写">插件编写</a></p>
+
+<h3 id="trick">一些trick</h3>
+
+<ol>
+  <li>假如你没有设置<code>Trigger Word</code>. 你要保证你的回复可以被停止, 否者你的回复会被当成下一次的输入. 这样就死循环了. 比如我们使用一个函数,
+只要文本用<code>!</code>开头就不会回调. 表示这个是一个正常的,不想被out-going的记录.</li>
+  <li>这里的天气图片是一个html5的data image. 还有豆瓣电影的海报图片做了防盗链， 不能被slack识别和正常显示.
+我的用法是upload到slack. 获得返回的url.然后在生成附件.</li>
+  <li>direct message其实是被限定了post的长度. 太长的话会报414. 需要对长数据切分. slack_bot已经实现了</li>
+  <li>现在simsim的借口被玩坏了, 有些低级，无聊，带有攻击性的回复. 酌情使用</li>
+</ol>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/python-cnshe-qu-huan-ying-da-jia-lai-gong-xian-dai-ma/">Python-cn社区欢迎大家来贡献代码</a></h1>
     
     
@@ -1615,233 +1802,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonji-ge-te-bie-de-kai-tou-de-fang-fa/">Python几个特别的__开头的方法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-12-06T22:51:00+08:00" pubdate data-updated="true">Dec 6<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p><a href="http://www.rafekettler.com/magicmethods.html">A Guide to Python’s Magic Methods</a>python的绝大多数这样的特殊方法都
-在这里面被提到了. 今天我来说3个他没有提到的[__dir__, __slots__, __weakref__], 再强调下他提到的2个[__missing__, __contains__]</p>
-
-<h5 id="dir---">__dir__ -&gt; 看个小例子就知道了</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">T</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">pass</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">t</span> <span class="o">=</span> <span class="n">T</span><span class="p">()</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">t</span><span class="o">.&lt;</span><span class="n">Tab</span><span class="o">&gt;</span>
-</span><span class="line"><span class="err">啥也没有</span><span class="o">...</span>
-</span></pre></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">T2</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">return</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">]</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">t</span> <span class="o">=</span> <span class="n">T2</span><span class="p">()</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">t</span><span class="o">.</span>
-</span><span class="line"><span class="n">t</span><span class="o">.</span><span class="n">a</span>  <span class="n">t</span><span class="o">.</span><span class="n">b</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="nb">dir</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">]</span>
-</span></pre></figure></notextile></div>
-
-<p>看出来了把, 不解释, 但是这个__dir__是相对于类的实例有效果的.</p>
-
-<h5 id="slots">__slots__</h5>
-
-<p>这个在我初学python的时候就被模糊了, 原来的理解是它的出现替代了__dict__，也就是说你只能给__slots__
-这个变量列表项的属性赋值. 对外的接口减少了,也安全了. 后来看了这篇<a href="http://tech.oyster.com/save-ram-with-python-slots/">Saving 9 GB of RAM with Python’s <strong>slots</strong></a>.
-好久不做运维了,在生产环境究竟怎么样我无法定论, <python cookbook="">也提到了,在对象实例很多的时候他能帮助减少内存, 详见https://www.safaribooksonline.com/library/view/python-cookbook-3rd/9781449357337/ch08s04.html.
-这里来个小实验(在Hacker News也被讨论过https://news.ycombinator.com/item?id=6750187)</python></p>
-
-<p>代码例子(我对细节做注释):</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># coding=utf-8</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">sys</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">starmap</span><span class="p">,</span> <span class="n">product</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">SlotTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">    <span class="c"># __slots__ = [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;] 主要对比去掉这句和包含这句程序内存占用</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
-</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
-</span><span class="line">                    <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
-</span><span class="line">                            <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">            <span class="k">return</span> <span class="s">&quot;{} {} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">p</span> <span class="o">=</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="c"># 创建0-1000 &amp; 0-20 &amp; 4 的笛卡尔积</span>
-</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">starmap</span><span class="p">(</span><span class="n">SlotTest</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span> <span class="c"># 相当于对每个SlotTest实例化,实例化的格式是p的长度</span>
-</span><span class="line">
-</span><span class="line"><span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span class="line"><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<p>结果对比:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line"><span class="nv">$pmap</span> -x <span class="sb">`</span>ps -ef|grep test_slot.py|grep -v grep|awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>|grep total <span class="c"># 未使用__slots__</span>
-</span><span class="line">  total kB          103496   76480   73728
-</span><span class="line"><span class="nv">$pmap</span> -x <span class="sb">`</span>ps -ef|grep test_slot.py|grep -v grep|awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>|grep total <span class="c"># 使用了__slots__</span>
-</span><span class="line">  total kB           49960   22888   20136
-</span></pre></figure></notextile></div>
-
-<p>结果很明显,内存占用减少了很多…</p>
-
-<h5 id="weakref-">__weakref__ 弱引用</h5>
-
-<p>首先先说下<a href="http://zh.wikipedia.org/wiki/%E5%BC%B1%E5%BC%95%E7%94%A8">weakref</a>: 弱引用，与强引用相对，是指不能确保其引用的对象不会被垃圾回收器回收的引用。一个对象若只被弱引用所引用，则被认为是不可访问（或弱可访问）的，并因此可能在任何时刻被回收.
-在Python中,当一个对象的引用数目为0的时候，才会被从内存中回收. 但是被循环引用呢?</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">weakref</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">gc</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">Obj</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">return</span> <span class="mi">1</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">Obj</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="n">obj</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span> <span class="c"># 不可达引用对象的数量</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="mi">3</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="k">print</span> <span class="n">s</span> <span class="ow">is</span> <span class="n">obj</span>
-</span><span class="line"><span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">obj</span> <span class="o">=</span> <span class="mi">1</span> <span class="c"># 最初的被引用的对象改变了.</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="mi">0</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">s</span> <span class="ow">is</span> <span class="bp">None</span> <span class="c"># s还是指向了Obj 引用计数为1</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="bp">False</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="n">s</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">__main__</span><span class="o">.</span><span class="n">Obj</span> <span class="n">at</span> <span class="mh">0x2b36510</span><span class="o">&gt;</span>
-</span><span class="line">
-</span><span class="line"><span class="o">----</span><span class="err">华丽的分割一下</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">Obj</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="c"># 让obj变成那个弱引用</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="mi">211</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="n">r</span><span class="p">()</span> <span class="ow">is</span> <span class="n">obj</span>
-</span><span class="line"><span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="n">obj</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="mi">0</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="n">r</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span> <span class="c"># 弱引用计数器没有增加，所以当obj不在引用Obj的时候，Obj对象就被释放了</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="bp">True</span>
-</span></pre></figure></notextile></div>
-
-<p>好吧, 我的总结是弱引用是个好东西, 但是加了__slots__就不支持弱引用了. 所以需要__weakref__</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">T3</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span class="line">      <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">T4</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">__slots__</span> <span class="o">=</span> <span class="s">&#39;__weakref__&#39;</span>  <span class="c"># 这样就支持了weakref</span>
-</span><span class="line">      <span class="o">....</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span>  <span class="kn">import</span> <span class="nn">weakref</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="n">t3</span> <span class="o">=</span> <span class="n">T3</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="n">t4</span> <span class="o">=</span> <span class="n">T4</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">t3</span><span class="p">)</span>
-</span><span class="line"><span class="o">---------------------------------------------------------------------------</span>
-</span><span class="line"><span class="ne">TypeError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
-</span><span class="line"><span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">14</span><span class="o">-</span><span class="n">bdb7ab7ac3bc</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
-</span><span class="line"><span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">t3</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="n">cannot</span> <span class="n">create</span> <span class="n">weak</span> <span class="n">reference</span> <span class="n">to</span> <span class="s">&#39;T3&#39;</span> <span class="nb">object</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">t4</span><span class="p">)</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">weakref</span> <span class="n">at</span> <span class="mh">0x2766f70</span><span class="p">;</span> <span class="n">to</span> <span class="s">&#39;T4&#39;</span> <span class="n">at</span> <span class="mh">0x2586fd8</span><span class="o">&gt;</span>
-</span></pre></figure></notextile></div>
-
-<h5 id="contains--innot-in-">__contains__ 判断某值 in/not in 实例</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">NewList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">l</span> <span class="o">=</span> <span class="n">NewList</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="mi">4</span> <span class="ow">in</span> <span class="n">l</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="bp">True</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="mi">10</span> <span class="ow">in</span> <span class="n">l</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="bp">False</span>
-</span></pre></figure></notextile></div>
-
-<h5 id="missing">__missing__</h5>
-
-<p>最初看这个特殊方法是看python标准库的源码的时候(collections#L421):</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">class</span> <span class="nc">Counter</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-</span><span class="line">    <span class="o">...</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span class="line">        <span class="s">&#39;The count of elements not in the Counter is zero.&#39;</span>
-</span><span class="line">        <span class="c"># Needed so that self[missing_item] does not raise KeyError</span>
-</span><span class="line">        <span class="k">return</span> <span class="mi">0</span>
-</span></pre></figure></notextile></div>
-
-<p>什么意思呢?</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">c</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">({</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">c</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span> <span class="c"># 没有键的count设置默认值0</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="mi">0</span>
-</span></pre></figure></notextile></div>
-
-<p>很多人可能看过这个(关于defaultdict的ppt)[http://discorporate.us/jek/talks/defaultdict/]. 内容就不说了, 讲的非常好.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/3/">&larr; Older</a></li>
@@ -1864,6 +1824,10 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1899,10 +1863,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

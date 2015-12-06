@@ -141,6 +141,675 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/mongodbguanlijiaoben/">Mongodb集群管理脚本（python）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-06T00:00:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：mongodb集群需要一个管理脚本，比如启动集群，关闭集群，查看集群状态等功能，本脚本使用了pdsh代替ssh，本来为了并行操作，但是事实上在for循环里面并行是不必要的，所以可以改成ssh的。以后会改成多线程并行操作。</p>
+
+<p>本脚本特性：</p>
+
+<p>1 需要安装PDSH （并行的ssh）和termcolor(一个让终端显示颜色的pythonapi)，-h选项有安装方法介绍</p>
+
+<p>2 支持查看集群服务状态（包括查看监听端口列表和各设定服务是否正常，正常状态为绿色，不正常为红色），start/stop/restart等集群服务</p>
+
+<p>3 支持tab自动补齐相关命令</p>
+
+<p>4  启动服务前先判定服务是否运行，防止多次启动。停止服务时给于倒计时，防止误操作</p>
+
+<p>5  效果截图：</p>
+
+<p><img class="alignnone" title="mongodb1" src="http://farm7.static.flickr.com/6143/6034397038_9edf238f9b_z.jpg" alt="" width="640" height="437" /></p>
+
+<p><img class="alignnone" title="mongodb2" src="http://farm7.static.flickr.com/6189/6034397214_dc86e3bd26_z.jpg" alt="" width="640" height="264" /></p>
+
+<p><img class="alignnone" title="mongodb3" src="http://farm7.static.flickr.com/6181/6033847951_a7e188c613_z.jpg" alt="" width="640" height="437" /></p>
+
+<p>本脚本需要一个配置文件conf.cfg，当切换shard或者仲裁到其他服务器上面时候只需要修改此配置文件，本例有7台服务器，其中mongod1代表shard1，mongod3a代表shard3的arbiter，这样的写法是我为了直接在脚本里面取值，因为在相应服务器启动进程使用的是init.d下的脚本，配置文件也是conf型，下面有2个例子：</p>
+
+<p>cat /etc/conf.cfg  //python脚本的配置文件
+<pre class="sh_python">
+[host]
+ hosts=mg01,mg02,mg03,mg04,mg05,mg06,mg07
+ [mg01]
+ mongod = mongod1,mongod4
+ arbiter= mongod3a
+ config =
+ mongos = mongos
+ [mg02]
+ mongod = mongod1,mongod4
+ arbiter= mongod3a
+ config = mongoconfig
+ mongos =
+ [mg03]
+ mongod = mongod1,mongod2
+ arbiter= mongod4a
+ config =
+ mongos = mongos
+ [mg04]
+ mongod = mongod2
+ arbiter= mongod1a,mongod4a
+ config = mongoconfig
+ mongos =
+ [mg05]
+ mongod = mongod2,mongod3
+ arbiter= mongod1a
+ config =
+ mongos = mongos
+ [mg06]
+ mongod = mongod3
+ arbiter= mongod2a
+ config = mongoconfig
+ mongos =
+ [mg07]
+ mongod = mongod3,mongod4
+ arbiter= mongod2a
+ config =
+ mongos = mongos
+</pre></p>
+
+<p>cat /etc/init.d/mongod1  //mongodb进程启动脚本，支持start，stop等
+<pre class="sh_bash">
+#!/bin/bash</p>
+
+<p># mongod - Startup script for mongod</p>
+
+<p># chkconfig: 35 85 15
+ # description: Mongo is a scalable, document-oriented database.
+ # processname: mongod
+ # config: /etc/mongod.conf
+ # pidfile: /var/run/mongo/mongo.pid</p>
+
+<p>. /etc/rc.d/init.d/functions</p>
+
+<p># things from mongod.conf get there by mongod reading it</p>
+
+<p>OPTIONS=" -f /etc/mongod1.conf"</p>
+
+<p>mongod=${MONGOD-/usr/local/mongodb/bin/mongod}</p>
+
+<p>MONGO_USER=mongod
+ MONGO_GROUP=mongod</p>
+
+<p>start()
+ {
+ echo -n $"Starting mongod1: "
+ daemon --user "$MONGO_USER" $mongod $OPTIONS
+ RETVAL=$?
+ echo
+ [ $RETVAL -eq 0 ] &amp;&amp; touch /var/lock/subsys/mongod1
+ }</p>
+
+<p>stop()
+ {
+ echo -n $"Stopping mongod1: "
+ killproc -p /var/lib/mongo/mongod1.lock -t30 -TERM /usr/local/mongodb/bin/mongod
+ RETVAL=$?
+ echo
+ [ $RETVAL -eq 0 ] &amp;&amp; rm -f /var/lock/subsys/mongod1
+ }</p>
+
+<p>restart () {
+ stop
+ start
+ }</p>
+
+<p>ulimit -n 12000
+ RETVAL=0</p>
+
+<p>case "$1" in
+ start)
+ start
+ ;;
+ stop)
+ stop
+ ;;
+ restart|reload|force-reload)
+ restart
+ ;;
+ condrestart)
+ [ -f /var/lock/subsys/mongod1 ] &amp;&amp; restart || :
+ ;;
+ status)
+ status $mongod
+ RETVAL=$?
+ ;;
+ *)
+ echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+ RETVAL=1
+ esac</p>
+
+<p>exit $RETVAL
+</pre></p>
+
+<p>cat /etc/mongod1.conf  //mongodb启动脚本需要的conf配置文件，mongos和config配置文件类似
+<pre class="sh_bash">
+# shard1 config
+ shardsvr=true
+ replSet=shard1
+ port=10000
+ fork=true
+ journal=true
+ dbpath=/data/shard1
+ oplogSize=10240
+ logpath=/data/shard1/shard1.log
+ logappend=true
+ pidfilepath=/var/lib/mongo/mongod1.lock
+ unixSocketPrefix=/data/shard1/
+</pre></p>
+
+<p>下面是python管理脚本：</p>
+
+<p>cat /usr/bin/Mshell.py  //真正的管理脚本</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+# coding=gbk</p>
+
+<p>#__doc__注释  执行脚本 -h 或者 --help  打印输出的内容
+"""
+This script is used to manage mongodb!</p>
+
+<p>The Feature:
+1 Support command automatically filled
+2 View the current status of the cluster
+3 Shut down or start the cluster service</p>
+
+<p>Required dependencies:
+1 PDSH -&gt; Parallel Distributed Shell
+Installation:
+rpm -ivh pdsh-2.24-1.el5.rf.x86_64.rpm
+2 termcolor -&gt; ANSII Color formatting for output in terminal
+Installation:
+python setup.py install</p>
+
+<p>Usage:
+/usr/bin/Mshell.py
+Note: Does not require any parameters</p>
+
+<p>Writer:Dongweiming</p>
+
+<p>"""
+#引用一些需要的模块
+import os
+import sys
+import time
+import re
+import string
+import readline
+from subprocess import Popen, PIPE
+import ConfigParser
+from optparse import OptionParser
+from termcolor import colored</p>
+
+<p>class Cfg():
+#类初始化函数
+    def __init__(self,cfg):
+        self.cfg = cfg
+        self._parse_configure()
+#设定取值逻辑，当出现多个分割格式化
+    def _get_value(self,conf, line, key):
+        try:
+            value = conf.get(line, key)
+        except ConfigParser.NoOptionError:
+            return []
+        if value:
+            return [i.strip() for i in value.split(',') if i]
+        else:
+            return []
+#从配置文件中取得某主机某服务相关值
+    def _parse_configure(self):
+        conf = ConfigParser.RawConfigParser()
+        conf.read(self.cfg)
+        green_on_grey = lambda x:colored(x,'red','on_grey')
+        self.hosts=self._get_value(conf,'host','hosts')
+        for h in self.hosts:
+            for service in ['arbiter', 'config', 'mongod', 'mongos']:
+                setattr(self, '%s_%s' % (h, service), self._get_value(conf, h, service))
+                self.h_service=self._get_value(conf, h, service)
+#登录Shell打印一些配置文件格式化后的明细
+            print green_on_grey('host:\t%s\n') % h
+            if getattr(self,'%s_mongod' % h):
+                print colored('Shard:\t%s','yellow')  % getattr(self,'%s_mongod' % h )
+            if getattr(self,'%s_config' % h):
+                print colored('Config server is Open','green')
+            if getattr(self,'%s_mongos' % h):
+                print colored('Mongos server is Open','magenta')
+            if getattr(self,'%s_arbiter' % h):
+                print colored('Arbiter:\t%s','blue') % getattr(self,'%s_arbiter' % h )</p>
+
+<p>class Manager(Cfg):
+#初始化函数
+    def __init__(self,confile):
+        Cfg.__init__(self,confile)
+        self.services = [ 'arbiter', 'config', 'mongod', 'mongos', 'all','*']
+#执行命令的函数，设定命令操作逻辑过程
+    def fetch_job(self,cmd):
+        cmd = cmd.strip().split(None, 2)
+        if len(cmd) == 1 and cmd[0] not in ['show', 'help','status']:
+            print '%s what...' % cmd[0]
+            return
+        service= None
+        host = None
+#判断当命令以 start stop开始，host和服务是不是再设定的范围值
+        if cmd[0] in ['start', 'stop']:
+            if '@' in cmd[1]:
+                (service,host) = cmd[1].split('@')
+                if host not in self.hosts:
+                    print 'No such a host %s' % host
+                    return
+            else:
+                service = cmd[1]
+                host = 'all'</p>
+
+<p>            if service not in self.services:
+                print "bad service %s,Correct parameters: [ 'arbiter', 'config', 'mongod', 'mongos', 'all','*']" % service
+                return
+#当符合要求 调用下面的_start_srv函数用于启动
+            if cmd[0] == 'start' and len(cmd) == 2:
+                self._start_srv(host, service)
+            elif cmd[0] == 'stop' and len(cmd) &lt;= 3:
+                now = False
+                if len(cmd) == 3:
+                    if cmd[2] == 'now':
+                        now = True
+                    else:
+                        print 'Oops, bad command'
+                        return
+                self._stop_srv(host, service, now)
+            else:
+                print 'Oops, bad command'
+                return
+        elif cmd[0] == 'show':
+            self._show_srv()
+        elif cmd[0] == 'help':
+            self._show_help()
+        elif cmd[0] == 'status':
+            self._status_srv()
+        else:
+            print 'command error %s %s' % (cmd[0], cmd[1])
+            return
+#执行show命令
+    def _show_srv(self):
+        print  colored('服务器'+('-'*2) + 'PID'+('-'*4)+ '数据'+('-'*10)+'监听端口'+('-'*4)+'服务端口','blue')
+        for host in self.hosts:
+            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s ps -ef |grep mongod|grep -v grep' % ( host )
+            for line in os.popen(cmd).readlines():
+                dict = {}
+                s = string.split(line)
+                if s[1] == 'mongod':
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat %s|grep -v "#"|grep -v "^$"' % (s[0].strip(':'),s[10])
+                    for line in os.popen(cmd).readlines():
+                        f = string.rstrip(line)
+                        value = f.split('=')[1:2]
+                        key = f.split('=')[0].split(':')[1]
+                        if key != '':
+                           dict[key] = value
+                           if not dict.get(" replSet"):
+                               dict[' replSet']=['NO']
+                    print  colored(s[0].ljust(6,' '),"red"),colored(s[2].ljust(6,' '),"green"),colored('%s  %s ','cyan') % (''.join(dict.get(" unixSocketPrefix")).split('/')[2].ljust(14,' '),''.join(dict.get(" port")).ljust(8,' '))
+#查看集群状态，执行status命令
+    def _status_srv(self):
+        yellow_on_grey = lambda x:colored(x,'yellow','on_grey')
+        for h in self.hosts:
+            print yellow_on_grey('host:\t%s\n') % h
+            for str in ','.join(getattr(self,'%s_mongod' % h)).split(','):
+                if getattr(self,'%s_mongod' % h):
+                       cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/%s.conf' % (h,str)
+                       for line in os.popen(cmd).readlines():
+                           cmds ="PDSH_SSH_ARGS_APPEND='-p9922' pdsh -Rssh -w ssh:root@%s netstat -tunlp|egrep '10000|12000|14000|16000'|awk '{print $5}'|cut -d':' -f2"  % h
+                           for lines in  os.popen(cmds).readlines():
+                               setattr(self, '%s' % h,lines.strip())
+                               if line.strip().split('=')[1]  in lines.strip():
+                                   print 'Shard :%s\t [%s] ' % (str,colored('ok','green'))
+                                   break
+                           #else  line.strip().split('=')[1] not in lines.strip():
+                           else:
+                                   print 'Shard :%s\t [%s] ' % (str,colored('ok','red'))</p>
+
+<p>            if getattr(self,'%s_arbiter' % h):
+                for str in ','.join(getattr(self,'%s_arbiter' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/%s.conf' % (h,str)
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep mongo|grep "1[0-9]\{3\}1"' % h
+                            for line in  os.popen(cmd1).readlines():
+                               t = string.rstrip(line)
+                               value=t.split('0.0.0.0:')[1].rstrip()
+                               if cc in value:
+                                print 'Arbiter :%s\t [%s] ' % (str,colored('ok','green'))
+                                break
+                            else:
+                                print 'Arbiter :%s\t [%s] ' % (str,colored('ok','red'))</p>
+
+<p>            if getattr(self,'%s_config' % h):
+                for str in ''.join(getattr(self,'%s_config' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s grep "^port" /etc/mongoconfig.conf' % h
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep 20000' % h
+                            for line in  os.popen(cmd1).readlines():
+                               t = string.rstrip(line)
+                               value=t.split('0.0.0.0:')[1].rstrip()
+                               if cc in value:
+                                  print 'Config :%s\t %s' % (str,('[' + colored('ok','green')+']'))
+                                  break
+                            else:
+                                  print 'Config :%s\t %s' % (str,('[' + colored('ok','red')+']'))
+            if getattr(self,'%s_mongos' % h):
+                for str in ''.join(getattr(self,'%s_mongos' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w  ssh:root@%s grep "^port" /etc/mongos.conf' % h
+                        for line in  os.popen(cmd).readlines():
+                            f = string.rstrip(line)
+                            cc=f.split('=')[1]
+                            cmd1 = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp|grep mongos' % h
+                        for line in  os.popen(cmd1).readlines():
+                            t = string.rstrip(line)
+                            value=t.split('0.0.0.0:')[1].rstrip()
+                            if cc in value:
+                                print 'Mongos :%s\t [%s] ' % (str,colored('ok','green'))
+                                break
+                        else:
+                                print 'Mongos :%s\t [%s] ' % (str,colored('ok','red'))
+                                break
+#当执行 start 命令
+    def _start_srv(self,host,prog):
+#当执行start all
+        if prog == 'all':
+            for h in self.hosts:
+                if getattr(self,'%s_mongod' % h):
+                    for str in ','.join(getattr(self,'%s_mongod' % h)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/%s.conf|grep -v "#"|grep port' % (h,str)
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s mongod process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,str)
+                            os.system(cmd)
+            for h in self.hosts:
+                if getattr(self,'%s_arbiter' % h):
+                    for str in ','.join(getattr(self,'%s_arbiter' % h)).split(','):
+                        print str
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/%s.conf|grep -v "#"|grep port' % (h,str)
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s arbiter process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,str)
+                            os.system(cmd)</p>
+
+<p>            for h in self.hosts:
+                if getattr(self,'%s_config' % h):
+                        print ','.join(getattr(self,'%s_config' % h))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/mongoconfig.conf|grep -v "#"|grep port' % h
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s config process' % h
+                        else:
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,','.join(getattr(self,'%s_config' % h)))
+                            os.system(cmd)
+            for h in self.hosts:
+                if getattr(self,'%s_mongos' % h):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s cat /etc/mongos.conf|grep -v "#"|grep port' % h
+                        port=os.popen(cmd).readline().split('=')[1]
+                        cmds = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s netstat -tunlp |grep %s' % (h,port)
+                        true = os.popen(cmds).readline()
+                        if true != '':
+                            print 'Please stop and start %s mongos process' % h
+                        else:
+                           cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (h,','.join(getattr(self,'%s_mongos' % h)))
+                           os.system(cmd)
+        else:
+            if  host== 'all':
+                host = self.hosts
+            else:
+                host = [host]
+            for i in host:
+                if  prog == '*':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                    if getattr(self,'%s_arbiter' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                    for service in ['config', 'mongos']:
+                        if getattr(self,'%s_%s' % (i,service)):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_%s' % (i,service))))
+                            os.system(cmd)
+                if prog == 'mongod':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                            os.system(cmd)
+                if prog == 'mongos':
+                    print ','.join(getattr(self,'%s_mongos' % i))
+                    if getattr(self,'%s_mongos' % i):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_mongos' % i)))
+                        os.system(cmd)
+                if prog == 'config':
+                    print ''.join(getattr(self,'%s_config' % i))
+                    if getattr(self,'%s_config' % i):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,','.join(getattr(self,'%s_config' % i)))
+                        os.system(cmd)
+                if prog == 'arbiter':
+                    print ','.join(getattr(self,'%s_arbiter' % i))
+                    if getattr(self,'%s_arbiter' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s start' % (i,str)
+                        os.system(cmd)
+#当执行stop 的一些设置
+    def _stop_srv(self, host, prog, now):
+        if host == 'all':
+            host = self.hosts
+        else:
+            host = [host]
+        verify = None
+#当执行 stop all
+        if prog == 'all':
+            if not now:
+#执行前做确定验证，并倒计时3秒
+                try:
+                    verify = raw_input(colored("Are you sure to stop all? (y/n) ","yellow")).lower()
+                    if verify == 'y':
+                        print "&gt;&gt;&gt; Waiting 3 seconds before stoping..."
+                        print "&gt;&gt;&gt; (Control-C to abort)..."
+                        print "&gt;&gt;&gt; Stoping in:",</p>
+
+<p>                        for i in range(3, 0, -1):
+                            print colored('%d','red') % i,
+                            sys.stdout.flush()
+                            time.sleep(1)
+                        print
+                    else:
+                        return
+                except KeyboardInterrupt:
+                    print
+                    return
+#stop 过程逻辑
+            for host in self.hosts:
+                if getattr(self,'%s_mongos' % host):
+                    ','.join(getattr(self,'%s_mongos' % host))
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,','.join(getattr(self,'%s_mongos' % host)))
+                    os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_config' % host):
+                    print ','.join(getattr(self,'%s_config' % host))
+                    cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,','.join(getattr(self,'%s_config' % host)))
+                    os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_arbiter' % host):
+                    for str in ','.join(getattr(self,'%s_arbiter' % host)).split(','):
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,str)
+                        os.system(cmd)
+            for host in self.hosts:
+                if getattr(self,'%s_mongod' % host):
+                    for str in ','.join(getattr(self,'%s_mongod' % host)).split(','):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (host,str)
+                            os.system(cmd)
+#当执行stop service@XX 逻辑过程
+        else:
+            for i in host:
+                if  prog == '*':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,str)
+                            os.system(cmd)
+                    for service in ['arbiter', 'config', 'mongos']:
+                        if getattr(self,'%s_%s' % (i,service)):
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_%s' % (i,service))))
+                            os.system(cmd)
+                if prog == 'mongod':
+                    if getattr(self,'%s_mongod' % i):
+                        for str in ','.join(getattr(self,'%s_mongod' % i)).split(','):
+                            print str
+                            cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,str)
+                            os.system(cmd)
+                if prog == 'mongos':
+                    if getattr(self,'%s_mongos' % i):
+                        print ','.join(getattr(self,'%s_mongos' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_mongos' % i)))
+                        os.system(cmd)
+                if prog == 'config':
+                    if getattr(self,'%s_config' % i):
+                        print ','.join(getattr(self,'%s_config' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_config' % i)))
+                        os.system(cmd)
+                if prog == 'arbiter':
+                    if getattr(self,'%s_arbiter' % i):
+                        print ','.join(getattr(self,'%s_arbiter' % i))
+                        cmd = 'PDSH_SSH_ARGS_APPEND="-p9922" pdsh -Rssh -w ssh:root@%s /etc/init.d/%s stop' % (i,','.join(getattr(self,'%s_arbiter' % i)))
+                        os.system(cmd)
+#当执行help打印一些帮助信息
+    def _show_help(self):
+        help = " CMD                        ARGS                          DESCRIPTOR               \n" \
+             " ==============================================================================         \n" \
+             " start/stop       all/mongod/arbiter/config/mongos        启动关闭进程          \n" \
+             " 注：启动关闭方式：1 start/stop service@host \n"  \
+             "                   2 start/stop all（相当于start/stop * \n" \
+             "                   3 start/stop service     \n" \
+             " 例子：停止集群mongos服务： stop  mongos \n" \
+             "       启动集群mg02主机的config服务：start  config@mg02 \n" \
+             "       停止整个集群服务： stop all\n" \
+             " help                                                     找到帮助      \n" \
+             " show                                                     查看当前启动进程      \n" \
+             " status                                                   查看状态     \n" \
+             " ==============================================================================         \n"
+        print help                 </p>
+
+<p>#Shell累 主要是用户操作的一些指导
+class Shell:
+#设定进入Shell显示的颜色和语言
+    PROMPT = colored('root','green') + colored('@MongoDB# ','red')
+#初始化函数 设定配置文件conf.cfg，命令行限制可以使用的几个命令
+    def __init__(self):
+        confile = os.path.join("", '/etc/conf.cfg')
+        self.cmds = ['start', 'stop', 'show', 'log', 'help','status']
+#调用类Manager
+        self.manager = Manager(confile)
+#        self.pro = Cfg(confile)
+    def start(self):
+        readline.set_completer(self._completer)
+        readline.parse_and_bind("tab: complete")
+        while True:
+            try:
+                cmd = raw_input(self.PROMPT)
+            except EOFError:
+                print colored('Exit','green')
+                exit(0)
+            except KeyboardInterrupt:
+                print colored('type ctrl-D to exit Mongo Manager Shell','yellow')
+                continue
+            if cmd:
+                self._parse_cmd(cmd)
+    def _completer(self, word, index):
+        matches = [c for c in self.cmds if c.startswith(word)]
+        try:
+            return matches[index] + ''
+        except IndexError:
+            pass
+    def _shell(self, cmd):
+        print 'Mongo-Shell: "%s": command not find  please input "help"' % cmd
+#判断命令开始是不是设定的那几个词语，是-&gt;执行fetch_job函数
+    def _parse_cmd(self, cmd):
+        if cmd.startswith('start') or \
+                cmd.startswith('stop') or \
+                cmd.startswith('show') or \
+                cmd.startswith('status') or \
+                cmd.startswith('help') or \
+                cmd.startswith('log'):
+            self.manager.fetch_job(cmd)
+        else:
+            self._shell(cmd)
+#主函数
+if __name__ == '__main__':
+    argc = len(sys.argv)
+    parser = OptionParser(description="Use For Mongodb Shell",prog="Mshell.py",version="1.0",usage="%prog")
+    parser.add_option("-v", "--verbose",action="count",help="Show Shell Version Information(For more information, please use the option: -vv)")
+    options, arguments=parser.parse_args()
+#判断是否root
+    if os.geteuid() != 0:
+        print red('Need to be root :(')
+        exit(1)
+#当脚本不带参数引发调用类Shell
+    if argc == 1:
+        test = Shell()
+        test.start()
+#当不了脚本的用户使用-h或者--help  给与doc提示
+    if '-h' in sys.argv  or '--help' in sys.argv:
+        print __doc__
+    elif options.verbose ==1:
+        print __doc__
+    elif options.verbose ==2:
+        print __doc__
+        print "Version =1.0  Revision time at 2011年 07月 04日"
+    else:
+        print '请直接运行脚本，不需要附带参数'
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sikewangluoanquanzhuantierguanyuluyouqianquan/">思科网络安全专题（二）:关于路由器安全</a></h1>
     
     
@@ -838,109 +1507,6 @@ else:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8ucarp%E5%AE%9E%E7%8E%B0%E8%99%9A%E6%8B%9Fip%E6%95%85%E9%9A%9C%E8%BD%AC%E6%8D%A2%EF%BC%8C%E9%93%BE%E8%B7%AF%E5%86%97%E4%BD%99/">使用UCARP实现虚拟IP故障转换，链路冗余</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-14T00:00:00+08:00" pubdate data-updated="true">Jul 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>UCARP是一个使用CARP协议的高可用软件。可以在2台服务器上上设置虚拟IP地址，并让他们实现自动热备。类似于vrrp和hsrp协议。</p>
-
-<p>1 下载安装
-wget http://download.pureftpd.org/pub/ucarp/ucarp-1.5.2.tar.gz
-tar zxvf ucarp-1.5.2.tar.gz
-cd ucarp-1.5.2
-./configure &amp;&amp; make &amp;&amp; make install
-注：rpm包安装及不同系统不同版本都会造成ucarp安装的路径及启动/关闭虚拟IP的脚本文件的地址不同，不一定是我以下演示的路径</p>
-
-<p>2 实验：
-我这里有2台服务器 192.168.9.104 ，192.168.9.115  虚拟的IP是192.168.120.120
-启动104上面的进程 （可以加-B后台运行把日志输入syslog）
-ucarp &#8211;interface=eth0 &#8211;srcip=192.168.9.104 &#8211;vhid=1 &#8211;pass=mypassword &#8211;addr=192.168.120.120 &#8211;upscript=/usr/share/doc/ucarp-1.5.2/vip-up.sh &#8211;downscript=/usr/share/doc/ucarp-1.5.2/vip-down.sh
-注：上面启动命令的释义：设置网络接口eth0上的虚拟ip 为192.168.120.120虚拟ip地址标识为1,密码是mypassword,真实地址为192.168.9.104,
-运行脚本/usr/share/doc/ucarp-1.5.2/vip-up.sh当主机成为主服务器的时候,运行脚本/usr/share/doc/ucarp-1.5.2/vip-down.sh当虚拟ip被禁用的时候.这2个启动关闭的脚本是安装包自带的。
-日志输出：
-[INFO] Local advertised ethernet address is [00:50:56:ae:00:0e]
-[WARNING] Switching to state: BACKUP
-[WARNING] Spawning [/usr/libexec/ucarp/vip-down eth0 192.168.120.120]
-[WARNING] Switching to state: MASTER
-[WARNING] Spawning [/usr/libexec/ucarp/vip-up eth0 192.168.120.120]
-启动115上面的进程
-ucarp &#8211;interface=eth0 &#8211;srcip=192.168.9.104 &#8211;vhid=1 &#8211;pass=mypassword
-&#8211;addr=192.168.120.120 &#8211;upscript=/usr/share/doc/ucarp-1.5.2/vip-up.sh
-&#8211;downscript=/usr/share/doc/ucarp-1.5.2/vip-down.sh
-日志输出
-[INFO] Local advertised ethernet address is [00:50:56:ae:00:01]
-[WARNING] Switching to state: BACKUP
-[WARNING] Spawning [/usr/share/doc/ucarp-1.5.2/vip-down.sh eth0 192.168.120.120]
-这个时候 我们登录192.168.120.120：
-dongwm@dongwm:~$ ssh root@192.168.120.120 -p9922
-Last login: Thu Jul 14 11:55:38 2011 from 192.168.8.83
-root@104 ~&gt;
-好了 我们登录了192.168.9.104这个机器，但是ifconfig并不会出现192.168.120.120这个虚拟接口</p>
-
-<p>现在down掉104的进程，观察115的日志：
-[WARNING] Switching to state: MASTER
-[WARNING] Spawning [/usr/share/doc/ucarp-1.5.2/vip-up.sh eth0 192.168.120.120]</p>
-
-<p>115变成了master，这时候登录192.168.120.120
-dongwm@dongwm:~$ ssh root@192.168.120.120 -p9922
-Last login: Thu Jul 14 11:58:22 2011 from 192.168.8.83
-root@115~&gt;
-登录的虚拟IP实际上已经换成了115
-在这个过程中 我一直开了一个终端去ping192.168.120.120：
-dongwm@dongwm:~$ ping 192.168.120.120
-PING 192.168.120.120 (192.168.120.120) 56(84) bytes of data.
-64 bytes from 192.168.120.120: icmp_req=1 ttl=64 time=0.780 ms
-64 bytes from 192.168.120.120: icmp_req=2 ttl=64 time=0.273 ms
-64 bytes from 192.168.120.120: icmp_req=3 ttl=64 time=0.297 ms
-64 bytes from 192.168.120.120: icmp_req=4 ttl=64 time=0.315 ms
-64 bytes from 192.168.120.120: icmp_req=5 ttl=64 time=0.306 ms
-64 bytes from 192.168.120.120: icmp_req=6 ttl=64 time=0.369 ms
-64 bytes from 192.168.120.120: icmp_req=7 ttl=64 time=0.311 ms
-64 bytes from 192.168.120.120: icmp_req=8 ttl=64 time=0.355 ms
-64 bytes from 192.168.120.120: icmp_req=9 ttl=64 time=0.286 ms
-64 bytes from 192.168.120.120: icmp_req=10 ttl=64 time=0.349 ms
-64 bytes from 192.168.120.120: icmp_req=11 ttl=64 time=0.638 ms
-64 bytes from 192.168.120.120: icmp_req=12 ttl=64 time=0.353 ms
-64 bytes from 192.168.120.120: icmp_req=13 ttl=64 time=0.339 ms
-64 bytes from 192.168.120.120: icmp_req=14 ttl=64 time=0.288 ms
-64 bytes from 192.168.120.120: icmp_req=15 ttl=64 time=0.316 ms
-64 bytes from 192.168.120.120: icmp_req=16 ttl=64 time=0.366 ms
-64 bytes from 192.168.120.120: icmp_req=17 ttl=64 time=0.309 ms
-64 bytes from 192.168.120.120: icmp_req=18 ttl=64 time=0.366 ms
-可以看到虚拟IP的漂移未造成链路的长时间的链路断掉。</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/25/">&larr; Older</a></li>
@@ -963,6 +1529,10 @@ PING 192.168.120.120 (192.168.120.120) 56(84) bytes of data.
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -998,10 +1568,6 @@ PING 192.168.120.120 (192.168.120.120) 56(84) bytes of data.
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

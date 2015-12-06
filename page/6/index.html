@@ -141,6 +141,175 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shi-yong-pelicanxin-de/">使用pelican心得</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-06T23:32:00+08:00" pubdate data-updated="true">Jun 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>最近在用<a href="http://getpelican.com/">pelican</a>借用<a href="http://pages.github.com">GitHub Pages</a>搭建我的<a href="http://dongweiming.github.io">小明明s Github</a>, 总结了些心得</p>
+
+<h4 id="makefile">写好Makefile</h4>
+
+<p>ruby有rake，但是python的好像没什么好用的，还是用Makefile，简单粗暴.先看用的</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">help:                                       
+</span><span class="line">    @echo 'Makefile for a pelican Web site                                        '
+</span><span class="line">    @echo '                                                                       '
+</span><span class="line">    @echo 'Usage:                                                                 '
+</span><span class="line">    @echo '   make html                        (re)generate the web site          '
+</span><span class="line">    @echo '   make clean                       remove the generated files         '
+</span><span class="line">                                                              
+</span><span class="line">local:                                                           
+</span><span class="line">    ./regen -q                                                  
+</span><span class="line">github:-                                                       
+</span><span class="line">    ./regen                                                   
+</span><span class="line">    ghp-import -b master $(OUTPUTDIR)                        
+</span><span class="line">    git push origin gh-pages:gh-pages-                      
+</span><span class="line">    git push origin master:master                          
+</span><span class="line">                                                          
+</span><span class="line">.PHONY: help github local 
+</span></pre></figure></notextile></div>
+
+<p>其中的regen是封装的脚本, 主要是为了加参数让我在本地生成html(其中的文件连接都指到我本地),然后我用python -m SimpleHTTPServer启动:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">#!/usr/bin/env bash
+</span><span class="line">
+</span><span class="line">set -e
+</span><span class="line">
+</span><span class="line">quiet=""
+</span><span class="line">output="output"
+</span><span class="line">if [ "$1" = "-q" ] ; then
+</span><span class="line">    shift
+</span><span class="line">    quiet="1"
+</span><span class="line">    output="output-local"
+</span><span class="line">    export OVERRIDE_SITEURL=http://localhost:8000
+</span><span class="line">fi
+</span><span class="line">
+</span><span class="line">echo -n "regenerating..."
+</span><span class="line">pelican content/ -o $output -s pelicanconf.py "$@"
+</span><span class="line">echo done.
+</span></pre></figure></notextile></div>
+
+<h4 id="github">我提交到github的方式</h4>
+
+<p>上面的脚本已经很明显了，我直接执行make github</p>
+
+<p>其中的<a href="http://github.com/davisp/ghp-import">ghp-import</a>的介绍很明显了:Easily import docs to your gh-pages branch</p>
+
+<p>但是有个大坑: githubpages是要从你的项目的master分支去获取html页面，而不是gh-pages分支,所以Makefile我修改了下用法</p>
+
+<h4 id="push">自动push不需要帐号密码</h4>
+
+<p>其实就是添加~./netrc</p>
+
+<p>machine github.com
+login XXX@gmail.com
+password XXX</p>
+
+<h4 id="section-1">可配置的创建文章</h4>
+
+<p>想想octopress的Rakefile，里面定义了一个new_post的方法，额pelican什么都没有，好吧，我用shell做了个</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">#!/bin/bash
+</span><span class="line">category='设计模式'
+</span><span class="line">title_resource='python设计模式之'
+</span><span class="line">tags='Design Patterns'
+</span><span class="line">
+</span><span class="line">while getopts ":c:r:g:s:t:" opt; do
+</span><span class="line">  case $opt in
+</span><span class="line">    c)
+</span><span class="line">    category=$OPTARG
+</span><span class="line">      ;;
+</span><span class="line">    r)
+</span><span class="line">    title_resource=$OPTARG
+</span><span class="line">        ;;
+</span><span class="line">    g)
+</span><span class="line">    tags=$OPTARG
+</span><span class="line">        ;;
+</span><span class="line">    t)
+</span><span class="line">    title=$OPTARG
+</span><span class="line">        ;;
+</span><span class="line">    s)
+</span><span class="line">    slug=$PTARG
+</span><span class="line">        ;;
+</span><span class="line">    ?)
+</span><span class="line">      echo "How to use: $0 [-c category] [-r title_resource] [-g tags] [-t title] [-s slug]" &gt;&amp;2
+</span><span class="line">      exit 1
+</span><span class="line">      ;;
+</span><span class="line">    :)
+</span><span class="line">      echo "Option -$OPTARG requires an argument." &gt;&amp;2
+</span><span class="line">      exit 1
+</span><span class="line">      ;;
+</span><span class="line">  esac
+</span><span class="line">done
+</span><span class="line">test "x$title" = "x" &amp;&amp; read -r -p "Post title [前缀是 ${title_resource}]&gt; " &amp;&amp; title=${REPLY}
+</span><span class="line">test "x$slug" = "x" &amp;&amp; read -r -p "Post slug [比如abstract-factory]&gt; " &amp;&amp; slug=${REPLY}
+</span><span class="line">title=`echo $title | tr "[:upper:]" "[:lower:]"]`
+</span><span class="line">title=`echo $title | tr -d "[:blank:]"`
+</span><span class="line">slug=`echo $slug | tr " " "-"`
+</span><span class="line">fileslug=`echo $slug | tr "-" '_'`
+</span><span class="line">cur_date=`date "+%Y-%m-%d"`
+</span><span class="line">filename="${category}/${fileslug}.md"
+</span><span class="line">author=`git config --get user.name`
+</span><span class="line">echo "Creating preview"
+</span><span class="line">echo "_________________________________"
+</span><span class="line">echo "filename: content/$filename"
+</span><span class="line">echo "title: ${title_resource}${title}"
+</span><span class="line">echo "slug: python-${slug}"
+</span><span class="line">echo "date: ${cur_date}"
+</span><span class="line">echo "category: ${category}"
+</span><span class="line">echo "tags: ${tags}"
+</span><span class="line">echo "_________________________________"
+</span><span class="line">echo ""
+</span><span class="line">read -r -p "Are you ready to create(Y or N) &gt;"
+</span><span class="line">reply=${REPLY}
+</span><span class="line">reply=`echo $reply | tr "[:upper:]" "[:lower:]"]`
+</span><span class="line">test "x$reply" != "xy" &amp;&amp; exit 1
+</span><span class="line">cat &gt; "content/"$filename &lt;&lt;EOF
+</span><span class="line">title: ${title_resource}${title}
+</span><span class="line">slug: python-${slug}
+</span><span class="line">date: ${cur_date}
+</span><span class="line">category: ${category}
+</span><span class="line">tags: ${tags}
+</span><span class="line">
+</span><span class="line">EOF
+</span><span class="line">
+</span><span class="line">$EDITOR "content/"$filename
+</span></pre></figure></notextile></div>
+
+<h4 id="psdongweiminggithubiohttpsgithubcomdongweimingdongweiminggithubiogh-pages">PS：以上脚本都可以到我的项目<a href="https://github.com/dongweiming/dongweiming.github.io">dongweiming.github.io</a>的gh-pages分支去拿</h4>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/duo-master-slash-developfen-zhi-shi-yong-gitflow/">多master/develop分支使用gitflow</a></h1>
     
     
@@ -1929,154 +2098,6 @@ shell&gt;bash &lt;(curl -s https://raw.github.com/orzrd/laptop/master/setup_lapt
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoo-wpa_supplicant-wireless/">Gentoo使用wpa_supplicant配置无线网卡</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-03-31T23:22:00+08:00" pubdate data-updated="true">Mar 31<span>st</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
-
-<p>公司全部使用了无线网络，我也被‘逼’的开始研究gentoo的无线上网，看了网上很多文章，以及gentoo文档，但是感觉都让我很迷糊，以下是我使用wpa_supplicant是一些总结</p>
-
-<h4 id="section-1">总结</h4>
-
-<ul>
-  <li>查看本机的无线网卡</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-emerge pciutils #这样就有了lspci这个命令
-localhost ~ # lspci |grep -i wire
-02:00.0 Network controller: Atheros Communications Inc. AR9285 Wireless Network Adapter (PCI-Express) (rev 01)
-</pre></figure></notextile></div></notextile></div>
-
-<p>可以发现，网卡是Atheros的AR9285</p>
-
-<ul>
-  <li>安装wpa_supplicant</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-emerge -s wpa_supplicant
-</pre></figure></notextile></div></notextile></div>
-
-<ul>
-  <li>生成一个配置配置文件</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-zcat /usr/share/doc/wpa_supplicant-2.0/wpa_supplicant.conf.bz2 &gt; /etc/wpa_supplicant/wpa_supplicant.conf
-</pre></figure></notextile></div></notextile></div>
-
-<ul>
-  <li>配置，以下是我去掉注释行，空白行等剩下的配置，其中的psk的字符串这样生成：</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-localhost ~ # wpa_passphrase 我的ssid 我的key
-network={
-	ssid="我的ssid"
-	#psk="我的key"
-	psk=e596aa911775ed47e04f5b9a9540978203210874eb258208b87cf82b5cf72588
-}
-</pre></figure></notextile></div></notextile></div>
-
-<p>把这段加在配置文件中</p>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-localhost ~ # cat /etc/wpa_supplicant.conf 
-
-ctrl_interface=/var/run/wpa_supplicant
-eapol_version=1
-ap_scan=1
-fast_reauth=1
-network={
-	ssid="我的ssid"
-	psk=e596aa911775ed47e04f5b9a9540978203210874eb258208b87cf82b5cf72588
-	priority=2
-}
-</pre></figure></notextile></div></notextile></div>
-
-<ul>
-  <li>命令行启动wpa(如果想看详细的信息用于调试，加-d选项)</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-localhost ~ # wpa_supplicant -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf   
-Successfully initialized wpa_supplicant
-wlan0: Trying to associate with 20:dc:c6:61:ab:34 (SSID='我的ssid' freq=2437 MHz)
-ioctl[SIOCSIWFREQ]: Device or resource busy
-wlan0: Association request to the driver failed
-wlan0: Associated with 20:dc:c6:61:ab:34
-wlan0: WPA: Key negotiation completed with 20:dc:c6:61:ab:34 [PTK=CCMP GTK=CCMP]
-wlan0: CTRL-EVENT-CONNECTED - Connection to 20:dc:c6:61:ab:34 completed [id=0 id_str=]
-</pre></figure></notextile></div></notextile></div>
-
-<p>其中wlan0: Association request to the driver failed 没关系</p>
-
-<ul>
-  <li>安装udhcpc</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-emerge udhcpc
-</pre></figure></notextile></div></notextile></div>
-
-<ul>
-  <li>通过dhcp自动获得</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
-localhost ~ # dhcpcd wlan0
-dhcpcd[12395]: version 5.6.4 starting
-dhcpcd[12395]: wlan0: waiting for carrier
-dhcpcd[12395]: wlan0: carrier acquired
-dhcpcd[12395]: wlan0: carrier lost
-dhcpcd[12395]: wlan0: waiting for carrier
-dhcpcd[12395]: wlan0: carrier acquired
-dhcpcd[12395]: wlan0: sending IPv6 Router Solicitation
-dhcpcd[12395]: wlan0: sendmsg: Cannot assign requested address
-dhcpcd[12395]: wlan0: rebinding lease of 192.168.0.106
-dhcpcd[12395]: wlan0: acknowledged 192.168.0.106 from 192.168.0.1 `�'
-dhcpcd[12395]: wlan0: checking for 192.168.0.106
-dhcpcd[12395]: wlan0: sending IPv6 Router Solicitation
-dhcpcd[12395]: wlan0: leased 192.168.0.106 for 7200 seconds
-dhcpcd[12462]: wlan0: wlan0: MTU set to 576
-dhcpcd[12395]: forked to background, child pid 12479
-</pre></figure></notextile></div></notextile></div>
-
-<p>看到了吧 获得了192.168.0.106这个地址</p>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/7/">&larr; Older</a></li>
@@ -2099,6 +2120,10 @@ dhcpcd[12395]: forked to background, child pid 12479
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -2134,10 +2159,6 @@ dhcpcd[12395]: forked to background, child pid 12479
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

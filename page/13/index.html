@@ -141,6 +141,192 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusimplexmlrpcserveryanjiu/">关于SimpleXMLRPCServer研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：SimpleXMLRPCServer顾名思义就是实现XML-RPC的远程调用服务器</p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer  #服务器端
+import logging
+import os</p>
+
+<p>logging.basicConfig(level=logging.DEBUG)  #记录日志级别为DEBUG</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)  #绑定到9000端口 假如指定allow_none=True，接受返回值是none</p>
+
+<p>def list_contents(dir_name):  #一个响应操作方法  
+    logging.debug('list_contents(%s)', dir_name)  #记录日志
+    return os.listdir(dir_name)  #给客户端返回结果，这个例子返回当前目录的所有文件名
+def my_function(a, b): #这个响应方法含有参数
+    return a * b
+class DirectoryService: #一个响应类
+    def list(self, dir_name):
+        return os.listdir(dir_name)
+class ServiceRoot:  #添加一个空类
+    pass</p>
+
+<p>class DirectoryService:  #这个类是定义响应方法的类
+    def list(self, dir_name):
+        return os.listdir(dir_name)</p>
+
+<p>root = ServiceRoot()
+root.dir = DirectoryService()  #就是为了在使用ServiceRoot.dir的时候找到DirectoryService()
+ server.register_function(list_contents,'dir')  #在服务器注册这个方法 会表示把这个方法重定义成'dir'，客户端使用proxy.dir而不是proxy.list_contents
+server.register_function(os.mkdir, 'dir.create')  #注册的方法别名也支持'.'，这里这个方法是proxy.dir.create
+server.register_function(my_function, 'multiply args')  #这个在调用时是getattr(proxy, 'multiply args')(5, 5) 使用getattr是因为这个注册的方法名字'multiply args'含有空格
+server.register_instance(DirectoryService())  #用类的方法注册  只在在客户端使用proxy.list （list是这个类中定义的方法）
+server.register_instance(root, allow_dotted_names=True) #指定容许类中的'.' 这样调用：proxy.dir.list
+try: 
+    print 'Use Control-C to exit'
+    server.serve_forever()  #loop运行
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p><pre class="sh_python">
+import xmlrpclib  #客户端</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')  
+print proxy.list_contents('/tmp') #使用上面注册的这个方法找到'/tmp'下的所有文件名
+</pre></p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+import os
+import inspect</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)</p>
+
+<p>def expose(f):  #自定义一个装饰器，返回的方法的exposed属性为真
+    f.exposed = True
+    return f
+def is_exposed(f): #测试方法是否公开exposed
+    return getattr(f, 'exposed', False)</p>
+
+<p>class MyService:
+    PREFIX = 'prefix'
+    def _dispatch(self, method, params): #设置自己的调度方式，因为默认不会调度以'_'开始的方法，而且有些方法可能是不愿意公开的 比如下面的private（私有）
+        if not method.startswith(self.PREFIX + '.'): #设置不能直接以proxy.+方法的方式调用，而需要proxy.prefix.+方法的方式
+            raise Exception('method "%s" is not supported' % method)</p>
+
+<p>        method_name = method.partition('.')[2]  #获取第三个参数，也就是类的方法名字
+        func = getattr(self, method_name)            
+        if not is_exposed(func):  #判断这个方法是不是能公开，使用其中的exposed属性值判断
+            raise Exception('method "%s" is not supported' % method)</p>
+
+<p>        return func(*params)  #执行这个方法</p>
+
+<p>    @expose
+    def public(self):
+        return 'This is public'</p>
+
+<p>    def private(self):
+        return 'This is private'</p>
+
+<p>server.register_instance(MyService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p>客户端：</p>
+
+<p><pre class="sh_python">
+import xmlrpclib</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')
+print 'public():', proxy.prefix.public()  #因为服务器的装饰器让这个方法的exposed永远为真，可以公开
+try:
+    print 'private():', proxy.prefix.private() #因为没有设置exposed的bool值，默认是假  
+except Exception, err:
+    print 'ERROR:', err
+try:
+    print 'public() without prefix:', proxy.public() #因为没有使用proxy.prefix.+方法的方式
+except Exception, err:
+    print 'ERROR:', err
+</pre></p>
+
+<p><pre class="sh_python">
+from SimpleXMLRPCServer import SimpleXMLRPCServer, list_public_methods
+import os
+import inspect</p>
+
+<p>server = SimpleXMLRPCServer(('localhost', 9000), logRequests=True)
+server.register_introspection_functions() #开启方法检查，如检查支持什么方法等作用</p>
+
+<p>class DirectoryService:</p>
+
+<p>    def _listMethods(self):
+        return list_public_methods(self) #返回方法列表</p>
+
+<p>    def _methodHelp(self, method):
+        f = getattr(self, method)
+        return inspect.getdoc(f)  #返回方法是否有doc文档</p>
+
+<p>    def list(self, dir_name):
+        """list(dir_name) =&gt; [&lt;filenames&gt;] 
+            Returns a list containing the contents of the named directory. 
+        """
+         return os.listdir(dir_name)</p>
+
+<p>server.register_instance(DirectoryService())</p>
+
+<p>try:
+    print 'Use Control-C to exit'
+    server.serve_forever()
+except KeyboardInterrupt:
+    print 'Exiting'
+</pre></p>
+
+<p>客户端：</p>
+
+<p><pre class="sh_python">
+import xmlrpclib</p>
+
+<p>proxy = xmlrpclib.ServerProxy('http://localhost:9000')
+for method_name in proxy.system.listMethods():  #返回支持的方法列表
+    print '=' * 60
+    print method_name
+    print '-' * 60
+    print proxy.system.methodHelp(method_name)  #返回方法帮助类定义的功能，因为服务器端设置这个方法是打印文档，这里就会打印文档
+    print
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusignalyanjiu/">关于signal研究</a></h1>
     
     
@@ -1768,78 +1954,6 @@ MyObj(3)</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyummapyanjiu/">关于mmap研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：mmap全称内存映射文件，需要在<a href="http://en.wikipedia.org/wiki/Python_%28programming_">Python<img src="http://i.ixnp.com/images/v3.45/t.gif" alt="" /></a>程序中存取一个很大的数组，数组的每一项是(int, int, float, int)的记录。如果直接用list来存放，占据的内存巨大（因为不仅所有这些数都是对象，且tuple本身也是对象），或者要将正则表达式应用于匹配整个文件，但又不想将整个文件内容全部读入内存（特别是对于大文件而言，更是如此），那么就是mmap的作用了，Memory-mapped文件可以被当作可变的字符串或类似文件的对象</p>
-
-<p><pre class="sh_python">
-import mmap
-import contextlib</p>
-
-<p>with open('text', 'r') as f:  #创建的一个文件text
-    with contextlib.closing(mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)) as m:  #mmap.mmap创建一个内存映射文件,第一个参数是文件描述符，第二个参数要是0，表示隐射全部文件
-                                                #第三个参数可选，ACCESS_READ表示只读，<tt>ACCESS_WRITE</tt>内存直接写文件 <tt>ACCESS_COPY</tt>不会真的修改到源文件
-        print 'First 10 bytes via read :', m.read(10)
-        print 'First 10 bytes via slice:', m[:10]
-        print '2nd   10 bytes via read :', m.read(10)
-</pre></p>
-
-<p><pre class="sh_python">
-import mmap
-import contextlib</p>
-
-<p>word = 'Icinga'
-reversed = word[::-1]
-print 'Looking for    :', word
-print 'Replacing with :', reversed</p>
-
-<p>with open('text', 'r+') as f:  #'r+'不能只是写，而是追加
-    with contextlib.closing(mmap.mmap(f.fileno(), 0)) as m:
-        print 'Before:', m.readline().rstrip()   #替换前的源文件
-        m.seek(0)  #指针到文件开头</p>
-
-<p>        loc = m.find(word)   #在内存中找到'Icinga'
-        m[loc:loc+len(word)] = reversed #替换
-        m.flush()</p>
-
-<p>        m.seek(0) 
-        print 'After :', m.readline().rstrip()
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/14/">&larr; Older</a></li>
@@ -1862,6 +1976,10 @@ print 'Replacing with :', reversed</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1897,10 +2015,6 @@ print 'Replacing with :', reversed</p>
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

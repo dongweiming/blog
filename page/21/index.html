@@ -141,6 +141,72 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%89%EF%BC%89/">关于expect研究（三）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-03T00:00:00+08:00" pubdate data-updated="true">Jan 3<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：本文主要介绍expect的正则表达式和参数匹配的一个例子</p>
+
+<p>需求： ssh常用的端口是22 但是有些端口可能不是，所以设计了一个如果有参数就表示端口指定了其它 没有参数表示使用默认的22。我本机设置了一些hosts，假如以‘mta’开头的就匹配第二条</p>
+
+<p><pre class="sh_tcl">
+#!/usr/bin/expect
+set timeout 10
+set file1 [lindex $argv 0]
+set port [lindex $argv 1]
+if {$port==""} {
+set port 22
+}
+if {$argc&gt;2} {
+puts stderr "参数错误,请使用以下格式: $argv0 {想去的服务器简称,比如89} "
+exit 1
+}
+if {$file1=="26"} {
+spawn sshfs -p 62100 root@10.14.22.26:/home/dongwm 26
+expect "password:"
+send "$password1089\n"
+interact
+} elseif {[regexp {^mta} $file1 found]} {
+spawn sshfs -p 61012 root@$file1:/home/dongwm $file1
+interact
+} else {
+spawn luit -encoding gbk ssh -p $port root@$file1
+interact
+}
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/unicodeencodeerror-latin-1-codec-cant-encode-characters-in-position-%E6%8A%A5%E9%94%99%E8%A7%A3%E5%86%B3/">UnicodeEncodeError: &#8216;Latin-1&#8217; Codec Can&#8217;t Encode Characters in Position 报错解决</a></h1>
     
     
@@ -962,74 +1028,6 @@ except:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongjuer/">Linux运维不可不知的性能监控和调试工具（二）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-14T00:00:00+08:00" pubdate data-updated="true">Dec 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1 nagios</strong></p>
-
-<p>Nagios是一个开源监控解决方案，我觉得他可以监控一切 ，可以看一下我以前的文章：<a href="http://www.dongwm.com/archives/category/%e7%b3%bb%e7%bb%9f%e7%9b%91%e6%8e%a7/nagios/">NAGIOS</a></p>
-
-<p><strong>2 ps #用来查看程序的运行情况</strong></p>
-
-<p>ps -ef |grep svr.py|grep -v grep |awk &#8216;{print $2}&#8217; #查看svr.py的进程pid号
-14554</p>
-
-<p>dongwm@linux-b8lh:~&gt; ps -e -o pid,args &#8211;forest #层次结构中的进程ID</p>
-
-<p><strong>3 free #查看系统的物理（RAM）和交换内存的信息</strong>
-dongwm@linux-b8lh:~&gt;  free -mto #MB值显示，显示总计
-total       used       free     shared    buffers     cached
-Mem:          3196       2947        249          0        264       1436
-Swap:         2053         88       1965
-Total:        5250       3035       2215
-<strong>4 top #显示所有正在运行的进程的信息，类似于windows的资源管理器 详细的清参看：</strong><a href="http://www.dongwm.com/archives/%e5%85%b3%e4%ba%8etop%e7%81%b5%e5%91%bd%e7%9a%84%e7%a0%94%e7%a9%b6/"><strong>关于top命令的研究</strong>
-</a>5 pmap #显示一个给定的进程的内存映射</p>
-
-<p>dongwm@linux-b8lh:~&gt; pmap 14443
-14443: bash
-START       SIZE     RSS     PSS   DIRTY    SWAP PERM MAPPING
-08048000    580K    476K     74K      0K      0K r-xp /bin/bash
-080d9000      4K      4K      4K      4K      0K r&#8211;p /bin/bash
-080da000      8K      8K      8K      8K      0K rw-p /bin/bash
-080dc000   1076K    976K    976K    976K      0K rw-p [heap]
-b744c000      8K      8K      8K      8K      0K rw-p [anon]
-b744e000    252K     32K      6K      0K      0K r&#8211;p /usr/lib/locale/zh_CN.utf8/LC_CTYPE
-b748d000   1344K     24K      2K      0K      0K r&#8211;p /usr/lib/locale/zh_CN.utf8/LC_COLLATE</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongjuer/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/22/">&larr; Older</a></li>
@@ -1052,6 +1050,10 @@ b748d000   1344K     24K      2K      0K      0K r&#8211;p 
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1087,10 +1089,6 @@ b748d000   1344K     24K      2K      0K      0K r&#8211;p 
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

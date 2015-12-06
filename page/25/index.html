@@ -141,6 +141,109 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8ucarp%E5%AE%9E%E7%8E%B0%E8%99%9A%E6%8B%9Fip%E6%95%85%E9%9A%9C%E8%BD%AC%E6%8D%A2%EF%BC%8C%E9%93%BE%E8%B7%AF%E5%86%97%E4%BD%99/">使用UCARP实现虚拟IP故障转换，链路冗余</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-14T00:00:00+08:00" pubdate data-updated="true">Jul 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>UCARP是一个使用CARP协议的高可用软件。可以在2台服务器上上设置虚拟IP地址，并让他们实现自动热备。类似于vrrp和hsrp协议。</p>
+
+<p>1 下载安装
+wget http://download.pureftpd.org/pub/ucarp/ucarp-1.5.2.tar.gz
+tar zxvf ucarp-1.5.2.tar.gz
+cd ucarp-1.5.2
+./configure &amp;&amp; make &amp;&amp; make install
+注：rpm包安装及不同系统不同版本都会造成ucarp安装的路径及启动/关闭虚拟IP的脚本文件的地址不同，不一定是我以下演示的路径</p>
+
+<p>2 实验：
+我这里有2台服务器 192.168.9.104 ，192.168.9.115  虚拟的IP是192.168.120.120
+启动104上面的进程 （可以加-B后台运行把日志输入syslog）
+ucarp &#8211;interface=eth0 &#8211;srcip=192.168.9.104 &#8211;vhid=1 &#8211;pass=mypassword &#8211;addr=192.168.120.120 &#8211;upscript=/usr/share/doc/ucarp-1.5.2/vip-up.sh &#8211;downscript=/usr/share/doc/ucarp-1.5.2/vip-down.sh
+注：上面启动命令的释义：设置网络接口eth0上的虚拟ip 为192.168.120.120虚拟ip地址标识为1,密码是mypassword,真实地址为192.168.9.104,
+运行脚本/usr/share/doc/ucarp-1.5.2/vip-up.sh当主机成为主服务器的时候,运行脚本/usr/share/doc/ucarp-1.5.2/vip-down.sh当虚拟ip被禁用的时候.这2个启动关闭的脚本是安装包自带的。
+日志输出：
+[INFO] Local advertised ethernet address is [00:50:56:ae:00:0e]
+[WARNING] Switching to state: BACKUP
+[WARNING] Spawning [/usr/libexec/ucarp/vip-down eth0 192.168.120.120]
+[WARNING] Switching to state: MASTER
+[WARNING] Spawning [/usr/libexec/ucarp/vip-up eth0 192.168.120.120]
+启动115上面的进程
+ucarp &#8211;interface=eth0 &#8211;srcip=192.168.9.104 &#8211;vhid=1 &#8211;pass=mypassword
+&#8211;addr=192.168.120.120 &#8211;upscript=/usr/share/doc/ucarp-1.5.2/vip-up.sh
+&#8211;downscript=/usr/share/doc/ucarp-1.5.2/vip-down.sh
+日志输出
+[INFO] Local advertised ethernet address is [00:50:56:ae:00:01]
+[WARNING] Switching to state: BACKUP
+[WARNING] Spawning [/usr/share/doc/ucarp-1.5.2/vip-down.sh eth0 192.168.120.120]
+这个时候 我们登录192.168.120.120：
+dongwm@dongwm:~$ ssh root@192.168.120.120 -p9922
+Last login: Thu Jul 14 11:55:38 2011 from 192.168.8.83
+root@104 ~&gt;
+好了 我们登录了192.168.9.104这个机器，但是ifconfig并不会出现192.168.120.120这个虚拟接口</p>
+
+<p>现在down掉104的进程，观察115的日志：
+[WARNING] Switching to state: MASTER
+[WARNING] Spawning [/usr/share/doc/ucarp-1.5.2/vip-up.sh eth0 192.168.120.120]</p>
+
+<p>115变成了master，这时候登录192.168.120.120
+dongwm@dongwm:~$ ssh root@192.168.120.120 -p9922
+Last login: Thu Jul 14 11:58:22 2011 from 192.168.8.83
+root@115~&gt;
+登录的虚拟IP实际上已经换成了115
+在这个过程中 我一直开了一个终端去ping192.168.120.120：
+dongwm@dongwm:~$ ping 192.168.120.120
+PING 192.168.120.120 (192.168.120.120) 56(84) bytes of data.
+64 bytes from 192.168.120.120: icmp_req=1 ttl=64 time=0.780 ms
+64 bytes from 192.168.120.120: icmp_req=2 ttl=64 time=0.273 ms
+64 bytes from 192.168.120.120: icmp_req=3 ttl=64 time=0.297 ms
+64 bytes from 192.168.120.120: icmp_req=4 ttl=64 time=0.315 ms
+64 bytes from 192.168.120.120: icmp_req=5 ttl=64 time=0.306 ms
+64 bytes from 192.168.120.120: icmp_req=6 ttl=64 time=0.369 ms
+64 bytes from 192.168.120.120: icmp_req=7 ttl=64 time=0.311 ms
+64 bytes from 192.168.120.120: icmp_req=8 ttl=64 time=0.355 ms
+64 bytes from 192.168.120.120: icmp_req=9 ttl=64 time=0.286 ms
+64 bytes from 192.168.120.120: icmp_req=10 ttl=64 time=0.349 ms
+64 bytes from 192.168.120.120: icmp_req=11 ttl=64 time=0.638 ms
+64 bytes from 192.168.120.120: icmp_req=12 ttl=64 time=0.353 ms
+64 bytes from 192.168.120.120: icmp_req=13 ttl=64 time=0.339 ms
+64 bytes from 192.168.120.120: icmp_req=14 ttl=64 time=0.288 ms
+64 bytes from 192.168.120.120: icmp_req=15 ttl=64 time=0.316 ms
+64 bytes from 192.168.120.120: icmp_req=16 ttl=64 time=0.366 ms
+64 bytes from 192.168.120.120: icmp_req=17 ttl=64 time=0.309 ms
+64 bytes from 192.168.120.120: icmp_req=18 ttl=64 time=0.366 ms
+可以看到虚拟IP的漂移未造成链路的长时间的链路断掉。</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E4%BD%BFnagios%E4%BD%BF%E7%94%A8ldap%E5%B8%90%E5%8F%B7%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95/">使nagios使用LDAP帐号密码登录</a></h1>
     
     
@@ -808,67 +911,6 @@ R2#sh run</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/ubuntu11-04%E5%AE%89%E8%A3%85macbuntu/">ubuntu11.04安装Macbuntu</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-31T00:00:00+08:00" pubdate data-updated="true">May 31<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>Macbuntu是什么呢？从名字就可以看出来和苹果的Mac OS有关，是滴，他就是让ubuntu变成Mac，并且保留了ubuntu所有的3D特效：</strong>
-<img style="max-width: 800px;" src="http://farm3.static.flickr.com/2699/5779619664_10bb87a0c5_b.jpg" alt="" />它的官方下载地址是：https://sourceforge.net/projects/macbuntu/ 但是目前还没出11.04版本 只能使用10.10版本，需要修改install.sh文件，否则因为版本问题会报错：
-将这一段：</p>
-
-<p>chk_system()
-{
-echo &#8220;&#8221;
-echo &#8220;Checking Ubuntu version&#8230;&#8221;
-#       s=`cat /etc/issue | grep -i &#8220;$UBUNTU&#8221;`
-#       if [ ! -n &#8220;$s&#8221; ]; then
-#               echo &#8220;Failed. System not supported, script will end here&#8221;
-#               echo &#8220;To ignore their compatibility with current OS try ./install.sh force&#8221;
-#               echo &#8220;Exiting&#8230;&#8221;
-#               exit 1;
-#       fi
-echo &#8220;Passed&#8221;
-}
-去掉其中的判断修改为：
-chk_system()
-{
-echo &#8220;&#8221;
-echo &#8220;Checking Ubuntu version&#8230;&#8221;
-echo &#8220;Passed&#8221;
-}
-然后按照提示安装
-<img style="max-width: 800px;" src="http://www.flickr.com/photos/63483712@N05/5779619664/" alt="" /></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/26/">&larr; Older</a></li>
@@ -891,6 +933,10 @@ echo &#8220;Passed&#8221;
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -926,10 +972,6 @@ echo &#8220;Passed&#8221;
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

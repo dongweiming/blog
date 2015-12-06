@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>CODE开源了 - 小明明s à domicile</title>
+  <meta name="author" content="Dongweiming">
+
+  
+  <meta name="description" content="douban dongweiming site">
+  <meta name="keywords" content="python, ipython, emacs, github, dongweiming, django, flask, bottle, jinja2, requests, douban, httpie, jedi, mako, plim, react, develop, lisp, ruby, web development, sed, awk, linux, 运维, 运维开发, sentry, tonrado, scrapy, fabric, celery, pythoncode">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dongweiming.github.com/blog/archives/codekai-yuan-liao">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/javascripts/api.js"></script>
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script>
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script>
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script>
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/sh_python.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_bash.min.js"></script>
+<script type="text/javascript" src="/javascripts/sh_main.min.js"></script>
+<link href="/stylesheets/sh_ide-anjuta.css" rel="stylesheet" type="text/css">
+
+  
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h3>
+            <small><time datetime="{{date}}" pubdate>{{date}}</time></small>
+            <a href="{{url}}">{{title}}</a>
+            <p>tagged: {{ tags }} | category: <a href="/categories/{{category }}">{{category}}</a></p>
+        </h3>
+    </article>
+  {{/entries}}
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20495125-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    onload="sh_highlightDocument('', '.js');">
+<a href="http://github.com/dongweiming/">
+<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Follower me on GitHub">
+</a>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">小明明s à domicile</a>
+
+      <div class="nav-collapse">
+          <ul class="nav">
+    <li><a href="/">博客主页</a></li>
+    <li><a href="/blog/archives">文章列表</a></li>
+    <li><a href="/aboutsite">关于本站</a></li>
+    <li><a href="/projects">我的项目</a></li>
+    <li><a href="http://dongweiming.github.io/sed_and_awk">sed_and_awk</a></li>
+    <li><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+    <li><a href="/aboutme">关于我</a></li>
+</ul>
+
+          <ul class="nav pull-right" data-subscription="rss">
+              <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+          </ul>
+
+        
+
+          
+            <form action="/search" method="get" class="pull-right navbar-search">
+    <fieldset role ="search">
+        <input type="text" id="search-query" name="q" placeholder="Search" autocomplete="off" class="search" />
+    </fieldset>
+</form>
+
+          
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+      <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">CODE开源了</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-06T22:28:00+08:00" pubdate data-updated="true">Dec 6<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3 id="section">引言</h3>
+<p>可能很多人有点诧异, CODE不是已经开源了么? 是的, 2014年2月14日CODE的早期版本就开源到了github. 但是后来由于很多原因没有在做下去, 今天, 它真的开源了.</p>
+
+<p>让我坚持下来的也是我想给外界看到豆瓣工程师文化的结晶, 这是一种情怀, 今天我想说说我和CODE的故事</p>
+
+<h3 id="code">CODE的意义</h3>
+
+<p>CODE为什么开源: 希望更多的人可以使用 CODE，希望更多的人可以一起开发 CODE。 - Code Team</p>
+
+<p>市面上有gitlab, 有github企业版. 我们折腾一个这样的东西有什么意义呢? 以下是我的看法.</p>
+
+<ol>
+  <li>CODE是一款豆瓣工程师自发组织, 基于我们自己的需要做出来的. 他其实是互联网公司程序员的一个需要, CODE曾经给github的同事们演示, 获得了很高的赞誉.</li>
+  <li>它并不是github的python克隆版, 有些地方却是和github殊途同归.</li>
+  <li>当你产品发展到一定地步, 对这个版本控制工具会有更多的定制化需求, 这个时候会需要二次开发. 假如你是个ruby开发很多的公司, 也不算个问题. 但是假如大家用非ruby的语言为主, 那么就很痛苦. ruby虽然在配置管理, web开发上面有一席之位, 但是没有python这么普遍. 同事们的参与局限性就多了很多.</li>
+  <li>假如你所在公司是python系, 或者爱好python系的, 那么CODE真的是一个很不错的选择. 首先它是免费的, 它是由国内python最大应用公司的工程师们开发, 质量有保证. 看代码的过程中也能学习到一些python的技巧, 豆瓣的玩法, 了解豆瓣的开发流程.</li>
+  <li>我一直觉得轮子是需要造的, 这个过程你能了解造轮子的乐趣, 一直在用其他人的东西那么永远只会停留在这个程度上.</li>
+  <li>用CODE, 看CODE代码的时候, 仿佛可以看到那帮有情怀, 有工程师文化的同学们在讨论需求, code review…  我一直认为这种关系和友谊才是最好的团队具有的</li>
+</ol>
+
+<h3 id="section-1">情怀</h3>
+
+<p>好吧, 啥是情怀呢?</p>
+
+<blockquote>
+  <p>情怀就是以心灵的满足而不是功利的得失作为自己的行为标准的一种品质。
+一件没什么用的事，还是要去做，也许只因为我喜欢，也许只因为它看起来很美 – 知乎<a href="http://www.zhihu.com/people/song-lao-mo">@宋老末</a></p>
+</blockquote>
+
+<p>「我坚信程序员都是有情怀的. 」</p>
+
+<p>从<a href="https://github.com/douban/code/issues/65#issuecomment-126901877">我决定继续这件事</a>, 到现在已经4个月有余. 这个过程里面经历蛮多, 比如我经历着从技术转型做管理, 部门问题多多, 人员也在我强力介入下也流动蛮大的 -。-; 我也要花很大的精力陪女儿; 我一直也在不断的给自己充电, 我现在也要开始写书了… 做了TL, 唯一的感觉就是时间不够用, 我是个蛮有洁癖的人, 以前做普通工程师的时候按期完成我职责范围内的就好了, 现在责任大了, 看着产品线的sentry里那么多的报错, 看着Trello里面堆积那么多的card还没有机会做… 尤其在我使用一种新的管理风格有关, 让我倍敢压力, 非常辛苦.</p>
+
+<p>要不是@xTao不断催促, 可能还要拖期. </p>
+
+<p>是什么支撑我的情怀? </p>
+
+<blockquote>
+  <p>除了眼前的苟且，还有诗和远方 - 知乎<a href="http://www.zhihu.com/people/dai-xiao-xi-70">@戴晓溪</a></p>
+</blockquote>
+
+<h3 id="code-1">我和CODE</h3>
+
+<p>告诉你们个小秘密, 我来豆瓣其实也是和CODE有很大的关系的… 在这里感谢@xTao和邢老师.</p>
+
+<p>这一切是为什么捏?</p>
+
+<p>话说那是13年下半年, 我的前公司从svn转到了gitlab. 我们在内部搭建了一个gitlab服务器. 各个产品线的代码都开始往上面迁移, 我不得不说它是市面上非常好的开源选择. 但是过了一段时间我就发现了问题:</p>
+
+<p>我是python系的, 我有时候对它是不满意的, 有想法二次开发的.</p>
+
+<p>这里我提一点, 很多人都说: “哎呀不要局限于编程语言, 不要去争论xx是宇宙第一语言”. 我的观点是, 只有0.1%的天才+4.9%的有天赋, 能力很强的人是可以这么说的. 剩下的95%都是在给自己学的不好找个理由和慰藉罢了. 我的观点是, 想要走在金字塔尖就需要有执念, 否则只能沦落到只能打打嘴炮的地步.</p>
+
+<p>我曾经尝试一边翻着<ruby元编程>一边去读gitlab的源码, 想尝试定制它. 努力了差不多一个月放弃了. 原因无二, 这种临时报佛脚去玩转一个大公司北京多为大牛参与的开源项目的必然结果.</ruby元编程></p>
+
+<p>很痛苦, 但是内心又多有不甘, 于是决定做一个大事: 用python造个gitlab的轮子:</p>
+
+<ol>
+  <li>样式扒gitlab</li>
+  <li>根据gitlab的路由方式添加url</li>
+  <li>使用pygit2作为git后端</li>
+</ol>
+
+<p>做起来才知道, 这是一个非常浩大的工程, 对于我当时的技术能力来说是个非常大的挑战. 我汲取前后端知识就基本直接用在这个项目上了. </p>
+
+<p>但是有一天, 我有个放弃的念头.</p>
+
+<p>之前我对豆瓣也没有什么特别的感觉. 直到有天我看到<a href="http://v.youku.com/v_show/id_XNTYwMzc0NjY0.html">清风在 C2D2 的分享</a></p>
+
+<p>http://segmentfault.com/a/1190000000410324
+http://www.infoq.com/cn/articles/douban-code-2years
+http://www.infoq.com/cn/presentations/tools-love-knot-of-engineer-culture</p>
+
+<p>我才知道在遥远的豆瓣, 有这样一帮人和我有同样的想法. 我称他们为geek. 这是我向往的地方呀. 于是, 我决定去豆瓣</p>
+
+<p>CODE开源不久, 我就到了豆瓣.</p>
+
+<p>非常遗憾, 我进来的时候, CODE的核心开发大多离开了豆瓣. 我没有机会和他们一起做CODE. CODE功能也接近稳定, 心情蛮失落的我只是修了几十个bug. 加一些功能, 比如:</p>
+
+<ol>
+  <li>鼠标放在团队上也会hover一个team的card</li>
+  <li>telchar - 类似quora的qlint</li>
+  <li>鼠标emoji会悬浮图片的放大版本</li>
+  <li>项目的guidelines</li>
+</ol>
+
+<p>等等.</p>
+
+<h3 id="code-2">CODE的未来</h3>
+
+<p>我会保证CODE会一直做下去. 但是单个人的能力精力有限, 我欢迎更多的公司都来用CODE, 帮助它变得更好. 也欢迎更多的同学参与进来. </p>
+
+<p>未来CODE会做以下几件事情(不断补充中)</p>
+
+<ol>
+  <li>完善CODE的功能 - 现在放出来, 跑起来了. 但是预计还会有很多坑</li>
+  <li>增加初始化脚本, 填充数据</li>
+  <li>修复travis-ci</li>
+  <li>国际化 - 现在code里面有很多中文, 需要英文能力很高的同学一起来做</li>
+  <li>重构 - 有很多功能都是需要重构甚至重写的</li>
+  <li>其他方面的尝试</li>
+</ol>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard"><span class="fn">Dongweiming 发布于</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-06T22:28:00+08:00" pubdate data-updated="true">Dec 6<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <span>
+  <iframe
+    width="55"
+    scrolling="no"
+    height="66"
+    frameborder="0"
+    src=
+      "http://hits.sinajs.cn/A1/weiboshare.html?url=http://dongweiming.github.com/blog/archives/codekai-yuan-liao/&amp;appkey=site.weiboapp&amp;type=1&amp;ralateUid=1994497175&amp;language=zh_cn" allowtransparency="true">
+  </iframe>
+  
+  
+  <iframe
+    width="55"
+    scrolling="no"
+    height="74"
+    frameborder="0"
+    src="/douban.html">
+  </iframe>
+  </span> 
+  
+  
+  
+</div>
+  <hr style="border-bottom:1px dotted #bdbabd;height:1px;border-top:0px;border-left:0px;border-right:0px;" />
+
+    
+    
+    <section>
+      <h1>评论</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/" title="Previous Post:
+        12个python填空题">&laquo; 12个python填空题</a></li>
+      
+      <li><a href="/blog/archives">博客文章</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class='well'>
+    <ul id='qq' class='nav'>
+        <li class='nav-header'>我新建了一个QQ群</li>
+        <li style="padding-left: 15px;">121435120</li>
+        <li style="padding-left: 15px;">欢迎入伙</li>
+    </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/idiomatic-python/">idiomatic python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
+      </li>
+    
+      <li class="post">
+        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+  <li class="nav-header">个人网站</li>
+    <li class="post"><a href="http://salogs.com">带我入行的boss</a></li>
+    <li class="post"><a href="http://dongweiming.github.com/">小明明s Github Blog</a></li>
+    <li class="post"><a href="http://youhouer.appspot.com/">Love story(GAE)</a></li>
+    <li class="post"><a href="http://www.unixhot.com">unixhot运维社区</a></li>
+    <li class="post"><a href="http://www.vpsee.com">Vpsee</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/sed_and_awk/">sed_and_awk</a></li>
+    <li class="post"><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a></li>
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub帐号</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'dongweiming',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+<section class="well">
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-cloud"></div>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">豆瓣阅读</li>
+  </ul>
+  <script type="text/javascript" src="http://www.douban.com/service/badge/62943420/?select=random&amp;n=10&amp;columns=2&amp;picsize=medium&amp;hidelogo=true&amp;hideself=true&amp;cat=book|music" ></script>
+  <a href="https://www.douban.com/people/62943420">@小明明</a> on Douban 
+</section>
+
+
+<section class='well'>
+<ul id='gh_repos' class='nav'>
+<li class='nav-header'>文章统计</li>
+<li>本站共有 271 篇文章</li>
+</ul>
+</section>
+
+
+  
+</aside>
+
+
+      </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2015 - Dongweiming -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dongwm';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dongweiming.github.com/blog/archives/codekai-yuan-liao/';
+        var disqus_url = 'http://dongweiming.github.com/blog/archives/codekai-yuan-liao/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

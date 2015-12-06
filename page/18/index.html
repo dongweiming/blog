@@ -141,6 +141,177 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuawkyanjiuwu/">关于AWK研究（五）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-23T00:00:00+08:00" pubdate data-updated="true">Apr 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 IGNORECASE忽略大小写</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;/aaa/{print}&#8217; test.txt   #默认IGNORECASE是0
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN{IGNORECASE=1}/aaa/{print}&#8217; test.txt
+115,AAA
+<strong>2 ERRNO  错误输出</strong>
+dongwm@linux-dongwm:~&gt; cat test.awk
+{
+print $0;
+x = getline &lt; &#8220;dummy-file.txt&#8221;
+if ( x == -1 )
+print ERRNO   #当出现一个I／O错误，会把ERRNO变成输出信息
+else
+print $0;
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+112,dongwm,dongwm.com,1120
+没有那个文件或目录
+113,ailll,ailll.com,1130
+没有那个文件或目录
+114,ccc,ccc.com,1140
+没有那个文件或目录
+<strong>3 用户自定义方法</strong></p>
+
+<p>语法：</p>
+
+<p>function fn-name(parameters)
+{
+function-body
+}
+dongwm@linux-dongwm:~&gt; cat test.awk
+{
+i=1; total=0;
+while (i &lt;= NF) {
+mydebug(&#8220;quantity is &#8221; $i);
+total = total + $i;
+i++;
+}
+print &#8220;Item&#8221;, $1, &#8220;:&#8221;,&#8221;num is&#8221;,total;
+}
+function mydebug ( message ) {
+printf(&#8220;DEBUG[%d]&gt;%s\n&#8221;, NR, message )
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt
+DEBUG[1]&gt;quantity is 112,dongwm,dongwm.com,1120
+Item 112,dongwm,dongwm.com,1120 : num is 112
+DEBUG[2]&gt;quantity is 113,ailll,ailll.com,1130
+Item 113,ailll,ailll.com,1130 : num is 113
+DEBUG[3]&gt;quantity is 114,ccc,ccc.com,1140
+Item 114,ccc,ccc.com,1140 : num is 114</p>
+
+<p><strong>4 其他语言输出</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk   # 第一步 建立文件域
+BEGIN {
+FS=&#8221;,&#8221;
+TEXTDOMAIN = &#8220;test&#8221;   #这个很重要 最后的.mo文件要一样
+bindtextdomain(&#8220;.&#8221;)
+print _&#8221;START_TIME:&#8221; strftime(&#8220;%a %b %d %H:%M:%S %Z%Y&#8221;,systime());
+printf &#8220;%-3s\t&#8221;, _&#8221;Num&#8221;;   #‘_’表示定制，打印时候是不显示的
+printf &#8220;%-10s\t&#8221;, _&#8221;Description&#8221;
+printf &#8220;%-10s\t&#8221;, _&#8221;Domain&#8221;
+printf &#8220;%-5s\t&#8221;, _&#8221;Price&#8221;
+printf&#8221;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;\n&#8221;
+}
+{
+printf &#8220;%-3d\t%-10s\t%-10s\t$%-.2f\n&#8221;,
+$1,$2,$3,$4
+}</p>
+
+<p>dongwm@linux-dongwm:~&gt; awk -f test.awk test.txt  #格式化输出为下面
+START_TIME:一  4月 23 10:19:29 CST2012
+Num    Description    Domain        Price    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;
+112    dongwm        dongwm.com    $1120.00
+113    ailll         ailll.com     $1130.00
+114    ccc           ccc.com       $1140.00
+dongwm@linux-dongwm:~&gt; gawk &#8211;gen-po -f test.awk &gt; test.po  #第二步  创建.po文件(portable object file  便携式对象文件)
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.po
+#: test.awk:5
+msgid &#8220;START_TIME:&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:6
+msgid &#8220;Num&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:7
+msgid &#8220;Description&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:8
+msgid &#8220;Domain&#8221;
+msgstr &#8220;&#8221;</p>
+
+<p>#: test.awk:9
+msgid &#8220;Price&#8221;
+msgstr &#8220;&#8221;
+第三步 修改.po文件，比如有一行：msgid &#8220;START_TIME:&#8221;，假如想显示成“Report Generated On:” 可以这样：</p>
+
+<p>#: test.awk:5
+msgid &#8220;START_TIME:&#8221;
+msgstr &#8220;Report Generated On:&#8221;
+dongwm@linux-dongwm:~&gt; msgfmt -v test.po  #第四步 建立消息对象
+1 条已翻译消息，4 条未翻译消息.
+dongwm@linux-dongwm:~&gt; ll messages.mo   #生成了这个文件
+-rw-r&#8211;r&#8211; 1 dongwm users 89  4月 23 10:25 messages.mo
+dongwm@linux-dongwm:~&gt; mkdir -p en_US/LC_MESSAGES   #拷贝这个文件到你想要的语言目录
+dongwm@linux-dongwm:~&gt; mv messages.mo en_US/LC_MESSAGES/test.mo
+<strong>5 双向通讯</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.awk
+BEGIN {
+command = &#8220;sed &#8216;s/Awk/Sed and Awk/&#8217;&#8221;
+print &#8220;Awk is Great!&#8221; |&amp; command                #“|&amp;”表明它是一个双向的沟通。
+close(command,&#8221;to&#8221;);
+command |&amp; getline tmp  #进程完成，按行输出显示
+print tmp;
+close(command);
+}
+dongwm@linux-dongwm:~&gt; awk -f test.awk
+Sed and Awk is Great!
+<strong>6使用系统命令方法</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { system(&#8220;pwd&#8221;) }&#8217;
+/home/dongwm
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { system(&#8220;date&#8221;) }&#8217;
+2012年 04月 23日 星期一 10:49:10 CST
+<strong>7 时间戳方法</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print systime() }&#8217;
+1335149444
+dongwm@linux-dongwm:~&gt; awk &#8216;BEGIN { print strftime(&#8220;%c&#8221;,systime()) }&#8217;
+2012年04月23日 星期一 10时50分53秒<strong></strong></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuawkyanjiusi/">关于awk研究（四）</a></h1>
     
     
@@ -1636,141 +1807,6 @@ error.html内容  #这个文件放在tornado模块的路径下
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/tornadoyingyongliziershiyongajaxjquerytongguoqiantaihehoutaijiaohu/">Tornado应用例子(二)：使用ajax（jquery）通过前台和后台交互</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-31T00:00:00+08:00" pubdate data-updated="true">Mar 31<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：在实际使用中肯定出现在web页面输入一些数据然后把数据传送到后台（tornado），执行完毕后再从后台把结果返回到web前台，其中也安排一些异常处理，比如数据在后台不存在，会进行提示（异步），上一个例子主要把html文件写到了python脚本，本例子是一个html＋tornado类</p>
-
-<p><pre class="sh_html4strict">
-&lt;html&gt;
-&lt;head&gt;
-&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;   #我这里使用了jquery封装
-&lt;script type="text/javascript"&gt;
-preAllow = true;   #定义一个变量，主要是为了防止恶刷，也是为了防止重复提交，在返回结果之前是不能点击的
-$(function()
-        {
-$("#AjaxGet").click(function(event)   #使用jquery封装js
-            {
-    if(preAllow){   
-    preAllow=false;
-    var flag =1  #定义一个变量，当下面的一些检查发现问题会置0，这样就不会发送post请求了
-    var htmlElement = encodeURI(encodeURI($("#myhtml").val()));  #使用jquery获取DOM 
-    if (/(\w+)\.html/.exec(htmlElement) == null||htmlElement=="")  #使用js的正则匹配判断格式不符合  或者  为空  都会alert
-    {
-    alert("请输入正确的html文件");
-    flag=0;
-    }
-    var tableElement = encodeURI(encodeURI($("#mytable").val()));
-    if (tableElement=="")
-    {
-    alert("请输入数据库表名");
-    flag=0;
-    }
-    var senderElement = encodeURI(encodeURI($("#sender").val()));
-    if (/(\w+)\@(.*)/.exec(senderElement) == null||senderElement=="")
-    {
-    alert("请输入正确的Email地址");
-    flag=0;
-    }
-    var headElement = $("#myhead").val();   #这里的jquery获取DOM，但是为了解析方便我没有编码url
-    if (headElement=="")
-    {
-    alert("请输入发送邮件的head");
-    flag=0;
-    }
-    var senderidElement = $("#sender_id").val();
-    if (senderidElement=="")
-    {
-    alert("请输入发送邮件标识");
-    flag=0;
-    }
-    if(flag){
-    $.ajax({   #使用了jquery的ajax，因为我需要回调没有使用$.get
-   type: "POST",  #调用类型
-   url: "/path",  #调用的url地址
-   data: {"html":htmlElement,"table":tableElement,"sender":senderElement,"head":headElement,"senderid":senderidElement},  #传送的dict数据
-   success: function(data){  #回调函数，alert返回结果
-   alert(decodeURI(data));
-   preAllow = true;
-}</p>
-
-<p>	});    
-}}
-else {alert("已经发送了!");}   #执行中再点击，弹出警告！
-});
-})
-&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;    
-    &lt;form&gt;
-    &lt;label for=filename&gt;调用的html文件名&lt;/label&gt;   #充分使用html5
-    &lt;input id=myhtml type=text required /&gt;&lt;/br&gt;
-    &lt;label for=tablename&gt;调用数据库表名&lt;/label&gt;
-    &lt;input id=mytable  type=text required /&gt;&lt;/br&gt;
-    &lt;label for=email&gt;发送者邮件地址&lt;/label&gt;
-    &lt;input id=sender  type=email required /&gt;&lt;/br&gt;
-    &lt;label for=emailhead&gt;邮件标题&lt;/label&gt;
-    &lt;input id=myhead  type=text required /&gt;&lt;/br&gt;
-    &lt;label for=emailid&gt;邮件发送人标识&lt;/label&gt;
-    &lt;input id=sender_id  type=text required /&gt;&lt;/br&gt;
-    &lt;/form&gt;
-    &lt;button id="AjaxGet"&gt;使用执行&lt;/button&gt;&lt;br /&gt;
-    &lt;div id="serverResponse"&gt;&lt;/div&gt;  #暂时没用
-&lt;/body&gt;
-&lt;/html&gt;
-</pre></p>
-
-<p><pre class="sh_python">
-class SendPostHandler(MyRequestHandler):
-    def post(self):
-        uri = self.request.body
-        sql = MysqlHander()
-        mydict = {}
-        for i in uri.split('&amp;'):
-            data = i.split('=')
-            mydict[data[0]]=data[1]
-        htmlpath = 'uphtml/' + mydict['html']
-        if not os.path.exists(htmlpath):
-            self.write('This html file does not exist!')
-            return -1
-        import Main
-        d = Main.Send()
-        d.General('mail',mydict['table'],sender,head,senderid,mydict['html']) 
-        time.sleep(10)
-        self.write('Sender Done!')
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/19/">&larr; Older</a></li>
@@ -1793,6 +1829,10 @@ class SendPostHandler(MyRequestHandler):
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1828,10 +1868,6 @@ class SendPostHandler(MyRequestHandler):
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

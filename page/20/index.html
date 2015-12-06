@@ -141,6 +141,207 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%BA%8C%EF%BC%89/">Pymongo教程（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-06T00:00:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1  移除子文档：</p>
+
+<p>user_doc = {
+&#8220;username&#8221;:&#8221;foouser&#8221;,
+&#8220;emails&#8221;:[
+{
+&#8220;email&#8221;:&#8221;foouser1@dongwm.com&#8221;,
+&#8220;primary&#8221;:True
+},
+{
+&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+},
+{
+&#8220;email&#8221;:&#8221;foouser3@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+}
+]
+}
+dbh.users.insert(user_doc, safe=True)
+dbh.users.update({&#8220;username&#8221;:&#8221;foouser&#8221;},
+{&#8220;$pull&#8221;:{&#8220;emails&#8221;:{&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;}}}, safe=True)   #移除 &#8220;foouser2@dongwm.com&#8221;子文档</p>
+
+<p>2 增加子文档</p>
+
+<p>new_email = {&#8220;email&#8221;:&#8221;fooemail4@dongwm.com&#8221;, &#8220;primary&#8221;:False}
+dbh.users.update({&#8220;username&#8221;:&#8221;foouser&#8221;},
+{&#8220;$push&#8221;:{&#8220;emails&#8221;:new_email}}, safe=True)   #使用$push增加</p>
+
+<p>3 修改子文档</p>
+
+<p>user_doc = {
+&#8220;username&#8221;:&#8221;foouser&#8221;,
+&#8220;emails&#8221;:[
+{
+&#8220;email&#8221;:&#8221;foouser1@dongwm.com&#8221;,
+&#8220;primary&#8221;:True
+},
+{
+&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+},
+{
+&#8220;email&#8221;:&#8221;foouser3@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+}
+]
+}
+dbh.users.insert(user_doc, safe=True)
+dbh.users.update({&#8220;emails.email&#8221;:&#8221;foouser2@dongwm.com&#8221;},
+{&#8220;$set&#8221;:{&#8220;emails.$.primary&#8221;:True}}, safe=True)   #设置子文档属性 &#8220;primary&#8221;为真</p>
+
+<p>4 使用索引加快查找</p>
+
+<p>这里有个文档</p>
+
+<p>user_doc = {
+&#8220;username&#8221;:&#8221;foouser&#8221;,
+&#8220;emails&#8221;:[
+{
+&#8220;email&#8221;:&#8221;foouser1@dongwm.com&#8221;,
+&#8220;primary&#8221;:True
+},
+{
+&#8220;email&#8221;:&#8221;foouser2@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+},
+{
+&#8220;email&#8221;:&#8221;foouser3@dongwm.com&#8221;,
+&#8220;primary&#8221;:False
+}
+]
+}</p>
+
+<p>dbh.users.insert(user_doc)</p>
+
+<p>正常查找使用：</p>
+
+<p>user = dbh.users.find_one({&#8220;emails.email&#8221;:&#8221;foouser2@dongwm.com&#8221;})</p>
+
+<p>使用索引（根据mail.mail）：</p>
+
+<p>dbh.users.create_index(&#8220;emails.email&#8221;)</p>
+
+<p>注：简历索引比较耗时也增加系统负荷可以使用将其放在后台：dbh.users.create_index(&#8220;emails.email&#8221;, background=True)</p>
+
+<p>5 删除索引</p>
+
+<p>dbh.users.create_index(&#8220;username&#8221;, name=&#8221;username_idx&#8221;)
+dbh.users.drop_index(&#8220;username_idx&#8221;)
+6 复合索引（简单的理解就是在where条件中字段用索引，如果用多字段就用复合索引）</p>
+
+<p>dbh.users.create_index([(&#8220;first_name&#8221;, pymongo.ASCENDING), (&#8220;last_name&#8221;, pymongo.ASCENDING)])</p>
+
+<p>注：删除索引方法：dbh.users.drop_index([(&#8220;first_name&#8221;, pymongo.ASCENDING), (&#8220;last_name&#8221;, pymongo.ASCENDING)])</p>
+
+<p>或者：</p>
+
+<p>dbh.users.create_index([
+(&#8220;first_name&#8221;, pymongo.ASCENDING),
+(&#8220;last_name&#8221;, pymongo.ASCENDING)
+],
+name=&#8221;name_idx&#8221;)  #给索引使用一个名字</p>
+
+<p>7 geospatial（<span>地理位置</span>）索引</p>
+
+<p>这个说来比较复杂：可以关注http://blog.nosqlfan.com/html/1811.html以及mongodbCTO的个人博客http://www.snailinaturtleneck.com/blog/</p>
+
+<p>dbh.users.create_index([(&#8220;user_location&#8221;, pymongo.GEO2D), (&#8220;username&#8221;, pymongo.ASCENDING)])</p>
+
+<p>8 例子（在点（40,40）最大距离为5的最近的10个用户）</p>
+
+<p>nearest_users = dbh.users.find(
+{&#8220;user_location&#8221;:
+{&#8220;$near&#8221; : [40, 40],
+&#8220;$maxDistance&#8221;:5}}).limit(10)   #关键字：$near
+for user in nearest_users:
+print &#8220;User %s is at location %s,%s&#8221; %(user[&#8220;username&#8221;], user[&#8220;user_location&#8221;][0],user[&#8220;user_location&#8221;[1])</p>
+
+<p>9 例子2（相关区域内的查找）</p>
+
+<p>box = [[50.73083, -83.99756], [50.741404,  -83.988135]]
+users_in_boundary = dbh.users.find({&#8220;user_location&#8221;:{&#8220;$within&#8221;: {&#8220;$box&#8221;:box}}})</p>
+
+<p>10 例子3（一个圆区域的查询，提供中心点和半径）</p>
+
+<p>users_in_circle = dbh.users.find({&#8220;user_location&#8221;:{&#8220;$within&#8221;:{&#8220;$center&#8221;:[40, 40, 5]}}}).limit(10)  （点（40,40）,半径为5内的区域查询，只要前10个数据）</p>
+
+<p>11 例子4（球形区域查询）：</p>
+
+<p>earth_radius_km = 6371.0
+max_distance_km = 5.0
+max_distance_radians = max_distance_km / earth_radius_km
+nearest_users = dbh.users.find(
+{&#8220;user_location&#8221;:
+{&#8220;$nearSphere&#8221; : [40, 40],
+&#8220;$maxDistance&#8221;:max_distance_radians}}).limit(10)   #还是点（40,40）,半径为5内的区域查询，只要前10个数据</p>
+
+<p>12 避免KeyErrors和其他错误，使用默认值</p>
+
+<p>比如计算分数，假如因为某些原因出现错误，为了不影响正常使用，例如将出现问题的那一次运算设计成0：</p>
+
+<p>total_score = 0
+for username in (&#8220;jill&#8221;, &#8220;sam&#8221;, &#8220;cathy&#8221;):
+user_doc = dbh.users.find_one({&#8220;username&#8221;:username})
+total_score += user_doc.get(&#8220;score&#8221;, 0)  #这样的话 有数据的就加数据 没有数据就是0</p>
+
+<p>注：也可能存在不是空值而是空列表</p>
+
+<p>for supplier in product_doc.get(&#8220;suppliers&#8221;, []):
+email_supplier(supplier)
+13 插入或者更新的选择：</p>
+
+<p>先查询是否已经存在的文档，没有选择插入，有的话就是更新</p>
+
+<p>def edit_or_add_session(description, session_id):
+dbh.sessions.update({&#8220;session_id&#8221;:session_id},
+{&#8220;$set&#8221;:{&#8220;session_description&#8221;:description}}, safe=True, upsert=True)</p>
+
+<p>14 自动增加文档属性值</p>
+
+<p>ret = dbh.users.find_and_modify({&#8220;username&#8221;:username},
+{&#8220;$inc&#8221;:{&#8220;account_balance&#8221;:20}}, safe=True, new=True)
+new_account_balance = ret[&#8220;account_balance&#8221;]  #&#8221;account_balance&#8221;自动加了20</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%B8%89%EF%BC%89/">Pymongo教程（三）</a></h1>
     
     
@@ -887,72 +1088,6 @@ class modify:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%89%EF%BC%89/">关于expect研究（三）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-03T00:00:00+08:00" pubdate data-updated="true">Jan 3<span>rd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：本文主要介绍expect的正则表达式和参数匹配的一个例子</p>
-
-<p>需求： ssh常用的端口是22 但是有些端口可能不是，所以设计了一个如果有参数就表示端口指定了其它 没有参数表示使用默认的22。我本机设置了一些hosts，假如以‘mta’开头的就匹配第二条</p>
-
-<p><pre class="sh_tcl">
-#!/usr/bin/expect
-set timeout 10
-set file1 [lindex $argv 0]
-set port [lindex $argv 1]
-if {$port==""} {
-set port 22
-}
-if {$argc&gt;2} {
-puts stderr "参数错误,请使用以下格式: $argv0 {想去的服务器简称,比如89} "
-exit 1
-}
-if {$file1=="26"} {
-spawn sshfs -p 62100 root@10.14.22.26:/home/dongwm 26
-expect "password:"
-send "$password1089\n"
-interact
-} elseif {[regexp {^mta} $file1 found]} {
-spawn sshfs -p 61012 root@$file1:/home/dongwm $file1
-interact
-} else {
-spawn luit -encoding gbk ssh -p $port root@$file1
-interact
-}
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/21/">&larr; Older</a></li>
@@ -975,6 +1110,10 @@ interact
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1010,10 +1149,6 @@ interact
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>

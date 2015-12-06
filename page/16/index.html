@@ -141,6 +141,124 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyucpickleyanjiu/">关于cPickle研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：cPickle是一个让python对象序列化的模块，什么是序列化？比如内存里面有个数据结构想保存，重用甚至发送给别人（比如游戏保存配置，下次登录游戏还是在上次的那个场景的意思一样），为什么这里只说cPickle？它是Pickle在python中以C的形式实现，性能快很多倍（算法其实一样），但是假如在进程间通信或者存储，数据是不安全的</p>
+
+<p><pre class="sh_python">
+try:
+    import cPickle as pickle
+except:
+    import pickle
+import pprint #这个模块将数据格式化显示了</p>
+
+<p>data1 = [ { 'a':'A', 'b':2, 'c':3.0 } ]
+print 'BEFORE:',
+pprint.pprint(data1)</p>
+
+<p>data1_string = pickle.dumps(data1)  #使用dump编码 类似于json
+pprint.pprint(data1_string)
+data2 = pickle.loads(data1_string)  #使用load解码
+print 'AFTER:',
+pprint.pprint(data2)</p>
+
+<p>print 'SAME?:', (data1 is data2)
+print 'EQUAL?:', (data1 == data2)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+BEFORE:[{&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: 2, &#8216;c&#8217;: 3.0}]</p>
+
+<p>&#8220;(lp1\n(dp2\nS&#8217;a&#8217;\nS&#8217;A&#8217;\nsS&#8217;c&#8217;\nF3\nsS&#8217;b&#8217;\nI2\nsa.&#8221;
+AFTER:[{&#8216;a&#8217;: &#8216;A&#8217;, &#8216;b&#8217;: 2, &#8216;c&#8217;: 3.0}]
+SAME?: False  #前后数据相同，但是不占用同样的内存位置
+EQUAL?: True
+<pre class="sh_python">
+try:
+    import cPickle as pickle
+except:
+    import pickle
+import pprint
+from StringIO import StringIO</p>
+
+<p>class SimpleObject(object):</p>
+
+<p>    def __init__(self, name):
+        self.name = name
+        l = list(name)
+        l.reverse()
+        self.name_backwards = ''.join(l)
+        return</p>
+
+<p>data = []
+data.append(SimpleObject('pickle')) #添加多个对象  
+data.append(SimpleObject('cPickle'))
+data.append(SimpleObject('last'))</p>
+
+<p>out_s = StringIO() </p>
+
+<p>for o in data:
+    print 'WRITING: %s (%s)' % (o.name, o.name_backwards)
+    pickle.dump(o, out_s)
+    out_s.flush()</p>
+
+<p>in_s = StringIO(out_s.getvalue()) #写入流中多个对象</p>
+
+<p>while True:
+    try:
+        o = pickle.load(in_s) #从流中读取，而不需要事先知道对象多大多少
+    except EOFError:
+        break
+    else:
+        print 'READ: %s (%s)' % (o.name, o.name_backwards)
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+WRITING: pickle (elkcip)
+WRITING: cPickle (elkciPc)
+WRITING: last (tsal)
+READ: pickle (elkcip)
+READ: cPickle (elkciPc)
+READ: last (tsal)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyucookieyanjiu/">关于cookie研究</a></h1>
     
     
@@ -1388,56 +1506,6 @@ print bisect.bisect_right(l,35) #如果待查找元素在列表中存在，则�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyubase64yanjiu/">关于base64研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：这事一个很常用的模块，主要用来将二进制数据编码成ASCII字符。其实base64，base32和base16就是把8位字节值转化成可用的每字节6，5，4位的数据，容许非ascii字节编码为ascii字符，比如stmp协议数据</p>
-
-<p>一个简单的例子：</p>
-
-<p><pre class="sh_python">
-import base64
-original_string = 'This is the data, in the clear.'
-print 'Original:', original_string   #原文
-encoded_string = base64.b64encode(original_string)
-print 'Encoded :', encoded_string  #编码后的数据
-decoded_string = base64.b64decode(encoded_string)
-print 'Decoded :', decoded_string  #将编码后数据解码
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1460,6 +1528,10 @@ print 'Decoded :', decoded_string  #将编码后数据解码
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/12ge-pythonnao-jin-ji-zhuan-wan/">12个python填空题</a>
@@ -1495,10 +1567,6 @@ print 'Decoded :', decoded_string  #将编码后数据解码
     
       <li class="post">
         <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slackshang-de-xiao-huang-ji-slackbot/">slack上的小黄鸡 - SlackBot</a>
       </li>
     
   </ul>
