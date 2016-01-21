@@ -141,6 +141,59 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/jiejueundefinedmethodrequirementfor/">解决安装redmine“undefined Method `requirement&#8217; ”报错</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-15T00:00:00+08:00" pubdate data-updated="true">Feb 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：在opensuse安装redmine出现一个比较可爱的报错，puppet面板安装也可能遇见，当创建表时：</p>
+
+<p>dongwm@linux-b8lh:~/redmine/svn/branches/1.3-stable/config&gt; !rake
+rake db:migrate RAILS_ENV=production
+(in /home/dongwm/redmine/svn/branches/1.3-stable)</p>
+
+<p>rake aborted!
+undefined method `requirement&#8217; for #&lt;Rails::GemDependency:0xb71a2248&gt;</p>
+
+<p>Tasks: TOP =&gt; db:migrate =&gt; environment
+(See full trace by running task with &#8211;trace)</p>
+
+<p>解决：修改gem_dependency.rb，一般在你安装的rails库目录下，我的是/usr/lib/ruby/gems/1.8/gems/rails-2.3.14/lib/rails/gem_dependency.rb</p>
+
+<p>注释掉81行 #gem self.name, self.requirement # &lt;  1.8 unhappy way
+修改为：</p>
+
+<p>gem self.name, :version =&gt; (self.respond_to?(:requirement) ? self.requirement : self.version_requirements)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pymongo%E6%95%99%E7%A8%8B%EF%BC%88%E4%BA%8C%EF%BC%89/">Pymongo教程（二）</a></h1>
     
     
@@ -970,124 +1023,6 @@ ip monitor file /var/log/rtmon.log
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8xml-etree-elementtree%E4%BF%AE%E6%94%B9%E5%88%A0%E9%99%A4kvm%E9%A1%B9%E7%9B%AE%E7%9A%84guest%E6%9C%BA%E5%99%A8xml%E6%96%87%E4%BB%B6/">使用xml.etree.ElementTree修改/删除kvm项目的guest机器xml文件</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-06T00:00:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：修改xml文件也可以用xml.dom. minidom,但是相对没有etree的简洁方便，以下是一个例子：</p>
-
-<p><pre class="sh_python">
-import libvirt
-from subprocess import *
-import os,string
-import xml.etree.ElementTree as ET   
-class modify:
-    def __init__(self):
-        try:
-            self.conn=libvirt.open(None)
-	except libvirt.libvirtError:
-	    return -1
-    def dump(self,name):
-        call('virsh dumpxml %(name)s &gt; /tmp/%(name)s.xml' % {'name':name},shell = True)   #将xml文件导出
-        self.tree = ET.parse("/tmp/%s.xml" % name)   #解析xml文件
-        self.root = self.tree.getroot()  #得到root树
-    def deldisk(self,dict):
-        x = dict['num']
-        name = dict['name'] 
-        self.dump(name)
-        hd = 'hd%s' % string.lowercase.replace('c','')[x-1]  
-        for i in self.root.find('devices').findall('disk'):
-            if i.find('target').get('dev') == hd:       #找到要删除的那个硬盘那标识
-                del self.root.find('devices')[self.root.find('devices').getchildren().index(i)]
-        self.done(name) 
-    def moddisk(self,dict): 
-        name = dict["name"]
-        self.dump(name)
-        for key in dict.keys():
-            if key == 'mem':
-                num =  int(1024)*int(dict['mem'])               #修改内存
-                self.root.find('memory').text = '%s' % num 
-            if key == 'cpu':
-                self.root.find('vcpu').text = '%s' % dict['cpu']    #修改cpu个数
-        self.done(name)
-     def adddisk(self,dict):
-        name = dict['name']
-        img_path = dict['img_path']
-        size = dict['size']
-        cmd="qemu-img create -f raw %s %dG" %(img_path,size)  #创建guest的img文件
-        try:
-           os.system(cmd)
-        except IOError,e:
-           return -1
-        self.dump(name)
-        dev = self.root.find('devices')
-        x = 0
-        for i in dev:
-            if i.tag == "disk":
-                x +=1
-        hd = 'hd%s' % string.lowercase.replace('c','')[x-1]  #这里主要是为了判断已经有几个disk，然后根据顺序选择hdX 除去‘c’是因为cdrom占用了
-        disk = ET.Element('disk')
-        disk.set('type', 'file')
-        disk.set('device', 'disk')
-        source = ET.SubElement(disk,'source')
-        source.set('file',img_path)
-        target = ET.SubElement(disk,'target')
-        target.set('dev',hd)
-        target.set('bus','ide')
-        dev.insert(x,disk)   #添加一个disk树 
-        self.done(name)
-     def done(self,name):
-        self.tree.write('/tmp/%s.xml' % name)     #将最新修改写到xml文件
-        dom=self.conn.lookupByName(name)   
-        try: 
-            dom.destroy()      #关机guest
-        except:
-            pass
-        dom.undefine()   
-        fxml=open('/tmp/%s.xml' % name, 'r')
-        flist=fxml.readlines()
-        if (len(flist) ):
-            xmldesc="".join(flist)
-        else:
-            return -1
-        fxml.close()  
-        try:
-            dom=self.conn.defineXML(xmldesc)  #重新定义这个guest 加载最新配置
-        except:
-            traceback.print_exc()      
-        call('virsh start %s' % name,shell = True)  #启动guest
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/21/">&larr; Older</a></li>
@@ -1110,6 +1045,10 @@ class modify:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1145,10 +1084,6 @@ class modify:
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1221,7 +1156,7 @@ class modify:
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

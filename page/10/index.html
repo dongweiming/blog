@@ -141,6 +141,342 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuthreadingyanjiuer-2/">关于threading研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def lock_holder(lock):  #显示资源holding和not holding
+    logging.debug('Starting')
+    while True:
+        lock.acquire()
+        try:
+            logging.debug('Holding')
+            time.sleep(0.5)
+        finally:
+            logging.debug('Not holding')
+            lock.release()
+        time.sleep(0.5)
+    return</p>
+
+<p>def worker(lock):
+    logging.debug('Starting')
+    num_tries = 0
+    num_acquires = 0
+    while num_acquires &lt; 3: #迭代2次，这样就会尝试4次，二次holding，2次not holding
+        time.sleep(0.5)
+        logging.debug('Trying to acquire')
+        have_it = lock.acquire(0)  #找出另一个线程是否已取得当前线程持有锁
+        try:
+            num_tries += 1
+            if have_it:
+                logging.debug('Iteration %d: Acquired',  num_tries)
+                num_acquires += 1
+            else:
+                logging.debug('Iteration %d: Not acquired', num_tries)
+        finally:
+            if have_it:
+                lock.release()
+    logging.debug('Done after %d iterations', num_tries)</p>
+
+<p>lock = threading.Lock()</p>
+
+<p>holder = threading.Thread(target=lock_holder, args=(lock,), name='LockHolder')
+holder.setDaemon(True)
+holder.start()</p>
+
+<p>worker = threading.Thread(target=worker, args=(lock,), name='Worker')
+worker.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+(LockHolder) Starting
+(LockHolder) Holding
+(Worker    ) Starting  #在sleep(0.5)的时候资源被worker获取
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 1: Acquired
+(LockHolder) Holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 2: Not acquired
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 3: Acquired
+(LockHolder) Holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 4: Not acquired
+(LockHolder) Not holding
+(Worker    ) Trying to acquire
+(Worker    ) Iteration 5: Acquired  #第5次因为num_acquires＝3而不进入循环
+(Worker    ) Done after 5 iterations
+<pre class="sh_python">
+import threading</p>
+
+<p>lock = threading.Lock()</p>
+
+<p>print 'First try :', lock.acquire()  #返回true
+print 'Second try:', lock.acquire(0)  #资源自能被锁定一次，这里就返回false了</p>
+
+<p>lock = threading.RLock()  #这样可以重新获得锁</p>
+
+<p>print 'First try :', lock.acquire()  #返回true
+print 'Second try:', lock.acquire(0)  #返回1
+</pre></p>
+
+<p><pre class="sh_python">
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def worker_with(lock):
+    with lock:   #使用wit关键字，执行lock的上下文管理
+        logging.debug('Lock acquired via with')</p>
+
+<p>def worker_no_with(lock):
+    lock.acquire()
+    try:
+        logging.debug('Lock acquired directly')
+    finally:
+        lock.release()</p>
+
+<p>lock = threading.Lock()
+w = threading.Thread(target=worker_with, args=(lock,))
+nw = threading.Thread(target=worker_no_with, args=(lock,))</p>
+
+<p>w.start()
+nw.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import logging
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s (%(threadName)-2s) %(message)s',  #当前时间
+                    )</p>
+
+<p>def consumer(cond):
+    logging.debug('Starting consumer thread')
+    t = threading.currentThread()
+    with cond:
+        cond.wait()  #释放内部所占用的琐，同时线程被挂起，直至接收到通知被唤醒或超时（如果提供了timeout参数的话）。 
+                     #当线程被唤醒并重新占有琐的时候，程序才会继续执行下去。
+        logging.debug('Resource is available to consumer')</p>
+
+<p>def producer(cond):
+    logging.debug('Starting producer thread')
+    with cond:
+        logging.debug('Making resource available')
+        cond.notifyAll()  #唤醒所有挂起的线程（如果存在挂起的线程），但是这些方法不会释放所占用的琐</p>
+
+<p>condition = threading.Condition()   #它提供了比Lock, RLock更高级的功能，允许我们能够控制复杂的线程同步问题
+c1 = threading.Thread(name='c1', target=consumer, args=(condition,))
+c2 = threading.Thread(name='c2', target=consumer, args=(condition,))
+p = threading.Thread(name='p', target=producer, args=(condition,))</p>
+
+<p>c1.start()
+time.sleep(2)
+c2.start()
+time.sleep(2)
+p.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-07-06 14:11:54,001 (c1) Starting consumer thread
+2012-07-06 14:11:56,001 (c2) Starting consumer thread
+2012-07-06 14:11:58,003 (p ) Starting producer thread
+2012-07-06 14:11:58,003 (p ) Making resource available  #producer唤起挂起的线程，触发consumer 线程继续执行
+2012-07-06 14:11:58,003 (c1) Resource is available to consumer
+2012-07-06 14:11:58,004 (c2) Resource is available to consumer
+<pre class="sh_python">
+import logging
+import random
+import threading
+import time</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s (%(threadName)-2s) %(message)s',
+                    )</p>
+
+<p>class ActivePool(object):  #跟踪进程执行状态
+    def __init__(self):
+        super(ActivePool, self).__init__()   #保证公共父类仅被执行一次
+        self.active = []
+        self.lock = threading.Lock()
+    def makeActive(self, name):
+        with self.lock:
+            self.active.append(name)
+            logging.debug('Running: %s', self.active)
+    def makeInactive(self, name):
+        with self.lock:
+            self.active.remove(name)
+            logging.debug('Running: %s', self.active)</p>
+
+<p>def worker(s, pool):
+    logging.debug('Waiting to join the pool')
+    with s:
+        name = threading.currentThread().getName()
+        pool.makeActive(name)
+        time.sleep(0.1)
+        pool.makeInactive(name)</p>
+
+<p>pool = ActivePool()
+s = threading.Semaphore(4) ##Semaphore用来控制对共享资源的访问数量，例如池的最大连接数，这里只有4个活动进程同时运行
+for i in range(4):
+    t = threading.Thread(target=worker, name=str(i), args=(s, pool))
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-07-06 14:19:04,395 (0 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (0 ) Running: [&#8216;0&#8217;]
+2012-07-06 14:19:04,395 (1 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (2 ) Waiting to join the pool
+2012-07-06 14:19:04,395 (3 ) Waiting to join the pool
+2012-07-06 14:19:04,396 (1 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;]
+2012-07-06 14:19:04,396 (2 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;]
+2012-07-06 14:19:04,396 (3 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;, &#8216;3&#8217;]
+2012-07-06 14:19:04,496 (0 ) Running: [&#8216;1&#8217;, &#8216;2&#8217;, &#8216;3&#8217;]
+2012-07-06 14:19:04,496 (1 ) Running: [&#8216;2&#8217;, &#8216;3&#8217;]
+2012-07-06 14:19:04,496 (2 ) Running: [&#8216;3&#8217;]
+2012-07-06 14:19:04,496 (3 ) Running: []</p>
+
+<p><pre class="sh_python">
+import random
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def show_value(data):
+    try:
+        val = data.value
+    except AttributeError:
+        logging.debug('No value yet')
+    else:
+        logging.debug('value=%s', val)</p>
+
+<p>def worker(data):
+    show_value(data)
+    data.value = random.randint(1, 100)
+    show_value(data)</p>
+
+<p>local_data = threading.local()  #虽然有些资源需要被锁定，所以多个线程可以使用它们,这里创建一个能够隐藏在单独的线程的值对象
+show_value(local_data)
+local_data.value = 1000
+show_value(local_data)</p>
+
+<p>for i in range(2):
+    t = threading.Thread(target=worker, args=(local_data,))
+    t.start()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) No value yet   #第一次调用还没有设置
+(MainThread) value=1000
+(Thread-1  ) No value yet  #子线程1还没有设置
+(Thread-1  ) value=4 #子线程1设置，但是是本地的属性没有继承1000
+(Thread-2  ) No value yet
+(Thread-2  ) value=55
+<pre class="sh_python">
+import random
+import threading
+import logging</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )</p>
+
+<p>def show_value(data):
+    try:
+        val = data.value
+    except AttributeError:
+        logging.debug('No value yet')
+    else:
+        logging.debug('value=%s', val)</p>
+
+<p>def worker(data):
+    show_value(data)
+    data.value = random.randint(1, 100)
+    show_value(data)</p>
+
+<p>class MyLocal(threading.local):
+    def __init__(self, value): #初始化设置，让所有的线程具有相同的value
+        logging.debug('Initializing %r', self)
+        self.value = value</p>
+
+<p>local_data = MyLocal(1000)
+show_value(local_data)</p>
+
+<p>for i in range(2):
+    t = threading.Thread(target=worker, args=(local_data,))
+    t.start()
+</pre>
+执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(MainThread) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
+(MainThread) value=1000
+(Thread-1  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
+(Thread-1  ) value=1000
+(Thread-1  ) value=42
+(Thread-2  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;  #实例的对象id都是一样的
+(Thread-2  ) value=1000
+(Thread-2  ) value=64</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuthreadingyanjiuer/">关于threading研究（一）</a></h1>
     
     
@@ -2685,139 +3021,6 @@ def file_to_words(filename):
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuzipimportyanjiu/">关于zipimport研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：zipimport模块实现如果sys.path中的任何项引用了 ZIP 格式的存档，则 Python 会把该存档视为目录。存档包含一个或多个模块的.py 源文件</p>
-
-<p><pre class="sh_python">
-import sys
-import zipfile
-import zipimport
-import os</p>
-
-<p>zf = zipfile.PyZipFile('zipimport_example.zip', mode='w')  #创建一个zip
-try:
-    zf.write('.')  #添加当前目录
-    zf.write('test1.py') #添加这个文件
-    zf.write('txt/README.txt')  #添加这个文件
-finally:
-    zf.close()
-for name in zf.namelist():
-    print name #打印zip档案文件
-importer = zipimport.zipimporter('zipimport_example.zip')  #导入这个zip分析</p>
-
-<p>for module_name in [ 'test1', 'not_there' ]:
-    print module_name, ':', importer.find_module(module_name) #当找到这个模块返回，没有返回none</p>
-
-<p>print importer.get_code('test1') #获取test1.py源码
-module = importer.load_module('test1')  #import导入test1.py  
-print 'Name   :', module.__name__ #模块的名字
-print 'Loader :', module.__loader__  #返回zipimporter对象
-print 'Code   :', module.datetime #返回模块的datetime方法(或者类)的引用
-source = importer.get_source('test1')  #获取test1.py源码
-print '=' * 80
-print module_name
-print '=' * 80
-print source
-print
-print importer.is_package('txt')  #我们把readme.txt 放入了txt  txt就类似于一个包
-import txt #导入txt这个包 
-data_filename = os.path.join(os.path.dirname(txt.__file__), 
-                             'README.txt')
-print data_filename, ':'
-print open(data_filename, 'rt').read()  #读取README.txt内容
-</pre></p>
-
-<p>执行：</p>
-
-<p>dongwm@linux-dongwm:~/test&gt; python test.py
-./
-test1.py
-txt/README.txt
-test1 : &lt;zipimporter object &#8220;zipimport_example.zip&#8221;&gt;
-not_there : None
-&lt;code object &lt;module&gt; at 0xb73800f8, file &#8220;zipimport_example.zip/test1.py&#8221;, line 1&gt;
-Name   : test1
-Loader : &lt;zipimporter object &#8220;zipimport_example.zip&#8221;&gt;
-Code   : &lt;module &#8216;datetime&#8217; from &#8216;/usr/lib/python2.7/lib-dynload/datetime.so&#8217;&gt;
-================================================================================
-not_there
-================================================================================
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-from xmlrpclib import Binary
-import datetime</p>
-
-<p>server = SimpleXMLRPCServer((&#8216;localhost&#8217;, 9000), logRequests=True, allow_none=True)
-server.register_introspection_functions()
-server.register_multicall_functions()</p>
-
-<p>class ExampleService:</p>
-
-<p>def ping(self):
-&#8221;&#8221;&#8220;Simple function to respond when called to demonstrate connectivity.&#8221;&#8220;&#8221;
-return True</p>
-
-<p>def now(self):
-&#8221;&#8221;&#8220;Returns the server current date and time.&#8221;&#8220;&#8221;
-return datetime.datetime.now()</p>
-
-<p>def show_type(self, arg):
-&#8221;&#8221;&#8220;Illustrates how types are passed in and out of server methods.</p>
-
-<p>Accepts one argument of any type.
-Returns a tuple with string representation of the value,
-the name of the type, and the value itself.
-&#8221;&#8221;&#8221;
-return (str(arg), str(type(arg)), arg)</p>
-
-<p>def raises_exception(self, msg):
-&#8220;Always raises a RuntimeError with the message passed in&#8221;
-raise RuntimeError(msg)</p>
-
-<p>def send_back_binary(self, bin):
-&#8220;Accepts single Binary argument, unpacks and repacks it to return it&#8221;
-data = bin.data
-response = Binary(data)
-return response
-<pre class="sh_python">
-import sys
-sys.path.insert(0, 'zipimport_example.zip')
-print txt.__file__
-print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获取数据，而不能只是 open(os.path.join(os.path.dirname(txt.__file__), 'README.txt'), 'rt').read()
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/11/">&larr; Older</a></li>
@@ -2840,6 +3043,10 @@ print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -2875,10 +3082,6 @@ print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获�
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -2951,7 +3154,7 @@ print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获�
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -141,6 +141,124 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8xml-etree-elementtree%E4%BF%AE%E6%94%B9%E5%88%A0%E9%99%A4kvm%E9%A1%B9%E7%9B%AE%E7%9A%84guest%E6%9C%BA%E5%99%A8xml%E6%96%87%E4%BB%B6/">使用xml.etree.ElementTree修改/删除kvm项目的guest机器xml文件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-06T00:00:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：修改xml文件也可以用xml.dom. minidom,但是相对没有etree的简洁方便，以下是一个例子：</p>
+
+<p><pre class="sh_python">
+import libvirt
+from subprocess import *
+import os,string
+import xml.etree.ElementTree as ET   
+class modify:
+    def __init__(self):
+        try:
+            self.conn=libvirt.open(None)
+	except libvirt.libvirtError:
+	    return -1
+    def dump(self,name):
+        call('virsh dumpxml %(name)s &gt; /tmp/%(name)s.xml' % {'name':name},shell = True)   #将xml文件导出
+        self.tree = ET.parse("/tmp/%s.xml" % name)   #解析xml文件
+        self.root = self.tree.getroot()  #得到root树
+    def deldisk(self,dict):
+        x = dict['num']
+        name = dict['name'] 
+        self.dump(name)
+        hd = 'hd%s' % string.lowercase.replace('c','')[x-1]  
+        for i in self.root.find('devices').findall('disk'):
+            if i.find('target').get('dev') == hd:       #找到要删除的那个硬盘那标识
+                del self.root.find('devices')[self.root.find('devices').getchildren().index(i)]
+        self.done(name) 
+    def moddisk(self,dict): 
+        name = dict["name"]
+        self.dump(name)
+        for key in dict.keys():
+            if key == 'mem':
+                num =  int(1024)*int(dict['mem'])               #修改内存
+                self.root.find('memory').text = '%s' % num 
+            if key == 'cpu':
+                self.root.find('vcpu').text = '%s' % dict['cpu']    #修改cpu个数
+        self.done(name)
+     def adddisk(self,dict):
+        name = dict['name']
+        img_path = dict['img_path']
+        size = dict['size']
+        cmd="qemu-img create -f raw %s %dG" %(img_path,size)  #创建guest的img文件
+        try:
+           os.system(cmd)
+        except IOError,e:
+           return -1
+        self.dump(name)
+        dev = self.root.find('devices')
+        x = 0
+        for i in dev:
+            if i.tag == "disk":
+                x +=1
+        hd = 'hd%s' % string.lowercase.replace('c','')[x-1]  #这里主要是为了判断已经有几个disk，然后根据顺序选择hdX 除去‘c’是因为cdrom占用了
+        disk = ET.Element('disk')
+        disk.set('type', 'file')
+        disk.set('device', 'disk')
+        source = ET.SubElement(disk,'source')
+        source.set('file',img_path)
+        target = ET.SubElement(disk,'target')
+        target.set('dev',hd)
+        target.set('bus','ide')
+        dev.insert(x,disk)   #添加一个disk树 
+        self.done(name)
+     def done(self,name):
+        self.tree.write('/tmp/%s.xml' % name)     #将最新修改写到xml文件
+        dom=self.conn.lookupByName(name)   
+        try: 
+            dom.destroy()      #关机guest
+        except:
+            pass
+        dom.undefine()   
+        fxml=open('/tmp/%s.xml' % name, 'r')
+        flist=fxml.readlines()
+        if (len(flist) ):
+            xmldesc="".join(flist)
+        else:
+            return -1
+        fxml.close()  
+        try:
+            dom=self.conn.defineXML(xmldesc)  #重新定义这个guest 加载最新配置
+        except:
+            traceback.print_exc()      
+        call('virsh start %s' % name,shell = True)  #启动guest
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%89%EF%BC%89/">关于expect研究（三）</a></h1>
     
     
@@ -885,149 +1003,6 @@ error: command &#8216;gcc&#8217; failed with exit status 1</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/sqlitedepythoncaozuomoban/">Sqlite的python操作模板</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-14T00:00:00+08:00" pubdate data-updated="true">Dec 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：最近弄了一个程序，但是使用mysql这样需要服务器的数据库有些限制和浪费，尝试了一下sqlite：</p>
-
-<p><pre class="sh_python">
-#!/usr/bin/env python
-#conding= gbk
-'''
-一般服务器安装python自带了sqlite3模块，但是有些机器可能安装有问题，没有——sqlite3.so这个文件，所以需要去手动安装pysqlite2，其实他们是一样的模块
-'''
-try:
-    from sqlite3 import dbapi2 as sqlite
-except:
-    from pysqlite2 import dbapi2 as sqlite </p>
-
-<p>class gysqlite:
-    def __init__(self,path):
-         '''
-         初始化，path是使用的数据库文件路径
-         '''
-        self.conn = sqlite.connect(path)
-        self.cur = self.conn.cursor()  #cursor是一个记录标识，用于一行一行迭代的访问查询返回的结果
-    def create(self,table):
-         '''
-         创建table，我这里创建包含2个段 ID（数字型，自增长），Name（char 40字符），Flag（数字型）
-         '''
-        try:
-            self.cur.execute("CREATE TABLE IF NOT EXISTS %s(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR(40),Flag INTEGER)"% table)
-            self.done()
-        except sqlite.Error ,e:
-            print e
-            self.conn.rollback()
-    def insert(self,table,name,flag = 0):
-         '''
-         插入数据，指定表名，设置Name的值，Flag默认设置为0
-         '''
-        try:
-            self.cur.execute("INSERT INTO %s(Name,Flag) VALUES('%s',%d)" % (table,name,flag))
-            self.done()
-        except sqlite.Error ,e:
-            print e
-            self.conn.rollback()
-    def drop(self,table):
-         '''
-        drop表
-         '''
-        try:
-            self.cur.execute("DROP TABLE IF EXISTS %s" % table)
-            self.done()
-        except sqlite.Error ,e:
-            print e
-            self.conn.rollback()
-    def update(self,table,name,flag = 1):
-         '''
-         修改表条目数据，在这里主要是设置条目Flag（符合Name等于name）
-         '''
-        try:
-            self.cur.execute("UPDATE %s SET Flag = %d WHERE Name = '%s'" % (table,flag,name))
-            self.done()
-        except sqlite.Error ,e:
-            print e
-            print 'sqlite update error'
-            self.conn.rollback()
-    def delete(self,table,name):
-         '''
-         删除表条目数据，在这里主要是删除Name等于name的条目
-         '''
-        try:
-            self.cur.execute("DELETE FROM %s WHERE Name = '%s'" % (table,name))
-            self.done()
-        except sqlite.Error ,e:
-            print e
-            print 'sqlite delete error'
-            self.conn.rollback()
-    def selectflag(self,table,flag):
-         '''
-         select查询，返回符合Flag等于flag的条目的数据
-         '''
-        try:
-            self.cur.execute("SELECT * FROM %s WHERE Flag = %d" % (table,flag))
-            rows = self.cur.fetchall()
-            return rows
-        except sqlite.Error, e:
-            print "Error %s:" % e.args[0]
-    def select(self,table):
-         '''
-         select查询，返回名字为table的表数据
-         '''
-        try:
-            self.cur.execute("SELECT * FROM %s" % table)
-            rows = self.cur.fetchall()
-            return rows
-        except sqlite.Error, e:
-            print "Error %s:" % e.args[0]
-    def done(self):
-         '''
-         事务提交
-         '''
-        self.conn.commit()
-    def close(self):
-         '''
-         关闭游标
-         '''
-        self.conn.close()
-</pre></p>
-
-<p>使用方法：</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/sqlitedepythoncaozuomoban/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/22/">&larr; Older</a></li>
@@ -1050,6 +1025,10 @@ except:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1085,10 +1064,6 @@ except:
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1161,7 +1136,7 @@ except:
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

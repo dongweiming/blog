@@ -141,6 +141,81 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusmtplibyanjiu/">关于smtplib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：smtplib是一个邮件传输协议的客户端模块，它与smtp服务器交互, 提供邮件发送</p>
+
+<p><pre class="sh_python">
+import smtplib
+import email.utils
+from email.mime.text import MIMEText
+import getpass</p>
+
+<p>to_email = raw_input('Recipient: ') #提示输入收件人
+servername = raw_input('Mail server name: ')  #输入服务器 比如 mail.dongwm.com
+username = raw_input('Mail user name: ') #用户名
+password = getpass.getpass("%s's password: " % username) #输入登录密码</p>
+
+<p>msg = MIMEText('Test message from dongwm.') #主体
+msg.set_unixfrom('author') 
+msg['To'] = email.utils.formataddr(('Recipient', to_email)) 
+msg['From'] = email.utils.formataddr(('Author', 'test@dongwm.com')) #设置发件人标识，和邮箱地址
+msg['Subject'] = 'Test from dongwm' #完成邮件内容</p>
+
+<p>server = smtplib.SMTP(servername)
+try:
+    server.set_debuglevel(True)</p>
+
+<p>    server.ehlo() #鉴定并询问服务器支持何种类型扩展</p>
+
+<p>    if server.has_extn('STARTTLS'):  #如果包含标识需要加密
+        server.starttls()
+        server.ehlo() # 重新确定自己的连接特性
+    server.login(username, password)
+    server.sendmail('author@example.com', [to_email], msg.as_string())
+finally:
+    server.quit()
+</pre></p>
+
+<p>注：可以使用一个命令&#8217;VRFY&#8217;验证邮箱地址，比如是否有这个用户，但是为了防止恶意的黑客扫描用户，一般是关闭的，假如打开这个功能：</p>
+
+<p>print server.verify(&#8216;unknownuser&#8217;)</p>
+
+<p>结果就是：
+unknownuser : (550, &#8216;5.1.1 &lt;unknownuser&gt;&#8230; User unknown&#8217;)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusimplexmlrpcserveryanjiu/">关于SimpleXMLRPCServer研究</a></h1>
     
     
@@ -1671,289 +1746,6 @@ Currently running with UID=1000 username=dongwm</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuoperatoryanjiu/">关于operator研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：operator是一系列内置的运算接口</p>
-
-<p><pre class="sh_python">
-from operator import *</p>
-
-<p>a = -1
-b = 5.0
-c = 2
-d = 6
-print 'a =', a
-print 'b =', b
-print 'c =', c
-print 'd =', d
-print '-'*30</p>
-
-<p>print 'not_(a)     :', not_(a) #逻辑判断是不是一个数据
-print 'truth(a)    :', truth(a) 逻辑判断数据是不是为真
-print 'is_(a, b)   :', is_(a,b) #逻辑判断a是b的bool结果
-print 'is_not(a, b):', is_not(a,b) #逻辑判断a不是b的bool结果
-for func in (lt, le, eq, ne, ge, gt):  
-    print '%s(a, b):' % func.__name__, func(a, b)  #判断大小和相等
-print '\nPositive/Negative:' 
-print 'abs(a):', abs(a) #a绝对值
-print 'neg(a):', neg(a) #a的补数</p>
-
-<p>print '\nArithmetic:'
-print 'add(a, b)     :', add(a, b)  #求和
-print 'div(a, b)     :', div(a, b) #a/b结果
-print 'div(d, c)     :', div(d, c) 
-print 'floordiv(a, b):', floordiv(a, b) #地板除
-print 'floordiv(d, c):', floordiv(d, c)
-print 'mod(a, b)     :', mod(a, b) #
-print 'mul(a, b)     :', mul(a, b)
-print 'pow(c, d)     :', pow(c, d)
-print 'sub(b, a)     :', sub(b, a)
-print 'truediv(a, b) :', truediv(a, b)
-print 'truediv(d, c) :', truediv(d, c)</p>
-
-<p>print '\nBitwise:'
-print 'and_(c, d)  :', and_(c, d) 
-print 'invert(c)   :', invert(c)
-print 'lshift(c, d):', lshift(c, d)
-print 'or_(c, d)   :', or_(c, d)
-print 'rshift(d, c):', rshift(d, c)
-print 'xor(c, d)   :', xor(c, d)</p>
-
-<p>a = [ 1, 2, 3 ]
-b = [ 'a', 'b', 'c' ]
-print 'a =', a
-print 'b =', b</p>
-
-<p>print '\nConstructive:'
-print '  concat(a, b):', concat(a, b)  #序列叠加
-print '  repeat(a, 3):', repeat(a, 3)  #序列重复3次</p>
-
-<p>print '\nSearching:'
-print '  contains(a, 1)  :', contains(a, 1)  #寻找是否a中包含1，返回bool
-print '  contains(b, "d"):', contains(b, "d") #寻找是否b中包字母‘d’，返回bool
-print '  countOf(a, 1)   :', countOf(a, 1) #返回符合值的数量
-print '  countOf(b, "d") :', countOf(b, "d")
-print '  indexOf(a, 5)   :', indexOf(a, 1) #返回符合的索引值</p>
-
-<p>print '\nAccess Items:'
-print '  getitem(b, 1)            :', getitem(b, 1) #返回b的第2項
-print '  getslice(a, 1, 3)        :', getslice(a, 1, 3)#返回序列a的第2－3项
-print '  setitem(b, 1, "d")       :', setitem(b, 1, "d"), ', after b =', b #设置b的第二项是‘d’，替换原来的
-print '  setslice(a, 1, 3, [4, 5]):', setslice(a, 1, 3, [4, 5]), ', after a =', a </p>
-
-<p>print '\nDestructive:'
-print '  delitem(b, 1)    :', delitem(b, 1), ', after b =', b #去掉序列b的第2项
-print '  delslice(a, 1, 3):', delslice(a, 1, 3), ', after a =', a #去掉序列a的第2－3项</p>
-
-<p>a = -1
-b = 5.0
-c = [ 1, 2, 3 ]
-d = [ 'a', 'b', 'c']
-print 'a =', a
-print 'b =', b
-print 'c =', c
-print 'd =', d
-print</p>
-
-<p>a = iadd(a, b)
-print 'a = iadd(a, b) =&gt;', a  #类似于a+=b a变化了
-print</p>
-
-<p>c = iconcat(c, d)
-print 'c = iconcat(c, d) =&gt;', c #类似于c+=d c变化了
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-a = -1
-b = 5.0
-c = 2
-d = 6
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
-not_(a)     : False
-truth(a)    : True
-is_(a, b)   : False
-is_not(a, b): True
-lt(a, b): True
-le(a, b): True
-eq(a, b): False
-ne(a, b): True
-ge(a, b): False
-gt(a, b): False</p>
-
-<p>Positive/Negative:
-abs(a): 1
-neg(a): 1
-neg(b): -5.0
-pos(a): -1
-pos(b): 5.0</p>
-
-<p>Arithmetic:
-add(a, b)     : 4.0
-div(a, b)     : -0.2
-div(d, c)     : 3
-floordiv(a, b): -1.0
-floordiv(d, c): 3
-mod(a, b)     : 4.0
-mul(a, b)     : -5.0
-pow(c, d)     : 64
-sub(b, a)     : 6.0
-truediv(a, b) : -0.2
-truediv(d, c) : 3.0</p>
-
-<p>Bitwise:
-and_(c, d)  : 2
-invert(c)   : -3
-lshift(c, d): 128
-or_(c, d)   : 6
-rshift(d, c): 1
-xor(c, d)   : 4
-a = [1, 2, 3]
-b = [&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]</p>
-
-<p>Constructive:
-concat(a, b): [1, 2, 3, &#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]
-repeat(a, 3): [1, 2, 3, 1, 2, 3, 1, 2, 3]</p>
-
-<p>Searching:
-contains(a, 1)  : True
-contains(b, &#8220;d&#8221;): False
-countOf(a, 1)   : 1
-countOf(b, &#8220;d&#8221;) : 0
-indexOf(a, 5)   : 0</p>
-
-<p>Access Items:
-getitem(b, 1)            : b
-getslice(a, 1, 3)        : [2, 3]
-setitem(b, 1, &#8220;d&#8221;)       : None , after b = [&#8216;a&#8217;, &#8216;d&#8217;, &#8216;c&#8217;]
-setslice(a, 1, 3, [4, 5]): None , after a = [1, 4, 5]</p>
-
-<p>Destructive:
-delitem(b, 1)    : None , after b = [&#8216;a&#8217;, &#8216;c&#8217;]
-delslice(a, 1, 3): None , after a = [1]
-a = -1
-b = 5.0
-c = [1, 2, 3]
-d = [&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]</p>
-
-<p>a = iadd(a, b) =&gt; 4.0</p>
-
-<p>c = iconcat(c, d) =&gt; [1, 2, 3, &#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]</p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_prolog">
-from operator import *</p>
-
-<p>class MyObj(object):
-    """example class for attrgetter"""
-    def __init__(self, arg):
-        super(MyObj, self).__init__()
-        self.arg = arg
-    def __repr__(self):
-        return 'MyObj(%s)' % self.arg  #设置出发一个属性的修改，添加了arg这个属性</p>
-
-<p>l = [ MyObj(i) for i in xrange(5) ]
-print l
-g = attrgetter('arg')  #获取属性arg
-vals = [ g(i) for i in l ]
-print vals
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_python">
-from operator import *</p>
-
-<p>print 'Dictionaries:'
-l = [ dict(val=i) for i in xrange(5) ]  #这个的意义就是匿名函数：<tt>lambda x, y=5: x[y]</tt>
-print l
-g = itemgetter('val')
-vals = [ g(i) for i in l ]
-print vals</p>
-
-<p>print
-print 'Tuples:'
-l = [ (i, i*2) for i in xrange(5) ]
-print l
-g = itemgetter(1)
-vals = [ g(i) for i in l ]
-print vals
-</pre>
-<pre class="sh_python">
-from operator import *</p>
-
-<p>class MyObj(object):
-    def __init__(self, val):
-        super(MyObj, self).__init__()
-        self.val = val
-        return
-    def __str__(self):
-        return 'MyObj(%s)' % self.val
-    def __lt__(self, other):  #自定义了比较lt的方法
-        print 'Testing %s &lt; %s' % (self, other)
-        return self.val &lt; other.val
-    def __add__(self, other): #自定义了add的方法
-        print 'Adding %s + %s' % (self, other)
-        return MyObj(self.val + other.val)</p>
-
-<p>a = MyObj(1)
-b = MyObj(2)</p>
-
-<p>print 'Comparison:'
-print lt(a, b)</p>
-
-<p>print '\nArithmetic:'
-print add(a, b)
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Comparison:
-Testing MyObj(1) &lt; MyObj(2)   #触发了a的__lt__
-True
-Arithmetic:
-Adding MyObj(1) + MyObj(2) #触发了a的__add__
-MyObj(3)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/14/">&larr; Older</a></li>
@@ -1976,6 +1768,10 @@ MyObj(3)</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -2011,10 +1807,6 @@ MyObj(3)</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -2087,7 +1879,7 @@ MyObj(3)</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

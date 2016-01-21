@@ -141,6 +141,139 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pythonchengxubenlipyqt4tuxingchengxuzhongdianjizidongdanchuqqliaotianchuangkou/">python程序（本例pyqt4图形程序）中点击自动弹出QQ聊天窗口</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-10-24T00:00:00+08:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：很向往点击某网页就能弹出QQ聊天窗口，最近做的一个python程序为了方便用户提交bug，也设计了一个点击自动弹出和我QQ聊天的对话框供大家参考（只剪切了其中一部分）：</p>
+
+<p><pre class="sh_python"></p>
+
+<p>from PyQt4 import QtCore, QtGui
+import systray_rc
+import threading,os
+import re,time
+try:
+_fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+_fromUtf8 = lambda s: s
+#设计一个界面，可以做成记事本效果，能够打印文件中的文本
+class Ui_notepad(object):
+def setupUi(self, notepad):
+notepad.setObjectName(_fromUtf8("notepad"))
+notepad.setWindowTitle(QtGui.QApplication.translate("notepad", "Form", None, QtGui.QApplication.UnicodeUTF8))
+self.editor_window = QtGui.QTextEdit(notepad)
+self.editor_window.setGeometry(QtCore.QRect(10, 50, 380, 240))
+self.editor_window.setObjectName(_fromUtf8("editor_window"))</p>
+
+<p>self.retranslateUi(notepad)
+QtCore.QMetaObject.connectSlotsByName(notepad)</p>
+
+<p>def retranslateUi(self, notepad):
+pass
+class Window(QtGui.QMainWindow):
+    def __init__(self):
+       # super(Window, self).__init__()
+	QtGui.QMainWindow.__init__(self)
+        self.iconComboBox = QtGui.QComboBox()
+        self.iconComboBox.addItem(
+            QtGui.QIcon('../image/app.jpg'), "Dmyz")
+	#通知区域图标右键菜单设置,弹出的菜单的行为，包括退出，还原，最小化
+        self.minimizeAction = QtGui.QAction(u"最小化", self,
+                triggered=self.hide)
+        self.restoreAction = QtGui.QAction(u"显示菜单", self,
+                triggered=self.showNormal)
+        self.quitAction = QtGui.QAction(u"退出", self,
+                triggered=QtGui.qApp.quit)
+	self.ui = Ui_notepad()
+        self.ui.setupUi(self)
+        self.trayIconMenu = QtGui.QMenu(self)
+        self.trayIconMenu.addAction(self.restoreAction)
+        self.trayIconMenu.addAction(self.minimizeAction)
+        self.trayIconMenu.addAction(self.quitAction)
+        self.trayIcon = QtGui.QSystemTrayIcon(self)
+        self.trayIcon.setContextMenu(self.trayIconMenu)
+        self.iconComboBox.currentIndexChanged.connect(
+            self.setIcon)
+        #设置第一个按键 效果退出
+        exit = QtGui.QAction(QtGui.QIcon('../image/exit.png'), 'Exit', self)
+	exit.setShortcut('Ctrl+Q')
+        exit.setStatusTip(u'\u9000\u51fa\u4e3b\u83dc\u5355')
+        self.connect(exit, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
+	#设置第二个按键  历史记录
+        lishi = QtGui.QAction(QtGui.QIcon('../image/history.png'),u'\u5386\u53f2', self)
+	lishi.setShortcut('Ctrl+L')
+        lishi.setStatusTip(u'\u5386\u53f2')
+        lishi.connect(lishi,QtCore.SIGNAL('triggered()'), self.file_dialog)
+	#设置第3个按键  关于信息
+	guangyu = QtGui.QAction(QtGui.QIcon('../image/app.jpg'),u'\u5173\u4e8e', self)
+	guangyu.setShortcut('Ctrl+K')
+        guangyu.setStatusTip(u'\u5173\u4e8e')
+        guangyu.connect(guangyu,QtCore.SIGNAL('triggered()'), self.print_text)
+	#设置第4个按键 bug提交 弹出QQ对话框
+	qq = QtGui.QAction(QtGui.QIcon('../image/QQ.png'),u'BUG\u8bf7\u8054\u7cfb\u6211', self)
+	qq.setShortcut('Ctrl+U')
+        qq.setStatusTip(u'\u70b9\u51fb\u6253\u5f00QQ')
+        qq.connect(qq,QtCore.SIGNAL('triggered()'), self.contqq)</p>
+
+<p>        self.statusBar()
+        menubar = self.menuBar()
+        file = menubar.addMenu('&amp;Exit')
+        file.addAction(exit)
+	file2 = menubar.addMenu('&amp;History')
+        file2.addAction(lishi)
+	file3 = menubar.addMenu('About')
+        file3.addAction(guangyu)
+	file3 = menubar.addMenu('Contact')
+        file3.addAction(qq)
+    #设置打开文件 在pyqt4的主餐单里面的记事本区域显示
+    def file_dialog(self):
+        s = open('../log/Communicate.log','r').read()
+	if len(s) == 0:
+	    self.atext = u'目前您还没收到什么信息哦^.^'
+	    self.ui.editor_window.setPlainText('sdf')
+        self.ui.editor_window.setPlainText(self.atext)
+    def print_text(self):  #设置打印关于的信息
+	self.ui.editor_window.setPlainText(self.text)
+    def contqq(self):  #设置打开QQ
+	import win32com.client
+	ie6=win32com.client.Dispatch("InternetExplorer.Application")
+	ie6.Navigate("tencent://message/?exe=qq&amp;menu=yes&amp;Uin=61966225")
+	ie6.Visible=1
+	while ie6.Busy:
+	  time.sleep(1)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shiyongsvntexingshipythonchengxuzidonggengxin/">使用svn特性使python程序自动更新</a></h1>
     
     
@@ -1833,66 +1966,6 @@ print LOG "$currenttime send mail to $sendto : \"$data\"\n";
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/bashhistorybiantaiyongfa/">Bash History （变态用法）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-12T00:00:00+08:00" pubdate data-updated="true">Aug 12<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>首先看一个例子：</p>
-
-<p>root@client ~&gt; history</p>
-
-<p>1002  ll /root
-1003  cat moxi
-1004  cd /home/dongwm
-1005  history</p>
-
-<p>1 从历史执行一个特定的命令使用，这里我想要执行“cat moxi”，使用“！histroy前面的数字”</p>
-
-<p>root@client ~&gt; !1003
-cat moxi
-21233 = {
-&#8220;hashAlgorithm&#8221;: &#8220;fnv1a_32&#8221;,
-&#8220;numReplicas&#8221;: 2,
-&#8220;serverList&#8221;: [&#8220;192.168.8.138:11211&#8221;,&#8221;192.168.8.137:11211&#8221;],
-&#8220;vBucketMap&#8221;: [
-[0,2,3],
-[1,2,3]
-]
-}</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/bashhistorybiantaiyongfa/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/24/">&larr; Older</a></li>
@@ -1915,6 +1988,10 @@ cat moxi
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1950,10 +2027,6 @@ cat moxi
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -2026,7 +2099,7 @@ cat moxi
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

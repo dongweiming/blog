@@ -141,6 +141,139 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuzipimportyanjiu/">关于zipimport研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：zipimport模块实现如果sys.path中的任何项引用了 ZIP 格式的存档，则 Python 会把该存档视为目录。存档包含一个或多个模块的.py 源文件</p>
+
+<p><pre class="sh_python">
+import sys
+import zipfile
+import zipimport
+import os</p>
+
+<p>zf = zipfile.PyZipFile('zipimport_example.zip', mode='w')  #创建一个zip
+try:
+    zf.write('.')  #添加当前目录
+    zf.write('test1.py') #添加这个文件
+    zf.write('txt/README.txt')  #添加这个文件
+finally:
+    zf.close()
+for name in zf.namelist():
+    print name #打印zip档案文件
+importer = zipimport.zipimporter('zipimport_example.zip')  #导入这个zip分析</p>
+
+<p>for module_name in [ 'test1', 'not_there' ]:
+    print module_name, ':', importer.find_module(module_name) #当找到这个模块返回，没有返回none</p>
+
+<p>print importer.get_code('test1') #获取test1.py源码
+module = importer.load_module('test1')  #import导入test1.py  
+print 'Name   :', module.__name__ #模块的名字
+print 'Loader :', module.__loader__  #返回zipimporter对象
+print 'Code   :', module.datetime #返回模块的datetime方法(或者类)的引用
+source = importer.get_source('test1')  #获取test1.py源码
+print '=' * 80
+print module_name
+print '=' * 80
+print source
+print
+print importer.is_package('txt')  #我们把readme.txt 放入了txt  txt就类似于一个包
+import txt #导入txt这个包 
+data_filename = os.path.join(os.path.dirname(txt.__file__), 
+                             'README.txt')
+print data_filename, ':'
+print open(data_filename, 'rt').read()  #读取README.txt内容
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~/test&gt; python test.py
+./
+test1.py
+txt/README.txt
+test1 : &lt;zipimporter object &#8220;zipimport_example.zip&#8221;&gt;
+not_there : None
+&lt;code object &lt;module&gt; at 0xb73800f8, file &#8220;zipimport_example.zip/test1.py&#8221;, line 1&gt;
+Name   : test1
+Loader : &lt;zipimporter object &#8220;zipimport_example.zip&#8221;&gt;
+Code   : &lt;module &#8216;datetime&#8217; from &#8216;/usr/lib/python2.7/lib-dynload/datetime.so&#8217;&gt;
+================================================================================
+not_there
+================================================================================
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
+import datetime</p>
+
+<p>server = SimpleXMLRPCServer((&#8216;localhost&#8217;, 9000), logRequests=True, allow_none=True)
+server.register_introspection_functions()
+server.register_multicall_functions()</p>
+
+<p>class ExampleService:</p>
+
+<p>def ping(self):
+&#8221;&#8221;&#8220;Simple function to respond when called to demonstrate connectivity.&#8221;&#8220;&#8221;
+return True</p>
+
+<p>def now(self):
+&#8221;&#8221;&#8220;Returns the server current date and time.&#8221;&#8220;&#8221;
+return datetime.datetime.now()</p>
+
+<p>def show_type(self, arg):
+&#8221;&#8221;&#8220;Illustrates how types are passed in and out of server methods.</p>
+
+<p>Accepts one argument of any type.
+Returns a tuple with string representation of the value,
+the name of the type, and the value itself.
+&#8221;&#8221;&#8221;
+return (str(arg), str(type(arg)), arg)</p>
+
+<p>def raises_exception(self, msg):
+&#8220;Always raises a RuntimeError with the message passed in&#8221;
+raise RuntimeError(msg)</p>
+
+<p>def send_back_binary(self, bin):
+&#8220;Accepts single Binary argument, unpacks and repacks it to return it&#8221;
+data = bin.data
+response = Binary(data)
+return response
+<pre class="sh_python">
+import sys
+sys.path.insert(0, 'zipimport_example.zip')
+print txt.__file__
+print txt.__loader__.get_data('txt/README.txt')  #导入模块使用get_data获取数据，而不能只是 open(os.path.join(os.path.dirname(txt.__file__), 'README.txt'), 'rt').read()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuzipfileyanjiu/">关于zipfile研究</a></h1>
     
     
@@ -1761,459 +1894,6 @@ finally:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuurllib2yanjiu/">关于urllib2研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：urllib2和urilib很类似，但是模块最显著的区别：1 urllib2可以接受一个<strong>Request</strong>类的实例来设置URL请求的headers，urllib仅可以接受URL。这意味着，你不可以伪装你的User Agent字符串等</p>
-
-<p>2 urllib提供<strong>urlencode</strong>方法用来GET查询字符串的产生，而urllib2没有。这是为何urllib常和urllib2一起使用的原因。</p>
-
-<p>还是借用BaseHTTPServer做的2个程序为服务器端：</p>
-
-<p><pre class="sh_python">
-from BaseHTTPServer import BaseHTTPRequestHandler
-import urlparse </p>
-
-<p>class GetHandler(BaseHTTPRequestHandler):</p>
-
-<p>    def do_GET(self):   #这个是get方法的处理
-        parsed_path = urlparse.urlparse(self.path)
-        message_parts = [
-                'CLIENT VALUES:',
-                'client_address=%s (%s)' % (self.client_address,
-                                            self.address_string()),
-                'command=%s' % self.command,
-                'path=%s' % self.path,
-                'real path=%s' % parsed_path.path,
-                'query=%s' % parsed_path.query,
-                'request_version=%s' % self.request_version,
-                '',
-                'SERVER VALUES:',
-                'server_version=%s' % self.server_version,
-                'sys_version=%s' % self.sys_version,
-                'protocol_version=%s' % self.protocol_version,
-                '',
-                'HEADERS RECEIVED:',
-                ]
-        for name, value in sorted(self.headers.items()):
-            message_parts.append('%s=%s' % (name, value.rstrip()))
-        message_parts.append('')
-        message = '\r\n'.join(message_parts)
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(message)
-        return</p>
-
-<p>if __name__ == '__main__':
-    from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 8080), GetHandler)
-    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
-    server.serve_forever()
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_python">
-from BaseHTTPServer import BaseHTTPRequestHandler
-import cgi</p>
-
-<p>class PostHandler(BaseHTTPRequestHandler):</p>
-
-<p>    def do_POST(self):  ##这个是post方法的处理
-        # Parse the form data posted
-        form = cgi.FieldStorage(
-            fp=self.rfile, 
-            headers=self.headers,
-            environ={'REQUEST_METHOD':'POST',
-                     'CONTENT_TYPE':self.headers['Content-Type'],
-                     })</p>
-
-<p>        # Begin the response
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write('Client: %s\n' % str(self.client_address))
-        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
-        self.wfile.write('Path: %s\n' % self.path)
-        self.wfile.write('Form data:\n')</p>
-
-<p>        # Echo back information about what was posted in the form
-        for field in form.keys():
-            field_item = form[field]
-            if field_item.filename:
-                # The field contains an uploaded file
-                file_data = field_item.file.read()
-                file_len = len(file_data)
-                del file_data
-                self.wfile.write('\tUploaded %s as "%s" (%d bytes)\n' % \
-                        (field, field_item.filename, file_len))
-            else:
-                # Regular form value
-                self.wfile.write('\t%s=%s\n' % (field, form[field].value))
-        return</p>
-
-<p>if __name__ == '__main__':
-    from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 8080), PostHandler)
-    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
-    server.serve_forever()
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_python">
-import urllib2</p>
-
-<p>response = urllib2.urlopen('http://localhost:8080/')  #指定一个url地址
-print 'RESPONSE:', response 
-print 'URL     :', response.geturl() #返回url地址</p>
-
-<p>headers = response.info() #头信息
-print 'DATE    :', headers['date']  #返回日期
-print 'HEADERS :'
-print '---------'
-print headers  #返回服务器的信息和请求时间</p>
-
-<p>data = response.read()  #返回相应数据
-print 'LENGTH  :', len(data)  #数据长度
-print 'DATA    :'
-print '---------'
-print data #包含客户端和服务器端以及头信息
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-RESPONSE: &lt;addinfourl at 3071720012L whose fp = &lt;socket._fileobject object at 0xb7482cec&gt;&gt;
-URL     : http://localhost:8080/
-DATE    : Tue, 19 Jun 2012 08:25:13 GMT
-HEADERS :
-&#8212;&#8212;&#8212;
-Server: BaseHTTP/0.3 Python/2.7
-Date: Tue, 19 Jun 2012 08:25:13 GMT</p>
-
-<p>LENGTH  : 347
-DATA    :
-&#8212;&#8212;&#8212;
-CLIENT VALUES:
-client_address=(&#8216;127.0.0.1&#8217;, 33760) (localhost)
-command=GET
-path=/
-real path=/
-query=
-request_version=HTTP/1.1</p>
-
-<p>SERVER VALUES:
-server_version=BaseHTTP/0.3
-sys_version=Python/2.7
-protocol_version=HTTP/1.0</p>
-
-<p>HEADERS RECEIVED:
-accept-encoding=identity
-connection=close
-host=localhost:8080
-user-agent=Python-urllib/2.7  #这些和urllib差不多</p>
-
-<p><pre class="sh_python">
-import urllib2</p>
-
-<p>request = urllib2.Request('http://localhost:8080/')
-request.add_header('User-agent', 'DWM (http://www.dongwm.com/)')  #指定一个头信息的用户代理，这样更容易识别。<tt>有利于robots.txt</tt>的控制</p>
-
-<p>response = urllib2.urlopen(request)
-data = response.read()
-print data
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-CLIENT VALUES:
-client_address=(&#8216;127.0.0.1&#8217;, 48836) (localhost)
-command=GET
-path=/
-real path=/
-query=
-request_version=HTTP/1.1</p>
-
-<p>SERVER VALUES:
-server_version=BaseHTTP/0.3
-sys_version=Python/2.7
-protocol_version=HTTP/1.0</p>
-
-<p>HEADERS RECEIVED:
-accept-encoding=identity
-connection=close
-host=localhost:8080
-user-agent=DWM (http://www.dongwm.com/)  #设置的用户代理</p>
-
-<p><pre class="sh_python">
-import urllib
-import urllib2</p>
-
-<p>query_args = { 'q':'query string', 'foo':'bar' }</p>
-
-<p>request = urllib2.Request('http://localhost:8080/')
-print 'Request method before data:', request.get_method()</p>
-
-<p>request.add_data(urllib.urlencode(query_args))
-print 'Request method after data :', request.get_method()
-request.add_header('User-agent', 'DWM (http://www.dongwm.com/)')</p>
-
-<p>print
-print 'OUTGOING DATA:'
-print request.get_data()</p>
-
-<p>print
-print 'SERVER RESPONSE:'
-print urllib2.urlopen(request).read()
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>Request method before data: GET
-Request method after data : POST  #从get变成了post</p>
-
-<p>OUTGOING DATA:
-q=query+string&amp;foo=bar</p>
-
-<p>SERVER RESPONSE:
-Client: (&#8216;127.0.0.1&#8217;, 59952)
-User-agent: DWM (http://www.dongwm.com/)
-Path: /
-Form data:
-q=query string
-foo=bar
-<pre class="sh_python">
-import itertools
-import mimetools #解析MIME的工具
-import mimetypes  #隐射文件名为MIME类型
-from cStringIO import StringIO
-import urllib
-import urllib2</p>
-
-<p>class MultiPartForm(object):  #积累张贴表单时要使用的数据</p>
-
-<p>    def __init__(self):
-        self.form_fields = []
-        self.files = []
-        self.boundary = mimetools.choose_boundary()  #用来隔开表单中不同部分数据的
-        return</p>
-
-<p>    def get_content_type(self):
-        return 'multipart/form-data; boundary=%s' % self.boundary  #修改Content-type</p>
-
-<p>    def add_field(self, name, value):
-        self.form_fields.append((name, value)) #增加一个表单项
-        return</p>
-
-<p>    def add_file(self, fieldname, filename, fileHandle, mimetype=None):
-        body = fileHandle.read() 
-        if mimetype is None:
-            mimetype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
-        self.files.append((fieldname, filename, mimetype, body))
-        return</p>
-
-<p>    def __str__(self):  #返回一个字符串，代表形式的数据，包括附加的文件。
-        parts = []
-        part_boundary = '--' + self.boundary</p>
-
-<p>        parts.extend(
-            [ part_boundary,
-              'Content-Disposition: form-data; name="%s"' % name,
-              '',
-              value,
-            ]
-            for name, value in self.form_fields
-            )   #增加表单项</p>
-
-<p>        parts.extend(
-            [ part_boundary,
-              'Content-Disposition: file; name="%s"; filename="%s"' % \
-                 (field_name, filename),
-              'Content-Type: %s' % content_type,
-              '',
-              body,
-            ]
-            for field_name, filename, content_type, body in self.files
-            ) #增加上传文件</p>
-
-<p>        flattened = list(itertools.chain(*parts))  #合并列表
-        flattened.append('--' + self.boundary + '--')
-        flattened.append('')
-        return '\r\n'.join(flattened)  #连接CR + LF分隔的数据</p>
-
-<p>if __name__ == '__main__':
-    form = MultiPartForm()  #创建表单域
-    form.add_field('firstname', 'Dong')
-    form.add_field('lastname', 'weiming')</p>
-
-<p>    form.add_file('biography', 'bio.txt',   #添加一个伪造的文件
-                  fileHandle=StringIO('Python developer and blogger.'))</p>
-
-<p>    request = urllib2.Request('http://localhost:8080/')  #创建请求
-    request.add_header('User-agent', 'DMW (http://www.dongwm.com/)')  #头信息添加用户代理
-    body = str(form) 
-    request.add_header('Content-type', form.get_content_type())  #添加Content-type
-    request.add_header('Content-length',str(len(body)))  #和英文教程原文不同，这里需要一个字符串的而不是int的
-    request.add_data(body)
-    print 'OUTGOING DATA:'
-    print request.get_data()</p>
-
-<p>    print
-    print 'SERVER RESPONSE:'
-    d = urllib2.urlopen(request)
-    print d.read()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-OUTGOING DATA:
-&#8211;127.0.0.2.1000.3551.1340096549.946.1
-Content-Disposition: form-data; name=&#8221;firstname&#8221;</p>
-
-<p>Dong
-&#8211;127.0.0.2.1000.3551.1340096549.946.1
-Content-Disposition: form-data; name=&#8221;lastname&#8221;</p>
-
-<p>weiming
-&#8211;127.0.0.2.1000.3551.1340096549.946.1
-Content-Disposition: file; name=&#8221;biography&#8221;; filename=&#8221;bio.txt&#8221;
-Content-Type: text/plain</p>
-
-<p>Python developer and blogger.
-&#8211;127.0.0.2.1000.3551.1340096549.946.1&#8211;</p>
-
-<p>SERVER RESPONSE:
-Client: (&#8216;127.0.0.1&#8217;, 53901)
-User-agent: DMW (http://www.dongwm.com/)
-Path: /
-Form data:
-lastname=weiming
-Uploaded biography as &#8220;bio.txt&#8221; (29 bytes)
-firstname=Dong</p>
-
-<p><pre class="sh_python">
-import mimetypes
-import os
-import tempfile
-import urllib
-import urllib2</p>
-
-<p>class NFSFile(file):
-    def __init__(self, tempdir, filename):
-        self.tempdir = tempdir
-        file.__init__(self, filename, 'rb')
-    def close(self):
-        print
-        print 'NFSFile:'
-        print '  unmounting %s' % self.tempdir
-        print '  when %s is closed' % os.path.basename(self.name)
-        return file.close(self)</p>
-
-<p>class FauxNFSHandler(urllib2.BaseHandler):  #继承至urllib2.BaseHandler类，自定义协议处理程序类</p>
-
-<p>    def __init__(self, tempdir):
-        self.tempdir = tempdir</p>
-
-<p>    def nfs_open(self, req):
-        url = req.get_selector()
-        directory_name, file_name = os.path.split(url)
-        server_name = req.get_host()
-        print
-        print 'FauxNFSHandler simulating mount:'
-        print '  Remote path: %s' % directory_name
-        print '  Server     : %s' % server_name
-        print '  Local path : %s' % tempdir
-        print '  File name  : %s' % file_name
-        local_file = os.path.join(tempdir, file_name)
-        fp = NFSFile(tempdir, local_file)
-        content_type = mimetypes.guess_type(file_name)[0] or 'application/octet-stream'
-        stats = os.stat(local_file)
-        size = stats.st_size
-        headers = { 'Content-type': content_type,
-                    'Content-length': size,
-                  }
-        return urllib.addinfourl(fp, headers, req.get_full_url())</p>
-
-<p>if __name__ == '__main__':
-    tempdir = tempfile.mkdtemp()
-    try:
-        with open(os.path.join(tempdir, 'file.txt'), 'wt') as f:
-            f.write('Contents of file.txt')</p>
-
-<p>        opener = urllib2.build_opener(FauxNFSHandler(tempdir))  #构建NFS处理类（他返回的类对象去调用该对象的open方法）
-        urllib2.install_opener(opener)  #注册这个类</p>
-
-<p>        response = urllib2.urlopen('nfs://remote_server/path/to/the/file.txt')  
-        print
-        print 'READ CONTENTS:', response.read()
-        print 'URL          :', response.geturl()
-        print 'HEADERS:'
-        for name, value in sorted(response.info().items()):
-            print '  %-15s = %s' % (name, value)
-        response.close()
-    finally:
-        os.remove(os.path.join(tempdir, 'file.txt'))
-        os.removedirs(tempdir)
-</pre>
-执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py</p>
-
-<p>FauxNFSHandler simulating mount:
-Remote path: /path/to/the
-Server     : remote_server
-Local path : /tmp/tmpAdEnXg
-File name  : file.txt</p>
-
-<p>READ CONTENTS: Contents of file.txt
-URL          : nfs://remote_server/path/to/the/file.txt
-HEADERS:
-Content-length  = 20
-Content-type    = text/plain</p>
-
-<p>NFSFile:
-unmounting /tmp/tmpAdEnXg
-when file.txt is closed</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/12/">&larr; Older</a></li>
@@ -2236,6 +1916,10 @@ when file.txt is closed</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -2271,10 +1955,6 @@ when file.txt is closed</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -2347,7 +2027,7 @@ when file.txt is closed</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

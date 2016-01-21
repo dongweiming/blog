@@ -141,6 +141,61 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuhashlibyanjiu/">关于hashlib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：hashlib是一个加密hash和消息摘要的模块，而且建议单独使用sha和md5，支持：md5，sha1，sha224，sha256，sha384，sha512等</p>
+
+<p><pre class="sh_python">
+import hashlib
+test='Traditional Linux systems use SysV init for starting the system: running init scripts to start and stop services as well as manage system runlevels and'</p>
+
+<p>h = hashlib.md5()  #使用md5
+h.update(test)  #更新消息，这个update整个文件(这里是test,但是把test一部分一部分的update，最后计算的结果是一样的)
+print h.hexdigest()  #计算消息摘要</p>
+
+<p>h = hashlib.sha256()  #使用sha256
+h.update(test) #更新消息
+print h.hexdigest() </p>
+
+<p>h = hashlib.new('sha256')  #使用new方式，可以灵活的指定算法 和上面的效果一样
+h.update(test)  
+print h.hexdigest()
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyugzipyanjiu/">关于gzip研究</a></h1>
     
     
@@ -1380,68 +1435,6 @@ strptime: Tue Jun 12 15:34:48 2012</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyucstringioyanjiu/">关于cStringIO研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：cStringIO的行为与file对象非常像，但它不是磁盘上文件，而是一个内存里的“文件”，我们可以将操作磁盘文件那样来操作cStringIO，经常被用来作为字符串的缓存，因为StringIO有个好处，他的有些接口和文件操作是一致的</p>
-
-<p><pre class="sh_python">
-#coding=utf-8
-try:
-    from cStringIO import StringIO
-except:
-    from StringIO import StringIO</p>
-
-<p>output = StringIO()
-output.write('This goes into the buffer. ') #写到内存缓存里面
-print &gt;&gt;output, 'And so does this.'
-print output.getvalue() #找到缓存结果
-output.close() #放弃内存中的缓存</p>
-
-<p>input = StringIO('Inital value for read buffer') #初始化一个缓存区</p>
-
-<p>print input.read() # 读取缓存区内容
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-This goes into the buffer. And so does this.</p>
-
-<p>Inital value for read buffer
-注：还可以使用<tt>readline()</tt>和<tt>readlines()</tt>，也可以使用seek()</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/16/">&larr; Older</a></li>
@@ -1464,6 +1457,10 @@ This goes into the buffer. And so does this.</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1499,10 +1496,6 @@ This goes into the buffer. And so does this.</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1575,7 +1568,7 @@ This goes into the buffer. And so does this.</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

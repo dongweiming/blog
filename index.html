@@ -141,6 +141,51 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-01-07T21:09:00+08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>应某出版社约, 最近一直在写一本Python Web开发的书. 暂时不发大纲全部的章节，主要涵盖如下方面的内容:</p>
+
+<ol>
+  <li>使用Python从零开始做一个完善的项目</li>
+  <li>源码级别分析产品过程中的各种知识点</li>
+  <li>站在运维，运维开发的角度讲解现在互联网Web应用的的方方面面</li>
+  <li>排错, 优化, 设计项目等</li>
+</ol>
+
+<p>我清晰的知道都写些什么, 但是担心最后遗漏读者有兴趣和关系的方面的内容, 特写本文. 希望本博客的读者如果有想法和建议, 欢迎和我交流.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/codekai-yuan-liao/">CODE开源了</a></h1>
     
     
@@ -1650,136 +1695,6 @@ mail: ciici123#gmail.com, dongweiming#douban.com</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">Slack-alert - 把定时任务的结果发送slack消息的微框架</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-07-26T18:08:00+08:00" pubdate data-updated="true">Jul 26<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>为什么要做<a href="https://github.com/dongweiming/slack-alert">slack-alert</a>呢? 成因其实是我一直想做的AST相关的一个项目.
-正好是一个机会. 其次也是业务需要:</p>
-
-<p>工程师都比较懒, 在每天的各种问题邮件几百几千封的时候会经常遗漏重要的邮件. 会经常被用户以及公司其他同事发现问题时@到时候才发现.
-现在大家也接受了slack这个工具. 那么我就在想何不把更重要的消息发送到slack里呢.</p>
-
-<p>原来也做过, 就是写一些脚本, 会把运行的结果通过<a href="https://github.com/os/slacker">slacker</a>里面封装的<a href="https://api.slack.com/methods/chat.postMessage">postMessage</a>发消息进来.
-先说一下为什么我不用<a href="https://api.slack.com/incoming-webhooks">Incoming-webhooks</a>. 最主要的, 因为通常slack都是用的免费版, 我担心对webhooks会有限制或者未来会有限制.</p>
-
-<p>但是为什么做这个<code>微框架</code>呢? 一则这样的脚本和任务会越来越多, 脚本需要设置的定时任务的间隔也会各不相同. 用系统自带的crontab, 每次新增修改删除都要去做调整.
-代码还需要做抽象; 用celery, rq这些其实一是很浪费, 二也不怎么应景. 所以我写了这个工具.</p>
-
-<h4 id="section-1">优点和特点</h4>
-
-<ol>
-  <li>只支持python3</li>
-  <li>支持多种调度模式: AsyncIOScheduler, BackgroundScheduler, GeventScheduler, TornadoScheduler. 默认是AsyncIO</li>
-  <li>使用<a href="https://docs.python.org/3/library/ast.html">AST</a>, 而没有直接import代码.</li>
-  <li>代码和项目无关, 没有register. 只需要按格式编写plugin脚本即可, 要被执行的任务加一个装饰器(只需要他是一个装饰器, 不需要存在). 指定运行的间隔就好</li>
-  <li>附带常用的配置</li>
-</ol>
-
-<h4 id="section-2">安装</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">pip install slack-alert</span></pre></figure></notextile></div>
-
-<p>slack-alert有个默认的配置<a href="https://github.com/dongweiming/slack-alert/blob/master/slack_alert.conf">slack_alert.conf</a>.
-使用<code>OS X</code>或者<code>linux</code>可以拷贝到 <code>~/.config/slack_alert.conf</code></p>
-
-<h4 id="section-3">编写插件</h4>
-
-<p>PS: 插件目录默认是当前目录的<code>plugins</code>子目录下.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">tree plugins
-</span><span class="line">plugins
-</span><span class="line">├── examples.py
-</span><span class="line">
-</span><span class="line">0 directories, 1 files</span></pre></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c"># coding=utf-8</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="nd">@deco</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># 这个一个正确格式的任务, 因为装饰器里面包含`hours|seconds|minutes|days`这样的键.</span>
-</span><span class="line"><span class="k">def</span> <span class="nf">a</span><span class="p">():</span>
-</span><span class="line">    <span class="k">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># 插件也需要python3的语法</span>
-</span><span class="line">    <span class="k">print</span><span class="p">(</span><span class="n">os</span><span class="p">)</span>  <span class="c"># 可以使用外部的变量</span>
-</span><span class="line">    <span class="k">return</span> <span class="mi">1</span>  <span class="c"># 这个返回值最后会被发送到slack的channel里面</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">b</span><span class="p">():</span>  <span class="c"># 这个函数因为没有对应的格式的装饰器 他不会被当做一个任务</span>
-</span><span class="line">    <span class="k">print</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</span><span class="line">    <span class="k">return</span> <span class="mi">2</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="nd">@deco2</span><span class="p">(</span><span class="n">xx</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line"><span class="nd">@deco</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-</span><span class="line"><span class="k">def</span> <span class="nf">c</span><span class="p">():</span>  <span class="c"># 这个函数也不是一个正确格式的装饰器. 我需要把`deco`放在最外面</span>
-</span><span class="line">    <span class="k">print</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-</span><span class="line">    <span class="k">return</span> <span class="mi">3</span>
-</span></pre></figure></notextile></div>
-
-<p>PS: 大家不要迷惑为什么<code>deco</code>这个函数没有介绍. 因为我只需要这个代码文本. 我其实不直接运行这个脚本. 所以不需要装饰器存在.</p>
-
-<h4 id="section-4">使用</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">slack</span><span class="o">-</span><span class="n">alert</span>
-</span></pre></figure></notextile></div>
-
-<p>这样就启动了.</p>
-
-<p><code>a</code>这个函数就会每隔2秒运行一次， 运行三次后, 停顿60分钟… 这样循环(高级用法看下面的参数). 并且把结果发送到slack里面</p>
-
-<h4 id="section-5">原理</h4>
-
-<ol>
-  <li>启动<code>slack-alert</code> 我首先加载配置.</li>
-  <li>我会根据配置<code>--path</code>去找我应该去哪个文件目录下(默认是当前目录)的<code>plugins</code>子目录下去找符合的任务程序.</li>
-  <li>加载符合的目录下的每个python文件. 生成一个AST(抽象语法树).</li>
-  <li>遍历这棵树. 找到符合我需要的语法的函数. 去掉这个实际不存在的装饰器. 编译源码并且执行. 生成一个命名空间</li>
-  <li>获取这个命名空间的参数, 通过<a href="http://apscheduler.readthedocs.org/en/latest/">apscheduler</a>. 添加一个任务</li>
-  <li>添加全部任务. 再添加一个监控这些任务的任务(主要是用来在某些时机停掉/启动其他某些任务)</li>
-  <li>启动任务调度. 直到<code>Ctrl+C</code></li>
-</ol>
-
-<h4 id="section-6">高级选项</h4>
-
-<p>可以参照源码的选项:</p>
-
-<ol>
-  <li><a href="https://github.com/dongweiming/slack-alert#config-files-options">Config file”s Options</a></li>
-  <li><a href="https://github.com/dongweiming/slack-alert#command-options">Command Options</a></li>
-</ol>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/2/">&larr; Older</a></li>
@@ -1800,6 +1715,10 @@ mail: ciici123#gmail.com, dongweiming#douban.com</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1835,10 +1754,6 @@ mail: ciici123#gmail.com, dongweiming#douban.com</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1911,7 +1826,7 @@ mail: ciici123#gmail.com, dongweiming#douban.com</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

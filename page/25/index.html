@@ -141,6 +141,42 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/nagios%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85nagios-plugin-mongodb%E6%8A%A5%E9%94%99%E2%80%9Cneed-to-install-pymongo%E2%80%9D/">Nagios插件安装nagios-plugin-mongodb报错“need to Install Pymongo”</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-16T00:00:00+08:00" pubdate data-updated="true">Jul 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近做mongodb的cacti和nagios监控，下载了github.com/mzupan/nagios-plugin-mongodb.git，但是执行脚本需要pymongo，否则报错：”need to install pymongo“，但是重新启动nagios后发现依然出现这样的报错，而我在本地执行是没有问题的，后来尝试了nrpe方式发现不可行，我的安装nagios服务器上面有2个python，后来我又给centos默认的2.4.3版本的python安装了pymongo，最后使用了yum安装的办法，都不能解决。通过几小时的研究发现，问题处在python环境上：我把check_mongodb.py的首行修改成指定的地址：#!/usr/local/bin/python，而放弃了默认的“env python”方式，OK，问题得解！</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8ucarp%E5%AE%9E%E7%8E%B0%E8%99%9A%E6%8B%9Fip%E6%95%85%E9%9A%9C%E8%BD%AC%E6%8D%A2%EF%BC%8C%E9%93%BE%E8%B7%AF%E5%86%97%E4%BD%99/">使用UCARP实现虚拟IP故障转换，链路冗余</a></h1>
     
     
@@ -838,79 +874,6 @@ s.quit()</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/luyouqidhcppeizhi/">路由器DHCP配置</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-10T00:00:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>实验要求:
-R1模拟成PC，R2模拟成DHCP服务器。
-R1的E0/0不配置地址，R2的E0/0可配成192.168.1.1/24。
-完成DHCP的相关配置。
-查看R1的e0/0是否成功获得地址。</p>
-
-<p>实验步骤
-R1
-R1(config)#no ip routing
-R1(config)#int e0/0
-R1(config-if)#no shutdown
-R1(config-if)#ip address dhcp</p>
-
-<p>R2
-R2 (config)#int e0/0
-R2 (config-if)#no shutdown
-R2 (config-if)#ip address 192.168.1.1  255.255.255.0
-R2 (config-if)#exit
-R2 (config)#ip dhcp pool dongwm
-R2 (dhcp-config)#network 192.168.1.96  255.255.255.224
-R2 (dhcp-config)#default-router 192.168.1.1
-R2 (dhcp-config)#dns-server 202.106.196.115  202.106.0.20
-R2 (dhcp-config)#domain-name dongwm.com
-R2 (dhcp-config)#lease 1
-R2 (dhcp-config)#exit
-R2 (config)#ip dhcp excluded-address 192.168.1.97  192.168.1.99
-R2 (config)#end
-R2#</p>
-
-<p>测试命令</p>
-
-<p>R1
-R1#sh interface e0/0
-R1#sh run</p>
-
-<p>R2
-R2#sh ip dhcp binding
-R2#sh run</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/26/">&larr; Older</a></li>
@@ -933,6 +896,10 @@ R2#sh run</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -968,10 +935,6 @@ R2#sh run</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1044,7 +1007,7 @@ R2#sh run</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

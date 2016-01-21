@@ -141,6 +141,270 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/">Ipython的一些高级用法(一)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-07T09:56:00+08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>以前在我的PPT<a href="http://dongweiming.github.io/Expert-Python/">python高级编程</a>也提到了一些关于ipython的用法. 今天继续由浅入深的看看ipython,
+本文作为读者的你已经知道ipython并且用了一段时间了.</p>
+
+<h5 id="run">%run</h5>
+
+<p>这是一个magic命令, 能把你的脚本里面的代码运行, 并且把对应的运行结果存入ipython的环境变量中:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cat t.py
+</span><span class="line"># coding=utf-8
+</span><span class="line">l = range(5)
+</span><span class="line">
+</span><span class="line">$ipython
+</span><span class="line">In [1]: %run t.py # `%`可加可不加
+</span><span class="line">
+</span><span class="line">In [2]: l # 这个l本来是t.py里面的变量, 这里直接可以使用了
+</span><span class="line">Out[2]: [0, 1, 2, 3, 4]</span></pre></figure></notextile></div>
+
+<h5 id="alias">alias</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="o">%</span><span class="n">alias</span> <span class="n">largest</span> <span class="n">ls</span> <span class="o">-</span><span class="mi">1</span><span class="n">sSh</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">%</span><span class="n">s</span>
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">largest</span> <span class="n">to</span>
+</span><span class="line"><span class="n">total</span> <span class="mi">42</span><span class="n">M</span>
+</span><span class="line"> <span class="mi">20</span><span class="n">K</span> <span class="n">tokenize</span><span class="o">.</span><span class="n">py</span>
+</span><span class="line"> <span class="mi">16</span><span class="n">K</span> <span class="n">tokenize</span><span class="o">.</span><span class="n">pyc</span>
+</span><span class="line"><span class="mf">8.0</span><span class="n">K</span> <span class="n">story</span><span class="o">.</span><span class="n">html</span>
+</span><span class="line"><span class="mf">4.0</span><span class="n">K</span> <span class="n">autopep8</span>
+</span><span class="line"><span class="mf">4.0</span><span class="n">K</span> <span class="n">autopep8</span><span class="o">.</span><span class="n">bak</span>
+</span><span class="line"><span class="mf">4.0</span><span class="n">K</span> <span class="n">story_layout</span><span class="o">.</span><span class="n">html</span>
+</span></pre></figure></notextile></div>
+
+<p>PS 别名需要存储的, 否则重启ipython就不存在了:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="o">%</span><span class="n">store</span> <span class="n">largest</span>
+</span><span class="line"><span class="n">Alias</span> <span class="n">stored</span><span class="p">:</span> <span class="n">largest</span> <span class="p">(</span><span class="n">ls</span> <span class="o">-</span><span class="mi">1</span><span class="n">sSh</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">%</span><span class="n">s</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>下次进入的时候<code>%store -r</code></p>
+
+<h5 id="bookmark---">bookmark - 对目录做别名</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="o">%</span><span class="n">pwd</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="s">u&#39;/home/vagrant&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="o">%</span><span class="n">bookmark</span> <span class="n">dongxi</span> <span class="o">~/</span><span class="n">shire</span><span class="o">/</span><span class="n">dongxi</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="o">%</span><span class="n">cd</span> <span class="n">dongxi</span>
+</span><span class="line"><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">vagrant</span><span class="o">/</span><span class="n">shire</span><span class="o">/</span><span class="n">dongxi_code</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="o">%</span><span class="n">pwd</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="s">u&#39;/home/vagrant/shire/dongxi_code&#39;</span>
+</span></pre></figure></notextile></div>
+
+<h5 id="ipcluster---">ipcluster - 并行计算</h5>
+
+<p>其实ipython提供的方便的并行计算的功能. 先回答ipython做并行计算的特点:</p>
+
+<p>1.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line"><span class="nv">$wget</span> http://www.gutenberg.org/files/27287/27287-0.txt
+</span></pre></figure></notextile></div>
+
+<p>第一个版本是直接的, 大家习惯的用法.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">re</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">io</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">non_word</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;[\W\d]+&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">common_words</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;the&#39;</span><span class="p">,</span><span class="s">&#39;of&#39;</span><span class="p">,</span><span class="s">&#39;and&#39;</span><span class="p">,</span><span class="s">&#39;in&#39;</span><span class="p">,</span><span class="s">&#39;to&#39;</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;is&#39;</span><span class="p">,</span><span class="s">&#39;it&#39;</span><span class="p">,</span><span class="s">&#39;that&#39;</span><span class="p">,</span><span class="s">&#39;which&#39;</span><span class="p">,</span><span class="s">&#39;as&#39;</span><span class="p">,</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;by&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;be&#39;</span><span class="p">,</span><span class="s">&#39;this&#39;</span><span class="p">,</span><span class="s">&#39;with&#39;</span><span class="p">,</span><span class="s">&#39;are&#39;</span><span class="p">,</span><span class="s">&#39;from&#39;</span><span class="p">,</span><span class="s">&#39;will&#39;</span><span class="p">,</span><span class="s">&#39;at&#39;</span><span class="p">,</span><span class="s">&#39;you&#39;</span><span class="p">,</span><span class="s">&#39;not&#39;</span><span class="p">,</span><span class="s">&#39;for&#39;</span><span class="p">,</span><span class="s">&#39;no&#39;</span><span class="p">,</span><span class="s">&#39;have&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;i&#39;</span><span class="p">,</span><span class="s">&#39;or&#39;</span><span class="p">,</span><span class="s">&#39;if&#39;</span><span class="p">,</span><span class="s">&#39;his&#39;</span><span class="p">,</span><span class="s">&#39;its&#39;</span><span class="p">,</span><span class="s">&#39;they&#39;</span><span class="p">,</span><span class="s">&#39;but&#39;</span><span class="p">,</span><span class="s">&#39;their&#39;</span><span class="p">,</span><span class="s">&#39;one&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">,</span><span class="s">&#39;he&#39;</span><span class="p">,</span><span class="s">&#39;when&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;than&#39;</span><span class="p">,</span><span class="s">&#39;so&#39;</span><span class="p">,</span><span class="s">&#39;these&#39;</span><span class="p">,</span><span class="s">&#39;them&#39;</span><span class="p">,</span><span class="s">&#39;may&#39;</span><span class="p">,</span><span class="s">&#39;see&#39;</span><span class="p">,</span><span class="s">&#39;other&#39;</span><span class="p">,</span><span class="s">&#39;was&#39;</span><span class="p">,</span><span class="s">&#39;has&#39;</span><span class="p">,</span><span class="s">&#39;an&#39;</span><span class="p">,</span><span class="s">&#39;there&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;more&#39;</span><span class="p">,</span><span class="s">&#39;we&#39;</span><span class="p">,</span><span class="s">&#39;footnote&#39;</span><span class="p">,</span> <span class="s">&#39;who&#39;</span><span class="p">,</span> <span class="s">&#39;had&#39;</span><span class="p">,</span> <span class="s">&#39;been&#39;</span><span class="p">,</span>  <span class="s">&#39;she&#39;</span><span class="p">,</span> <span class="s">&#39;do&#39;</span><span class="p">,</span> <span class="s">&#39;what&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;her&#39;</span><span class="p">,</span> <span class="s">&#39;him&#39;</span><span class="p">,</span> <span class="s">&#39;my&#39;</span><span class="p">,</span> <span class="s">&#39;me&#39;</span><span class="p">,</span> <span class="s">&#39;would&#39;</span><span class="p">,</span> <span class="s">&#39;could&#39;</span><span class="p">,</span> <span class="s">&#39;said&#39;</span><span class="p">,</span> <span class="s">&#39;am&#39;</span><span class="p">,</span> <span class="s">&#39;were&#39;</span><span class="p">,</span> <span class="s">&#39;very&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="s">&#39;your&#39;</span><span class="p">,</span> <span class="s">&#39;did&#39;</span><span class="p">,</span> <span class="s">&#39;not&#39;</span><span class="p">,</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">yield_words</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="kn">import</span> <span class="nn">io</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;latin-1&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="n">word</span> <span class="o">=</span> <span class="n">non_word</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>                 <span class="k">if</span> <span class="n">word</span> <span class="ow">and</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">common_words</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>                     <span class="k">yield</span> <span class="n">word</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">word_count</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">word_iterator</span> <span class="o">=</span> <span class="n">yield_words</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">counts</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">try</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="n">word</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">word_iterator</span><span class="p">)</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="k">break</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="k">else</span><span class="p">:</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>             <span class="n">counts</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">return</span> <span class="n">counts</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span> <span class="c"># 脑残了 忘记放进去了..</span>
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="o">%</span><span class="n">time</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">word_count</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line"><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">88.5</span> <span class="n">ms</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mf">2.48</span> <span class="n">ms</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mi">91</span> <span class="n">ms</span>
+</span><span class="line"><span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">89.3</span> <span class="n">ms</span>
+</span></pre></figure></notextile></div>
+
+<p>现在用ipython来跑一下:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">ipcluster</span> <span class="n">start</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span> <span class="c"># 好吧, 我的Mac是双核的</span>
+</span></pre></figure></notextile></div>
+
+<p>先讲下ipython 并行计算的用法:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">IPython.parallel</span> <span class="kn">import</span> <span class="n">Client</span> <span class="c"># import之后才能用%px*的magic</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">rc</span><span class="o">.</span><span class="n">ids</span> <span class="c"># 因为我启动了2个进程</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="o">%</span><span class="n">autopx</span> <span class="c"># 如果不自动 每句都需要: `%px xxx`</span>
+</span><span class="line"><span class="o">%</span><span class="n">autopx</span> <span class="n">enabled</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">os</span> <span class="c"># 这里没autopx的话 需要: `%px import os`</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="k">print</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span> <span class="c"># 2个进程的pid</span>
+</span><span class="line"><span class="p">[</span><span class="n">stdout</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="mi">62638</span>
+</span><span class="line"><span class="p">[</span><span class="n">stdout</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="mi">62636</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="o">%</span><span class="n">pxconfig</span> <span class="o">--</span><span class="n">targets</span> <span class="mi">1</span> <span class="c"># 在autopx下 这个magic不可用</span>
+</span><span class="line"><span class="p">[</span><span class="n">stderr</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="n">ERROR</span><span class="p">:</span> <span class="n">Line</span> <span class="n">magic</span> <span class="n">function</span> <span class="sb">`%pxconfig`</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span>
+</span><span class="line"><span class="p">[</span><span class="n">stderr</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="n">ERROR</span><span class="p">:</span> <span class="n">Line</span> <span class="n">magic</span> <span class="n">function</span> <span class="sb">`%pxconfig`</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="o">%</span><span class="n">autopx</span> <span class="c"># 再执行一次就会关闭autopx</span>
+</span><span class="line"><span class="o">%</span><span class="n">autopx</span> <span class="n">disabled</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="o">%</span><span class="n">pxconfig</span> <span class="o">--</span><span class="n">targets</span> <span class="mi">1</span> <span class="c"># 指定目标对象, 这样下面执行的代码就会只在第2个进程下运行</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="o">%%</span><span class="n">px</span> <span class="o">--</span><span class="n">noblock</span> <span class="c"># 其实就是执行一段非阻塞的代码</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">AsyncResult</span><span class="p">:</span> <span class="n">execute</span><span class="o">&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="o">%</span><span class="n">pxresult</span> <span class="c"># 看 只返回了第二个进程的pid</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">21</span><span class="p">]:</span> <span class="mi">62636</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rc</span><span class="p">[:]</span> <span class="c"># 使用全部的进程, ipython可以细粒度的控制那个engine执行的内容</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="k">with</span> <span class="n">v</span><span class="o">.</span><span class="n">sync_imports</span><span class="p">():</span> <span class="c"># 每个进程都导入time模块</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>
+</span><span class="line"><span class="n">importing</span> <span class="n">time</span> <span class="n">on</span> <span class="n">engine</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="n">v</span><span class="o">.</span><span class="n">map_sync</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c"># 同步的执行</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">81</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="n">r</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c"># 异步的执行</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="n">r</span><span class="o">.</span><span class="n">ready</span><span class="p">(),</span> <span class="n">r</span><span class="o">.</span><span class="n">elapsed</span> <span class="c"># celery的用法</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">18</span><span class="p">]:</span> <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="mf">5.87735</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="c"># 获得执行的结果</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">81</span><span class="p">]</span>
+</span></pre></figure></notextile></div>
+
+<p>入正题:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">split_text</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">nlines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">block</span> <span class="o">=</span> <span class="n">nlines</span><span class="o">//</span><span class="n">n</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>        <span class="n">chunk</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">block</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">block</span><span class="p">)]</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;count_file</span><span class="si">%i</span><span class="s">.txt&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="n">fnames</span> <span class="o">=</span> <span class="p">[</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s">&#39;count_file</span><span class="si">%i</span><span class="s">.txt&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="c"># 不用glob是为了精准</span>
+</span><span class="line"><span class="o">....</span><span class="p">:</span>    <span class="k">return</span> <span class="n">fnames</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">parallel</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="n">view</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">load_balanced_view</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rc</span><span class="p">[:]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="n">v</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">non_word</span><span class="o">=</span><span class="n">non_word</span><span class="p">,</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">yield_words</span><span class="o">=</span><span class="n">yield_words</span><span class="p">,</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span>     <span class="n">common_words</span><span class="o">=</span><span class="n">common_words</span>
+</span><span class="line">   <span class="o">....</span><span class="p">:</span> <span class="p">))</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">AsyncResult</span><span class="p">:</span> <span class="n">_push</span><span class="o">&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]:</span> <span class="n">fnames</span> <span class="o">=</span> <span class="n">split_text</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">27</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">count_parallel</span><span class="p">():</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="n">pcounts</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">word_count</span><span class="p">,</span> <span class="n">fnames</span><span class="p">)</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">for</span> <span class="n">pcount</span> <span class="ow">in</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pcount</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>             <span class="n">counts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>     <span class="k">return</span> <span class="n">counts</span><span class="p">,</span> <span class="n">pcounts</span>
+</span><span class="line">   <span class="o">.....</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]:</span> <span class="o">%</span><span class="n">time</span> <span class="n">counts</span><span class="p">,</span> <span class="n">pcounts</span> <span class="o">=</span> <span class="n">count_parallel</span><span class="p">()</span> <span class="c"># 这个时间包含了我再聚合的时间</span>
+</span><span class="line"><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">47.6</span> <span class="n">ms</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mf">6.67</span> <span class="n">ms</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mf">54.3</span> <span class="n">ms</span> <span class="c"># 是不是比直接运行少了很多时间?</span>
+</span><span class="line"><span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mi">106</span> <span class="n">ms</span> <span class="c"># 这个时间是</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">serial_time</span><span class="p">,</span> <span class="n">pcounts</span><span class="o">.</span><span class="n">wall_time</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="p">(</span><span class="mf">0.104384</span><span class="p">,</span> <span class="mf">0.13980499999999998</span><span class="p">,</span> <span class="mf">0.104384</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>更多地关于并行计算请看这里: <a href="http://nbviewer.ipython.org/url/www.astro.washington.edu/users/vanderplas/Astr599/notebooks/21_IPythonParallel.ipynb">Parallel Computing with IPython</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonji-ge-te-bie-de-kai-tou-de-fang-fa/">Python几个特别的__开头的方法</a></h1>
     
     
@@ -2037,178 +2301,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/yong-pythonpao-mapreduce/">用python跑mapreduce</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-09T23:04:00+08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>mapreduce在我的理解里一直都是java等语言的专利,介于python乃至于pypy的性能局限，
-一直没想过用python写分布式任务,最多就是多workers从消息队列取任务执行这样,但是最近一件事真的颠覆
-了我对python的认识.</p>
-
-<h4 id="section-1">先说说起因</h4>
-
-<p>某天分享<a href="http://www.dongwm.com/archives/sed-and-awk/">sed和awk</a>,领导突发奇想让我用一些顾问的实际工作需要去我们的大量数据里面获取想要的数据的需求作为一些演示的例子.其中有这样一个需求(我去掉实际一些专业晦涩的用语,用实际的内容来表达):</p>
-
-<h5 id="section-2">需求</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="mf">1.</span> <span class="err">有大量的</span><span class="n">gz</span><span class="err">压缩文件</span><span class="p">,</span> <span class="err">找到其中某</span><span class="mi">2</span><span class="err">天的数据</span><span class="p">,</span> <span class="err">每一行都是一条实际数据</span>
-</span><span class="line"><span class="mf">2.</span> <span class="err">需要解压缩每个文件</span><span class="p">,</span><span class="err">遍历每行找到用逗号隔开的第</span><span class="mi">21</span><span class="err">列为</span><span class="mi">16233</span><span class="p">,</span><span class="err">第</span><span class="mi">23</span><span class="err">列为</span><span class="mi">27188</span><span class="err">的行</span><span class="o">.</span> <span class="err">以第</span><span class="mi">2</span><span class="err">列为键计算符合的数量</span>
-</span><span class="line"><span class="mf">3.</span> <span class="err">在全部统计结果里面根据值计算符合的键的数量</span><span class="p">:</span> <span class="err">比如</span><span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="err">结果就是</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="err">也就是</span><span class="mi">2</span><span class="err">次的有</span><span class="mi">2</span><span class="err">个</span><span class="p">,</span><span class="mi">1</span><span class="err">次的只有一个</span>
-</span></pre></figure></notextile></div>
-
-<h6 id="section-3">分析</h6>
-
-<p>一上来真的想用awk来搞.但是和其他同事一聊,有几个难点:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="mf">1.</span> <span class="mi">2</span><span class="err">天数据总量在</span><span class="mi">400</span><span class="n">G</span><span class="err">以上</span><span class="p">,</span><span class="err">用</span><span class="n">awk</span><span class="err">还要保留</span><span class="mi">2</span><span class="err">次哈希结果</span><span class="o">-</span><span class="err">不可能用</span><span class="n">awk</span>
-</span><span class="line"><span class="mf">2.</span> <span class="err">用</span><span class="n">python</span><span class="p">,</span><span class="err">据同事经验说</span><span class="p">:</span><span class="err">只是解压缩这些小文件后读取什么都不做也大概</span><span class="mi">1</span><span class="err">天多的时间</span><span class="p">,</span><span class="err">完全不能忍</span>
-</span><span class="line"><span class="mf">3.</span> <span class="err">数据还没有放到</span><span class="n">hadoop</span><span class="p">,</span> <span class="err">没有其他更好更快的方法</span>
-</span></pre></figure></notextile></div>
-
-<h5 id="section-4">解题思路:</h5>
-
-<ol>
-  <li>
-    <p>最初我想做成这样:</p>
-
-    <ol>
-      <li>把需要处理的这些压缩文件放到队列里面</li>
-      <li>启动多进程出队列里面获取要处理的文件,执行,把符合的结果放到共享变量叠加</li>
-      <li>计算完成后从共享变量里面或者数据在生成上面第三条的结果</li>
-    </ol>
-  </li>
-</ol>
-
-<p>但是今天讲的是python得mapreduce,也就是我后续的版本,它源于伟大的Doug Hellmann的<a href="http://pymotw.com/2/multiprocessing/mapreduce.html">Implementing MapReduce with multiprocessing</a></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/usr/bin/env python</span>
-</span><span class="line"><span class="c">#coding=utf-8</span>
-</span><span class="line"><span class="c"># python mapreduce 跑数实现</span>
-</span><span class="line"><span class="c"># Author: Dongweiming</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">gzip</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">glob</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">collections</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">itertools</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">operator</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">multiprocessing</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">AdMapReduce</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_func</span><span class="p">,</span> <span class="n">reduce_func</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&#39;&#39;&#39;</span>
-</span><span class="line"><span class="sd">        num_workers: 不指定就是默认可用cpu的核数</span>
-</span><span class="line"><span class="sd">        map_func: map函数: 要求返回格式类似:[(a, 1), (b, 3)]</span>
-</span><span class="line"><span class="sd">        reduce_func: reduce函数: 要求返回格式类似: (c, 10)</span>
-</span><span class="line"><span class="sd">        &#39;&#39;&#39;</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">map_func</span> <span class="o">=</span> <span class="n">map_func</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">reduce_func</span> <span class="o">=</span> <span class="n">reduce_func</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">partition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapped_values</span><span class="p">):</span>
-</span><span class="line">        <span class="n">partitioned_data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-</span><span class="line">        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mapped_values</span><span class="p">:</span>
-</span><span class="line">            <span class="n">partitioned_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">partitioned_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-</span><span class="line">        <span class="sd">&#39;&#39;&#39;调用类的时候被触发&#39;&#39;&#39;</span>
-</span><span class="line">        <span class="c"># 其实都是借用multiprocessing.Pool.map这个函数, inputs是一个需要处理的列表,想想map函数</span>
-</span><span class="line">        <span class="c"># chunksize表示每次给mapper的量, 这个根据需求调整效率</span>
-</span><span class="line">        <span class="n">map_responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">map_func</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">)</span>
-</span><span class="line">        <span class="c"># itertools.chain是把mapper的结果链接起来为一个可迭代的对象</span>
-</span><span class="line">        <span class="n">partitioned_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">map_responses</span><span class="p">))</span>
-</span><span class="line">        <span class="c"># 大家想,上面的就是[(a, [1,2]), (b, [2,3]),列表中的数就是当时符合的次数,reduce就是吧列表符合项sum</span>
-</span><span class="line">        <span class="n">reduced_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reduce_func</span><span class="p">,</span> <span class="n">partitioned_data</span><span class="p">)</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">reduced_values</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">mapper_match</span><span class="p">(</span><span class="n">one_file</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;第一次的map函数,从每个文件里面获取符合的条目&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span class="line">    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">one_file</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
-</span><span class="line">        <span class="n">l</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">20</span><span class="p">])</span> <span class="o">==</span> <span class="mi">16309</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">22</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2656</span><span class="p">:</span>
-</span><span class="line">            <span class="n">cookie</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span class="line">            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cookie</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">output</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">reduce_match</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;第一次的reduce函数,给相同的key做统计&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="n">cookie</span><span class="p">,</span> <span class="n">occurances</span> <span class="o">=</span> <span class="n">item</span>
-</span><span class="line">    <span class="k">return</span> <span class="p">(</span><span class="n">cookie</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occurances</span><span class="p">))</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">mapper_count</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;第二次mapper函数,其实就是把某key的总数做键,但是值标1&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="n">_</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">item</span>
-</span><span class="line">    <span class="k">return</span> <span class="p">[(</span><span class="n">count</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">reduce_count</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;第二次reduce函数&#39;&#39;&#39;</span>
-</span><span class="line">    <span class="n">freq</span><span class="p">,</span> <span class="n">occurances</span> <span class="o">=</span> <span class="n">item</span>
-</span><span class="line">    <span class="k">return</span> <span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occurances</span><span class="p">))</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-</span><span class="line">    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span class="line">    <span class="n">input_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;/datacenter/input/2013-12-1[01]/*&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="n">mapper</span> <span class="o">=</span> <span class="n">AdMapReduce</span><span class="p">(</span><span class="n">mapper_match</span><span class="p">,</span> <span class="n">reduce_match</span><span class="p">)</span>
-</span><span class="line">    <span class="n">cookie_feq</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
-</span><span class="line">    <span class="n">mapper</span> <span class="o">=</span> <span class="n">AdMapReduce</span><span class="p">(</span><span class="n">mapper_count</span><span class="p">,</span> <span class="n">reduce_count</span><span class="p">)</span>
-</span><span class="line">    <span class="n">cookie_feq</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">(</span><span class="n">cookie_feq</span><span class="p">)</span>
-</span><span class="line">    <span class="n">cookie_feq</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-</span><span class="line">    <span class="k">for</span> <span class="n">freq</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">cookie_feq</span><span class="p">:</span>
-</span><span class="line">        <span class="k">print</span> <span class="s">&#39;{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">freq</span><span class="o">*</span><span class="n">count</span><span class="p">)</span>
-</span><span class="line">    <span class="c">#cookie_feq.reverse()</span>
-</span><span class="line">    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span class="line">    <span class="k">print</span> <span class="s">&#39;cost:&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-5">后话</h4>
-
-<p>哇,看python做mapreduce也是可以这样优雅的, 我是用pypy跑下来,竟然只有了61分钟….</p>
-
-<p>但是其实他只是借助mapreduce思想和多核的硬件基础,其实pool做的还是文件级别的处理.假如是少量的大文件,就未必有这样好的效果了.</p>
-
-<p>我想很多时候这样的工作都可以交给这个Admapreduce类来做</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/4/">&larr; Older</a></li>
@@ -2231,6 +2323,10 @@
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -2266,10 +2362,6 @@
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -2342,7 +2434,7 @@
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

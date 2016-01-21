@@ -141,6 +141,117 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shiyongsphinxheapachedajianwikiwendangwangzhan/">使用sphinx和apache搭建wiki文档网站</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-13T00:00:00+08:00" pubdate data-updated="true">Sep 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：sphix是一个允许开发人员以纯文本格式使用reStructuredText 标记语法编写文档，自定义显示效果的文档工具。比较有代表性的网站有<a href="http://docs.python.org" target="_blank">python的docs官网</a>，<a href="http://book.42qu.com" target="_blank">张沈鹏的42区</a>等等，没事我在内网弄个记录一些工作文档。</p>
+
+<p>注：我这里使用了gentoo系统</p>
+
+<p><strong>1  安装sphinx和apache2</strong></p>
+
+<p>因为还有个同名的大名鼎鼎的sphinx搜索引擎，需要指定到类型：</p>
+
+<p>sudo emerge dev-python/sphinx apache2
+<strong>2 配置一个wiki站点</strong></p>
+
+<p>dongwm@localhost ~ $sphinx-quickstart  # 使用这个命令快速创建</p>
+
+<p>&gt; Root path for the documentation [.]:    test #过程中会有一些提示选项，根据你的需要定制，我对所有的疑问都是yes，注意这步，是问你这个配置的站点的root目录，我这里是一个新的test子目录目录，在家目录下
+完成后会出现test目录，包含这样的内容：</p>
+
+<p>dongwm@localhost ~/test $ ls -l
+total 24
+drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 build  #最后生成的html文件目录
+-rw-r&#8211;r&#8211; 1 dongwm dongwm 5113 Sep 14 13:37 make.bat #我想是windows下的make
+-rw-r&#8211;r&#8211; 1 dongwm dongwm 5589 Sep 14 13:37 Makefile #这个大家都熟悉
+drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 source  #源文件就是我们要编辑的wiki显示的代码的源文件目录</p>
+
+<p><strong>3 修改要显示的源文件</strong>
+原理：修改source下面的XXX.rst(或者你定义的其他后缀文件)，最后会生成同名的html文件，比如编辑index.rst会生成index.html，这个也就是默认的主显文件，通过他链接到其他文档处</p>
+
+<p><strong>4 生成html文件目录</strong>
+dongwm@localhost ~/test $  make html</p>
+
+<p>这样就会在build/html目录下生成html文件，当然你也自定义</p>
+
+<p><strong>5 设置apache以及htaccess</strong></p>
+
+<p>修改/etc/apache2/vhosts.d/default_vhost.include</p>
+
+<p>DocumentRoot &#8220;/home/dongwm/test/build/html&#8221;  12行 其中/home/dongwm/test/build/html就是生成html的目录，我就使用了默认的</p>
+
+<p>&lt;Directory &#8220;/home/dongwm/test/build/html&#8221;&gt;  15行</p>
+
+<p>在/home/dongwm/test/build/html目录，也就是网站根目录添加新文件.htaccess</p>
+
+<p>dongwm@localhost ~/test/build/html $ cat !$
+cat .htaccess
+&lt;Files ~ &#8220;^.(htaccess|htpasswd)$&#8221;&gt;
+deny from all
+&lt;/Files&gt;
+Options -Indexes
+&lt;FilesMatch &#8220;.(gif|jpg|jpeg|png|ico)$&#8221;&gt;
+Header set Cache-Control &#8220;max-age=86400&#8221;  #静态图片缓存24小时
+&lt;/FilesMatch&gt;
+AuthUserFile /home/dongwm/.htpasswd  #密码验证文件使用htpasswd生成
+AuthGroupFile /dev/null
+AuthName &#8220;Please enter your ID and password&#8221;
+AuthType Basic
+require valid-user
+order deny,allow
+allow from 10.28.101.1/24  #只容许这个段的人访问
+deny from all</p>
+
+<p>dongwm@localhost ~/test $ sudo /etc/init.d/apache2 restart  #重启apache2</p>
+
+<p><strong>6 显示中文</strong></p>
+
+<p>修改source/conf.py其中的language=&#8221;zh_CN&#8221; 重新make html即可</p>
+
+<p><strong>7 技巧</strong></p>
+
+<p>1 快速开发</p>
+
+<p>每次我们修改了rst的源文件还需要make html去生成html文件，操作很麻烦，我在使用sublime_text2编辑器，写一个自定义编译程序的build，然后在Tools-&gt;Build System里面选择这个程序，</p>
+
+<p>比如：dongwm@localhost ~ $ cat ~/.config/sublime-text-2/Packages/User/makehtml.sublime-build  #一定要保存在这个目录，这个命令就是makehtml（去掉文件的.sublime-build后缀）
+{
+&#8220;cmd&#8221;: [&#8220;make&#8221;, &#8220;html&#8221;], #我要执行make html  每个参数都要用引号隔开
+&#8220;working_dir&#8221;: &#8220;${project_path:${folder}}&#8221;  #他的语法大家可以去看官方文档，这里表示执行这个命令实在我当前的工作目录
+}</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyugeventdeyixielijieyi-2/">关于gevent的一些理解(一)</a></h1>
     
     
@@ -3865,248 +3976,6 @@ return self.impl.convert_result_value(value, engine)</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochenger/">SQLAlchemy教程(二)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-17T00:00:00+08:00" pubdate data-updated="true">Jul 17<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>对于SQLAlchemy的一些总结:</p>
-
-<p><strong>1 metadata.create_all()</strong></p>
-
-<p>创建多个table可以这样使用,但是他还有个功能,它添加了&#8221;IF NOT EXISTS&#8221;,就是在数据库存在的时候,他还是安全的</p>
-
-<p><strong>2 交互模式下的一个全过程:</strong></p>
-
-<p><pre class="sh_python">
-dongwm@localhost ~ $ python
-Python 2.7.3 (default, Jul 11 2012, 10:10:17) 
-[GCC 4.5.3] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
-&gt;&gt;&gt; from sqlalchemy import create_engine
-&gt;&gt;&gt; from sqlalchemy import Table, MetaData, Column, ForeignKey, Integer, String, Unicode, DateTime
-&gt;&gt;&gt; from datetime import datetime
-&gt;&gt;&gt; metadata = MetaData('sqlite:///tutorial.db')
-&gt;&gt;&gt; user_table = Table(
-...     'tf_user', metadata,
-...     Column('id', Integer, primary_key=True),
-...     Column('user_name', Unicode(16),
-...            unique=True, nullable=False),
-...     Column('password', Unicode(40), nullable=False),
-...     Column('display_name', Unicode(255), default=''),
-...     Column('created', DateTime, default=datetime.now))
-__main__:7: SAWarning: Unicode column received non-unicode default value.
-&gt;&gt;&gt; stmt = user_table.insert()  #插入数据
-&gt;&gt;&gt; stmt.execute(user_name='dongwm1', password='secret',display_name='testdongwm1')
-/usr/lib/python2.7/site-packages/SQLAlchemy-0.7.8-py2.7-linux-i686.egg/sqlalchemy/engine/default.py:463: SAWarning: Unicode type received non-unicode bind param value.
-  param.append(processors[key](compiled_params[key]))
-&lt;sqlalchemy.engine.base.ResultProxy object at 0x8377fcc&gt;
-&gt;&gt;&gt; stmt.execute(user_name='dongwm2', password='secret',display_name='testdongwm2') #这个实例可以多次插入,和sql区别很大
-&lt;sqlalchemy.engine.base.ResultProxy object at 0x837e4ec&gt;
-&gt;&gt;&gt; stmt = user_table.select() #select查询
-&gt;&gt;&gt; result = stmt.execute()
-&gt;&gt;&gt; for row in result:
-...     print row 
-... 
-(1, u'dongwm1', u'secret', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))
-(2, u'dongwm2', u'secret', u'testdongwm2', datetime.datetime(2012, 7, 17, 11, 58, 5, 226977))
-&gt;&gt;&gt; result = stmt.execute()
-&gt;&gt;&gt; row =result.fetchone() #只获取符合要求的第一项
-&gt;&gt;&gt; print  row['user_name']
-dongwm1
-&gt;&gt;&gt; print row.password
-secret
-&gt;&gt;&gt; print row.items()
-[(u'id', 1), (u'user_name', u'dongwm1'), (u'password', u'secret'), (u'display_name', u'testdongwm1'), (u'created', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
-&gt;&gt;&gt; stmt = user_table.select(user_table.c.user_name=='dongwm1') #过滤留下user_name=='dongwm1的项
-&gt;&gt;&gt; print stmt.execute().fetchall() #获取所有符合项
-[(1, u'dongwm1', u'secret', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
-&gt;&gt;&gt; stmt = user_table.update(user_table.c.user_name=='dongwm1') #更新数据
-&gt;&gt;&gt; stmt.execute(password='secret123') #修改密码
-&lt;sqlalchemy.engine.base.ResultProxy object at 0x8377f6c&gt;
-&gt;&gt;&gt; stmt = user_table.delete(user_table.c.user_name != 'dongwm1')  #删除user_name不是dongwm1的条目
-&gt;&gt;&gt; stmt.execute()
-&lt;sqlalchemy.engine.base.ResultProxy object at 0x837f3ac&gt;
-&gt;&gt;&gt; user_table.select().execute().fetchall() #查询发现就剩一条了
-[(1, u'dongwm1', u'secret123', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
-</pre></p>
-
-<p><strong>3 sission上面已经说过了,补充一些:</strong></p>
-
-<p>session.delete(u) #把映射类从会话中删除</p>
-
-<p><strong>4 关于引擎</strong></p>
-
-<p>引擎就是根据不同的数据库方言连接数据库的方法</p>
-
-<p>以下是一些例子(方法 driver://username:password@host:port/database):
-engine = create_engine(&#8216;sqlite://&#8217;)  #连接基于内存的sqlite
-engine = create_engine(&#8216;sqlite:///data.sqlite&#8217;)  #连接基于硬盘文件的sqlite
-engine = create_engine(&#8216;postgres://dongwm:foo@localhost:5432/pg_db&#8217;)  #连接postgresql
-engine = create_engine(&#8216;mysql://localhost/mysql_db&#8217;)  #连接mysql
-engine = create_engine(&#8216;oracle://dongwm:foo@oracle_tns&#8217;) #连接基于TNS协议的Oracle
-engine =create_engine(&#8216;oracle://dongwm:foo@localhost:1521/oracle_sid&#8217;) #连接没有TNS名字的Oracle</p>
-
-<p>也可以带一些参数:</p>
-
-<p>url=&#8217;postgres://dongwm:foo@localhost/pg_db?arg1=foo&amp;arg2=bar&#8217;
-engine = create_engine(url)</p>
-
-<p>或者:</p>
-
-<p>engine = create_engine(&#8216;postgres://dongwm:foo@localhost/pg_db&#8217;,
-connect_args=dict(arg1=&#8217;foo&#8217;, arg2=&#8217;bar&#8217;))</p>
-
-<p>还可以通过函数完全控制连接:</p>
-
-<p>import psycopg
-def connect_pg():
-return psycopg.connect(user=&#8217;rick&#8217;, host=&#8217;localhost&#8217;)
-engine = create_engine(&#8216;postgres://&#8217;, creator=connect_pg)</p>
-
-<p>import logging
-handler = logging.FileHandler(&#8216;sqlalchemy.engine.log&#8217;)  #可以给它添加一个日志文件处理类
-handler.level = logging.DEBUG
-logging.getLogger(&#8216;sqlalchemy.engine&#8217;).addHandler(handler)</p>
-
-<p>上面说的操作表,也可以直接操作数据库:</p>
-
-<p>conn = engine.connect()
-result = conn.execute(&#8216;select user_name, email_address from tf_user&#8217;) #结果是一个sqlalchemy.engine.ResultProxy的实例
-for row in result:
-print &#8216;User name: %s Email address: %s&#8217; % (
-row[&#8216;user_name&#8217;], row[&#8216;email_address&#8217;])
-conn.close()</p>
-
-<p>from sqlalchemy import pool #本来它已经自动通过数据库连接管理数据池,但是也可以手动管理
-import psycopg2
-psycopg = pool.manage(psycopg2) #结果是一个sqlalchemy.pool.DBProxy实例
-connection = psycopg.connect(database=&#8217;mydb&#8217;,
-username=&#8217;rick&#8217;, password=&#8217;foo&#8217;)</p>
-
-<p><strong>5 关于元数据metadata</strong></p>
-
-<p>它收集了描述table对象等的元数据类,当使用ORM等时必须使用metadata</p>
-
-<p>如果他被绑定了,那么使用table.create()就会生成表,没有绑定需要:table.create(bind=some_engine_or_connection),其中table.create</p>
-
-<p>包含一些函数:</p>
-
-<p>autoload:默认是false,当数据库已经存在这个table会自动加载覆盖</p>
-
-<p>autoload_with:默认是false,是否自动加载引擎的字段结构</p>
-
-<p>reflect:默认是false,是否体现源表结构</p>
-
-<p>brand_table = Table(&#8216;brand&#8217;, metadata,
-Column(&#8216;name&#8217;, Unicode(255)), # 覆盖类型
-autoload=True)</p>
-
-<p><strong>6 关于表结构:</strong></p>
-
-<p>设置表主键可以这样:</p>
-
-<p>Column(&#8216;brand_id&#8217;, Integer, ForeignKey(&#8216;brand.id&#8217;),primary_key=True), #通过primary_key=True
-Column(&#8216;sku&#8217;, Unicode(80), primary_key=True))
-也可以这样:
-product_table = Table(
-&#8216;product&#8217;, metadata,
-Column(&#8216;brand_id&#8217;, Integer, ForeignKey(&#8216;brand.id&#8217;)),
-Column(&#8216;sku&#8217;, Unicode(80)),
-PrimaryKeyConstraint(&#8216;brand_id&#8217;, &#8216;sku&#8217;, name=&#8217;prikey&#8217;))  #通过PrimaryKeyConstraint</p>
-
-<p>style_table = Table(
-&#8216;style&#8217;, metadata,
-Column(&#8216;brand_id&#8217;, Integer, primary_key=True),
-Column(&#8216;sku&#8217;, Unicode(80), primary_key=True),
-Column(&#8216;code&#8217;, Unicode(80), primary_key=True),
-ForeignKeyConstraint(  #使用复合键,关联外部表的字段
-[&#8216;brand_id&#8217;, &#8216;sku&#8217;],
-[&#8216;product.brand_id&#8217;, &#8216;product.sku&#8217;]))</p>
-
-<p>product_table = Table(
-&#8216;product&#8217;, metadata,
-Column(&#8216;id&#8217;, Integer, primary_key=True),
-Column(&#8216;brand_id&#8217;, Integer, ForeignKey(&#8216;brand.id&#8217;)), #他的brand_id关联brand的让id
-Column(&#8216;sku&#8217;, Unicode(80)),
-UniqueConstraint(&#8216;brand_id&#8217;, &#8216;sku&#8217;)) #约束唯一标识数据库表中的每条记录</p>
-
-<p>payment_table = Table(
-&#8216;payment&#8217;, metadata,
-Column(&#8216;amount&#8217;, Numeric(10,2), CheckConstraint(&#8216;amount &gt; 0&#8217;))) #验证amount大于0
-user_table = Table(
-&#8216;tf_user&#8217;, MetaData(),
-Column(&#8216;id&#8217;, Integer, primary_key=True),
-Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False),
-Column(&#8216;password&#8217;, Unicode(40), nullable=False),
-Column(&#8216;first_name&#8217;, Unicode(255), default=&#8221;),
-Column(&#8216;last_name&#8217;, Unicode(255), default=&#8221;),
-Column(&#8216;created_apptime&#8217;, DateTime, default=datetime.now), #default表示当不舍定具体值时设定一个默认值
-Column(&#8216;created_dbtime&#8217;, DateTime, PassiveDefault(&#8216;sysdate&#8217;)), # PassiveDefault是数据库级别的默认值,
-Column(&#8216;modified&#8217;, DateTime, onupdate=datetime.now)) #单设置onupdate这个属性，这是不应用到数据库的设计中的.只是存在于映射类中.</p>
-
-<p>#它是活跃更新的,因为每次执行的时间都不同</p>
-
-<p>user_table = Table(
-&#8216;tf_user&#8217;, MetaData(),
-Column(&#8216;id&#8217;, Integer, primary_key=True),
-Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False, index=True), #一旦数据库增长到一定规模时，可能需要考虑增加表的索引，以加快某些操作
-Column(&#8216;password&#8217;, Unicode(40), nullable=False),
-Column(&#8216;first_name&#8217;, Unicode(255), default=&#8221;),
-Column(&#8216;last_name&#8217;, Unicode(255), default=&#8221;, index=True))</p>
-
-<p>其中指定索引也可以这样:</p>
-
-<p>i = Index(&#8216;idx_name&#8217;, user_table.c.first_name,user_table.c.last_name,unique=True)
-i.create(bind=e)</p>
-
-<p>brand_table = Table(
-&#8216;brand&#8217;, metadata,
-Column(&#8216;id&#8217;, Integer, Sequence(&#8216;brand_id_seq&#8217;), primary_key=True),  #需要通过序列化方式来创建新主键标识符的数据库，</p>
-
-<p>#SQLAlchemy 并不会自动为其生成。可以指定Sequence 生成
-Column(&#8216;name&#8217;, Unicode(255), unique=True, nullable=False))</p>
-
-<p><strong>7 元数据操作</strong></p>
-
-<p>meta1 = MetaData(&#8216;postgres://postgres:password@localhost/test&#8217;,
-&#8230; reflect=True)
-meta2 = MetaData(&#8216;sqlite://&#8217;)
-for table in meta1.table_iterator():
-table.tometadata(meta2) #通过这个方法让meta1的元数据被meta2使用
-meta2.create_all()</p>
-
-<p>2 假如想放弃绑定使用drop_all( )或者drop(e)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/9/">&larr; Older</a></li>
@@ -4129,6 +3998,10 @@ meta2.create_all()</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -4164,10 +4037,6 @@ meta2.create_all()</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -4240,7 +4109,7 @@ meta2.create_all()</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -141,6 +141,68 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyucstringioyanjiu/">关于cStringIO研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：cStringIO的行为与file对象非常像，但它不是磁盘上文件，而是一个内存里的“文件”，我们可以将操作磁盘文件那样来操作cStringIO，经常被用来作为字符串的缓存，因为StringIO有个好处，他的有些接口和文件操作是一致的</p>
+
+<p><pre class="sh_python">
+#coding=utf-8
+try:
+    from cStringIO import StringIO
+except:
+    from StringIO import StringIO</p>
+
+<p>output = StringIO()
+output.write('This goes into the buffer. ') #写到内存缓存里面
+print &gt;&gt;output, 'And so does this.'
+print output.getvalue() #找到缓存结果
+output.close() #放弃内存中的缓存</p>
+
+<p>input = StringIO('Inital value for read buffer') #初始化一个缓存区</p>
+
+<p>print input.read() # 读取缓存区内容
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+This goes into the buffer. And so does this.</p>
+
+<p>Inital value for read buffer
+注：还可以使用<tt>readline()</tt>和<tt>readlines()</tt>，也可以使用seek()</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyucpickleyanjiu/">关于cPickle研究</a></h1>
     
     
@@ -1449,63 +1511,6 @@ running shell command: pwd
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyubisectyanjiu/">关于bisect研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：bisect模块会让列表保持排序顺序列出,可以在向一个数组插入数据的同时进行排序</p>
-
-<p>例子：</p>
-
-<p><pre class="sh_python">
-import bisect
-l = [ 20, 34, 35, 65, 78 ]
-print bisect.bisect(l, 25) #显示在什么位置插入25
-bisect.insort(l,25)  #插入数据
-print l  #新列表
-print bisect.bisect_left(l,35) #如果待查找元素在列表中存在，则返回左侧插入位置
-print bisect.bisect_right(l,35) #如果待查找元素在列表中存在，则返回右侧插入位置
-</pre></p>
-
-<p>结果：</p>
-
-<p>1
-[20, 25, 34, 35, 65, 78]
-3
-4</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1528,6 +1533,10 @@ print bisect.bisect_right(l,35) #如果待查找元素在列表中存在，则�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1563,10 +1572,6 @@ print bisect.bisect_right(l,35) #如果待查找元素在列表中存在，则�
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1639,7 +1644,7 @@ print bisect.bisect_right(l,35) #如果待查找元素在列表中存在，则�
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -141,6 +141,94 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/tornado404shixianzhongdingxiangyemian/">Tornado 404实现重定向页面</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-10T00:00:00+08:00" pubdate data-updated="true">Apr 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：不喜欢默认的404报错：404:Not Found，本来我可以在我程序里面对RequestHandler重定义，但是需要修改的比较多，因为我的服务器上面只跑我这一个程序，那么我直接去修改源码（/usr/local/lib/python2.6/site-packages/tornado-2.2-py2.6.egg/tornado）的ErrorHandler类（个人方法仅供参考，要是有更好的方法，欢迎留言<pre class="sh_python">
+class ErrorHandler(RequestHandler):  #大约1413行  这里主要是‘文件url的404’
+    """Generates an error response with status_code for all requests."""
+    def initialize(self, status_code):
+        self.set_status(status_code)</p>
+
+<p>    def prepare(self):
+#        raise HTTPError(self._status_code)   注释掉了这句
+        self.render("error.html")   改成重定向到一个页面</p>
+
+<p> if not os.path.exists(abspath):   #大约1490行 这里主要是‘文件的404’
+            #raise HTTPError(404)
+            self.render("error.html")
+            return -1</p>
+
+<p> </pre>
+error.html内容  #这个文件放在tornado模块的路径下
+<pre class="sh_html4strict">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8" /&gt;
+&lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
+&lt;title&gt;dongwm.com 404报错页面&lt;/title&gt;
+&lt;meta name="robots" content="noindex, nofollow" /&gt;
+&lt;link href="" rel="stylesheet" type="text/css" /&gt;	  #这里指定css放在网站程序的静态页面路径，而不是
+&lt;/head&gt;                                                 #在tornado源码目录下，使用这样的路径是为了无论在网站那一级目录都能找到这个css，要不然在跟目录下可以，其他子目录下就没有了
+	&lt;body&gt;                                           #或者直接指定url 比如 http://127.0.0.1/static/dict.css
+		&lt;div id="header" class='headerPadding'&gt;
+		&lt;/div&gt;
+		&lt;div id="allframe" class="width950"&gt;
+			&lt;div class="div404"&gt;
+				&lt;div class="div404wording"&gt;
+					&lt;a href="https://127.0.0.1"&gt;首页&lt;/a&gt;
+					&lt;br&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div id="bottom"&gt;
+			&lt;div class="width950" align="center"&gt;
+				&lt;div class="copyright"&gt;
+					Copyright © 2012 dongwm.com&lt;/br&gt;
+					&lt;br /&gt;版权所有
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/tornadoyingyongliziershiyongajaxjquerytongguoqiantaihehoutaijiaohu/">Tornado应用例子(二)：使用ajax（jquery）通过前台和后台交互</a></h1>
     
     
@@ -1477,59 +1565,6 @@ yum clean all  会删除之前的缓存，例如刚下载国12。1的那些更�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/jiejueundefinedmethodrequirementfor/">解决安装redmine“undefined Method `requirement&#8217; ”报错</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-15T00:00:00+08:00" pubdate data-updated="true">Feb 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：在opensuse安装redmine出现一个比较可爱的报错，puppet面板安装也可能遇见，当创建表时：</p>
-
-<p>dongwm@linux-b8lh:~/redmine/svn/branches/1.3-stable/config&gt; !rake
-rake db:migrate RAILS_ENV=production
-(in /home/dongwm/redmine/svn/branches/1.3-stable)</p>
-
-<p>rake aborted!
-undefined method `requirement&#8217; for #&lt;Rails::GemDependency:0xb71a2248&gt;</p>
-
-<p>Tasks: TOP =&gt; db:migrate =&gt; environment
-(See full trace by running task with &#8211;trace)</p>
-
-<p>解决：修改gem_dependency.rb，一般在你安装的rails库目录下，我的是/usr/lib/ruby/gems/1.8/gems/rails-2.3.14/lib/rails/gem_dependency.rb</p>
-
-<p>注释掉81行 #gem self.name, self.requirement # &lt;  1.8 unhappy way
-修改为：</p>
-
-<p>gem self.name, :version =&gt; (self.respond_to?(:requirement) ? self.requirement : self.version_requirements)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/20/">&larr; Older</a></li>
@@ -1552,6 +1587,10 @@ undefined method `requirement&#8217; for #&lt;Rails::GemDependency:0xb71a2248&gt
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1587,10 +1626,6 @@ undefined method `requirement&#8217; for #&lt;Rails::GemDependency:0xb71a2248&gt
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1663,7 +1698,7 @@ undefined method `requirement&#8217; for #&lt;Rails::GemDependency:0xb71a2248&gt
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

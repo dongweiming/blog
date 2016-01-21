@@ -141,6 +141,149 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/sqlitedepythoncaozuomoban/">Sqlite的python操作模板</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-14T00:00:00+08:00" pubdate data-updated="true">Dec 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：最近弄了一个程序，但是使用mysql这样需要服务器的数据库有些限制和浪费，尝试了一下sqlite：</p>
+
+<p><pre class="sh_python">
+#!/usr/bin/env python
+#conding= gbk
+'''
+一般服务器安装python自带了sqlite3模块，但是有些机器可能安装有问题，没有——sqlite3.so这个文件，所以需要去手动安装pysqlite2，其实他们是一样的模块
+'''
+try:
+    from sqlite3 import dbapi2 as sqlite
+except:
+    from pysqlite2 import dbapi2 as sqlite </p>
+
+<p>class gysqlite:
+    def __init__(self,path):
+         '''
+         初始化，path是使用的数据库文件路径
+         '''
+        self.conn = sqlite.connect(path)
+        self.cur = self.conn.cursor()  #cursor是一个记录标识，用于一行一行迭代的访问查询返回的结果
+    def create(self,table):
+         '''
+         创建table，我这里创建包含2个段 ID（数字型，自增长），Name（char 40字符），Flag（数字型）
+         '''
+        try:
+            self.cur.execute("CREATE TABLE IF NOT EXISTS %s(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR(40),Flag INTEGER)"% table)
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            self.conn.rollback()
+    def insert(self,table,name,flag = 0):
+         '''
+         插入数据，指定表名，设置Name的值，Flag默认设置为0
+         '''
+        try:
+            self.cur.execute("INSERT INTO %s(Name,Flag) VALUES('%s',%d)" % (table,name,flag))
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            self.conn.rollback()
+    def drop(self,table):
+         '''
+        drop表
+         '''
+        try:
+            self.cur.execute("DROP TABLE IF EXISTS %s" % table)
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            self.conn.rollback()
+    def update(self,table,name,flag = 1):
+         '''
+         修改表条目数据，在这里主要是设置条目Flag（符合Name等于name）
+         '''
+        try:
+            self.cur.execute("UPDATE %s SET Flag = %d WHERE Name = '%s'" % (table,flag,name))
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            print 'sqlite update error'
+            self.conn.rollback()
+    def delete(self,table,name):
+         '''
+         删除表条目数据，在这里主要是删除Name等于name的条目
+         '''
+        try:
+            self.cur.execute("DELETE FROM %s WHERE Name = '%s'" % (table,name))
+            self.done()
+        except sqlite.Error ,e:
+            print e
+            print 'sqlite delete error'
+            self.conn.rollback()
+    def selectflag(self,table,flag):
+         '''
+         select查询，返回符合Flag等于flag的条目的数据
+         '''
+        try:
+            self.cur.execute("SELECT * FROM %s WHERE Flag = %d" % (table,flag))
+            rows = self.cur.fetchall()
+            return rows
+        except sqlite.Error, e:
+            print "Error %s:" % e.args[0]
+    def select(self,table):
+         '''
+         select查询，返回名字为table的表数据
+         '''
+        try:
+            self.cur.execute("SELECT * FROM %s" % table)
+            rows = self.cur.fetchall()
+            return rows
+        except sqlite.Error, e:
+            print "Error %s:" % e.args[0]
+    def done(self):
+         '''
+         事务提交
+         '''
+        self.conn.commit()
+    def close(self):
+         '''
+         关闭游标
+         '''
+        self.conn.close()
+</pre></p>
+
+<p>使用方法：</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/sqlitedepythoncaozuomoban/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/linuxyunweibukebuzhidexingnengjiankonghediaoshigongjuer/">Linux运维不可不知的性能监控和调试工具（二）</a></h1>
     
     
@@ -809,139 +952,6 @@ self.trayIconMenu.addAction(self.quitAction)
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonchengxubenlipyqt4tuxingchengxuzhongdianjizidongdanchuqqliaotianchuangkou/">python程序（本例pyqt4图形程序）中点击自动弹出QQ聊天窗口</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-10-24T00:00:00+08:00" pubdate data-updated="true">Oct 24<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：很向往点击某网页就能弹出QQ聊天窗口，最近做的一个python程序为了方便用户提交bug，也设计了一个点击自动弹出和我QQ聊天的对话框供大家参考（只剪切了其中一部分）：</p>
-
-<p><pre class="sh_python"></p>
-
-<p>from PyQt4 import QtCore, QtGui
-import systray_rc
-import threading,os
-import re,time
-try:
-_fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-_fromUtf8 = lambda s: s
-#设计一个界面，可以做成记事本效果，能够打印文件中的文本
-class Ui_notepad(object):
-def setupUi(self, notepad):
-notepad.setObjectName(_fromUtf8("notepad"))
-notepad.setWindowTitle(QtGui.QApplication.translate("notepad", "Form", None, QtGui.QApplication.UnicodeUTF8))
-self.editor_window = QtGui.QTextEdit(notepad)
-self.editor_window.setGeometry(QtCore.QRect(10, 50, 380, 240))
-self.editor_window.setObjectName(_fromUtf8("editor_window"))</p>
-
-<p>self.retranslateUi(notepad)
-QtCore.QMetaObject.connectSlotsByName(notepad)</p>
-
-<p>def retranslateUi(self, notepad):
-pass
-class Window(QtGui.QMainWindow):
-    def __init__(self):
-       # super(Window, self).__init__()
-	QtGui.QMainWindow.__init__(self)
-        self.iconComboBox = QtGui.QComboBox()
-        self.iconComboBox.addItem(
-            QtGui.QIcon('../image/app.jpg'), "Dmyz")
-	#通知区域图标右键菜单设置,弹出的菜单的行为，包括退出，还原，最小化
-        self.minimizeAction = QtGui.QAction(u"最小化", self,
-                triggered=self.hide)
-        self.restoreAction = QtGui.QAction(u"显示菜单", self,
-                triggered=self.showNormal)
-        self.quitAction = QtGui.QAction(u"退出", self,
-                triggered=QtGui.qApp.quit)
-	self.ui = Ui_notepad()
-        self.ui.setupUi(self)
-        self.trayIconMenu = QtGui.QMenu(self)
-        self.trayIconMenu.addAction(self.restoreAction)
-        self.trayIconMenu.addAction(self.minimizeAction)
-        self.trayIconMenu.addAction(self.quitAction)
-        self.trayIcon = QtGui.QSystemTrayIcon(self)
-        self.trayIcon.setContextMenu(self.trayIconMenu)
-        self.iconComboBox.currentIndexChanged.connect(
-            self.setIcon)
-        #设置第一个按键 效果退出
-        exit = QtGui.QAction(QtGui.QIcon('../image/exit.png'), 'Exit', self)
-	exit.setShortcut('Ctrl+Q')
-        exit.setStatusTip(u'\u9000\u51fa\u4e3b\u83dc\u5355')
-        self.connect(exit, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
-	#设置第二个按键  历史记录
-        lishi = QtGui.QAction(QtGui.QIcon('../image/history.png'),u'\u5386\u53f2', self)
-	lishi.setShortcut('Ctrl+L')
-        lishi.setStatusTip(u'\u5386\u53f2')
-        lishi.connect(lishi,QtCore.SIGNAL('triggered()'), self.file_dialog)
-	#设置第3个按键  关于信息
-	guangyu = QtGui.QAction(QtGui.QIcon('../image/app.jpg'),u'\u5173\u4e8e', self)
-	guangyu.setShortcut('Ctrl+K')
-        guangyu.setStatusTip(u'\u5173\u4e8e')
-        guangyu.connect(guangyu,QtCore.SIGNAL('triggered()'), self.print_text)
-	#设置第4个按键 bug提交 弹出QQ对话框
-	qq = QtGui.QAction(QtGui.QIcon('../image/QQ.png'),u'BUG\u8bf7\u8054\u7cfb\u6211', self)
-	qq.setShortcut('Ctrl+U')
-        qq.setStatusTip(u'\u70b9\u51fb\u6253\u5f00QQ')
-        qq.connect(qq,QtCore.SIGNAL('triggered()'), self.contqq)</p>
-
-<p>        self.statusBar()
-        menubar = self.menuBar()
-        file = menubar.addMenu('&amp;Exit')
-        file.addAction(exit)
-	file2 = menubar.addMenu('&amp;History')
-        file2.addAction(lishi)
-	file3 = menubar.addMenu('About')
-        file3.addAction(guangyu)
-	file3 = menubar.addMenu('Contact')
-        file3.addAction(qq)
-    #设置打开文件 在pyqt4的主餐单里面的记事本区域显示
-    def file_dialog(self):
-        s = open('../log/Communicate.log','r').read()
-	if len(s) == 0:
-	    self.atext = u'目前您还没收到什么信息哦^.^'
-	    self.ui.editor_window.setPlainText('sdf')
-        self.ui.editor_window.setPlainText(self.atext)
-    def print_text(self):  #设置打印关于的信息
-	self.ui.editor_window.setPlainText(self.text)
-    def contqq(self):  #设置打开QQ
-	import win32com.client
-	ie6=win32com.client.Dispatch("InternetExplorer.Application")
-	ie6.Navigate("tencent://message/?exe=qq&amp;menu=yes&amp;Uin=61966225")
-	ie6.Visible=1
-	while ie6.Busy:
-	  time.sleep(1)
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/23/">&larr; Older</a></li>
@@ -964,6 +974,10 @@ class Window(QtGui.QMainWindow):
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -999,10 +1013,6 @@ class Window(QtGui.QMainWindow):
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1075,7 +1085,7 @@ class Window(QtGui.QMainWindow):
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

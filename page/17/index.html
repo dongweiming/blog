@@ -141,6 +141,63 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyubisectyanjiu/">关于bisect研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：bisect模块会让列表保持排序顺序列出,可以在向一个数组插入数据的同时进行排序</p>
+
+<p>例子：</p>
+
+<p><pre class="sh_python">
+import bisect
+l = [ 20, 34, 35, 65, 78 ]
+print bisect.bisect(l, 25) #显示在什么位置插入25
+bisect.insort(l,25)  #插入数据
+print l  #新列表
+print bisect.bisect_left(l,35) #如果待查找元素在列表中存在，则返回左侧插入位置
+print bisect.bisect_right(l,35) #如果待查找元素在列表中存在，则返回右侧插入位置
+</pre></p>
+
+<p>结果：</p>
+
+<p>1
+[20, 25, 34, 35, 65, 78]
+3
+4</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyubase64yanjiu/">关于base64研究</a></h1>
     
     
@@ -1171,77 +1228,6 @@ def myprint(color,mes):
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonzhaodaoipduankeyongipzuidahezuishaoip/">Python找到ip段可用ip最大和最少ip</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-27T00:00:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：一个小需求，当用户输入‘XXX.XXX.XXX.XXX/XX’（ip/netmask）时候自动帮他分析出这个网段除去网络号和广播地址外的开始和结束ip</p>
-
-<p><pre class="sh_python">
-def ipto(iplist):
-    data = iplist.split('/')
-    ip= data[0]
-    ti = int(data[1])
-    d = int(ti/8)
-    c = 256/(2**(ti%8))
-    ip_items = ip.split('.')
-    if len(ip_items[d:]) == 1:
-        if ti%8 == 0:
-            cmin = '%s.%s' % ('.'.join(ip_items[:d]),'0')
-            cmax = '%s.%s' % ('.'.join(ip_items[:d]),'255')
-        else:
-            for i in range(2**(ti%8)):
-	        mymax = (i+1)*c-1
-	        mymin=  i*c
-	        data =  int(''.join(ip_items[d:]))
-	        if data &lt; mymax and data &gt;= mymin:
-	            cmin = '%s.%s' % ('.'.join(ip_items[:d]),mymin)
-  	            cmax = '%s.%s' % ('.'.join(ip_items[:d]),mymax)
-    else:
-        if ti%8 == 0:
-             cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),'0',('0.'*(len(ip_items)-d-1))[:-1])
-             cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),'255',('255.'*(len(ip_items)-d-1))[:-1])
-        else:
-	    for i in range(2**(ti%8)):
-                mymax = (i+1)*c-1
-                mymin=  i*c
-	        data =  int(''.join(ip_items[d]))
-	        if data &lt; mymax and data &gt;= mymin:
-		    cmin = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymin,('0.'*(len(ip_items)-d-1))[:-1])
-		    cmax = '%s.%s.%s' % ('.'.join(ip_items[:d]),mymax,('255.'*(len(ip_items)-d-1))[:-1])
-    print  cmin,cmax
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/18/">&larr; Older</a></li>
@@ -1264,6 +1250,10 @@ def ipto(iplist):
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1299,10 +1289,6 @@ def ipto(iplist):
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1375,7 +1361,7 @@ def ipto(iplist):
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

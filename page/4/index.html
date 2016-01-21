@@ -141,6 +141,178 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/yong-pythonpao-mapreduce/">用python跑mapreduce</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-09T23:04:00+08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>mapreduce在我的理解里一直都是java等语言的专利,介于python乃至于pypy的性能局限，
+一直没想过用python写分布式任务,最多就是多workers从消息队列取任务执行这样,但是最近一件事真的颠覆
+了我对python的认识.</p>
+
+<h4 id="section-1">先说说起因</h4>
+
+<p>某天分享<a href="http://www.dongwm.com/archives/sed-and-awk/">sed和awk</a>,领导突发奇想让我用一些顾问的实际工作需要去我们的大量数据里面获取想要的数据的需求作为一些演示的例子.其中有这样一个需求(我去掉实际一些专业晦涩的用语,用实际的内容来表达):</p>
+
+<h5 id="section-2">需求</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="mf">1.</span> <span class="err">有大量的</span><span class="n">gz</span><span class="err">压缩文件</span><span class="p">,</span> <span class="err">找到其中某</span><span class="mi">2</span><span class="err">天的数据</span><span class="p">,</span> <span class="err">每一行都是一条实际数据</span>
+</span><span class="line"><span class="mf">2.</span> <span class="err">需要解压缩每个文件</span><span class="p">,</span><span class="err">遍历每行找到用逗号隔开的第</span><span class="mi">21</span><span class="err">列为</span><span class="mi">16233</span><span class="p">,</span><span class="err">第</span><span class="mi">23</span><span class="err">列为</span><span class="mi">27188</span><span class="err">的行</span><span class="o">.</span> <span class="err">以第</span><span class="mi">2</span><span class="err">列为键计算符合的数量</span>
+</span><span class="line"><span class="mf">3.</span> <span class="err">在全部统计结果里面根据值计算符合的键的数量</span><span class="p">:</span> <span class="err">比如</span><span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="err">结果就是</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="err">也就是</span><span class="mi">2</span><span class="err">次的有</span><span class="mi">2</span><span class="err">个</span><span class="p">,</span><span class="mi">1</span><span class="err">次的只有一个</span>
+</span></pre></figure></notextile></div>
+
+<h6 id="section-3">分析</h6>
+
+<p>一上来真的想用awk来搞.但是和其他同事一聊,有几个难点:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="mf">1.</span> <span class="mi">2</span><span class="err">天数据总量在</span><span class="mi">400</span><span class="n">G</span><span class="err">以上</span><span class="p">,</span><span class="err">用</span><span class="n">awk</span><span class="err">还要保留</span><span class="mi">2</span><span class="err">次哈希结果</span><span class="o">-</span><span class="err">不可能用</span><span class="n">awk</span>
+</span><span class="line"><span class="mf">2.</span> <span class="err">用</span><span class="n">python</span><span class="p">,</span><span class="err">据同事经验说</span><span class="p">:</span><span class="err">只是解压缩这些小文件后读取什么都不做也大概</span><span class="mi">1</span><span class="err">天多的时间</span><span class="p">,</span><span class="err">完全不能忍</span>
+</span><span class="line"><span class="mf">3.</span> <span class="err">数据还没有放到</span><span class="n">hadoop</span><span class="p">,</span> <span class="err">没有其他更好更快的方法</span>
+</span></pre></figure></notextile></div>
+
+<h5 id="section-4">解题思路:</h5>
+
+<ol>
+  <li>
+    <p>最初我想做成这样:</p>
+
+    <ol>
+      <li>把需要处理的这些压缩文件放到队列里面</li>
+      <li>启动多进程出队列里面获取要处理的文件,执行,把符合的结果放到共享变量叠加</li>
+      <li>计算完成后从共享变量里面或者数据在生成上面第三条的结果</li>
+    </ol>
+  </li>
+</ol>
+
+<p>但是今天讲的是python得mapreduce,也就是我后续的版本,它源于伟大的Doug Hellmann的<a href="http://pymotw.com/2/multiprocessing/mapreduce.html">Implementing MapReduce with multiprocessing</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/usr/bin/env python</span>
+</span><span class="line"><span class="c">#coding=utf-8</span>
+</span><span class="line"><span class="c"># python mapreduce 跑数实现</span>
+</span><span class="line"><span class="c"># Author: Dongweiming</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">gzip</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">glob</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">collections</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">itertools</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">operator</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">multiprocessing</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">AdMapReduce</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_func</span><span class="p">,</span> <span class="n">reduce_func</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&#39;&#39;&#39;</span>
+</span><span class="line"><span class="sd">        num_workers: 不指定就是默认可用cpu的核数</span>
+</span><span class="line"><span class="sd">        map_func: map函数: 要求返回格式类似:[(a, 1), (b, 3)]</span>
+</span><span class="line"><span class="sd">        reduce_func: reduce函数: 要求返回格式类似: (c, 10)</span>
+</span><span class="line"><span class="sd">        &#39;&#39;&#39;</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">map_func</span> <span class="o">=</span> <span class="n">map_func</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">reduce_func</span> <span class="o">=</span> <span class="n">reduce_func</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">partition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapped_values</span><span class="p">):</span>
+</span><span class="line">        <span class="n">partitioned_data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mapped_values</span><span class="p">:</span>
+</span><span class="line">            <span class="n">partitioned_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">partitioned_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span class="line">        <span class="sd">&#39;&#39;&#39;调用类的时候被触发&#39;&#39;&#39;</span>
+</span><span class="line">        <span class="c"># 其实都是借用multiprocessing.Pool.map这个函数, inputs是一个需要处理的列表,想想map函数</span>
+</span><span class="line">        <span class="c"># chunksize表示每次给mapper的量, 这个根据需求调整效率</span>
+</span><span class="line">        <span class="n">map_responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">map_func</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># itertools.chain是把mapper的结果链接起来为一个可迭代的对象</span>
+</span><span class="line">        <span class="n">partitioned_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">map_responses</span><span class="p">))</span>
+</span><span class="line">        <span class="c"># 大家想,上面的就是[(a, [1,2]), (b, [2,3]),列表中的数就是当时符合的次数,reduce就是吧列表符合项sum</span>
+</span><span class="line">        <span class="n">reduced_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reduce_func</span><span class="p">,</span> <span class="n">partitioned_data</span><span class="p">)</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">reduced_values</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">mapper_match</span><span class="p">(</span><span class="n">one_file</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第一次的map函数,从每个文件里面获取符合的条目&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">one_file</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+</span><span class="line">        <span class="n">l</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">20</span><span class="p">])</span> <span class="o">==</span> <span class="mi">16309</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">22</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2656</span><span class="p">:</span>
+</span><span class="line">            <span class="n">cookie</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class="line">            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cookie</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">output</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">reduce_match</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第一次的reduce函数,给相同的key做统计&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">cookie</span><span class="p">,</span> <span class="n">occurances</span> <span class="o">=</span> <span class="n">item</span>
+</span><span class="line">    <span class="k">return</span> <span class="p">(</span><span class="n">cookie</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occurances</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">mapper_count</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第二次mapper函数,其实就是把某key的总数做键,但是值标1&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">_</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">item</span>
+</span><span class="line">    <span class="k">return</span> <span class="p">[(</span><span class="n">count</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">reduce_count</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;第二次reduce函数&#39;&#39;&#39;</span>
+</span><span class="line">    <span class="n">freq</span><span class="p">,</span> <span class="n">occurances</span> <span class="o">=</span> <span class="n">item</span>
+</span><span class="line">    <span class="k">return</span> <span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occurances</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">    <span class="n">input_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;/datacenter/input/2013-12-1[01]/*&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="n">mapper</span> <span class="o">=</span> <span class="n">AdMapReduce</span><span class="p">(</span><span class="n">mapper_match</span><span class="p">,</span> <span class="n">reduce_match</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cookie_feq</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+</span><span class="line">    <span class="n">mapper</span> <span class="o">=</span> <span class="n">AdMapReduce</span><span class="p">(</span><span class="n">mapper_count</span><span class="p">,</span> <span class="n">reduce_count</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cookie_feq</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">(</span><span class="n">cookie_feq</span><span class="p">)</span>
+</span><span class="line">    <span class="n">cookie_feq</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">freq</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">cookie_feq</span><span class="p">:</span>
+</span><span class="line">        <span class="k">print</span> <span class="s">&#39;{0}</span><span class="se">\t</span><span class="s">{1}</span><span class="se">\t</span><span class="s">{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">freq</span><span class="o">*</span><span class="n">count</span><span class="p">)</span>
+</span><span class="line">    <span class="c">#cookie_feq.reverse()</span>
+</span><span class="line">    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;cost:&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-5">后话</h4>
+
+<p>哇,看python做mapreduce也是可以这样优雅的, 我是用pypy跑下来,竟然只有了61分钟….</p>
+
+<p>但是其实他只是借助mapreduce思想和多核的硬件基础,其实pool做的还是文件级别的处理.假如是少量的大文件,就未必有这样好的效果了.</p>
+
+<p>我想很多时候这样的工作都可以交给这个Admapreduce类来做</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sed-and-awk/">Sed and Awk</a></h1>
     
     
@@ -1551,190 +1723,6 @@ justnow的请求都是立刻返回不受影响.但是用了asynchronous的装饰
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shi-yong-celeryzhi-liao-jie-celery/">使用celery之了解celery</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-10T20:12:00+08:00" pubdate data-updated="true">Aug 10<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>我想很多做开发和运维的都会涉及一件事:crontab, 也就是在服务器上设定定时任务,按期执行一些任务.但是假如你有上千台的服务器，
-你有上千种任务,那么对于这个定时任务的管理恐怕是一件很头疼的事情.哪怕你只是几十个任务分配的不同的机器上怎么样合理的管理和实现以下功能呢:</p>
-
-<ol>
-  <li>查看定时任务的执行情况.比如执行是否成功，当前状态，执行花费的时间.</li>
-  <li>一个友好的界面或者命令行下实现添加,删除任务</li>
-  <li>怎么样简单实现不同的机器设定不同种任务,某些机器执行不同的队列</li>
-  <li>假如你需要生成一个任务怎么样不阻塞剩下来的过程(异步了呗)</li>
-  <li>怎么样并发的执行任务</li>
-</ol>
-
-<h4 id="section-1">几种选择</h4>
-
-<ol>
-  <li>有钱有人有时间自己实现一套,优点是完全符合公司业务的需要,有专门的团队维护和服务</li>
-  <li>使用<a href="http://gearman.org/">Gearman</a>,听说过没用过，因为是C/java/perl,对我们这种python开发者或者运维来说,假如没有这方面经验之后没有能力了解底层实现和二次开发的能力</li>
-  <li>使用<a href="http://python-rq.org/">rq</a>, rq是搞gitflow的那个作者写的，简介里面说的很清楚:Simple job queues for Python. 怕它不够复杂,但是假如业务没有那么复杂或者应用不是那么严格，完全可以尝试下</li>
-  <li>好吧我选择了<a href="https://github.com/celery/celery">celery</a>, 现在用了快半年，可能是历史遗留问题,版本较低.有很多坑.但是很不错</li>
-</ol>
-
-<h4 id="section-2">消息队列</h4>
-
-<p>RabbitMQ,ZeroMQ这样的消息队列总是出现在我们视线中, 其实意义是很简单: 消息就是一个要传送的数据,celery是一个分布式的任务队列.这个”任务”其实就是一种消息,
-任务被生成到队列中，被RabbitMQ等容器接收和存储，在适当的时候又被要执行的机器把这个消息取走.</p>
-
-<p>celery任务可以使用RabbitMQ/Redis/SQLAlchemy/Django的orm/Mongodb等等容器(这里叫做Broker).我使用的是RabbitMQ,因为作者在github主页的介绍里面很明确的写了这个</p>
-
-<p>所谓队列,你可以设想一个问题,我有一大推的东西要执行,但是我并不是需要每个服务器都执行这个任务,因为业务不同嘛. 所以就要做个队列, 比如任务A,B,C A可以在X,Y服务器执行,
-但是不需要或者不能在Z服务器上执行.那么在X,Y你启动worker(下面会说，其实就是消费者和生产者的消费者)加上这个队列,Z服务器就不需要指定这个队列,也就不会执行这个队列的任务</p>
-
-<h5 id="celerydjangocelerydjango-celery">celery的原理,我这里的角度是django+celery+django-celery</h5>
-
-<p>首先说一下流程:</p>
-
-<ol>
-  <li>使用django-celery或者直接操作数据库(settings.py里面指定)添加任务,设置的相关属性(包含定时任务的间隔)存入数据库.</li>
-  <li>celerybeat通过djcelery.schedulers.DatabaseScheduler获取django内你设置的任务周期性的检查(默认5s),发现需要执行某任务讲其丢入你设置的broker(我这里是rabbitmq),他会更具settings.py的设置放到对应的队列</li>
-  <li>在你启动了celery worker(以前是celeryd)的服务器上,根据worker也会定期(默认5s)去broker里面查找需要它执行的队列里面是否有任务</li>
-  <li>当发现队列有要执行的任务,worker将它取出来执行,执行完的结果通过celerycam(默认30s,所以这个进程也要启动)写入django设置的数据库,更新了这个任务的状态.比如花费的时间</li>
-</ol>
-
-<h4 id="supervisor">supervisor进程管理</h4>
-
-<p>不知道有没有人用过<a href="http://cr.yp.to/daemontools/supervise.html">supervise</a>，我以前经常在最初的项目开发中经常使用它监视我的程序,当程序死掉自动启动, <a href="https://github.com/Supervisor/supervisor">supervisor</a>确是一个
-进程管理的工具，我在这里使用它管理celery的程序和uwsgi</p>
-
-<p>粘贴下我的一个本地环境的配置,并直接进行一下说明:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="p">;</span><span class="err">程序名字</span>
-</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celery</span><span class="o">-</span><span class="n">queue</span><span class="o">-</span><span class="n">fetch</span><span class="p">]</span>
-</span><span class="line"><span class="p">;</span><span class="err">程序要执行的命令</span><span class="p">,</span> <span class="o">-</span><span class="n">Q</span> <span class="err">指定了生成和接受任务的队列</span><span class="p">,</span><span class="err">多个用都好分开</span> <span class="o">-</span><span class="n">c</span><span class="err">为</span><span class="n">workr</span><span class="err">的数量</span><span class="p">,</span><span class="err">原意为并发数量</span>
-</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celery</span> <span class="n">worker</span> <span class="o">-</span><span class="n">E</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_local</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">INFO</span> <span class="o">-</span><span class="n">Q</span> <span class="n">fetch_</span> <span class="o">-</span><span class="n">c</span> <span class="mi">30</span>
-</span><span class="line"><span class="p">;</span><span class="err">程序执行时候所在目录</span>
-</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
-</span><span class="line"><span class="p">;</span><span class="err">执行程序使用的用户</span>
-</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
-</span><span class="line"><span class="p">;</span><span class="err">启动的程序的实例数</span><span class="p">,</span><span class="err">默认是</span><span class="mi">1</span>
-</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
-</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="p">;</span><span class="err">在启动</span><span class="n">supervisor</span><span class="err">时候自动启动</span>
-</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="p">;</span><span class="err">当程序可能因为某些原因没有启动成功会自动重启</span>
-</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="p">;</span><span class="err">启动的等待时候</span><span class="p">,</span><span class="err">我想是为了重启能杀掉原来进程预留的时间</span>
-</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">10</span>
-</span><span class="line"><span class="p">;</span><span class="err">进程发送停止信号等待</span><span class="n">os</span><span class="err">返回</span><span class="n">SIGCHILD</span><span class="err">的时间</span>
-</span><span class="line"><span class="n">stopwaitsecs</span><span class="o">=</span><span class="mi">10</span>
-</span><span class="line"><span class="p">;</span><span class="err">低优先级的会首先启动最后关闭</span>
-</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">998</span>
-</span><span class="line"><span class="p">;</span><span class="err">以下</span><span class="mi">2</span><span class="err">句是为了保证杀掉进程和其子进程而不会只杀死其控制的程序主进程而留下子进程变为孤立进程的问题</span>
-</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
-</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line">
-</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celery</span><span class="o">-</span><span class="n">queue</span><span class="o">-</span><span class="n">feed</span><span class="p">]</span>
-</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celeryd</span> <span class="o">-</span><span class="n">E</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_local</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">INFO</span> <span class="o">-</span><span class="n">Q</span> <span class="n">feed</span>
-</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
-</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
-</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
-</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">10</span>
-</span><span class="line"><span class="n">stopwaitsecs</span><span class="o">=</span><span class="mi">10</span>
-</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">998</span>
-</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
-</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line">
-</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celerycam</span><span class="p">]</span>
-</span><span class="line"><span class="p">;</span><span class="err">任务快照的间隔时间为</span><span class="mi">10</span><span class="n">s</span>
-</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celerycam</span> <span class="o">-</span><span class="n">F</span> <span class="mi">10</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_local</span>
-</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
-</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
-</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
-</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celerycam</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celerycam</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">5</span>
-</span><span class="line"><span class="n">stopwaitsecs</span><span class="o">=</span><span class="mi">5</span>
-</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">998</span>
-</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
-</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line">
-</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">celerybeat</span><span class="p">]</span>
-</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">celerybeat</span> <span class="o">--</span><span class="n">settings</span><span class="o">=</span><span class="n">settings_real_old</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">DEBUG</span>
-</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
-</span><span class="line"><span class="n">user</span><span class="o">=</span><span class="n">dongwm</span>
-</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
-</span><span class="line"><span class="n">stdout_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery_beat</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">stderr_logfile</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span><span class="o">/</span><span class="n">celerylog</span><span class="o">/</span><span class="n">celery_beat</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">startsecs</span><span class="o">=</span><span class="mi">10</span>
-</span><span class="line"><span class="n">priority</span><span class="o">=</span><span class="mi">999</span>
-</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
-</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line">
-</span><span class="line"><span class="p">;</span><span class="err">这是</span><span class="n">supervisor</span><span class="err">官方的一个监控进程状态异常退出的脚本</span><span class="p">,</span><span class="err">我对它进行了较大的修改</span><span class="p">,</span><span class="err">这样在程序奇怪退出的时候会给我发邮件</span>
-</span><span class="line"><span class="p">[</span><span class="n">eventlistener</span><span class="p">:</span><span class="n">crashmail</span><span class="p">]</span>
-</span><span class="line"><span class="n">command</span><span class="o">=</span><span class="n">python</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">superlance</span><span class="o">/</span><span class="n">superlance</span><span class="o">/</span><span class="n">crashmail</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">m</span> <span class="n">ciici123</span><span class="nd">@163.com</span>
-</span><span class="line"><span class="n">events</span><span class="o">=</span><span class="n">PROCESS_STATE_EXITED</span>
-</span><span class="line">
-</span><span class="line"><span class="p">[</span><span class="n">program</span><span class="p">:</span><span class="n">uwsgi</span><span class="p">]</span>
-</span><span class="line"><span class="n">user</span> <span class="o">=</span> <span class="n">dongwm</span>
-</span><span class="line"><span class="n">numprocs</span><span class="o">=</span><span class="mi">1</span>
-</span><span class="line"><span class="n">command</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">uwsgi</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">uwsgi</span><span class="o">-</span><span class="n">sandbox</span><span class="o">.</span><span class="n">sock</span> <span class="o">--</span><span class="n">processes</span> <span class="mi">4</span>  <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">threads</span> \
-</span><span class="line">     <span class="o">--</span><span class="n">pythonpath</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">uwsgi</span> <span class="o">--</span><span class="nb">buffer</span><span class="o">-</span><span class="n">size</span> <span class="mi">32768</span> <span class="o">--</span><span class="n">listen</span> <span class="mi">100</span> <span class="o">--</span><span class="n">daemonize</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">ulog</span><span class="o">/</span><span class="n">uwsgi_out</span><span class="o">.</span><span class="n">log</span>
-</span><span class="line"><span class="n">directory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">dongwm</span><span class="o">/</span><span class="n">work</span>
-</span><span class="line"><span class="n">autostart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">autorestart</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">redirect_stderr</span><span class="o">=</span><span class="n">true</span>
-</span><span class="line"><span class="n">stopsignal</span><span class="o">=</span><span class="n">KILL</span>
-</span><span class="line"><span class="n">stopasgroup</span><span class="o">=</span><span class="n">true</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="nginxuwsgi">nginx+uwsgi的实践</h4>
-
-<p>nginx进程数会直接影响性能, 如何使用到的模块不会出现阻塞式的调用，应该有多少cpu就配多少worker_processes,否则才需要配置更多的进程数.
-比如你的用户大量读取你的本地静态文件，并且服务器上面内存较少，硬盘的I/O调用可能会阻塞worker少量时间,那么就要多配</p>
-
-<p>为了更好利用多核的优势,我绑定了worker和对应的内核:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">worker_processes</span>     <span class="mi">4</span><span class="p">;</span>
-</span><span class="line"><span class="n">worker_cpu_affinity</span> <span class="mo">0001</span> <span class="mo">0010</span> <span class="mo">0100</span> <span class="mi">1000</span><span class="p">;</span>
-</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/5/">&larr; Older</a></li>
@@ -1757,6 +1745,10 @@ justnow的请求都是立刻返回不受影响.但是用了asynchronous的装饰
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1792,10 +1784,6 @@ justnow的请求都是立刻返回不受影响.但是用了asynchronous的装饰
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1868,7 +1856,7 @@ justnow的请求都是立刻返回不受影响.但是用了asynchronous的装饰
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

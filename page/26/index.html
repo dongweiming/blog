@@ -141,6 +141,79 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/luyouqidhcppeizhi/">路由器DHCP配置</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-10T00:00:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>实验要求:
+R1模拟成PC，R2模拟成DHCP服务器。
+R1的E0/0不配置地址，R2的E0/0可配成192.168.1.1/24。
+完成DHCP的相关配置。
+查看R1的e0/0是否成功获得地址。</p>
+
+<p>实验步骤
+R1
+R1(config)#no ip routing
+R1(config)#int e0/0
+R1(config-if)#no shutdown
+R1(config-if)#ip address dhcp</p>
+
+<p>R2
+R2 (config)#int e0/0
+R2 (config-if)#no shutdown
+R2 (config-if)#ip address 192.168.1.1  255.255.255.0
+R2 (config-if)#exit
+R2 (config)#ip dhcp pool dongwm
+R2 (dhcp-config)#network 192.168.1.96  255.255.255.224
+R2 (dhcp-config)#default-router 192.168.1.1
+R2 (dhcp-config)#dns-server 202.106.196.115  202.106.0.20
+R2 (dhcp-config)#domain-name dongwm.com
+R2 (dhcp-config)#lease 1
+R2 (dhcp-config)#exit
+R2 (config)#ip dhcp excluded-address 192.168.1.97  192.168.1.99
+R2 (config)#end
+R2#</p>
+
+<p>测试命令</p>
+
+<p>R1
+R1#sh interface e0/0
+R1#sh run</p>
+
+<p>R2
+R2#sh ip dhcp binding
+R2#sh run</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/ubuntu11-04%E5%AE%89%E8%A3%85macbuntu/">ubuntu11.04安装Macbuntu</a></h1>
     
     
@@ -809,118 +882,6 @@ done&lt;YZ.nagios.log</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/icinga%E4%B8%93%E9%A2%98%EF%BC%88%E4%B8%80%EF%BC%89icinga%E5%AE%89%E8%A3%85/">Icinga专题（一）Icinga安装</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-16T00:00:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>Icinga是一些nagios项目社区的成员发起的，兼容nagios，并实现了中文化和安卓系统版本。I like ^.^</strong></p>
-
-<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png"><img class="alignnone size-full wp-image-461" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_13.png" alt="" width="890" height="342" /></a>
-</strong></p>
-
-<p><strong><a href="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png"><img class="alignnone size-full wp-image-459" title="image_1" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_12.png" alt="" width="800" height="453" /></a>
-</strong></p>
-
-<p><strong>1 准备</strong></p>
-
-<p><pre class="sh_bash">#yum  install freetype libjpeg libpng fontconfig libdbi libdbi-drivers gcc glibc glibc-common gd gd-devel libjpeg libjpeg-devel libpng libpng-devel net-snmp net-snmp-devel</pre></p>
-
-<p><strong>2 下载安装icinga</strong></p>
-
-<p><pre class="sh_bash">#wget http://sourceforge.net/projects/icinga/files/icinga/1.3.1/icinga-1.3.1.tar.gz/download</p>
-
-<p># tar zxvf icinga-1.3.1.tar.gz</p>
-
-<p>#cd icinga-1.3.1/</p>
-
-<p>#./configure --with-rdbm --with-rdbm-incdir=/usr/include/rdbm/ --with-rdbm-libdir=/usr/lib64/ --disable-docs  --with-icinga-user=dongwm   --with-icinga-group=dongwm --with-command-user=dongwm  --with-command-group=dongwm &amp;&amp; make all &amp;&amp; make install</p>
-
-<p>#make install-init   //# 安装主程序，CGI和HTML
-#make install-commandmode //在/etc/rc.d/init.d安装启动脚本
-#make install-config  // 安装配置实例配置文件
-#make install-webconf  //安装apache相关的配置文件
-# chkconfig --add icinga
-# chkconfig icinga on</p>
-
-<p># /etc/init.d/icinga start</pre></p>
-
-<p><strong>3 设置web页面登陆用户</strong><strong>及密码(必须）</strong></p>
-
-<p><pre class="sh_bash">默认用户名 icingaadmin 默认密码admin</p>
-
-<p>用户可自行修改,如htpasswd -c /usr/local/icinga/etc/htpasswd.users dongwm</pre></p>
-
-<p><strong>4  安装nagios-plugins</strong></p>
-
-<p><pre class="sh_bash"># wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/1.4.15/nagios-plugins-1.4.15.tar.gz/download</p>
-
-<p># tar zxvf nagios-plugins-1.4.15.tar.gz</p>
-
-<p># cd nagios-plugins-1.4.15/</p>
-
-<p>#./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-htmurl=/icinga --with-nagios-user=dongwm --with-nagios-group=dongwm</p>
-
-<p># make &amp;&amp; make install</pre></p>
-
-<p><strong>5  安装nrpe</strong></p>
-
-<p><pre class="sh_bash">#wget "<a href="https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz&quot;">https://git.icinga.org/?p=icinga-nrpe.git;a=snapshot;h=HEAD;sf=tgz"</a> -O nrpe.tgz
-#tar zxvf nrpe.tgz</p>
-
-<p># cd icinga-nrpe  &amp;&amp;  ./configure --with-nrpe-user=dongwm --with-nrpe-group=dongwm --with-icinga-user=dongwm --with-icinga-group=dongwm &amp;&amp;make all &amp;&amp;make install-plugin</p>
-
-<p>拷贝nrpe文件：</p>
-
-<p>#cp src/nrpe  /usr/local/icinga/bin</p>
-
-<p>#cp sample-config/nrpe.cfg /usr/local/icinga/etc</p>
-
-<p>启动nrpe并检查：</p>
-
-<p># /usr/local/icinga/bin/nrpe -n -c /usr/local/icinga/etc/nrpe.cfg -d</p>
-
-<p># /usr/local/icinga/libexec/check_nrpe  -H 127.0.0.1 –n</p>
-
-<p>NRPE v2.12</p>
-
-<p>stop nrpe：</p>
-
-<p>#kill `ps -ef | grep "sample-config/nrpe.cfg" | grep -v grep | awk '{print $2}'`</pre></p>
-
-<p><strong>6 配置文件</strong></p>
-
-<p><strong>其实icinga的配置文件可以把nagios的配置文件直接拷贝过来使用，把关键字‘nagios’改成‘icinga’就完全可以了</strong></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/27/">&larr; Older</a></li>
@@ -943,6 +904,10 @@ done&lt;YZ.nagios.log</pre>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -978,10 +943,6 @@ done&lt;YZ.nagios.log</pre>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1054,7 +1015,7 @@ done&lt;YZ.nagios.log</pre>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

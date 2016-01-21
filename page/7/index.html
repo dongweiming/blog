@@ -141,6 +141,270 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/kua-cao-zuo-xi-tong-chu-shi-hua-an-zhuang-gong-ju-shell/">跨操作系统初始化安装工具(laptop)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-08T18:07:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>上周看了<a href="https://github.com/docopt/docopt">docopt</a>, 感想很多。最近因为工作需要用opensuse，用ubuntu，个人pc用gentoo，
+实在够折腾，每个系统都要相应的安装那些软件，搭建环境。早就想好好整理下思路，更geek的做这件事情。上段时间还看了个
+<a href="https://github.com/thoughtbot/laptop">laptop</a>,觉得能力很一般，但是fork真不少。但是确实这个想法很不错，很有必要。
+然后周末就构思了我的<a href="https://github.com/orzrd/laptop.git">laptop</a></p>
+
+<h4 id="section-1">它的特性</h4>
+
+<ul>
+  <li>记录操作记录，当某处出现故障，下次会从这个位置继续执行，而不需要全部执行一遍</li>
+  <li>受<a href="https://github.com/docopt/docopt">docopt</a>启发，根据我特定的语法写配置文件，不需要修改初始化脚本initialize.sh</li>
+  <li>只需要添加你要安装的软件包的安装命令（使用包管理器的就需要修改相应操作系统的install文件）</li>
+  <li>支持对已安装软件的确认，不再安装而跳过</li>
+  <li>根据特定语法打印安装过程的提示</li>
+  <li>提供绿色，红色的asciilinux终端显示字体</li>
+  <li>执行在没有git等环境下git clone项目安装</li>
+</ul>
+
+<h4 id="section-2">目前每个版本会安装那些软件？</h4>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gcc</td>
+          <td>g++</td>
+          <td>automake</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>tmux</td>
+          <td>htop</td>
+          <td>dstat</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>ruby</td>
+          <td>python</td>
+          <td>python库</td>
+          <td>expect</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>zsh</td>
+          <td>oh-my-zsh</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>easy_install</td>
+          <td>pip</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>django</td>
+          <td>torando</td>
+          <td>flask</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>nginx</td>
+          <td>uwsgi</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>redis</td>
+          <td>mongodb</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>mit-scheme</td>
+          <td>commonlisp</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>emacs</li>
+  <li>gitflow</li>
+  <li>celery</li>
+  <li>colout</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>MySQLdb</td>
+          <td>pymongo</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>taglist</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gevent</td>
+          <td>twisted</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>the_silver_searcher</li>
+  <li>检查vim是否自带python/ruby支持，否则下载编译一个执行的版本</li>
+  <li>我的常用脚本<a href="https://github.com/orzrd/mytools.github">mytools</a>,目前包含一个expect脚本和orzdba</li>
+  <li>我的<a href="https://github.com/dongweiming/dotfiles.git">dotfiles</a></li>
+</ul>
+
+<h2 id="gentoo">gentoo系统一些软件</h2>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>gentoolkit</td>
+          <td>module-rebuild</td>
+          <td>genlop</td>
+          <td>eix</td>
+          <td>euses</td>
+          <td>elogv</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>fcitx</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>iproute2</td>
+          <td>netkit-telnetd</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="section-3">使用方法</h4>
+
+<ol>
+  <li>有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;git clone https://github.com/orzrd/laptop
+shell&gt;cd laptop
+shell&gt;bash initialize.sh
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>没有git的情况：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+shell&gt;bash &lt;(curl -s https://raw.github.com/orzrd/laptop/master/setup_laptop)
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="section-4">脚本语法</h5>
+
+<h2 id="section-5">可操作文件</h2>
+
+<ol>
+  <li>common.install: 用户自定义的软件安装脚本，推荐非操作系统包管理器的都放在这里，注意逻辑顺序</li>
+  <li>opensuse/ubuntu/gentoo.install: 相应系统的安装脚本，这个只需要修改，我的脚本会自动根据系统信息找到</li>
+  <li>initialize.sh： 假如你想把需要我的安装方法，添加功能等，修改他，他是主入口</li>
+  <li>
+    <p>setup_laptop： 当用户没有git环境不能git clone  直接远程curl我，主要是下载git，clone我的laptop</p>
+  </li>
+  <li>’#’  以’#’开头的行表示这个信息会被安装过程以绿色字体打印，提示一下你要安装的东西等</li>
+  <li>： 以’:’开头的行，表示后面的字符串是个命令，也就是检查这个软件包有没有被安装需要的，假如which找到了路径说明被安装</li>
+  <li>; 以’;’开头的行为注释</li>
+  <li>其它行就是要执行的语句，请不要当作shell注释等，因为他会把你写的东西当成要执行的命令</li>
+</ol>
+
+<h2 id="todo">TODO</h2>
+
+<ul>
+  <li>文件下载后就不需要再下载而直接使用</li>
+  <li>在执行某软件的安装过程中其他进程继续下载其他软件包（也就是实现shell版本的emerge）</li>
+  <li>进度条或者python_koans的提示已完成/剩余，更多的异常处理等</li>
+  <li>更多的异常处理</li>
+  <li>打印彩色字体内容嵌其他颜色字体（比如提示出错，高亮错误的原因或者软件包）</li>
+</ul>
+
+<h2 id="forkpull-requestissue">注意我的项目地址，欢迎各种fork，pull request，issue</h2>
+
+<h3 id="httpsgithubcomorzrdlaptop">https://github.com/orzrd/laptop</h3>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoo-wpa_supplicant-wireless/">Gentoo使用wpa_supplicant配置无线网卡</a></h1>
     
     
@@ -2305,117 +2569,6 @@ To git@github.com:dongweiming/dongweiming.github.com.git
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shiyongsphinxheapachedajianwikiwendangwangzhan/">使用sphinx和apache搭建wiki文档网站</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-13T00:00:00+08:00" pubdate data-updated="true">Sep 13<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：sphix是一个允许开发人员以纯文本格式使用reStructuredText 标记语法编写文档，自定义显示效果的文档工具。比较有代表性的网站有<a href="http://docs.python.org" target="_blank">python的docs官网</a>，<a href="http://book.42qu.com" target="_blank">张沈鹏的42区</a>等等，没事我在内网弄个记录一些工作文档。</p>
-
-<p>注：我这里使用了gentoo系统</p>
-
-<p><strong>1  安装sphinx和apache2</strong></p>
-
-<p>因为还有个同名的大名鼎鼎的sphinx搜索引擎，需要指定到类型：</p>
-
-<p>sudo emerge dev-python/sphinx apache2
-<strong>2 配置一个wiki站点</strong></p>
-
-<p>dongwm@localhost ~ $sphinx-quickstart  # 使用这个命令快速创建</p>
-
-<p>&gt; Root path for the documentation [.]:    test #过程中会有一些提示选项，根据你的需要定制，我对所有的疑问都是yes，注意这步，是问你这个配置的站点的root目录，我这里是一个新的test子目录目录，在家目录下
-完成后会出现test目录，包含这样的内容：</p>
-
-<p>dongwm@localhost ~/test $ ls -l
-total 24
-drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 build  #最后生成的html文件目录
--rw-r&#8211;r&#8211; 1 dongwm dongwm 5113 Sep 14 13:37 make.bat #我想是windows下的make
--rw-r&#8211;r&#8211; 1 dongwm dongwm 5589 Sep 14 13:37 Makefile #这个大家都熟悉
-drwxr-xr-x 4 dongwm dongwm 4096 Sep 14 13:38 source  #源文件就是我们要编辑的wiki显示的代码的源文件目录</p>
-
-<p><strong>3 修改要显示的源文件</strong>
-原理：修改source下面的XXX.rst(或者你定义的其他后缀文件)，最后会生成同名的html文件，比如编辑index.rst会生成index.html，这个也就是默认的主显文件，通过他链接到其他文档处</p>
-
-<p><strong>4 生成html文件目录</strong>
-dongwm@localhost ~/test $  make html</p>
-
-<p>这样就会在build/html目录下生成html文件，当然你也自定义</p>
-
-<p><strong>5 设置apache以及htaccess</strong></p>
-
-<p>修改/etc/apache2/vhosts.d/default_vhost.include</p>
-
-<p>DocumentRoot &#8220;/home/dongwm/test/build/html&#8221;  12行 其中/home/dongwm/test/build/html就是生成html的目录，我就使用了默认的</p>
-
-<p>&lt;Directory &#8220;/home/dongwm/test/build/html&#8221;&gt;  15行</p>
-
-<p>在/home/dongwm/test/build/html目录，也就是网站根目录添加新文件.htaccess</p>
-
-<p>dongwm@localhost ~/test/build/html $ cat !$
-cat .htaccess
-&lt;Files ~ &#8220;^.(htaccess|htpasswd)$&#8221;&gt;
-deny from all
-&lt;/Files&gt;
-Options -Indexes
-&lt;FilesMatch &#8220;.(gif|jpg|jpeg|png|ico)$&#8221;&gt;
-Header set Cache-Control &#8220;max-age=86400&#8221;  #静态图片缓存24小时
-&lt;/FilesMatch&gt;
-AuthUserFile /home/dongwm/.htpasswd  #密码验证文件使用htpasswd生成
-AuthGroupFile /dev/null
-AuthName &#8220;Please enter your ID and password&#8221;
-AuthType Basic
-require valid-user
-order deny,allow
-allow from 10.28.101.1/24  #只容许这个段的人访问
-deny from all</p>
-
-<p>dongwm@localhost ~/test $ sudo /etc/init.d/apache2 restart  #重启apache2</p>
-
-<p><strong>6 显示中文</strong></p>
-
-<p>修改source/conf.py其中的language=&#8221;zh_CN&#8221; 重新make html即可</p>
-
-<p><strong>7 技巧</strong></p>
-
-<p>1 快速开发</p>
-
-<p>每次我们修改了rst的源文件还需要make html去生成html文件，操作很麻烦，我在使用sublime_text2编辑器，写一个自定义编译程序的build，然后在Tools-&gt;Build System里面选择这个程序，</p>
-
-<p>比如：dongwm@localhost ~ $ cat ~/.config/sublime-text-2/Packages/User/makehtml.sublime-build  #一定要保存在这个目录，这个命令就是makehtml（去掉文件的.sublime-build后缀）
-{
-&#8220;cmd&#8221;: [&#8220;make&#8221;, &#8220;html&#8221;], #我要执行make html  每个参数都要用引号隔开
-&#8220;working_dir&#8221;: &#8220;${project_path:${folder}}&#8221;  #他的语法大家可以去看官方文档，这里表示执行这个命令实在我当前的工作目录
-}</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/8/">&larr; Older</a></li>
@@ -2438,6 +2591,10 @@ deny from all</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -2473,10 +2630,6 @@ deny from all</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -2549,7 +2702,7 @@ deny from all</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

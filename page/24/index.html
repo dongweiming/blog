@@ -141,6 +141,66 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/bashhistorybiantaiyongfa/">Bash History （变态用法）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-12T00:00:00+08:00" pubdate data-updated="true">Aug 12<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>首先看一个例子：</p>
+
+<p>root@client ~&gt; history</p>
+
+<p>1002  ll /root
+1003  cat moxi
+1004  cd /home/dongwm
+1005  history</p>
+
+<p>1 从历史执行一个特定的命令使用，这里我想要执行“cat moxi”，使用“！histroy前面的数字”</p>
+
+<p>root@client ~&gt; !1003
+cat moxi
+21233 = {
+&#8220;hashAlgorithm&#8221;: &#8220;fnv1a_32&#8221;,
+&#8220;numReplicas&#8221;: 2,
+&#8220;serverList&#8221;: [&#8220;192.168.8.138:11211&#8221;,&#8221;192.168.8.137:11211&#8221;],
+&#8220;vBucketMap&#8221;: [
+[0,2,3],
+[1,2,3]
+]
+}</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/bashhistorybiantaiyongfa/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/mongodbguanlijiaoben/">Mongodb集群管理脚本（python）</a></h1>
     
     
@@ -1471,42 +1531,6 @@ else:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/nagios%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85nagios-plugin-mongodb%E6%8A%A5%E9%94%99%E2%80%9Cneed-to-install-pymongo%E2%80%9D/">Nagios插件安装nagios-plugin-mongodb报错“need to Install Pymongo”</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-16T00:00:00+08:00" pubdate data-updated="true">Jul 16<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近做mongodb的cacti和nagios监控，下载了github.com/mzupan/nagios-plugin-mongodb.git，但是执行脚本需要pymongo，否则报错：”need to install pymongo“，但是重新启动nagios后发现依然出现这样的报错，而我在本地执行是没有问题的，后来尝试了nrpe方式发现不可行，我的安装nagios服务器上面有2个python，后来我又给centos默认的2.4.3版本的python安装了pymongo，最后使用了yum安装的办法，都不能解决。通过几小时的研究发现，问题处在python环境上：我把check_mongodb.py的首行修改成指定的地址：#!/usr/local/bin/python，而放弃了默认的“env python”方式，OK，问题得解！</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/25/">&larr; Older</a></li>
@@ -1529,6 +1553,10 @@ else:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -1564,10 +1592,6 @@ else:
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -1640,7 +1664,7 @@ else:
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

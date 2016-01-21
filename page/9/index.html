@@ -141,6 +141,248 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochenger/">SQLAlchemy教程(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-17T00:00:00+08:00" pubdate data-updated="true">Jul 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>对于SQLAlchemy的一些总结:</p>
+
+<p><strong>1 metadata.create_all()</strong></p>
+
+<p>创建多个table可以这样使用,但是他还有个功能,它添加了&#8221;IF NOT EXISTS&#8221;,就是在数据库存在的时候,他还是安全的</p>
+
+<p><strong>2 交互模式下的一个全过程:</strong></p>
+
+<p><pre class="sh_python">
+dongwm@localhost ~ $ python
+Python 2.7.3 (default, Jul 11 2012, 10:10:17) 
+[GCC 4.5.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; from sqlalchemy import create_engine
+&gt;&gt;&gt; from sqlalchemy import Table, MetaData, Column, ForeignKey, Integer, String, Unicode, DateTime
+&gt;&gt;&gt; from datetime import datetime
+&gt;&gt;&gt; metadata = MetaData('sqlite:///tutorial.db')
+&gt;&gt;&gt; user_table = Table(
+...     'tf_user', metadata,
+...     Column('id', Integer, primary_key=True),
+...     Column('user_name', Unicode(16),
+...            unique=True, nullable=False),
+...     Column('password', Unicode(40), nullable=False),
+...     Column('display_name', Unicode(255), default=''),
+...     Column('created', DateTime, default=datetime.now))
+__main__:7: SAWarning: Unicode column received non-unicode default value.
+&gt;&gt;&gt; stmt = user_table.insert()  #插入数据
+&gt;&gt;&gt; stmt.execute(user_name='dongwm1', password='secret',display_name='testdongwm1')
+/usr/lib/python2.7/site-packages/SQLAlchemy-0.7.8-py2.7-linux-i686.egg/sqlalchemy/engine/default.py:463: SAWarning: Unicode type received non-unicode bind param value.
+  param.append(processors[key](compiled_params[key]))
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8377fcc&gt;
+&gt;&gt;&gt; stmt.execute(user_name='dongwm2', password='secret',display_name='testdongwm2') #这个实例可以多次插入,和sql区别很大
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x837e4ec&gt;
+&gt;&gt;&gt; stmt = user_table.select() #select查询
+&gt;&gt;&gt; result = stmt.execute()
+&gt;&gt;&gt; for row in result:
+...     print row 
+... 
+(1, u'dongwm1', u'secret', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))
+(2, u'dongwm2', u'secret', u'testdongwm2', datetime.datetime(2012, 7, 17, 11, 58, 5, 226977))
+&gt;&gt;&gt; result = stmt.execute()
+&gt;&gt;&gt; row =result.fetchone() #只获取符合要求的第一项
+&gt;&gt;&gt; print  row['user_name']
+dongwm1
+&gt;&gt;&gt; print row.password
+secret
+&gt;&gt;&gt; print row.items()
+[(u'id', 1), (u'user_name', u'dongwm1'), (u'password', u'secret'), (u'display_name', u'testdongwm1'), (u'created', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
+&gt;&gt;&gt; stmt = user_table.select(user_table.c.user_name=='dongwm1') #过滤留下user_name=='dongwm1的项
+&gt;&gt;&gt; print stmt.execute().fetchall() #获取所有符合项
+[(1, u'dongwm1', u'secret', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
+&gt;&gt;&gt; stmt = user_table.update(user_table.c.user_name=='dongwm1') #更新数据
+&gt;&gt;&gt; stmt.execute(password='secret123') #修改密码
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x8377f6c&gt;
+&gt;&gt;&gt; stmt = user_table.delete(user_table.c.user_name != 'dongwm1')  #删除user_name不是dongwm1的条目
+&gt;&gt;&gt; stmt.execute()
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x837f3ac&gt;
+&gt;&gt;&gt; user_table.select().execute().fetchall() #查询发现就剩一条了
+[(1, u'dongwm1', u'secret123', u'testdongwm1', datetime.datetime(2012, 7, 17, 11, 57, 48, 515953))]
+</pre></p>
+
+<p><strong>3 sission上面已经说过了,补充一些:</strong></p>
+
+<p>session.delete(u) #把映射类从会话中删除</p>
+
+<p><strong>4 关于引擎</strong></p>
+
+<p>引擎就是根据不同的数据库方言连接数据库的方法</p>
+
+<p>以下是一些例子(方法 driver://username:password@host:port/database):
+engine = create_engine(&#8216;sqlite://&#8217;)  #连接基于内存的sqlite
+engine = create_engine(&#8216;sqlite:///data.sqlite&#8217;)  #连接基于硬盘文件的sqlite
+engine = create_engine(&#8216;postgres://dongwm:foo@localhost:5432/pg_db&#8217;)  #连接postgresql
+engine = create_engine(&#8216;mysql://localhost/mysql_db&#8217;)  #连接mysql
+engine = create_engine(&#8216;oracle://dongwm:foo@oracle_tns&#8217;) #连接基于TNS协议的Oracle
+engine =create_engine(&#8216;oracle://dongwm:foo@localhost:1521/oracle_sid&#8217;) #连接没有TNS名字的Oracle</p>
+
+<p>也可以带一些参数:</p>
+
+<p>url=&#8217;postgres://dongwm:foo@localhost/pg_db?arg1=foo&amp;arg2=bar&#8217;
+engine = create_engine(url)</p>
+
+<p>或者:</p>
+
+<p>engine = create_engine(&#8216;postgres://dongwm:foo@localhost/pg_db&#8217;,
+connect_args=dict(arg1=&#8217;foo&#8217;, arg2=&#8217;bar&#8217;))</p>
+
+<p>还可以通过函数完全控制连接:</p>
+
+<p>import psycopg
+def connect_pg():
+return psycopg.connect(user=&#8217;rick&#8217;, host=&#8217;localhost&#8217;)
+engine = create_engine(&#8216;postgres://&#8217;, creator=connect_pg)</p>
+
+<p>import logging
+handler = logging.FileHandler(&#8216;sqlalchemy.engine.log&#8217;)  #可以给它添加一个日志文件处理类
+handler.level = logging.DEBUG
+logging.getLogger(&#8216;sqlalchemy.engine&#8217;).addHandler(handler)</p>
+
+<p>上面说的操作表,也可以直接操作数据库:</p>
+
+<p>conn = engine.connect()
+result = conn.execute(&#8216;select user_name, email_address from tf_user&#8217;) #结果是一个sqlalchemy.engine.ResultProxy的实例
+for row in result:
+print &#8216;User name: %s Email address: %s&#8217; % (
+row[&#8216;user_name&#8217;], row[&#8216;email_address&#8217;])
+conn.close()</p>
+
+<p>from sqlalchemy import pool #本来它已经自动通过数据库连接管理数据池,但是也可以手动管理
+import psycopg2
+psycopg = pool.manage(psycopg2) #结果是一个sqlalchemy.pool.DBProxy实例
+connection = psycopg.connect(database=&#8217;mydb&#8217;,
+username=&#8217;rick&#8217;, password=&#8217;foo&#8217;)</p>
+
+<p><strong>5 关于元数据metadata</strong></p>
+
+<p>它收集了描述table对象等的元数据类,当使用ORM等时必须使用metadata</p>
+
+<p>如果他被绑定了,那么使用table.create()就会生成表,没有绑定需要:table.create(bind=some_engine_or_connection),其中table.create</p>
+
+<p>包含一些函数:</p>
+
+<p>autoload:默认是false,当数据库已经存在这个table会自动加载覆盖</p>
+
+<p>autoload_with:默认是false,是否自动加载引擎的字段结构</p>
+
+<p>reflect:默认是false,是否体现源表结构</p>
+
+<p>brand_table = Table(&#8216;brand&#8217;, metadata,
+Column(&#8216;name&#8217;, Unicode(255)), # 覆盖类型
+autoload=True)</p>
+
+<p><strong>6 关于表结构:</strong></p>
+
+<p>设置表主键可以这样:</p>
+
+<p>Column(&#8216;brand_id&#8217;, Integer, ForeignKey(&#8216;brand.id&#8217;),primary_key=True), #通过primary_key=True
+Column(&#8216;sku&#8217;, Unicode(80), primary_key=True))
+也可以这样:
+product_table = Table(
+&#8216;product&#8217;, metadata,
+Column(&#8216;brand_id&#8217;, Integer, ForeignKey(&#8216;brand.id&#8217;)),
+Column(&#8216;sku&#8217;, Unicode(80)),
+PrimaryKeyConstraint(&#8216;brand_id&#8217;, &#8216;sku&#8217;, name=&#8217;prikey&#8217;))  #通过PrimaryKeyConstraint</p>
+
+<p>style_table = Table(
+&#8216;style&#8217;, metadata,
+Column(&#8216;brand_id&#8217;, Integer, primary_key=True),
+Column(&#8216;sku&#8217;, Unicode(80), primary_key=True),
+Column(&#8216;code&#8217;, Unicode(80), primary_key=True),
+ForeignKeyConstraint(  #使用复合键,关联外部表的字段
+[&#8216;brand_id&#8217;, &#8216;sku&#8217;],
+[&#8216;product.brand_id&#8217;, &#8216;product.sku&#8217;]))</p>
+
+<p>product_table = Table(
+&#8216;product&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;brand_id&#8217;, Integer, ForeignKey(&#8216;brand.id&#8217;)), #他的brand_id关联brand的让id
+Column(&#8216;sku&#8217;, Unicode(80)),
+UniqueConstraint(&#8216;brand_id&#8217;, &#8216;sku&#8217;)) #约束唯一标识数据库表中的每条记录</p>
+
+<p>payment_table = Table(
+&#8216;payment&#8217;, metadata,
+Column(&#8216;amount&#8217;, Numeric(10,2), CheckConstraint(&#8216;amount &gt; 0&#8217;))) #验证amount大于0
+user_table = Table(
+&#8216;tf_user&#8217;, MetaData(),
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False),
+Column(&#8216;password&#8217;, Unicode(40), nullable=False),
+Column(&#8216;first_name&#8217;, Unicode(255), default=&#8221;),
+Column(&#8216;last_name&#8217;, Unicode(255), default=&#8221;),
+Column(&#8216;created_apptime&#8217;, DateTime, default=datetime.now), #default表示当不舍定具体值时设定一个默认值
+Column(&#8216;created_dbtime&#8217;, DateTime, PassiveDefault(&#8216;sysdate&#8217;)), # PassiveDefault是数据库级别的默认值,
+Column(&#8216;modified&#8217;, DateTime, onupdate=datetime.now)) #单设置onupdate这个属性，这是不应用到数据库的设计中的.只是存在于映射类中.</p>
+
+<p>#它是活跃更新的,因为每次执行的时间都不同</p>
+
+<p>user_table = Table(
+&#8216;tf_user&#8217;, MetaData(),
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;user_name&#8217;, Unicode(16), unique=True, nullable=False, index=True), #一旦数据库增长到一定规模时，可能需要考虑增加表的索引，以加快某些操作
+Column(&#8216;password&#8217;, Unicode(40), nullable=False),
+Column(&#8216;first_name&#8217;, Unicode(255), default=&#8221;),
+Column(&#8216;last_name&#8217;, Unicode(255), default=&#8221;, index=True))</p>
+
+<p>其中指定索引也可以这样:</p>
+
+<p>i = Index(&#8216;idx_name&#8217;, user_table.c.first_name,user_table.c.last_name,unique=True)
+i.create(bind=e)</p>
+
+<p>brand_table = Table(
+&#8216;brand&#8217;, metadata,
+Column(&#8216;id&#8217;, Integer, Sequence(&#8216;brand_id_seq&#8217;), primary_key=True),  #需要通过序列化方式来创建新主键标识符的数据库，</p>
+
+<p>#SQLAlchemy 并不会自动为其生成。可以指定Sequence 生成
+Column(&#8216;name&#8217;, Unicode(255), unique=True, nullable=False))</p>
+
+<p><strong>7 元数据操作</strong></p>
+
+<p>meta1 = MetaData(&#8216;postgres://postgres:password@localhost/test&#8217;,
+&#8230; reflect=True)
+meta2 = MetaData(&#8216;sqlite://&#8217;)
+for table in meta1.table_iterator():
+table.tometadata(meta2) #通过这个方法让meta1的元数据被meta2使用
+meta2.create_all()</p>
+
+<p>2 假如想放弃绑定使用drop_all( )或者drop(e)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoo3-2-21neihebianyivmware8-02failedtocompilemodulevmnetjiejue/">gentoo3.2.21内核编译vmware8.02failed to Compile Module Vmnet 解决</a></h1>
     
     
@@ -2151,342 +2393,6 @@ genkernel &#8211;menuconfig  all #&#8211;bootloader=grub表示自动更新grub�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuthreadingyanjiuer-2/">关于threading研究（二）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-06T00:00:00+08:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><pre class="sh_python">
-import logging
-import threading
-import time</p>
-
-<p>logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-10s) %(message)s',
-                    )</p>
-
-<p>def lock_holder(lock):  #显示资源holding和not holding
-    logging.debug('Starting')
-    while True:
-        lock.acquire()
-        try:
-            logging.debug('Holding')
-            time.sleep(0.5)
-        finally:
-            logging.debug('Not holding')
-            lock.release()
-        time.sleep(0.5)
-    return</p>
-
-<p>def worker(lock):
-    logging.debug('Starting')
-    num_tries = 0
-    num_acquires = 0
-    while num_acquires &lt; 3: #迭代2次，这样就会尝试4次，二次holding，2次not holding
-        time.sleep(0.5)
-        logging.debug('Trying to acquire')
-        have_it = lock.acquire(0)  #找出另一个线程是否已取得当前线程持有锁
-        try:
-            num_tries += 1
-            if have_it:
-                logging.debug('Iteration %d: Acquired',  num_tries)
-                num_acquires += 1
-            else:
-                logging.debug('Iteration %d: Not acquired', num_tries)
-        finally:
-            if have_it:
-                lock.release()
-    logging.debug('Done after %d iterations', num_tries)</p>
-
-<p>lock = threading.Lock()</p>
-
-<p>holder = threading.Thread(target=lock_holder, args=(lock,), name='LockHolder')
-holder.setDaemon(True)
-holder.start()</p>
-
-<p>worker = threading.Thread(target=worker, args=(lock,), name='Worker')
-worker.start()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python !$
-python test.py
-(LockHolder) Starting
-(LockHolder) Holding
-(Worker    ) Starting  #在sleep(0.5)的时候资源被worker获取
-(LockHolder) Not holding
-(Worker    ) Trying to acquire
-(Worker    ) Iteration 1: Acquired
-(LockHolder) Holding
-(Worker    ) Trying to acquire
-(Worker    ) Iteration 2: Not acquired
-(LockHolder) Not holding
-(Worker    ) Trying to acquire
-(Worker    ) Iteration 3: Acquired
-(LockHolder) Holding
-(Worker    ) Trying to acquire
-(Worker    ) Iteration 4: Not acquired
-(LockHolder) Not holding
-(Worker    ) Trying to acquire
-(Worker    ) Iteration 5: Acquired  #第5次因为num_acquires＝3而不进入循环
-(Worker    ) Done after 5 iterations
-<pre class="sh_python">
-import threading</p>
-
-<p>lock = threading.Lock()</p>
-
-<p>print 'First try :', lock.acquire()  #返回true
-print 'Second try:', lock.acquire(0)  #资源自能被锁定一次，这里就返回false了</p>
-
-<p>lock = threading.RLock()  #这样可以重新获得锁</p>
-
-<p>print 'First try :', lock.acquire()  #返回true
-print 'Second try:', lock.acquire(0)  #返回1
-</pre></p>
-
-<p><pre class="sh_python">
-import threading
-import logging</p>
-
-<p>logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-10s) %(message)s',
-                    )</p>
-
-<p>def worker_with(lock):
-    with lock:   #使用wit关键字，执行lock的上下文管理
-        logging.debug('Lock acquired via with')</p>
-
-<p>def worker_no_with(lock):
-    lock.acquire()
-    try:
-        logging.debug('Lock acquired directly')
-    finally:
-        lock.release()</p>
-
-<p>lock = threading.Lock()
-w = threading.Thread(target=worker_with, args=(lock,))
-nw = threading.Thread(target=worker_no_with, args=(lock,))</p>
-
-<p>w.start()
-nw.start()
-</pre></p>
-
-<p><pre class="sh_python">
-import logging
-import threading
-import time</p>
-
-<p>logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s (%(threadName)-2s) %(message)s',  #当前时间
-                    )</p>
-
-<p>def consumer(cond):
-    logging.debug('Starting consumer thread')
-    t = threading.currentThread()
-    with cond:
-        cond.wait()  #释放内部所占用的琐，同时线程被挂起，直至接收到通知被唤醒或超时（如果提供了timeout参数的话）。 
-                     #当线程被唤醒并重新占有琐的时候，程序才会继续执行下去。
-        logging.debug('Resource is available to consumer')</p>
-
-<p>def producer(cond):
-    logging.debug('Starting producer thread')
-    with cond:
-        logging.debug('Making resource available')
-        cond.notifyAll()  #唤醒所有挂起的线程（如果存在挂起的线程），但是这些方法不会释放所占用的琐</p>
-
-<p>condition = threading.Condition()   #它提供了比Lock, RLock更高级的功能，允许我们能够控制复杂的线程同步问题
-c1 = threading.Thread(name='c1', target=consumer, args=(condition,))
-c2 = threading.Thread(name='c2', target=consumer, args=(condition,))
-p = threading.Thread(name='p', target=producer, args=(condition,))</p>
-
-<p>c1.start()
-time.sleep(2)
-c2.start()
-time.sleep(2)
-p.start()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-2012-07-06 14:11:54,001 (c1) Starting consumer thread
-2012-07-06 14:11:56,001 (c2) Starting consumer thread
-2012-07-06 14:11:58,003 (p ) Starting producer thread
-2012-07-06 14:11:58,003 (p ) Making resource available  #producer唤起挂起的线程，触发consumer 线程继续执行
-2012-07-06 14:11:58,003 (c1) Resource is available to consumer
-2012-07-06 14:11:58,004 (c2) Resource is available to consumer
-<pre class="sh_python">
-import logging
-import random
-import threading
-import time</p>
-
-<p>logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s (%(threadName)-2s) %(message)s',
-                    )</p>
-
-<p>class ActivePool(object):  #跟踪进程执行状态
-    def __init__(self):
-        super(ActivePool, self).__init__()   #保证公共父类仅被执行一次
-        self.active = []
-        self.lock = threading.Lock()
-    def makeActive(self, name):
-        with self.lock:
-            self.active.append(name)
-            logging.debug('Running: %s', self.active)
-    def makeInactive(self, name):
-        with self.lock:
-            self.active.remove(name)
-            logging.debug('Running: %s', self.active)</p>
-
-<p>def worker(s, pool):
-    logging.debug('Waiting to join the pool')
-    with s:
-        name = threading.currentThread().getName()
-        pool.makeActive(name)
-        time.sleep(0.1)
-        pool.makeInactive(name)</p>
-
-<p>pool = ActivePool()
-s = threading.Semaphore(4) ##Semaphore用来控制对共享资源的访问数量，例如池的最大连接数，这里只有4个活动进程同时运行
-for i in range(4):
-    t = threading.Thread(target=worker, name=str(i), args=(s, pool))
-    t.start()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-2012-07-06 14:19:04,395 (0 ) Waiting to join the pool
-2012-07-06 14:19:04,395 (0 ) Running: [&#8216;0&#8217;]
-2012-07-06 14:19:04,395 (1 ) Waiting to join the pool
-2012-07-06 14:19:04,395 (2 ) Waiting to join the pool
-2012-07-06 14:19:04,395 (3 ) Waiting to join the pool
-2012-07-06 14:19:04,396 (1 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;]
-2012-07-06 14:19:04,396 (2 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;]
-2012-07-06 14:19:04,396 (3 ) Running: [&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;, &#8216;3&#8217;]
-2012-07-06 14:19:04,496 (0 ) Running: [&#8216;1&#8217;, &#8216;2&#8217;, &#8216;3&#8217;]
-2012-07-06 14:19:04,496 (1 ) Running: [&#8216;2&#8217;, &#8216;3&#8217;]
-2012-07-06 14:19:04,496 (2 ) Running: [&#8216;3&#8217;]
-2012-07-06 14:19:04,496 (3 ) Running: []</p>
-
-<p><pre class="sh_python">
-import random
-import threading
-import logging</p>
-
-<p>logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-10s) %(message)s',
-                    )</p>
-
-<p>def show_value(data):
-    try:
-        val = data.value
-    except AttributeError:
-        logging.debug('No value yet')
-    else:
-        logging.debug('value=%s', val)</p>
-
-<p>def worker(data):
-    show_value(data)
-    data.value = random.randint(1, 100)
-    show_value(data)</p>
-
-<p>local_data = threading.local()  #虽然有些资源需要被锁定，所以多个线程可以使用它们,这里创建一个能够隐藏在单独的线程的值对象
-show_value(local_data)
-local_data.value = 1000
-show_value(local_data)</p>
-
-<p>for i in range(2):
-    t = threading.Thread(target=worker, args=(local_data,))
-    t.start()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-(MainThread) No value yet   #第一次调用还没有设置
-(MainThread) value=1000
-(Thread-1  ) No value yet  #子线程1还没有设置
-(Thread-1  ) value=4 #子线程1设置，但是是本地的属性没有继承1000
-(Thread-2  ) No value yet
-(Thread-2  ) value=55
-<pre class="sh_python">
-import random
-import threading
-import logging</p>
-
-<p>logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-10s) %(message)s',
-                    )</p>
-
-<p>def show_value(data):
-    try:
-        val = data.value
-    except AttributeError:
-        logging.debug('No value yet')
-    else:
-        logging.debug('value=%s', val)</p>
-
-<p>def worker(data):
-    show_value(data)
-    data.value = random.randint(1, 100)
-    show_value(data)</p>
-
-<p>class MyLocal(threading.local):
-    def __init__(self, value): #初始化设置，让所有的线程具有相同的value
-        logging.debug('Initializing %r', self)
-        self.value = value</p>
-
-<p>local_data = MyLocal(1000)
-show_value(local_data)</p>
-
-<p>for i in range(2):
-    t = threading.Thread(target=worker, args=(local_data,))
-    t.start()
-</pre>
-执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-(MainThread) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
-(MainThread) value=1000
-(Thread-1  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;
-(Thread-1  ) value=1000
-(Thread-1  ) value=42
-(Thread-2  ) Initializing &lt;__main__.MyLocal object at 0x80ff324&gt;  #实例的对象id都是一样的
-(Thread-2  ) value=1000
-(Thread-2  ) value=64</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/10/">&larr; Older</a></li>
@@ -2509,6 +2415,10 @@ show_value(local_data)</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Web开发主题的书</a>
+      </li>
     
       <li class="post">
         <a href="/archives/codekai-yuan-liao/">CODE开源了</a>
@@ -2544,10 +2454,6 @@ show_value(local_data)</p>
     
       <li class="post">
         <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">slack-alert - 把定时任务的结果发送slack消息的微框架</a>
       </li>
     
   </ul>
@@ -2620,7 +2526,7 @@ show_value(local_data)</p>
   </div>
   <footer role="contentinfo" class="page-footer"><hr>
 <p>
-  Copyright &copy; 2015 - Dongweiming -
+  Copyright &copy; 2016 - Dongweiming -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
