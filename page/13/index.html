@@ -141,6 +141,137 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyustringyanjiu/">关于string研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：string是包括文本处理中的常量和类的模块，大量简化我们工作</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>for n in dir(string):
+    if n.startswith('_'):
+        continue
+    v = getattr(string, n)
+    if isinstance(v, basestring):  #打印模块定义的常量
+        print '%s=%s' % (n, repr(v))
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+ascii_letters=&#8217;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+ascii_lowercase=&#8217;abcdefghijklmnopqrstuvwxyz&#8217;
+ascii_uppercase=&#8217;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+digits=&#8217;0123456789&#8217;
+hexdigits=&#8217;0123456789abcdefABCDEF&#8217;
+letters=&#8217;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+lowercase=&#8217;abcdefghijklmnopqrstuvwxyz&#8217;
+octdigits=&#8217;01234567&#8217;
+printable=&#8217;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&#8221;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[&#92;]^_`{|}~ \t\n\r\x0b\x0c&#8217;
+punctuation=&#8217;!&#8221;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[&#92;]^_`{|}~&#8217;
+uppercase=&#8217;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
+whitespace=&#8217;\t\n\x0b\x0c\r &#8217;</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>s = 'The quick brown fox jumped over the lazy dog.'  #一段字符串
+leet = string.maketrans('abegiloprstz', '463611092572') #想要把某些字母翻译成对应的东西 比如 a翻译成4</p>
+
+<p>print s
+print string.capwords(s) #每个单词第一个字母大写
+print s.translate(leet)
+</pre>
+结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+The quick brown fox jumped over the lazy dog.
+The Quick Brown Fox Jumped Over The Lazy Dog.
+Th3 qu1ck 620wn f0x jum93d 0v32 7h3 142y d06.
+<pre class="sh_python">
+import string</p>
+
+<p>values = { 'var':'foo' }</p>
+
+<p>t = string.Template("""  #使用了 <tt>string.Template</tt> 的占位符, 前缀为$的单词就被认为是变量(如$var), 如果需要将其在上下文中区别出来的话, 也可以将变量名包括在大括号中(如${var}).
+$var
+$$
+${var}iable
+""")  #设置string模板</p>
+
+<p>print 'TEMPLATE:', t.substitute(values) #假如某个键不存在会报错，避免报错，可以用t.safe_substitute(values)捕获了异常并将这个未知的变量表达式保留在文本中</p>
+
+<p>s = """
+%(var)s
+%%
+%(var)siable
+"""</p>
+
+<p>print 'INTERPLOATION:', s % values
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+TEMPLATE:
+foo  #var的value是 foo
+$ #重复两次则被转义为普通字符
+fooiable #只替换一段</p>
+
+<p>INTERPLOATION:
+foo
+%
+fooiable</p>
+
+<p><pre class="sh_python">
+import string</p>
+
+<p>class MyTemplate(string.Template):
+    delimiter = '%' #默认是'$'  这里修改成了'%'
+    idpattern = '[a-z]+_[a-z]+'  #修改默认的匹配模式：这里有个"_"</p>
+
+<p>t = MyTemplate('%% %with_underscore %notunderscored')  
+d = { 'with_underscore':'replaced',
+          'notunderscored':'not replaced',  #这里的value没有"_"，不匹配
+}</p>
+
+<p>print t.safe_substitute(d)
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusmtplibyanjiu/">关于smtplib研究</a></h1>
     
     
@@ -1589,163 +1720,6 @@ def get_history_items():
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyupwdyanjiu/">关于pwd 研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：pwd是UNIX口令数据库模块，一般分析的是/etc/passwd的用户信息，
-<table border="1">
-<thead valign="bottom">
-<tr>
-<th>索引</th>
-<th>属性</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr>
-<td>0</td>
-<td>pw_name</td>
-<td>用户登录名</td>
-</tr>
-<tr>
-<td>1</td>
-<td>pw_passwd</td>
-<td>（可选）加密的密码</td>
-</tr>
-<tr>
-<td>2</td>
-<td>pw_uid</td>
-<td>User id</td>
-</tr>
-<tr>
-<td>3</td>
-<td>pw_gid</td>
-<td>Group id</td>
-</tr>
-<tr>
-<td>4</td>
-<td>pw_gecos</td>
-<td>用户的描述信息</td>
-</tr>
-<tr>
-<td>5</td>
-<td>pw_dir</td>
-<td>家目录</td>
-</tr>
-<tr>
-<td>6</td>
-<td>pw_shell</td>
-<td>登录的shell，默认/bin/bash</td>
-</tr>
-</tbody>
-</table>
-<pre class="sh_python">
-import pwd  #类似于组数据模块grp
-import operator</p>
-
-<p>all_user_data = pwd.getpwall()  #获取所有用户信息
-interesting_users = sorted((u 
-                            for u in all_user_data 
-                            if not u.pw_name.startswith('_')), 
-                            key=operator.attrgetter('pw_name')) #这个排序根据用户名的数据 比如 dongwm在daliu的后面，dongwm在dongwn的前面</p>
-
-<p># Find the longest lengths for a few fields
-username_length = max(len(u.pw_name) for u in interesting_users) + 1
-home_length = max(len(u.pw_dir) for u in interesting_users) + 1 #算某个字段的长度</p>
-
-<p># Print report headers
-fmt = '%-*s %4s %-*s %s'
-print fmt % (username_length, 'User', 
-             'UID', 
-             home_length, 'Home Dir', 
-             'Description')
-print '-' * username_length, '----', '-' * home_length, '-' * 30  #根据字段最大长度 格式化</p>
-
-<p>for u in interesting_users:
-    print fmt % (username_length, u.pw_name, 
-                 u.pw_uid, 
-                 home_length, u.pw_dir, 
-                 u.pw_gecos)
-</pre></p>
-
-<p><pre class="sh_python">
-import pwd
-import sys</p>
-
-<p>username = sys.argv[1]
-user_info = pwd.getpwnam(username)  #查询用户数据信息</p>
-
-<p>print 'Username:', user_info.pw_name
-print 'Password:', user_info.pw_passwd
-print 'Comment :', user_info.pw_gecos
-print 'UID/GID :', user_info.pw_uid, '/', user_info.pw_gid
-print 'Home    :', user_info.pw_dir
-print 'Shell   :', user_info.pw_shell
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py dongwm
-Username: dongwm
-Password: x
-Comment : dongwm
-UID/GID : 1000 / 100
-Home    : /home/dongwm
-Shell   : /bin/bash
-<pre class="sh_python">
-import pwd
-import os
-import sys</p>
-
-<p>filename = os.path.basename(__file__)
-stat_info = os.stat(filename)
-owner = pwd.getpwuid(stat_info.st_uid).pw_name</p>
-
-<p>print '%s is owned by %s (%s)' % (filename, owner, stat_info.st_uid)</p>
-
-<p>uid = os.getuid()
-user_info = pwd.getpwuid(uid)
-print 'Currently running with UID=%s username=%s' % (uid, user_info.pw_name)</p>
-
-<p>执行结果：
-dongwm@linux-dongwm:~&gt; python test.py 
-test.py is owned by dongwm (1000)
-Currently running with UID=1000 username=dongwm</p>
-
-<p> ~
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/14/">&larr; Older</a></li>
@@ -1768,6 +1742,10 @@ Currently running with UID=1000 username=dongwm</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1803,10 +1781,6 @@ Currently running with UID=1000 username=dongwm</p>
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

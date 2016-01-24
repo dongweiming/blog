@@ -141,6 +141,59 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/jiejuepyqtxitongtuopanyoujiancaidanzaidianjiqitaweizhibuyincangxiaoshidewenti/">解决pyqt系统托盘右键菜单在点击其他位置不隐藏（消失）的问题</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-10-25T00:00:00+08:00" pubdate data-updated="true">Oct 25<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：在使用一些软件的时候都发现当你右键点开这个软件的菜单，再点击其他位置这个菜单会隐藏起来。这样不弹出的菜单无法消失，必须点击菜单项或者应用程序窗体才会消失。。pyqt软件也有这个问题。我研究了一下：该菜单的context是默认的应用程序窗体，当窗体获得焦点时，系统托盘的上下文菜单才会消失。</p>
+
+<p>请看我的部分代码：</p>
+
+<p>self.minimizeAction = QtGui.QAction(u&#8221;最小化&#8221;, self,
+triggered=self.hide)   ＃这个self是继承QtGui.QMainWindow的类
+self.restoreAction = QtGui.QAction(u&#8221;显示菜单&#8221;, self,
+triggered=self.show)
+self.quitAction = QtGui.QAction(u&#8221;退出&#8221;, self,
+triggered=QtGui.qApp.quit)</p>
+
+<p>self.trayIconMenu = QtGui.QMenu(self)
+self.trayIconMenu.addAction(self.restoreAction)
+self.trayIconMenu.addAction(self.minimizeAction)
+self.trayIconMenu.addAction(self.quitAction)
+需要将“self.trayIconMenu = QtGui.QMenu(self)”这行修改为“self.trayIconMenu = QtGui.QMenu(QtGui.QApplication.desktop())”  原理是将这个菜单当作一个桌面</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonchengxubenlipyqt4tuxingchengxuzhongdianjizidongdanchuqqliaotianchuangkou/">python程序（本例pyqt4图形程序）中点击自动弹出QQ聊天窗口</a></h1>
     
     
@@ -1877,95 +1930,6 @@ sub ChangePage{
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shiyongkeyidaixuanxiangdeperlfasongzhongwenyoujian/">使用可以带选项的perl发送中文邮件</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-13T00:00:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>为了处理复杂事件处理的故障报警，需要使用perl语言实现邮件报警和短信报警</p>
-
-<p><pre class="sh_perl">
-#!/usr/bin/perl
-use strict;
-use Getopt::Long;
-use MIME::Lite;
-use MIME::Words qw(encode_mimewords);</p>
-
-<p>my ($title,$sendto,$cc,@data,$help);</p>
-
-<p>GetOptions(
-    'title|t=s'	    =&gt; \$title,
-    'sendto|s=s'    =&gt; \$sendto,
-    'cc|c=s'	    =&gt; \$cc,
-    'data|d=s{1,10}'=&gt; \@data,
-    'h|help'	    =&gt; \$help,
-);</p>
-
-<p>if ( $help ) {
-print &lt;&lt;EOF;
-    -t	--title	    标题
-    -s	--sendto    收件人
-    -c	--cc	    抄送人
-    -d	--data	    内容
-    -h	--help	    帮助
-EOF
-}
-my @ltime=localtime;
-my $today=sprintf("%04d%02d%02d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);
-open LOG,"&gt;&gt;/cepdata/notification.log.$today";</p>
-
-<p>my $data="@data";
-$data =~ s/=/:/g;
-my $subject = encode_mimewords("$title",'Charset','GB2312');
-$sendto =~ s/(?=,|$)/\@dongwm.com/g;
-$cc =~ s/(?=,|$)/\@dongwm.com/g if $cc;</p>
-
-<p>my $msg = MIME::Lite-&gt;new (
-        From =&gt; 'cep@dongwm.com',
-        To =&gt; $sendto,
-	Cc  =&gt; $cc,
-        Subject =&gt; $subject,
-        Type     =&gt; 'text/html',
-        Data     =&gt; $data,
-        Encoding =&gt; 'base64',
-    ) or die "create container failed: $!";</p>
-
-<p>$msg-&gt;attr('content-type.charset' =&gt; 'GB2312');
-$msg-&gt;send('smtp','localhost',Debug=&gt;0);
-my @time=localtime;
-my $currenttime=sprintf("%04d-%02d-%02d %02d:%02d:%02d",$time[5]+1900,$time[4]+1,$time[3],$time[2],$time[1],$time[0]);
-print LOG "$currenttime send mail to $sendto : \"$data\"\n";
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/24/">&larr; Older</a></li>
@@ -1988,6 +1952,10 @@ print LOG "$currenttime send mail to $sendto : \"$data\"\n";
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -2023,10 +1991,6 @@ print LOG "$currenttime send mail to $sendto : \"$data\"\n";
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

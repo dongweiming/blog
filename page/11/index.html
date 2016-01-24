@@ -141,6 +141,482 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyumultiprocessingyanjiuer/">关于multiprocessing研究(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>class MyFancyClass(object):</p>
+
+<p>    def __init__(self, name):
+        self.name = name</p>
+
+<p>    def do_something(self):
+        proc_name = multiprocessing.current_process().name
+        print 'Doing something fancy in %s for %s!' % (proc_name, self.name)</p>
+
+<p>def worker(q):
+    obj = q.get()   #获取队列
+    obj.do_something()</p>
+
+<p>if __name__ == '__main__':
+    queue = multiprocessing.Queue() #Queue基本属于Queue.Queue模块的复制,他主要用来做进程间的通信</p>
+
+<p>    p = multiprocessing.Process(target=worker, args=(queue,))
+    p.start()</p>
+
+<p>    queue.put(MyFancyClass('Fancy Dan'))</p>
+
+<p>    queue.close()
+    queue.join_thread()  #
+    p.join()   #阻塞直到queue中的所有的task都被处理（即task_done方法被调用）
+</pre></p>
+
+<p>注：Queue建构在系统的Pipe之上，但是实际上进程并不是直接将对象写入到Pipe里面，而是先写入一个本地的buffer，</p>
+
+<p>再由一个专门 的feed线程将其放入Pipe当中。读取端则是直接从Pipe当中读出对象。之所以有这样一个feed线程，</p>
+
+<p>是为了能够提供Queue接口函数所需要的 put的超时控制。但是由于这个feed线程的存在，mp.Queue提供了几个额外的函数来控制它，</p>
+
+<p>一个函数close来停止该线程，以及 join_thread来join该线程。close同时负责把所有在buffer当中的对象刷新到Pipe当中</p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>class Consumer(multiprocessing.Process):</p>
+
+<p>    def __init__(self, task_queue, result_queue):
+        multiprocessing.Process.__init__(self)
+        self.task_queue = task_queue
+        self.result_queue = result_queue</p>
+
+<p>    def run(self):
+        proc_name = self.name
+        while True:
+            next_task = self.task_queue.get()  #获取队列
+            if next_task is None:
+                print '%s: Exiting' % proc_name
+                self.task_queue.task_done()  #向任务已经完成的队列发送一个信号
+                break
+            print '%s: %s' % (proc_name, next_task)
+            answer = next_task() #执行队列的那个类
+            self.task_queue.task_done()
+            self.result_queue.put(answer)
+        return</p>
+
+<p>class Task(object):
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+    def __call__(self):
+        time.sleep(0.1) # 保证这部分正常执行
+        return '%s * %s = %s' % (self.a, self.b, self.a * self.b)
+    def __str__(self):
+        return '%s * %s' % (self.a, self.b)  #元类计算结果</p>
+
+<p>if __name__ == '__main__':
+    tasks = multiprocessing.JoinableQueue()  #JoinableQueue 是 Queue的子类，增加了task_done()和join()方法
+    results = multiprocessing.Queue()</p>
+
+<p>    num_consumers = multiprocessing.cpu_count() * 2  #创建消费者，cpu个数的2倍
+    print 'Creating %d consumers' % num_consumers  
+    consumers = [ Consumer(tasks, results)
+                  for i in xrange(num_consumers) ]
+    for w in consumers:
+        w.start()</p>
+
+<p>    num_jobs = 10
+    for i in xrange(num_jobs):
+        tasks.put(Task(i, i))  #创建10个job</p>
+
+<p>    for i in xrange(num_consumers):  #为每个消费者添加队列结束标记
+        tasks.put(None)
+    tasks.join()  #等待所有tasks完成</p>
+
+<p>    while num_jobs:
+        result = results.get()
+        print 'Result:', result  #打印结果
+        num_jobs -= 1
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def wait_for_event(e):
+    print 'wait_for_event: starting'
+    e.wait()   #<span>主线程将被阻塞，它将不会 再被分配时间片 直到现有的一些线程退出运行</span>
+    print 'wait_for_event: e.is_set()-&gt;', e.is_set()  #返回事件是否设置的布尔值</p>
+
+<p>def wait_for_event_timeout(e, t):
+    print 'wait_for_event_timeout: starting'
+    e.wait(t)  #设置等待超时
+    print 'wait_for_event_timeout: e.is_set()-&gt;', e.is_set()</p>
+
+<p>if __name__ == '__main__':
+    e = multiprocessing.Event()  #类似<tt>threading.Event</tt>,替代time.sleep(),用wait()和set()来精确控制线程
+    w1 = multiprocessing.Process(name='block', 
+                                 target=wait_for_event,
+                                 args=(e,))
+    w1.start()</p>
+
+<p>    w2 = multiprocessing.Process(name='non-block', 
+                                 target=wait_for_event_timeout, 
+                                 args=(e, 2))
+    w2.start()</p>
+
+<p>    print 'main: waiting before calling Event.set()'
+    time.sleep(3)
+    e.set()
+    print 'main: event is set'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+main: waiting before calling Event.set()
+wait_for_event: starting
+wait_for_event_timeout: starting
+wait_for_event_timeout: e.is_set()-&gt; False
+main: event is set
+wait_for_event: e.is_set()-&gt; True
+<pre class="sh_python">
+import multiprocessing
+import sys</p>
+
+<p>def worker_with(lock, stream):
+    with lock:
+        stream.write('Lock acquired via with\n') #lock资源</p>
+
+<p>def worker_no_with(lock, stream):
+    lock.acquire() #获得资源
+    try:
+        stream.write('Lock acquired directly\n')
+    finally:
+        lock.release()  #释放资源</p>
+
+<p>lock = multiprocessing.Lock() #需要多个进程之间共享一个单一的资源的情况下，可以使用Lock，以避免冲突的访问
+w = multiprocessing.Process(target=worker_with, args=(lock, sys.stdout))
+nw = multiprocessing.Process(target=worker_no_with, args=(lock, sys.stdout))</p>
+
+<p>w.start()
+nw.start()</p>
+
+<p>w.join()
+nw.join()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def stage_1(cond):  #执行工作的第一阶段，然后通知继续阶段2”
+    name = multiprocessing.current_process().name
+    print 'Starting', name
+    with cond:
+        print '%s done and ready for stage 2' % name
+        cond.notify_all()   #唤醒所有挂起的线程（如果存在挂起的线程），但是这些方法不会释放所占用的琐</p>
+
+<p>def stage_2(cond):  #告诉我们阶段1完成的情况下等待
+    name = multiprocessing.current_process().name
+    print 'Starting', name
+    with cond:
+        cond.wait()  #释放内部所占用的琐，同时线程被挂起，直至接收到通知被唤醒或超时（如果提供了timeout参数的话）。
+                     #当线程被唤醒并重新占有琐的时候，程序才会继续执行下去。
+        print '%s running' % name</p>
+
+<p>if __name__ == '__main__':
+    condition = multiprocessing.Condition() #它提供了比Lock, RLock更高级的功能，允许我们能够控制复杂的线程同步问题
+    s1 = multiprocessing.Process(name='s1', target=stage_1, args=(condition,))
+    s2_clients = [
+        multiprocessing.Process(name='stage_2[%d]' % i, target=stage_2, args=(condition,))
+        for i in range(1, 3)
+        ]</p>
+
+<p>    for c in s2_clients:
+        c.start()
+        time.sleep(1)
+    s1.start()</p>
+
+<p>    s1.join()
+    for c in s2_clients:
+        c.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Starting stage_2[1]
+Starting stage_2[2]
+Starting s1
+s1 done and ready for stage 2
+stage_2[2] running
+stage_2[1] running
+<pre class="sh_python">
+import random
+import multiprocessing
+import time</p>
+
+<p>class ActivePool(object):   #跟踪进程执行状态
+    def __init__(self):
+        super(ActivePool, self).__init__()  #保证公共父类仅被执行一次
+        self.mgr = multiprocessing.Manager()  #进程间共享数据,支持的类型有list,dict,Namespace,Lock,RLock,Semaphore,BoundedSemaphore,Condition,Event,Queue,Value和Array
+        self.active = self.mgr.list()
+        self.lock = multiprocessing.Lock()
+    def makeActive(self, name):
+        with self.lock:
+            self.active.append(name)
+    def makeInactive(self, name):
+        with self.lock:
+            self.active.remove(name)
+    def __str__(self):
+        with self.lock:
+            return str(self.active)</p>
+
+<p>def worker(s, pool):
+    name = multiprocessing.current_process().name
+    with s:
+        pool.makeActive(name)
+        print 'Now running: %s' % str(pool)
+        time.sleep(random.random())
+        pool.makeInactive(name)</p>
+
+<p>if __name__ == '__main__':
+    pool = ActivePool()
+    s = multiprocessing.Semaphore(3) #Semaphore用来控制对共享资源的访问数量，例如池的最大连接数，这里只有三个活动进程同时运行
+    jobs = [
+        multiprocessing.Process(target=worker, name=str(i), args=(s, pool))
+        for i in range(10)
+        ]</p>
+
+<p>    for j in jobs:
+        j.start()</p>
+
+<p>    for j in jobs:
+        j.join()
+        print 'Now running: %s' % str(pool)
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>def producer(ns, event):
+    ns.value = 'This is the value'
+    event.set()</p>
+
+<p>def consumer(ns, event):
+    try:
+        value = ns.value
+    except Exception, err:
+        print 'Before event, consumer got:', str(err)
+    event.wait()
+    print 'After event, consumer got:', ns.value</p>
+
+<p>if __name__ == '__main__':
+    mgr = multiprocessing.Manager()
+    namespace = mgr.Namespace()  #通过Manager管理共享命名空间
+    event = multiprocessing.Event()
+    p = multiprocessing.Process(target=producer, args=(namespace, event))
+    c = multiprocessing.Process(target=consumer, args=(namespace, event))</p>
+
+<p>    c.start()
+    p.start()</p>
+
+<p>    c.join()
+    p.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before event, consumer got: &#8216;Namespace&#8217; object has no attribute &#8216;value&#8217;
+After event, consumer got: This is the value
+<pre class="sh_python">
+import multiprocessing</p>
+
+<p>def producer(ns, event):
+    ns.my_list.append('This is the value') # DOES NOT UPDATE GLOBAL VALUE!
+    event.set()</p>
+
+<p>def consumer(ns, event):
+    print 'Before event, consumer got:', ns.my_list
+    event.wait()
+    print 'After event, consumer got:', ns.my_list</p>
+
+<p>if __name__ == '__main__':
+    mgr = multiprocessing.Manager()
+    namespace = mgr.Namespace()
+    namespace.my_list = []</p>
+
+<p>    event = multiprocessing.Event()  
+    p = multiprocessing.Process(target=producer, args=(namespace, event))
+    c = multiprocessing.Process(target=consumer, args=(namespace, event))</p>
+
+<p>    c.start()
+    p.start()</p>
+
+<p>    c.join()
+    p.join()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Before event, consumer got: []
+After event, consumer got: []
+注意：其中程序的producer已经设置了一个列表值,可变值中的命名空间的内容<em>更新不</em>自动传播。所以consumer事件更新后还是空列表</p>
+
+<p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>def do_calculation(data):
+    return data * 2</p>
+
+<p>def start_process():
+    print 'Starting', multiprocessing.current_process().name</p>
+
+<p>if __name__ == '__main__':
+    inputs = list(range(10))
+    print 'Input   :', inputs</p>
+
+<p>    builtin_outputs = map(do_calculation, inputs)  #返回一个隐射，lambda x:x*2
+    print 'Built-in:', builtin_outputs</p>
+
+<p>    pool_size = multiprocessing.cpu_count() * 2
+    pool = multiprocessing.Pool(processes=pool_size, #进程池管理固定数量的进程，还能设定一个maxtasksperchild（从添加python2.7），任务可以完成之前
+                                initializer=start_process,  #它会退出和更换一个新的工作进程，使闲置的资源被释放。
+                                )
+    pool_outputs = pool.map(do_calculation, inputs)  #   map方法与内置的map函数行为基本一致，在它会使进程阻塞与此直到结果返回。
+    pool.close()  #关闭pool，使其不在接受新的任务。
+    pool.join()  #结束当前任务,主进程阻塞等待子进程的退出， join方法要在close或terminate之后使用。</p>
+
+<p>    print 'Pool    :', pool_outputs
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Input   : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Built-in: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+Starting PoolWorker-1
+Starting PoolWorker-2
+Starting PoolWorker-3
+Starting PoolWorker-4
+Starting PoolWorker-5
+Starting PoolWorker-6
+Starting PoolWorker-7
+Starting PoolWorker-8
+Pool    : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+<pre class="sh_python">
+import multiprocessing 
+import string
+import collections
+import itertools
+import multiprocessing</p>
+
+<p>class SimpleMapReduce(object):</p>
+
+<p>    def __init__(self, map_func, reduce_func, num_workers=None): 
+        """
+        map_func是一个用实现映射（对一些独立元素组成的概念上的列表（例如，一个测试成绩的列表）的每一个元素进行指定的操作（
+        有人发现所有学生的成绩都被高估了一分，他可以定义一个“减一”的映射函数，用来修正这个错误。）。事实上，每个元素都是被独立操作的，
+        而原始列表没有被更改，因为这里创建了一个新的列表来保存新的答案）的函数</p>
+
+<p>        reduce_func是一个用于化简（对一个列表的元素进行适当的合并（如果有人想知道班级的平均分该怎么做？他可以定义一个化简函数，
+        通过让列表中的元素跟自己的相邻的元素相加的方式把列表减半，如此递归运算直到列表只剩下一个元素，然后用这个元素除以人数，
+        就得到了平均分。）。虽然他不如映射函数那么并行，但是因为化简 总是有一个简单的答案，大规模的运算相对独立）的函数
+        num_workers是进程池的数量这里默认就是cpu数目
+        self.map_func = map_func
+        self.reduce_func = reduce_func
+        self.pool = multiprocessing.Pool(num_workers)</p>
+
+<p>    def partition(self, mapped_values):  #组织k-v映射，返回一个键和一个值序列元组的无序序列
+        partitioned_data = collections.defaultdict(list)
+        for key, value in mapped_values:
+            partitioned_data[key].append(value)
+        return partitioned_data.items()</p>
+
+<p>    def __call__(self, inputs, chunksize=1):  #inputs是一个包含输入的数据进行处理的迭代器 chunksize用来调整映射效果
+        map_responses = self.pool.map(self.map_func, inputs, chunksize=chunksize)
+        partitioned_data = self.partition(itertools.chain(*map_responses))
+        reduced_values = self.pool.map(self.reduce_func, partitioned_data)
+        return reduced_values
+def file_to_words(filename):  
+    STOP_WORDS = set([
+            'a', 'an', 'and', 'are', 'as', 'be', 'by', 'for', 'if', 'in', 
+            'is', 'it', 'of', 'or', 'py', 'rst', 'that', 'the', 'to', 'with',
+            ])
+    TR = string.maketrans(string.punctuation, ' ' * len(string.punctuation))</p>
+
+<p>    print multiprocessing.current_process().name, 'reading', filename
+    output = []</p>
+
+<p>    with open(filename, 'rt') as f:
+        for line in f:
+            if line.lstrip().startswith('..'): # Skip rst comment lines
+                continue
+            line = line.translate(TR) # Strip punctuation
+            for word in line.split():
+                word = word.lower()
+                if word.isalpha() and word not in STOP_WORDS:
+                    output.append( (word, 1) )
+    return output   #读取文件并返回一个值（词，字符串）序列</p>
+
+<p>def count_words(item):
+    word, occurances = item
+    return (word, sum(occurances))  #转换成包含单词和其数量的元组</p>
+
+<p>if __name__ == '__main__':
+    import operator
+    import glob</p>
+
+<p>    input_files = glob.glob('*.rst')</p>
+
+<p>    mapper = SimpleMapReduce(file_to_words, count_words)
+    word_counts = mapper(input_files)
+    word_counts.sort(key=operator.itemgetter(1))
+    word_counts.reverse()</p>
+
+<p>    print '\nTOP 20 WORDS BY FREQUENCY\n'
+    top20 = word_counts[:20]
+    longest = max(len(word) for word, count in top20)
+    for word, count in top20:
+        print '%-*s: %5s' % (longest+1, word, count)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuzipimportyanjiu/">关于zipimport研究</a></h1>
     
     
@@ -1669,231 +2145,6 @@ f2f84497-b3bf-493a-bba9-7c68e6def80b</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuurllibyanjiu/">关于urllib研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言;urllib模块提供了一个访问网络资源的简单接口支持（ftp协议)，访问不需要认证的远程资源</p>
-
-<p>因为urllib模块是一个客户端模块，需要一个httpserver，借用以前的BaseHTTPServer的模块的程序：</p>
-
-<p><pre class="sh_python">
-from BaseHTTPServer import BaseHTTPRequestHandler
-import urlparse </p>
-
-<p>class GetHandler(BaseHTTPRequestHandler):</p>
-
-<p>    def do_GET(self):   #这个是get方法的处理
-        parsed_path = urlparse.urlparse(self.path)
-        message_parts = [
-                'CLIENT VALUES:',
-                'client_address=%s (%s)' % (self.client_address,
-                                            self.address_string()),
-                'command=%s' % self.command,
-                'path=%s' % self.path,
-                'real path=%s' % parsed_path.path,
-                'query=%s' % parsed_path.query,
-                'request_version=%s' % self.request_version,
-                '',
-                'SERVER VALUES:',
-                'server_version=%s' % self.server_version,
-                'sys_version=%s' % self.sys_version,
-                'protocol_version=%s' % self.protocol_version,
-                '',
-                'HEADERS RECEIVED:',
-                ]
-        for name, value in sorted(self.headers.items()):
-            message_parts.append('%s=%s' % (name, value.rstrip()))
-        message_parts.append('')
-        message = '\r\n'.join(message_parts)
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(message)
-        return</p>
-
-<p>if __name__ == '__main__':
-    from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 8080), GetHandler)
-    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
-    server.serve_forever()
-</pre></p>
-
-<p><pre class="sh_python">
-from BaseHTTPServer import BaseHTTPRequestHandler
-import cgi</p>
-
-<p>class PostHandler(BaseHTTPRequestHandler):</p>
-
-<p>    def do_POST(self):  ##这个是post方法的处理
-        # Parse the form data posted
-        form = cgi.FieldStorage(
-            fp=self.rfile, 
-            headers=self.headers,
-            environ={'REQUEST_METHOD':'POST',
-                     'CONTENT_TYPE':self.headers['Content-Type'],
-                     })</p>
-
-<p>        # Begin the response
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write('Client: %s\n' % str(self.client_address))
-        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
-        self.wfile.write('Path: %s\n' % self.path)
-        self.wfile.write('Form data:\n')</p>
-
-<p>        # Echo back information about what was posted in the form
-        for field in form.keys():
-            field_item = form[field]
-            if field_item.filename:
-                # The field contains an uploaded file
-                file_data = field_item.file.read()
-                file_len = len(file_data)
-                del file_data
-                self.wfile.write('\tUploaded %s as "%s" (%d bytes)\n' % \
-                        (field, field_item.filename, file_len))
-            else:
-                # Regular form value
-                self.wfile.write('\t%s=%s\n' % (field, form[field].value))
-        return</p>
-
-<p>if __name__ == '__main__':
-    from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 8080), PostHandler)
-    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
-    server.serve_forever()
-</pre></p>
-
-<p><pre class="sh_python">
-import urllib</p>
-
-<p>response = urllib.urlopen('http://localhost:8080/')  #指定要打开的网页
-print 'RESPONSE:', response   #这个类文件对象也是可以迭代
-print 'URL :', response.geturl() #返回这个网页的url地址</p>
-
-<p>headers = response.info()
-print 'DATE :', headers['date']  #执行请求的时间
-print 'HEADERS :'
-print '---------'
-print headers  #返回server的信息和date信息</p>
-
-<p>data = response.read() #取到数据
-print 'LENGTH :', len(data) #数据长度
-print 'DATA :'
-print '---------'
-print data  #返回客户端，服务器端的一些信息，header信息
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-RESPONSE: &lt;addinfourl at 3074658828L whose fp = &lt;socket._fileobject object at 0xb7418b2c&gt;&gt;
-URL : http://localhost:8080/
-DATE : Tue, 19 Jun 2012 07:55:13 GMT
-HEADERS :
-&#8212;&#8212;&#8212;
-Server: BaseHTTP/0.3 Python/2.7
-Date: Tue, 19 Jun 2012 07:55:13 GMT</p>
-
-<p>LENGTH : 304
-DATA :
-&#8212;&#8212;&#8212;
-CLIENT VALUES:
-client_address=(&#8216;127.0.0.1&#8217;, 57709) (localhost)
-command=GET
-path=/
-real path=/
-query=
-request_version=HTTP/1.0</p>
-
-<p>SERVER VALUES:
-server_version=BaseHTTP/0.3
-sys_version=Python/2.7
-protocol_version=HTTP/1.0</p>
-
-<p>HEADERS RECEIVED:
-host=localhost:8080
-user-agent=Python-urllib/1.17</p>
-
-<p><pre class="sh_python">
-import urllib
-query_args = { 'q':'query string', 'foo':'bar' }
-encoded_args = urllib.urlencode(query_args) #将dict或者包含两个元素的元组列表转换成url参数，如果参数doseq=True ，表示使用单独的变量来传递值序列时
-print 'Encoded:', encoded_args</p>
-
-<p>url = 'http://localhost:8080/?' + encoded_args
-print urllib.urlopen(url).read()  #返回打开的这个get页面的数据
-print 'quote() :', urllib.quote(url) #对字符串进行编码。参数safe指定了不需要编码的字符 同样的还原就是unquote
-print 'quote_plus():', urllib.quote_plus(url) #与urllib.quote类似，但这个方法用'+'来替换' '，而quote用'%20'来代替 同样的还原就是unquote_plus
-</pre></p>
-
-<p><pre class="sh_python">
-import urllib
-query_args = { 'q':'query string', 'foo':'bar' }
-encoded_args = urllib.urlencode(query_args)
-url = 'http://localhost:8080/'
-print urllib.urlopen(url, encoded_args).read()  #通过POST代替GET方式传递数据给远程服务器, 仅仅是把已编码的查询参数当作数据传递给urlopen().
-</pre></p>
-
-<p><pre class="sh_python">
-import urllib
-import os</p>
-
-<p>def reporthook(blocks_read, block_size, total_size):
-    if not blocks_read:
-        print 'Connection opened'
-        return
-    if total_size &lt; 0:
-        # Unknown size 未知大小
-        print 'Read %d blocks' % blocks_read
-    else:
-        amount_read = blocks_read * block_size
-        print 'Read %d blocks, or %d/%d' % (blocks_read, amount_read, total_size)
-        return</p>
-
-<p>try:
-    filename, msg = urllib.urlretrieve('http://www.dongwm.com/', reporthook=reporthook) # urlretrieve方法直接将远程数据下载到本地。
-                                                #参数filename指定了保存到本地的路径（如果未指定该参数，urllib会生成一个临时文件来保存数据） ,reporthook是一个回调函数
-                                                #当连接上服务器、以及相应的数据块传输完毕的时候会触发该回调。我们可以利用这个回调函 数来显示当前的下载进度
-    print
-    print 'File:', filename
-    print 'Headers:'
-    print msg
-    print 'File exists before cleanup:', os.path.exists(filename)
-finally:
-    urllib.urlcleanup()   #除这些临时的复本
-    print 'File still exists:', os.path.exists(filename)
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/12/">&larr; Older</a></li>
@@ -1916,6 +2167,10 @@ finally:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1951,10 +2206,6 @@ finally:
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

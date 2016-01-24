@@ -141,6 +141,163 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyupwdyanjiu/">关于pwd 研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：pwd是UNIX口令数据库模块，一般分析的是/etc/passwd的用户信息，
+<table border="1">
+<thead valign="bottom">
+<tr>
+<th>索引</th>
+<th>属性</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+<td>0</td>
+<td>pw_name</td>
+<td>用户登录名</td>
+</tr>
+<tr>
+<td>1</td>
+<td>pw_passwd</td>
+<td>（可选）加密的密码</td>
+</tr>
+<tr>
+<td>2</td>
+<td>pw_uid</td>
+<td>User id</td>
+</tr>
+<tr>
+<td>3</td>
+<td>pw_gid</td>
+<td>Group id</td>
+</tr>
+<tr>
+<td>4</td>
+<td>pw_gecos</td>
+<td>用户的描述信息</td>
+</tr>
+<tr>
+<td>5</td>
+<td>pw_dir</td>
+<td>家目录</td>
+</tr>
+<tr>
+<td>6</td>
+<td>pw_shell</td>
+<td>登录的shell，默认/bin/bash</td>
+</tr>
+</tbody>
+</table>
+<pre class="sh_python">
+import pwd  #类似于组数据模块grp
+import operator</p>
+
+<p>all_user_data = pwd.getpwall()  #获取所有用户信息
+interesting_users = sorted((u 
+                            for u in all_user_data 
+                            if not u.pw_name.startswith('_')), 
+                            key=operator.attrgetter('pw_name')) #这个排序根据用户名的数据 比如 dongwm在daliu的后面，dongwm在dongwn的前面</p>
+
+<p># Find the longest lengths for a few fields
+username_length = max(len(u.pw_name) for u in interesting_users) + 1
+home_length = max(len(u.pw_dir) for u in interesting_users) + 1 #算某个字段的长度</p>
+
+<p># Print report headers
+fmt = '%-*s %4s %-*s %s'
+print fmt % (username_length, 'User', 
+             'UID', 
+             home_length, 'Home Dir', 
+             'Description')
+print '-' * username_length, '----', '-' * home_length, '-' * 30  #根据字段最大长度 格式化</p>
+
+<p>for u in interesting_users:
+    print fmt % (username_length, u.pw_name, 
+                 u.pw_uid, 
+                 home_length, u.pw_dir, 
+                 u.pw_gecos)
+</pre></p>
+
+<p><pre class="sh_python">
+import pwd
+import sys</p>
+
+<p>username = sys.argv[1]
+user_info = pwd.getpwnam(username)  #查询用户数据信息</p>
+
+<p>print 'Username:', user_info.pw_name
+print 'Password:', user_info.pw_passwd
+print 'Comment :', user_info.pw_gecos
+print 'UID/GID :', user_info.pw_uid, '/', user_info.pw_gid
+print 'Home    :', user_info.pw_dir
+print 'Shell   :', user_info.pw_shell
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py dongwm
+Username: dongwm
+Password: x
+Comment : dongwm
+UID/GID : 1000 / 100
+Home    : /home/dongwm
+Shell   : /bin/bash
+<pre class="sh_python">
+import pwd
+import os
+import sys</p>
+
+<p>filename = os.path.basename(__file__)
+stat_info = os.stat(filename)
+owner = pwd.getpwuid(stat_info.st_uid).pw_name</p>
+
+<p>print '%s is owned by %s (%s)' % (filename, owner, stat_info.st_uid)</p>
+
+<p>uid = os.getuid()
+user_info = pwd.getpwuid(uid)
+print 'Currently running with UID=%s username=%s' % (uid, user_info.pw_name)</p>
+
+<p>执行结果：
+dongwm@linux-dongwm:~&gt; python test.py 
+test.py is owned by dongwm (1000)
+Currently running with UID=1000 username=dongwm</p>
+
+<p> ~
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuoperatoryanjiu/">关于operator研究</a></h1>
     
     
@@ -1505,234 +1662,6 @@ print base64.encodestring(digest) #有些服务或者内容包含非ascii字符�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuheapq/">关于heapq</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：heapq实现了适用于Python列表的小顶堆排序算法.堆是一种树型数据结构, 其父子节点间具有顺序关系. 二进制堆可以使用一个列表或数组来表示, 其中元素N的孩子所在位置为2*N+1 和 2*N+2(以0开始计算位置). 这种特征让就地重排成为可能, 这样在增加或删除元素时就不需要重新分配内存空间.大顶堆确保每个父元素都大于或等于他的任一个孩子元素. 而小顶堆则需要每个父元素都要小于或等于他的任一个孩子元素. Python的heapq模块实现的是小顶堆.</p>
-
-<p><pre class="sh_python">
-import math
-import heapq
-from cStringIO import StringIO</p>
-
-<p>list = [12,19,34,2,10,1]
-heap = []
-def show_tree(tree, total_width=36, fill=' '):  #这个方法很直观了显示了树的变化
-    output = StringIO()
-    last_row = -1
-    for i, n in enumerate(tree):
-        if i:
-            row = int(math.floor(math.log(i+1, 2)))
-        else:
-            row = 0
-        if row != last_row:
-            output.write('\n')
-        columns = 2**row
-        col_width = int(math.floor((total_width * 1.0) / columns))
-        output.write(str(n).center(col_width, fill))
-        last_row = row
-    print output.getvalue()
-    print '-' * total_width
-    print
-    return
-for n in list:
-    print 'add %3d:' % n
-    heapq.heappush(heap, n)  #创建一个堆,使用heappush(), 堆中元素排序顺序是随着新元素的不断增加而不断更新的
-    show_tree(heap)
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-add  12:
-12                    #增加列表的第一个元素，因为是第一个元素 换行
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
-add  19:
-12                 #因为新增的19大于12，所以成了子树一部分
-19
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
-add  34:
-12
-19                34        #因为这是第三个,3的对数也还是和19在一行
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
-add   2:
-2
-12                34
-19
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
-add  10:
-2
-10                34
-19       12
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
-add   1:
-1
-10                2
-19       12       34
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
-<pre class="sh_python">
-import math
-import heapq
-from cStringIO import StringIO</p>
-
-<p>list = [12,19,34,2,10,1]
-heap = []
-def show_tree(tree, total_width=36, fill=' '):
-    output = StringIO()
-    last_row = -1
-    for i, n in enumerate(tree):
-        if i:
-            row = int(math.floor(math.log(i+1, 2)))
-        else:
-            row = 0
-            print 'd'
-        if row != last_row:
-            output.write('\n')
-        columns = 2**row
-        col_width = int(math.floor((total_width * 1.0) / columns))
-        output.write(str(n).center(col_width, fill))
-        last_row = row
-    print output.getvalue()
-    print '-' * total_width
-    print
-    return</p>
-
-<p>heapq.heapify(list)  #如果数据已经在内存中了, 使用heapify()进行就地排序会更有效.
-print 'heapified :'
-show_tree(list) 
-print</p>
-
-<p>inorder = []
-while list:
-    smallest = heapq.heappop(list)  #删掉最小的数据
-    print 'pop %3d:' % smallest #打印这个最小的数据
-    show_tree(list)
-    inorder.append(smallest)  #这个李彪从小到大的收集了原list数据
-print 'inorder :', inorder
-</pre></p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-heapified :</p>
-
-<p>1
-2                 12
-19       10       34
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
-
-<p>pop   1:</p>
-
-<p>2
-10                12
-19       34
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
-
-<p>pop   2:</p>
-
-<p>10
-19                12
-34
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
-
-<p>pop  10:</p>
-
-<p>12
-19                34
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
-
-<p>pop  12:</p>
-
-<p>19
-34
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
-
-<p>pop  19:</p>
-
-<p>34
-&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
-
-<p>pop  34:</p>
-
-<p>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
-
-<p>inorder : [1, 2, 10, 12, 19, 34]</p>
-
-<p><pre class="sh_python">
-import math
-import heapq
-from cStringIO import StringIO</p>
-
-<p>list = [12,19,34,2,10,1]
-heap = []
-def show_tree(tree, total_width=36, fill=' '):
-    output = StringIO()
-    last_row = -1
-    for i, n in enumerate(tree):
-        if i:
-            row = int(math.floor(math.log(i+1, 2)))
-        else:
-            row = 0
-        if row != last_row:
-            output.write('\n')
-        columns = 2**row
-        col_width = int(math.floor((total_width * 1.0) / columns))
-        output.write(str(n).center(col_width, fill))
-        last_row = row
-    print output.getvalue()
-    print '-' * total_width
-    print
-    return</p>
-
-<p>heapq.heapify(list)
-for n in [1, 7, 12, 9, 5]:
-    smallest = heapq.heapreplace(list, n)  #这里可以删除掉原值，然后替换成新值，保持了堆的长度
-    print 'replace %2d with %2d:' % (smallest, n)
-    show_tree(list)
-</pre></p>
-
-<p><pre class="sh_python">
-import heapq</p>
-
-<p>data = [12,19,34,2,10,1]
-print 'all :', data
-print '3 largest :', heapq.nlargest(3, data) #相对最大的3个数
-print 'from sort :', list(reversed(sorted(data)[-3:]))  #效果一样
-print '3 smallest:', heapq.nsmallest(3, data) #相对最小的3个数
-print 'from sort :', sorted(data)[:3] #效果一样
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/15/">&larr; Older</a></li>
@@ -1755,6 +1684,10 @@ print 'from sort :', sorted(data)[:3] #效果一样
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1790,10 +1723,6 @@ print 'from sort :', sorted(data)[:3] #效果一样
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

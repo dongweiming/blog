@@ -141,6 +141,234 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuheapq/">关于heapq</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：heapq实现了适用于Python列表的小顶堆排序算法.堆是一种树型数据结构, 其父子节点间具有顺序关系. 二进制堆可以使用一个列表或数组来表示, 其中元素N的孩子所在位置为2*N+1 和 2*N+2(以0开始计算位置). 这种特征让就地重排成为可能, 这样在增加或删除元素时就不需要重新分配内存空间.大顶堆确保每个父元素都大于或等于他的任一个孩子元素. 而小顶堆则需要每个父元素都要小于或等于他的任一个孩子元素. Python的heapq模块实现的是小顶堆.</p>
+
+<p><pre class="sh_python">
+import math
+import heapq
+from cStringIO import StringIO</p>
+
+<p>list = [12,19,34,2,10,1]
+heap = []
+def show_tree(tree, total_width=36, fill=' '):  #这个方法很直观了显示了树的变化
+    output = StringIO()
+    last_row = -1
+    for i, n in enumerate(tree):
+        if i:
+            row = int(math.floor(math.log(i+1, 2)))
+        else:
+            row = 0
+        if row != last_row:
+            output.write('\n')
+        columns = 2**row
+        col_width = int(math.floor((total_width * 1.0) / columns))
+        output.write(str(n).center(col_width, fill))
+        last_row = row
+    print output.getvalue()
+    print '-' * total_width
+    print
+    return
+for n in list:
+    print 'add %3d:' % n
+    heapq.heappush(heap, n)  #创建一个堆,使用heappush(), 堆中元素排序顺序是随着新元素的不断增加而不断更新的
+    show_tree(heap)
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+add  12:
+12                    #增加列表的第一个元素，因为是第一个元素 换行
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+add  19:
+12                 #因为新增的19大于12，所以成了子树一部分
+19
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+add  34:
+12
+19                34        #因为这是第三个,3的对数也还是和19在一行
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+add   2:
+2
+12                34
+19
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+add  10:
+2
+10                34
+19       12
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+add   1:
+1
+10                2
+19       12       34
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;
+<pre class="sh_python">
+import math
+import heapq
+from cStringIO import StringIO</p>
+
+<p>list = [12,19,34,2,10,1]
+heap = []
+def show_tree(tree, total_width=36, fill=' '):
+    output = StringIO()
+    last_row = -1
+    for i, n in enumerate(tree):
+        if i:
+            row = int(math.floor(math.log(i+1, 2)))
+        else:
+            row = 0
+            print 'd'
+        if row != last_row:
+            output.write('\n')
+        columns = 2**row
+        col_width = int(math.floor((total_width * 1.0) / columns))
+        output.write(str(n).center(col_width, fill))
+        last_row = row
+    print output.getvalue()
+    print '-' * total_width
+    print
+    return</p>
+
+<p>heapq.heapify(list)  #如果数据已经在内存中了, 使用heapify()进行就地排序会更有效.
+print 'heapified :'
+show_tree(list) 
+print</p>
+
+<p>inorder = []
+while list:
+    smallest = heapq.heappop(list)  #删掉最小的数据
+    print 'pop %3d:' % smallest #打印这个最小的数据
+    show_tree(list)
+    inorder.append(smallest)  #这个李彪从小到大的收集了原list数据
+print 'inorder :', inorder
+</pre></p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+heapified :</p>
+
+<p>1
+2                 12
+19       10       34
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
+
+<p>pop   1:</p>
+
+<p>2
+10                12
+19       34
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
+
+<p>pop   2:</p>
+
+<p>10
+19                12
+34
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
+
+<p>pop  10:</p>
+
+<p>12
+19                34
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
+
+<p>pop  12:</p>
+
+<p>19
+34
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
+
+<p>pop  19:</p>
+
+<p>34
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
+
+<p>pop  34:</p>
+
+<p>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</p>
+
+<p>inorder : [1, 2, 10, 12, 19, 34]</p>
+
+<p><pre class="sh_python">
+import math
+import heapq
+from cStringIO import StringIO</p>
+
+<p>list = [12,19,34,2,10,1]
+heap = []
+def show_tree(tree, total_width=36, fill=' '):
+    output = StringIO()
+    last_row = -1
+    for i, n in enumerate(tree):
+        if i:
+            row = int(math.floor(math.log(i+1, 2)))
+        else:
+            row = 0
+        if row != last_row:
+            output.write('\n')
+        columns = 2**row
+        col_width = int(math.floor((total_width * 1.0) / columns))
+        output.write(str(n).center(col_width, fill))
+        last_row = row
+    print output.getvalue()
+    print '-' * total_width
+    print
+    return</p>
+
+<p>heapq.heapify(list)
+for n in [1, 7, 12, 9, 5]:
+    smallest = heapq.heapreplace(list, n)  #这里可以删除掉原值，然后替换成新值，保持了堆的长度
+    print 'replace %2d with %2d:' % (smallest, n)
+    show_tree(list)
+</pre></p>
+
+<p><pre class="sh_python">
+import heapq</p>
+
+<p>data = [12,19,34,2,10,1]
+print 'all :', data
+print '3 largest :', heapq.nlargest(3, data) #相对最大的3个数
+print 'from sort :', list(reversed(sorted(data)[-3:]))  #效果一样
+print '3 smallest:', heapq.nsmallest(3, data) #相对最小的3个数
+print 'from sort :', sorted(data)[:3] #效果一样
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuhashlibyanjiu/">关于hashlib研究</a></h1>
     
     
@@ -1281,160 +1509,6 @@ Regex   : FNMATCH\_.*&#46;PY\Z(?ms)</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyudatetimeyanjiu/">关于datetime研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：datetime是一个日期/时间值操作的模块</p>
-
-<p><pre class="sh_python">
-import datetime</p>
-
-<p>t = datetime.time(1, 2, 3)  #这事一个关于时间的调用
-print t
-print 'hour  :', t.hour 
-print 'minute:', t.minute
-print 'second:', t.second
-print 'microsecond:', t.microsecond
-print 'tzinfo:', t.tzinfo
-</pre></p>
-
-<p><pre class="sh_python">
-import datetime</p>
-
-<p>today = datetime.date.today()  #这是一个关于日期的调用
-print today
-print 'ctime:', today.ctime()
-print 'tuple:', today.timetuple()
-print 'ordinal:', today.toordinal()
-print 'Year:', today.year
-print 'Mon :', today.month
-print 'Day :', today.day
-d1 = datetime.date(2008, 3, 12)
-print 'd1:', d1
-d2 = d1.replace(year=2009)
-print 'd2:', d2
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-2012-06-12
-ctime: Tue Jun 12 00:00:00 2012
-tuple: time.struct_time(tm_year=2012, tm_mon=6, tm_mday=12, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=1, tm_yday=164, tm_isdst=-1)
-ordinal: 734666
-Year: 2012
-Mon : 6
-Day : 12</p>
-
-<p>d1: 2008-03-12
-d2: 2009-03-12</p>
-
-<p><pre class="sh_python">
-import datetime</p>
-
-<p>today = datetime.date.today()  #计算今天
-print 'Today    :', today</p>
-
-<p>one_day = datetime.timedelta(days=1) #<tt>timedelta</tt>类通过的日期值进行基本的算术，这个步长是1天
-print 'One day  :', one_day</p>
-
-<p>yesterday = today - one_day
-print 'Yesterday:', yesterday</p>
-
-<p>tomorrow = today + one_day
-print 'Tomorrow :', tomorrow</p>
-
-<p>print 'tomorrow - yesterday:', tomorrow - yesterday   #日期计算，当然也可以使用比较计算
-print 'yesterday - tomorrow:', yesterday - tomorrow
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>Today    : 2012-06-12
-One day  : 1 day, 0:00:00
-Yesterday: 2012-06-11
-Tomorrow : 2012-06-13
-tomorrow - yesterday: 2 days, 0:00:00
-yesterday - tomorrow: -2 days, 0:00:00</p>
-
-<p><pre class="sh_python">
-import datetime</p>
-
-<p>print 'Now    :', datetime.datetime.now() #datetime.datetime结合了日期和时间,合并也可以这样：datetime.datetime.combine(datetime.date.today(), datetime.time(1, 2, 3))
-print 'Today  :', datetime.datetime.today()
-print 'UTC Now:', datetime.datetime.utcnow()</p>
-
-<p>d = datetime.datetime.now()
-for attr in [ 'year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond']:
-    print attr, ':', getattr(d, attr)
-</pre></p>
-
-<p>结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Now    : 2012-06-12 15:31:49.960739  #精确到微秒
-Today  : 2012-06-12 15:31:49.961110
-UTC Now: 2012-06-12 07:31:49.961128
-year : 2012
-month : 6
-day : 12
-hour : 15
-minute : 31
-second : 49
-microsecond : 961134</p>
-
-<p><pre class="sh_python">
-import datetime</p>
-
-<p>format = "%a %b %d %H:%M:%S %Y" #想格式化成： 星期几的简称 月简称  一个月的第几天（01..31)  小时 分 秒 年</p>
-
-<p>today = datetime.datetime.today()
-print 'ISO     :', today</p>
-
-<p>s = today.strftime(format)
-print 'strftime:', s</p>
-
-<p>d = datetime.datetime.strptime(s, format)
-print 'strptime:', d.strftime(format)
-</pre>
-结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-ISO     : 2012-06-12 15:34:48.377180
-strftime: Tue Jun 12 15:34:48 2012
-strptime: Tue Jun 12 15:34:48 2012</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/16/">&larr; Older</a></li>
@@ -1457,6 +1531,10 @@ strptime: Tue Jun 12 15:34:48 2012</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1492,10 +1570,6 @@ strptime: Tue Jun 12 15:34:48 2012</p>
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

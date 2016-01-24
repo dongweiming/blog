@@ -141,6 +141,398 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shi-yong-tornadorang-ni-de-qing-qiu-yi-bu-fei-zu-sai/">使用tornado让你的请求异步非阻塞</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-14T12:08:00+08:00" pubdate data-updated="true">Aug 14<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>也许有同学很迷惑:tornado不是标榜异步非阻塞解决10K问题的嘛?但是我却发现不是torando不好，而是你用错了.比如最近发现一个事情:某网站打开页面很慢,服务器cpu/内存都正常.网络状态也良好.
+后来发现，打开页面会有很多请求后端数据库的访问，有一个mongodb的数据库业务api的rest服务.但是它的tornado却用错了,一步步的来研究问题:</p>
+
+<h4 id="section-1">说明</h4>
+
+<p>以下的例子都有2个url,一个是耗时的请求，一个是可以或者说需要立刻返回的请求,我想就算一个对技术不熟，从道理上来说的用户，
+他希望的是他访问的请求不会影响也不会被其他人的请求影响</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>假如你使用页面请求或者使用哪个httpie,curl等工具先访问http://localhost:8000/sleep,再访问http://localhost:8000/justnow.你会发现本来可以立刻返回的/jsutnow的请求会一直阻塞到/sleep请求完才返回.</p>
+
+<p>这是为啥?为啥我的请求被/sleep请求阻塞了？如果平时我们的web请求足够快我们可能不会意识到这个问题，但是事实上经常会有一些耗时的进程，意味着应用程序被有效的锁定直至处理结束.</p>
+
+<p>这是时候你有没有想起@tornado.web.asynchronous这个装饰器？但是使用这个装饰器有个前提就是你要耗时的执行需要执行异步,比如上面的time.sleep,你只是加装饰器是没有作用的，而且需要注意的是
+Tornado默认在函数处理返回时关闭客户端的连接,但是当你使用@tornado.web.asynchonous装饰器时，Tornado永远不会自己关闭连接，需要显式的self.finish()关闭</p>
+
+<p>我们大部分的函数都是阻塞的, 比如上面的time.sleep其实tornado有个异步的实现:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.concurrent</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">tornado</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_timeout</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>这里有个新的tornado.gen.coroutine装饰器, coroutine是3.0之后新增的装饰器.以前的办法是用回调，还是看我这个例子:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_timeout</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">on_response</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">on_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>使用了callback, 但是新的装饰器让我们通过yield实现同样的效果:你在打开/sleep之后再点击/justnow，
+justnow的请求都是立刻返回不受影响.但是用了asynchronous的装饰器你的耗时的函数也需要执行异步</p>
+
+<p>刚才说的都是没有意义的例子，下面写个有点用的:读取mongodb数据库数据，然后再前端按行write出来</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.concurrent</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line"><span class="c"># 一个mongodb出品的支持异步的数据库的python驱动</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">motor</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line"><span class="c"># db其实就是test数据库的游标</span>
+</span><span class="line"><span class="n">db</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">MotorClient</span><span class="p">()</span><span class="o">.</span><span class="n">open_sync</span><span class="p">()</span><span class="o">.</span><span class="n">test</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 这一行执行还是阻塞需要时间的，我的tt集合有一些数据并且没有索引</span>
+</span><span class="line">        <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">tt</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
+</span><span class="line">        <span class="c"># 这部分会异步非阻塞的执行二不影响其他页面请求</span>
+</span><span class="line">        <span class="k">while</span> <span class="p">(</span><span class="k">yield</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetch_next</span><span class="p">):</span>
+</span><span class="line">            <span class="n">message</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">next_object</span><span class="p">()</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;li&gt;</span><span class="si">%s</span><span class="s">&lt;/li&gt;&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">])</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;/ul&gt;&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">_on_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+</span><span class="line">            <span class="k">raise</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">message</span><span class="p">:</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+</span><span class="line">                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;li&gt;</span><span class="si">%s</span><span class="s">&lt;/li&gt;&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">])</span>
+</span><span class="line">        <span class="k">else</span><span class="p">:</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&lt;/ul&gt;&#39;</span><span class="p">)</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>一个同事提示为什么这个耗时的东西不能异步的丢给某工具去执行而不阻塞我的请求呢?好吧，我也想到了:celery，正好github有这个东西:<a href="https://github.com/mher/tornado-celery">tornado-celery</a></p>
+
+<p>执行下面的程序首先你要安装rabbitmq和celery:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tcelery</span><span class="o">,</span> <span class="nn">tasks</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">tcelery</span><span class="o">.</span><span class="n">setup_nonblocking_producer</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># tornado.gen.Task的参数是:要执行的函数, 参数</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">tornado</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">tasks</span><span class="o">.</span><span class="n">sleep</span><span class="o">.</span><span class="n">apply_async</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep 5s&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>task是celery的任务定义的文件，包含我们说的time.sleep的函数</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+</span><span class="line">
+</span><span class="line"><span class="n">celery</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s">&quot;tasks&quot;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s">&quot;amqp://guest:guest@localhost:5672&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="n">celery</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">CELERY_RESULT_BACKEND</span> <span class="o">=</span> <span class="s">&quot;amqp&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="nd">@celery.task</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">sleep</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
+</span><span class="line">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">seconds</span><span class="p">))</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">seconds</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">celery</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>然后启动celelry  worker(要不然你的任务怎么执行呢?肯定需要一个消费者取走):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">celery</span> <span class="o">-</span><span class="n">A</span> <span class="n">tasks</span> <span class="n">worker</span> <span class="o">--</span><span class="n">loglevel</span><span class="o">=</span><span class="n">info</span>
+</span></pre></figure></notextile></div>
+
+<p>但是这里的问题也可能很严重:我们的异步非阻塞依赖于celery,还是这个队列的长度,假如任务很多那么就需要等待,效率很低.有没有一种办法把我的同步阻塞函数变为异步(或者说被tornado的装饰器理解和识别)呢?</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#!/bin/env python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpserver</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.options</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.httpclient</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.gen</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span>
+</span><span class="line"><span class="c"># 这个并发库在python3自带在python2需要安装sudo pip install futures</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@tornado.gen.coroutine</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 假如你执行的异步会返回值被继续调用可以这样(只是为了演示),否则直接yield就行</span>
+</span><span class="line">        <span class="n">res</span> <span class="o">=</span> <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">sleep</span><span class="p">()</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;when i sleep&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@run_on_executor</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">sleep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span class="line">        <span class="k">return</span> <span class="mi">5</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">parse_command_line</span><span class="p">()</span>
+</span><span class="line">    <span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+</span><span class="line">            <span class="p">(</span><span class="s">r&quot;/sleep&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span> <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">)])</span>
+</span><span class="line">    <span class="n">http_server</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpserver</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">    <span class="n">http_server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>但是有朋友留言和我说为什么在浏览器打开多个url请求还是会阻塞一个个的响应呢?</p>
+
+<p>这个事浏览器自身实现的可能是缓存把,当请求的资源相同就会出现这个问题,可以使用多浏览器(多人)或者命令行下的curl登都不会有这个问题,还有个比较恶的解决方法:</p>
+
+<p>给你的请求添加一些无用参数，比如: http://localhost:8000/sleep/?a=1 也可以是个时间戳</p>
+
+<h5 id="blocking-tasks-in-tornadohttplbollainfoblog20130122blocking-tornado">2014.4.1更新,发现了2种新的写法,请参照<a href="http://lbolla.info/blog/2013/01/22/blocking-tornado">Blocking tasks in Tornado</a></h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">tornado.web</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">tornado.options</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">options</span>
+</span><span class="line"><span class="n">define</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;run on the given port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">EXECUTOR</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">unblock</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">future</span><span class="p">):</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">EXECUTOR</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+</span><span class="line">            <span class="n">partial</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span class="line">        <span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span>
+</span><span class="line">            <span class="k">lambda</span> <span class="n">future</span><span class="p">:</span> <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span>
+</span><span class="line">                <span class="n">partial</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">future</span><span class="p">)))</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="n">wrapper</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">JustNowHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;i hope just now see you&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@unblock</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&quot;Awake! </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">SleepAsyncHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@tornado.web.asynchronous</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">future</span><span class="p">):</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">EXECUTOR</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+</span><span class="line">            <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span><span class="line">        <span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span>
+</span><span class="line">            <span class="k">lambda</span> <span class="n">future</span><span class="p">:</span> <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span>
+</span><span class="line">                <span class="n">partial</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">future</span><span class="p">)))</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span class="line">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&quot;Awake! </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+</span><span class="line">    <span class="p">(</span><span class="s">r&quot;/justnow&quot;</span><span class="p">,</span> <span class="n">JustNowHandler</span><span class="p">),</span>
+</span><span class="line">    <span class="p">(</span><span class="s">r&quot;/sleep/(\d+)&quot;</span><span class="p">,</span> <span class="n">SleepHandler</span><span class="p">),</span>
+</span><span class="line">    <span class="p">(</span><span class="s">r&quot;/sleep_async/(\d+)&quot;</span><span class="p">,</span> <span class="n">SleepAsyncHandler</span><span class="p">),</span>
+</span><span class="line"><span class="p">])</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">   <span class="n">application</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</span><span class="line">   <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shi-yong-celeryzhi-liao-jie-celery/">使用celery之了解celery</a></h1>
     
     
@@ -1535,116 +1927,6 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gei-chu-xue-pythonshe-ji-mo-shi-de-pythonista/">给初学python设计模式的pythonista</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-17T22:16:00+08:00" pubdate data-updated="true">Jun 17<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>从2011年5月4日买了第一本《python学习手册》到现在，我学python已经2年多了，python也是我第一门除bash外的语言。
-学’设计模式’这么神秘的东西还是源于去年一次面试，在我说了我想做某个东西，然后有什么思路后，面试官很不屑的问我：你知道设计模式嘛？
-然后我就懵了-从来没听过。我特别赞赏提供良好扩展功能的项目，比如<a href="http://www.sublimetext.com/2">Sublime Text2</a>, 它提供第三方插件功能，你可以使用别人开发的插件，也可以自己写插件，让项目更好的维护和扩展而不需要动基础的代码。
-后来换工作一直在熟悉业务，学一些东西。但是我一直记得这个’设计模式’，上个月花了一些时间去了解，所以有了此文，假如你也想了解’设计模式’,也很怕它，你会python，希望本文带给你帮助</p>
-
-<p>我也写了一组python设计模式的文章: <a href="http://dongweiming.github.io/category/she-ji-mo-shi.html">小明明s Github - 设计模式</a></p>
-
-<h4 id="section-1">我的角度</h4>
-
-<p>GoF（“四人帮”，又称Gang of Four，即Erich Gamma, Richard Helm, Ralph Johnson &amp; John Vlissides四人）的《设计模式》这本书我没看过，我也不怎么会java，看不懂例子.我没有受到其他语言的毒害(因为python是我一开始的语言)，我的角度应该是最靠近python</p>
-
-<h4 id="section-2">什么是设计模式</h4>
-
-<p>设计模式其实是一些被很多人反复使用而总结出来的代码设计经验，这些技术被GOF在大概20年前编辑成《编程模式》，其实不要害怕，
-因为<strong>设计模式就在你写代码过程中已经体现了，被叫做’设计模式’只是被很好的总结出来</strong>，</p>
-
-<h4 id="python">python程序员的成长</h4>
-
-<ul>
-  <li>
-    <p>当你初学python，可能还是翻阅手册或者去google出一些你想要问题的答案，而后举一反三修改它符合你想要的东西。那么这是阶段一：堆代码，这个时候主要是为了实现功能，不重视代码编码规范，代码运行效率，代码可读性等</p>
-  </li>
-  <li>
-    <p>用过一段时间python，你对python很熟悉了，可以copy代码写东西了。那么这是阶段二：码农初长成</p>
-  </li>
-  <li>
-    <p>我是这样的人：当一个类似的功能出现，我就想思考重构(重构这个词太大了，好吧，为了减少我的代码量);当经常出现某些相同的情况的过程，我就会思考更好的抽象出来;当项目大了，、
-会思考如何在不改动或者少改动的前提下更好的扩展新功能。那么这是阶段三: 码农中的愤青 这里你会对自己有更高的要求，其实总结一些更好的表达和实现，就是设计模式了</p>
-  </li>
-  <li>
-    <p>埋头写代码毕竟进步有限，这个时候可能你会读一些好的开源代码，保存了很多别人的代码片段等，你会发现:哦，原来可以这么写.. 哇 这个实现好酷… 然后你会记下来，
-等以后在合适的场景里面借用这些思想, 这是阶段四：在很多开源代码中会看见一些很好的设计模式的体现，就是这样看别人，然后理解吸收</p>
-  </li>
-</ul>
-
-<h4 id="python-1">如何学习python的设计模式</h4>
-
-<p>github上面有2个这方面的项目: <a href="https://github.com/faif/python-patterns">python-patterns</a>和<a href="https://github.com/gennad/Design-Patterns-in-Python">Design-Patterns-in-Python</a>, 但是都不怎么维护了
-当然了，做广告,可以看我的GithubPages<a href="http://dongweiming.github.io/category/she-ji-mo-shi.html">小明明s Github - 设计模式</a>,都是我自己的理解，欢迎大家提意见</p>
-
-<h4 id="python-2">python的设计模式</h4>
-
-<p>通过我学习和写这些模式的文章，我有很多感悟</p>
-
-<ul>
-  <li>
-    <p>对于python，装饰器模式其实都已经是内置代码级别;</p>
-  </li>
-  <li>
-    <p><a href="http://dongweiming.github.io/python-flyweight.html">flyweight模式</a>原来还可以这样玩;</p>
-  </li>
-  <li>
-    <p><a href="http://dongweiming.github.io/python-singleton.html">单例模式</a>已经落伍，完全可以被<a href="http://dongweiming.github.io/python-borg.html">borg模式</a>取代</p>
-  </li>
-  <li>
-    <p><a href="http://dongweiming.github.io/python-null.html">NUll模式</a>可以帮助你省去很多代码和异常处理</p>
-  </li>
-  <li>
-    <p><a href="http://dongweiming.github.io/python-object-pool.html">对象池模式</a>是一个很实用的模式</p>
-  </li>
-  <li>
-    <p>终于理解游戏人物设计用到了<a href="http://dongweiming.github.io/python-pototype.html">原型模式</a></p>
-  </li>
-</ul>
-
-<p>…</p>
-
-<p>基本是学了每个模式都有很深的触动</p>
-
-<h4 id="section-3">学习设计模式有没有必要</h4>
-
-<p>没有学习设计模式不会影响你写代码的水平，但是学习了会提高你的代码质量和拓宽你解决问题的思路</p>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/6/">&larr; Older</a></li>
@@ -1667,6 +1949,10 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1702,10 +1988,6 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

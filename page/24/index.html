@@ -141,6 +141,95 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shiyongkeyidaixuanxiangdeperlfasongzhongwenyoujian/">使用可以带选项的perl发送中文邮件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-13T00:00:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>为了处理复杂事件处理的故障报警，需要使用perl语言实现邮件报警和短信报警</p>
+
+<p><pre class="sh_perl">
+#!/usr/bin/perl
+use strict;
+use Getopt::Long;
+use MIME::Lite;
+use MIME::Words qw(encode_mimewords);</p>
+
+<p>my ($title,$sendto,$cc,@data,$help);</p>
+
+<p>GetOptions(
+    'title|t=s'	    =&gt; \$title,
+    'sendto|s=s'    =&gt; \$sendto,
+    'cc|c=s'	    =&gt; \$cc,
+    'data|d=s{1,10}'=&gt; \@data,
+    'h|help'	    =&gt; \$help,
+);</p>
+
+<p>if ( $help ) {
+print &lt;&lt;EOF;
+    -t	--title	    标题
+    -s	--sendto    收件人
+    -c	--cc	    抄送人
+    -d	--data	    内容
+    -h	--help	    帮助
+EOF
+}
+my @ltime=localtime;
+my $today=sprintf("%04d%02d%02d",$ltime[5]+1900,$ltime[4]+1,$ltime[3]);
+open LOG,"&gt;&gt;/cepdata/notification.log.$today";</p>
+
+<p>my $data="@data";
+$data =~ s/=/:/g;
+my $subject = encode_mimewords("$title",'Charset','GB2312');
+$sendto =~ s/(?=,|$)/\@dongwm.com/g;
+$cc =~ s/(?=,|$)/\@dongwm.com/g if $cc;</p>
+
+<p>my $msg = MIME::Lite-&gt;new (
+        From =&gt; 'cep@dongwm.com',
+        To =&gt; $sendto,
+	Cc  =&gt; $cc,
+        Subject =&gt; $subject,
+        Type     =&gt; 'text/html',
+        Data     =&gt; $data,
+        Encoding =&gt; 'base64',
+    ) or die "create container failed: $!";</p>
+
+<p>$msg-&gt;attr('content-type.charset' =&gt; 'GB2312');
+$msg-&gt;send('smtp','localhost',Debug=&gt;0);
+my @time=localtime;
+my $currenttime=sprintf("%04d-%02d-%02d %02d:%02d:%02d",$time[5]+1900,$time[4]+1,$time[3],$time[2],$time[1],$time[0]);
+print LOG "$currenttime send mail to $sendto : \"$data\"\n";
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/bashhistorybiantaiyongfa/">Bash History （变态用法）</a></h1>
     
     
@@ -1447,90 +1536,6 @@ http://localhost/icinga-web
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/nrpe%E6%A8%A1%E5%BC%8F%E6%A3%80%E6%9F%A5mongo%E8%BF%9B%E7%A8%8B%E8%84%9A%E6%9C%AC/">Nrpe模式检查mongodb进程脚本</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-28T00:00:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：nagios检查状态无外乎三种方式：1 直接到客户端取状态 2 nrpe间接再客户端取状态 3 被动检查通过nsca向nagios主服务器传送状态。这里是nrpe模式检查状态，要点包括 1 再nagios配置文件添加services 2 在客户端的nrpe.cfg里面添加command</p>
-
-<p>1 在nagios添加配置：</p>
-
-<p>define service{
-use                     major-service
-hostgroup_name          MongoGroup
-service_description     check_mongo_procs
-check_command           check_nrpe!check_mongo_procs  //选择nrpe模式
-servicegroups           memory
-contact_groups          sys
-_SRCTYPE                sys
-}</p>
-
-<p>2 客户端nrpe.cfg添加：</p>
-
-<p>command[check_mongo_procs]=/usr/local/nagios/libexec/check_mongopro.py</p>
-
-<p>并重启nrpe进程</p>
-
-<p>3 客户端脚本</p>
-
-<p>cat /usr/local/nagios/libexec/check_mongopro.py</p>
-
-<p><pre class="sh_python">
-#!/bin/env python
-# coding=gbk
-import os
-import sys
-from subprocess import Popen, PIPE</p>
-
-<p>list =[]
-cmd = 'chkconfig --list |grep "启用"|grep mongo'
-for line in os.popen(cmd).readlines():
-     pro = line.split(' ')[0] 
-     p1=Popen(['ps', '-ef'], stdout=PIPE)
-     p2 = Popen(['grep', '-v', 'grep'], stdin=p1.stdout, stdout=PIPE) 
-     p3 = Popen(['grep', '/etc/%s.conf' % pro], stdin=p2.stdout, stdout=PIPE)
-     p4 = Popen(['awk', '{print $3}'], stdin=p3.stdout, stdout=PIPE)
-     flag2 = [int(i.strip()) for i in p4.communicate()[0].split('\n') if i]
-     if 1 not in flag2:
-         list.append(pro)
-         flag =1
-if flag==1:
-    print 'CRITICAL %s is dead!' % ','.join(list)
-    sys.exit(2)
-else:
-    print 'Mongo Pro is OK'
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/25/">&larr; Older</a></li>
@@ -1553,6 +1558,10 @@ else:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1590,10 +1599,6 @@ else:
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
-      </li>
-    
   </ul>
 </section>
 <section class="well">
@@ -1612,7 +1617,7 @@ else:
 <section class="well">
   <ul id="gh_repos" class="nav">
     <li class="nav-header">GitHub帐号</li>
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub

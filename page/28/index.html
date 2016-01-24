@@ -141,6 +141,83 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shell-%E9%AB%98%E7%BA%A7%E5%8F%98%E9%87%8F/">Shell 高级变量</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-08T00:00:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 测试变量存在与否:</strong>
+语法 ${变量-默认值}
+若变量不存在换回-后面的默认值,要存在传回变量值
+<pre class="sh_bash">[root@server ~]# unset dongwm
+[root@server ~]# r=${dongwm-'not exist'}
+[root@server ~]# echo $r
+not exist
+[root@server ~]# dongwm=hello
+[root@server ~]# r=${dongwm-'not exist'}
+[root@server ~]# echo $r
+hello</pre>
+<strong>2  测试变量不存在或者为空值:</strong>
+r=${变量:-默认值}
+<pre class="sh_bash">[root@server ~]# unset dongwm
+[root@server ~]# r=${dongwm:-'not exist'}
+[root@server ~]# echo $r
+not exist
+[root@server ~]# dongwm=
+[root@server ~]# r=${dongwm:-'not exist'}
+[root@server ~]# echo $r
+not exist</pre>
+<strong>3  测试变量不存在或者其值为空 提示错误信息</strong>
+<pre class="sh_bash">[root@server test]# cat test.sh
+#!/bin/bash
+ra=${1:?'错误,请提供要删除目录的名称'}
+echo  '你要执行的命令是'
+echo  "rm -rf ./$ra"
+rm -rf ./$ra
+[root@server test]# ls
+test  test.sh
+[root@server test]# sh test.sh
+test.sh: line 2: 1: 错误,请提供要删除目录的名称
+[root@server test]# ls
+test  test.sh
+[root@server test]# sh test.sh test
+你要执行的命令是
+rm -rf ./test
+[root@server test]# ls
+test.sh  //test目录被删除了</pre></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/shell-%E9%AB%98%E7%BA%A7%E5%8F%98%E9%87%8F/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/ps1ps2ps3ps4%E5%92%8Cprompt_command/">PS1,PS2,PS3,PS4和PROMPT_COMMAND</a></h1>
     
     
@@ -928,46 +1005,6 @@ rsync options source destination</div>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ewatch%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">关于watch命令的研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-12T00:00:00+08:00" pubdate data-updated="true">Mar 12<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>当想重复一个命令或者shell脚本（只间隔几秒），可以使用watch：</strong>
-<strong>1 方便查看日志文件以及其他增长型文件的速度</strong></div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Ewatch%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/29/">&larr; Older</a></li>
@@ -990,6 +1027,10 @@ rsync options source destination</div>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1025,10 +1066,6 @@ rsync options source destination</div>
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

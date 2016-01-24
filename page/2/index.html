@@ -141,6 +141,165 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-29T07:57:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="section">前言</h3>
+
+<p>学common lisp(以下除非特殊需要说明的都简称lisp)以及用emacs的人都有一个体会 - lisp无所不能, 可以使用lisp修改lisp的行为. 什么意思呢?</p>
+
+<p>我来举个例子. 我希望重置<code>+</code>的行为为实际意义的减法<code>-</code>. 看起来这是语言不可能完成的任务, 对lisp来说很简洁(我使用sbcl):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line">* <span class="o">(</span>+ 1 1<span class="o">)</span>
+</span><span class="line">
+</span><span class="line">2  ; 正确结果
+</span><span class="line">* <span class="o">(</span>shadow <span class="s1">&#39;+)</span>
+</span><span class="line">
+</span><span class="line"><span class="s1">T</span>
+</span><span class="line"><span class="s1">* (defgeneric + (a &amp;rest b))</span>
+</span><span class="line">
+</span><span class="line"><span class="s1">#&lt;STANDARD-GENERIC-FUNCTION + (0)&gt;</span>
+</span><span class="line"><span class="s1">* (defmethod + ((a number) &amp;rest b) (apply &#39;</span>cl:- a b<span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="c">#&lt;STANDARD-METHOD + (NUMBER) {1002E43E73}&gt;</span>
+</span><span class="line">* <span class="o">(</span>+ 1 1<span class="o">)</span>
+</span><span class="line">
+</span><span class="line">0  ; 这里的加号的意义其实是我们所理解的<span class="sb">`</span>减号<span class="sb">`</span>
+</span></pre></figure></notextile></div>
+
+<p>是不是很神奇?</p>
+
+<p>那么对于python这种高级语言能不能做到呢? 答案是肯定的. 我们马上就来实现它</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">ast</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s">&#39;1 + 1&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">x</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Sub</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">compile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="mi">0</span>
+</span></pre></figure></notextile></div>
+
+<p>我想大家开始明白AST有多大能量了吧?</p>
+
+<h3 id="ast">AST的故事</h3>
+
+<p><a href="https://docs.python.org/2/library/ast.html">AST</a>中文叫做抽象语法树,
+也就是<code>分析当前版本的python代码的语法, 用一种树的结构解析出来</code>.
+这个模块提供给我们一个在编译代码之前, 用python语言本身去修改.</p>
+
+<p>它的作者是Armin Ronacher.
+如果你听过或者觉得似曾相识, 对. 他就是mitsuhiko - flask的作者.
+也是<a href="http://www.pocoo.org/">pocoo</a>的leader之一(另外一个是看起来不知名的birkenfeld - 对我来说他很有名).</p>
+
+<p>那么AST有什么意义呢? 但是有绝大多数人其实不了解也用不到这个模块, 为什么呢?</p>
+
+<ol>
+  <li>出现需要对代码默认行为做更改的场景很少</li>
+  <li>它主要用来做静态文件的检查, 比如pylint, pychecker，以及写flake8插件. 而我们平时的写代码都是在运行不需要进行预先的语法检查之类, 那么实际接触它就很难得了.</li>
+</ol>
+
+<h3 id="section-1">一些文章的索引</h3>
+
+<p>为了对本文有更深的理解可以看看以下文章</p>
+
+<p><a href="http://pycoders-weekly-chinese.readthedocs.org/en/latest/issue3/static-modification-of-python-with-python-the-ast-module.html#cpython">AST 模块：用 Python 修改 Python 代码</a>这里对流程说的很好了. 可以直接读一下</p>
+
+<p>模块代码也写得非常精炼, 可能不直接让你明白, 那么这时候可以看看</p>
+
+<p><a href="http://greentreesnakes.readthedocs.org/">Abstract Syntax Trees</a>, 这个时候我再强调一下作者吧, takluyver是ipython的核心开发成员, 他也参与了很多我们常用的开源项目, 比如pexpect和pandas</p>
+
+<p>上面的2篇文章写了很多, 既有理解, 也有一些初级的用法.</p>
+
+<h3 id="section-2">我个人用它的例子</h3>
+
+<p>最近做的<a href="https://github.com/dongweiming/slack-alert">slack-alert</a>. 先说它和AST的关系:</p>
+
+<ol>
+  <li>我没有使用注册或者import的方式，而是直接去遍历文件, 找到符合我要求的函数当做一个任务需要执行的任务</li>
+  <li>任务就要设置间隔, 那么会加某种格式的装饰器, 装饰器的参数就是间隔类型, 比如<code>@deco(seconds=10)</code>表示没十秒跑一次的意思</li>
+  <li>我这样就可以放心的写plugin就好了, 我只关注任务本身的逻辑. 而这个装饰器(类似上面说的@deco), 它其实是不存在</li>
+  <li>这个特殊格式的装饰器本身不存在没有关系, 因为我不会直接运行代码, 我只是把代码通过AST的处理, 解析出我要的任务和任务的执行间隔. 再去编译代码.</li>
+</ol>
+
+<p>上代码:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">class</span> <span class="nc">GetJobs</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeTransformer</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># 原来的ast.NodeTransformer其实没有__init__方法</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># 一个方便的获得任务的方法</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">get_job_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decorator</span><span class="p">):</span>  <span class="c"># 这属于解析装饰器这个结构, 拿到执行的间隔</span>
+</span><span class="line">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">arg</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">n</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">decorator</span><span class="o">.</span><span class="n">keywords</span>
+</span><span class="line">                <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">arg</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;hours&#39;</span><span class="p">,</span> <span class="s">&#39;seconds&#39;</span><span class="p">,</span> <span class="s">&#39;minutes&#39;</span><span class="p">,</span> <span class="s">&#39;days&#39;</span><span class="p">)</span>
+</span><span class="line">                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Num</span><span class="p">)}</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">visit_FunctionDef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>  <span class="c"># 这个visit_xxx的方法被重载的时候, 就会对这个类型的语法加一些特殊处理. 因为我设计的时候只有函数才有可能是任务</span>
+</span><span class="line">        <span class="n">decorator_list</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">decorator_list</span>  <span class="c"># 或者一个函数的装饰器列表</span>
+</span><span class="line">        <span class="k">if</span> <span class="ow">not</span> <span class="n">decorator_list</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">node</span>  <span class="c"># 没有装饰器明显不是我想要的任务, 可能只是一个helper函数而已</span>
+</span><span class="line">        <span class="n">decorator</span> <span class="o">=</span> <span class="n">decorator_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># 这里我把最外面的装饰器取出来看看是不是符合我要的格式</span>
+</span><span class="line">        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_job_args</span><span class="p">(</span><span class="n">decorator</span><span class="p">)</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>  <span class="c"># 当获得了适合的参数, 那么正确这个格式是正确的</span>
+</span><span class="line">            <span class="n">node</span><span class="o">.</span><span class="n">decorator_list</span> <span class="o">=</span> <span class="n">decorator_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="c"># 最外面的装饰器就是语法hack, 它不存在也没有意义，以后完成历史任务 去掉之</span>
+</span><span class="line">            <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">node</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">find_jobs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span class="line">    <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+</span><span class="line">            <span class="nb">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span><span class="line">            <span class="k">if</span> <span class="ow">not</span> <span class="nb">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.py&#39;</span><span class="p">):</span>
+</span><span class="line">                <span class="k">continue</span>
+</span><span class="line">            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">                <span class="n">expr_ast</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c"># 读文件, 解析</span>
+</span><span class="line">                <span class="n">transformer</span> <span class="o">=</span> <span class="n">GetJobs</span><span class="p">()</span>
+</span><span class="line">                <span class="n">sandbox</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># 其实就是把执行放在一个命名空间里面, 因为最后我还是会把任务编译执行的, 我在这里面存了执行后的环境</span>
+</span><span class="line">                <span class="k">exec</span><span class="p">(</span><span class="nb">compile</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">expr_ast</span><span class="p">),</span>
+</span><span class="line">                             <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;exec&#39;</span><span class="p">),</span> <span class="n">sandbox</span><span class="p">)</span>
+</span><span class="line">                <span class="n">jobs</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">sandbox</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">transformer</span><span class="o">.</span><span class="n">jobs</span><span class="p">])</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">jobs</span>
+</span></pre></figure></notextile></div>
+
+<p>其实看起来不能完成的事情, 就是这么简单.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/slack-alert-ba-ding-shi-ren-wu-de-jie-guo-fa-song-slackxiao-xi-de-wei-kuang-jia/">Slack-alert - 把定时任务的结果发送slack消息的微框架</a></h1>
     
     
@@ -1420,254 +1579,6 @@ ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa-er/">Ipython的一些高级用法(二)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-12-11T17:04:00+08:00" pubdate data-updated="true">Dec 11<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="ipythonmagic--magic-ipython-history-prun-logstart">今天我们学习下写ipython的magic命令. 好, magic是什么? 它是ipython自带的一些扩展命令, 类似%history, %prun, %logstart..</h4>
-<p>想查看全部的magic可以使用ismagic, 列出可用的全部magics</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">%</span><span class="n">lsmagic</span>
-</span></pre></figure></notextile></div>
-
-<p>magic分为2类:</p>
-
-<ul>
-  <li>line magic: 一些功能命令</li>
-  <li>cell magic: 主要是渲染ipython notebook页面效果以及执行某语言的代码</li>
-</ul>
-
-<h5 id="idbhttpsgithubcomdongweimingidb---python-dbpy-shell-extension"><a href="https://github.com/dongweiming/idb">idb</a> - python db.py shell extension</h5>
-
-<p>idb是我最近写的一个magic. 主要是给ipython提供<a href="https://github.com/yhat/db.py">db.py</a>的接口,我们直接分析代码(我只截取有代表性的一段):</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">os.path</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">urlparse</span> <span class="kn">import</span> <span class="n">urlparse</span>
-</span><span class="line">
-</span><span class="line"><span class="kn">from</span> <span class="nn">db</span> <span class="kn">import</span> <span class="n">DB</span> <span class="c"># db.py提供的接口</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">IPython.core.magic</span> <span class="kn">import</span> <span class="n">Magics</span><span class="p">,</span> <span class="n">magics_class</span><span class="p">,</span> <span class="n">line_magic</span> <span class="c"># 这三个就是我们需要做magic插件的组件</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">get_or_none</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">attr</span> <span class="k">if</span> <span class="n">attr</span> <span class="k">else</span> <span class="bp">None</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">check_db</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">deco</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-</span><span class="line">        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_db</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="c"># 每个magic都需要首页实例化过db，so 直接加装饰器来判断</span>
-</span><span class="line">            <span class="k">print</span> <span class="s">&#39;[ERROR]Please make connection: `con = </span><span class="si">%d</span><span class="s">b_connect xx` or `</span><span class="si">%u</span><span class="s">se_credentials xx` first!&#39;</span>  <span class="c"># noqa</span>
-</span><span class="line">            <span class="k">return</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">deco</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="nd">@magics_class</span>  <span class="c"># 每个magic都需要加这个magics_class装饰器</span>
-</span><span class="line"><span class="k">class</span> <span class="nc">SQLDB</span><span class="p">(</span><span class="n">Magics</span><span class="p">):</span> <span class="c"># 要继承至Magics</span>
-</span><span class="line">    <span class="n">_db</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># 每次打开ipython都是一次实例化</span>
-</span><span class="line">
-</span><span class="line">    <span class="nd">@line_magic</span><span class="p">(</span><span class="s">&#39;db_connect&#39;</span><span class="p">)</span> <span class="c"># 这里用了line_magic 表示它是一个line magic.(其他2种一会再说) magic的名字是db_connect. 注意 函数名不重要</span>
-</span><span class="line">                              <span class="c"># 最后我们用 %db_connect而不是%conn</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">conn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="p">):</span> <span class="c"># 每个这样的方法都接收一个参数 就是你在ipython里输入的内容</span>
-</span><span class="line">        <span class="sd">&quot;&quot;&quot;Conenct to database in ipython shell.</span>
-</span><span class="line"><span class="sd">        Examples::</span>
-</span><span class="line"><span class="sd">            %db_connect</span>
-</span><span class="line"><span class="sd">            %db_connect postgresql://user:pass@localhost:port/database</span>
-</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span class="line">        <span class="n">uri</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">parameter_s</span><span class="p">)</span> <span class="c"># 剩下的都是解析parameter_s的逻辑</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">if</span> <span class="ow">not</span> <span class="n">uri</span><span class="o">.</span><span class="n">scheme</span><span class="p">:</span>
-</span><span class="line">            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">                <span class="s">&#39;dbtype&#39;</span><span class="p">:</span> <span class="s">&#39;sqlite&#39;</span><span class="p">,</span>
-</span><span class="line">                <span class="s">&#39;filename&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">),</span> <span class="s">&#39;db.sqlite&#39;</span><span class="p">)</span>
-</span><span class="line">            <span class="p">}</span>
-</span><span class="line">        <span class="k">elif</span> <span class="n">uri</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s">&#39;sqlite&#39;</span><span class="p">:</span>
-</span><span class="line">            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">                <span class="s">&#39;dbtype&#39;</span><span class="p">:</span> <span class="s">&#39;sqlite&#39;</span><span class="p">,</span>
-</span><span class="line">                <span class="s">&#39;filename&#39;</span><span class="p">:</span> <span class="n">uri</span><span class="o">.</span><span class="n">path</span>
-</span><span class="line">            <span class="p">}</span>
-</span><span class="line">        <span class="k">else</span><span class="p">:</span>
-</span><span class="line">            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">                <span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">username</span><span class="p">),</span>
-</span><span class="line">                <span class="s">&#39;password&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">password</span><span class="p">),</span>
-</span><span class="line">                <span class="s">&#39;hostname&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">hostname</span><span class="p">),</span>
-</span><span class="line">                <span class="s">&#39;port&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">port</span><span class="p">),</span>
-</span><span class="line">                <span class="s">&#39;dbname&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-</span><span class="line">            <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">DB</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="c"># 这里给_db赋值</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="c"># return的结果就会被ipython接收,显示出来</span>
-</span><span class="line">
-</span><span class="line">    <span class="nd">@line_magic</span><span class="p">(</span><span class="s">&#39;db&#39;</span><span class="p">)</span> <span class="c"># 一个新的magic 叫做%db -- 谨防取名冲突</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="p">):</span>
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span>
-</span><span class="line">
-</span><span class="line">    <span class="nd">@line_magic</span><span class="p">(</span><span class="s">&#39;table&#39;</span><span class="p">)</span>
-</span><span class="line">    <span class="nd">@check_db</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="p">):</span>
-</span><span class="line">        <span class="n">p</span> <span class="o">=</span> <span class="n">parameter_s</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="c"># 可能传进来的是多个参数,但是对ipython来说,传进来的就是一堆字符串，所以需要按空格分隔下</span>
-</span><span class="line">        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-</span><span class="line">        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-</span><span class="line">            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-</span><span class="line">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">tables</span>
-</span><span class="line">            <span class="k">else</span><span class="p">:</span>
-</span><span class="line">                <span class="k">return</span> <span class="n">attrgetter</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">tables</span><span class="p">)</span>
-</span><span class="line">        <span class="k">else</span><span class="p">:</span>
-</span><span class="line">            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">tables</span>
-</span><span class="line">            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
-</span><span class="line">                <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;head&#39;</span><span class="p">,</span> <span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;unique&#39;</span><span class="p">,</span> <span class="s">&#39;count&#39;</span><span class="p">,</span> <span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="s">&#39;query&#39;</span><span class="p">]:</span>
-</span><span class="line">                    <span class="n">data</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="n">c</span><span class="p">)(</span><span class="n">data</span><span class="p">)()</span>
-</span><span class="line">                <span class="k">else</span><span class="p">:</span>
-</span><span class="line">                    <span class="n">data</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="n">c</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
-</span><span class="line">            <span class="k">return</span> <span class="n">data</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">load_ipython_extension</span><span class="p">(</span><span class="n">ipython</span><span class="p">):</span> <span class="c"># 注册一下. 假如你直接去ipython里面加 就不需要这个了</span>
-</span><span class="line">    <span class="n">ipython</span><span class="o">.</span><span class="n">register_magics</span><span class="p">(</span><span class="n">SQLDB</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<p>PS:</p>
-
-<ol>
-  <li>调试中可以使用%reloa_ext idb 的方式重启magic</li>
-  <li>%install_ext 之后默认放在你的ipython自定义目录/extensions里. 我这里是~/.ipython/extensions</li>
-</ol>
-
-<p>好了,大家是不是觉得ipython的magic也不是很难嘛</p>
-
-<h5 id="ipython">来了解ipython都提供了什么?</h5>
-
-<ol>
-  <li>magic装饰器的类型:</li>
-</ol>
-
-<ul>
-  <li>line_magic # 刚才我们见识了, 就是%xx, xx就是magic的名字</li>
-  <li>cell_magic # 就是%%xx</li>
-  <li>line_cell_magic # 可以是%xx, 也可以是%%xx</li>
-</ul>
-
-<p>先说cell_magic 来个例子，假如我想执行个ruby,本来应该是:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="err">!</span><span class="n">ruby</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;p &quot;hello&quot;&#39;</span>
-</span><span class="line"><span class="s">&quot;hello&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="o">%%</span><span class="n">ruby</span> <span class="c"># 也可以这样</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="n">p</span> <span class="s">&quot;hello&quot;</span>
-</span><span class="line">      <span class="o">...</span><span class="p">:</span>
-</span><span class="line">      <span class="s">&quot;hello&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="err">再说个</span><span class="n">notebook</span><span class="err">的</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="o">%%</span><span class="n">javascript</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="n">require</span><span class="o">.</span><span class="n">config</span><span class="p">({</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">paths</span><span class="p">:</span> <span class="p">{</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="n">chartjs</span><span class="p">:</span> <span class="s">&#39;//code.highcharts.com/highcharts&#39;</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="p">}</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="p">});</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">   <span class="o">&lt;</span><span class="n">IPython</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Javascript</span> <span class="nb">object</span><span class="o">&gt;</span>
-</span><span class="line"><span class="p">});</span>
-</span></pre></figure></notextile></div>
-
-<p>然后再说line_cell_magic:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="o">%</span><span class="n">time</span> <span class="mi">2</span><span class="o">**</span><span class="mi">128</span>
-</span><span class="line"><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mi">2</span> <span class="err">µ</span><span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mi">1</span> <span class="err">µ</span><span class="n">s</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mi">3</span> <span class="err">µ</span><span class="n">s</span>
-</span><span class="line"><span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">5.01</span> <span class="err">µ</span><span class="n">s</span>
-</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="il">340282366920938463463374607431768211456L</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="o">%%</span><span class="n">time</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">128</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>
-</span><span class="line">   <span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mi">4</span> <span class="err">µ</span><span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ns</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mi">4</span> <span class="err">µ</span><span class="n">s</span>
-</span><span class="line">   <span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">9.06</span> <span class="err">µ</span><span class="n">s</span>
-</span><span class="line">   <span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="il">340282366920938463463374607431768211456L</span>
-</span></pre></figure></notextile></div>
-
-<p>Ps: line_cell_magic方法的参数是2个:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@line_cell_magic</span>
-</span><span class="line"><span class="k">def</span> <span class="nf">xx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-</span></pre></figure></notextile></div>
-
-<h5 id="magicipythonmagic">带参数的magic（我直接拿ipython源码提供的magic来说明):</h5>
-
-<p>一共2种风格:</p>
-
-<ul>
-  <li>使用getopt: self.parse_options</li>
-  <li>使用argparse: magic_arguments</li>
-</ul>
-
-<h6 id="selfparseoptions">self.parse_options</h6>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@line_cell_magic</span>
-</span><span class="line"><span class="k">def</span> <span class="nf">prun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-</span><span class="line">    <span class="n">opts</span><span class="p">,</span> <span class="n">arg_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_options</span><span class="p">(</span><span class="n">parameter_s</span><span class="p">,</span> <span class="s">&#39;D:l:rs:T:q&#39;</span><span class="p">,</span>
-</span><span class="line">                                       <span class="n">list_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">posix</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-</span><span class="line">    <span class="o">...</span>
-</span></pre></figure></notextile></div>
-
-<p>getopt用法可以看这里 http://pymotw.com/2/getopt/index.html#module-getopt</p>
-
-<p>我简单介绍下’D:l:rs:T:q’就是可以使用 -D, -l, -r, -s, -T, -q这些选项. <code>:</code>号是告诉你是否需要参数,split下就是:
-D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %prun -D <filename /></p>
-
-<h6 id="magicarguments">magic_arguments</h6>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@magic_arguments.magic_arguments</span><span class="p">()</span> <span class="c"># 最上面</span>
-</span><span class="line"><span class="nd">@magic_arguments.argument</span><span class="p">(</span><span class="s">&#39;--breakpoint&#39;</span><span class="p">,</span> <span class="s">&#39;-b&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;FILE:LINE&#39;</span><span class="p">,</span>
-</span><span class="line">    <span class="n">help</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class="line"><span class="s">    Set break point at LINE in FILE.</span>
-</span><span class="line"><span class="s">    &quot;&quot;&quot;</span>
-</span><span class="line"><span class="p">)</span> <span class="c"># 这种argument可以有多个</span>
-</span><span class="line"><span class="nd">@magic_arguments.argument</span><span class="p">(</span><span class="s">&#39;statement&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;*&#39;</span><span class="p">,</span>
-</span><span class="line">    <span class="n">help</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class="line"><span class="s">    Code to run in debugger.</span>
-</span><span class="line"><span class="s">    You can omit this in cell magic mode.</span>
-</span><span class="line"><span class="s">    &quot;&quot;&quot;</span>
-</span><span class="line"><span class="p">)</span>
-</span><span class="line"><span class="nd">@line_cell_magic</span>
-</span><span class="line"><span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-</span><span class="line">    <span class="n">args</span> <span class="o">=</span> <span class="n">magic_arguments</span><span class="o">.</span><span class="n">parse_argstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span> <span class="c"># 要保持第一个参数等于这个方法名字,这里就是self.debug</span>
-</span><span class="line">    <span class="o">...</span>
-</span></pre></figure></notextile></div>
-
-<p>还有个magic方法集: 用于并行计算的magics: <a href="https://github.com/ipython/ipython/blob/master/IPython/parallel/client/magics.py">IPython/parallel/client/magics.py</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/3/">&larr; Older</a></li>
@@ -1690,6 +1601,10 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1725,10 +1640,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

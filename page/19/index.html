@@ -141,6 +141,66 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/tornadoduihttp403405zhongdingxiang/">Tornado对http403，405重定向</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-11T00:00:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：http403表示禁止访问，比如没有相应权限，比如它不是一个可以读的文件（目录）;http405表示资源被禁止，比如一个url要求你使用post方式访问，你直接打开网页用get方式就不可以</p>
+
+<p>修改 tornado源码web.py</p>
+
+<p><pre class="sh_python">
+if not (abspath + os.path.sep).startswith(self.root): #大概1479行
+    #raise HTTPError(403, "%s is not in root static directory", path)
+    self.render("error403.html")
+    return -1      </p>
+
+<p>if not os.path.isfile(abspath):   #大概1492
+    #raise HTTPError(403, "%s is not a file", path)
+    self.render("error403.html")
+    return -1</p>
+
+<p>def get(self, *args, **kwargs):  #大概158行
+    self.render("error405.html")
+    #raise HTTPError(405)</p>
+
+<p>注：不能在self.set_status根据code标识重定向（self._finished已经被设置了，会重复2次）
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/tornado404shixianzhongdingxiangyemian/">Tornado 404实现重定向页面</a></h1>
     
     
@@ -1511,60 +1571,6 @@ emerge -C anjuta</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/opensuserpmshujukusunhuaidejiejuefangfa/">Opensuse Rpm数据库损坏的解决方法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-23T00:00:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>opensuse后来使用不知道为什么，安装更新软件以及我最近做的从11。4升级到12。1的操作，都会报类似的错误：</p>
-
-<p>rpmdb: PANIC: fatal region error detected; run recovery
-error: db3 error(-30977) from db-&gt;sync: DB_RUNRECOVERY: Fatal error, run database recovery
-rpmdb: PANIC: fatal region error detected; run recovery
-下列软件包在安装期间或安装后或移除时出现问题：
-Installation aborted by user
-研究发现：这是因为rpm数据库损坏了，解决办法</p>
-
-<p>使用 <span style="color: navy;"># rpm &#8211;rebuilddb</span> 或者 <span style="color: navy;"># rpm -initdb</span> 、（重新建立了rpm库里的记录）</p>
-
-<p>但是 加入还是不行，那只能这样：</p>
-
-<p>rm /var/lib/rpm/__db*</p>
-
-<p>rpm &#8211;rebuilddb
-yum clean all  会删除之前的缓存，例如刚下载国12。1的那些更新包，就不能使用 ，需要重新下载安装了</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/20/">&larr; Older</a></li>
@@ -1587,6 +1593,10 @@ yum clean all  会删除之前的缓存，例如刚下载国12。1的那些更�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1622,10 +1632,6 @@ yum clean all  会删除之前的缓存，例如刚下载国12。1的那些更�
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

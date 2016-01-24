@@ -141,6 +141,160 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyudatetimeyanjiu/">关于datetime研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：datetime是一个日期/时间值操作的模块</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>t = datetime.time(1, 2, 3)  #这事一个关于时间的调用
+print t
+print 'hour  :', t.hour 
+print 'minute:', t.minute
+print 'second:', t.second
+print 'microsecond:', t.microsecond
+print 'tzinfo:', t.tzinfo
+</pre></p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>today = datetime.date.today()  #这是一个关于日期的调用
+print today
+print 'ctime:', today.ctime()
+print 'tuple:', today.timetuple()
+print 'ordinal:', today.toordinal()
+print 'Year:', today.year
+print 'Mon :', today.month
+print 'Day :', today.day
+d1 = datetime.date(2008, 3, 12)
+print 'd1:', d1
+d2 = d1.replace(year=2009)
+print 'd2:', d2
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+2012-06-12
+ctime: Tue Jun 12 00:00:00 2012
+tuple: time.struct_time(tm_year=2012, tm_mon=6, tm_mday=12, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=1, tm_yday=164, tm_isdst=-1)
+ordinal: 734666
+Year: 2012
+Mon : 6
+Day : 12</p>
+
+<p>d1: 2008-03-12
+d2: 2009-03-12</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>today = datetime.date.today()  #计算今天
+print 'Today    :', today</p>
+
+<p>one_day = datetime.timedelta(days=1) #<tt>timedelta</tt>类通过的日期值进行基本的算术，这个步长是1天
+print 'One day  :', one_day</p>
+
+<p>yesterday = today - one_day
+print 'Yesterday:', yesterday</p>
+
+<p>tomorrow = today + one_day
+print 'Tomorrow :', tomorrow</p>
+
+<p>print 'tomorrow - yesterday:', tomorrow - yesterday   #日期计算，当然也可以使用比较计算
+print 'yesterday - tomorrow:', yesterday - tomorrow
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>Today    : 2012-06-12
+One day  : 1 day, 0:00:00
+Yesterday: 2012-06-11
+Tomorrow : 2012-06-13
+tomorrow - yesterday: 2 days, 0:00:00
+yesterday - tomorrow: -2 days, 0:00:00</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>print 'Now    :', datetime.datetime.now() #datetime.datetime结合了日期和时间,合并也可以这样：datetime.datetime.combine(datetime.date.today(), datetime.time(1, 2, 3))
+print 'Today  :', datetime.datetime.today()
+print 'UTC Now:', datetime.datetime.utcnow()</p>
+
+<p>d = datetime.datetime.now()
+for attr in [ 'year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond']:
+    print attr, ':', getattr(d, attr)
+</pre></p>
+
+<p>结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Now    : 2012-06-12 15:31:49.960739  #精确到微秒
+Today  : 2012-06-12 15:31:49.961110
+UTC Now: 2012-06-12 07:31:49.961128
+year : 2012
+month : 6
+day : 12
+hour : 15
+minute : 31
+second : 49
+microsecond : 961134</p>
+
+<p><pre class="sh_python">
+import datetime</p>
+
+<p>format = "%a %b %d %H:%M:%S %Y" #想格式化成： 星期几的简称 月简称  一个月的第几天（01..31)  小时 分 秒 年</p>
+
+<p>today = datetime.datetime.today()
+print 'ISO     :', today</p>
+
+<p>s = today.strftime(format)
+print 'strftime:', s</p>
+
+<p>d = datetime.datetime.strptime(s, format)
+print 'strptime:', d.strftime(format)
+</pre>
+结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+ISO     : 2012-06-12 15:34:48.377180
+strftime: Tue Jun 12 15:34:48 2012
+strptime: Tue Jun 12 15:34:48 2012</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyucstringioyanjiu/">关于cStringIO研究</a></h1>
     
     
@@ -1269,248 +1423,6 @@ import re</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyubz2yanjiu/">关于cmd研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：cmd模块创建面向行的命令处理器</p>
-
-<p><strong>1 例子：</strong></p>
-
-<p><pre class="sh_python">
-import cmd</p>
-
-<p>class HelloWorld(cmd.Cmd):
-    def do_exhello(self, line):  #设置一个命令，其中，这个命令就是‘do_’后面的字符串，这里，这个命令就是exhello
-        print "hello"</p>
-
-<p>    def do_EOF(self, line):  #设置一个结束方法，这里返回true表示程序退出
-        return True
-if __name__ == '__main__':
-    HelloWorld().cmdloop()
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py  #启动程序
-(Cmd) help   #进入cmd模式，输入‘help’
-Undocumented commands:
-======================
-EOF  exhello  help  #显示目前有三个命令可用</p>
-
-<p>(Cmd) exhello  #执行我们自定义的命令
-hello  #执行这个命令的方法
-(Cmd) testcmd  #不存在这个命令，报错
-*** Unknown syntax: testcmd
-(Cmd) dongwm@linux-dongwm:~&gt; #退出</p>
-
-<p><strong>2 例子（命令带参数）：</strong></p>
-
-<p><pre class="sh_python">
-import cmd
-class HelloWorld(cmd.Cmd):
-    def do_exhello(self, person):
-        """exhello [person]   #这个方法注释就是显示这个命令帮助的信息
-        Greet the named person"""
-        if person:
-            print "hi,", person
-        else:
-            print 'hi'
-    def do_EOF(self, line):
-        return True
-if __name__ == '__main__':
-    HelloWorld().cmdloop()
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-(Cmd) help</p>
-
-<p>Documented commands (type help &lt;topic&gt;):
-========================================
-exhello</p>
-
-<p>Undocumented commands:
-======================
-EOF  help</p>
-
-<p>(Cmd) help exhello   #显示命令的帮助
-exhello [person]
-Greet the named person
-(Cmd) exhello dongwm
-hi, dongwm
-(Cmd) exhello
-hi
-<strong>注：上面的例子，也可以不实用方法的注释作为帮助信息，可以定义一个方法名字是：&#8217;help_&#8217; + 这个命令</strong></p>
-
-<p><pre class="sh_python">
-class HelloWorld(cmd.Cmd):
-    def do_exhello(self, person):
-        if person:
-            print "hi,", person
-        else:
-            print 'hi'
-    def help_exhello(self):  #注意这个方法
-        print '\n'.join([ 'greet [person]',
-                           'Greet the named person',])
-    def do_EOF(self, line):
-        return True
-if __name__ == '__main__':
-    HelloWorld().cmdloop()
-</pre></p>
-
-<p><strong>3 实现命令的tab自动补全，其实还是给命令添加一个方法：&#8217;complete_&#8217; + 命令名字</strong></p>
-
-<p><pre class="sh_python">
-import cmd
-class HelloWorld(cmd.Cmd):
-    FRIENDS = [ 'ailll', 'dongwm' ]  #设置一个命令提示的数据范围，这里有这2个字符串
-    def do_exhello(self, person):
-        if person:
-            print "hi,", person
-        else:
-            print 'hi'
-    def complete_exhello(self, text, line, begidx, endidx):  #自动补全的方法
-        if not text:  #当没有设置时候 打印所有可选的字符串
-            completions = self.FRIENDS[:]
-        else:  
-            completions = [ f
-                            for f in self.FRIENDS
-                            if f.startswith(text)
-                            ]  #假如输入的字母符合那个提供的字符串列表中的某项开头，打印之
-        return completions
-    def do_EOF(self, line):
-        return True
-if __name__ == '__main__':
-    HelloWorld().cmdloop()
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-(Cmd) &lt;tab&gt;&lt;tab&gt; #2下‘tab’自动输出全部命令
-EOF      exhello  help
-(Cmd) exhello dongwm #在输入ex，按&lt;tab&gt;自动补全exhello ，然后空格，输入字母&#8217;d&#8217;，因为符合列表中的&#8217;dongwm&#8217;，自动补全
-hi, dongwm
-(Cmd)
-<strong>4 通过属性配置CMD</strong></p>
-
-<p><pre class="sh_python">
-import cmd
-class HelloWorld(cmd.Cmd):
-    prompt = 'prompt: '   #设置最开始的提示符
-    intro = "Simple command processor example."  #一个欢迎的旗标，执行cmd后自动打印出来
-    doc_header = 'doc_header'
-    misc_header = 'misc_header'
-    undoc_header = 'undoc_header'
-    ruler = '-'
-    def do_prompt(self, line):
-        "Change the interactive prompt"  #当执行prompt这个命令，修改提示符
-        self.prompt = line + ': '</p>
-
-<p>    def do_EOF(self, line):
-        return True
-if __name__ == '__main__':
-    HelloWorld().cmdloop()
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Simple command processor example.  #一开始打印旗标
-prompt: prompt test #使用prompt命令修改标识
-test: help  #表示变成&#8217;test:&#8217; 执行help命令
-doc_header
-&#8212;&#8212;&#8212;-
-prompt
-undoc_header
-&#8212;&#8212;&#8212;&#8212;
-EOF  help
-test:</p>
-
-<p><strong>5类似于shell的历史记录，比如使用? !</strong></p>
-
-<p>注：&#8217;?&#8217;相当于内置的help，&#8217;!&#8217;相当于象以前一样使用这个命令</p>
-
-<p><pre class="sh_python">
-import cmd
-import os</p>
-
-<p>class ShellEnabled(cmd.Cmd):
-    last_output = ''
-    def do_shell(self, line):
-        print "running shell command:", line
-        output = os.popen(line).read()  #相当与启动一个新shell操作
-        print output
-        self.last_output = output
-    def do_echo(self, line):
-        "Print the input, replacing '$out' with the output of the last shell command"
-        print line.replace('$out', self.last_output)
-    def do_EOF(self, line):
-        return True
-if __name__ == '__main__':
-    ShellEnabled().cmdloop()
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-(Cmd) ?</p>
-
-<p>Documented commands (type help &lt;topic&gt;):
-========================================
-echo  #因为这个命令指定了方法的描述</p>
-
-<p>Undocumented commands:
-======================
-EOF  help  shell</p>
-
-<p>(Cmd) ?echo  #因为以前没有用过命令，还不存在
-Print the input, replacing &#8216;$out&#8217; with the output of the last shell command
-(Cmd) shell pwd  #执行shell  打印当前目录
-running shell command: pwd
-/home/dongwm</p>
-
-<p>(Cmd) !pwd  #执行上一个命令shell，还是打印当前目录
-running shell command: pwd
-/home/dongwm</p>
-
-<p>(Cmd) echo $out  #现在$out存在了
-/home/dongwm</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1533,6 +1445,10 @@ running shell command: pwd
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1568,10 +1484,6 @@ running shell command: pwd
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

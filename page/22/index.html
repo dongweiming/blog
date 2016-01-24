@@ -141,6 +141,74 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/jiejuelinuxxiaanzhuangpypcapwenti/">解决linux下安装pypcap问题</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-20T00:00:00+08:00" pubdate data-updated="true">Dec 20<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：libpcap的python接口pypcap的安装我想很多编译安装者都很头疼，因为可能出现很多报错，类似于下面：</p>
+
+<p>在包含自 /usr/local/include/python2.6/Python.h：58 的文件中，
+从 pcap.c：3:
+/usr/local/include/python2.6/pyport.h:685:2: 错误：#error &#8220;LONG_BIT definition appears wrong for platform (bad gcc/glibc config?).&#8221;</p>
+
+<p>&#8230;&#8230;</p>
+
+<p>pcap.c:1719: 警告：未使用的变量 ‘p’
+pcap.c: In function ‘__pyx_tp_dealloc_4pcap_pcap’:
+pcap.c:1724: 警告：未使用的变量 ‘p’
+pcap.c: In function ‘__pyx_tp_traverse_4pcap_pcap’:
+pcap.c:1739: 警告：未使用的变量 ‘p’
+pcap.c:1738: 警告：未使用的变量 ‘e’
+pcap.c: In function ‘__pyx_tp_clear_4pcap_pcap’:
+pcap.c:1744: 警告：未使用的变量 ‘p’
+pcap.c: In function ‘__Pyx_GetStarArgs’:
+pcap.c:2253: 警告：建议显式地使用花括号以避免出现有歧义的 ‘else’
+pcap.c:2255: 警告：建议显式地使用花括号以避免出现有歧义的 ‘else’
+error: command &#8216;gcc&#8217; failed with exit status 1</p>
+
+<p><strong> 首先确定环境：</strong></p>
+
+<p><strong>1 安装python-devel（需要Python.h）</strong></p>
+
+<p><address><strong>2 安装libpcap，libpcap-devel （需要pcap.h）</strong></address><strong>3 安装pypcap：</strong>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">tar zxvf pypcap-1.1.tar.gz </span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">cd pypcap-1.1</span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">CFLAGS=-m32 python setup.py config </span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">CFLAGS=-m32 python setup.py build </span></span></p>
+<p align="LEFT"><span style="font-family: Liberation Serif,serif;"><span style="font-size: x-small;">CFLAGS=-m32 python setup.py install </span></span></p>
+<p align="LEFT"></p>
+&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sqlitedepythoncaozuomoban/">Sqlite的python操作模板</a></h1>
     
     
@@ -899,59 +967,6 @@ sudo rpm -ivh kiba-plugins-0.svn862-7.6.i586.rpm kiba-dock-0.svn862-6.6.i586.rpm
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/jiejuepyqtxitongtuopanyoujiancaidanzaidianjiqitaweizhibuyincangxiaoshidewenti/">解决pyqt系统托盘右键菜单在点击其他位置不隐藏（消失）的问题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-10-25T00:00:00+08:00" pubdate data-updated="true">Oct 25<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：在使用一些软件的时候都发现当你右键点开这个软件的菜单，再点击其他位置这个菜单会隐藏起来。这样不弹出的菜单无法消失，必须点击菜单项或者应用程序窗体才会消失。。pyqt软件也有这个问题。我研究了一下：该菜单的context是默认的应用程序窗体，当窗体获得焦点时，系统托盘的上下文菜单才会消失。</p>
-
-<p>请看我的部分代码：</p>
-
-<p>self.minimizeAction = QtGui.QAction(u&#8221;最小化&#8221;, self,
-triggered=self.hide)   ＃这个self是继承QtGui.QMainWindow的类
-self.restoreAction = QtGui.QAction(u&#8221;显示菜单&#8221;, self,
-triggered=self.show)
-self.quitAction = QtGui.QAction(u&#8221;退出&#8221;, self,
-triggered=QtGui.qApp.quit)</p>
-
-<p>self.trayIconMenu = QtGui.QMenu(self)
-self.trayIconMenu.addAction(self.restoreAction)
-self.trayIconMenu.addAction(self.minimizeAction)
-self.trayIconMenu.addAction(self.quitAction)
-需要将“self.trayIconMenu = QtGui.QMenu(self)”这行修改为“self.trayIconMenu = QtGui.QMenu(QtGui.QApplication.desktop())”  原理是将这个菜单当作一个桌面</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/23/">&larr; Older</a></li>
@@ -974,6 +989,10 @@ self.trayIconMenu.addAction(self.quitAction)
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1009,10 +1028,6 @@ self.trayIconMenu.addAction(self.quitAction)
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

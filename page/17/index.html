@@ -141,6 +141,248 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyubz2yanjiu/">关于cmd研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：cmd模块创建面向行的命令处理器</p>
+
+<p><strong>1 例子：</strong></p>
+
+<p><pre class="sh_python">
+import cmd</p>
+
+<p>class HelloWorld(cmd.Cmd):
+    def do_exhello(self, line):  #设置一个命令，其中，这个命令就是‘do_’后面的字符串，这里，这个命令就是exhello
+        print "hello"</p>
+
+<p>    def do_EOF(self, line):  #设置一个结束方法，这里返回true表示程序退出
+        return True
+if __name__ == '__main__':
+    HelloWorld().cmdloop()
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py  #启动程序
+(Cmd) help   #进入cmd模式，输入‘help’
+Undocumented commands:
+======================
+EOF  exhello  help  #显示目前有三个命令可用</p>
+
+<p>(Cmd) exhello  #执行我们自定义的命令
+hello  #执行这个命令的方法
+(Cmd) testcmd  #不存在这个命令，报错
+*** Unknown syntax: testcmd
+(Cmd) dongwm@linux-dongwm:~&gt; #退出</p>
+
+<p><strong>2 例子（命令带参数）：</strong></p>
+
+<p><pre class="sh_python">
+import cmd
+class HelloWorld(cmd.Cmd):
+    def do_exhello(self, person):
+        """exhello [person]   #这个方法注释就是显示这个命令帮助的信息
+        Greet the named person"""
+        if person:
+            print "hi,", person
+        else:
+            print 'hi'
+    def do_EOF(self, line):
+        return True
+if __name__ == '__main__':
+    HelloWorld().cmdloop()
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Cmd) help</p>
+
+<p>Documented commands (type help &lt;topic&gt;):
+========================================
+exhello</p>
+
+<p>Undocumented commands:
+======================
+EOF  help</p>
+
+<p>(Cmd) help exhello   #显示命令的帮助
+exhello [person]
+Greet the named person
+(Cmd) exhello dongwm
+hi, dongwm
+(Cmd) exhello
+hi
+<strong>注：上面的例子，也可以不实用方法的注释作为帮助信息，可以定义一个方法名字是：&#8217;help_&#8217; + 这个命令</strong></p>
+
+<p><pre class="sh_python">
+class HelloWorld(cmd.Cmd):
+    def do_exhello(self, person):
+        if person:
+            print "hi,", person
+        else:
+            print 'hi'
+    def help_exhello(self):  #注意这个方法
+        print '\n'.join([ 'greet [person]',
+                           'Greet the named person',])
+    def do_EOF(self, line):
+        return True
+if __name__ == '__main__':
+    HelloWorld().cmdloop()
+</pre></p>
+
+<p><strong>3 实现命令的tab自动补全，其实还是给命令添加一个方法：&#8217;complete_&#8217; + 命令名字</strong></p>
+
+<p><pre class="sh_python">
+import cmd
+class HelloWorld(cmd.Cmd):
+    FRIENDS = [ 'ailll', 'dongwm' ]  #设置一个命令提示的数据范围，这里有这2个字符串
+    def do_exhello(self, person):
+        if person:
+            print "hi,", person
+        else:
+            print 'hi'
+    def complete_exhello(self, text, line, begidx, endidx):  #自动补全的方法
+        if not text:  #当没有设置时候 打印所有可选的字符串
+            completions = self.FRIENDS[:]
+        else:  
+            completions = [ f
+                            for f in self.FRIENDS
+                            if f.startswith(text)
+                            ]  #假如输入的字母符合那个提供的字符串列表中的某项开头，打印之
+        return completions
+    def do_EOF(self, line):
+        return True
+if __name__ == '__main__':
+    HelloWorld().cmdloop()
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Cmd) &lt;tab&gt;&lt;tab&gt; #2下‘tab’自动输出全部命令
+EOF      exhello  help
+(Cmd) exhello dongwm #在输入ex，按&lt;tab&gt;自动补全exhello ，然后空格，输入字母&#8217;d&#8217;，因为符合列表中的&#8217;dongwm&#8217;，自动补全
+hi, dongwm
+(Cmd)
+<strong>4 通过属性配置CMD</strong></p>
+
+<p><pre class="sh_python">
+import cmd
+class HelloWorld(cmd.Cmd):
+    prompt = 'prompt: '   #设置最开始的提示符
+    intro = "Simple command processor example."  #一个欢迎的旗标，执行cmd后自动打印出来
+    doc_header = 'doc_header'
+    misc_header = 'misc_header'
+    undoc_header = 'undoc_header'
+    ruler = '-'
+    def do_prompt(self, line):
+        "Change the interactive prompt"  #当执行prompt这个命令，修改提示符
+        self.prompt = line + ': '</p>
+
+<p>    def do_EOF(self, line):
+        return True
+if __name__ == '__main__':
+    HelloWorld().cmdloop()
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Simple command processor example.  #一开始打印旗标
+prompt: prompt test #使用prompt命令修改标识
+test: help  #表示变成&#8217;test:&#8217; 执行help命令
+doc_header
+&#8212;&#8212;&#8212;-
+prompt
+undoc_header
+&#8212;&#8212;&#8212;&#8212;
+EOF  help
+test:</p>
+
+<p><strong>5类似于shell的历史记录，比如使用? !</strong></p>
+
+<p>注：&#8217;?&#8217;相当于内置的help，&#8217;!&#8217;相当于象以前一样使用这个命令</p>
+
+<p><pre class="sh_python">
+import cmd
+import os</p>
+
+<p>class ShellEnabled(cmd.Cmd):
+    last_output = ''
+    def do_shell(self, line):
+        print "running shell command:", line
+        output = os.popen(line).read()  #相当与启动一个新shell操作
+        print output
+        self.last_output = output
+    def do_echo(self, line):
+        "Print the input, replacing '$out' with the output of the last shell command"
+        print line.replace('$out', self.last_output)
+    def do_EOF(self, line):
+        return True
+if __name__ == '__main__':
+    ShellEnabled().cmdloop()
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+(Cmd) ?</p>
+
+<p>Documented commands (type help &lt;topic&gt;):
+========================================
+echo  #因为这个命令指定了方法的描述</p>
+
+<p>Undocumented commands:
+======================
+EOF  help  shell</p>
+
+<p>(Cmd) ?echo  #因为以前没有用过命令，还不存在
+Print the input, replacing &#8216;$out&#8217; with the output of the last shell command
+(Cmd) shell pwd  #执行shell  打印当前目录
+running shell command: pwd
+/home/dongwm</p>
+
+<p>(Cmd) !pwd  #执行上一个命令shell，还是打印当前目录
+running shell command: pwd
+/home/dongwm</p>
+
+<p>(Cmd) echo $out  #现在$out存在了
+/home/dongwm</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyubisectyanjiu/">关于bisect研究</a></h1>
     
     
@@ -1100,134 +1342,6 @@ sendmail
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonzhongduanxianshicaisezifu/">Python终端显示彩色字符</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-27T00:00:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：作一个脚本或者程序在需要发音很多输出的时候，默认的白色会让人看的很困，但是有了彩色做个分割线或者让一些重要信息用彩色字体打印出来就好多了，以前一直在用模块实现，后来发现print借用ANSI控制码原来也可以：参见：http://www.oschina.net/code/snippet_87675_8599</p>
-
-<p>1分析这个程序</p>
-
-<p><pre class="sh_python">
-#!/usr/bin/env python
-#-*-coding:utf-8-*-
-#Filename:</p>
-
-<p>__author__ = "maqiang.jacky &lt;maqiang.jacky@snda.com&gt;"
-__version__ = 1.0
-__date__ = "12-2-9"</p>
-
-<p>"""
-0  All attributes off 默认值
-1  Bold (or Bright) 粗体 or 高亮
-4  Underline 下划线
-5  Blink 闪烁
-7  Invert 反显
-30 Black text
-31 Red text
-32 Green text
-33 Yellow text
-34 Blue text
-35 Purple text
-36 Cyan text
-37 White text
-40 Black background
-41 Red background
-42 Green background
-43 Yellow background
-44 Blue background
-45 Purple background
-46 Cyan background
-47 White background
-"""
-def main():
-    """ """
-for atrr in [0,1,4,5,7]:   0表示无属性，1表示高亮，4加下划线，5表示闪烁 ，7反显 ，8消隐 
-    print "attribute %d ------------------------------" % atrr
-    for fore in [30,31,32,33,34,35,36,37]:
-        for back in [40,41,42,43,44,45,46,47]:
-            color = "\x1B[%d;%d;%dm" % (atrr,fore,back)  #除了atrr，分别代表 字的颜色，底色
-            print "%s %d-%d-%d\x1B[0m" % (color,atrr,fore,back),
-        print ""
-if __name__ == "__main__":
-    """ """
-    main()
-</pre></p>
-
-<p>其中</p>
-
-<p>字背景颜色范围:40&#8212;-49
-40:黑
-41:深红
-42:绿
-43:黄色
-44:蓝色
-45:紫色
-46:深绿
-47:白色</p>
-
-<p>字颜色:30&#8212;&#8212;&#8212;&#8211;39
-30:黑
-31:红
-32:绿
-33:黄
-34:蓝色
-35:紫色
-36:深绿
-37:白色</p>
-
-<p>因为我不需要底色，自己写了一个方法：</p>
-
-<p><pre class="sh_python">
-def myprint(color,mes):
-    if color == 'r':
-        fore = 31
-    elif color == 'g':
-        fore = 32
-    elif color == 'b':
-        fore = 36
-    elif color == 'y':
-        fore = 33
-    else:
-        fore = 37
-    color = "\x1B[%d;%dm" % (1,fore)
-    print "%s %s\x1B[0m" % (color,mes)
-</pre></p>
-
-<p>假如想显示一段信息为红色：</p>
-
-<p>dongwm@linux-dongwm:~&gt; myprint(&#8216;r&#8217;,&#8217;some messages&#8217;)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/18/">&larr; Older</a></li>
@@ -1250,6 +1364,10 @@ def myprint(color,mes):
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1285,10 +1403,6 @@ def myprint(color,mes):
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

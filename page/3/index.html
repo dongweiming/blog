@@ -141,6 +141,254 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa-er/">Ipython的一些高级用法(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-11T17:04:00+08:00" pubdate data-updated="true">Dec 11<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="ipythonmagic--magic-ipython-history-prun-logstart">今天我们学习下写ipython的magic命令. 好, magic是什么? 它是ipython自带的一些扩展命令, 类似%history, %prun, %logstart..</h4>
+<p>想查看全部的magic可以使用ismagic, 列出可用的全部magics</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">%</span><span class="n">lsmagic</span>
+</span></pre></figure></notextile></div>
+
+<p>magic分为2类:</p>
+
+<ul>
+  <li>line magic: 一些功能命令</li>
+  <li>cell magic: 主要是渲染ipython notebook页面效果以及执行某语言的代码</li>
+</ul>
+
+<h5 id="idbhttpsgithubcomdongweimingidb---python-dbpy-shell-extension"><a href="https://github.com/dongweiming/idb">idb</a> - python db.py shell extension</h5>
+
+<p>idb是我最近写的一个magic. 主要是给ipython提供<a href="https://github.com/yhat/db.py">db.py</a>的接口,我们直接分析代码(我只截取有代表性的一段):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">os.path</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">urlparse</span> <span class="kn">import</span> <span class="n">urlparse</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">db</span> <span class="kn">import</span> <span class="n">DB</span> <span class="c"># db.py提供的接口</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">IPython.core.magic</span> <span class="kn">import</span> <span class="n">Magics</span><span class="p">,</span> <span class="n">magics_class</span><span class="p">,</span> <span class="n">line_magic</span> <span class="c"># 这三个就是我们需要做magic插件的组件</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">get_or_none</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">attr</span> <span class="k">if</span> <span class="n">attr</span> <span class="k">else</span> <span class="bp">None</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">check_db</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">deco</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_db</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="c"># 每个magic都需要首页实例化过db，so 直接加装饰器来判断</span>
+</span><span class="line">            <span class="k">print</span> <span class="s">&#39;[ERROR]Please make connection: `con = </span><span class="si">%d</span><span class="s">b_connect xx` or `</span><span class="si">%u</span><span class="s">se_credentials xx` first!&#39;</span>  <span class="c"># noqa</span>
+</span><span class="line">            <span class="k">return</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">deco</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="nd">@magics_class</span>  <span class="c"># 每个magic都需要加这个magics_class装饰器</span>
+</span><span class="line"><span class="k">class</span> <span class="nc">SQLDB</span><span class="p">(</span><span class="n">Magics</span><span class="p">):</span> <span class="c"># 要继承至Magics</span>
+</span><span class="line">    <span class="n">_db</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># 每次打开ipython都是一次实例化</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@line_magic</span><span class="p">(</span><span class="s">&#39;db_connect&#39;</span><span class="p">)</span> <span class="c"># 这里用了line_magic 表示它是一个line magic.(其他2种一会再说) magic的名字是db_connect. 注意 函数名不重要</span>
+</span><span class="line">                              <span class="c"># 最后我们用 %db_connect而不是%conn</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">conn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="p">):</span> <span class="c"># 每个这样的方法都接收一个参数 就是你在ipython里输入的内容</span>
+</span><span class="line">        <span class="sd">&quot;&quot;&quot;Conenct to database in ipython shell.</span>
+</span><span class="line"><span class="sd">        Examples::</span>
+</span><span class="line"><span class="sd">            %db_connect</span>
+</span><span class="line"><span class="sd">            %db_connect postgresql://user:pass@localhost:port/database</span>
+</span><span class="line"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class="line">        <span class="n">uri</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">parameter_s</span><span class="p">)</span> <span class="c"># 剩下的都是解析parameter_s的逻辑</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="ow">not</span> <span class="n">uri</span><span class="o">.</span><span class="n">scheme</span><span class="p">:</span>
+</span><span class="line">            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&#39;dbtype&#39;</span><span class="p">:</span> <span class="s">&#39;sqlite&#39;</span><span class="p">,</span>
+</span><span class="line">                <span class="s">&#39;filename&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">),</span> <span class="s">&#39;db.sqlite&#39;</span><span class="p">)</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">uri</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s">&#39;sqlite&#39;</span><span class="p">:</span>
+</span><span class="line">            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&#39;dbtype&#39;</span><span class="p">:</span> <span class="s">&#39;sqlite&#39;</span><span class="p">,</span>
+</span><span class="line">                <span class="s">&#39;filename&#39;</span><span class="p">:</span> <span class="n">uri</span><span class="o">.</span><span class="n">path</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="k">else</span><span class="p">:</span>
+</span><span class="line">            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">username</span><span class="p">),</span>
+</span><span class="line">                <span class="s">&#39;password&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">password</span><span class="p">),</span>
+</span><span class="line">                <span class="s">&#39;hostname&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">hostname</span><span class="p">),</span>
+</span><span class="line">                <span class="s">&#39;port&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">port</span><span class="p">),</span>
+</span><span class="line">                <span class="s">&#39;dbname&#39;</span><span class="p">:</span> <span class="n">get_or_none</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">DB</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="c"># 这里给_db赋值</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="c"># return的结果就会被ipython接收,显示出来</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@line_magic</span><span class="p">(</span><span class="s">&#39;db&#39;</span><span class="p">)</span> <span class="c"># 一个新的magic 叫做%db -- 谨防取名冲突</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="p">):</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@line_magic</span><span class="p">(</span><span class="s">&#39;table&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="nd">@check_db</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="p">):</span>
+</span><span class="line">        <span class="n">p</span> <span class="o">=</span> <span class="n">parameter_s</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="c"># 可能传进来的是多个参数,但是对ipython来说,传进来的就是一堆字符串，所以需要按空格分隔下</span>
+</span><span class="line">        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class="line">            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+</span><span class="line">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">tables</span>
+</span><span class="line">            <span class="k">else</span><span class="p">:</span>
+</span><span class="line">                <span class="k">return</span> <span class="n">attrgetter</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">tables</span><span class="p">)</span>
+</span><span class="line">        <span class="k">else</span><span class="p">:</span>
+</span><span class="line">            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">tables</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+</span><span class="line">                <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;head&#39;</span><span class="p">,</span> <span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;unique&#39;</span><span class="p">,</span> <span class="s">&#39;count&#39;</span><span class="p">,</span> <span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="s">&#39;query&#39;</span><span class="p">]:</span>
+</span><span class="line">                    <span class="n">data</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="n">c</span><span class="p">)(</span><span class="n">data</span><span class="p">)()</span>
+</span><span class="line">                <span class="k">else</span><span class="p">:</span>
+</span><span class="line">                    <span class="n">data</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="n">c</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">data</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">load_ipython_extension</span><span class="p">(</span><span class="n">ipython</span><span class="p">):</span> <span class="c"># 注册一下. 假如你直接去ipython里面加 就不需要这个了</span>
+</span><span class="line">    <span class="n">ipython</span><span class="o">.</span><span class="n">register_magics</span><span class="p">(</span><span class="n">SQLDB</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>PS:</p>
+
+<ol>
+  <li>调试中可以使用%reloa_ext idb 的方式重启magic</li>
+  <li>%install_ext 之后默认放在你的ipython自定义目录/extensions里. 我这里是~/.ipython/extensions</li>
+</ol>
+
+<p>好了,大家是不是觉得ipython的magic也不是很难嘛</p>
+
+<h5 id="ipython">来了解ipython都提供了什么?</h5>
+
+<ol>
+  <li>magic装饰器的类型:</li>
+</ol>
+
+<ul>
+  <li>line_magic # 刚才我们见识了, 就是%xx, xx就是magic的名字</li>
+  <li>cell_magic # 就是%%xx</li>
+  <li>line_cell_magic # 可以是%xx, 也可以是%%xx</li>
+</ul>
+
+<p>先说cell_magic 来个例子，假如我想执行个ruby,本来应该是:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="err">!</span><span class="n">ruby</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;p &quot;hello&quot;&#39;</span>
+</span><span class="line"><span class="s">&quot;hello&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="o">%%</span><span class="n">ruby</span> <span class="c"># 也可以这样</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="n">p</span> <span class="s">&quot;hello&quot;</span>
+</span><span class="line">      <span class="o">...</span><span class="p">:</span>
+</span><span class="line">      <span class="s">&quot;hello&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="err">再说个</span><span class="n">notebook</span><span class="err">的</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="o">%%</span><span class="n">javascript</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="n">require</span><span class="o">.</span><span class="n">config</span><span class="p">({</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="n">paths</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>         <span class="n">chartjs</span><span class="p">:</span> <span class="s">&#39;//code.highcharts.com/highcharts&#39;</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="p">}</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="p">});</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>
+</span><span class="line">   <span class="o">&lt;</span><span class="n">IPython</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Javascript</span> <span class="nb">object</span><span class="o">&gt;</span>
+</span><span class="line"><span class="p">});</span>
+</span></pre></figure></notextile></div>
+
+<p>然后再说line_cell_magic:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="o">%</span><span class="n">time</span> <span class="mi">2</span><span class="o">**</span><span class="mi">128</span>
+</span><span class="line"><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mi">2</span> <span class="err">µ</span><span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mi">1</span> <span class="err">µ</span><span class="n">s</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mi">3</span> <span class="err">µ</span><span class="n">s</span>
+</span><span class="line"><span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">5.01</span> <span class="err">µ</span><span class="n">s</span>
+</span><span class="line"><span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="il">340282366920938463463374607431768211456L</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="o">%%</span><span class="n">time</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">128</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>
+</span><span class="line">   <span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mi">4</span> <span class="err">µ</span><span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ns</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mi">4</span> <span class="err">µ</span><span class="n">s</span>
+</span><span class="line">   <span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">9.06</span> <span class="err">µ</span><span class="n">s</span>
+</span><span class="line">   <span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="il">340282366920938463463374607431768211456L</span>
+</span></pre></figure></notextile></div>
+
+<p>Ps: line_cell_magic方法的参数是2个:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@line_cell_magic</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">xx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span></pre></figure></notextile></div>
+
+<h5 id="magicipythonmagic">带参数的magic（我直接拿ipython源码提供的magic来说明):</h5>
+
+<p>一共2种风格:</p>
+
+<ul>
+  <li>使用getopt: self.parse_options</li>
+  <li>使用argparse: magic_arguments</li>
+</ul>
+
+<h6 id="selfparseoptions">self.parse_options</h6>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@line_cell_magic</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">prun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_s</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">    <span class="n">opts</span><span class="p">,</span> <span class="n">arg_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_options</span><span class="p">(</span><span class="n">parameter_s</span><span class="p">,</span> <span class="s">&#39;D:l:rs:T:q&#39;</span><span class="p">,</span>
+</span><span class="line">                                       <span class="n">list_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">posix</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</span><span class="line">    <span class="o">...</span>
+</span></pre></figure></notextile></div>
+
+<p>getopt用法可以看这里 http://pymotw.com/2/getopt/index.html#module-getopt</p>
+
+<p>我简单介绍下’D:l:rs:T:q’就是可以使用 -D, -l, -r, -s, -T, -q这些选项. <code>:</code>号是告诉你是否需要参数,split下就是:
+D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %prun -D <filename /></p>
+
+<h6 id="magicarguments">magic_arguments</h6>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@magic_arguments.magic_arguments</span><span class="p">()</span> <span class="c"># 最上面</span>
+</span><span class="line"><span class="nd">@magic_arguments.argument</span><span class="p">(</span><span class="s">&#39;--breakpoint&#39;</span><span class="p">,</span> <span class="s">&#39;-b&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;FILE:LINE&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="n">help</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class="line"><span class="s">    Set break point at LINE in FILE.</span>
+</span><span class="line"><span class="s">    &quot;&quot;&quot;</span>
+</span><span class="line"><span class="p">)</span> <span class="c"># 这种argument可以有多个</span>
+</span><span class="line"><span class="nd">@magic_arguments.argument</span><span class="p">(</span><span class="s">&#39;statement&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;*&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="n">help</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class="line"><span class="s">    Code to run in debugger.</span>
+</span><span class="line"><span class="s">    You can omit this in cell magic mode.</span>
+</span><span class="line"><span class="s">    &quot;&quot;&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line"><span class="nd">@line_cell_magic</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">    <span class="n">args</span> <span class="o">=</span> <span class="n">magic_arguments</span><span class="o">.</span><span class="n">parse_argstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span> <span class="c"># 要保持第一个参数等于这个方法名字,这里就是self.debug</span>
+</span><span class="line">    <span class="o">...</span>
+</span></pre></figure></notextile></div>
+
+<p>还有个magic方法集: 用于并行计算的magics: <a href="https://github.com/ipython/ipython/blob/master/IPython/parallel/client/magics.py">IPython/parallel/client/magics.py</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa/">Ipython的一些高级用法(一)</a></h1>
     
     
@@ -2223,84 +2471,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/sou-ji-xi-tong-xin-xi-de-dashboard/">搜集系统信息的dashboard</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-02-09T22:21:00+08:00" pubdate data-updated="true">Feb 9<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>过年在家无聊, 发现个挺有意思的项目: <a href="https://github.com/afaqurk/linux-dash">linux-dash</a>,就是使用Twitter的Bootstrap做的管理模板,可以显示服务器信息, 负载, 内存,进程,硬盘,用户,安装/未安装的软件信息,网卡IP,网速,以及网络状态,在线用户等. 但是有2个问题:</p>
-
-<ol>
-  <li>它是php的…</li>
-  <li>它获取信息都是通过shell下得系统命令</li>
-</ol>
-
-<p>我就用django写了一个python版的<a href="https://github.com/dongweiming/django-linux-dash">django-linux-dash</a>:本来想用flask,结果被人用了,但是问题也是通过subprocess调用命令获取数据,这个轮子有以下优点:</p>
-
-<ol>
-  <li>不仅支持linux,也支持OS X</li>
-  <li>使用<a href="http://code.google.com/p/psutil/">psutil</a>, 项目完全不调用shell命令</li>
-</ol>
-
-<h4 id="section-1">安装和使用</h4>
-
-<p>需要django&gt;=1.4以及psutils模块</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$pip install/easy_install django
-</span><span class="line">$pip install/easy_install psutil</span></pre></figure></notextile></div>
-
-<p>PS: OS X 还需要<a href="https://pypi.python.org/pypi/netifaces">netifaces</a>模块用于获取网卡ip</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$pip install/easy_install netifaces</span></pre></figure></notextile></div>
-
-<p>启动:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">$cd /You/install/path
-</span><span class="line">$git clone https://github.com/dongweiming/django-linux-dash &amp;&amp; cd django-linux-dash
-</span><span class="line">$python manage.py runserver 0.0.0.0:8000</span></pre></figure></notextile></div>
-
-<p>打开浏览器输入 http://localhost:8000 就可以看见了…</p>
-
-<p>TODO:</p>
-
-<ol>
-  <li>目前还没有添加测速功能,因为我希望不要一直傻瓜式的下载某文件,根据用时计算平均值,因为第一它需要时间才会显示个速度,其次是不实时不能循环实时</li>
-  <li>添加更多信息模块</li>
-  <li>增加用户登陆和权限控制
-…</li>
-</ol>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/4/">&larr; Older</a></li>
@@ -2323,6 +2493,10 @@
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -2358,10 +2532,6 @@
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

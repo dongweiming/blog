@@ -141,6 +141,134 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pythonzhongduanxianshicaisezifu/">Python终端显示彩色字符</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-27T00:00:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：作一个脚本或者程序在需要发音很多输出的时候，默认的白色会让人看的很困，但是有了彩色做个分割线或者让一些重要信息用彩色字体打印出来就好多了，以前一直在用模块实现，后来发现print借用ANSI控制码原来也可以：参见：http://www.oschina.net/code/snippet_87675_8599</p>
+
+<p>1分析这个程序</p>
+
+<p><pre class="sh_python">
+#!/usr/bin/env python
+#-*-coding:utf-8-*-
+#Filename:</p>
+
+<p>__author__ = "maqiang.jacky &lt;maqiang.jacky@snda.com&gt;"
+__version__ = 1.0
+__date__ = "12-2-9"</p>
+
+<p>"""
+0  All attributes off 默认值
+1  Bold (or Bright) 粗体 or 高亮
+4  Underline 下划线
+5  Blink 闪烁
+7  Invert 反显
+30 Black text
+31 Red text
+32 Green text
+33 Yellow text
+34 Blue text
+35 Purple text
+36 Cyan text
+37 White text
+40 Black background
+41 Red background
+42 Green background
+43 Yellow background
+44 Blue background
+45 Purple background
+46 Cyan background
+47 White background
+"""
+def main():
+    """ """
+for atrr in [0,1,4,5,7]:   0表示无属性，1表示高亮，4加下划线，5表示闪烁 ，7反显 ，8消隐 
+    print "attribute %d ------------------------------" % atrr
+    for fore in [30,31,32,33,34,35,36,37]:
+        for back in [40,41,42,43,44,45,46,47]:
+            color = "\x1B[%d;%d;%dm" % (atrr,fore,back)  #除了atrr，分别代表 字的颜色，底色
+            print "%s %d-%d-%d\x1B[0m" % (color,atrr,fore,back),
+        print ""
+if __name__ == "__main__":
+    """ """
+    main()
+</pre></p>
+
+<p>其中</p>
+
+<p>字背景颜色范围:40&#8212;-49
+40:黑
+41:深红
+42:绿
+43:黄色
+44:蓝色
+45:紫色
+46:深绿
+47:白色</p>
+
+<p>字颜色:30&#8212;&#8212;&#8212;&#8211;39
+30:黑
+31:红
+32:绿
+33:黄
+34:蓝色
+35:紫色
+36:深绿
+37:白色</p>
+
+<p>因为我不需要底色，自己写了一个方法：</p>
+
+<p><pre class="sh_python">
+def myprint(color,mes):
+    if color == 'r':
+        fore = 31
+    elif color == 'g':
+        fore = 32
+    elif color == 'b':
+        fore = 36
+    elif color == 'y':
+        fore = 33
+    else:
+        fore = 37
+    color = "\x1B[%d;%dm" % (1,fore)
+    print "%s %s\x1B[0m" % (color,mes)
+</pre></p>
+
+<p>假如想显示一段信息为红色：</p>
+
+<p>dongwm@linux-dongwm:~&gt; myprint(&#8216;r&#8217;,&#8217;some messages&#8217;)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonzhaodaoipduankeyongipzuidahezuishaoip/">Python找到ip段可用ip最大和最少ip</a></h1>
     
     
@@ -1730,66 +1858,6 @@ $("#lg").click(function(event)
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/tornadoduihttp403405zhongdingxiang/">Tornado对http403，405重定向</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-11T00:00:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：http403表示禁止访问，比如没有相应权限，比如它不是一个可以读的文件（目录）;http405表示资源被禁止，比如一个url要求你使用post方式访问，你直接打开网页用get方式就不可以</p>
-
-<p>修改 tornado源码web.py</p>
-
-<p><pre class="sh_python">
-if not (abspath + os.path.sep).startswith(self.root): #大概1479行
-    #raise HTTPError(403, "%s is not in root static directory", path)
-    self.render("error403.html")
-    return -1      </p>
-
-<p>if not os.path.isfile(abspath):   #大概1492
-    #raise HTTPError(403, "%s is not a file", path)
-    self.render("error403.html")
-    return -1</p>
-
-<p>def get(self, *args, **kwargs):  #大概158行
-    self.render("error405.html")
-    #raise HTTPError(405)</p>
-
-<p>注：不能在self.set_status根据code标识重定向（self._finished已经被设置了，会重复2次）
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/19/">&larr; Older</a></li>
@@ -1812,6 +1880,10 @@ if not (abspath + os.path.sep).startswith(self.root): #大概1479行
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1847,10 +1919,6 @@ if not (abspath + os.path.sep).startswith(self.root): #大概1479行
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>

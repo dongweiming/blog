@@ -141,6 +141,231 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuurllibyanjiu/">关于urllib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言;urllib模块提供了一个访问网络资源的简单接口支持（ftp协议)，访问不需要认证的远程资源</p>
+
+<p>因为urllib模块是一个客户端模块，需要一个httpserver，借用以前的BaseHTTPServer的模块的程序：</p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import urlparse </p>
+
+<p>class GetHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_GET(self):   #这个是get方法的处理
+        parsed_path = urlparse.urlparse(self.path)
+        message_parts = [
+                'CLIENT VALUES:',
+                'client_address=%s (%s)' % (self.client_address,
+                                            self.address_string()),
+                'command=%s' % self.command,
+                'path=%s' % self.path,
+                'real path=%s' % parsed_path.path,
+                'query=%s' % parsed_path.query,
+                'request_version=%s' % self.request_version,
+                '',
+                'SERVER VALUES:',
+                'server_version=%s' % self.server_version,
+                'sys_version=%s' % self.sys_version,
+                'protocol_version=%s' % self.protocol_version,
+                '',
+                'HEADERS RECEIVED:',
+                ]
+        for name, value in sorted(self.headers.items()):
+            message_parts.append('%s=%s' % (name, value.rstrip()))
+        message_parts.append('')
+        message = '\r\n'.join(message_parts)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(message)
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), GetHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p><pre class="sh_python">
+from BaseHTTPServer import BaseHTTPRequestHandler
+import cgi</p>
+
+<p>class PostHandler(BaseHTTPRequestHandler):</p>
+
+<p>    def do_POST(self):  ##这个是post方法的处理
+        # Parse the form data posted
+        form = cgi.FieldStorage(
+            fp=self.rfile, 
+            headers=self.headers,
+            environ={'REQUEST_METHOD':'POST',
+                     'CONTENT_TYPE':self.headers['Content-Type'],
+                     })</p>
+
+<p>        # Begin the response
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write('Client: %s\n' % str(self.client_address))
+        self.wfile.write('User-agent: %s\n' % str(self.headers['user-agent']))
+        self.wfile.write('Path: %s\n' % self.path)
+        self.wfile.write('Form data:\n')</p>
+
+<p>        # Echo back information about what was posted in the form
+        for field in form.keys():
+            field_item = form[field]
+            if field_item.filename:
+                # The field contains an uploaded file
+                file_data = field_item.file.read()
+                file_len = len(file_data)
+                del file_data
+                self.wfile.write('\tUploaded %s as "%s" (%d bytes)\n' % \
+                        (field, field_item.filename, file_len))
+            else:
+                # Regular form value
+                self.wfile.write('\t%s=%s\n' % (field, form[field].value))
+        return</p>
+
+<p>if __name__ == '__main__':
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 8080), PostHandler)
+    print 'Starting server, use &lt;Ctrl-C&gt; to stop'
+    server.serve_forever()
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib</p>
+
+<p>response = urllib.urlopen('http://localhost:8080/')  #指定要打开的网页
+print 'RESPONSE:', response   #这个类文件对象也是可以迭代
+print 'URL :', response.geturl() #返回这个网页的url地址</p>
+
+<p>headers = response.info()
+print 'DATE :', headers['date']  #执行请求的时间
+print 'HEADERS :'
+print '---------'
+print headers  #返回server的信息和date信息</p>
+
+<p>data = response.read() #取到数据
+print 'LENGTH :', len(data) #数据长度
+print 'DATA :'
+print '---------'
+print data  #返回客户端，服务器端的一些信息，header信息
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+RESPONSE: &lt;addinfourl at 3074658828L whose fp = &lt;socket._fileobject object at 0xb7418b2c&gt;&gt;
+URL : http://localhost:8080/
+DATE : Tue, 19 Jun 2012 07:55:13 GMT
+HEADERS :
+&#8212;&#8212;&#8212;
+Server: BaseHTTP/0.3 Python/2.7
+Date: Tue, 19 Jun 2012 07:55:13 GMT</p>
+
+<p>LENGTH : 304
+DATA :
+&#8212;&#8212;&#8212;
+CLIENT VALUES:
+client_address=(&#8216;127.0.0.1&#8217;, 57709) (localhost)
+command=GET
+path=/
+real path=/
+query=
+request_version=HTTP/1.0</p>
+
+<p>SERVER VALUES:
+server_version=BaseHTTP/0.3
+sys_version=Python/2.7
+protocol_version=HTTP/1.0</p>
+
+<p>HEADERS RECEIVED:
+host=localhost:8080
+user-agent=Python-urllib/1.17</p>
+
+<p><pre class="sh_python">
+import urllib
+query_args = { 'q':'query string', 'foo':'bar' }
+encoded_args = urllib.urlencode(query_args) #将dict或者包含两个元素的元组列表转换成url参数，如果参数doseq=True ，表示使用单独的变量来传递值序列时
+print 'Encoded:', encoded_args</p>
+
+<p>url = 'http://localhost:8080/?' + encoded_args
+print urllib.urlopen(url).read()  #返回打开的这个get页面的数据
+print 'quote() :', urllib.quote(url) #对字符串进行编码。参数safe指定了不需要编码的字符 同样的还原就是unquote
+print 'quote_plus():', urllib.quote_plus(url) #与urllib.quote类似，但这个方法用'+'来替换' '，而quote用'%20'来代替 同样的还原就是unquote_plus
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib
+query_args = { 'q':'query string', 'foo':'bar' }
+encoded_args = urllib.urlencode(query_args)
+url = 'http://localhost:8080/'
+print urllib.urlopen(url, encoded_args).read()  #通过POST代替GET方式传递数据给远程服务器, 仅仅是把已编码的查询参数当作数据传递给urlopen().
+</pre></p>
+
+<p><pre class="sh_python">
+import urllib
+import os</p>
+
+<p>def reporthook(blocks_read, block_size, total_size):
+    if not blocks_read:
+        print 'Connection opened'
+        return
+    if total_size &lt; 0:
+        # Unknown size 未知大小
+        print 'Read %d blocks' % blocks_read
+    else:
+        amount_read = blocks_read * block_size
+        print 'Read %d blocks, or %d/%d' % (blocks_read, amount_read, total_size)
+        return</p>
+
+<p>try:
+    filename, msg = urllib.urlretrieve('http://www.dongwm.com/', reporthook=reporthook) # urlretrieve方法直接将远程数据下载到本地。
+                                                #参数filename指定了保存到本地的路径（如果未指定该参数，urllib会生成一个临时文件来保存数据） ,reporthook是一个回调函数
+                                                #当连接上服务器、以及相应的数据块传输完毕的时候会触发该回调。我们可以利用这个回调函 数来显示当前的下载进度
+    print
+    print 'File:', filename
+    print 'Headers:'
+    print msg
+    print 'File exists before cleanup:', os.path.exists(filename)
+finally:
+    urllib.urlcleanup()   #除这些临时的复本
+    print 'File still exists:', os.path.exists(filename)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuurllib2yanjiu/">关于urllib2研究</a></h1>
     
     
@@ -1620,137 +1845,6 @@ print 'Unpacked:', s.unpack_from(a, 0)
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyustringyanjiu/">关于string研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：string是包括文本处理中的常量和类的模块，大量简化我们工作</p>
-
-<p><pre class="sh_python">
-import string</p>
-
-<p>for n in dir(string):
-    if n.startswith('_'):
-        continue
-    v = getattr(string, n)
-    if isinstance(v, basestring):  #打印模块定义的常量
-        print '%s=%s' % (n, repr(v))
-</pre></p>
-
-<p>结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-ascii_letters=&#8217;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
-ascii_lowercase=&#8217;abcdefghijklmnopqrstuvwxyz&#8217;
-ascii_uppercase=&#8217;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
-digits=&#8217;0123456789&#8217;
-hexdigits=&#8217;0123456789abcdefABCDEF&#8217;
-letters=&#8217;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
-lowercase=&#8217;abcdefghijklmnopqrstuvwxyz&#8217;
-octdigits=&#8217;01234567&#8217;
-printable=&#8217;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&#8221;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[&#92;]^_`{|}~ \t\n\r\x0b\x0c&#8217;
-punctuation=&#8217;!&#8221;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[&#92;]^_`{|}~&#8217;
-uppercase=&#8217;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;
-whitespace=&#8217;\t\n\x0b\x0c\r &#8217;</p>
-
-<p><pre class="sh_python">
-import string</p>
-
-<p>s = 'The quick brown fox jumped over the lazy dog.'  #一段字符串
-leet = string.maketrans('abegiloprstz', '463611092572') #想要把某些字母翻译成对应的东西 比如 a翻译成4</p>
-
-<p>print s
-print string.capwords(s) #每个单词第一个字母大写
-print s.translate(leet)
-</pre>
-结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-The quick brown fox jumped over the lazy dog.
-The Quick Brown Fox Jumped Over The Lazy Dog.
-Th3 qu1ck 620wn f0x jum93d 0v32 7h3 142y d06.
-<pre class="sh_python">
-import string</p>
-
-<p>values = { 'var':'foo' }</p>
-
-<p>t = string.Template("""  #使用了 <tt>string.Template</tt> 的占位符, 前缀为$的单词就被认为是变量(如$var), 如果需要将其在上下文中区别出来的话, 也可以将变量名包括在大括号中(如${var}).
-$var
-$$
-${var}iable
-""")  #设置string模板</p>
-
-<p>print 'TEMPLATE:', t.substitute(values) #假如某个键不存在会报错，避免报错，可以用t.safe_substitute(values)捕获了异常并将这个未知的变量表达式保留在文本中</p>
-
-<p>s = """
-%(var)s
-%%
-%(var)siable
-"""</p>
-
-<p>print 'INTERPLOATION:', s % values
-</pre></p>
-
-<p>结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-TEMPLATE:
-foo  #var的value是 foo
-$ #重复两次则被转义为普通字符
-fooiable #只替换一段</p>
-
-<p>INTERPLOATION:
-foo
-%
-fooiable</p>
-
-<p><pre class="sh_python">
-import string</p>
-
-<p>class MyTemplate(string.Template):
-    delimiter = '%' #默认是'$'  这里修改成了'%'
-    idpattern = '[a-z]+_[a-z]+'  #修改默认的匹配模式：这里有个"_"</p>
-
-<p>t = MyTemplate('%% %with_underscore %notunderscored')  
-d = { 'with_underscore':'replaced',
-          'notunderscored':'not replaced',  #这里的value没有"_"，不匹配
-}</p>
-
-<p>print t.safe_substitute(d)
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/13/">&larr; Older</a></li>
@@ -1773,6 +1867,10 @@ d = { 'with_underscore':'replaced',
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
+      </li>
     
       <li class="post">
         <a href="/archives/zui-jin-zai-xie-ben-webkai-fa-zhu-ti-de-shu/">最近在写一本Python Web开发的书</a>
@@ -1808,10 +1906,6 @@ d = { 'with_underscore':'replaced',
     
       <li class="post">
         <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/ast-xiang-lisp%5B%3F%5D-yang-zi-ding-yi-dai-ma-xing-wei/">AST - 像lisp一样自定义代码行为</a>
       </li>
     
   </ul>
