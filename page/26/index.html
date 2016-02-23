@@ -141,6 +141,42 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/zxtm%E5%AE%9E%E7%8E%B0mongodb%E7%9A%84route-server%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/">zxtm实现mongodb的Route Server负载均衡</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Route Server是一个mongos 实例，客户端由此接入，可以让整个集群看上去像单一数据库，简单的理解就是一个前端的路由。在实际配置中Route Server的冗余那也是很必须的，伟大的ZXTM也支持了它！关键步骤是1&nbsp; 创建pool时每个node都填入其ip和route sever的端口2&nbsp; 在创建virtual server时选择协议“Generic&nbsp; client first”这样就可以通过负载均衡来访问：[root@test ~]# mongo 192.168.8.20:30000MongoDB shell version: 1.8.1connecting to: 192.168.8.200:30000/test&gt; </p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/linux-%E5%9C%A8%E7%BA%BF%E5%90%AC%E6%AD%8C%E8%BD%AF%E4%BB%B6/">Linux 在线听歌软件</a></h1>
     
     
@@ -796,88 +832,6 @@ initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8pssh%E8%BF%9B%E8%A1%8C%E5%B9%B6%E8%A1%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C/">使用pssh进行并行批量操作</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-22T00:00:00+08:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>假如同时给上千台服务器执行一个命令,拷贝一个文件,杀一个进程等,有什么简化运维管理的工具呢?在小型使用中我都是使用for循环,数量巨大,一方面不确定操作是否成功,一方面for循环语句性能不好估计且是不是同步并行执行.，这类工具比如pdsh，mussh，cssh，dsh等还有这里提到的pssh:
-1  安装:</strong>
-<pre class="sh_bash">#wget http://peak.telecommunity.com/dist/ez_setup.py
-python ez_setup.py
-#wget http://parallel-ssh.googlecode.com/files/pssh-2.2.2.tar.gz
-# tar zxvf pssh-2.2.2.tar.gz
-# cd pssh-2.2.2
-# python setup.py install</pre>
-<strong>2  pssh使用 (假设ssh已做好SSH信任,ssh信任请参看:<a href="http://www.dongwm.com/archives/%E5%85%B3%E4%BA%8Essh%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6%E4%BB%A5%E5%8F%8Assh%E4%BF%A1%E4%BB%BB%E8%AF%A6%E8%A7%A3/" target="_blank">关于ssh命令研究以及SSH信任详解</a>)</strong>
-pssh工具包主要有5个程序:
-<strong>1 pssh  多主机并行运行命令</strong>
-<pre class="sh_bash">[root@server pssh-2.2.2]# pssh -P -h test.txt uptime
-192.168.9.102:  14:04:58 up 26 days, 17:05,  0 users,  load average: 0.07, 0.02, 0.00
-192.168.9.102: [1] 14:04:58 [SUCCESS] 192.168.9.102 9922
-192.168.8.171:  14:04:59 up 35 days,  2:01,  6 users,  load average: 0.00, 0.00, 0.00
-192.168.8.171: [2] 14:04:59 [SUCCESS] 192.168.8.171 22
-192.168.9.104:  14:04:59 up 7 days, 20:59,  0 users,  load average: 0.10, 0.04, 0.01
-192.168.9.104: [3] 14:04:59 [SUCCESS] 192.168.9.104 9922
-[root@server pssh-2.2.2]# cat test.txt
-192.168.9.102:9922
-192.168.9.104:9922
-192.168.8.171:22   //注意我的端口号不仅是默认的22
-假如想将输出重定向到一个文件 加-o file 选项</pre>
-<strong>2 pscp  把文件并行地复制到多个主机上</strong>
-注意 是从服务器端给客户端传送文件:
-<pre class="sh_bash">[root@server pssh-2.2.2]# pscp -h test.txt /etc/sysconfig/network /tmp/network   //标示将本地的/etc/sysconfig/network传到目标服务器的/tmp/network</pre>
-<strong>3 prsync 使用rsync协议从本地计算机同步到远程主机</strong>
-<pre class="sh_bash">[root@server ~]# pssh -h test.txt -P mkdir /tmp/etc
-[root@server ~]# prsync -h test.txt -l dongwm -a -r /etc/sysconfig /tmp/etc //标示将本地的/etc/sysconfig目录递归同步到目标服务器的 /tmp/etc目录下,并保持原来的时间戳,使用用户 dongwm</pre>
-<strong>4  pslurp 将文件从远程主机复制到本地,和pscp方向相反:</strong>
-<pre class="sh_bash">[root@server ~]# pslurp -h test.txt   -L /tmp/test -l root /tmp/network test  //标示将目标服务器的/tmp/network文件复制到本地的/tmp/test目录下,并更名为test
-[1] 14:53:54 [SUCCESS] 192.168.9.102 9922
-[2] 14:53:54 [SUCCESS] 192.168.9.104 9922
-[root@server ~]# ll /tmp/test/192.168.9.10
-192.168.9.102/ 192.168.9.104/
-[root@server ~]# ll /tmp/test/192.168.9.102/
-总计 4.0K
--rw-r--r-- 1 root root 60 2011-04-22 14:53 test
-[root@server ~]# ll /tmp/test/192.168.9.104/
-总计 4.0K
--rw-r--r-- 1 root root 60 2011-04-22 14:53 test</pre>
-<strong>5  pnuke 并行在远程主机杀进程:</strong>
-<pre class="sh_bash">[root@server ~]# pnuke -h test.txt   syslog //杀死目标服务器的syslog进程,只要ps进程中出现相关词语 都能杀死
-[1] 15:05:14 [SUCCESS] 192.168.9.102 9922
-[2] 15:05:14 [SUCCESS] 192.168.9.104 9922</pre>
-<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
-<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=eb2641aa-47eb-83ae-b8a8-d1a0b97e174d" alt="" /></div></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/27/">&larr; Older</a></li>
@@ -900,6 +854,10 @@ pssh工具包主要有5个程序:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -935,10 +893,6 @@ pssh工具包主要有5个程序:
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

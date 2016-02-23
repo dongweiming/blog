@@ -141,6 +141,77 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-24T00:48:00+08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="section">前言</h3>
+
+<p>写这个评注系统是因为最新写书, 想找个更顺畅的和编辑沟通的方式, 提高工作效率。
+学Django的同学应该都访问过: http://djangobook.py3k.cn/ , 它和<a href="http://www.djangobook.com/en/2.0/index.html">Djangobook官网</a>
+有个很重要的功能: 评注系统。在这里先向<a href="http://djangopeople.com/vcc/">VCC</a>致敬, 虽然很久没有继续维护，但是这个评注的功能还是很不错的。</p>
+
+<p>我也翻了Djangobook的Git提交记录, 没有找到实现的方式。 而且最重要的是, 它是通过ReStructuredText生成的静态页面, 不符合我的需求。所以有了今天说的<a href="https://github.com/dongweiming/aiglos">Aiglos</a></p>
+
+<p>可以看<a href="https://dry-castle-71587.herokuapp.com/">Heroku上的Demo</a>看看效果, 其中的文档使用了 https://github.com/GitbookIO/markdown</p>
+
+<h3 id="section-1">功能</h3>
+
+<ol>
+  <li>在线浏览渲染的本地Markdown文件。</li>
+  <li>提供 http://djangobook.py3k.cn/2.0/ 那样的评注系统。</li>
+  <li>评注支持Markdown语法。</li>
+</ol>
+
+<h3 id="section-2">使用的技术</h3>
+
+<p><a href="https://github.com/mitsuhiko/flask">Flask</a>: Web框架
+<a href="makotemplates.org">Mako</a>: 模板语言
+<a href="https://github.com/benselme/flask-mako">Flask-Mako</a>: Mako支持的Flask扩展
+<a href="https://github.com/mitsuhiko/flask-sqlalchemy">Flask-SQLAlchemy</a>: SQLAlchemy的Flask扩展
+<a href="https://github.com/lepture/mistune">mistune</a>: Markdown渲染
+<a href="https://github.com/cython/cython">cython</a>: Python转化到C的编译器, 可以让mistune渲染更快</p>
+
+<h3 id="section-3">使用说明</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">❯ git clone https://github.com/dongweiming/aiglos
+</span><span class="line">❯ cd aiglos
+</span><span class="line">❯ virtualenv-2.7 venv
+</span><span class="line">❯ source venv/bin/activate
+</span><span class="line">❯ pip install -r requirements.txt
+</span><span class="line">❯ touch local_settings.py  # 增加BOOK_DIR (Markdown文件存放目录), SQLALCHEMY_DATABASE_URI等配置
+</span><span class="line">❯ gunicorn -w 3 run:app -b 0.0.0.0:8000</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a></h1>
     
     
@@ -1558,80 +1629,6 @@ python掌握不好的确实做的会比较吃力, 也会直接暴露细节点掌
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-08-22T19:48:00+08:00" pubdate data-updated="true">Aug 22<span>nd</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3 id="section">前言</h3>
-
-<p>之前也发布一篇<a href="http://www.dongwm.com/archives/zhi-ding-dou-ban-tiao-mu-zu-zhao-pin/">招聘贴</a>. 这里只说一些不一样的.
-不一样的是现在我已经开始负责条目组的技术. 在这里我主要写给想来条目组的同学.</p>
-
-<p>为了让想来豆瓣的人对我们组有个了解. 我还是先说一下我们组的情况.</p>
-
-<h4 id="section-1">负责的产品线</h4>
-
-<p><a href="http://dongxi.douban.com">东西</a>, <a href="http://book.douban.com">读书</a>, <a href="http://movie.douban.com">电影</a>, <a href="http://music.douban.com">音乐</a> 以及条目, 条目就是www.douban.com/subject/xxx这样的地址.
-目前主要包含游戏和移动应用, 正在扩展更多玩法和种类.</p>
-
-<h4 id="section-2">工作范围</h4>
-
-<p>组内的同事都是前后端都可以, 只有一些比较大的前端需求需要前端部门的同事来协作. 目前就是人少事多. 组内招聘严格, 本次豆瓣实习生招聘挖掘没有合适的人</p>
-
-<h4 id="section-3">这个组不太一样的地方</h4>
-
-<ol>
-  <li>上面说的本组维护了多个知名的产品线. 你也可以看到非常多的知名id的代码.</li>
-  <li>本组是全豆瓣对代码要求最严格的组, 强制要求flake8. 且有很多自动化的工具帮你改正 - 比如你的PR不符合flake8, 那么CODE上对应位置就会出现对应规范的评论(创意源自quora的qlint)</li>
-  <li>本组的code review非常严格, 我们只欢迎最正确, 最有效率的方式写代码. 尤其对职业初期/实习生来说是一个非常好的机会. 我们可以帮你养成非常多的代码习惯的python开发能力.</li>
-  <li>我们欢迎使用新技术, 在时间容许的前提下, 鼓励使用更潮流的工具/库 - 这也是对我们组内成员最大的压力. 我们保证你会一直进步,而不是来豆瓣养老</li>
-  <li>我们组准备在豆瓣内率先支持es6</li>
-</ol>
-
-<h3 id="section-4">负责技术的我</h3>
-
-<ol>
-  <li>我参与很多开源项目, 因为之前是运维开发, 所以主要领域都在devops上. 通用的知名的项目包括ipython/pip, 我也给python标准库贡献过代码</li>
-  <li>我个人在做一个python的社区 <a href="https://github.com/python-cn/firefly/">firefly</a>. 未来会一直坚持下去</li>
-  <li>我接手了CODE(2014 pycon第一个议题)在豆瓣内部的迭代, 以及开源计划. 我的目的就是让豆瓣内部和开源项目的版本一致</li>
-  <li>个人其他信息: 使用emacs, 曾经看<黑客与画家>后用commonlisp写了第一个网站,从此决定做产品开发. 目前在用react做一些事情</黑客与画家></li>
-</ol>
-
-<h3 id="section-5">联系我</h3>
-
-<p>qq: 61966225
-mail: ciici123#gmail.com, dongweiming#douban.com</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/2/">&larr; Older</a></li>
@@ -1652,6 +1649,10 @@ mail: ciici123#gmail.com, dongweiming#douban.com</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -1687,10 +1688,6 @@ mail: ciici123#gmail.com, dongweiming#douban.com</p>
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

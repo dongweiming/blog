@@ -141,6 +141,86 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyufnmatchyanjiu/">关于fnmatch研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：fnmatch是一个底层比较文件名匹配的模块</p>
+
+<p><pre class="sh_python">
+import fnmatch</p>
+
+<p>pattern = 'FNMATCH_*.PY'  #要匹配的字符串
+print 'Pattern :', pattern
+print</p>
+
+<p>for name in ['test.py','fnmatch_fn.py','FNMATCH_fn.PY']:
+    print 'Filename: %-25s %s' % (name, fnmatch.fnmatch(name, pattern))
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Pattern : FNMATCH_*.PY</p>
+
+<p>Filename: test.py                   False
+Filename: fnmatch_fn.py             False #大小写敏感，失败
+Filename: FNMATCH_fn.PY             True  #匹配成功</p>
+
+<p>注：要强制区分大小写的比较，无论文件系统和操作系统设置，使用<tt>fnmatchcas</tt>e</p>
+
+<p><pre class="sh_python">
+import fnmatch</p>
+
+<p>pattern = 'FNMATCH_*.PY'
+list = ['test.py','fnmatch_fn.py','FNMATCH_fn.PY']
+print 'Matches :', fnmatch.filter(list, pattern) #过滤，只留下匹配项
+</pre></p>
+
+<p><pre class="sh_python">
+import fnmatch</p>
+
+<p>pattern = 'FNMATCH_*.PY'
+print 'Pattern :', pattern
+print 'Regex   :', fnmatch.translate(pattern)  # 这事公共的API，用来转换glob模式到一个正则表达式
+</pre></p>
+
+<p>执行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Pattern : FNMATCH_*.PY
+Regex   : FNMATCH\_.*&#46;PY\Z(?ms)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyudatetimeyanjiu/">关于datetime研究</a></h1>
     
     
@@ -1373,56 +1453,6 @@ close()</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyucompileallyanjiu/">关于compileall研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：这个模块主要用来将源文件编译成字节码文件</p>
-
-<p>假如想整个目录的编译成pyc文件，那么可以这样用：</p>
-
-<p><pre class="sh_python">
-import compileall
-import re</p>
-
-<p>compileall.compile_dir('examples',   #要编译当面目录下的examples目录
-    rx=re.compile(r'/\.svn'))  #'rx'自动了一个排除目录， 不编译.svn目录下的文件
-</pre></p>
-
-<p>注：以上的也可以使用命令行;</p>
-
-<p>python -m compileall -x &#8216;/&#46;svn&#8217; examples</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1445,6 +1475,10 @@ import re</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -1480,10 +1514,6 @@ import re</p>
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

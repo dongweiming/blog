@@ -141,6 +141,86 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/kongzhipingmianheguanlipingmiananquan-2/">控制平面和管理平面安全</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-29T00:00:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R3 </strong></span></span><span style="font-size: medium;"><strong>上的</strong></span><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>VLAN</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN3 Fa0/0, Fa0/3</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN14 Fa0/1, Fa0/4</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="color: #c00000;"><span style="font-family: Times New Roman,serif;"><span style="font-size: medium;"><strong>R1</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#int e1/0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#no sh</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#ip add 192.168.1.1</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#int e1/1</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#no sh</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#ip add 192.168.2.1 255.255.255.0</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-if)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#line vty 0 4</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-line)#login local</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-line)#exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#username cisco123 privilege 15 secret cisco123</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config)#ip access-list extended CoPP-acl</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#deny tcp host 192.168.2.2 any eq telnet</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#deny tcp host 192.168.2.2 any eq www
+</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#permit tcp any any eq telnet</span></p>
+
+<p><span style="font-family: Times New Roman,serif;">R1(config-ext-nacl)#permit tcp any any eq www //建立ACL，允许到管理平面的telnet和http访问</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/kongzhipingmianheguanlipingmiananquan-2/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/nrpe%E6%A8%A1%E5%BC%8F%E6%A3%80%E6%9F%A5mongo%E8%BF%9B%E7%A8%8B%E8%84%9A%E6%9C%AC/">Nrpe模式检查mongodb进程脚本</a></h1>
     
     
@@ -879,42 +959,6 @@ s.quit()</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/zxtm%E5%AE%9E%E7%8E%B0mongodb%E7%9A%84route-server%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/">zxtm实现mongodb的Route Server负载均衡</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Route Server是一个mongos 实例，客户端由此接入，可以让整个集群看上去像单一数据库，简单的理解就是一个前端的路由。在实际配置中Route Server的冗余那也是很必须的，伟大的ZXTM也支持了它！关键步骤是1&nbsp; 创建pool时每个node都填入其ip和route sever的端口2&nbsp; 在创建virtual server时选择协议“Generic&nbsp; client first”这样就可以通过负载均衡来访问：[root@test ~]# mongo 192.168.8.20:30000MongoDB shell version: 1.8.1connecting to: 192.168.8.200:30000/test&gt; </p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/26/">&larr; Older</a></li>
@@ -937,6 +981,10 @@ s.quit()</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -972,10 +1020,6 @@ s.quit()</p>
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

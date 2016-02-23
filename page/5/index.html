@@ -141,6 +141,211 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/feng-zhuang-pymongozi-dong-guan-bi-lian-jie/">封装pymongo自动关闭连接</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-16T21:42:00+08:00" pubdate data-updated="true">Aug 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>在我工作的项目里面使用了mongodb.自然也用到了pymongo.但是它都是在大片的函数里面使用类似于这样的方式</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">db</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+</span><span class="line">    <span class="o">...</span>
+</span><span class="line">    <span class="n">db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+</span><span class="line">    <span class="o">...</span>
+</span></pre></figure></notextile></div>
+
+<p>但是问题是在使用完都没有关闭连接,这样多台服务器连接我这台mongodb服务器，在业务高峰期就会占满我的连接, 我当时总结造成这个原因的问题有以下三种:</p>
+
+<ol>
+  <li>
+    <p>上面说的用完db不关闭连接而是等着db超时</p>
+  </li>
+  <li>
+    <p>注意上面的import，其实在import文件的时候数据库连接就已经生成了，没有在需要的时候才创建, 占满我连接的应用其实有很多没有用，浪费了</p>
+  </li>
+  <li>
+    <p>nginx、uwsgi，celery等应用配置的问题，造成过多的实例，其实根本无益</p>
+  </li>
+</ol>
+
+<h4 id="pymongo">我今天写的一个封装pymongo和关闭数据库连接的装饰器</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#/usr/bin/env python</span>
+</span><span class="line"><span class="c"># coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="sd">&quot;&quot;&quot;</span>
+</span><span class="line"><span class="sd">1. 封装数据库操作(INSERT,FIND,UPDATE)</span>
+</span><span class="line"><span class="sd">2. 函数执行完MONGODB操作后关闭数据库连接</span>
+</span><span class="line"><span class="sd">&quot;&quot;&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">pymongo.database</span> <span class="kn">import</span> <span class="n">Database</span>
+</span><span class="line">
+</span><span class="line"><span class="k">try</span><span class="p">:</span>
+</span><span class="line">    <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+</span><span class="line"><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span class="line">    <span class="c"># 好像2.4之前的pymongo都没有MongoClient,现在官网已经把Connection抛弃了</span>
+</span><span class="line">    <span class="kn">import</span> <span class="nn">warnings</span>
+</span><span class="line">    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Strongly recommend upgrading to the latest version pymongo version,&quot;</span>
+</span><span class="line">                  <span class="s">&quot;Connection is DEPRECATED: Please use mongo_client instead.&quot;</span><span class="p">)</span>
+</span><span class="line">    <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">Connection</span> <span class="k">as</span> <span class="n">MongoClient</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Mongo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;封装数据库操作&#39;&#39;&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">27017</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
+</span><span class="line">                 <span class="n">max_pool_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">max_pool_size</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@property</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 我这里是为了使用类似&quot;db.集合.操作&quot;的操作的时候才会生成数据库连接,其实pymongo已经实现了进程池,也可以把这个db放在__init__里面,</span>
+</span><span class="line">        <span class="c"># 比如我把db关掉有其他的数据库调用连接又会生成,并且不影响使用.我这里只是想每次执行数据库生成一个连接用完关掉-自己控制自己的</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">MongoClientself</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">max_pool_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+</span><span class="line">                  <span class="n">connectTimeoutMS</span><span class="o">=</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collection</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 为了兼容db[集合].操作的用法</span>
+</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">):</span>
+</span><span class="line">        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">]</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">collection_or_func</span> <span class="ow">in</span> <span class="n">Database</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+</span><span class="line">            <span class="c"># 当调用的是db的方法就直接返回</span>
+</span><span class="line">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># 否则委派给Collection</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">Collection</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Collection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">collection</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># 我这个封装只是为了拦截一部分操作,不符合的就直接raise属性错误</span>
+</span><span class="line">        <span class="n">control_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;disconnect&#39;</span><span class="p">,</span> <span class="s">&#39;insert&#39;</span><span class="p">,</span> <span class="s">&#39;update&#39;</span><span class="p">,</span> <span class="s">&#39;find&#39;</span><span class="p">,</span> <span class="s">&#39;find_one&#39;</span><span class="p">]</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">operation</span> <span class="ow">in</span> <span class="n">control_type</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+</span><span class="line">        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">close_db</span><span class="p">(</span><span class="n">dbs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;db&#39;</span><span class="p">]):</span>
+</span><span class="line">    <span class="sd">&#39;&#39;&#39;</span>
+</span><span class="line"><span class="sd">    关闭mongodb数据库连接</span>
+</span><span class="line"><span class="sd">    db : 在执行函数里面使用的db的名字(大部分是db，也会有s_db)</span>
+</span><span class="line"><span class="sd">        Usage::</span>
+</span><span class="line"><span class="sd">            &gt;&gt;&gt;s_db = Mongo()</span>
+</span><span class="line"><span class="sd">            &gt;&gt;&gt;@close_db([&#39;s_db&#39;])</span>
+</span><span class="line"><span class="sd">            ...: def test():</span>
+</span><span class="line"><span class="sd">            ...:     print s_db.test.insert({&#39;a&#39;: 1, &#39;b&#39;: 2})</span>
+</span><span class="line"><span class="sd">            ...:</span>
+</span><span class="line"><span class="sd">    &#39;&#39;&#39;</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">_deco</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class="line">        <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">dbs</span><span class="p">:</span>
+</span><span class="line">                <span class="k">try</span><span class="p">:</span>
+</span><span class="line">                    <span class="n">func</span><span class="o">.</span><span class="n">func_globals</span><span class="p">[</span><span class="n">db</span><span class="p">]</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</span><span class="line">                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+</span><span class="line">                    <span class="k">pass</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">result</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">_call</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">_deco</span>
+</span></pre></figure></notextile></div>
+
+<p>PS: 在我测试的时候发现,使用Mongo()类生成的db，操作完会自动关闭连接了…</p>
+
+<h4 id="section-1">怎么样给一个很大的文件每个函数都加上面的这个装饰器？</h4>
+
+<p>项目每个脚本的代码都很长，函数也很多，并且每个函数里面使用的db的名字都不同,比如有一些一些风格:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+</span><span class="line"><span class="n">s_db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">test</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="o">...</span>
+</span></pre></figure></notextile></div>
+
+<p>每个函数加一个装饰器,好费劲，就想能不能自动分辨文件中的函数然后给他们自动加装饰器，然后就有以下的一个做好的脚本:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#coding=utf-8</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">copy</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">types</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class="line">        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span class="line">        <span class="k">print</span> <span class="s">&#39;wrap you&#39;</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">result</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">_call</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;test&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">test2</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;test3&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">glocal_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
+</span><span class="line">
+</span><span class="line"><span class="n">func_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">glocal_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_list</span><span class="p">:</span>
+</span><span class="line">    <span class="k">if</span>  <span class="n">func_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;wraps&#39;</span><span class="p">,</span> <span class="s">&#39;copy&#39;</span><span class="p">,</span> <span class="s">&#39;wrap&#39;</span><span class="p">,</span> <span class="s">&#39;types&#39;</span><span class="p">]:</span>
+</span><span class="line">        <span class="k">continue</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span>  <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">        <span class="nb">globals</span><span class="p">()[</span><span class="n">func_name</span><span class="p">]</span><span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>这样当你调用的时候自动就有了装饰器:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line">&gt;&gt;&gt; from <span class="nb">test </span>import <span class="nb">test</span>
+</span><span class="line">&gt;&gt;&gt; <span class="nb">test</span><span class="o">()</span>
+</span><span class="line"><span class="nb">test</span>
+</span><span class="line">wrap you
+</span><span class="line">&gt;&gt;&gt;
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shi-yong-tornadorang-ni-de-qing-qiu-yi-bu-fei-zu-sai/">使用tornado让你的请求异步非阻塞</a></h1>
     
     
@@ -1834,99 +2039,6 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/zi-da-jian-gitfu-wu-qi-shi-xian-ti-jiao-dai-ma-zi-dong-tui-dao-ce-shi-huan-jing/">自搭建git服务器实现提交代码自动推到测试环境</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-17T23:15:00+08:00" pubdate data-updated="true">Jun 17<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>假如公司有很多项目，很可能你要自建git服务器，然后有不同的分支管理各个项目。尤其是web开发，每次push不仅在测试环境需要pull代码，
-可能还有nginx，uwsgi，supervisor等都需要重启。那么有没有什么办法让你在push代码的时候触发这一系列的重新部署呢？</p>
-
-<h4 id="section-1">思路和例子</h4>
-
-<p>假设你的开发分支是feature_example_develop(你要是在master分支直接push也可以，呵呵)有A，B，C等等同事都会往这个分支提交东西
-测试环境的IP为192.168.22.34</p>
-
-<ol>
-  <li>在你的git版本库的hooks里面这些修改post-update(表示代码提交到版本库后触发)</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">#!/bin/sh
-</span><span class="line">#
-</span><span class="line"># An example hook script to prepare a packed repository for use over
-</span><span class="line"># dumb transports.
-</span><span class="line">#
-</span><span class="line"># To enable this hook, rename this file to "post-update".
-</span><span class="line">
-</span><span class="line"># 获取本次提交的分支名字
-</span><span class="line">branch=$(git rev-parse --symbolic --abbrev-ref $1)
-</span><span class="line">        
-</span><span class="line">case "$branch" in
-</span><span class="line">    feature_example_develop)
-</span><span class="line">        echo This is a develop push
-</span><span class="line">        # 远程执行测试环境下的sync_develop_code.sh脚本
-</span><span class="line">        ssh dongwm@192.168.22.34  -p 9922 "source sync_develop_code.sh"
-</span><span class="line">        ;;
-</span><span class="line">    master)
-</span><span class="line">        echo This is a master push
-</span><span class="line">        ;;
-</span><span class="line">    *)
-</span><span class="line">        echo This is only some push ops.
-</span><span class="line">        ;;
-</span><span class="line">esac
-</span><span class="line">
-</span><span class="line">exec git update-server-info</span></pre></figure></notextile></div>
-
-<ol>
-  <li>测试环境的更新环境脚本 sync_develop_code.sh</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">#! /bin/bash
-</span><span class="line"># 切换到git版本库目录下
-</span><span class="line">cd /home/dongwm/test_develop
-</span><span class="line"># '拉'下最新代码
-</span><span class="line">git pull origin feature_example_develop
-</span><span class="line"># 重启supervisor管理的进程
-</span><span class="line">sudo supervisorctl -c /home/dongwm/test_develop/server/supervisor_develop.conf restart all
-</span><span class="line"># 重启uwsgi
-</span><span class="line">sudo /etc/init.d/uwsgi restart</span></pre></figure></notextile></div>
-
-<h4 id="section-2">一个很重要的问题</h4>
-
-<p>post-update不会检查你的代码是不是有问题，当提交了错误的代码会造成测试环境问题
-解决办法：修改update钩子-在提交前对你设置的操作的执行的$?做判断-非0就会拒绝你的提交，在这个时候你可以做pylint/coverage/nosetests等，下次我再说我做的这个工作</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/6/">&larr; Older</a></li>
@@ -1949,6 +2061,10 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -1984,10 +2100,6 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

@@ -141,6 +141,160 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuuuidyanjiu/">关于uuid研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：uuid是使用python生成唯一ID的模块，uuid是一种唯一标识，在许多领域作为标识用途.主要方法从硬件地址和时间生成，md5，sha－1，随机四种方法</p>
+
+<p><pre class="sh_python">
+import uuid</p>
+
+<p>print hex(uuid.getnode())   #根据系统的mac地址打印  ,但是多个mac就有问题</p>
+
+<p>u = uuid.uuid1()  #uuid.uuid1()根据mac地址生成uuid  不带参数就是使用uuid.getnode() </p>
+
+<p>print u
+print type(u)
+print 'bytes   :', repr(u.bytes)
+print 'hex     :', u.hex
+print 'int     :', u.int
+print 'urn     :', u.urn
+print 'variant :', u.variant
+print 'version :', u.version
+print 'fields  :', u.fields
+print '\ttime_low            : ', u.time_low
+print '\ttime_mid            : ', u.time_mid
+print '\ttime_hi_version     : ', u.time_hi_version
+print '\tclock_seq_hi_variant: ', u.clock_seq_hi_variant
+print '\tclock_seq_low       : ', u.clock_seq_low
+print '\tnode                : ', u.node
+print '\ttime                : ', u.time
+print '\tclock_seq           : ', u.clock_seq</p>
+
+<p>for i in xrange(3):
+    print uuid.uuid1()  #uuid1()里面也包含了时间的影响  这样的迭代其中的一部分因为是时间不同而不同</p>
+
+<p>node1 = uuid.getnode()
+print hex(node1), uuid.uuid1(node1)  #本机mac地址生成</p>
+
+<p>node2 =  0x1e5274040e
+print hex(node2), uuid.uuid1(node2)  #根据这个特定mac生成</p>
+
+<p>hostnames = ['www.ailll.com', 'www.dongwm.com']</p>
+
+<p>for name in hostnames:
+    print name
+    print '\tMD5   :', uuid.uuid3(uuid.NAMESPACE_DNS, name)  #uuid3基于dns和加密算法md5
+    print '\tSHA-1 :', uuid.uuid5(uuid.NAMESPACE_DNS, name)  #uuid5是基于dns和加密算法sha-1 
+for i in xrange(3):
+    print uuid.uuid3(uuid.NAMESPACE_DNS, 'www.doughellmann.com')  #不基于时间 所以是迭代的是一样的
+for i in xrange(3):
+    print uuid.uuid4()  #uuid4是根据随机算法  每次差别很大
+def show(msg, l):
+    print msg
+    for v in l:
+        print '\t', v
+    print</p>
+
+<p>input_values = [ 
+    'urn:uuid:f2f84497-b3bf-493a-bba9-7c68e6def80b',
+    '{417a5ebb-01f7-4ed5-aeac-3d56cd5037b0}',
+    '2115773a-5bf1-11dd-ab48-001ec200d9e0',
+    ]  #用于分析各种格式的字符串创建的UUID对象</p>
+
+<p>show('input_values', input_values)</p>
+
+<p>uuids = [ uuid.UUID(s) for s in input_values ]
+show('converted to uuids', uuids)</p>
+
+<p>uuids.sort()
+show('sorted', uuids)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+0xaeb8f70e0L
+f312fcaa-b9f1-11e1-bc26-000aeb8f70e0
+&lt;class &#8216;uuid.UUID&#8217;&gt;
+bytes   : &#8216;\xf3\x12\xfc\xaa\xb9\xf1\x11\xe1\xbc&amp;\x00\n\xeb\x8fp\xe0&#8217;
+hex     : f312fcaab9f111e1bc26000aeb8f70e0
+int     : 323100989012742094042604002680798933216
+urn     : urn:uuid:f312fcaa-b9f1-11e1-bc26-000aeb8f70e0
+variant : specified in RFC 4122
+version : 1
+fields  : (4078107818L, 47601L, 4577L, 188L, 38L, 46901719264L)
+time_low            :  4078107818
+time_mid            :  47601
+time_hi_version     :  4577
+clock_seq_hi_variant:  188
+clock_seq_low       :  38
+node                :  46901719264
+time                :  135593912614190250
+clock_seq           :  15398
+f31305ec-b9f1-11e1-bc26-000aeb8f70e0
+f31307f4-b9f1-11e1-bc26-000aeb8f70e0
+f3130952-b9f1-11e1-bc26-000aeb8f70e0
+0xaeb8f70e0L f3131b0c-b9f1-11e1-8092-000aeb8f70e0
+0x1e5274040eL f3131d17-b9f1-11e1-b53b-001e5274040e
+www.ailll.com
+MD5   : 3b7e4bb6-9606-34f9-ae27-98e0a83555ea
+SHA-1 : 2eae48e1-73e7-57c7-8b7c-3229c87fd79e
+www.dongwm.com
+MD5   : 2ddcfb77-c053-3e92-8a24-b57206b75157
+SHA-1 : 1ceafb54-c8ec-5090-b6ec-e71b3f0e15a9
+bcd02e22-68f0-3046-a512-327cca9def8f
+bcd02e22-68f0-3046-a512-327cca9def8f
+bcd02e22-68f0-3046-a512-327cca9def8f
+225d3fa0-d176-4eea-af0f-5a043711062d
+5039067a-e2a7-4a9b-8f3a-edd54d90a280
+40c69a3c-ebbc-4b67-b083-3223e32248ac
+input_values
+urn:uuid:f2f84497-b3bf-493a-bba9-7c68e6def80b
+{417a5ebb-01f7-4ed5-aeac-3d56cd5037b0}
+2115773a-5bf1-11dd-ab48-001ec200d9e0</p>
+
+<p>converted to uuids
+f2f84497-b3bf-493a-bba9-7c68e6def80b
+417a5ebb-01f7-4ed5-aeac-3d56cd5037b0
+2115773a-5bf1-11dd-ab48-001ec200d9e0</p>
+
+<p>sorted
+2115773a-5bf1-11dd-ab48-001ec200d9e0
+417a5ebb-01f7-4ed5-aeac-3d56cd5037b0
+f2f84497-b3bf-493a-bba9-7c68e6def80b</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuurllibyanjiu/">关于urllib研究</a></h1>
     
     
@@ -1736,115 +1890,6 @@ Queuing: http://a3.mzstatic.com/us/r30/Music/6e/0e/2a/mzm.vieuqpdk.aac.p.m4a
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyustructyanjiu/">关于struct研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：struct是一个实现字符串和二进制数据之间的相互转换的模块，它包含了实现字符串字节和Python本地数据类型(如数字和字符串)间的相互转换的函数.</p>
-
-<p><pre class="sh_python">
-import struct
-import binascii</p>
-
-<p>values = (1, 'ab', 2.7)
-s = struct.Struct('I 2s f')
-packed_data = s.pack(*values)
-data = binascii.hexlify(packed_data) #封装后的值被转换成16进制字节流输出
-print 'Original values:', values
-print 'Format string  :', s.format
-print 'Uses           :', s.size, 'bytes'
-print 'Packed Value   :', data
-print
-packed_data = binascii.unhexlify(data)
-s = struct.Struct('I 2s f')
-unpacked_data = s.unpack(packed_data)
-print 'Unpacked Values:', unpacked_data
-</pre></p>
-
-<p><pre class="sh_python">
-import struct
-import binascii</p>
-
-<p>values = (1, 'ab', 2.7)
-print 'Original values:', values</p>
-
-<p>endianness = [
-    ('@', 'native, native'),
-    ('=', 'native, standard'),
-    ('&lt;', 'little-endian'),
-    ('&gt;', 'big-endian'),
-    ('!', 'network'),
-]</p>
-
-<p>for code, name in endianness:
-    s = struct.Struct(code + ' I 2s f')  #默认情况下, 使用标准C库中”字节序”的概念将数值编码. 通过在字符串格式中直接指定一个明确的字节序可以简单的覆盖这个选项
-    packed_data = s.pack(*values)
-    print
-    print 'Format string  :', s.format, 'for', name
-    print 'Uses           :', s.size, 'bytes'
-    print 'Packed Value   :', binascii.hexlify(packed_data)
-    print 'Unpacked Value :', s.unpack(packed_data)
-</pre></p>
-
-<p><pre class="sh_python">
-import struct
-import binascii</p>
-
-<p>s = struct.Struct('I 2s f')
-values = (1, 'ab', 2.7)
-print 'Original:', values</p>
-
-<p>print
-print 'ctypes string buffer'</p>
-
-<p>import ctypes
-b = ctypes.create_string_buffer(s.size)  #在高性能的敏感情况或者通过通过第三方模块来传递数据经常会要求对二进制数据进行封装
-print 'Before  :', binascii.hexlify(b.raw)
-s.pack_into(b, 0, *values) #一种优化的方式是避免为每一个封装结构分配新的缓冲区. 函数pack_into()和unpack_from()支持直接写入到预分配的缓冲区中.
-print 'After   :', binascii.hexlify(b.raw)
-print 'Unpacked:', s.unpack_from(b, 0)</p>
-
-<p>print
-print 'array'</p>
-
-<p>import array
-a = array.array('c', '\0' *s.size)
-print 'Before  :', binascii.hexlify(a)
-s.pack_into(a, 0, *values)
-print 'After   :', binascii.hexlify(a)
-print 'Unpacked:', s.unpack_from(a, 0)
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/13/">&larr; Older</a></li>
@@ -1867,6 +1912,10 @@ print 'Unpacked:', s.unpack_from(a, 0)
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -1902,10 +1951,6 @@ print 'Unpacked:', s.unpack_from(a, 0)
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

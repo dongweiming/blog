@@ -141,6 +141,140 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/tui-jian-pre-commit-slash-pre-push-ben-di-zai-commithuo-zhe-pushde-shi-hou-zuo-ge-chong-jian-cha-pep8-slash-pylint-slash-pyflakes8/">推荐pre-commit/pre-push: 本地在commit或者push的时候做各种检查(pep8/pylint/pyflakes8)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-12T18:16:00+08:00" pubdate data-updated="true">Jan 12<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>使用git的同学想必都有这样的工作场景-保证生产环境的ci不挂. 也就是检查python是否符合pep8/csslint/jslint/pylint/pyflake8等.
+我在我的emacs配置中加入了这一项<a href="https://github.com/dongweiming/emacs.d/blob/master/custom/py-autopep8.el">py-autopep8</a>,
+就是在保存缓存区的时候把当前缓存区的文本放到一个临时文件, 然后执行autopep8, 再检查pep8/flake8</p>
+
+<p>但是不能对css/js/html做规范检查. 而且也不通用. 周末看到了Yelp的<a href="https://github.com/pre-commit/pre-commit">pre-commit</a>.
+感觉是个很有意思的东西，虽然之前也写过类似的hook. 但是没有它灵活. 看完他的源码后, 我今天给大家介绍下这个东西</p>
+
+<h4 id="pre-commit">pre-commit</h4>
+
+<p>玩过svn/git的同学应该都知道他们有各种的hook. 也就是准备/完成什么事件的时候做些额外的工作. 一般是shell脚本,
+版本控制工具会判断脚本的退出码, 如果不是0, 就不会继续完成. pre-commit顾名思义就是在commit之前做的准备, 也就是每次执行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git commit -m 'xxx'</span></pre></figure></notextile></div>
+
+<p>的时候去做一些检查. 启用的插件都放到这个版本库目录的根目录下, 名字叫做.pre-commit-config.yaml -&gt; 详细文档请看: <a href="http://pre-commit.com/">http://pre-commit.com/</a></p>
+
+<p>这里有我的一个配置例子:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">-</span>   <span class="n">repo</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="o">-</span><span class="n">hooks</span>
+</span><span class="line">    <span class="n">sha</span><span class="p">:</span> <span class="n">b03733bc86d9e8b2564a5798ade40d64baae3055</span>
+</span><span class="line">    <span class="n">hooks</span><span class="p">:</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">trailing</span><span class="o">-</span><span class="n">whitespace</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">end</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="nb">file</span><span class="o">-</span><span class="n">fixer</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">autopep8</span><span class="o">-</span><span class="n">wrapper</span>
+</span><span class="line">    <span class="n">args</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;--ignore=E265,E309,E501&#39;</span><span class="p">]</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">check</span><span class="o">-</span><span class="n">docstring</span><span class="o">-</span><span class="n">first</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">check</span><span class="o">-</span><span class="n">json</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">check</span><span class="o">-</span><span class="n">yaml</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">debug</span><span class="o">-</span><span class="n">statements</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">name</span><span class="o">-</span><span class="n">tests</span><span class="o">-</span><span class="n">test</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">requirements</span><span class="o">-</span><span class="n">txt</span><span class="o">-</span><span class="n">fixer</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">flake8</span>
+</span><span class="line"><span class="o">-</span>   <span class="n">repo</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span>
+</span><span class="line">    <span class="n">sha</span><span class="p">:</span> <span class="mi">86</span><span class="n">c99c6b870a261d2aff0b4cdb36995764edce1b</span>
+</span><span class="line">    <span class="n">hooks</span><span class="p">:</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">validate_config</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">validate_manifest</span>
+</span><span class="line"><span class="o">-</span>   <span class="n">repo</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">asottile</span><span class="o">/</span><span class="n">reorder_python_imports</span>
+</span><span class="line">    <span class="n">sha</span><span class="p">:</span> <span class="n">ea9fa14a757bb210d849de5af8f8ba2c9744027a</span>
+</span><span class="line">    <span class="n">hooks</span><span class="p">:</span>
+</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">reorder</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">imports</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-1">安装使用</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span>
+</span><span class="line"><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
+</span><span class="line"><span class="c"># PS: 第一次执行commit会比较慢，因为他会clone对应的源, 之后就会用这个缓存的源</span>
+</span><span class="line"><span class="c"># 其他的可选源和用法直接参照[https://github.com/pre-commit](https://github.com/pre-commit)里面的项目或者[http://pre-commit.com/hooks.html](http://pre-commit.com/hooks.html)</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-2">看一个失败的例子(有颜色效果, 不能展示出来)</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&#39;test&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Trim</span> <span class="n">Trailing</span> <span class="n">Whitespace</span><span class="o">.................................................................................................................</span><span class="n">Passed</span>
+</span><span class="line"><span class="n">Fix</span> <span class="n">End</span> <span class="n">of</span> <span class="n">Files</span><span class="o">.........................................................................................................................</span><span class="n">Passed</span>
+</span><span class="line"><span class="n">autopep8</span> <span class="n">wrapper</span><span class="o">.........................................................................................................................</span><span class="n">Passed</span>
+</span><span class="line"><span class="n">Check</span> <span class="n">docstring</span> <span class="ow">is</span> <span class="n">first</span><span class="o">.................................................................................................................</span><span class="n">Passed</span>
+</span><span class="line"><span class="n">Check</span> <span class="n">JSON</span><span class="o">..........................................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
+</span><span class="line"><span class="n">Check</span> <span class="n">Yaml</span><span class="o">..........................................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
+</span><span class="line"><span class="n">Debug</span> <span class="n">Statements</span> <span class="p">(</span><span class="n">Python</span><span class="p">)</span><span class="o">................................................................................................................</span><span class="n">Passed</span>
+</span><span class="line"><span class="n">Tests</span> <span class="n">should</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">_test</span><span class="o">.</span><span class="n">py</span><span class="o">........................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
+</span><span class="line"><span class="n">Fix</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span><span class="o">................................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
+</span><span class="line"><span class="n">Flake8</span><span class="o">...................................................................................................................................</span><span class="n">Failed</span>
+</span><span class="line"><span class="n">hookid</span><span class="p">:</span> <span class="n">flake8</span>
+</span><span class="line">
+</span><span class="line"><span class="n">pre_commit</span><span class="o">/</span><span class="n">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span> <span class="n">F401</span> <span class="s">&#39;os&#39;</span> <span class="n">imported</span> <span class="n">but</span> <span class="n">unused</span>
+</span><span class="line"><span class="n">pre_commit</span><span class="o">/</span><span class="n">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span> <span class="n">F401</span> <span class="s">&#39;sys&#39;</span> <span class="n">imported</span> <span class="n">but</span> <span class="n">unused</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Validate</span> <span class="n">Pre</span><span class="o">-</span><span class="n">Commit</span> <span class="n">Config</span><span class="o">..........................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
+</span><span class="line"><span class="n">Validate</span> <span class="n">Pre</span><span class="o">-</span><span class="n">Commit</span> <span class="n">Manifest</span><span class="o">........................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
+</span><span class="line"><span class="n">Reorder</span> <span class="n">python</span> <span class="n">imports</span><span class="o">...................................................................................................................</span><span class="n">Passed</span>
+</span><span class="line"><span class="c"># 因为我的flake8有问题 所以commit失败了</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="pre-commit-1">pre-commit的问题</h4>
+
+<p>我觉得对每次commit做一次审查, 第一是需要时间, 第二是没有必要, 因为经常一个pr有多个commit,
+我只保证整体结果是正确的就好了 - 也就是说应该是在push的时候. 整个过程我可能对commit做多次rebase/–amend等等. 某一次的检查失败其实完全不
+影响我做后的结果 - 我是手快党</p>
+
+<p>so. 我基于它修改了一个版本<a href="https://github.com/dongweiming/pre-push/">pre-push</a>, 只是我对push做了拦截. 并且我会经常和它保持同步</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span> <span class="o">-</span><span class="n">t</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="c"># 默认安装pre-commit钩子, 每次commit触发</span>
+</span><span class="line"><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span> <span class="o">-</span><span class="n">t</span> <span class="n">pre</span><span class="o">-</span><span class="n">push</span> <span class="c"># 默认安装pre-push钩子, 每次push触发</span>
+</span></pre></figure></notextile></div>
+
+<p>其他用法完全一样.</p>
+
+<p>假如push的时候想要不检查而强制push, 可以加上<code>--no-verify</code>参数</p>
+
+<h4 id="update-from-2015-01-15">Update from 2015-01-15</h4>
+
+<p>我的这个分支已经合并到<a href="https://github.com/pre-commit/pre-commit">pre-commit</a>. <a href="https://github.com/pre-commit/pre-commit/pull/189">pull189</a></p>
+
+<p>大家可以不要用我的分支了. PS: 这是我见到测试覆盖最高的项目.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/ipythonde-%5B%3F%5D-xie-gao-ji-yong-fa-er/">Ipython的一些高级用法(二)</a></h1>
     
     
@@ -2016,461 +2150,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shi-yong-grafanahe-diamondgou-jian-graphitejian-kong-xi-tong/">使用grafana和Diamond构建Graphite监控系统</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-01T13:56:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>在豆瓣开源项目里面有个<a href="https://github.com/douban/graph-index">graph-index</a>, 提供监控服务器的状态的目录索引,基于<a href="https://github.com/vimeo/graph-explorer">graph-explorer</a>. 类似衍生物很多,就包括我要说的本文用到的项目.先看看我的测试环境的几个截图</p>
-
-<p><img src="https://cloud.githubusercontent.com/assets/841395/9101045/7a64742a-3c14-11e5-92e7-012c713596e3.png" alt="" />
-<img src="https://cloud.githubusercontent.com/assets/841395/9101046/7a6a2ec4-3c14-11e5-8aeb-0158c20e8c6b.png" alt="" /></p>
-
-<h4 id="section-1">一些关键词说明</h4>
-
-<ol>
-  <li>graphite-web # graphite组件之一, 提供一个django的可以高度扩展的实时画图系统</li>
-  <li>Whisper # graphite组件之一, 实现数据库存储. 它比rrdtool要慢，因为whisper是使用python写的，而rrdtool是使用C写的。然而速度之间的差异很小</li>
-  <li>Carbon # 数据收集的结果会传给它, 它会解析数据让它可用于实时绘图. 它默认可会提示一些类型的数据,监听2003和2004端口</li>
-  <li><a href="https://github.com/BrightcoveOS/Diamond">Diamond</a> # 他是一个提供了大部分数据收集结果功能的结合,类似cpu, load, memory以及mongodb,rabbitmq,nginx等指标.这样就不需要我大量的写各种类型,因为它都已经提供,并且它提供了可扩展的自定义类型(最后我会展示一个我自己定义的类型)</li>
-  <li><a href="https://github.com/torkelo/grafana">grafana</a> # 这个面板是基于node, <a href="https://github.com/elasticsearch/kibana">kibana</a>,并且可以在线编辑. 因为是kibana,所以也用到了开元搜索框架<a href="https://github.com/elasticsearch/elasticsearch">elasticsearch</a></li>
-</ol>
-
-<p>PS: 其他工具可以参考这里<a href="http://graphite.readthedocs.org/en/1.0/tools.html">Tools That Work With Graphite</a></p>
-
-<h4 id="section-2">原理解析</h4>
-
-<p>我没有看实际全部代码,大概的流程是这样的:</p>
-
-<ol>
-  <li>启动Carbon-cache等待接收数据(carbon用的是twisted)</li>
-  <li>启动graphite-web给grafana提供实时绘图数据api</li>
-  <li>启动grafana,调用graphite-web接口获取数据展示出来</li>
-  <li>Diamond定期获取各类要监测的类型数据发给carbon(默认是5分钟,默认一小时自动重载一次配置)</li>
-</ol>
-
-<h4 id="section-3">实现我这个系统需要做的事情</h4>
-
-<h5 id="graphitecentos">安装graphite相关组件(我这里用的是centos)</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">yum --enablerepo=epel install graphite-web python-carbon -y</span></pre></figure></notextile></div>
-
-<h6 id="grafana">安装grafana需要的组件</h6>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># 增加elasticsearch的repo:
-</span><span class="line">sudo  rpm --import http://packages.elasticsearch.org/GPG-KEY-elasticsearch
-</span><span class="line">$cat /etc/yum.repos.d/elasticsearch.repo
-</span><span class="line">[elasticsearch-1.0]
-</span><span class="line">name=Elasticsearch repository for 1.0.x packages
-</span><span class="line">baseurl=http://packages.elasticsearch.org/elasticsearch/1.0/centos
-</span><span class="line">gpgcheck=1
-</span><span class="line">gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
-</span><span class="line">enabled=1
-</span><span class="line">sudo yum install nginx nodejs npm java-1.7.0-openjdk elasticsearch -y</span></pre></figure></notextile></div>
-
-<h5 id="diamondgrafana">下载Diamond和grafana</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git clone https://github.com/torkelo/grafana
-</span><span class="line">cd grafana
-</span><span class="line">sudo npm install
-</span><span class="line">sudo pip install django-cors-headers configobj # 这可能因为我环境中已经有了一些模块，看缺什么安装什么
-</span><span class="line">git clone https://github.com/BrightcoveOS/Diamond
-</span><span class="line">cd Diamond</span></pre></figure></notextile></div>
-<p>##### 开始修改配置</p>
-
-<ol>
-  <li>添加cors支持</li>
-</ol>
-
-<p>在/usr/lib/python2.6/site-packages/graphite/app_settings.py:</p>
-
-<p>INSTALLED_APPS里面添加corsheaders, MIDDLEWARE_CLASSES里面添加’corsheaders.middleware.CorsMiddleware’</p>
-
-<ol>
-  <li>使用nginx使用grafana</li>
-</ol>
-
-<p>在nginx.conf 添加类型的一段配置</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">server {
-</span><span class="line">  listen                *:80 ;
-</span><span class="line">
-</span><span class="line">  server_name           monitor.dongwm.com; # 我用了虚拟主机
-</span><span class="line">  access_log            /var/log/nginx/kibana.myhost.org.access.log;
-</span><span class="line">
-</span><span class="line">  location / {
-</span><span class="line">    add_header 'Access-Control-Allow-Origin' "$http_origin";
-</span><span class="line">    add_header 'Access-Control-Allow-Credentials' 'true';
-</span><span class="line">    root  /home/operation/dongwm/grafana/src;
-</span><span class="line">    index  index.html  index.htm;
-</span><span class="line">  }
-</span><span class="line">
-</span><span class="line">  location ~ ^/_aliases$ {
-</span><span class="line">    proxy_pass http://127.0.0.1:9200;
-</span><span class="line">    proxy_read_timeout 90;
-</span><span class="line">  }
-</span><span class="line">  location ~ ^/_nodes$ {
-</span><span class="line">    proxy_pass http://127.0.0.1:9200;
-</span><span class="line">    proxy_read_timeout 90;
-</span><span class="line">  }
-</span><span class="line">  location ~ ^/.*/_search$ {
-</span><span class="line">    proxy_pass http://127.0.0.1:9200;
-</span><span class="line">    proxy_read_timeout 90;
-</span><span class="line">  }
-</span><span class="line">  location ~ ^/.*/_mapping$ {
-</span><span class="line">    proxy_pass http://127.0.0.1:9200;
-</span><span class="line">    proxy_read_timeout 90;
-</span><span class="line">  }
-</span><span class="line">
-</span><span class="line">  # Password protected end points
-</span><span class="line">  location ~ ^/kibana-int/dashboard/.*$ {
-</span><span class="line">    proxy_pass http://127.0.0.1:9200;
-</span><span class="line">    proxy_read_timeout 90;
-</span><span class="line">    limit_except GET {
-</span><span class="line">      proxy_pass http://127.0.0.1:9200;
-</span><span class="line">      auth_basic "Restricted";
-</span><span class="line">      auth_basic_user_file /etc/nginx/conf.d/dongwm.htpasswd;
-</span><span class="line">    }
-</span><span class="line">  }
-</span><span class="line">  location ~ ^/kibana-int/temp.*$ {
-</span><span class="line">    proxy_pass http://127.0.0.1:9200;
-</span><span class="line">    proxy_read_timeout 90;
-</span><span class="line">    limit_except GET {
-</span><span class="line">      proxy_pass http://127.0.0.1:9200;
-</span><span class="line">      auth_basic "Restricted";
-</span><span class="line">      auth_basic_user_file /etc/nginx/conf.d/dongwm.htpasswd;
-</span><span class="line">    }
-</span><span class="line">  }</span></pre></figure></notextile></div>
-
-<ol>
-  <li>修改grafana的src/config.js:</li>
-</ol>
-
-<p>graphiteUrl: “http://”+window.location.hostname+”:8020”, # 下面会定义graphite-web启动在8020端口</p>
-
-<ol>
-  <li>修改Diamond的配置conf/diamond.conf</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cp conf/diamond.conf.example conf/diamond.conf</span></pre></figure></notextile></div>
-
-<p>主要修改监听的carbon服务器和端口,以及要监控什么类型的数据,看我的一个全文配置</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">################################################################################
-</span><span class="line"># Diamond Configuration File
-</span><span class="line">################################################################################
-</span><span class="line">
-</span><span class="line">################################################################################
-</span><span class="line">### Options for the server
-</span><span class="line">[server]
-</span><span class="line">
-</span><span class="line"># Handlers for published metrics.
-</span><span class="line">handlers = diamond.handler.graphite.GraphiteHandler, diamond.handler.archive.ArchiveHandler
-</span><span class="line">
-</span><span class="line"># User diamond will run as
-</span><span class="line"># Leave empty to use the current user
-</span><span class="line">user =
-</span><span class="line">
-</span><span class="line"># Group diamond will run as
-</span><span class="line"># Leave empty to use the current group
-</span><span class="line">group =
-</span><span class="line">
-</span><span class="line"># Pid file
-</span><span class="line">pid_file = /home/dongwm/logs/diamond.pid # 换了pid的地址,因为我的服务都不会root启动
-</span><span class="line">
-</span><span class="line"># Directory to load collector modules from
-</span><span class="line">collectors_path = /home/dongwm/Diamond/src/collectors # 收集器的目录,这个/home/dongwm/Diamond就是克隆代码的地址
-</span><span class="line">
-</span><span class="line"># Directory to load collector configs from
-</span><span class="line">collectors_config_path = /home/dongwm/Diamond/src/collectors
-</span><span class="line">
-</span><span class="line"># Directory to load handler configs from
-</span><span class="line">handlers_config_path = /home/dongwm/Diamond/src/diamond/handler
-</span><span class="line">
-</span><span class="line">handlers_path = /home/dongwm/Diamond/src/diamond/handler
-</span><span class="line">
-</span><span class="line"># Interval to reload collectors
-</span><span class="line">collectors_reload_interval = 3600 # 收集器定期会重载看有没有配置更新
-</span><span class="line">
-</span><span class="line">################################################################################
-</span><span class="line">### Options for handlers
-</span><span class="line">[handlers]
-</span><span class="line">
-</span><span class="line"># daemon logging handler(s)
-</span><span class="line">keys = rotated_file
-</span><span class="line">
-</span><span class="line">### Defaults options for all Handlers
-</span><span class="line">[[default]]
-</span><span class="line">
-</span><span class="line">[[ArchiveHandler]]
-</span><span class="line">
-</span><span class="line"># File to write archive log files
-</span><span class="line">log_file = /home/dongwm/logs/diamond_archive.log
-</span><span class="line">
-</span><span class="line"># Number of days to keep archive log files
-</span><span class="line">days = 7
-</span><span class="line">
-</span><span class="line">[[GraphiteHandler]]
-</span><span class="line">### Options for GraphiteHandler
-</span><span class="line">
-</span><span class="line"># Graphite server host
-</span><span class="line">host = 123.126.1.11
-</span><span class="line">
-</span><span class="line"># Port to send metrics to
-</span><span class="line">port = 2003
-</span><span class="line">
-</span><span class="line"># Socket timeout (seconds)
-</span><span class="line">timeout = 15
-</span><span class="line">
-</span><span class="line"># Batch size for metrics
-</span><span class="line">batch = 1
-</span><span class="line">
-</span><span class="line">[[GraphitePickleHandler]]
-</span><span class="line">### Options for GraphitePickleHandler
-</span><span class="line">
-</span><span class="line"># Graphite server host
-</span><span class="line">host = 123.126.1.11
-</span><span class="line">
-</span><span class="line"># Port to send metrics to
-</span><span class="line">port = 2004
-</span><span class="line">
-</span><span class="line"># Socket timeout (seconds)
-</span><span class="line">timeout = 15
-</span><span class="line">
-</span><span class="line"># Batch size for pickled metrics
-</span><span class="line">batch = 256
-</span><span class="line">
-</span><span class="line">[[MySQLHandler]]
-</span><span class="line">### Options for MySQLHandler
-</span><span class="line">
-</span><span class="line"># MySQL Connection Info 这个可以你的会不同
-</span><span class="line">hostname    = 127.0.0.1
-</span><span class="line">port        = 3306
-</span><span class="line">username    = root
-</span><span class="line">password    =
-</span><span class="line">database    = diamond
-</span><span class="line">table       = metrics
-</span><span class="line"># INT UNSIGNED NOT NULL
-</span><span class="line">col_time    = timestamp
-</span><span class="line"># VARCHAR(255) NOT NULL
-</span><span class="line">col_metric  = metric
-</span><span class="line"># VARCHAR(255) NOT NULL
-</span><span class="line">col_value   = value
-</span><span class="line">
-</span><span class="line">[[StatsdHandler]]
-</span><span class="line">host = 127.0.0.1
-</span><span class="line">port = 8125
-</span><span class="line">
-</span><span class="line">[[TSDBHandler]]
-</span><span class="line">host = 127.0.0.1
-</span><span class="line">port = 4242
-</span><span class="line">timeout = 15
-</span><span class="line">
-</span><span class="line">[[LibratoHandler]]
-</span><span class="line">user = user@example.com
-</span><span class="line">apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
-</span><span class="line">
-</span><span class="line">[[HostedGraphiteHandler]]
-</span><span class="line">apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
-</span><span class="line">timeout = 15
-</span><span class="line">batch = 1
-</span><span class="line">
-</span><span class="line"># And any other config settings from GraphiteHandler are valid here
-</span><span class="line">
-</span><span class="line">[[HttpPostHandler]]
-</span><span class="line">
-</span><span class="line">### Urp to post the metrics
-</span><span class="line">url = http://localhost:8888/
-</span><span class="line">### Metrics batch size
-</span><span class="line">batch = 100
-</span><span class="line">
-</span><span class="line">
-</span><span class="line">################################################################################
-</span><span class="line">### Options for collectors
-</span><span class="line">[collectors]
-</span><span class="line">[[TencentCollector]] # 本来[collectors]下试没有东西的,这个是我定制的一个类型
-</span><span class="line">ttype = server
-</span><span class="line">[[MongoDBCollector]] # 一般情况,有一些类型是默认enabled = True,也就是启动的,但是大部分是默认不启动《需要显示指定True
-</span><span class="line">enabled = True
-</span><span class="line">host = 127.0.0.1 # 每种类型的参数不同
-</span><span class="line">[[TCPCollector]]
-</span><span class="line">enabled = True
-</span><span class="line">[[NetworkCollector]]
-</span><span class="line">enabled = True
-</span><span class="line">[[NginxCollector]]
-</span><span class="line">enabled = False # 没开启nginx_status 开启了也没用
-</span><span class="line">[[ SockstatCollector]]
-</span><span class="line">enabled = True
-</span><span class="line">[[default]]
-</span><span class="line">### Defaults options for all Collectors
-</span><span class="line">
-</span><span class="line"># Uncomment and set to hardcode a hostname for the collector path
-</span><span class="line"># Keep in mind, periods are seperators in graphite
-</span><span class="line"># hostname = my_custom_hostname
-</span><span class="line">
-</span><span class="line"># If you prefer to just use a different way of calculating the hostname
-</span><span class="line"># Uncomment and set this to one of these values:
-</span><span class="line">
-</span><span class="line"># smart             = Default. Tries fqdn_short. If that's localhost, uses hostname_short
-</span><span class="line">
-</span><span class="line"># fqdn_short        = Default. Similar to hostname -s
-</span><span class="line"># fqdn              = hostname output
-</span><span class="line"># fqdn_rev          = hostname in reverse (com.example.www)
-</span><span class="line">
-</span><span class="line"># uname_short       = Similar to uname -n, but only the first part
-</span><span class="line"># uname_rev         = uname -r in reverse (com.example.www)
-</span><span class="line">
-</span><span class="line"># hostname_short    = `hostname -s`
-</span><span class="line"># hostname          = `hostname`
-</span><span class="line"># hostname_rev      = `hostname` in reverse (com.example.www)
-</span><span class="line">
-</span><span class="line"># hostname_method = smart
-</span><span class="line">
-</span><span class="line"># Path Prefix and Suffix
-</span><span class="line"># you can use one or both to craft the path where you want to put metrics
-</span><span class="line"># such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
-</span><span class="line"># path_prefix = servers
-</span><span class="line"># path_suffix =
-</span><span class="line">
-</span><span class="line"># Path Prefix for Virtual Machines
-</span><span class="line"># If the host supports virtual machines, collectors may report per
-</span><span class="line"># VM metrics. Following OpenStack nomenclature, the prefix for
-</span><span class="line"># reporting per VM metrics is "instances", and metric foo for VM
-</span><span class="line"># bar will be reported as: instances.bar.foo...
-</span><span class="line"># instance_prefix = instances
-</span><span class="line">
-</span><span class="line"># Default Poll Interval (seconds)
-</span><span class="line"># interval = 300
-</span><span class="line">
-</span><span class="line">################################################################################
-</span><span class="line">### Options for logging
-</span><span class="line"># for more information on file format syntax:
-</span><span class="line"># http://docs.python.org/library/logging.config.html#configuration-file-format
-</span><span class="line">
-</span><span class="line">[loggers]
-</span><span class="line">
-</span><span class="line">keys = root
-</span><span class="line">
-</span><span class="line"># handlers are higher in this config file, in:
-</span><span class="line"># [handlers]
-</span><span class="line"># keys = ...
-</span><span class="line">
-</span><span class="line">[formatters]
-</span><span class="line">
-</span><span class="line">keys = default
-</span><span class="line">
-</span><span class="line">[logger_root]
-</span><span class="line">
-</span><span class="line"># to increase verbosity, set DEBUG
-</span><span class="line">level = INFO
-</span><span class="line">handlers = rotated_file
-</span><span class="line">propagate = 1
-</span><span class="line">
-</span><span class="line">[handler_rotated_file]
-</span><span class="line">
-</span><span class="line">class = handlers.TimedRotatingFileHandler
-</span><span class="line">level = DEBUG
-</span><span class="line">formatter = default
-</span><span class="line"># rotate at midnight, each day and keep 7 days
-</span><span class="line">args = ('/home/dongwm/logs/diamond.log', 'midnight', 1, 7)
-</span><span class="line">
-</span><span class="line">[formatter_default]
-</span><span class="line">
-</span><span class="line">format = [%(asctime)s] [%(threadName)s] %(message)s
-</span><span class="line">datefmt =</span></pre></figure></notextile></div>
-
-<h5 id="section-4">启动相关服务</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo /etc/init.d/nginx reload
-</span><span class="line">sudo /sbin/chkconfig --add elasticsearch
-</span><span class="line">sudo service elasticsearch start
-</span><span class="line">sudo service carbon-cache restart
-</span><span class="line">sudo python /usr/lib/python2.6/site-packages/graphite/manage.py runserver 0.0.0.0:8020 # 启动graphite-web到8020端口</span></pre></figure></notextile></div>
-
-<h6 id="agentdiamond">在每个要搜集信息的agent上面安装Diamond,并启动:</h6>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cd /home/dongm/Diamond
-</span><span class="line">python ./bin/diamond --configfile=conf/diamond.conf
-</span><span class="line">
-</span><span class="line"># PS: 也可以添加 -l -f在前台显示</span></pre></figure></notextile></div>
-
-<h5 id="tencentcollector">自定义数据搜集类型，也就是上面的TencentCollector</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># coding=utf-8
-</span><span class="line">
-</span><span class="line">"""
-</span><span class="line">获取腾讯微博爬虫的业务指标
-</span><span class="line">"""
-</span><span class="line">
-</span><span class="line">import diamond.collector
-</span><span class="line">import pymongo
-</span><span class="line">from pymongo.errors import ConnectionFailure
-</span><span class="line">
-</span><span class="line">
-</span><span class="line">class TencentCollector(diamond.collector.Collector): # 需要继承至diamond.collector.Collector
-</span><span class="line">    PATH = '/home/dongwm/tencent_data'
-</span><span class="line">
-</span><span class="line">    def get_default_config(self):
-</span><span class="line">        config = super(TencentCollector, self).get_default_config()
-</span><span class="line">        config.update({
-</span><span class="line">            'enabled':  'True',
-</span><span class="line">            'path':     'tencent',
-</span><span class="line">            'method':   'Threaded',
-</span><span class="line">            'ttype':    'agent' # 服务类型 包含agent和server
-</span><span class="line">        })
-</span><span class="line">        return config
-</span><span class="line">
-</span><span class="line">    def collect(self):
-</span><span class="line">        ttype = self.config['ttype']
-</span><span class="line">        if ttype == 'server':
-</span><span class="line">            try:
-</span><span class="line">                db = pymongo.MongoClient()['tmp']
-</span><span class="line">            except ConnectionFailure:
-</span><span class="line">                return
-</span><span class="line">            now_count = db.data.count()
-</span><span class="line">            try:
-</span><span class="line">                last_count = db.diamond.find_and_modify(
-</span><span class="line">                    {}, {'$set': {'last': now_count}}, upsert=True)['last']
-</span><span class="line">            except TypeError:
-</span><span class="line">                last_count = 0
-</span><span class="line">            self.publish('count', now_count)
-</span><span class="line">            self.publish('update', abs(last_count - now_count))
-</span><span class="line">        if ttype == 'agent':
-</span><span class="line">            # somethings..........</span></pre></figure></notextile></div>
-
-<h5 id="grafana-rowpanelmetric">添加你要绘图的类型. 这个就是打开grafana, 添加不同的row.给每个添加panel.选择metric的类型就好了</h5>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/4/">&larr; Older</a></li>
@@ -2493,6 +2172,10 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -2528,10 +2211,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

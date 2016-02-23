@@ -141,6 +141,88 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8pssh%E8%BF%9B%E8%A1%8C%E5%B9%B6%E8%A1%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C/">使用pssh进行并行批量操作</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-22T00:00:00+08:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>假如同时给上千台服务器执行一个命令,拷贝一个文件,杀一个进程等,有什么简化运维管理的工具呢?在小型使用中我都是使用for循环,数量巨大,一方面不确定操作是否成功,一方面for循环语句性能不好估计且是不是同步并行执行.，这类工具比如pdsh，mussh，cssh，dsh等还有这里提到的pssh:
+1  安装:</strong>
+<pre class="sh_bash">#wget http://peak.telecommunity.com/dist/ez_setup.py
+python ez_setup.py
+#wget http://parallel-ssh.googlecode.com/files/pssh-2.2.2.tar.gz
+# tar zxvf pssh-2.2.2.tar.gz
+# cd pssh-2.2.2
+# python setup.py install</pre>
+<strong>2  pssh使用 (假设ssh已做好SSH信任,ssh信任请参看:<a href="http://www.dongwm.com/archives/%E5%85%B3%E4%BA%8Essh%E5%91%BD%E4%BB%A4%E7%A0%94%E7%A9%B6%E4%BB%A5%E5%8F%8Assh%E4%BF%A1%E4%BB%BB%E8%AF%A6%E8%A7%A3/" target="_blank">关于ssh命令研究以及SSH信任详解</a>)</strong>
+pssh工具包主要有5个程序:
+<strong>1 pssh  多主机并行运行命令</strong>
+<pre class="sh_bash">[root@server pssh-2.2.2]# pssh -P -h test.txt uptime
+192.168.9.102:  14:04:58 up 26 days, 17:05,  0 users,  load average: 0.07, 0.02, 0.00
+192.168.9.102: [1] 14:04:58 [SUCCESS] 192.168.9.102 9922
+192.168.8.171:  14:04:59 up 35 days,  2:01,  6 users,  load average: 0.00, 0.00, 0.00
+192.168.8.171: [2] 14:04:59 [SUCCESS] 192.168.8.171 22
+192.168.9.104:  14:04:59 up 7 days, 20:59,  0 users,  load average: 0.10, 0.04, 0.01
+192.168.9.104: [3] 14:04:59 [SUCCESS] 192.168.9.104 9922
+[root@server pssh-2.2.2]# cat test.txt
+192.168.9.102:9922
+192.168.9.104:9922
+192.168.8.171:22   //注意我的端口号不仅是默认的22
+假如想将输出重定向到一个文件 加-o file 选项</pre>
+<strong>2 pscp  把文件并行地复制到多个主机上</strong>
+注意 是从服务器端给客户端传送文件:
+<pre class="sh_bash">[root@server pssh-2.2.2]# pscp -h test.txt /etc/sysconfig/network /tmp/network   //标示将本地的/etc/sysconfig/network传到目标服务器的/tmp/network</pre>
+<strong>3 prsync 使用rsync协议从本地计算机同步到远程主机</strong>
+<pre class="sh_bash">[root@server ~]# pssh -h test.txt -P mkdir /tmp/etc
+[root@server ~]# prsync -h test.txt -l dongwm -a -r /etc/sysconfig /tmp/etc //标示将本地的/etc/sysconfig目录递归同步到目标服务器的 /tmp/etc目录下,并保持原来的时间戳,使用用户 dongwm</pre>
+<strong>4  pslurp 将文件从远程主机复制到本地,和pscp方向相反:</strong>
+<pre class="sh_bash">[root@server ~]# pslurp -h test.txt   -L /tmp/test -l root /tmp/network test  //标示将目标服务器的/tmp/network文件复制到本地的/tmp/test目录下,并更名为test
+[1] 14:53:54 [SUCCESS] 192.168.9.102 9922
+[2] 14:53:54 [SUCCESS] 192.168.9.104 9922
+[root@server ~]# ll /tmp/test/192.168.9.10
+192.168.9.102/ 192.168.9.104/
+[root@server ~]# ll /tmp/test/192.168.9.102/
+总计 4.0K
+-rw-r--r-- 1 root root 60 2011-04-22 14:53 test
+[root@server ~]# ll /tmp/test/192.168.9.104/
+总计 4.0K
+-rw-r--r-- 1 root root 60 2011-04-22 14:53 test</pre>
+<strong>5  pnuke 并行在远程主机杀进程:</strong>
+<pre class="sh_bash">[root@server ~]# pnuke -h test.txt   syslog //杀死目标服务器的syslog进程,只要ps进程中出现相关词语 都能杀死
+[1] 15:05:14 [SUCCESS] 192.168.9.102 9922
+[2] 15:05:14 [SUCCESS] 192.168.9.104 9922</pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=eb2641aa-47eb-83ae-b8a8-d1a0b97e174d" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/nagios%E6%97%A5%E5%BF%97%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2%E9%97%AE%E9%A2%98/">Nagios日志格式转换问题</a></h1>
     
     
@@ -868,42 +950,6 @@ This is a error for test</pre></p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/zxtm%E4%B8%93%E9%A2%98%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8zxtm%E7%94%A8%E8%87%AA%E5%BB%BAssl%E8%AF%81%E4%B9%A6%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E7%9A%84https%E5%8D%8F%E8%AE%AE%E8%AE%BF%E9%97%AE/">ZXTM专题二：使用ZXTM用自建ssl证书实现网站的https协议访问</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-08T00:00:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><b>可能一些网站的二级域名涉及交易,用户信息等敏感重要信息,所以建议使用https协议替代传统的httpd,我这里使用了负载均衡ZXTM来做这件事情.</b><b>1 创建公钥,私钥,证书</b>习惯借用linux下的openssl工具,zxtm也可以创建相应东东:[root@dongwm conf]# openssl genrsa -des3 1024 &gt; server.key&nbsp;&nbsp; //建立<a style="font-weight: bold; color: #ff0000" href="http://www.fuancn.cn/">服务器</a>密钥Generating RSA private key, 1024 bit long modulus&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;++++++&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;++++++e is 65537 (0x10001)Enter pass phrase:&nbsp;&nbsp;&nbsp; //输入密码Verifying - Enter pass phrase:&nbsp;&nbsp; //重复输入密码[root@dongwm conf]# openssl rsa -in server.key -out server.key&nbsp;&nbsp;&nbsp;&nbsp; //从密钥中删除密码Enter pass phrase for server.key:&nbsp; //输入上面写入的密码writing RSA key&nbsp;&nbsp;&nbsp; //生成了server.key[root@dongwm conf]# openssl req -new -key server.key -out server.csr&nbsp; //建立服务器公钥You are about to be asked to enter information that will be incorporatedinto your certificate request.What you are about to enter is what is called a Distinguished Name or a DN.There are quite a few fields but you can leave some blankFor some fields there will be a default value,If you enter &#8216;.&#8217;, the field will be left blank.&#8212;&#8211;Country Name (2 letter code) [GB]:CN&nbsp;&nbsp; //国家名称State or Province Name (full name) [Berkshire]:Beijing //省名Locality Name (eg, city) [Newbury]:Beijing&nbsp;&nbsp; //城市名Organization Name (eg, company) [My Company Ltd]:www.dongwm.com //域名Organizational Unit Name (eg, section) []:&nbsp; //不填Common Name (eg, your name or your server&#8217;s hostname) []:www.dongwm.com&nbsp; //通称&nbsp; 写域名即可Email Address []:admin@dongwm.com&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //邮箱地址Please enter the following &#8216;extra&#8217; attributesto be sent with your certificate requestA challenge password []:&nbsp; //回车An optional company name []:&nbsp; //回车[root@dongwm conf]# openssl x509 -in server.csr -out server.crt -req -signkey server.key -days 365&nbsp; //建立<a style="font-weight: bold; color: #ff0000" href="http://www.fuancn.cn/">服务器</a>证书Signature ok subject=/C=CN/ST=Beijing/L=Beijing/O=www.dongwm.com/CN=www.dongwm.com/emailAddress=admin@dongwm.comGetting Private key&nbsp;&nbsp; 生成了三个文件:server.key&nbsp;&nbsp; server.crt(证书)&nbsp; server.csr(公钥)<b>2 配置ZXTM</b><b>1 添加一个POOL,添加web节点:</b><img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_1.png" /><b>2&nbsp; 添加SSL证书:</b>&nbsp;进入Catalogs&#8211;&gt;SSL页面<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_2.png" />选择第一项<a href="https://58.83.184.18:9090/apps/zxtm/index.fcgi?section=SSL%3ASSL%20Certs">SSL Certificates catalog</a>进入:<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_3.png" />选择Import Certificate选项导入上面生成的证书和私钥:<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_41.png" />名字随便命名,Certificate file:选择的文件是刚才生成的server.crt ,Private key file选择最开始生成的server.key,单击 Import Certificate<b>3&nbsp; 添加Virtual Servers</b>进入 Services&#8211;&gt;Virtual Servers页面 Create a new Virtual Server<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_6.png" />注意协议为HTTP 端口为443,流量POOL是最初建的那个测试pool点开下面的<a href="https://58.83.184.18:9090/apps/zxtm/index.fcgi?name=test-dongwm&amp;section=Virtual%20Servers%3AEdit%3ASSL%20Decryption">SSL Decryption</a>选项:<img style="max-width: 800px;" src="http://www.dongwm.com/wp-content/uploads/2011/04/image_5.png" />里面的Certificate&nbsp; 选择刚才新建的那个证书,标示最开始就是刚才给那个证书命名的名字.<b>4&nbsp; 现在配置完成,测试</b>注意我以下的表述:<font color="#FF0000">点开https://你的ZXTM的Traffic&nbsp;IP Groups地址(也就是负载均衡前端IP)就实现了访问你最初建的POOL里面节点的web内容不同的域名需要不同的在httpd.conf里面指定因为我这里监听的是192.168.8.108的8080端口,所以在这个端口上的HTTP流量都会走这个加密的https协议 </font><div style="position: absolute; display: none; z-index: 9999;" id="livemargins_control"><img src="chrome://livemargins/skin/monitor-background-horizontal.png" style="position: absolute;left:-77px;top:-5px" height="5" width="77" />	<img src="chrome://livemargins/skin/monitor-background-vertical.png" style="position: absolute;left:0;top:-5px;" />	<img id="monitor-play-button" src="chrome://livemargins/skin/monitor-play-button.png" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" style="position: absolute;left:1px;top:0;opacity:0.5;cursor:pointer" /></div><div class="zemanta-pixie"><img class="zemanta-pixie-img" alt="" src="http://img.zemanta.com/pixy.gif?x-id=0e8b3cc5-5bb3-8e44-83a5-5b82e3858738" /></div></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/28/">&larr; Older</a></li>
@@ -926,6 +972,10 @@ This is a error for test</pre></p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -961,10 +1011,6 @@ This is a error for test</pre></p>
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

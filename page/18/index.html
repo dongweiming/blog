@@ -141,6 +141,51 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/linuxjiqiao/">Linux技巧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-10T00:00:00+08:00" pubdate data-updated="true">May 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 cat ~/.ssh/id_rsa.pub | ssh －p port user@server &#8220;cat - &gt;&gt; ~/.ssh/authorized_keys&#8221;  #ssh-copy-id类似</strong></p>
+
+<p><strong>2 awk &#8216;BEGIN{srand()}{a[NR,rand()]=$0}END{y=0;for(i in a){print a[i];y++;if(y==num){exit;}}}&#8217;  file #从file中随机出num行显示出来</strong></p>
+
+<p><strong>3 sorted(dict.iteritems(), key=lambda d:d[1],reverse =True) #将字典dict以value按从大到小的顺序排序（python）</strong></p>
+
+<p><strong>4 history | awk &#8216;{a[$2]++}END{for(i in a){print a[i] &#8221; &#8221; i}}&#8217; | sort -rn | head #最常用的10条命令</strong></p>
+
+<p><strong>5 heapq.nlargest(10, d.iteritems(), operator.itemgetter(1)) #字典排序，返回根据value从大到小前十</strong></p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonzhongduanxianshicaisezifu/">Python终端显示彩色字符</a></h1>
     
     
@@ -1699,165 +1744,6 @@ sed &#8216;11,$ d&#8217; /etc/passwd
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shiyonggooglecaptchazuotornadowangzhandeyanzhengma/">使用Google Captcha作tornado网站的验证码</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-13T00:00:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：为了防止恶意尝试破解密码，在用户注册和登录的时候都需要一个验证码，但是简单的验证码图片实在太好破解了，还是不安全，正好发现类似于google，yahoo等大网站的图片验证使用了这样的方式：</p>
-
-<p><img class="alignnone" title="recaptcha" src="https://developers.google.com/recaptcha/images/reCAPTCHA_Sample_White.png" alt="" width="322" height="132" /></p>
-
-<p>我不知道安全性怎么样，但是至少这样的网站在使用就能说明问题。</p>
-
-<p>，而且省去了自己研究复杂算法，自己画图，然后根据数据确定是不是正确验证，也省去了Captcha服务器，感谢google！</p>
-
-<p>网站上有一个例子,而且也有一个python模块：http://recaptcha.googlecode.com/svn/trunk/recaptcha-plugins/python ，和我的实现差不多</p>
-
-<p>1 captcha.py #recaptcha检查模块</p>
-
-<p><pre class="sh_python">
-import urllib,urllib2
-import os
-GOOGLE_CAPTCHA_API = 'http://www.google.com/recaptcha/api/verify'
-class RecaptchaResponse:
-    def __init__(self, is_valid, error_code=None):
-        self.is_valid = is_valid
-        self.error_code = error_code
-def check_google_captcha(request,remote_ip,recaptcha_challenge_field,recaptcha_response_field):
-    if not (recaptcha_challenge_field and recaptcha_response_field):
-        return RecaptchaResponse (is_valid = False, error_code = 'incorrect-captcha-sol')
-    def encode_if_necessary(s):
-        if isinstance(s, unicode):
-            return s.encode('utf-8')
-        return s
-    params = urllib.urlencode ({
-            'privatekey': encode_if_necessary('6LfyINASAAcxzdUXc_f_kJ1ADSA6NfkU8ZoNgw_jl'),  #这里是我的私钥
-            'remoteip' :  encode_if_necessary(remote_ip), #远程主机ip
-            'challenge':  encode_if_necessary(recaptcha_challenge_field),
-            'response' :  encode_if_necessary(recaptcha_response_field),  #填入的数据
-            })
-    request = urllib2.Request(
-        url = GOOGLE_CAPTCHA_API,
-        data = params,
-        headers = {
-            "Content-type": "application/x-www-form-urlencoded",
-            "User-agent": "reCAPTCHA Python"
-            }
-        )
-    httpresp = urllib2.urlopen(request)
-    return_values = httpresp.read().splitlines();
-    httpresp.close();
-    return_code = return_values[0]
-    if (return_code == "true"):
-        return RecaptchaResponse(is_valid=True)
-    else:
-        return RecaptchaResponse(is_valid=False, error_code = return_values[1])
-</pre></p>
-
-<p>2 后台相关代码：</p>
-
-<p><pre class="sh_python"></p>
-
-<p>import captcha
-remote_ip = self.request.remote_ip  #获取远程ip  这个和django，gae获取方式都不同
-challenge = self.get_argument('recaptcha_challenge_field',None)
-response =  self.get_argument('recaptcha_response_field',None)
-rsp = captcha.check_google_captcha(self,remote_ip,challenge,response)
-if not rsp.is_valid:
-self.write('Verification code error!')
-             return -1
-</pre></p>
-
-<p>3 前台网页代码：</p>
-
-<p><pre class="sh_html4strict">
-&lt;!DOCTYPE html&gt;
-&lt;head&gt;
-&lt;script src="static/jquery.js" type="text/javascript"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"/&gt;&lt;/script&gt;  #引用google的js
-&lt;script type="text/javascript" src="static/jquery.cookies.2.2.0.min.js"&gt;&lt;/script&gt; 
-&lt;script type="text/javascript"&gt;</p>
-
-<p>$(document).ready(function(){
-    google_captcha('gcaptcha');
-});
-function google_captcha(element){
-    Recaptcha.create('6LfyINASAAsdddJhhV-ofP8nQ-sRsddup8AHSQHl',element,{   #输入公钥
-        theme: "clean",  #主题 一共四种
-        callback: Recaptcha.focus_response_field 
-    });
-}
-$(function()
-        {
-$("#lg").click(function(event)
-            {
-    var xsrf = $.cookies.get("_xsrf");
-    var name = $("#zh").val();
-    var loginElement = encodeURI(encodeURI($("#zh").val()));
-    var passElement = encodeURI(encodeURI($("#ps").val()));
-    var response = $("#recaptcha_response_field").val();  #因为这里使用jquery的ajax，post的数据需要指定都取什么
-    var challenge = $("#recaptcha_challenge_field").val(); 
-    $.ajax({
-   type: "POST",
-   url: "/login",
-   data: {'login':loginElement,'passwd':passElement,'_xsrf':xsrf,'recaptcha_response_field':response,'recaptcha_challenge_field':challenge}, #数据包含这五种
-   success: function(data){
-   if (/Login Success/.exec(decodeURI(data)) == null)
-   {
-   alert(decodeURI(data));
-   Recaptcha.reload();   #假如有输入错误会弹窗警告，然后会重置验证码图片
-}
-   else {  window.location="/home";
-   }}
-	});    
-   $.cookies.set("name",name);
-});
-})
-&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div id="login"&gt;
-&lt;form class="login" action="/login" method="post"&gt;
-{ % module xsrf_form_html() % } <!-- 这里我把%和{/}分开了-->
-&lt;input class="text" type="text" name="login" id="zh" spellcheck="false" placeholder="帐 号" autofocus tabindex="1"&gt;
-&lt;input class="text" type="password" name="passwd" id ="ps" placeholder="密 码" tabindex="2"&gt;
-&lt;div id="gcaptcha"&gt;&lt;/div&gt;  #验证码图片在这里
-&lt;input class="button" id="lg" value="登 录" tabindex="3"&gt;
-&lt;/form&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/19/">&larr; Older</a></li>
@@ -1880,6 +1766,10 @@ $("#lg").click(function(event)
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -1915,10 +1805,6 @@ $("#lg").click(function(event)
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

@@ -5059,6 +5059,21 @@
     }
   },
   {
+    "id": 320,
+    "title": "仿Djangobook的Markdown文章评注系统",
+    "category": "python",
+    "tags": [
+
+    ],
+    "url": "/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/",
+    "content": "### 前言\n\n写这个评注系统是因为最新写书, 想找个更顺畅的和编辑沟通的方式, 提高工作效率。\n学Django的同学应该都访问过: http://djangobook.py3k.cn/ , 它和[Djangobook官网](http://www.djangobook.com/en/2.0/index.html)\n有个很重要的功能: 评注系统。在这里先向[VCC](http://djangopeople.com/vcc/)致敬, 虽然很久没有继续维护，但是这个评注的功能还是很不错的。\n\n我也翻了Djangobook的Git提交记录, 没有找到实现的方式。 而且最重要的是, 它是通过ReStructuredText生成的静态页面, 不符合我的需求。所以有了今天说的[Aiglos](https://github.com/dongweiming/aiglos)\n\n可以看[Heroku上的Demo](https://dry-castle-71587.herokuapp.com/)看看效果, 其中的文档使用了 https://github.com/GitbookIO/markdown\n\n### 功能\n\n1. 在线浏览渲染的本地Markdown文件。\n2. 提供 http://djangobook.py3k.cn/2.0/ 那样的评注系统。\n3. 评注支持Markdown语法。\n\n### 使用的技术\n\n[Flask](https://github.com/mitsuhiko/flask): Web框架\n[Mako](makotemplates.org): 模板语言\n[Flask-Mako](https://github.com/benselme/flask-mako): Mako支持的Flask扩展\n[Flask-SQLAlchemy](https://github.com/mitsuhiko/flask-sqlalchemy): SQLAlchemy的Flask扩展\n[mistune](https://github.com/lepture/mistune): Markdown渲染\n[cython](https://github.com/cython/cython): Python转化到C的编译器, 可以让mistune渲染更快\n\n### 使用说明\n\n```\n❯ git clone https://github.com/dongweiming/aiglos\n❯ cd aiglos\n❯ virtualenv-2.7 venv\n❯ source venv/bin/activate\n❯ pip install -r requirements.txt\n❯ touch local_settings.py  # 增加BOOK_DIR (Markdown文件存放目录), SQLALCHEMY_DATABASE_URI等配置\n❯ gunicorn -w 3 run:app -b 0.0.0.0:8000\n```\n",
+    "date": {
+      "year": "2016",
+      "month": "February",
+      "day": "24"
+    }
+  },
+  {
     "id": 0,
     "title": "出错了",
     "url": "/404.html",

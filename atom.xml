@@ -4,7 +4,7 @@
   <title><![CDATA[小明明s à domicile]]></title>
   <link href="http://dongweiming.github.com/blog/atom.xml" rel="self"/>
   <link href="http://dongweiming.github.com/blog/"/>
-  <updated>2016-01-26T18:35:27+08:00</updated>
+  <updated>2016-02-24T01:06:02+08:00</updated>
   <id>http://dongweiming.github.com/blog/</id>
   <author>
     <name><![CDATA[Dongweiming]]></name>
@@ -12,6 +12,50 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[仿Djangobook的Markdown文章评注系统]]></title>
+    <link href="http://dongweiming.github.com/blog/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/"/>
+    <updated>2016-02-24T00:48:00+08:00</updated>
+    <id>http://dongweiming.github.com/blog/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong</id>
+    <content type="html"><![CDATA[<h3 id="section">前言</h3>
+
+<p>写这个评注系统是因为最新写书, 想找个更顺畅的和编辑沟通的方式, 提高工作效率。
+学Django的同学应该都访问过: http://djangobook.py3k.cn/ , 它和<a href="http://www.djangobook.com/en/2.0/index.html">Djangobook官网</a>
+有个很重要的功能: 评注系统。在这里先向<a href="http://djangopeople.com/vcc/">VCC</a>致敬, 虽然很久没有继续维护，但是这个评注的功能还是很不错的。</p>
+
+<p>我也翻了Djangobook的Git提交记录, 没有找到实现的方式。 而且最重要的是, 它是通过ReStructuredText生成的静态页面, 不符合我的需求。所以有了今天说的<a href="https://github.com/dongweiming/aiglos">Aiglos</a></p>
+
+<p>可以看<a href="https://dry-castle-71587.herokuapp.com/">Heroku上的Demo</a>看看效果, 其中的文档使用了 https://github.com/GitbookIO/markdown</p>
+
+<h3 id="section-1">功能</h3>
+
+<ol>
+  <li>在线浏览渲染的本地Markdown文件。</li>
+  <li>提供 http://djangobook.py3k.cn/2.0/ 那样的评注系统。</li>
+  <li>评注支持Markdown语法。</li>
+</ol>
+
+<h3 id="section-2">使用的技术</h3>
+
+<p><a href="https://github.com/mitsuhiko/flask">Flask</a>: Web框架
+<a href="makotemplates.org">Mako</a>: 模板语言
+<a href="https://github.com/benselme/flask-mako">Flask-Mako</a>: Mako支持的Flask扩展
+<a href="https://github.com/mitsuhiko/flask-sqlalchemy">Flask-SQLAlchemy</a>: SQLAlchemy的Flask扩展
+<a href="https://github.com/lepture/mistune">mistune</a>: Markdown渲染
+<a href="https://github.com/cython/cython">cython</a>: Python转化到C的编译器, 可以让mistune渲染更快</p>
+
+<h3 id="section-3">使用说明</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">❯ git clone https://github.com/dongweiming/aiglos
+</span><span class="line">❯ cd aiglos
+</span><span class="line">❯ virtualenv-2.7 venv
+</span><span class="line">❯ source venv/bin/activate
+</span><span class="line">❯ pip install -r requirements.txt
+</span><span class="line">❯ touch local_settings.py  # 增加BOOK_DIR (Markdown文件存放目录), SQLALCHEMY_DATABASE_URI等配置
+</span><span class="line">❯ gunicorn -w 3 run:app -b 0.0.0.0:8000</span></pre></figure></notextile></div>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论]]></title>
@@ -2302,113 +2346,6 @@ ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多�
 <h3 id="update-2015-02-02">UPDATE: 2015-02-02</h3>
 
 <p>上周五在组内分享了, 下面是视频下载地址: <a href="http://pan.baidu.com/s/1o6BjBXg">http://pan.baidu.com/s/1o6BjBXg</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[推荐pre-commit/pre-push: 本地在commit或者push的时候做各种检查(pep8/pylint/pyflakes8)]]></title>
-    <link href="http://dongweiming.github.com/blog/archives/tui-jian-pre-commit-slash-pre-push-ben-di-zai-commithuo-zhe-pushde-shi-hou-zuo-ge-chong-jian-cha-pep8-slash-pylint-slash-pyflakes8/"/>
-    <updated>2015-01-12T18:16:00+08:00</updated>
-    <id>http://dongweiming.github.com/blog/archives/tui-jian-pre-commit-slash-pre-push-ben-di-zai-commithuo-zhe-pushde-shi-hou-zuo-ge-chong-jian-cha-pep8-slash-pylint-slash-pyflakes8</id>
-    <content type="html"><![CDATA[<h4 id="section">前言</h4>
-
-<p>使用git的同学想必都有这样的工作场景-保证生产环境的ci不挂. 也就是检查python是否符合pep8/csslint/jslint/pylint/pyflake8等.
-我在我的emacs配置中加入了这一项<a href="https://github.com/dongweiming/emacs.d/blob/master/custom/py-autopep8.el">py-autopep8</a>,
-就是在保存缓存区的时候把当前缓存区的文本放到一个临时文件, 然后执行autopep8, 再检查pep8/flake8</p>
-
-<p>但是不能对css/js/html做规范检查. 而且也不通用. 周末看到了Yelp的<a href="https://github.com/pre-commit/pre-commit">pre-commit</a>.
-感觉是个很有意思的东西，虽然之前也写过类似的hook. 但是没有它灵活. 看完他的源码后, 我今天给大家介绍下这个东西</p>
-
-<h4 id="pre-commit">pre-commit</h4>
-
-<p>玩过svn/git的同学应该都知道他们有各种的hook. 也就是准备/完成什么事件的时候做些额外的工作. 一般是shell脚本,
-版本控制工具会判断脚本的退出码, 如果不是0, 就不会继续完成. pre-commit顾名思义就是在commit之前做的准备, 也就是每次执行</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git commit -m 'xxx'</span></pre></figure></notextile></div>
-
-<p>的时候去做一些检查. 启用的插件都放到这个版本库目录的根目录下, 名字叫做.pre-commit-config.yaml -&gt; 详细文档请看: <a href="http://pre-commit.com/">http://pre-commit.com/</a></p>
-
-<p>这里有我的一个配置例子:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">-</span>   <span class="n">repo</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="o">-</span><span class="n">hooks</span>
-</span><span class="line">    <span class="n">sha</span><span class="p">:</span> <span class="n">b03733bc86d9e8b2564a5798ade40d64baae3055</span>
-</span><span class="line">    <span class="n">hooks</span><span class="p">:</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">trailing</span><span class="o">-</span><span class="n">whitespace</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">end</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="nb">file</span><span class="o">-</span><span class="n">fixer</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">autopep8</span><span class="o">-</span><span class="n">wrapper</span>
-</span><span class="line">    <span class="n">args</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;--ignore=E265,E309,E501&#39;</span><span class="p">]</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">check</span><span class="o">-</span><span class="n">docstring</span><span class="o">-</span><span class="n">first</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">check</span><span class="o">-</span><span class="n">json</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">check</span><span class="o">-</span><span class="n">yaml</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">debug</span><span class="o">-</span><span class="n">statements</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">name</span><span class="o">-</span><span class="n">tests</span><span class="o">-</span><span class="n">test</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">requirements</span><span class="o">-</span><span class="n">txt</span><span class="o">-</span><span class="n">fixer</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">flake8</span>
-</span><span class="line"><span class="o">-</span>   <span class="n">repo</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="o">/</span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span>
-</span><span class="line">    <span class="n">sha</span><span class="p">:</span> <span class="mi">86</span><span class="n">c99c6b870a261d2aff0b4cdb36995764edce1b</span>
-</span><span class="line">    <span class="n">hooks</span><span class="p">:</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">validate_config</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">validate_manifest</span>
-</span><span class="line"><span class="o">-</span>   <span class="n">repo</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">asottile</span><span class="o">/</span><span class="n">reorder_python_imports</span>
-</span><span class="line">    <span class="n">sha</span><span class="p">:</span> <span class="n">ea9fa14a757bb210d849de5af8f8ba2c9744027a</span>
-</span><span class="line">    <span class="n">hooks</span><span class="p">:</span>
-</span><span class="line">    <span class="o">-</span>   <span class="nb">id</span><span class="p">:</span> <span class="n">reorder</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">imports</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-1">安装使用</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span>
-</span><span class="line"><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
-</span><span class="line"><span class="c"># PS: 第一次执行commit会比较慢，因为他会clone对应的源, 之后就会用这个缓存的源</span>
-</span><span class="line"><span class="c"># 其他的可选源和用法直接参照[https://github.com/pre-commit](https://github.com/pre-commit)里面的项目或者[http://pre-commit.com/hooks.html](http://pre-commit.com/hooks.html)</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-2">看一个失败的例子(有颜色效果, 不能展示出来)</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&#39;test&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">Trim</span> <span class="n">Trailing</span> <span class="n">Whitespace</span><span class="o">.................................................................................................................</span><span class="n">Passed</span>
-</span><span class="line"><span class="n">Fix</span> <span class="n">End</span> <span class="n">of</span> <span class="n">Files</span><span class="o">.........................................................................................................................</span><span class="n">Passed</span>
-</span><span class="line"><span class="n">autopep8</span> <span class="n">wrapper</span><span class="o">.........................................................................................................................</span><span class="n">Passed</span>
-</span><span class="line"><span class="n">Check</span> <span class="n">docstring</span> <span class="ow">is</span> <span class="n">first</span><span class="o">.................................................................................................................</span><span class="n">Passed</span>
-</span><span class="line"><span class="n">Check</span> <span class="n">JSON</span><span class="o">..........................................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
-</span><span class="line"><span class="n">Check</span> <span class="n">Yaml</span><span class="o">..........................................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
-</span><span class="line"><span class="n">Debug</span> <span class="n">Statements</span> <span class="p">(</span><span class="n">Python</span><span class="p">)</span><span class="o">................................................................................................................</span><span class="n">Passed</span>
-</span><span class="line"><span class="n">Tests</span> <span class="n">should</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">_test</span><span class="o">.</span><span class="n">py</span><span class="o">........................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
-</span><span class="line"><span class="n">Fix</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span><span class="o">................................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
-</span><span class="line"><span class="n">Flake8</span><span class="o">...................................................................................................................................</span><span class="n">Failed</span>
-</span><span class="line"><span class="n">hookid</span><span class="p">:</span> <span class="n">flake8</span>
-</span><span class="line">
-</span><span class="line"><span class="n">pre_commit</span><span class="o">/</span><span class="n">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span> <span class="n">F401</span> <span class="s">&#39;os&#39;</span> <span class="n">imported</span> <span class="n">but</span> <span class="n">unused</span>
-</span><span class="line"><span class="n">pre_commit</span><span class="o">/</span><span class="n">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span> <span class="n">F401</span> <span class="s">&#39;sys&#39;</span> <span class="n">imported</span> <span class="n">but</span> <span class="n">unused</span>
-</span><span class="line">
-</span><span class="line"><span class="n">Validate</span> <span class="n">Pre</span><span class="o">-</span><span class="n">Commit</span> <span class="n">Config</span><span class="o">..........................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
-</span><span class="line"><span class="n">Validate</span> <span class="n">Pre</span><span class="o">-</span><span class="n">Commit</span> <span class="n">Manifest</span><span class="o">........................................................................................</span><span class="p">(</span><span class="n">no</span> <span class="n">files</span> <span class="n">to</span> <span class="n">check</span><span class="p">)</span> <span class="n">Skipped</span>
-</span><span class="line"><span class="n">Reorder</span> <span class="n">python</span> <span class="n">imports</span><span class="o">...................................................................................................................</span><span class="n">Passed</span>
-</span><span class="line"><span class="c"># 因为我的flake8有问题 所以commit失败了</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="pre-commit-1">pre-commit的问题</h4>
-
-<p>我觉得对每次commit做一次审查, 第一是需要时间, 第二是没有必要, 因为经常一个pr有多个commit,
-我只保证整体结果是正确的就好了 - 也就是说应该是在push的时候. 整个过程我可能对commit做多次rebase/–amend等等. 某一次的检查失败其实完全不
-影响我做后的结果 - 我是手快党</p>
-
-<p>so. 我基于它修改了一个版本<a href="https://github.com/dongweiming/pre-push/">pre-push</a>, 只是我对push做了拦截. 并且我会经常和它保持同步</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span> <span class="o">-</span><span class="n">t</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="c"># 默认安装pre-commit钩子, 每次commit触发</span>
-</span><span class="line"><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span> <span class="o">-</span><span class="n">t</span> <span class="n">pre</span><span class="o">-</span><span class="n">push</span> <span class="c"># 默认安装pre-push钩子, 每次push触发</span>
-</span></pre></figure></notextile></div>
-
-<p>其他用法完全一样.</p>
-
-<p>假如push的时候想要不检查而强制push, 可以加上<code>--no-verify</code>参数</p>
-
-<h4 id="update-from-2015-01-15">Update from 2015-01-15</h4>
-
-<p>我的这个分支已经合并到<a href="https://github.com/pre-commit/pre-commit">pre-commit</a>. <a href="https://github.com/pre-commit/pre-commit/pull/189">pull189</a></p>
-
-<p>大家可以不要用我的分支了. PS: 这是我见到测试覆盖最高的项目.</p>
 ]]></content>
   </entry>
   

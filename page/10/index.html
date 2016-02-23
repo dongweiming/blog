@@ -141,6 +141,103 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentoobijishisangengxinxitongdebaocuojiejue/">Gentoo笔记（十三）更新系统的总结和报错解决</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T00:00:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>升级步骤：</p>
+
+<p>1 emerge -–sync ＃同步更新目录
+2 emerge portage ＃更新portage
+3 emerge python ＃更新python，这属于个人习惯
+4 python-updater ＃更新python配置
+5 emerge -aDjNquv @world ＃升级整个系统（包括依赖）,-D 表示-deep,－j不加参数表示不限制同时运行的emerge进程（模式是1）</p>
+
+<p>#－N表示查看每个包的可用的USE参数，－q表示减少显示器屏幕输出，－u表示 &#8211;update ,-v表示详细模式
+6 emerge -av –depclean ＃清除不需要的软件包
+7 revdep-rebuild ＃检查系统依赖关系自动安装不满足的 关系包,假如过程中出现错误，重新 执行还是过去的包数量，</p>
+
+<p>#这是因为对需要重新安装的依赖包的数据缓存了，可以删除：rm /var/cache/revdep-rebuild/*.rr
+8 dispatch-conf或etc-update ＃更新系统配置文件</p>
+
+<p>9 （可选）emerge -ej world #重新编译系统，假如USE修改不大就不需要</p>
+
+<p>1 [blocks B ] 原因：说明小于sys-libs/talloc-2.0.5的包被sys-libs/talloc-2.0.7被屏蔽了，需要卸载重装新版本
+解决：dongwm@localhost ~ $sudo emerge -C talloc &amp;&amp; sudo emerge -1 talloc
+2 !!! The following updates are masked by LICENSE changes: - www-plugins/adobe-flash-11.2.202.236
+原因：这是adobe-flash造成的阻止安装，需要手动容许这个LICENSE
+解决：echo &#8220;www-plugins/adobe-flash AdobeFlash-10.3&#8221; &gt;&gt; /etc/portage/package.license #其中的10.3是报错提示信息重提到的</p>
+
+<p>3 !!! One of the following masked packages is required to complete your request:
+- x11-plugins/compiz-plugins-extra-0.8.8::gentoo (masked by: corruption)</p>
+
+<p>原因：主要是权限问题,本来更新portage后不存在这个ebuild，但是依赖关系又需要，所以去http://gpo.zugaina.org/x11-plugins/compiz-plugins-extra下载了一个相应版本，其他的地址，你懂的!</p>
+
+<p>解决：ebuild compiz-plugins-extra-0.8.8.ebuild digest</p>
+
+<p>4 emerge: there are no ebuilds built with USE flags to satisfy &#8220;&gt;=x11-libs/libdrm-2.4.24[video_cards_nouveau]&#8221;.
+!!! One of the following packages is required to complete your request:
+- x11-libs/libdrm-2.4.33::gentoo (Change USE: +video_cards_nouveau)</p>
+
+<p>原因：需要指定一个USE标识，可以直接在安装指定
+解决：这样安装：USE=video_cards_nouveau emerge  x11-drivers/xf86-video-nouveau 或者给某个包一个特定的USE到/etc/portage/package.use，这里也就是添加一行：</p>
+
+<p>x11-drivers/xf86-video-nouveau video_cards_nouveau
+5The following REQUIRED_USE flag constraints are unsatisfied:</p>
+
+<p>osdmenu? ( X ) xscreensaver? ( X ) xv? ( X )</p>
+
+<p>原因：说明USE包括osdmenu对其他标识有影响</p>
+
+<p>解决：需要去掉，或者&#8217;-osdmenu&#8217;</p>
+
+<p>6 /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../i686-pc-linux-gnu/bin/ld: warning: libxcb-util.so.0, needed by /usr/lib/gcc/i686-pc-linux-gnu/4.5.3/../../../../lib/libstartup-notification-1.so, not found (try using -rpath or -rpath-link)(安装时)</p>
+
+<p>原因： libxcb-util的动态链接有问题</p>
+
+<p>解决：需要重新emerge x11-libs/xcb-util, x11-libs/libxc 然后 revdep-rebuild重建依赖关系</p>
+
+<p>7 Traceback (most recent call last):
+File &#8220;configure.py&#8221;, line 32, in &lt;module&gt;
+import sipconfig
+ImportError: No module named sipconfig
+* ERROR: dev-python/PyQt4-4.9.1 failed (configure phase):
+*   (no error message)
+原因：安装qt需要sip</p>
+
+<p>解决：重新安装dev-python/sip
+</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoobijishierzhongxinbianyineihezongjie/">Gentoo笔记（十二）重新编译内核总结</a></h1>
     
     
@@ -2334,265 +2431,6 @@ def visit(arg, dirname, names):
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyumultiprocessingyanjiuyi/">关于multiprocessing研究(一)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：multiprocessing是一个使用方法类似threading模块的进程模块，允许程序员做并行开发，从python2.6开始内置</p>
-
-<p><pre class="sh_python">
-import multiprocessing
-import logging,sys
-def worker():
-    print 'Worker'
-    sys.stdout.flush() 
-    return</p>
-
-<p>if __name__ == '__main__':
-    jobs = []
-    for i in range(5):
-        multiprocessing.log_to_stderr(logging.DEBUG)  #记录日志,也可以使用一下注释的三句
-        #multiprocessing.log_to_stderr() 
-        #logger = multiprocessing.get_logger() 
-        #logger.setLevel(logging.INFO)
-        p = multiprocessing.Process(target=worker)  #实例化Process
-        jobs.append(p)
-        p.start() #调用start()开始，类似于threading.Thread
-</pre></p>
-
-<p><pre class="sh_python">
-import multiprocessing</p>
-
-<p>def worker(num): #带参数的函数
-    print 'Worker:', num
-    return</p>
-
-<p>if __name__ == '__main__':
-    jobs = []
-    for i in range(5):
-        p = multiprocessing.Process(target=worker, args=(i,)) #带参数的目标
-        jobs.append(p)
-        p.start()
-</pre></p>
-
-<p><pre class="sh_python">
-import multiprocessing
-import time</p>
-
-<p>def worker():
-    name = multiprocessing.current_process().name  #当前进程名字
-    print name, 'Starting'
-    time.sleep(2)
-    print name, 'Exiting'</p>
-
-<p>def my_service():
-    name = multiprocessing.current_process().name
-    print name, 'Starting'
-    time.sleep(3)
-    print name, 'Exiting'</p>
-
-<p>if __name__ == '__main__':
-    service = multiprocessing.Process(name='my_service', target=my_service) #使用自定义的函数名
-    worker_1 = multiprocessing.Process(name='worker 1', target=worker)
-    worker_2 = multiprocessing.Process(target=worker) # use default name  #使用默认的函数名，即Process-3</p>
-
-<p>    worker_1.start()
-    worker_2.start()
-    service.start()
-</pre></p>
-
-<p><pre class="sh_python">
-import multiprocessing
-import time
-import sys</p>
-
-<p>def daemon():
-    p = multiprocessing.current_process()
-    print 'Starting:', p.name, p.pid
-    sys.stdout.flush()
-    time.sleep(2)
-    print 'Exiting :', p.name, p.pid
-    sys.stdout.flush()</p>
-
-<p>def non_daemon():  #默认情况下，主程序将不会退出，直到所有的孩子都已经退出
-    p = multiprocessing.current_process()
-    print 'Starting:', p.name, p.pid
-    sys.stdout.flush()
-    print 'Exiting :', p.name, p.pid
-    sys.stdout.flush()</p>
-
-<p>if __name__ == '__main__':
-    d = multiprocessing.Process(name='daemon', target=daemon)
-    d.daemon = True</p>
-
-<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
-    n.daemon = False   #默认是不是守护进程，以便通过真正轮流守护模式</p>
-
-<p>    d.start()
-    time.sleep(1)
-    n.start()
-</pre></p>
-
-<p><pre class="sh_python">
-import multiprocessing
-import time
-import sys</p>
-
-<p>def daemon():
-    print 'Starting:', multiprocessing.current_process().name
-    time.sleep(2)
-    print 'Exiting :', multiprocessing.current_process().name</p>
-
-<p>def non_daemon():
-    print 'Starting:', multiprocessing.current_process().name
-    print 'Exiting :', multiprocessing.current_process().name</p>
-
-<p>if __name__ == '__main__':
-    d = multiprocessing.Process(name='daemon', target=daemon)
-    d.daemon = True</p>
-
-<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
-    n.daemon = False</p>
-
-<p>    d.start()
-    time.sleep(1)
-    n.start()</p>
-
-<p>    d.join() #会使主调线程堵塞，直到被调用线程运行结束或超时,join函数可以设置超时， 如果进程在超时期限内没有完成就返回 比如join(1)，可以通过d.is_alive()查看进程是否存活
-    n.join()
-</pre></p>
-
-<p><pre class="sh_python">
-import multiprocessing
-import time</p>
-
-<p>def slow_worker():
-    print 'Starting worker'
-    time.sleep(0.1)
-    print 'Finished worker'</p>
-
-<p>if __name__ == '__main__':
-    p = multiprocessing.Process(target=slow_worker)
-    print 'BEFORE:', p, p.is_alive()</p>
-
-<p>    p.start()
-    print 'DURING:', p, p.is_alive()</p>
-
-<p>    p.terminate()  #发送结束进程信号
-    print 'TERMINATED:', p, p.is_alive()</p>
-
-<p>    p.join()  #更新状态以反应终止后的状态
-    print 'JOINED:', p, p.is_alive()
-</pre></p>
-
-<p><pre class="sh_python">
-import multiprocessing
-import sys
-import time</p>
-
-<p>def exit_error():
-    sys.exit(1)</p>
-
-<p>def exit_ok():
-    return</p>
-
-<p>def return_value():
-    return 1</p>
-
-<p>def raises():
-    raise RuntimeError('There was an error!')</p>
-
-<p>def terminated():
-    time.sleep(3)</p>
-
-<p>if __name__ == '__main__':
-    jobs = []
-    for f in [exit_error, exit_ok, return_value, raises, terminated]:
-        print 'Starting process for', f.func_name
-        j = multiprocessing.Process(target=f, name=f.func_name)
-        jobs.append(j)
-        j.start()</p>
-
-<p>    jobs[-1].terminate()</p>
-
-<p>    for j in jobs:
-        j.join()
-        print '%s.exitcode = %s' % (j.name, j.exitcode)  #exitcode返回退出的代码，0表示没有错误，&gt;0表示程序有错误，&lt;0表示被code为-1的信号杀死了
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Starting process for exit_error
-Starting process for exit_ok
-Starting process for return_value
-Starting process for raises
-Starting process for terminated
-Process raises:
-Traceback (most recent call last):
-exit_error.exitcode = 1
-exit_ok.exitcode = 0
-return_value.exitcode = 0
-File &#8220;/usr/lib/python2.7/multiprocessing/process.py&#8221;, line 232, in _bootstrap
-self.run()
-File &#8220;/usr/lib/python2.7/multiprocessing/process.py&#8221;, line 88, in run
-self._target(*self._args, **self._kwargs)
-File &#8220;test.py&#8221;, line 15, in raises
-raise RuntimeError(&#8216;There was an error!&#8217;)
-RuntimeError: There was an error!
-raises.exitcode = 1
-terminated.exitcode = -15
-<pre class="sh_python">
-import multiprocessing</p>
-
-<p>class Worker(multiprocessing.Process):   #最开始的例子也可以使用继承类的方式</p>
-
-<p>    def run(self):
-        print 'In %s' % self.name
-        return</p>
-
-<p>if __name__ == '__main__':
-    jobs = []
-    for i in range(5):
-        p = Worker()
-        jobs.append(p)
-        p.start()
-    for j in jobs:
-        j.join()
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/11/">&larr; Older</a></li>
@@ -2615,6 +2453,10 @@ import multiprocessing</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -2650,10 +2492,6 @@ import multiprocessing</p>
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

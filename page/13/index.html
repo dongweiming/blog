@@ -141,6 +141,115 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyustructyanjiu/">关于struct研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：struct是一个实现字符串和二进制数据之间的相互转换的模块，它包含了实现字符串字节和Python本地数据类型(如数字和字符串)间的相互转换的函数.</p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>values = (1, 'ab', 2.7)
+s = struct.Struct('I 2s f')
+packed_data = s.pack(*values)
+data = binascii.hexlify(packed_data) #封装后的值被转换成16进制字节流输出
+print 'Original values:', values
+print 'Format string  :', s.format
+print 'Uses           :', s.size, 'bytes'
+print 'Packed Value   :', data
+print
+packed_data = binascii.unhexlify(data)
+s = struct.Struct('I 2s f')
+unpacked_data = s.unpack(packed_data)
+print 'Unpacked Values:', unpacked_data
+</pre></p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>values = (1, 'ab', 2.7)
+print 'Original values:', values</p>
+
+<p>endianness = [
+    ('@', 'native, native'),
+    ('=', 'native, standard'),
+    ('&lt;', 'little-endian'),
+    ('&gt;', 'big-endian'),
+    ('!', 'network'),
+]</p>
+
+<p>for code, name in endianness:
+    s = struct.Struct(code + ' I 2s f')  #默认情况下, 使用标准C库中”字节序”的概念将数值编码. 通过在字符串格式中直接指定一个明确的字节序可以简单的覆盖这个选项
+    packed_data = s.pack(*values)
+    print
+    print 'Format string  :', s.format, 'for', name
+    print 'Uses           :', s.size, 'bytes'
+    print 'Packed Value   :', binascii.hexlify(packed_data)
+    print 'Unpacked Value :', s.unpack(packed_data)
+</pre></p>
+
+<p><pre class="sh_python">
+import struct
+import binascii</p>
+
+<p>s = struct.Struct('I 2s f')
+values = (1, 'ab', 2.7)
+print 'Original:', values</p>
+
+<p>print
+print 'ctypes string buffer'</p>
+
+<p>import ctypes
+b = ctypes.create_string_buffer(s.size)  #在高性能的敏感情况或者通过通过第三方模块来传递数据经常会要求对二进制数据进行封装
+print 'Before  :', binascii.hexlify(b.raw)
+s.pack_into(b, 0, *values) #一种优化的方式是避免为每一个封装结构分配新的缓冲区. 函数pack_into()和unpack_from()支持直接写入到预分配的缓冲区中.
+print 'After   :', binascii.hexlify(b.raw)
+print 'Unpacked:', s.unpack_from(b, 0)</p>
+
+<p>print
+print 'array'</p>
+
+<p>import array
+a = array.array('c', '\0' *s.size)
+print 'Before  :', binascii.hexlify(a)
+s.pack_into(a, 0, *values)
+print 'After   :', binascii.hexlify(a)
+print 'Unpacked:', s.unpack_from(a, 0)
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyustringyanjiu/">关于string研究</a></h1>
     
     
@@ -1484,242 +1593,6 @@ print 'FINAL:', counter
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyureadlineyanjiu/">关于readline研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：readline是一个GNU readline库的API</p>
-
-<p><pre class="sh_python">
-import readline</p>
-
-<p>readline.parse_and_bind('tab: complete')  #按tab自动补全
-readline.parse_and_bind('set editing-mode vi')  #设置对某行数据假如按‘ESC’，进入vi模式  这2行也可以写道一个文件里面int.rc ,导入配置：readline.read_init_file('int.rc')</p>
-
-<p>while True:
-    line = raw_input('Prompt ("stop" to quit): ')
-    if line == 'stop':
-        break
-    print 'ENTERED: "%s"' % line
-</pre></p>
-
-<p><pre class="sh_python">
-import readline
-import logging</p>
-
-<p>LOG_FILENAME = '/tmp/completer.log'
-logging.basicConfig(filename=LOG_FILENAME,
-                    level=logging.DEBUG,
-                    )   #记录日志</p>
-
-<p>class SimpleCompleter(object):</p>
-
-<p>    def __init__(self, options):
-        self.options = sorted(options)
-        return</p>
-
-<p>    def complete(self, text, state):
-        response = None
-        if state == 0:
-            if text:
-                self.matches = [s 
-                                for s in self.options
-                                if s and s.startswith(text)]
-                logging.debug('%s matches: %s', repr(text), self.matches)
-            else:
-                self.matches = self.options[:]
-                logging.debug('(empty input) matches: %s', self.matches)
-        try:
-            response = self.matches[state]
-        except IndexError:
-            response = None
-        logging.debug('complete(%s, %s) =&gt; %s', 
-                      repr(text), state, repr(response))
-        return response</p>
-
-<p>def input_loop():
-    line = ''
-    while line != 'stop':
-        line = raw_input('Prompt ("stop" to quit): ')
-        print 'Dispatch %s' % line</p>
-
-<p>readline.set_completer(SimpleCompleter(['start', 'stop', 'list', 'print']).complete)  #注册列表里面几个命令
-readline.parse_and_bind('tab: complete')  #绑定tab自动补全
-input_loop()
-</pre></p>
-
-<p><pre class="sh_python">
-import readline
-import logging</p>
-
-<p>LOG_FILENAME = 'completer.log'
-logging.basicConfig(filename=LOG_FILENAME,
-                    level=logging.DEBUG,
-                    )</p>
-
-<p>class BufferAwareCompleter(object):</p>
-
-<p>    def __init__(self, options):
-        self.options = options  #可选的黎明和2级命令
-        self.current_candidates = [] 
-        return</p>
-
-<p>    def complete(self, text, state):
-        response = None
-        if state == 0:    
-            origline = readline.get_line_buffer() #返回行缓冲区的当前内容
-            begin = readline.get_begidx() #返回行自动补全的范围的开始
-            end = readline.get_endidx() #返回行自动补全的范围的结束
-            being_completed = origline[begin:end]  #返回行数据
-            words = origline.split() #因为有2级命令  分割出那级命令</p>
-
-<p>            logging.debug('origline=%s', repr(origline))
-            logging.debug('begin=%s', begin)
-            logging.debug('end=%s', end)
-            logging.debug('being_completed=%s', being_completed)
-            logging.debug('words=%s', words)</p>
-
-<p>            if not words: #弱国使用tab是空 ，返回所有一级命令
-                self.current_candidates = sorted(self.options.keys()) 
-            else:
-                try:
-                    if begin == 0: #如果是第一个命令
-                        candidates = self.options.keys()
-                    else:
-                        first = words[0] #2级命令 
-                        candidates = self.options[first] 取第一级命令作为键  取子键</p>
-
-<p>                    if being_completed: #如果有字母
-                        self.current_candidates = [ w for w in candidates
-                                                    if w.startswith(being_completed) ]  #对比是不是注册的命令是不是以这个或这些字母开头
-                    else:
-                        self.current_candidates = candidates  #返回所有</p>
-
-<p>                    logging.debug('candidates=%s', self.current_candidates)</p>
-
-<p>                except (KeyError, IndexError), err:
-                    logging.error('completion error: %s', err)
-                    self.current_candidates = []</p>
-
-<p>        try:
-            response = self.current_candidates[state]
-        except IndexError:
-            response = None
-        logging.debug('complete(%s, %s) =&gt; %s', repr(text), state, response)
-        return response</p>
-
-<p>def input_loop():
-    line = ''
-    while line != 'stop':
-        line = raw_input('Prompt ("stop" to quit): ')
-        print 'Dispatch %s' % line</p>
-
-<p>readline.set_completer(BufferAwareCompleter(
-    {'list':['files', 'directories'],
-     'print':['byname', 'bysize'],
-     'stop':[],
-    }).complete)</p>
-
-<p>readline.parse_and_bind('tab: complete')</p>
-
-<p># Prompt the user for text
-input_loop()
-</pre></p>
-
-<p><pre class="sh_python">
-import readline
-import logging
-import os</p>
-
-<p>LOG_FILENAME = 'completer.log'
-HISTORY_FILENAME = 'completer.hist'</p>
-
-<p>logging.basicConfig(filename=LOG_FILENAME,
-                    level=logging.DEBUG,
-                    )
-def get_history_items():
-    return [ readline.get_history_item(i) #返回历史记录中的这条
-             for i in xrange(1, readline.get_current_history_length() + 1)
-             ]</p>
-
-<p>class HistoryCompleter(object):</p>
-
-<p>    def __init__(self):
-        self.matches = []
-        return
-    def complete(self, text, state):
-        response = None
-        if state == 0:
-            history_values = get_history_items()
-            logging.debug('history: %s', history_values)
-            if text:
-                self.matches = sorted(h 
-                                      for h in history_values 
-                                      if h and h.startswith(text))
-            else:
-                self.matches = []
-            logging.debug('matches: %s', self.matches)
-        try:
-            response = self.matches[state]
-        except IndexError:
-            response = None
-        logging.debug('complete(%s, %s) =&gt; %s', 
-                      repr(text), state, repr(response))
-        return response</p>
-
-<p>def input_loop():
-    if os.path.exists(HISTORY_FILENAME):
-        readline.read_history_file(HISTORY_FILENAME)
-    print 'Max history file length:', readline.get_history_length()
-    print 'Startup history:', get_history_items()
-    try:
-        while True:
-            line = raw_input('Prompt ("stop" to quit): ')
-            if line == 'stop':
-                break
-            if line:
-                print 'Adding "%s" to the history' % line
-    finally:
-        print 'Final history:', get_history_items()
-        readline.write_history_file(HISTORY_FILENAME)   #记录历史记录到文件</p>
-
-<p>readline.set_completer(HistoryCompleter().complete)</p>
-
-<p>readline.parse_and_bind('tab: complete')</p>
-
-<p>input_loop()
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/14/">&larr; Older</a></li>
@@ -1742,6 +1615,10 @@ def get_history_items():
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -1777,10 +1654,6 @@ def get_history_items():
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

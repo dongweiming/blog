@@ -141,6 +141,265 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyumultiprocessingyanjiuyi/">关于multiprocessing研究(一)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：multiprocessing是一个使用方法类似threading模块的进程模块，允许程序员做并行开发，从python2.6开始内置</p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import logging,sys
+def worker():
+    print 'Worker'
+    sys.stdout.flush() 
+    return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        multiprocessing.log_to_stderr(logging.DEBUG)  #记录日志,也可以使用一下注释的三句
+        #multiprocessing.log_to_stderr() 
+        #logger = multiprocessing.get_logger() 
+        #logger.setLevel(logging.INFO)
+        p = multiprocessing.Process(target=worker)  #实例化Process
+        jobs.append(p)
+        p.start() #调用start()开始，类似于threading.Thread
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing</p>
+
+<p>def worker(num): #带参数的函数
+    print 'Worker:', num
+    return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = multiprocessing.Process(target=worker, args=(i,)) #带参数的目标
+        jobs.append(p)
+        p.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def worker():
+    name = multiprocessing.current_process().name  #当前进程名字
+    print name, 'Starting'
+    time.sleep(2)
+    print name, 'Exiting'</p>
+
+<p>def my_service():
+    name = multiprocessing.current_process().name
+    print name, 'Starting'
+    time.sleep(3)
+    print name, 'Exiting'</p>
+
+<p>if __name__ == '__main__':
+    service = multiprocessing.Process(name='my_service', target=my_service) #使用自定义的函数名
+    worker_1 = multiprocessing.Process(name='worker 1', target=worker)
+    worker_2 = multiprocessing.Process(target=worker) # use default name  #使用默认的函数名，即Process-3</p>
+
+<p>    worker_1.start()
+    worker_2.start()
+    service.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time
+import sys</p>
+
+<p>def daemon():
+    p = multiprocessing.current_process()
+    print 'Starting:', p.name, p.pid
+    sys.stdout.flush()
+    time.sleep(2)
+    print 'Exiting :', p.name, p.pid
+    sys.stdout.flush()</p>
+
+<p>def non_daemon():  #默认情况下，主程序将不会退出，直到所有的孩子都已经退出
+    p = multiprocessing.current_process()
+    print 'Starting:', p.name, p.pid
+    sys.stdout.flush()
+    print 'Exiting :', p.name, p.pid
+    sys.stdout.flush()</p>
+
+<p>if __name__ == '__main__':
+    d = multiprocessing.Process(name='daemon', target=daemon)
+    d.daemon = True</p>
+
+<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
+    n.daemon = False   #默认是不是守护进程，以便通过真正轮流守护模式</p>
+
+<p>    d.start()
+    time.sleep(1)
+    n.start()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time
+import sys</p>
+
+<p>def daemon():
+    print 'Starting:', multiprocessing.current_process().name
+    time.sleep(2)
+    print 'Exiting :', multiprocessing.current_process().name</p>
+
+<p>def non_daemon():
+    print 'Starting:', multiprocessing.current_process().name
+    print 'Exiting :', multiprocessing.current_process().name</p>
+
+<p>if __name__ == '__main__':
+    d = multiprocessing.Process(name='daemon', target=daemon)
+    d.daemon = True</p>
+
+<p>    n = multiprocessing.Process(name='non-daemon', target=non_daemon)
+    n.daemon = False</p>
+
+<p>    d.start()
+    time.sleep(1)
+    n.start()</p>
+
+<p>    d.join() #会使主调线程堵塞，直到被调用线程运行结束或超时,join函数可以设置超时， 如果进程在超时期限内没有完成就返回 比如join(1)，可以通过d.is_alive()查看进程是否存活
+    n.join()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import time</p>
+
+<p>def slow_worker():
+    print 'Starting worker'
+    time.sleep(0.1)
+    print 'Finished worker'</p>
+
+<p>if __name__ == '__main__':
+    p = multiprocessing.Process(target=slow_worker)
+    print 'BEFORE:', p, p.is_alive()</p>
+
+<p>    p.start()
+    print 'DURING:', p, p.is_alive()</p>
+
+<p>    p.terminate()  #发送结束进程信号
+    print 'TERMINATED:', p, p.is_alive()</p>
+
+<p>    p.join()  #更新状态以反应终止后的状态
+    print 'JOINED:', p, p.is_alive()
+</pre></p>
+
+<p><pre class="sh_python">
+import multiprocessing
+import sys
+import time</p>
+
+<p>def exit_error():
+    sys.exit(1)</p>
+
+<p>def exit_ok():
+    return</p>
+
+<p>def return_value():
+    return 1</p>
+
+<p>def raises():
+    raise RuntimeError('There was an error!')</p>
+
+<p>def terminated():
+    time.sleep(3)</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for f in [exit_error, exit_ok, return_value, raises, terminated]:
+        print 'Starting process for', f.func_name
+        j = multiprocessing.Process(target=f, name=f.func_name)
+        jobs.append(j)
+        j.start()</p>
+
+<p>    jobs[-1].terminate()</p>
+
+<p>    for j in jobs:
+        j.join()
+        print '%s.exitcode = %s' % (j.name, j.exitcode)  #exitcode返回退出的代码，0表示没有错误，&gt;0表示程序有错误，&lt;0表示被code为-1的信号杀死了
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Starting process for exit_error
+Starting process for exit_ok
+Starting process for return_value
+Starting process for raises
+Starting process for terminated
+Process raises:
+Traceback (most recent call last):
+exit_error.exitcode = 1
+exit_ok.exitcode = 0
+return_value.exitcode = 0
+File &#8220;/usr/lib/python2.7/multiprocessing/process.py&#8221;, line 232, in _bootstrap
+self.run()
+File &#8220;/usr/lib/python2.7/multiprocessing/process.py&#8221;, line 88, in run
+self._target(*self._args, **self._kwargs)
+File &#8220;test.py&#8221;, line 15, in raises
+raise RuntimeError(&#8216;There was an error!&#8217;)
+RuntimeError: There was an error!
+raises.exitcode = 1
+terminated.exitcode = -15
+<pre class="sh_python">
+import multiprocessing</p>
+
+<p>class Worker(multiprocessing.Process):   #最开始的例子也可以使用继承类的方式</p>
+
+<p>    def run(self):
+        print 'In %s' % self.name
+        return</p>
+
+<p>if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = Worker()
+        jobs.append(p)
+        p.start()
+    for j in jobs:
+        j.join()
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyumultiprocessingyanjiuer/">关于multiprocessing研究(二)</a></h1>
     
     
@@ -1991,160 +2250,6 @@ WARNING:root:test.py:39: UserWarning:This is a warning message, after</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuuuidyanjiu/">关于uuid研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-19T00:00:00+08:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：uuid是使用python生成唯一ID的模块，uuid是一种唯一标识，在许多领域作为标识用途.主要方法从硬件地址和时间生成，md5，sha－1，随机四种方法</p>
-
-<p><pre class="sh_python">
-import uuid</p>
-
-<p>print hex(uuid.getnode())   #根据系统的mac地址打印  ,但是多个mac就有问题</p>
-
-<p>u = uuid.uuid1()  #uuid.uuid1()根据mac地址生成uuid  不带参数就是使用uuid.getnode() </p>
-
-<p>print u
-print type(u)
-print 'bytes   :', repr(u.bytes)
-print 'hex     :', u.hex
-print 'int     :', u.int
-print 'urn     :', u.urn
-print 'variant :', u.variant
-print 'version :', u.version
-print 'fields  :', u.fields
-print '\ttime_low            : ', u.time_low
-print '\ttime_mid            : ', u.time_mid
-print '\ttime_hi_version     : ', u.time_hi_version
-print '\tclock_seq_hi_variant: ', u.clock_seq_hi_variant
-print '\tclock_seq_low       : ', u.clock_seq_low
-print '\tnode                : ', u.node
-print '\ttime                : ', u.time
-print '\tclock_seq           : ', u.clock_seq</p>
-
-<p>for i in xrange(3):
-    print uuid.uuid1()  #uuid1()里面也包含了时间的影响  这样的迭代其中的一部分因为是时间不同而不同</p>
-
-<p>node1 = uuid.getnode()
-print hex(node1), uuid.uuid1(node1)  #本机mac地址生成</p>
-
-<p>node2 =  0x1e5274040e
-print hex(node2), uuid.uuid1(node2)  #根据这个特定mac生成</p>
-
-<p>hostnames = ['www.ailll.com', 'www.dongwm.com']</p>
-
-<p>for name in hostnames:
-    print name
-    print '\tMD5   :', uuid.uuid3(uuid.NAMESPACE_DNS, name)  #uuid3基于dns和加密算法md5
-    print '\tSHA-1 :', uuid.uuid5(uuid.NAMESPACE_DNS, name)  #uuid5是基于dns和加密算法sha-1 
-for i in xrange(3):
-    print uuid.uuid3(uuid.NAMESPACE_DNS, 'www.doughellmann.com')  #不基于时间 所以是迭代的是一样的
-for i in xrange(3):
-    print uuid.uuid4()  #uuid4是根据随机算法  每次差别很大
-def show(msg, l):
-    print msg
-    for v in l:
-        print '\t', v
-    print</p>
-
-<p>input_values = [ 
-    'urn:uuid:f2f84497-b3bf-493a-bba9-7c68e6def80b',
-    '{417a5ebb-01f7-4ed5-aeac-3d56cd5037b0}',
-    '2115773a-5bf1-11dd-ab48-001ec200d9e0',
-    ]  #用于分析各种格式的字符串创建的UUID对象</p>
-
-<p>show('input_values', input_values)</p>
-
-<p>uuids = [ uuid.UUID(s) for s in input_values ]
-show('converted to uuids', uuids)</p>
-
-<p>uuids.sort()
-show('sorted', uuids)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-0xaeb8f70e0L
-f312fcaa-b9f1-11e1-bc26-000aeb8f70e0
-&lt;class &#8216;uuid.UUID&#8217;&gt;
-bytes   : &#8216;\xf3\x12\xfc\xaa\xb9\xf1\x11\xe1\xbc&amp;\x00\n\xeb\x8fp\xe0&#8217;
-hex     : f312fcaab9f111e1bc26000aeb8f70e0
-int     : 323100989012742094042604002680798933216
-urn     : urn:uuid:f312fcaa-b9f1-11e1-bc26-000aeb8f70e0
-variant : specified in RFC 4122
-version : 1
-fields  : (4078107818L, 47601L, 4577L, 188L, 38L, 46901719264L)
-time_low            :  4078107818
-time_mid            :  47601
-time_hi_version     :  4577
-clock_seq_hi_variant:  188
-clock_seq_low       :  38
-node                :  46901719264
-time                :  135593912614190250
-clock_seq           :  15398
-f31305ec-b9f1-11e1-bc26-000aeb8f70e0
-f31307f4-b9f1-11e1-bc26-000aeb8f70e0
-f3130952-b9f1-11e1-bc26-000aeb8f70e0
-0xaeb8f70e0L f3131b0c-b9f1-11e1-8092-000aeb8f70e0
-0x1e5274040eL f3131d17-b9f1-11e1-b53b-001e5274040e
-www.ailll.com
-MD5   : 3b7e4bb6-9606-34f9-ae27-98e0a83555ea
-SHA-1 : 2eae48e1-73e7-57c7-8b7c-3229c87fd79e
-www.dongwm.com
-MD5   : 2ddcfb77-c053-3e92-8a24-b57206b75157
-SHA-1 : 1ceafb54-c8ec-5090-b6ec-e71b3f0e15a9
-bcd02e22-68f0-3046-a512-327cca9def8f
-bcd02e22-68f0-3046-a512-327cca9def8f
-bcd02e22-68f0-3046-a512-327cca9def8f
-225d3fa0-d176-4eea-af0f-5a043711062d
-5039067a-e2a7-4a9b-8f3a-edd54d90a280
-40c69a3c-ebbc-4b67-b083-3223e32248ac
-input_values
-urn:uuid:f2f84497-b3bf-493a-bba9-7c68e6def80b
-{417a5ebb-01f7-4ed5-aeac-3d56cd5037b0}
-2115773a-5bf1-11dd-ab48-001ec200d9e0</p>
-
-<p>converted to uuids
-f2f84497-b3bf-493a-bba9-7c68e6def80b
-417a5ebb-01f7-4ed5-aeac-3d56cd5037b0
-2115773a-5bf1-11dd-ab48-001ec200d9e0</p>
-
-<p>sorted
-2115773a-5bf1-11dd-ab48-001ec200d9e0
-417a5ebb-01f7-4ed5-aeac-3d56cd5037b0
-f2f84497-b3bf-493a-bba9-7c68e6def80b</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/12/">&larr; Older</a></li>
@@ -2167,6 +2272,10 @@ f2f84497-b3bf-493a-bba9-7c68e6def80b</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -2202,10 +2311,6 @@ f2f84497-b3bf-493a-bba9-7c68e6def80b</p>
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>

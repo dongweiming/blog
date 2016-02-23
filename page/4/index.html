@@ -141,6 +141,461 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shi-yong-grafanahe-diamondgou-jian-graphitejian-kong-xi-tong/">使用grafana和Diamond构建Graphite监控系统</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-01T13:56:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>在豆瓣开源项目里面有个<a href="https://github.com/douban/graph-index">graph-index</a>, 提供监控服务器的状态的目录索引,基于<a href="https://github.com/vimeo/graph-explorer">graph-explorer</a>. 类似衍生物很多,就包括我要说的本文用到的项目.先看看我的测试环境的几个截图</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/9101045/7a64742a-3c14-11e5-92e7-012c713596e3.png" alt="" />
+<img src="https://cloud.githubusercontent.com/assets/841395/9101046/7a6a2ec4-3c14-11e5-8aeb-0158c20e8c6b.png" alt="" /></p>
+
+<h4 id="section-1">一些关键词说明</h4>
+
+<ol>
+  <li>graphite-web # graphite组件之一, 提供一个django的可以高度扩展的实时画图系统</li>
+  <li>Whisper # graphite组件之一, 实现数据库存储. 它比rrdtool要慢，因为whisper是使用python写的，而rrdtool是使用C写的。然而速度之间的差异很小</li>
+  <li>Carbon # 数据收集的结果会传给它, 它会解析数据让它可用于实时绘图. 它默认可会提示一些类型的数据,监听2003和2004端口</li>
+  <li><a href="https://github.com/BrightcoveOS/Diamond">Diamond</a> # 他是一个提供了大部分数据收集结果功能的结合,类似cpu, load, memory以及mongodb,rabbitmq,nginx等指标.这样就不需要我大量的写各种类型,因为它都已经提供,并且它提供了可扩展的自定义类型(最后我会展示一个我自己定义的类型)</li>
+  <li><a href="https://github.com/torkelo/grafana">grafana</a> # 这个面板是基于node, <a href="https://github.com/elasticsearch/kibana">kibana</a>,并且可以在线编辑. 因为是kibana,所以也用到了开元搜索框架<a href="https://github.com/elasticsearch/elasticsearch">elasticsearch</a></li>
+</ol>
+
+<p>PS: 其他工具可以参考这里<a href="http://graphite.readthedocs.org/en/1.0/tools.html">Tools That Work With Graphite</a></p>
+
+<h4 id="section-2">原理解析</h4>
+
+<p>我没有看实际全部代码,大概的流程是这样的:</p>
+
+<ol>
+  <li>启动Carbon-cache等待接收数据(carbon用的是twisted)</li>
+  <li>启动graphite-web给grafana提供实时绘图数据api</li>
+  <li>启动grafana,调用graphite-web接口获取数据展示出来</li>
+  <li>Diamond定期获取各类要监测的类型数据发给carbon(默认是5分钟,默认一小时自动重载一次配置)</li>
+</ol>
+
+<h4 id="section-3">实现我这个系统需要做的事情</h4>
+
+<h5 id="graphitecentos">安装graphite相关组件(我这里用的是centos)</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">yum --enablerepo=epel install graphite-web python-carbon -y</span></pre></figure></notextile></div>
+
+<h6 id="grafana">安装grafana需要的组件</h6>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># 增加elasticsearch的repo:
+</span><span class="line">sudo  rpm --import http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+</span><span class="line">$cat /etc/yum.repos.d/elasticsearch.repo
+</span><span class="line">[elasticsearch-1.0]
+</span><span class="line">name=Elasticsearch repository for 1.0.x packages
+</span><span class="line">baseurl=http://packages.elasticsearch.org/elasticsearch/1.0/centos
+</span><span class="line">gpgcheck=1
+</span><span class="line">gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+</span><span class="line">enabled=1
+</span><span class="line">sudo yum install nginx nodejs npm java-1.7.0-openjdk elasticsearch -y</span></pre></figure></notextile></div>
+
+<h5 id="diamondgrafana">下载Diamond和grafana</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git clone https://github.com/torkelo/grafana
+</span><span class="line">cd grafana
+</span><span class="line">sudo npm install
+</span><span class="line">sudo pip install django-cors-headers configobj # 这可能因为我环境中已经有了一些模块，看缺什么安装什么
+</span><span class="line">git clone https://github.com/BrightcoveOS/Diamond
+</span><span class="line">cd Diamond</span></pre></figure></notextile></div>
+<p>##### 开始修改配置</p>
+
+<ol>
+  <li>添加cors支持</li>
+</ol>
+
+<p>在/usr/lib/python2.6/site-packages/graphite/app_settings.py:</p>
+
+<p>INSTALLED_APPS里面添加corsheaders, MIDDLEWARE_CLASSES里面添加’corsheaders.middleware.CorsMiddleware’</p>
+
+<ol>
+  <li>使用nginx使用grafana</li>
+</ol>
+
+<p>在nginx.conf 添加类型的一段配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">server {
+</span><span class="line">  listen                *:80 ;
+</span><span class="line">
+</span><span class="line">  server_name           monitor.dongwm.com; # 我用了虚拟主机
+</span><span class="line">  access_log            /var/log/nginx/kibana.myhost.org.access.log;
+</span><span class="line">
+</span><span class="line">  location / {
+</span><span class="line">    add_header 'Access-Control-Allow-Origin' "$http_origin";
+</span><span class="line">    add_header 'Access-Control-Allow-Credentials' 'true';
+</span><span class="line">    root  /home/operation/dongwm/grafana/src;
+</span><span class="line">    index  index.html  index.htm;
+</span><span class="line">  }
+</span><span class="line">
+</span><span class="line">  location ~ ^/_aliases$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/_nodes$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/.*/_search$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/.*/_mapping$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">  }
+</span><span class="line">
+</span><span class="line">  # Password protected end points
+</span><span class="line">  location ~ ^/kibana-int/dashboard/.*$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">    limit_except GET {
+</span><span class="line">      proxy_pass http://127.0.0.1:9200;
+</span><span class="line">      auth_basic "Restricted";
+</span><span class="line">      auth_basic_user_file /etc/nginx/conf.d/dongwm.htpasswd;
+</span><span class="line">    }
+</span><span class="line">  }
+</span><span class="line">  location ~ ^/kibana-int/temp.*$ {
+</span><span class="line">    proxy_pass http://127.0.0.1:9200;
+</span><span class="line">    proxy_read_timeout 90;
+</span><span class="line">    limit_except GET {
+</span><span class="line">      proxy_pass http://127.0.0.1:9200;
+</span><span class="line">      auth_basic "Restricted";
+</span><span class="line">      auth_basic_user_file /etc/nginx/conf.d/dongwm.htpasswd;
+</span><span class="line">    }
+</span><span class="line">  }</span></pre></figure></notextile></div>
+
+<ol>
+  <li>修改grafana的src/config.js:</li>
+</ol>
+
+<p>graphiteUrl: “http://”+window.location.hostname+”:8020”, # 下面会定义graphite-web启动在8020端口</p>
+
+<ol>
+  <li>修改Diamond的配置conf/diamond.conf</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cp conf/diamond.conf.example conf/diamond.conf</span></pre></figure></notextile></div>
+
+<p>主要修改监听的carbon服务器和端口,以及要监控什么类型的数据,看我的一个全文配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">################################################################################
+</span><span class="line"># Diamond Configuration File
+</span><span class="line">################################################################################
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for the server
+</span><span class="line">[server]
+</span><span class="line">
+</span><span class="line"># Handlers for published metrics.
+</span><span class="line">handlers = diamond.handler.graphite.GraphiteHandler, diamond.handler.archive.ArchiveHandler
+</span><span class="line">
+</span><span class="line"># User diamond will run as
+</span><span class="line"># Leave empty to use the current user
+</span><span class="line">user =
+</span><span class="line">
+</span><span class="line"># Group diamond will run as
+</span><span class="line"># Leave empty to use the current group
+</span><span class="line">group =
+</span><span class="line">
+</span><span class="line"># Pid file
+</span><span class="line">pid_file = /home/dongwm/logs/diamond.pid # 换了pid的地址,因为我的服务都不会root启动
+</span><span class="line">
+</span><span class="line"># Directory to load collector modules from
+</span><span class="line">collectors_path = /home/dongwm/Diamond/src/collectors # 收集器的目录,这个/home/dongwm/Diamond就是克隆代码的地址
+</span><span class="line">
+</span><span class="line"># Directory to load collector configs from
+</span><span class="line">collectors_config_path = /home/dongwm/Diamond/src/collectors
+</span><span class="line">
+</span><span class="line"># Directory to load handler configs from
+</span><span class="line">handlers_config_path = /home/dongwm/Diamond/src/diamond/handler
+</span><span class="line">
+</span><span class="line">handlers_path = /home/dongwm/Diamond/src/diamond/handler
+</span><span class="line">
+</span><span class="line"># Interval to reload collectors
+</span><span class="line">collectors_reload_interval = 3600 # 收集器定期会重载看有没有配置更新
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for handlers
+</span><span class="line">[handlers]
+</span><span class="line">
+</span><span class="line"># daemon logging handler(s)
+</span><span class="line">keys = rotated_file
+</span><span class="line">
+</span><span class="line">### Defaults options for all Handlers
+</span><span class="line">[[default]]
+</span><span class="line">
+</span><span class="line">[[ArchiveHandler]]
+</span><span class="line">
+</span><span class="line"># File to write archive log files
+</span><span class="line">log_file = /home/dongwm/logs/diamond_archive.log
+</span><span class="line">
+</span><span class="line"># Number of days to keep archive log files
+</span><span class="line">days = 7
+</span><span class="line">
+</span><span class="line">[[GraphiteHandler]]
+</span><span class="line">### Options for GraphiteHandler
+</span><span class="line">
+</span><span class="line"># Graphite server host
+</span><span class="line">host = 123.126.1.11
+</span><span class="line">
+</span><span class="line"># Port to send metrics to
+</span><span class="line">port = 2003
+</span><span class="line">
+</span><span class="line"># Socket timeout (seconds)
+</span><span class="line">timeout = 15
+</span><span class="line">
+</span><span class="line"># Batch size for metrics
+</span><span class="line">batch = 1
+</span><span class="line">
+</span><span class="line">[[GraphitePickleHandler]]
+</span><span class="line">### Options for GraphitePickleHandler
+</span><span class="line">
+</span><span class="line"># Graphite server host
+</span><span class="line">host = 123.126.1.11
+</span><span class="line">
+</span><span class="line"># Port to send metrics to
+</span><span class="line">port = 2004
+</span><span class="line">
+</span><span class="line"># Socket timeout (seconds)
+</span><span class="line">timeout = 15
+</span><span class="line">
+</span><span class="line"># Batch size for pickled metrics
+</span><span class="line">batch = 256
+</span><span class="line">
+</span><span class="line">[[MySQLHandler]]
+</span><span class="line">### Options for MySQLHandler
+</span><span class="line">
+</span><span class="line"># MySQL Connection Info 这个可以你的会不同
+</span><span class="line">hostname    = 127.0.0.1
+</span><span class="line">port        = 3306
+</span><span class="line">username    = root
+</span><span class="line">password    =
+</span><span class="line">database    = diamond
+</span><span class="line">table       = metrics
+</span><span class="line"># INT UNSIGNED NOT NULL
+</span><span class="line">col_time    = timestamp
+</span><span class="line"># VARCHAR(255) NOT NULL
+</span><span class="line">col_metric  = metric
+</span><span class="line"># VARCHAR(255) NOT NULL
+</span><span class="line">col_value   = value
+</span><span class="line">
+</span><span class="line">[[StatsdHandler]]
+</span><span class="line">host = 127.0.0.1
+</span><span class="line">port = 8125
+</span><span class="line">
+</span><span class="line">[[TSDBHandler]]
+</span><span class="line">host = 127.0.0.1
+</span><span class="line">port = 4242
+</span><span class="line">timeout = 15
+</span><span class="line">
+</span><span class="line">[[LibratoHandler]]
+</span><span class="line">user = user@example.com
+</span><span class="line">apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
+</span><span class="line">
+</span><span class="line">[[HostedGraphiteHandler]]
+</span><span class="line">apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
+</span><span class="line">timeout = 15
+</span><span class="line">batch = 1
+</span><span class="line">
+</span><span class="line"># And any other config settings from GraphiteHandler are valid here
+</span><span class="line">
+</span><span class="line">[[HttpPostHandler]]
+</span><span class="line">
+</span><span class="line">### Urp to post the metrics
+</span><span class="line">url = http://localhost:8888/
+</span><span class="line">### Metrics batch size
+</span><span class="line">batch = 100
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for collectors
+</span><span class="line">[collectors]
+</span><span class="line">[[TencentCollector]] # 本来[collectors]下试没有东西的,这个是我定制的一个类型
+</span><span class="line">ttype = server
+</span><span class="line">[[MongoDBCollector]] # 一般情况,有一些类型是默认enabled = True,也就是启动的,但是大部分是默认不启动《需要显示指定True
+</span><span class="line">enabled = True
+</span><span class="line">host = 127.0.0.1 # 每种类型的参数不同
+</span><span class="line">[[TCPCollector]]
+</span><span class="line">enabled = True
+</span><span class="line">[[NetworkCollector]]
+</span><span class="line">enabled = True
+</span><span class="line">[[NginxCollector]]
+</span><span class="line">enabled = False # 没开启nginx_status 开启了也没用
+</span><span class="line">[[ SockstatCollector]]
+</span><span class="line">enabled = True
+</span><span class="line">[[default]]
+</span><span class="line">### Defaults options for all Collectors
+</span><span class="line">
+</span><span class="line"># Uncomment and set to hardcode a hostname for the collector path
+</span><span class="line"># Keep in mind, periods are seperators in graphite
+</span><span class="line"># hostname = my_custom_hostname
+</span><span class="line">
+</span><span class="line"># If you prefer to just use a different way of calculating the hostname
+</span><span class="line"># Uncomment and set this to one of these values:
+</span><span class="line">
+</span><span class="line"># smart             = Default. Tries fqdn_short. If that's localhost, uses hostname_short
+</span><span class="line">
+</span><span class="line"># fqdn_short        = Default. Similar to hostname -s
+</span><span class="line"># fqdn              = hostname output
+</span><span class="line"># fqdn_rev          = hostname in reverse (com.example.www)
+</span><span class="line">
+</span><span class="line"># uname_short       = Similar to uname -n, but only the first part
+</span><span class="line"># uname_rev         = uname -r in reverse (com.example.www)
+</span><span class="line">
+</span><span class="line"># hostname_short    = `hostname -s`
+</span><span class="line"># hostname          = `hostname`
+</span><span class="line"># hostname_rev      = `hostname` in reverse (com.example.www)
+</span><span class="line">
+</span><span class="line"># hostname_method = smart
+</span><span class="line">
+</span><span class="line"># Path Prefix and Suffix
+</span><span class="line"># you can use one or both to craft the path where you want to put metrics
+</span><span class="line"># such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
+</span><span class="line"># path_prefix = servers
+</span><span class="line"># path_suffix =
+</span><span class="line">
+</span><span class="line"># Path Prefix for Virtual Machines
+</span><span class="line"># If the host supports virtual machines, collectors may report per
+</span><span class="line"># VM metrics. Following OpenStack nomenclature, the prefix for
+</span><span class="line"># reporting per VM metrics is "instances", and metric foo for VM
+</span><span class="line"># bar will be reported as: instances.bar.foo...
+</span><span class="line"># instance_prefix = instances
+</span><span class="line">
+</span><span class="line"># Default Poll Interval (seconds)
+</span><span class="line"># interval = 300
+</span><span class="line">
+</span><span class="line">################################################################################
+</span><span class="line">### Options for logging
+</span><span class="line"># for more information on file format syntax:
+</span><span class="line"># http://docs.python.org/library/logging.config.html#configuration-file-format
+</span><span class="line">
+</span><span class="line">[loggers]
+</span><span class="line">
+</span><span class="line">keys = root
+</span><span class="line">
+</span><span class="line"># handlers are higher in this config file, in:
+</span><span class="line"># [handlers]
+</span><span class="line"># keys = ...
+</span><span class="line">
+</span><span class="line">[formatters]
+</span><span class="line">
+</span><span class="line">keys = default
+</span><span class="line">
+</span><span class="line">[logger_root]
+</span><span class="line">
+</span><span class="line"># to increase verbosity, set DEBUG
+</span><span class="line">level = INFO
+</span><span class="line">handlers = rotated_file
+</span><span class="line">propagate = 1
+</span><span class="line">
+</span><span class="line">[handler_rotated_file]
+</span><span class="line">
+</span><span class="line">class = handlers.TimedRotatingFileHandler
+</span><span class="line">level = DEBUG
+</span><span class="line">formatter = default
+</span><span class="line"># rotate at midnight, each day and keep 7 days
+</span><span class="line">args = ('/home/dongwm/logs/diamond.log', 'midnight', 1, 7)
+</span><span class="line">
+</span><span class="line">[formatter_default]
+</span><span class="line">
+</span><span class="line">format = [%(asctime)s] [%(threadName)s] %(message)s
+</span><span class="line">datefmt =</span></pre></figure></notextile></div>
+
+<h5 id="section-4">启动相关服务</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo /etc/init.d/nginx reload
+</span><span class="line">sudo /sbin/chkconfig --add elasticsearch
+</span><span class="line">sudo service elasticsearch start
+</span><span class="line">sudo service carbon-cache restart
+</span><span class="line">sudo python /usr/lib/python2.6/site-packages/graphite/manage.py runserver 0.0.0.0:8020 # 启动graphite-web到8020端口</span></pre></figure></notextile></div>
+
+<h6 id="agentdiamond">在每个要搜集信息的agent上面安装Diamond,并启动:</h6>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">cd /home/dongm/Diamond
+</span><span class="line">python ./bin/diamond --configfile=conf/diamond.conf
+</span><span class="line">
+</span><span class="line"># PS: 也可以添加 -l -f在前台显示</span></pre></figure></notextile></div>
+
+<h5 id="tencentcollector">自定义数据搜集类型，也就是上面的TencentCollector</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># coding=utf-8
+</span><span class="line">
+</span><span class="line">"""
+</span><span class="line">获取腾讯微博爬虫的业务指标
+</span><span class="line">"""
+</span><span class="line">
+</span><span class="line">import diamond.collector
+</span><span class="line">import pymongo
+</span><span class="line">from pymongo.errors import ConnectionFailure
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">class TencentCollector(diamond.collector.Collector): # 需要继承至diamond.collector.Collector
+</span><span class="line">    PATH = '/home/dongwm/tencent_data'
+</span><span class="line">
+</span><span class="line">    def get_default_config(self):
+</span><span class="line">        config = super(TencentCollector, self).get_default_config()
+</span><span class="line">        config.update({
+</span><span class="line">            'enabled':  'True',
+</span><span class="line">            'path':     'tencent',
+</span><span class="line">            'method':   'Threaded',
+</span><span class="line">            'ttype':    'agent' # 服务类型 包含agent和server
+</span><span class="line">        })
+</span><span class="line">        return config
+</span><span class="line">
+</span><span class="line">    def collect(self):
+</span><span class="line">        ttype = self.config['ttype']
+</span><span class="line">        if ttype == 'server':
+</span><span class="line">            try:
+</span><span class="line">                db = pymongo.MongoClient()['tmp']
+</span><span class="line">            except ConnectionFailure:
+</span><span class="line">                return
+</span><span class="line">            now_count = db.data.count()
+</span><span class="line">            try:
+</span><span class="line">                last_count = db.diamond.find_and_modify(
+</span><span class="line">                    {}, {'$set': {'last': now_count}}, upsert=True)['last']
+</span><span class="line">            except TypeError:
+</span><span class="line">                last_count = 0
+</span><span class="line">            self.publish('count', now_count)
+</span><span class="line">            self.publish('update', abs(last_count - now_count))
+</span><span class="line">        if ttype == 'agent':
+</span><span class="line">            # somethings..........</span></pre></figure></notextile></div>
+
+<h5 id="grafana-rowpanelmetric">添加你要绘图的类型. 这个就是打开grafana, 添加不同的row.给每个添加panel.选择metric的类型就好了</h5>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sou-ji-xi-tong-xin-xi-de-dashboard/">搜集系统信息的dashboard</a></h1>
     
     
@@ -1204,211 +1659,6 @@ jquery, amchart和一个最近发现的页面消息弹出<a href="https://github
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/feng-zhuang-pymongozi-dong-guan-bi-lian-jie/">封装pymongo自动关闭连接</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-16T21:42:00+08:00" pubdate data-updated="true">Aug 16<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>在我工作的项目里面使用了mongodb.自然也用到了pymongo.但是它都是在大片的函数里面使用类似于这样的方式</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">db</span>
-</span><span class="line"><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
-</span><span class="line">    <span class="o">...</span>
-</span><span class="line">    <span class="n">db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
-</span><span class="line">    <span class="o">...</span>
-</span></pre></figure></notextile></div>
-
-<p>但是问题是在使用完都没有关闭连接,这样多台服务器连接我这台mongodb服务器，在业务高峰期就会占满我的连接, 我当时总结造成这个原因的问题有以下三种:</p>
-
-<ol>
-  <li>
-    <p>上面说的用完db不关闭连接而是等着db超时</p>
-  </li>
-  <li>
-    <p>注意上面的import，其实在import文件的时候数据库连接就已经生成了，没有在需要的时候才创建, 占满我连接的应用其实有很多没有用，浪费了</p>
-  </li>
-  <li>
-    <p>nginx、uwsgi，celery等应用配置的问题，造成过多的实例，其实根本无益</p>
-  </li>
-</ol>
-
-<h4 id="pymongo">我今天写的一个封装pymongo和关闭数据库连接的装饰器</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#/usr/bin/env python</span>
-</span><span class="line"><span class="c"># coding=utf-8</span>
-</span><span class="line">
-</span><span class="line"><span class="sd">&quot;&quot;&quot;</span>
-</span><span class="line"><span class="sd">1. 封装数据库操作(INSERT,FIND,UPDATE)</span>
-</span><span class="line"><span class="sd">2. 函数执行完MONGODB操作后关闭数据库连接</span>
-</span><span class="line"><span class="sd">&quot;&quot;&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">pymongo.database</span> <span class="kn">import</span> <span class="n">Database</span>
-</span><span class="line">
-</span><span class="line"><span class="k">try</span><span class="p">:</span>
-</span><span class="line">    <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
-</span><span class="line"><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span class="line">    <span class="c"># 好像2.4之前的pymongo都没有MongoClient,现在官网已经把Connection抛弃了</span>
-</span><span class="line">    <span class="kn">import</span> <span class="nn">warnings</span>
-</span><span class="line">    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Strongly recommend upgrading to the latest version pymongo version,&quot;</span>
-</span><span class="line">                  <span class="s">&quot;Connection is DEPRECATED: Please use mongo_client instead.&quot;</span><span class="p">)</span>
-</span><span class="line">    <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">Connection</span> <span class="k">as</span> <span class="n">MongoClient</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Mongo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;封装数据库操作&#39;&#39;&#39;</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">27017</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
-</span><span class="line">                 <span class="n">max_pool_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">max_pool_size</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
-</span><span class="line">
-</span><span class="line">    <span class="nd">@property</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">        <span class="c"># 我这里是为了使用类似&quot;db.集合.操作&quot;的操作的时候才会生成数据库连接,其实pymongo已经实现了进程池,也可以把这个db放在__init__里面,</span>
-</span><span class="line">        <span class="c"># 比如我把db关掉有其他的数据库调用连接又会生成,并且不影响使用.我这里只是想每次执行数据库生成一个连接用完关掉-自己控制自己的</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">MongoClientself</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">max_pool_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
-</span><span class="line">                  <span class="n">connectTimeoutMS</span><span class="o">=</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collection</span><span class="p">):</span>
-</span><span class="line">        <span class="c"># 为了兼容db[集合].操作的用法</span>
-</span><span class="line">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">):</span>
-</span><span class="line">        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">]</span>
-</span><span class="line">        <span class="k">if</span> <span class="n">collection_or_func</span> <span class="ow">in</span> <span class="n">Database</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
-</span><span class="line">            <span class="c"># 当调用的是db的方法就直接返回</span>
-</span><span class="line">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">)</span>
-</span><span class="line">        <span class="c"># 否则委派给Collection</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">Collection</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection_or_func</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Collection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">collection</span><span class="p">):</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">collection</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
-</span><span class="line">        <span class="c"># 我这个封装只是为了拦截一部分操作,不符合的就直接raise属性错误</span>
-</span><span class="line">        <span class="n">control_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;disconnect&#39;</span><span class="p">,</span> <span class="s">&#39;insert&#39;</span><span class="p">,</span> <span class="s">&#39;update&#39;</span><span class="p">,</span> <span class="s">&#39;find&#39;</span><span class="p">,</span> <span class="s">&#39;find_one&#39;</span><span class="p">]</span>
-</span><span class="line">        <span class="k">if</span> <span class="n">operation</span> <span class="ow">in</span> <span class="n">control_type</span><span class="p">:</span>
-</span><span class="line">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
-</span><span class="line">        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">close_db</span><span class="p">(</span><span class="n">dbs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;db&#39;</span><span class="p">]):</span>
-</span><span class="line">    <span class="sd">&#39;&#39;&#39;</span>
-</span><span class="line"><span class="sd">    关闭mongodb数据库连接</span>
-</span><span class="line"><span class="sd">    db : 在执行函数里面使用的db的名字(大部分是db，也会有s_db)</span>
-</span><span class="line"><span class="sd">        Usage::</span>
-</span><span class="line"><span class="sd">            &gt;&gt;&gt;s_db = Mongo()</span>
-</span><span class="line"><span class="sd">            &gt;&gt;&gt;@close_db([&#39;s_db&#39;])</span>
-</span><span class="line"><span class="sd">            ...: def test():</span>
-</span><span class="line"><span class="sd">            ...:     print s_db.test.insert({&#39;a&#39;: 1, &#39;b&#39;: 2})</span>
-</span><span class="line"><span class="sd">            ...:</span>
-</span><span class="line"><span class="sd">    &#39;&#39;&#39;</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">_deco</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-</span><span class="line">        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span class="line">        <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span class="line">            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span class="line">            <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">dbs</span><span class="p">:</span>
-</span><span class="line">                <span class="k">try</span><span class="p">:</span>
-</span><span class="line">                    <span class="n">func</span><span class="o">.</span><span class="n">func_globals</span><span class="p">[</span><span class="n">db</span><span class="p">]</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
-</span><span class="line">                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-</span><span class="line">                    <span class="k">pass</span>
-</span><span class="line">            <span class="k">return</span> <span class="n">result</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">_call</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">_deco</span>
-</span></pre></figure></notextile></div>
-
-<p>PS: 在我测试的时候发现,使用Mongo()类生成的db，操作完会自动关闭连接了…</p>
-
-<h4 id="section-1">怎么样给一个很大的文件每个函数都加上面的这个装饰器？</h4>
-
-<p>项目每个脚本的代码都很长，函数也很多，并且每个函数里面使用的db的名字都不同,比如有一些一些风格:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
-</span><span class="line"><span class="n">s_db</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">test</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
-</span><span class="line"><span class="o">...</span>
-</span></pre></figure></notextile></div>
-
-<p>每个函数加一个装饰器,好费劲，就想能不能自动分辨文件中的函数然后给他们自动加装饰器，然后就有以下的一个做好的脚本:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="c">#coding=utf-8</span>
-</span><span class="line">
-</span><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">copy</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">types</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span class="line">    <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span class="line">        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span class="line">        <span class="k">print</span> <span class="s">&#39;wrap you&#39;</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">result</span>
-</span><span class="line">    <span class="k">return</span> <span class="n">_call</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
-</span><span class="line">    <span class="k">print</span> <span class="s">&#39;test&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">test2</span><span class="p">():</span>
-</span><span class="line">    <span class="k">print</span> <span class="s">&#39;test3&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">glocal_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span>
-</span><span class="line">
-</span><span class="line"><span class="n">func_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">glocal_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">for</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_list</span><span class="p">:</span>
-</span><span class="line">    <span class="k">if</span>  <span class="n">func_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;wraps&#39;</span><span class="p">,</span> <span class="s">&#39;copy&#39;</span><span class="p">,</span> <span class="s">&#39;wrap&#39;</span><span class="p">,</span> <span class="s">&#39;types&#39;</span><span class="p">]:</span>
-</span><span class="line">        <span class="k">continue</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span>  <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-</span><span class="line">        <span class="nb">globals</span><span class="p">()[</span><span class="n">func_name</span><span class="p">]</span><span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span></pre></figure></notextile></div>
-
-<p>这样当你调用的时候自动就有了装饰器:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_bash"><span class="line">&gt;&gt;&gt; from <span class="nb">test </span>import <span class="nb">test</span>
-</span><span class="line">&gt;&gt;&gt; <span class="nb">test</span><span class="o">()</span>
-</span><span class="line"><span class="nb">test</span>
-</span><span class="line">wrap you
-</span><span class="line">&gt;&gt;&gt;
-</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/5/">&larr; Older</a></li>
@@ -1431,6 +1681,10 @@ jquery, amchart和一个最近发现的页面消息弹出<a href="https://github
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-github-webhookfu-wu-shi-xian-ti-przi-dong-jian-cha-flake8bing-zai-dui-ying-wei-zhi-fa-ping-lun/">使用Github webhook服务实现提PR自动检查Flake8并在对应位置发评论</a>
@@ -1466,10 +1720,6 @@ jquery, amchart和一个最近发现的页面消息弹出<a href="https://github
     
       <li class="post">
         <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a>
       </li>
     
   </ul>
