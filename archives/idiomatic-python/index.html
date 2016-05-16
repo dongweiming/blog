@@ -343,7 +343,7 @@
 </span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span class="line">    <span class="k">def</span> <span class="nf">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
 </span><span class="line">        <span class="k">if</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">saved</span><span class="p">:</span>
-</span><span class="line">            <span class="k">return</span> <span class="n">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">saved</span><span class="p">[</span><span class="n">args</span><span class="p">]</span>
 </span><span class="line">        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </span><span class="line">        <span class="n">saved</span><span class="p">[</span><span class="n">args</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
 </span><span class="line">        <span class="k">return</span> <span class="n">result</span>

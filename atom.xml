@@ -4,7 +4,7 @@
   <title><![CDATA[小明明s à domicile]]></title>
   <link href="http://dongweiming.github.com/blog/atom.xml" rel="self"/>
   <link href="http://dongweiming.github.com/blog/"/>
-  <updated>2016-02-24T01:06:02+08:00</updated>
+  <updated>2016-05-17T06:58:53+08:00</updated>
   <id>http://dongweiming.github.com/blog/</id>
   <author>
     <name><![CDATA[Dongweiming]]></name>
@@ -1189,7 +1189,7 @@ python掌握不好的确实做的会比较吃力, 也会直接暴露细节点掌
 </span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span class="line">    <span class="k">def</span> <span class="nf">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
 </span><span class="line">        <span class="k">if</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">saved</span><span class="p">:</span>
-</span><span class="line">            <span class="k">return</span> <span class="n">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">saved</span><span class="p">[</span><span class="n">args</span><span class="p">]</span>
 </span><span class="line">        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </span><span class="line">        <span class="n">saved</span><span class="p">[</span><span class="n">args</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
 </span><span class="line">        <span class="k">return</span> <span class="n">result</span>
