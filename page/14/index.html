@@ -141,6 +141,138 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuschedyanjiu/">关于sched研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-14T00:00:00+08:00" pubdate data-updated="true">Jun 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：我们经常需要定时的执行某个任务，在Linux下我们有强大的crontab，但是在Python这个粒度（定时执行函数），如何处理呢？sched是一个调度（延时处理机制），每次想要定时执行某任务都必须写入一个调度</p>
+
+<p><pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>def print_event(name):
+    print 'EVENT:', time.time(), name</p>
+
+<p>print 'START:', time.time()
+scheduler.enter(2, 1, print_event, ('first',)) #第一个参数代表延迟多久，第二个表示优先级，第三个是需要被调用的函数，地四个是函数的参数（元组类型）
+scheduler.enter(3, 1, print_event, ('second',))</p>
+
+<p>scheduler.run()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+START: 1339660487.96
+EVENT: 1339660489.96 first
+EVENT: 1339660490.96 second
+<pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>def long_event(name):
+    print 'BEGIN EVENT :', time.time(), name
+    time.sleep(2)
+    print 'FINISH EVENT:', time.time(), name</p>
+
+<p>print 'START:', time.time()
+scheduler.enter(2, 1, long_event, ('first',))
+scheduler.enter(3, 1, long_event, ('second',))</p>
+
+<p>scheduler.run()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+START: 1339660898.83
+BEGIN EVENT : 1339660900.84 first
+FINISH EVENT: 1339660902.84 first
+BEGIN EVENT : 1339660902.84 second
+FINISH EVENT: 1339660904.84 second
+注：run()一直被阻塞, 直到所有事件被全部执行完. 每个事件在同一线程中运行, 所以如果一个事件的执行时间大于其他事件的延迟时间,</p>
+
+<p>那么, 就会产生重叠. 重叠的解决方法是推迟后来事件的执行时间. 这样保证没有丢失任何事件, 但这些事件的调用时刻会比原先设定的迟</p>
+
+<p>上面的例子第二个事件在第一个事件运行结束后立即运行, 因为第一个事件的执行时间足够长, 已经超过第二个事件的预期开始时刻.（本来应该1339660903秒运行）</p>
+
+<p><pre class="sh_python">
+import sched
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)
+now = time.time()
+def print_event(name):
+    print 'EVENT:', time.time(), name
+print 'START:', now
+scheduler.enterabs(now+2, 2, print_event, ('first',)) #enterabs保证事件准确的在同一时刻执行,,第一个参数是运行事件的确切时间, 而不是延迟时间量
+scheduler.enterabs(now+2, 1, print_event, ('second',))
+scheduler.run()
+</pre></p>
+
+<p><pre class="sh_python">
+import sched
+import threading
+import time</p>
+
+<p>scheduler = sched.scheduler(time.time, time.sleep)</p>
+
+<p>counter = 0 #一个全局变量的计数器</p>
+
+<p>def increment_counter(name):</p>
+
+<p>    global counter
+    print 'EVENT:', time.time(), name
+    counter += 1
+    print 'NOW:', counter</p>
+
+<p>print 'START:', time.time()
+e1 = scheduler.enter(2, 1, increment_counter, ('E1',))
+e2 = scheduler.enter(3, 1, increment_counter, ('E2',))</p>
+
+<p>t = threading.Thread(target=scheduler.run) #enter()和enterabs()返回一事件的引用, 该引用可被用于事件的取消. 由于run()阻塞, 
+             #所以事件的取消操作需要在另外一个线程中进行. 如下例子, 在一个子线程开始执行调度, 而主处理线程用于取消某个事件
+t.start()
+scheduler.cancel(e1)  #取消了e1的那个调度
+t.join()  #等调度完成再开始下一个
+print 'FINAL:', counter
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyureadlineyanjiu/">关于readline研究</a></h1>
     
     
@@ -1670,162 +1802,6 @@ object
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuimaplibyanjiu/">关于imaplib研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：imaplib是IMAP4的客户端库，用来接收imap协议服务器的邮件模块</p>
-
-<p><pre class="sh_python">
-import imaplib
-import re
-from pprint import pprint
-list_response_pattern = re.compile(r'\((?P&lt;flags&gt;.*?)\) "(?P&lt;delimiter&gt;.*)" (?P&lt;name&gt;.*)')
-#imaplib.Debug = 4 #设置debug模式
- def parse_list_response(line):
-    flags, delimiter, mailbox_name = list_response_pattern.match(line).groups()
-    mailbox_name = mailbox_name.strip('"')
-    return (flags, delimiter, mailbox_name)</p>
-
-<p>hostname='imap.qq.com' #设置收取腾讯邮件
-connection = imaplib.IMAP4_SSL(hostname)  #要求使用SSL加密方式登录  不强制的话可以用imaplib.IMAP4</p>
-
-<p>username = 'XXX' #用户名
-password = 'YYYY' #密码
-print 'Logging in as', username
-connection.login(username, password)  #连接  注意我这个程序没有异常处理
-typ,data =  connection.list()  #检索Mailbox
-pprint(data)</p>
-
-<p>for line in data:
-    flags, delimiter, mailbox_name = parse_list_response(line)
-    print 'Parsed response:', (flags, delimiter, mailbox_name)
-    print connection.status(mailbox_name, '(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)') #邮箱状态,MESSAGES:消息数量，RECENT：最近查看的邮件数量，
-                                                在#UIDNEXT：邮箱的下一个唯一标识符值,UIDVALIDITY:邮箱的有效性的唯一标识符值,UNSEEN:还没有查看的邮件数量
-    connection.select(mailbox_name, readonly=True)  
-    typ, msg_ids = connection.search(None, 'ALL')#寻找邮件包含'ALL'数量
-    typ, msg_ids = connection.search(None, '( FROM "Doug" SUBJECT "test message 2")')  #寻找邮件主题包含’test message 2‘，发件人是'Doug'的邮件数量
-    typ, msg_data = c.fetch('1', '(BODY.PEEK[HEADER] FLAGS)') #
-    print mailbox_name, typ, msg_ids    </p>
-
-<p>try:
-    connection.select('INBOX', readonly=True)</p>
-
-<p>    print 'HEADER:'
-    typ, msg_data = connection.fetch('1', '(BODY.PEEK[HEADER])')
-    for response_part in msg_data:
-        if isinstance(response_part, tuple):
-            print response_part[1]  #打印邮件头内容</p>
-
-<p>    print 'BODY TEXT:'
-    typ, msg_data = connection.fetch('1', '(BODY.PEEK[TEXT])')
-    for response_part in msg_data:
-        if isinstance(response_part, tuple):
-            print response_part[1] #打印内容</p>
-
-<p>    print '\nFLAGS:'
-    typ, msg_data = connection.fetch('1', '(FLAGS)')
-    for response_part in msg_data:
-        print response_part
-        print imaplib.ParseFlags(response_part)
-finally:
-    try:
-        c.close()
-    except:
-        pass
-connection.logout()
-</pre></p>
-
-<p><pre class="sh_python">
-import imaplib
-import email
-import time
-import email.message
-import re</p>
-
-<p>hostname='imap.qq.com'
-connection = imaplib.IMAP4_SSL(hostname)</p>
-
-<p>username = 'XXX' 
-password = 'YYY'
-print 'Logging in as', username
-connection.login(username, password)</p>
-
-<p>new_message = email.message.Message()
-new_message.set_unixfrom('pymotw')
-new_message['Subject'] = 'subject goes here'
-new_message['From'] = 'pymotw@example.com'
-new_message['To'] = 'example@example.com'
-new_message.set_payload('This is the body of the message.\n')</p>
-
-<p>print new_message #想增加一封邮件
-try:
-    connection.append('INBOX', '', imaplib.Time2Internaldate(time.time()), str(new_message)) #给收件箱添加一封邮件
-    connection.select('INBOX', readonly=True) #选定收件箱
-    typ, msg_data = connection.fetch('1', '(RFC822)')  #获取RFC822邮件
-    for response_part in msg_data:
-        if isinstance(response_part, tuple):
-            msg = email.message_from_string(response_part[1])
-            for header in [ 'subject', 'to', 'from' ]:
-                print '%-8s: %s' % (header.upper(), msg[header]) #打印主题，发件人和收件人
-    typ, [response] = connection.search(None, 'SEEN')  #搜索查看过得邮件
-    if typ != 'OK':
-        raise RuntimeError(response)</p>
-
-<p>    msg_ids = ','.join(response.split(' '))
-    typ, create_response = connection.create('Archive.Today')  #创建一个邮箱
-    print 'CREATED Archive.Today:', create_response </p>
-
-<p>    print 'COPYING:', msg_ids
-    connection.copy(msg_ids, 'Archive.Today') #拷贝那些邮件到这里</p>
-
-<p>    connection.select('Archive.Today')
-    typ, [response] = connection.search(None, 'ALL')
-    print 'COPIED:', response
-    typ, response = connection.store(msg_ids, '+FLAGS', r'(\Deleted)')  #设置删除的标识
-    typ, response = connection.fetch(msg_ids, '(FLAGS)') 
-    print 'Flags after:', response</p>
-
-<p>    typ, response = connection.expunge() #删除邮件 
-    print 'Expunged:', response
-finally:
-    try:
-        connection.close()
-    except:
-        pass
-    connection.logout()
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/15/">&larr; Older</a></li>
@@ -1848,6 +1824,10 @@ finally:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1883,10 +1863,6 @@ finally:
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

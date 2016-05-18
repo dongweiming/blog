@@ -141,6 +141,223 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pythonyumingchaxunfuwuwhoischengxujiancha5weiyineiyumingdaoqishijianyoujianbaojingqiangzhuyuming/">（python）域名查询服务（whois）程序+检查5位以内域名到期时间邮件报警抢注域名！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-24T00:00:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：这个程序写了挺长时间，主要的加‘-d’选项+域名（只支持.com域名）查询特定域名，不带任何参数后台运行（可以设定cron）脚本检查域名到期时间，发现域名还有5天以内到期报警提示，方便抢注呵呵！</p>
+
+<p>缺点：1  有些域名是没有域名信息的，比如a.com，p.com  所有就过滤掉了</p>
+
+<p>2  程序执行时间不会对负载有影响，但是可能出现socket超时，我设置了socket连接三次，但是可能会出现一些未知错误break，大家发现BUG留言我再修改</p>
+
+<p><pre class="sh_python">
+#!/bin/env python
+import sys
+import string
+import socket
+import optparse
+import smtplib
+import re
+import time
+import itertools
+reload(sys)
+sys.setdefaultencoding('utf8') </p>
+
+<p>class Host(object):</p>
+
+<p>    INTERHOST           ="whois.internic.net"
+    NICHOST             = "whois.crsnic.net"
+    INICHOST            = "whois.networksolutions.com"
+    ip_whois = [ INTERHOST, NICHOST ,INICHOST ]</p>
+
+<p>class Whois(object) :</p>
+
+<p>    WHOIS_SERVER_ID     = "Whois Server:"
+    WHOIS_ORG_SERVER_ID = "Registrant Street1:Whois Server:"
+    WHOIS_RECURSE       = 0x01
+    WHOIS_QUICK         = 0x02</p>
+
+<p>    def whois(self, query, hostname, flags):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        fails =0
+        while True:
+            try:
+                if fails &lt;=3:
+                    s.connect((hostname, 43))
+            except socket.error:
+                fails +=1
+            else:
+                break
+                print 'Socket Connection timed out'
+        queryBytes = None
+        queryBytes = (query  + "\r\n").encode()
+        s.send(queryBytes)
+        response = ''
+        while True:
+            d = s.recv(4096)
+            response += d
+            if not d:
+                break
+        s.close()
+        nhost = None
+        nhost = self.findwhois_server(response.decode(), hostname)
+        if (nhost != None):
+            response += self.whois(query, nhost, 0)
+        return response.decode()
+    def findwhois_server(self, buf, hostname):
+        nhost = None
+        parts_index = 1
+        start = buf.find(Whois.WHOIS_SERVER_ID)
+        if (start == -1):
+            start = buf.find(Whois.WHOIS_ORG_SERVER_ID)
+            parts_index = 2</p>
+
+<p>        if (start &gt; -1):
+            end = buf[start:].find('\n')
+            whois_line = buf[start:end+start]
+            whois_parts = whois_line.split(':')
+            nhost = whois_parts[parts_index].strip()
+        else:
+            for nichost in Host.ip_whois:
+                if (buf.find(nichost) != -1):
+                    nhost = nichost
+                    break
+        return nhost</p>
+
+<p>    def whois_lookup(self, options, query_arg, flags):
+        nichost = None
+        if (options == None):
+            options = {}</p>
+
+<p>        options['whoishost'] = Host.NICHOST
+        if ( not (flags &amp; Whois.WHOIS_QUICK)):
+            flags |= Whois.WHOIS_RECURSE
+        return self.whois(query_arg, options['whoishost'], flags)   </p>
+
+<p>class WhoisEntry(object):
+    _regex = {
+        'domain_name':      'Domain Name:\s?(.+)',
+        'registrar':        'Registrar:\s?(.+)',
+        'whois_server':     'Whois Server:\s?(.+)',
+        'referral_url':     'Referral URL:\s?(.+)',
+        'updated_date':     'Updated Date:\s?(.+)',
+        'creation_date':    'Creation Date:\s?(.+)',
+        'expiration_date':  'Expiration Date:\s?(.+)',
+        'name_servers':     'Name Server:\s?(.+)',
+        'status':           'Status:\s?(.+)',
+        'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}',
+    }
+    def __init__(self, domain, text, regex=None):
+        self.domain = domain
+        self.text = text
+        if regex is not None:
+            self._regex = regex</p>
+
+<p>    def __getattr__(self, attr):
+        whois_regex = self._regex.get(attr)
+        if whois_regex:
+            setattr(self, attr, re.findall(whois_regex, self.text))
+            return getattr(self, attr)</p>
+
+<p>        else:
+            raise KeyError('Unknown attribute: %s' % attr)</p>
+
+<p>    def __str__(self):
+        return '\n'.join('%s: %s' % (attr, str(getattr(self, attr))) for attr in self.attrs())</p>
+
+<p>    def attrs(self):
+        return sorted(self._regex.keys())</p>
+
+<p>    @staticmethod
+    def load(domain, text):
+        if text.strip() == 'No whois server is known for this kind of object.':
+            pass
+        return WhoisCom(domain, text)
+class WhoisCom(WhoisEntry):
+    def __init__(self, domain, text):
+        if 'No match for "' in text:
+            pass
+        else:
+            WhoisEntry.__init__(self, domain, text)
+class Email(object):
+    def __init__(self,body):
+        mail_server = 'mail.dongwm.com'
+        mail_server_port = 25
+        from_addr='whois_check@dongwm.com'
+        to_addr ='dongwm@dongwm.com'
+        from_header = 'From: %s\r\n' % from_addr#    to_header = 'To: %s\r\n\r\n' % to_addr
+        to_header = 'To: %s\r\n\r\n' % to_addr
+        subject_header = 'Subject: Yuming check'
+        email_message = '%s\n%s\n%s\n\n%s' % (from_header, to_header, subject_header, body)
+        s = smtplib.SMTP(mail_server, mail_server_port)
+        s.sendmail(from_addr, to_addr, email_message)
+        s.quit()</p>
+
+<p>def parse_command_line(argv):
+    usage = "usage: %prog [options] name"
+    parser = optparse.OptionParser(add_help_option=False, usage=usage)
+    parser.add_option("-d", "--domain", action="store_const",
+                      const=Host.NICHOST, dest="whoishost",
+                      help="Query for a specific domain name, please use: XXX.com format")
+    parser.add_option("-h", "--help", action="help")
+    return parser.parse_args(argv)</p>
+
+<p>if __name__ == "__main__":
+     whoisclient = Whois()
+     (options, args) = parse_command_line(sys.argv)
+     if len(sys.argv)==3 and re.sub('^.*://', '', args[1]).split('/')[0].lower().split('.')[1]  in 'com':
+             text = whoisclient.whois_lookup(options.__dict__,args[1], 0)
+             print  WhoisEntry.load(args[1], text)</p>
+
+<p>     elif len(sys.argv)==1:
+         #for i in range(97,123):
+         #   print chr(i)
+         len = 1
+         while (len&lt;6):
+             for i in list(itertools.permutations(string.lowercase,len)):
+                 if whoisclient.whois_lookup(options.__dict__,''.join(i)+'.com', 0).encode('utf8').find('Expiration Date: ') != -1:
+                     sa = whoisclient.whois_lookup(options.__dict__,''.join(i)+'.com', 0).encode('utf8').split('Expiration Date: ')[1].split(r'&gt;&gt;&gt; Last')[0][:-2]
+                     wtime = time.strftime('%d-%b-%Y',time.localtime(time.time()))
+                     if wtime.lower()[3:6] == sa[3:6] and wtime[7:11] == sa[7:11] and int(sa[0:2]) - int(wtime[0:2]) &lt;=5 and int(sa[0:2]) - int(wtime[0:2]) &gt;=0:
+                         tt = '%s is %s' % (''.join(i)+'.com',sa)
+                         Email(tt)
+                         time.sleep(1)
+             len +=1
+     else:
+             print "Please use the '-h' or '--help' parameter"
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/fuzashijiancepchulijieguozhanshijiaoben/">复杂事件(cep)处理结果实时展示脚本（perl）</a></h1>
     
     
@@ -1766,111 +1983,6 @@ Key Data:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%AE%89%E8%A3%85%E5%8F%8A%E9%85%8D%E7%BD%AEicinga-web/">安装及配置icinga-web</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-29T00:00:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：我所认为的icinga-web其实就是将icinga监控数据写到数据库，用icinga-web对其进行一些处理返回检查的状态
-<img style="max-width: 800px;" src="http://farm7.static.flickr.com/6025/5986605311_38600dbb57_b.jpg" alt="" />
-1 安装一些必备的rpm包：
-yum install libdbi-devel libdbi libdbi-drivers libdbi-dbd-mysql
-2 首先需要安装支持IDOUtils的icinga
-wget http://sourceforge.net/projects/icinga/files/icinga/1.4.2/icinga-1.4.2.tar.gz/download
-tar zxvf icinga-1.4.2.tar.gz
-cd icinga-1.4.2
-./configure  &#8211;with-icinga-group=dongwm  &#8211;with-icinga-user=dongwm  &#8211;with-command-user=dongwm  &#8211;with-command-group=dongwm &#8211;enable-idoutils &amp;&amp; make all &amp;&amp; make  fullinstall
-3 安装nagios插件
-wget http://prdownloads.sourceforge.net/sourceforge/nagiosplug/nagios-plugins-1.4.15.tar.gz
-tar zxvf nagios-plugins-1.4.15.tar.gz
-cd nagios-plugins-1.4.15
-./configure &#8211;prefix=/usr/local/icinga &#8211;with-cgiurl=/icinga/cgi-bin &#8211;with-htmurl=/icinga &#8211;with-nagios-user=dongwm &#8211;with-nagios-group=dongwm &amp;&amp; make &amp;&amp; make install
-4 配置idoutils
-cd /usr/local/icinga/etc/
-mv ido2db.cfg-sample ido2db.cfg
-mv idomod.cfg-sample idomod.cfg
-vi /usr/local/icinga/etc/icinga.cfg
-讲这句前面的注释去掉：
-broker_module=/usr/local/icinga/bin/idomod.o config_file=/usr/local/icinga/etc/idomod.cfg
-确认库文件依赖关系是否正常：
-ldd /usr/local/icinga/bin/idomod.o
-输出类似：
-linux-vdso.so.1 =&gt;  (0x00007fff7f5fc000)
-libc.so.6 =&gt; /lib64/libc.so.6 (0x00002b2cbf799000)
-/lib64/ld-linux-x86-64.so.2 (0x0000003472c00000)
-表示相关库文件都找到
-创建mysql数据库：
-<pre class="code-java">mysql -u root -p
- mysql&gt; CREATE DATABASE icinga;
- GRANT USAGE ON *.* TO 'icinga'@'localhost' IDENTIFIED BY 'icinga' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;
- GRANT SELECT , INSERT , UPDATE , DELETE ON icinga.* TO 'icinga'@'localhost';
- FLUSH PRIVILEGES ;
- quit
-mysql -u root -p icinga &lt; /icinga安装目录/module/idoutils/db/mysql/mysql.sql
-5 安装icinga-web
-wget http://sourceforge.net/projects/icinga/files/icinga-web/1.4.1/icinga-web-1.4.1.tar.gz/download
-tar zxvf icinga-web-1.4.1.tar.gz
-cd icinga-web-1.4.1
-./configure --prefix=/usr/local/icinga-web --with-web-user=dongwm --with-web-group=dongwm --with-db-type=mysql --with-db-host=localhost --with-db-port=3306 --with-db-name=icinga_web --with-db-user=icinga_web --with-db-pass=icinga_web --with-icinga-api=/usr/local/icinga/share/icinga-api --with-web-apache-path=/etc/httpd/conf.d
-make all
-make install
-创建mysql数据库：
-mysql -u root -p
- mysql&gt; CREATE DATABASE icinga_web;
-        GRANT USAGE ON *.* TO 'icinga_web'@'localhost' IDENTIFIED BY 'icinga_web' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;
-        GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON icinga_web.* TO 'icinga_web'@'localhost';
-        quit</p>
-
-<p>mysql -u root -p icinga_web &lt; /icinga-web安装目录/etc/schema/mysql.sql
-确认以下文件相关数据库相关信息：
-/usr/local/icinga-web/app/modules/Web/config/icinga-io.site.xml
-&lt;setting name="api.interfaces.data"&gt;
-                &lt;ae:parameter name="api_type"&gt;IcingaApi::CONNECTION_IDO&lt;/ae:parameter&gt;
-                &lt;ae:parameter name="config_type"&gt;mysql&lt;/ae:parameter&gt;
-                &lt;ae:parameter name="config_host"&gt;127.0.0.1&lt;/ae:parameter&gt;
-                &lt;ae:parameter name="config_port"&gt;3306&lt;/ae:parameter&gt;
-                &lt;ae:parameter name="config_database"&gt;icinga&lt;/ae:parameter&gt;
-                &lt;ae:parameter name="config_user"&gt;icinga&lt;/ae:parameter&gt;
-                &lt;ae:parameter name="config_password"&gt;icinga&lt;/ae:parameter&gt;
-                &lt;ae:parameter name="config_table_prefix"&gt;icinga_&lt;/ae:parameter&gt;
-        &lt;/setting&gt;
-注意：这里是icinga-web的配置文件里面用的数据库是icinga的数据库信息，这样才能取到相关值
-清除缓存数据：
-/usr/local/icinga-web/bin/clearcache.sh
-然后使用一下地址登录icinga-web：
-http://localhost/icinga-web
-最重要的这里的默认帐号密码：root/password
-然后就可以看见icinga里面监控项的相关信息了！</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/25/">&larr; Older</a></li>
@@ -1893,6 +2005,10 @@ http://localhost/icinga-web
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1930,10 +2046,6 @@ http://localhost/icinga-web
         <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
-      </li>
-    
   </ul>
 </section>
 <section class="well">
@@ -1952,7 +2064,7 @@ http://localhost/icinga-web
 <section class="well">
   <ul id="gh_repos" class="nav">
     <li class="nav-header">GitHub帐号</li>
-    <li class="loading">Status updating...</li>
+    <li class="loading">Status updating&#8230;</li>
   </ul>
   
   <a href="https://github.com/dongweiming">@dongweiming</a> on GitHub

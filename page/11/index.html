@@ -141,6 +141,104 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuos-pathyanjiu/">关于os.path研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：os.path子库主要更容易地在跨平台上对文件名和路径进行解析, 创建, 测试和其他操作.</p>
+
+<p><pre class="sh_python">
+import os.path</p>
+
+<p>for path in [ '/one/two/three','/one/two/three/','/',',']:
+    print '"%s" : "%s"' % (path, os.path.split(path)) #<tt>split()</tt> 函数将路径切分成两个两部分并返回一个元组, 它的第二个元素是路径的最后一部份, 第一个元素是路径的前面部分.
+    print '"%s" : "%s"' % (path, os.path.basename(path)) #basename() 返回的值和 <tt>split()</tt> 返回的第二个值相同.
+    print '"%s" : "%s"' % (path, os.path.dirname(path)) #dirname() 返回的值是和 <tt>split()</tt> 返回的第一个值相同.
+    print '"%s" :' % path, os.path.splitext(path) #splitext() 和 <tt>split()</tt> 类似但是分隔路径的扩展名, 而不是目录名.
+paths = ['/one/two/three/four','/one/two/threefold','/one/two/three/',] # 取一个路径列表作为参数, 返回一个单一的字符串表示这些路径公共的前缀. 这个值可能是一个实际上不存在的路径. 路径分割符是被忽略的
+print os.path.commonprefix(paths)
+</pre></p>
+
+<p><pre class="sh_python">
+import os.path
+import os
+for parts in [ ('one', 'two', 'three'),('/', 'one', 'two', 'three'),('/one', '/two', '/three'),]:
+    print parts, ':', os.path.join(*parts)  #可以使用 <tt>join()</tt> 将多个路径部分组合成一个单个值
+for user in [ '', 'dongwm', 'postgres' ]:
+    lookup = '~' + user
+    print lookup, ':', os.path.expanduser(lookup)  # <tt>expanduser()</tt> 可以将波浪线(~)扩展成用户的主目录.
+os.environ['MYVAR'] = 'VALUE'
+print os.path.expandvars('/path/to/$MYVAR')  #获取出现在路径中的环境变量.
+for path in [ '.', '..', './one/two/three', '../one/two/three']:
+    print '"%s" : "%s"' % (path, os.path.abspath(path))  #使用 abspath() 将一个相对路径转换成绝对路径.
+</pre>
+<pre class="sh_python">
+import os.path
+import time</p>
+
+<p>print 'File :', __file__
+print 'Access time :', time.ctime(os.path.getatime(__file__)) #最后一次访问文件或目录的时间
+print 'Modified time:', time.ctime(os.path.getmtime(__file__)) #最后一次修改文件或目录的时间
+print 'Change time :', time.ctime(os.path.getctime(__file__)) #最后一次改变文件或目录(改变的是原数据即:属性)的时间
+print 'Size :', os.path.getsize(__file__)
+</pre>
+<pre class="sh_python">
+for file in [ __file__, os.path.dirname(__file__), '/', './broken_link']:
+    print 'File :', file
+    print 'Absolute :', os.path.isabs(file)  #判断是否是绝对路径，返回布尔值
+    print 'Is File? :', os.path.isfile(file)#判断是否是文件，返回布尔值
+    print 'Is Dir? :', os.path.isdir(file)  #判断是否是目录，返回布尔值
+    print 'Is Link? :', os.path.islink(file) #判断是否是链接文件，返回布尔值
+    print 'Mountpoint? :', os.path.ismount(file)#判断是否是挂载文件，返回布尔值
+    print 'Exists? :', os.path.exists(file) #判断是否存在，返回布尔值
+    print 'Link Exists?:', os.path.lexists(file) #判断是否符号链接存在，返回布尔值
+    print
+def visit(arg, dirname, names):
+    print dirname, arg
+    for name in names:
+        subname = os.path.join(dirname, name)
+        if os.path.isdir(subname):
+            print ' %s/' % name
+        else:
+            print ' %s' % name
+    if '.svn' in names:
+        names.remove('.svn')  #假如是.svn 去掉
+    print</p>
+
+<p>os.path.walk('..', visit, '(User data)') #遍历树中的所有目录, 并调用一个你提供的函数, 同时将目录名和目录中包含内容的名字传递给这个函数
+
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyumultiprocessingyanjiuyi/">关于multiprocessing研究(一)</a></h1>
     
     
@@ -2133,123 +2231,6 @@ ReferenceError: weakly-referenced object no longer exists</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuwarningsyanjiu/">关于warnings研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：warnings是非致命级别警报的模块,当执行行程序时遇到问题时给用户非致命性的警示</p>
-
-<p><pre class="sh_python">
-print 'Before the warning'
-warnings.warn('This is a warning message')  #产生一个警告
-print 'After the warning'
-print
-warnings.simplefilter('error', UserWarning)#当出现报错 就停止继续</p>
-
-<p>print 'Before the warning'
-warnings.warn('This is a warning message')  
-print 'After the warning'
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Before the warning
-test.py:5: UserWarning: This is a warning message
-warnings.warn(&#8216;This is a warning message&#8217;)
-After the warning</p>
-
-<p>Before the warning
-Traceback (most recent call last):
-File &#8220;test.py&#8221;, line 11, in &lt;module&gt;
-warnings.warn(&#8216;This is a warning message&#8217;)
-UserWarning: This is a warning message   #UserWarning  执行报错 停止</p>
-
-<p><pre class="sh_python">
-import warnings
-import logging
-warnings.filterwarnings('ignore', '.*do not.*',) #过滤报错信息，其中包含6种：error：变成一个异常警告，ignore:丢弃警告，
-#always:始终报警，default:它是从每个位置产生的第一次打印警告，module:它是从每个模块产生的第一次打印警告，once:它生成的第一次打印警告
-warnings.warn('Show this message')   #打印这个信息
-warnings.warn('Do not show this message')  #不打印这个信息，上面过滤了'.*do not.*'这样的模式匹配</p>
-
-<p>def function_with_warning():
-    warnings.warn('This is a warning!')</p>
-
-<p>function_with_warning() #虽然调用三次，只打印一次 不重复
-function_with_warning()
-function_with_warning()</p>
-
-<p>warnings.simplefilter('once', UserWarning)  #也可以这样调用，告诉值是第一次打印错误警告</p>
-
-<p>warnings.warn('This is a warning!')
-warnings.warn('This is a warning!')
-warnings.warn('This is a warning!')</p>
-
-<p>logging.basicConfig(level=logging.INFO)</p>
-
-<p>def send_warnings_to_log(message, category, filename, lineno, file=None):  #设定一个记录日志的方法
-    logging.warning(
-        '%s:%s: %s:%s' % 
-        (filename, lineno, category.__name__, message))
-    return</p>
-
-<p>old_showwarning = warnings.showwarning  #默认是终端显示错误信息，但是也可能改变方式  这里保存旧的方式
-warnings.showwarning = send_warnings_to_log  #将显示错误信息的方式改成用这个函数执行</p>
-
-<p>warnings.warn('This is a warning message')  #这里就会以logging的方式显示</p>
-
-<p>def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
-    return ' %s:%s: %s:%s' % (filename, lineno, category.__name__, message)</p>
-
-<p>warnings.warn('This is a warning message, before')
-warnings.formatwarning = warning_on_one_line #修改显示错误信息的格式
-warnings.warn('This is a warning message, after')
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-test.py:5: UserWarning: Show this message
-warnings.warn(&#8216;Show this message&#8217;)
-test.py:9: UserWarning: This is a warning!
-warnings.warn(&#8216;This is a warning!&#8217;)
-test.py:17: UserWarning: This is a warning!
-warnings.warn(&#8216;This is a warning!&#8217;)
-WARNING:root:test.py:32: UserWarning:This is a warning message
-WARNING:root:test.py:37: UserWarning:This is a warning message, before
-WARNING:root:test.py:39: UserWarning:This is a warning message, after</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/12/">&larr; Older</a></li>
@@ -2272,6 +2253,10 @@ WARNING:root:test.py:39: UserWarning:This is a warning message, after</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -2307,10 +2292,6 @@ WARNING:root:test.py:39: UserWarning:This is a warning message, after</p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

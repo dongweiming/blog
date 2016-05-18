@@ -141,6 +141,300 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyufunctoolsyanjiu/">关于functools研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：functools是一些操作功能公据的集合，需要python2.5或者以上版本</p>
+
+<p><strong>1 partial 我的理解是凝固函数的局部参数</strong></p>
+
+<p><pre class="sh_python">
+from functools import *</p>
+
+<p>def test_func(arg1, arg2):
+   return arg1+arg2
+partial_test_func = partial(test_func, 1) #给第一个参数设置默认值1 
+print test_func(1,2)  
+print partial_test_func(2) #其实效果和上面的一样
+print type(test_func)
+print type(partial_test_func)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+3
+3
+&lt;type &#8216;function&#8217;&gt;
+&lt;type &#8216;functools.partial&#8217;&gt;
+<strong>2 update_wrapper  把被封装函数的__name__、__module__、__doc__和 __dict__都复制到封装函数</strong></p>
+
+<p><pre class="sh_python">
+import functools</p>
+
+<p>def myfunc(a, b=2):
+    """Docstring for myfunc()."""
+    print '\tcalled myfunc with:', (a, b)
+    return</p>
+
+<p>def show_details(name, f):
+    """Show details of a callable object."""
+    print '%s:' % name
+    print '\tobject:', f
+    print '\t__name__:', 
+    try:
+        print f.__name__
+    except AttributeError:
+        print '(no __name__)'
+    print '\t__doc__', repr(f.__doc__)
+    print
+    return</p>
+
+<p>show_details('myfunc', myfunc)</p>
+
+<p>p1 = functools.partial(myfunc, b=4)
+show_details('raw wrapper', p1)</p>
+
+<p>print 'Updating wrapper:'
+print '\tassign:', functools.WRAPPER_ASSIGNMENTS
+print '\tupdate:', functools.WRAPPER_UPDATES
+print</p>
+
+<p>functools.update_wrapper(p1, myfunc)
+show_details('updated wrapper', p1)
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行过程：</p>
+
+<p>myfunc:
+object: &lt;function myfunc at 0xb74ddae4&gt;
+__name__: myfunc
+__doc__ &#8216;Docstring for myfunc().&#8217;</p>
+
+<p>raw wrapper:
+object: &lt;functools.partial object at 0xb74e14b4&gt;
+__name__: (no __name__)
+__doc__ &#8216;partial(func, *args, **keywords) - new function with partial application\n    of the given arguments and keywords.\n&#8217;</p>
+
+<p>Updating wrapper:
+assign: (&#8216;__module__&#8217;, &#8216;__name__&#8217;, &#8216;__doc__&#8217;)  #这些属性从myfunc继承
+update: (&#8216;__dict__&#8217;,)   #因为继承属性内置__dice__更新了</p>
+
+<p>updated wrapper:
+object: &lt;functools.partial object at 0xb74e14b4&gt; #还是原来的属性
+__name__: myfunc #属性继承了
+__doc__ &#8216;Docstring for myfunc().&#8217; #属性继承了<strong>
+3 wraps 其实也就是相当于在调用了<tt>partial，使用wraps可以把整个function的属性都带上</tt></strong></p>
+
+<p><strong><pre class="sh_python"></strong>
+import functools</p>
+
+<p>def show_details(name, f):
+    """Show details of a callable object."""
+    print '%s:' % name
+    print '\tobject:', f
+    print '\t__name__:', 
+    try:
+        print f.__name__
+    except AttributeError:
+        print '(no __name__)'
+    print '\t__doc__', repr(f.__doc__)
+    print
+    return</p>
+
+<p>def simple_decorator(f):
+    @functools.wraps(f)
+    def decorated(a='decorated defaults', b=1):
+        print '\tdecorated:', (a, b)
+        print '\t',
+        f(a, b=b)
+        return
+    return decorated</p>
+
+<p>def myfunc(a, b=2):
+    print '\tmyfunc:', (a,b)
+    return</p>
+
+<p>show_details('myfunc', myfunc)
+myfunc('unwrapped, default b')
+myfunc('unwrapped, passing b', 3)
+print</p>
+
+<p>wrapped_myfunc = simple_decorator(myfunc) #继承myfunc的属性
+show_details('wrapped_myfunc', wrapped_myfunc)
+wrapped_myfunc()
+wrapped_myfunc('args to decorated', 4)
+<strong></pre>
+</strong></p>
+
+<p>运行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+myfunc:
+object: &lt;function myfunc at 0xb72e4c6c&gt;
+__name__: myfunc
+__doc__ None</p>
+
+<p>myfunc: (&#8216;unwrapped, default b&#8217;, 2)
+myfunc: (&#8216;unwrapped, passing b&#8217;, 3)</p>
+
+<p>wrapped_myfunc:
+object: &lt;function myfunc at 0xb72e4ca4&gt;
+__name__: myfunc
+__doc__ None</p>
+
+<p>decorated: (&#8216;decorated defaults&#8217;, 1) #包含参数设定a=&#8217;decorated defaults&#8217;, b=1，而不在是a,b=2
+myfunc: (&#8216;decorated defaults&#8217;, 1) #默认参数都没有变
+decorated: (&#8216;args to decorated&#8217;, 4)
+myfunc: (&#8216;args to decorated&#8217;, 4) #参数都变了
+<strong>4 total_ordering使用内置的比较属性</strong></p>
+
+<p><pre class="sh_python">
+import functools
+import inspect  #主要用来模块，框架，函数等进行类型检查，获取类或函数的参数的信息，获取源码和获取类或函数的参数的信息
+from pprint import pprint</p>
+
+<p>@functools.total_ordering
+class MyObject(object):
+    def __init__(self, val):
+        self.val = val
+    def __eq__(self, other):
+        print '  testing __eq__(%s, %s)' % (self.val, other.val)
+        return self.val == other.val
+    def __gt__(self, other):
+        print '  testing __gt__(%s, %s)' % (self.val, other.val)
+        return self.val &gt; other.val</p>
+
+<p>print 'Methods:\n'
+pprint(inspect.getmembers(MyObject, inspect.ismethod))  #要是不加inspect.ismethod的话，会将对象的所有默认属性都列出来</p>
+
+<p>a = MyObject(1)
+b = MyObject(2)</p>
+
+<p>print '\nComparisons:'
+for expr in [ 'a &lt; b', 'a &lt;= b', 'a == b', 'a &gt;= b', 'a &gt; b' ]:
+    print '\n%-6s:' % expr
+    result = eval(expr)
+    print '  result of %s: %s' % (expr, result)
+</pre></p>
+
+<p>结果：</p>
+
+<p>Methods:</p>
+
+<p>[(&#8216;__eq__&#8217;, &lt;unbound method MyObject.__eq__&gt;),
+(&#8216;__ge__&#8217;, &lt;unbound method MyObject.__ge__&gt;),
+(&#8216;__gt__&#8217;, &lt;unbound method MyObject.__gt__&gt;),
+(&#8216;__init__&#8217;, &lt;unbound method MyObject.__init__&gt;),
+(&#8216;__le__&#8217;, &lt;unbound method MyObject.__le__&gt;),
+(&#8216;__lt__&#8217;, &lt;unbound method MyObject.__lt__&gt;)]</p>
+
+<p>Comparisons:</p>
+
+<p>a &lt; b :
+testing __gt__(2, 1)
+result of a &lt; b: True</p>
+
+<p>a &lt;= b:
+testing __gt__(1, 2)
+result of a &lt;= b: True</p>
+
+<p>a == b:
+testing __eq__(1, 2)
+result of a == b: False</p>
+
+<p>a &gt;= b:
+testing __gt__(2, 1)
+result of a &gt;= b: False</p>
+
+<p>a &gt; b :
+testing __gt__(1, 2)
+result of a &gt; b: False
+<strong>5 <tt>cmp_to_key</tt>排序</strong></p>
+
+<p><pre class="sh_python">
+import functools</p>
+
+<p>class MyObject(object):
+    def __init__(self, val):
+        self.val = val
+    def __str__(self):
+        return 'MyObject(%s)' % self.val</p>
+
+<p>def compare_obj(a, b):
+    print 'comparing %s and %s' % (a, b)
+    return cmp(a.val, b.val)</p>
+
+<p>get_key = functools.cmp_to_key(compare_obj)</p>
+
+<p>def get_key_wrapper(o):
+    """Wrapper function for get_key to allow for print statements.
+    """
+    new_key = get_key(o)
+    print 'key_wrapper(%s) -&gt; %s' % (o, new_key)
+    return new_key</p>
+
+<p>objs = [ MyObject(x) for x in xrange(5, 0, -1) ]</p>
+
+<p>for o in sorted(objs, key=get_key_wrapper):
+    print o
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+key_wrapper(MyObject(5)) -&gt; &lt;functools.K object at 0xb73c342c&gt;
+key_wrapper(MyObject(4)) -&gt; &lt;functools.K object at 0xb73c344c&gt;
+key_wrapper(MyObject(3)) -&gt; &lt;functools.K object at 0xb73c346c&gt;
+key_wrapper(MyObject(2)) -&gt; &lt;functools.K object at 0xb73c348c&gt;
+key_wrapper(MyObject(1)) -&gt; &lt;functools.K object at 0xb73c34ac&gt;
+comparing MyObject(4) and MyObject(5)
+comparing MyObject(3) and MyObject(4)
+comparing MyObject(2) and MyObject(3)
+comparing MyObject(1) and MyObject(2)
+MyObject(1)
+MyObject(2)
+MyObject(3)
+MyObject(4)
+MyObject(5)</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyufnmatchyanjiu/">关于fnmatch研究</a></h1>
     
     
@@ -1303,156 +1597,6 @@ port    : 80</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyucontextlibyanjiu/">关于contextlib研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：本模块在python2.5及以上版本可用，主要用来上下文管理</p>
-
-<p>看一个其他的例子：</p>
-
-<p><pre class="sh_python">
-class WithinContext(object):</p>
-
-<p>    def __init__(self, context):
-        print 'WithinContext.__init__(%s)' % context</p>
-
-<p>    def do_something(self):
-        print 'WithinContext.do_something()'</p>
-
-<p>    def __del__(self):
-        print 'WithinContext.__del__'</p>
-
-<p>class Context(object):</p>
-
-<p>    def __init__(self):
-        print 'Context.__init__()'</p>
-
-<p>    def __enter__(self):   #返回一个上下文内使用的对象
-        print 'Context.__enter__()'
-        return WithinContext(self)</p>
-
-<p>    def __exit__(self, exc_type, exc_val, exc_tb):  #清理正在用的资源
-        print 'Context.__exit__()'</p>
-
-<p>with Context() as c:
-    c.do_something()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python !$
-python test.py
-Context.__init__()
-Context.__enter__()
-WithinContext.__init__(&lt;__main__.Context object at 0xb749c94c&gt;)
-WithinContext.do_something()
-Context.__exit__()
-WithinContext.__del__</p>
-
-<p><strong>1 使用contextlib：</strong></p>
-
-<p><pre class="sh_python">
-import contextlib</p>
-
-<p>@contextlib.contextmanager #使用装饰器自动写一个带 <tt>__enter__()</tt> <tt>和 __exit__()</tt> 的类
-def make_context():
-    print 'entering'
-    try:
-        yield {}
-    finally:
-        print 'exiting'
-with make_context() as value:
-    print 'inside with statement:', value
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-entering
-inside with statement: {}
-exiting</p>
-
-<p><strong>2嵌套上下文</strong></p>
-
-<p><pre class="sh_python">
-import contextlib</p>
-
-<p>@contextlib.contextmanager
-def make_context(name):
-    print 'entering',name
-    yield name
-    print 'exiting',name
-with contextlib.nested(make_context('A'), make_context('B'), make_context('C')) as (A, B, C):  #同时管理三个上下文
-    print 'inside with statement:', A,B,C
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-entering A
-entering B
-entering C
-inside with statement: A B C
-exiting C
-exiting B
-exiting A
-注python2.7及更高，with关键字已经支持嵌套可以这样：
-with make_context(&#8216;A&#8217;) as A, make_context(&#8216;B&#8217;) as B, make_context(&#8216;C&#8217;) as C:
-    print &#8216;inside with statement:&#8217;, A, B, C
-<strong>3 关闭打开的句柄</strong>
-为了确保一个句柄被关闭，使用<tt>closing()</tt>
-<pre class="sh_python">
-cat test.py
-import contextlib</p>
-
-<p>class Door(object):
-    def __init__(self):
-        print '__init__()'
-    def close(self):
-        print 'close()'</p>
-
-<p>with contextlib.closing(Door()) as door:
-    print 'inside with statement'
-</pre>
-执行过程：
-dongwm@linux-dongwm:~&gt; python test.py
-__init__()
-inside with statement
-close()</p>
-
-<p></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1475,6 +1619,10 @@ close()</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1510,10 +1658,6 @@ close()</p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

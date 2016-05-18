@@ -141,6 +141,162 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuimaplibyanjiu/">关于imaplib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：imaplib是IMAP4的客户端库，用来接收imap协议服务器的邮件模块</p>
+
+<p><pre class="sh_python">
+import imaplib
+import re
+from pprint import pprint
+list_response_pattern = re.compile(r'\((?P&lt;flags&gt;.*?)\) "(?P&lt;delimiter&gt;.*)" (?P&lt;name&gt;.*)')
+#imaplib.Debug = 4 #设置debug模式
+ def parse_list_response(line):
+    flags, delimiter, mailbox_name = list_response_pattern.match(line).groups()
+    mailbox_name = mailbox_name.strip('"')
+    return (flags, delimiter, mailbox_name)</p>
+
+<p>hostname='imap.qq.com' #设置收取腾讯邮件
+connection = imaplib.IMAP4_SSL(hostname)  #要求使用SSL加密方式登录  不强制的话可以用imaplib.IMAP4</p>
+
+<p>username = 'XXX' #用户名
+password = 'YYYY' #密码
+print 'Logging in as', username
+connection.login(username, password)  #连接  注意我这个程序没有异常处理
+typ,data =  connection.list()  #检索Mailbox
+pprint(data)</p>
+
+<p>for line in data:
+    flags, delimiter, mailbox_name = parse_list_response(line)
+    print 'Parsed response:', (flags, delimiter, mailbox_name)
+    print connection.status(mailbox_name, '(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)') #邮箱状态,MESSAGES:消息数量，RECENT：最近查看的邮件数量，
+                                                在#UIDNEXT：邮箱的下一个唯一标识符值,UIDVALIDITY:邮箱的有效性的唯一标识符值,UNSEEN:还没有查看的邮件数量
+    connection.select(mailbox_name, readonly=True)  
+    typ, msg_ids = connection.search(None, 'ALL')#寻找邮件包含'ALL'数量
+    typ, msg_ids = connection.search(None, '( FROM "Doug" SUBJECT "test message 2")')  #寻找邮件主题包含’test message 2‘，发件人是'Doug'的邮件数量
+    typ, msg_data = c.fetch('1', '(BODY.PEEK[HEADER] FLAGS)') #
+    print mailbox_name, typ, msg_ids    </p>
+
+<p>try:
+    connection.select('INBOX', readonly=True)</p>
+
+<p>    print 'HEADER:'
+    typ, msg_data = connection.fetch('1', '(BODY.PEEK[HEADER])')
+    for response_part in msg_data:
+        if isinstance(response_part, tuple):
+            print response_part[1]  #打印邮件头内容</p>
+
+<p>    print 'BODY TEXT:'
+    typ, msg_data = connection.fetch('1', '(BODY.PEEK[TEXT])')
+    for response_part in msg_data:
+        if isinstance(response_part, tuple):
+            print response_part[1] #打印内容</p>
+
+<p>    print '\nFLAGS:'
+    typ, msg_data = connection.fetch('1', '(FLAGS)')
+    for response_part in msg_data:
+        print response_part
+        print imaplib.ParseFlags(response_part)
+finally:
+    try:
+        c.close()
+    except:
+        pass
+connection.logout()
+</pre></p>
+
+<p><pre class="sh_python">
+import imaplib
+import email
+import time
+import email.message
+import re</p>
+
+<p>hostname='imap.qq.com'
+connection = imaplib.IMAP4_SSL(hostname)</p>
+
+<p>username = 'XXX' 
+password = 'YYY'
+print 'Logging in as', username
+connection.login(username, password)</p>
+
+<p>new_message = email.message.Message()
+new_message.set_unixfrom('pymotw')
+new_message['Subject'] = 'subject goes here'
+new_message['From'] = 'pymotw@example.com'
+new_message['To'] = 'example@example.com'
+new_message.set_payload('This is the body of the message.\n')</p>
+
+<p>print new_message #想增加一封邮件
+try:
+    connection.append('INBOX', '', imaplib.Time2Internaldate(time.time()), str(new_message)) #给收件箱添加一封邮件
+    connection.select('INBOX', readonly=True) #选定收件箱
+    typ, msg_data = connection.fetch('1', '(RFC822)')  #获取RFC822邮件
+    for response_part in msg_data:
+        if isinstance(response_part, tuple):
+            msg = email.message_from_string(response_part[1])
+            for header in [ 'subject', 'to', 'from' ]:
+                print '%-8s: %s' % (header.upper(), msg[header]) #打印主题，发件人和收件人
+    typ, [response] = connection.search(None, 'SEEN')  #搜索查看过得邮件
+    if typ != 'OK':
+        raise RuntimeError(response)</p>
+
+<p>    msg_ids = ','.join(response.split(' '))
+    typ, create_response = connection.create('Archive.Today')  #创建一个邮箱
+    print 'CREATED Archive.Today:', create_response </p>
+
+<p>    print 'COPYING:', msg_ids
+    connection.copy(msg_ids, 'Archive.Today') #拷贝那些邮件到这里</p>
+
+<p>    connection.select('Archive.Today')
+    typ, [response] = connection.search(None, 'ALL')
+    print 'COPIED:', response
+    typ, response = connection.store(msg_ids, '+FLAGS', r'(\Deleted)')  #设置删除的标识
+    typ, response = connection.fetch(msg_ids, '(FLAGS)') 
+    print 'Flags after:', response</p>
+
+<p>    typ, response = connection.expunge() #删除邮件 
+    print 'Expunged:', response
+finally:
+    try:
+        connection.close()
+    except:
+        pass
+    connection.logout()
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuhmacyanjiu/">关于hmac研究</a></h1>
     
     
@@ -1207,300 +1363,6 @@ Done</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyufunctoolsyanjiu/">关于functools研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：functools是一些操作功能公据的集合，需要python2.5或者以上版本</p>
-
-<p><strong>1 partial 我的理解是凝固函数的局部参数</strong></p>
-
-<p><pre class="sh_python">
-from functools import *</p>
-
-<p>def test_func(arg1, arg2):
-   return arg1+arg2
-partial_test_func = partial(test_func, 1) #给第一个参数设置默认值1 
-print test_func(1,2)  
-print partial_test_func(2) #其实效果和上面的一样
-print type(test_func)
-print type(partial_test_func)
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-3
-3
-&lt;type &#8216;function&#8217;&gt;
-&lt;type &#8216;functools.partial&#8217;&gt;
-<strong>2 update_wrapper  把被封装函数的__name__、__module__、__doc__和 __dict__都复制到封装函数</strong></p>
-
-<p><pre class="sh_python">
-import functools</p>
-
-<p>def myfunc(a, b=2):
-    """Docstring for myfunc()."""
-    print '\tcalled myfunc with:', (a, b)
-    return</p>
-
-<p>def show_details(name, f):
-    """Show details of a callable object."""
-    print '%s:' % name
-    print '\tobject:', f
-    print '\t__name__:', 
-    try:
-        print f.__name__
-    except AttributeError:
-        print '(no __name__)'
-    print '\t__doc__', repr(f.__doc__)
-    print
-    return</p>
-
-<p>show_details('myfunc', myfunc)</p>
-
-<p>p1 = functools.partial(myfunc, b=4)
-show_details('raw wrapper', p1)</p>
-
-<p>print 'Updating wrapper:'
-print '\tassign:', functools.WRAPPER_ASSIGNMENTS
-print '\tupdate:', functools.WRAPPER_UPDATES
-print</p>
-
-<p>functools.update_wrapper(p1, myfunc)
-show_details('updated wrapper', p1)
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行过程：</p>
-
-<p>myfunc:
-object: &lt;function myfunc at 0xb74ddae4&gt;
-__name__: myfunc
-__doc__ &#8216;Docstring for myfunc().&#8217;</p>
-
-<p>raw wrapper:
-object: &lt;functools.partial object at 0xb74e14b4&gt;
-__name__: (no __name__)
-__doc__ &#8216;partial(func, *args, **keywords) - new function with partial application\n    of the given arguments and keywords.\n&#8217;</p>
-
-<p>Updating wrapper:
-assign: (&#8216;__module__&#8217;, &#8216;__name__&#8217;, &#8216;__doc__&#8217;)  #这些属性从myfunc继承
-update: (&#8216;__dict__&#8217;,)   #因为继承属性内置__dice__更新了</p>
-
-<p>updated wrapper:
-object: &lt;functools.partial object at 0xb74e14b4&gt; #还是原来的属性
-__name__: myfunc #属性继承了
-__doc__ &#8216;Docstring for myfunc().&#8217; #属性继承了<strong>
-3 wraps 其实也就是相当于在调用了<tt>partial，使用wraps可以把整个function的属性都带上</tt></strong></p>
-
-<p><strong><pre class="sh_python"></strong>
-import functools</p>
-
-<p>def show_details(name, f):
-    """Show details of a callable object."""
-    print '%s:' % name
-    print '\tobject:', f
-    print '\t__name__:', 
-    try:
-        print f.__name__
-    except AttributeError:
-        print '(no __name__)'
-    print '\t__doc__', repr(f.__doc__)
-    print
-    return</p>
-
-<p>def simple_decorator(f):
-    @functools.wraps(f)
-    def decorated(a='decorated defaults', b=1):
-        print '\tdecorated:', (a, b)
-        print '\t',
-        f(a, b=b)
-        return
-    return decorated</p>
-
-<p>def myfunc(a, b=2):
-    print '\tmyfunc:', (a,b)
-    return</p>
-
-<p>show_details('myfunc', myfunc)
-myfunc('unwrapped, default b')
-myfunc('unwrapped, passing b', 3)
-print</p>
-
-<p>wrapped_myfunc = simple_decorator(myfunc) #继承myfunc的属性
-show_details('wrapped_myfunc', wrapped_myfunc)
-wrapped_myfunc()
-wrapped_myfunc('args to decorated', 4)
-<strong></pre>
-</strong></p>
-
-<p>运行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-myfunc:
-object: &lt;function myfunc at 0xb72e4c6c&gt;
-__name__: myfunc
-__doc__ None</p>
-
-<p>myfunc: (&#8216;unwrapped, default b&#8217;, 2)
-myfunc: (&#8216;unwrapped, passing b&#8217;, 3)</p>
-
-<p>wrapped_myfunc:
-object: &lt;function myfunc at 0xb72e4ca4&gt;
-__name__: myfunc
-__doc__ None</p>
-
-<p>decorated: (&#8216;decorated defaults&#8217;, 1) #包含参数设定a=&#8217;decorated defaults&#8217;, b=1，而不在是a,b=2
-myfunc: (&#8216;decorated defaults&#8217;, 1) #默认参数都没有变
-decorated: (&#8216;args to decorated&#8217;, 4)
-myfunc: (&#8216;args to decorated&#8217;, 4) #参数都变了
-<strong>4 total_ordering使用内置的比较属性</strong></p>
-
-<p><pre class="sh_python">
-import functools
-import inspect  #主要用来模块，框架，函数等进行类型检查，获取类或函数的参数的信息，获取源码和获取类或函数的参数的信息
-from pprint import pprint</p>
-
-<p>@functools.total_ordering
-class MyObject(object):
-    def __init__(self, val):
-        self.val = val
-    def __eq__(self, other):
-        print '  testing __eq__(%s, %s)' % (self.val, other.val)
-        return self.val == other.val
-    def __gt__(self, other):
-        print '  testing __gt__(%s, %s)' % (self.val, other.val)
-        return self.val &gt; other.val</p>
-
-<p>print 'Methods:\n'
-pprint(inspect.getmembers(MyObject, inspect.ismethod))  #要是不加inspect.ismethod的话，会将对象的所有默认属性都列出来</p>
-
-<p>a = MyObject(1)
-b = MyObject(2)</p>
-
-<p>print '\nComparisons:'
-for expr in [ 'a &lt; b', 'a &lt;= b', 'a == b', 'a &gt;= b', 'a &gt; b' ]:
-    print '\n%-6s:' % expr
-    result = eval(expr)
-    print '  result of %s: %s' % (expr, result)
-</pre></p>
-
-<p>结果：</p>
-
-<p>Methods:</p>
-
-<p>[(&#8216;__eq__&#8217;, &lt;unbound method MyObject.__eq__&gt;),
-(&#8216;__ge__&#8217;, &lt;unbound method MyObject.__ge__&gt;),
-(&#8216;__gt__&#8217;, &lt;unbound method MyObject.__gt__&gt;),
-(&#8216;__init__&#8217;, &lt;unbound method MyObject.__init__&gt;),
-(&#8216;__le__&#8217;, &lt;unbound method MyObject.__le__&gt;),
-(&#8216;__lt__&#8217;, &lt;unbound method MyObject.__lt__&gt;)]</p>
-
-<p>Comparisons:</p>
-
-<p>a &lt; b :
-testing __gt__(2, 1)
-result of a &lt; b: True</p>
-
-<p>a &lt;= b:
-testing __gt__(1, 2)
-result of a &lt;= b: True</p>
-
-<p>a == b:
-testing __eq__(1, 2)
-result of a == b: False</p>
-
-<p>a &gt;= b:
-testing __gt__(2, 1)
-result of a &gt;= b: False</p>
-
-<p>a &gt; b :
-testing __gt__(1, 2)
-result of a &gt; b: False
-<strong>5 <tt>cmp_to_key</tt>排序</strong></p>
-
-<p><pre class="sh_python">
-import functools</p>
-
-<p>class MyObject(object):
-    def __init__(self, val):
-        self.val = val
-    def __str__(self):
-        return 'MyObject(%s)' % self.val</p>
-
-<p>def compare_obj(a, b):
-    print 'comparing %s and %s' % (a, b)
-    return cmp(a.val, b.val)</p>
-
-<p>get_key = functools.cmp_to_key(compare_obj)</p>
-
-<p>def get_key_wrapper(o):
-    """Wrapper function for get_key to allow for print statements.
-    """
-    new_key = get_key(o)
-    print 'key_wrapper(%s) -&gt; %s' % (o, new_key)
-    return new_key</p>
-
-<p>objs = [ MyObject(x) for x in xrange(5, 0, -1) ]</p>
-
-<p>for o in sorted(objs, key=get_key_wrapper):
-    print o
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-key_wrapper(MyObject(5)) -&gt; &lt;functools.K object at 0xb73c342c&gt;
-key_wrapper(MyObject(4)) -&gt; &lt;functools.K object at 0xb73c344c&gt;
-key_wrapper(MyObject(3)) -&gt; &lt;functools.K object at 0xb73c346c&gt;
-key_wrapper(MyObject(2)) -&gt; &lt;functools.K object at 0xb73c348c&gt;
-key_wrapper(MyObject(1)) -&gt; &lt;functools.K object at 0xb73c34ac&gt;
-comparing MyObject(4) and MyObject(5)
-comparing MyObject(3) and MyObject(4)
-comparing MyObject(2) and MyObject(3)
-comparing MyObject(1) and MyObject(2)
-MyObject(1)
-MyObject(2)
-MyObject(3)
-MyObject(4)
-MyObject(5)</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/16/">&larr; Older</a></li>
@@ -1523,6 +1385,10 @@ MyObject(5)</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1558,10 +1424,6 @@ MyObject(5)</p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

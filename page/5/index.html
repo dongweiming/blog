@@ -141,6 +141,172 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shi-yong-celeryzhi-shen-ru-celerypei-zhi/">使用celery之深入celery配置</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-24T14:08:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>celery的官方文档其实相对还是写的很不错的.但是在一些深层次的使用上面却显得杂乱甚至就没有某些方面的介绍, 通过我的一个测试环境的settings.py来说明一些使用celery的技巧和解决办法</p>
+
+<h4 id="amqp">amqp交换类型</h4>
+
+<p>其实一共有4种交换类型，还有默认类型和自定义类型. 但是对我们配置队列只会用到其中之三，我来一个个说明，英语好的话可以直接去看英文文档</p>
+
+<p>首先思考一下流程:</p>
+
+<ol>
+  <li>
+    <p>celerybeat生成任务消息，然后发送消息到一个exchange(交换机)</p>
+  </li>
+  <li>
+    <p>交换机决定那个(些)队列会接收这个消息，这个其实就是根据下面的exchange的类型和绑定到这个交换机所用的bindingkey</p>
+  </li>
+</ol>
+
+<p>我们这里要说的其实就是怎么样决定第二步谁接收的问题</p>
+
+<ol>
+  <li>Direct Exchange</li>
+</ol>
+
+<p>如其名，直接交换，也就是指定一个消息被那个队列接收， 这个消息被celerybeat定义个一个routing key，如果你发送给交换机并且那个队列绑定的bindingkey 那么就会直接转给这个队列</p>
+
+<ol>
+  <li>Topic Exchange</li>
+</ol>
+
+<p>你设想一下这样的环境(我举例个小型的应该用场景): 你有三个队列和三个消息, A消息可能希望被X,Y处理,B消息你希望被,X,Z处理,C消息你希望被Y,Z处理.并且这个不是队列的不同而是消息希望被相关的队列都去执行,看一张图可能更好理解:</p>
+
+<p><img src="https://access.redhat.com/site/documentation/resources/docs/en-US/Red_Hat_Enterprise_MRG/1.1/html/Messaging_User_Guide/images/topic-exchange.png" alt="" /></p>
+
+<p>对，Topic可以根据同类的属性进程通配, 你只需要routing key有’.’分割:比如上图中的usa.news, usa.weather, europe.news, europe.weather</p>
+
+<ol>
+  <li>Fanout Exchange</li>
+</ol>
+
+<p>先想一下广播的概念, 在设想你有某个任务，相当耗费时间，但是却要求很高的实时性,那么你可以需要多台服务器的多个workers一起工作，每个服务器负担其中的一部分,但是celerybeat只会生成一个任务,被某个worker取走就没了,
+所以你需要让每个服务器的队列都要收到这个消息.这里很需要注意的是:你的fanout类型的消息在生成的时候为多份,每个队列一份，而不是一个消息发送给单一队列的次数</p>
+
+<h4 id="settingspy">我的settings.py</h4>
+
+<p>这里只是相关于celery的部分:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">import</span> <span class="nn">djcelery</span>
+</span><span class="line"><span class="n">djcelery</span><span class="o">.</span><span class="n">setup_loader</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.sites&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c">#&#39;django.contrib.staticfiles&#39;,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c"># Uncomment the next line to enable the admin:</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="c"># Uncomment the next line to enable admin documentation:</span>
+</span><span class="line">    <span class="c"># &#39;django.contrib.admindocs&#39;,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smhome&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.apply&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;djcelery&#39;</span><span class="p">,</span> <span class="c"># 这里增加了djcelery 也就是为了在django admin里面可一直接配置和查看celery</span>
+</span><span class="line">    <span class="s">&#39;django_extensions&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;djsupervisor&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django.contrib.humanize&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;django_jenkins&#39;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">BROKER_URL</span> <span class="o">=</span> <span class="s">&#39;amqp://username:password@localhost:5672/yourvhost&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_IMPORTS</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smhome.tasks&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">&#39;dongwm.smdata.tasks&#39;</span><span class="p">,</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_RESULT_BACKEND</span> <span class="o">=</span> <span class="s">&quot;amqp&quot;</span> <span class="c"># 官网优化的地方也推荐使用c的librabbitmq</span>
+</span><span class="line"><span class="n">CELERY_TASK_RESULT_EXPIRES</span> <span class="o">=</span> <span class="mi">1200</span> <span class="c"># celery任务执行结果的超时时间，我的任务都不需要返回结果,只需要正确执行就行</span>
+</span><span class="line"><span class="n">CELERYD_CONCURRENCY</span> <span class="o">=</span> <span class="mi">50</span> <span class="c"># celery worker的并发数 也是命令行-c指定的数目,事实上实践发现并不是worker也多越好,保证任务不堆积,加上一定新增任务的预留就可以</span>
+</span><span class="line"><span class="n">CELERYD_PREFETCH_MULTIPLIER</span> <span class="o">=</span> <span class="mi">4</span> <span class="c"># celery worker 每次去rabbitmq取任务的数量，我这里预取了4个慢慢执行,因为任务有长有短没有预取太多</span>
+</span><span class="line"><span class="n">CELERYD_MAX_TASKS_PER_CHILD</span> <span class="o">=</span> <span class="mi">40</span> <span class="c"># 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200</span>
+</span><span class="line"><span class="n">CELERYBEAT_SCHEDULER</span> <span class="o">=</span> <span class="s">&#39;djcelery.schedulers.DatabaseScheduler&#39;</span> <span class="c"># 这是使用了django-celery默认的数据库调度模型,任务执行周期都被存在你指定的orm数据库中</span>
+</span><span class="line"><span class="n">CELERY_DEFAULT_QUEUE</span> <span class="o">=</span> <span class="s">&quot;default_dongwm&quot;</span> <span class="c"># 默认的队列，如果一个消息不符合其他的队列就会放在默认队列里面</span>
+</span><span class="line">
+</span><span class="line"><span class="n">CELERY_QUEUES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="s">&quot;default_dongwm&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># 这是上面指定的默认队列</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;default_dongwm&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;direct&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;routing_key&quot;</span><span class="p">:</span> <span class="s">&quot;default_dongwm&quot;</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;topicqueue&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># 这是一个topic队列 凡是topictest开头的routing key都会被放到这个队列</span>
+</span><span class="line">        <span class="s">&quot;routing_key&quot;</span><span class="p">:</span> <span class="s">&quot;topictest.#&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;topic_exchange&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;topic&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;test2&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="c"># test和test2是2个fanout队列,注意他们的exchange相同</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;fanout&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;binding_key&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s">&quot;test&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">        <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;exchange_type&quot;</span><span class="p">:</span> <span class="s">&quot;fanout&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="s">&quot;binding_key&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks2&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">MyRouter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">route_for_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;topictest&#39;</span><span class="p">):</span>
+</span><span class="line">            <span class="k">return</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&#39;queue&#39;</span><span class="p">:</span> <span class="s">&#39;topicqueue&#39;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="c"># 我的dongwm.tasks文件里面有2个任务都是test开头</span>
+</span><span class="line">        <span class="k">elif</span> <span class="n">task</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;dongwm.tasks.test&#39;</span><span class="p">):</span>
+</span><span class="line">            <span class="k">return</span> <span class="p">{</span>
+</span><span class="line">                <span class="s">&quot;exchange&quot;</span><span class="p">:</span> <span class="s">&quot;broadcast_tasks&quot;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="c"># 剩下的其实就会被放到默认队列</span>
+</span><span class="line">        <span class="k">else</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="bp">None</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># CELERY_ROUTES本来也可以用一个大的含有多个字典的字典,但是不如直接对它做一个名称统配</span>
+</span><span class="line"><span class="n">CELERY_ROUTES</span> <span class="o">=</span> <span class="p">(</span><span class="n">MyRouter</span><span class="p">(),</span> <span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/feng-zhuang-pymongozi-dong-guan-bi-lian-jie/">封装pymongo自动关闭连接</a></h1>
     
     
@@ -1855,190 +2021,6 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythoncheng-xu-yuan-macchu-shi-hua-huan-jing/">python程序员Mac初始化环境</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-22T18:28:00+08:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>早就想总结一篇python程序员的Mac配置笔记，趁这次就写一下我初始化的一些实践</p>
-
-<h4 id="xcode-command-line-tools">安装Xcode, Command line tools</h4>
-
-<p>作为开发者，肯定需要gcc,clang这些环境，Xcode界面也能下载Command line tools，但是下载好几次都有签名错误的问题，直接去官网下载</p>
-
-<p>使用浏览器下载一段时间锁屏会停止下载，又不能续传。所以我还是习惯命令行下载.可以在这里找到https://github.com/orzrd/mytools/blob/master/adc_download.sh
-比如下载xcode:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">./adc_download.sh http://adcdownload.apple.com/Developer_Tools/xcode_4.6.3/xcode4630916281a.dmg</span></pre></figure></notextile></div>
-
-<h4 id="git">安装git</h4>
-
-<p>在这里 http://git-scm.com/download/mac，但是你需要注意<a href="http://support.apple.com/kb/ht1633?viewlocale=zh_CN">版本和你的os的版本的对应关系</a></p>
-
-<h4 id="brew-">安装brew-包管理工具</h4>
-
-<h5 id="brew">以后我通过brew安装的软件都放在这个目录</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo chown -R `whoami` /usr/local
-</span><span class="line">git init
-</span><span class="line">git remote add origin git://github.com/mxcl/homebrew.git
-</span><span class="line">git pull origin master</span></pre></figure></notextile></div>
-
-<h4 id="section-1">安装一些常用工具</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">brew install wget the_silver_searcher tree tmux htop mysql autojump mongodb zsh-completions
-</span><span class="line">sudo easy_install pip
-</span><span class="line">sudo pip install virtualenv
-</span><span class="line">sudo pip install virtualenvwrapper
-</span><span class="line"># 设置mysql和mongodb开机自启动
-</span><span class="line">ln -sfv /usr/local/opt/mysql/*.plist ~/Library/LaunchAgents 
-</span><span class="line">iln -sfv /usr/local/opt/mongodb/*.plist ~/Library/LaunchAgents</span></pre></figure></notextile></div>
-
-<h4 id="oh-my-zshdotfiles">安装配置oh-my-zsh和dotfiles</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
-</span><span class="line">chsh -s /bin/zsh
-</span><span class="line">git clone https://github.com/dongweiming/dotfiles.git ~/dotfiles
-</span><span class="line">cd dotfiles
-</span><span class="line">./install.sh vim</span></pre></figure></notextile></div>
-
-<h4 id="python">配置一个虚拟python环境</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">export WORKON_HOME=~/envs
-</span><span class="line">mkdir $WORKON_HOME -p
-</span><span class="line">source /usr/local/bin/virtualenvwrapper.sh
-</span><span class="line">mkvirtualenv --no-site-packages XXX # 这里新建了一个叫做XXX的环境,并且不会依赖site-package，需要你在环境中自定义下载
-</span><span class="line">pip install -r requirements.txt #根据文件安装依赖</span></pre></figure></notextile></div>
-
-<h5 id="zshrcdotfileshttpsgithubcomdongweimingdotfilesblobmasterzshrc">zshrc的配置可以看我的<a href="https://github.com/dongweiming/dotfiles/blob/master/_zshrc">dotfiles</a>，我粘贴出来</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">export ANTIGEN_DEFAULT_REPO_URL=https://github.com/dongweiming/oh-my-zsh       
-</span><span class="line">source ~/dotfiles/antigen/antigen.zsh                                          
-</span><span class="line">                                                                               
-</span><span class="line">antigen use oh-my-zsh                                                          
-</span><span class="line">                                                                               
-</span><span class="line">if [ "${OSTYPE:0:6}"="darwin" ]; then                                          
-</span><span class="line">  antigen-bundle osx                                                           
-</span><span class="line">  antigen-bundle brew                                                          
-</span><span class="line">  export PATH=$(brew --prefix ruby)/bin:$PATH:/usr/local/sbin:~/bin
-</span><span class="line">else                                                                           
-</span><span class="line">  export PATH=$PATH:~/bin                                                      
-</span><span class="line">fi                                                                             
-</span><span class="line">antigen bundles &lt;&lt;EOB                                                          
-</span><span class="line">  git-extras                                                                   
-</span><span class="line">  pip                                                                          
-</span><span class="line">  python                                                                       
-</span><span class="line">  autojump
-</span><span class="line">  django                                                                       
-</span><span class="line">  ruby                                                                         
-</span><span class="line">  git-flow                                                                     
-</span><span class="line">  virtualenvwrapper                                                            
-</span><span class="line">  git                                                                          
-</span><span class="line">  github                                                                       
-</span><span class="line">  supervisor                                                                   
-</span><span class="line">  tmux                                                                         
-</span><span class="line">  vagrant                                                                      
-</span><span class="line">  history                                                                      
-</span><span class="line">  zsh-users/zsh-syntax-highlighting                                            
-</span><span class="line">  zsh-users/zaw                                                                
-</span><span class="line">  zsh-users/zsh-history-substring-search                                       
-</span><span class="line">  ~/.oh-my-zsh --no-local-clone                                                
-</span><span class="line">EOB                                                                            
-</span><span class="line">                                                                               
-</span><span class="line">antigen theme sheerun/oh-my-zsh-powerline-theme powerline                     
-</span><span class="line">                                                                               
-</span><span class="line">antigen apply                                                                  
-</span><span class="line">                                                                               
-</span><span class="line">autoload -U zmv                                                                
-</span><span class="line">export SSH_ASKPASS=""                                                          
-</span><span class="line">alias rake='noglob rake'                                                       
-</span><span class="line">export WORKON_HOME=~/envs                                                      
-</span><span class="line">source `which virtualenvwrapper.sh`                                            
-</span><span class="line">alias social='workon social;cd ~/social_master' 
-</span><span class="line">alias ls='ls -hF --color=auto'
-</span><span class="line">source ~/.oh-my-zsh/custom/powerline.zsh
-</span><span class="line">zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-</span><span class="line">
-</span><span class="line">for keycode in '[' 'O'; do
-</span><span class="line">  bindkey "^[${keycode}A" history-substring-search-up
-</span><span class="line">  bindkey "^[${keycode}B" history-substring-search-down
-</span><span class="line">done
-</span><span class="line">unset keycode
-</span><span class="line">
-</span><span class="line">
-</span><span class="line"># bind k and j for VI mode
-</span><span class="line">bindkey -M vicmd 'k' history-substring-search-up
-</span><span class="line">bindkey -M vicmd 'j' history-substring-search-down</span></pre></figure></notextile></div>
-
-<h4 id="coreutils">安装coreutils</h4>
-
-<h5 id="macfreebsdls-grepfreebsdrmrm--rf-xx--rm-xx--rf-s">Mac说白了就是freeBSD+一些插件的组合，所以常用工具例如ls 、grep也都是freeBSD版本,比如我使用rm删除文件,就必须rm -rf xx 而不能 rm xx -rf s实在脑残</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">brew install coreutils</span></pre></figure></notextile></div>
-
-<p>添加PATH到.zshrc</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"                           
-</span><span class="line">MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"</span></pre></figure></notextile></div>
-
-<h4 id="ls">修改ls配色</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git clone git@github.com:seebi/dircolors-solarized.git
-</span><span class="line"># dircolors就在上面的coreutils中
-</span><span class="line">echo 'eval `dircolors ~/lib/dircolors-solarized/dircolors.256dark`' &gt;&gt; ~/.zshrc</span></pre></figure></notextile></div>
-
-<h4 id="octopress---">安装octopress-为我的博客  仅供参考</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># 默认的ruby是1.8.7的，我想要2.0的
-</span><span class="line">brew install ruby
-</span><span class="line">gem install bundler
-</span><span class="line">bundle install
-</span><span class="line">bundle update rake #安装的版本和octoress要求的9.2.2要高，所以需要升级
-</span><span class="line">git clone https://github.com/imathis/octopress.git oc
-</span><span class="line">cd oc
-</span><span class="line"># 为啥会有下面的一堆cp?其实是为了升级我的octopress
-</span><span class="line">cp ../octopress/Rakefile .
-</span><span class="line">cp ../octopress/_config.yml .
-</span><span class="line">cp -rp ../octopress/source .
-</span><span class="line"># 以下是我自己写的几个脚本
-</span><span class="line">cp ../octopress/plugins/pygments_code.rb plugins
-</span><span class="line">cp ../octopress/plugins/shjs.rb plugins
-</span><span class="line">cp ../octopress/plugins/tag_cloud.rb plugins
-</span><span class="line">cp ../octopress/sass . -rp
-</span><span class="line"># 然后你就可以生成了
-</span><span class="line">rake generate</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/6/">&larr; Older</a></li>
@@ -2061,6 +2043,10 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -2096,10 +2082,6 @@ Virtualbox生成容器的. 至于为什么选择LXC，我想除了开销小之�
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

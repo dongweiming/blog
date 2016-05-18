@@ -141,6 +141,57 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ekvm%E4%BD%BF%E7%94%A8virt-manager%E6%8A%A5%E9%94%99/">关于kvm使用virt-manager报错</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-16T00:00:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：使用linux桌面连接远程kvm服务器，使用virt-manager，出现下面报错：</p>
+
+<p>Traceback (most recent call last):
+File &#8220;/usr/share/virt-manager/virt-manager.py&#8221;, line 376, in ?
+_show_startup_error(str(run_e), &#8220;&#8221;.join(traceback.format_exc()))
+File &#8220;/usr/share/virt-manager/virt-manager.py&#8221;, line 52, in _show_startup_error
+import gtk
+File &#8220;/usr/lib64/python2.4/site-packages/gtk-2.0/gtk/__init__.py&#8221;, line 76, in ?
+_init()
+File &#8220;/usr/lib64/python2.4/site-packages/gtk-2.0/gtk/__init__.py&#8221;, line 64, in _init
+_gtk.init_check()
+RuntimeError: could not open display</p>
+
+<p>解决办法（原因是ssh登录参数，传输X窗口相关参数，C应该是压缩）：</p>
+
+<p>luit -encoding gbk ssh -p端口 root@kvm服务器IP -X -C</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/kvm%E5%88%9B%E5%BB%BAguest-img%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E9%97%AE%E9%A2%98/">Kvm创建guest Img文件的一个小问题</a></h1>
     
     
@@ -888,61 +939,6 @@ XSESSION=&#8221;Gnome&#8221;</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/opnesusesudozhichitabzidongbuqi/">Opnesuse Sudo 支持tab自动补齐</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-23T00:00:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：just 一个小技巧，一直依赖使用linux终端都习惯tab补全命令或者路径，但是在opensuse 使用sudo时候却不是这样，比如我想重启一个/etc/init.d目录下的服务：</p>
-
-<p>sudo  /etc&lt;TAB&gt; 直接 就把空格大出来 相当于 cat /etc 加入想要查看下以及目录，就得退格，然后输入“/”，再使用TAB</p>
-
-<p>解决方案：</p>
-
-<p>安装配置bash-completion</p>
-
-<p>dongwm@linux-b8lh:~&gt; sudo zypper in bash-completion</p>
-
-<p>dongwm@linux-b8lh:~&gt; . /etc/bash_completion
-然后就OK了，方便了很多</p>
-
-<p>每次登录支持：</p>
-
-<p><code>在/etc/bash.bashrc文件加入</code>
-<code>
-if [ -f /etc/bash_completion ]; then
-. /etc/bash_completion
-fi</code></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/22/">&larr; Older</a></li>
@@ -965,6 +961,10 @@ fi</code></p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1000,10 +1000,6 @@ fi</code></p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

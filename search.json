@@ -5074,6 +5074,21 @@
     }
   },
   {
+    "id": 321,
+    "title": "使用Strider实现持续集成",
+    "category": null,
+    "tags": [
+
+    ],
+    "url": "/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/",
+    "content": "### 前言\n\n持续集成（Continuous Integration）已经是公认的保证产品质量和开发快速迭代的开发实践了。\n目前常见的CI服务器有2种：\n\n1. [Jenkins](https://jenkins.io/)。 Jenkins是一个用Java编写的开源的持续集成工具， 它有丰富的插件和完善的API， 但实际工作中发现它不太稳定， Python和前端工程师很难对其进行二次开发， 页面和功能也有些陈旧。\n2. [Travis CI](https://github.com/travis-ci/travis-ci)。 一个针对Github的云服务平台， 只对开源项目提供免费的CI服务。\n\n本篇博客将给大家介绍一个新的持续集成工具[Strider](https://github.com/Strider-CD/strider)。 一个使用Node.js开发的、 开源的持续集成和发布服务器。 目前它已经支持Github、 Bitbucket、 Gitlab等平台， 支持Python、 Ruby、 Node.js和其他自定义的应用。\n虽然它使用常见了bootstrap， 但是页面效果还是很不错的。\n\n在使用之前， 我们先创建一个[Github开发者应用](https://github.com/settings/applications/new)， 内容如下图：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366447/ffeb1170-1d56-11e6-9957-9361c089fc05.png)\n\n然后在Github上创建一个用来测试的项目[dongweiming/tola](https://github.com/dongweiming/tola)。\n\n### 使用Strider集成\n\n使用最新版的Node.js：\n\n```\n❯ wget https://nodejs.org/dist/v4.4.2/node-v4.4.2.tar.gz\n❯ tar zxf node-v4.4.2.tar.gz\n❯ cd node-v4.4.2\n❯ ./configure && make && sudo make install\n```\n\n安装Strider：\n\n```\n❯ git clone https://github.com/Strider-CD/strider\n❯ cd strider\n❯ npm install  # 安装依赖包\n```\n\nStrider配置项很多， 可以在Strider目录下添加.striderrc文件：\n\n```\n❯ cat .striderrc\n{\n\"db_uri\": \"mongodb://dongwm:dongwm@ds015720.mlab.com:15720/strider-dongwm\",  # 我的VPS不够1G内存， 不能安装MongoDB， 使用 MongoLab的免费服务来测试\n\"smtp_host\": \"smtp.mailgun.org\",  # Mailgun提供每天可发送300封邮件的免费服务， 我们用它来测试\n\"smtp_user\": \"postmaster@sandboxabe8d2f42ac8424fa8dd4c5ab1f1d92b.mailgun.org\",\n\"smtp_pass\": \"4e0c2880f7aaf6c1b5f39bb88acabee1\"\n}\n```\n\n创建管理员用户：\n\n```\nDB_URI=mongodb://dongwm:dongwm@ds015720.mlab.com:15720/strider-dongwm node bin/strider addUser\n```\n\n启动服务， 需要上面创建的开发者应用的APP_ID和APP_SECRET（如果使用Github企业版， 需要设置PLUGIN_GITHUB_API_DOMAIN和PLUGIN_GITHUB_API_ENDPOINT）：\n\n```\nexport SERVER_NAME=http://VPS:3000\nexport PLUGIN_GITHUB_APP_ID=1a7bcf97d84c938bdbe8\nexport PLUGIN_GITHUB_APP_SECRET=316947cbe6a85e295dcd2346f272f7844aea87cd\nNODE_ENV=production npm start\n```\n\n访问http://VPS:3000/login， 使用之前创建的管理员用户登录。 目前还没有配置项目：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366504/362d531a-1d57-11e6-94d6-fdeed98754a5.png)\n\nStrider默认开启了Github、 Bitbucket、 Gitlab插件。 点击`Github`按钮来集成Github支持（也可以直接使用如下地址访问http://VPS:3000/auth/github）：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366507/36e05f78-1d57-11e6-85d8-58b9b43f6cb4.png)\n\n点击`Authorize application`按钮， 输入有权限的Github账号密码。 验证后会跳回Strider的项目页面下。\n\n找到项目tola， 点击项目右侧的`Add`\n\n![](https://cloud.githubusercontent.com/assets/841395/15366545/65f6590c-1d57-11e6-82fd-821b19f14eea.png)\n\n接下来选择项目类型， 这里选择Python， Strider会做一些初始设置。\n\nStrider会自动给项目添加一个Webhook。 打开https://github.com/dongweiming/tola/settings/hooks可以看到：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366565/7acdc266-1d57-11e6-9abb-f66d50baf858.png)\n\n访问插件管理页面：http://VPS:3000/admin/plugins， 我们需要安装Github Status这个插件， 点击后面的Install。\n\n访问http://VPS:3000/dongweiming/tola/config/tab-plugins激活邮件通知和Github状态插件， 需要把`Email Notifiter`和`GitHub Status`拖拽到左面。\n\n![](https://cloud.githubusercontent.com/assets/841395/15366576/8f345cce-1d57-11e6-8f8e-6636ec50b6b3.png)\n\n进入http://VPS:3000/dongweiming/tola/config/plugin-emailnotifier页面勾选`Always send notification emails.`。\n\n现在当tola项目发生Pull request、 Push等事件时就会自动触发这个集成测试了。 项目结果页面是http://VPS:3000/dongweiming/tola。 构建成功的效果如下：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366595/a5e27d0c-1d57-11e6-9417-6fcc859763b5.png)\n\n构建失败的效果如下：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366594/a5db3cf4-1d57-11e6-8191-ddd10ae7e25e.png)\n\n同时， 在Github的Pull request页面也会显示集成结果：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366599/a70fc1b2-1d57-11e6-937c-556114484be8.png)\n\n打开QQ邮箱就可以看到集成结果的邮件了：\n\n![](https://cloud.githubusercontent.com/assets/841395/15366593/a5d9be4c-1d57-11e6-930d-0d322b2fa4be.png)\n\nStrider自带发送Slack通知的插件， 而且Strider插件非常容易定制， 可以定义更多的插件支撑业务需要。\n",
+    "date": {
+      "year": "2016",
+      "month": "May",
+      "day": "19"
+    }
+  },
+  {
     "id": 0,
     "title": "出错了",
     "url": "/404.html",

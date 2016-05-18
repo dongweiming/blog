@@ -141,6 +141,61 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/opnesusesudozhichitabzidongbuqi/">Opnesuse Sudo 支持tab自动补齐</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-12-23T00:00:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：just 一个小技巧，一直依赖使用linux终端都习惯tab补全命令或者路径，但是在opensuse 使用sudo时候却不是这样，比如我想重启一个/etc/init.d目录下的服务：</p>
+
+<p>sudo  /etc&lt;TAB&gt; 直接 就把空格大出来 相当于 cat /etc 加入想要查看下以及目录，就得退格，然后输入“/”，再使用TAB</p>
+
+<p>解决方案：</p>
+
+<p>安装配置bash-completion</p>
+
+<p>dongwm@linux-b8lh:~&gt; sudo zypper in bash-completion</p>
+
+<p>dongwm@linux-b8lh:~&gt; . /etc/bash_completion
+然后就OK了，方便了很多</p>
+
+<p>每次登录支持：</p>
+
+<p><code>在/etc/bash.bashrc文件加入</code>
+<code>
+if [ -f /etc/bash_completion ]; then
+. /etc/bash_completion
+fi</code></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentooanzhuangbiji/">Gentoo笔记（一）安装基本gentoo系统随笔</a></h1>
     
     
@@ -1033,72 +1088,6 @@ python Socketsrv.py ＃这个就是你要让它关里的进程程序 就在Socke
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shiyongcx_freezeduipengyoutahuanoni/">使用cx_Freeze对python程序打包生成多个exe文件</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-10-28T00:00:00+08:00" pubdate data-updated="true">Oct 28<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：使用python程序需要打包成exe忽略python环境的可执行文件，但是网上没有出现一个相对比较好的文档，我这里有一个setup.py:</p>
-
-<p><pre class="sh_python">
-from distutils.core import setup
-from cx_Freeze import setup, Executable </p>
-
-<p>GUI2Exe = Executable(
-      script = "update.py",  ＃对主程序相关文件升级程序
-      base = 'Win32GUI',
-       )
-GUI2Exe2 = Executable(
-      script = "main.py",  #主程序
-      base = 'Win32GUI',
-      icon = r"C:\app.ico",  #自动exe文件的图标
-      shortcutName = u"GY终端",  
-       )
-includeFiles = [
-     ( r"C:\dervcer\etc", "../etc"),
-     (r"C:\dervcer\log", "../log"),
-      (r"C:\dervcer\image", "../image"),
-      (r"C:\dervcer\imageformats", "./imageformats")
-    ]   #这个地方主要是为了在打包中添加一些源文件，生成至打包目录，其中imageformats是pyqt4里面的插件动态链接库文件目录，要不然无法在winodws下显示系统图标</p>
-
-<p>setup(
-        name = "test",
-        version = "0.1",
-        description = "dongwm",   ＃生成的exe文件的描述
-        options = {"build_exe": {"include_files": includeFiles,}}, </p>
-
-<p>        executables = [GUI2Exe,GUI2Exe2])   ＃因为要生成多个exe文件 所以指定了2个执行的“块”
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/23/">&larr; Older</a></li>
@@ -1121,6 +1110,10 @@ includeFiles = [
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1156,10 +1149,6 @@ includeFiles = [
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

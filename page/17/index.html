@@ -141,6 +141,156 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyucontextlibyanjiu/">关于contextlib研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：本模块在python2.5及以上版本可用，主要用来上下文管理</p>
+
+<p>看一个其他的例子：</p>
+
+<p><pre class="sh_python">
+class WithinContext(object):</p>
+
+<p>    def __init__(self, context):
+        print 'WithinContext.__init__(%s)' % context</p>
+
+<p>    def do_something(self):
+        print 'WithinContext.do_something()'</p>
+
+<p>    def __del__(self):
+        print 'WithinContext.__del__'</p>
+
+<p>class Context(object):</p>
+
+<p>    def __init__(self):
+        print 'Context.__init__()'</p>
+
+<p>    def __enter__(self):   #返回一个上下文内使用的对象
+        print 'Context.__enter__()'
+        return WithinContext(self)</p>
+
+<p>    def __exit__(self, exc_type, exc_val, exc_tb):  #清理正在用的资源
+        print 'Context.__exit__()'</p>
+
+<p>with Context() as c:
+    c.do_something()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Context.__init__()
+Context.__enter__()
+WithinContext.__init__(&lt;__main__.Context object at 0xb749c94c&gt;)
+WithinContext.do_something()
+Context.__exit__()
+WithinContext.__del__</p>
+
+<p><strong>1 使用contextlib：</strong></p>
+
+<p><pre class="sh_python">
+import contextlib</p>
+
+<p>@contextlib.contextmanager #使用装饰器自动写一个带 <tt>__enter__()</tt> <tt>和 __exit__()</tt> 的类
+def make_context():
+    print 'entering'
+    try:
+        yield {}
+    finally:
+        print 'exiting'
+with make_context() as value:
+    print 'inside with statement:', value
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+entering
+inside with statement: {}
+exiting</p>
+
+<p><strong>2嵌套上下文</strong></p>
+
+<p><pre class="sh_python">
+import contextlib</p>
+
+<p>@contextlib.contextmanager
+def make_context(name):
+    print 'entering',name
+    yield name
+    print 'exiting',name
+with contextlib.nested(make_context('A'), make_context('B'), make_context('C')) as (A, B, C):  #同时管理三个上下文
+    print 'inside with statement:', A,B,C
+</pre></p>
+
+<p>执行过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+entering A
+entering B
+entering C
+inside with statement: A B C
+exiting C
+exiting B
+exiting A
+注python2.7及更高，with关键字已经支持嵌套可以这样：
+with make_context(&#8216;A&#8217;) as A, make_context(&#8216;B&#8217;) as B, make_context(&#8216;C&#8217;) as C:
+    print &#8216;inside with statement:&#8217;, A, B, C
+<strong>3 关闭打开的句柄</strong>
+为了确保一个句柄被关闭，使用<tt>closing()</tt>
+<pre class="sh_python">
+cat test.py
+import contextlib</p>
+
+<p>class Door(object):
+    def __init__(self):
+        print '__init__()'
+    def close(self):
+        print 'close()'</p>
+
+<p>with contextlib.closing(Door()) as door:
+    print 'inside with statement'
+</pre>
+执行过程：
+dongwm@linux-dongwm:~&gt; python test.py
+__init__()
+inside with statement
+close()</p>
+
+<p></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyucompileallyanjiu/">关于compileall研究</a></h1>
     
     
@@ -1286,67 +1436,6 @@ sendmail
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/shiyongbeautifulsoupzhuaquyoudaocidianchaxunzidianjieguo/">使用BeautifulSoup抓取有道词典查询字典结果</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-01T00:00:00+08:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：BeautifulSoup是python第三方类库，用于解析和修改html和xml文件。有时候不会一个英语单词想查询还要登录网站输入单词然后搜索，不如写个抓取程序玩玩</p>
-
-<p>首先将一下运行过程：</p>
-
-<p>1 登录网站http://dict.youdao.com 2 在 form区域输入要输入的英语词 3 点击‘搜索’ 4 页面返回结果 5解析html文件 6 找到相关翻译项 7 打印出来</p>
-
-<p>1  分析form（我只截取了一部分）：</p>
-
-<p><pre class="sh_html4strict">
-&lt;form method="<a>get</a>" action="<a href="view-source:http://dict.youdao.com/search">/search</a>" class="<a>c-fm-w</a>" id="<a>f</a>"&gt;    #使用‘get’方法，地址是http://dict.youdao.com/search（程序会用到）
-    &lt;!--Begin 搜索框 --&gt;
-    &lt;span class="<a>s-inpt-w</a>"&gt;
-        &lt;input type="<a>text</a>" class="<a>s-inpt</a>" autocomplete="<a>off</a>" name="<a>q</a>" id="<a>query</a>" onmouseover="<a>this.focus()</a>" onfocus="<a>this.select()</a>" maxlength="<a>256</a>"/&gt; #'name'是'q'，程序会用
-        &lt;span id="<a>hnwBtn</a>" class="<a>hand-write</a>"&gt;&lt;/span&gt;
-        &lt;!-- Begin 这两个SPAN 尽量写一行 --&gt;
-    &lt;/span&gt;&lt;span class="<a>s-btn-w</a>"&gt;
-        &lt;!-- #End 这两个SPAN 尽量写一行 --&gt;
-        &lt;input type="<a>submit</a>" class="<a>s-btn</a>" id="<a>qb</a>" value="<a>搜 索</a>"/&gt;
-        &lt;input type="<a>hidden</a>" name="<a>keyfrom</a>" value="<a>dict.index</a>"/&gt; &lt;/span&gt;
-&lt;/form &gt;
-</pre></p>
-
-<p>当提交后，看我的firebug的分析图：</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/shiyongbeautifulsoupzhuaquyoudaocidianchaxunzidianjieguo/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/18/">&larr; Older</a></li>
@@ -1369,6 +1458,10 @@ sendmail
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1404,10 +1497,6 @@ sendmail
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

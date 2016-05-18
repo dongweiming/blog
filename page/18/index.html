@@ -141,6 +141,67 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shiyongbeautifulsoupzhuaquyoudaocidianchaxunzidianjieguo/">使用BeautifulSoup抓取有道词典查询字典结果</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-01T00:00:00+08:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：BeautifulSoup是python第三方类库，用于解析和修改html和xml文件。有时候不会一个英语单词想查询还要登录网站输入单词然后搜索，不如写个抓取程序玩玩</p>
+
+<p>首先将一下运行过程：</p>
+
+<p>1 登录网站http://dict.youdao.com 2 在 form区域输入要输入的英语词 3 点击‘搜索’ 4 页面返回结果 5解析html文件 6 找到相关翻译项 7 打印出来</p>
+
+<p>1  分析form（我只截取了一部分）：</p>
+
+<p><pre class="sh_html4strict">
+&lt;form method="<a>get</a>" action="<a href="view-source:http://dict.youdao.com/search">/search</a>" class="<a>c-fm-w</a>" id="<a>f</a>"&gt;    #使用‘get’方法，地址是http://dict.youdao.com/search（程序会用到）
+    &lt;!--Begin 搜索框 --&gt;
+    &lt;span class="<a>s-inpt-w</a>"&gt;
+        &lt;input type="<a>text</a>" class="<a>s-inpt</a>" autocomplete="<a>off</a>" name="<a>q</a>" id="<a>query</a>" onmouseover="<a>this.focus()</a>" onfocus="<a>this.select()</a>" maxlength="<a>256</a>"/&gt; #'name'是'q'，程序会用
+        &lt;span id="<a>hnwBtn</a>" class="<a>hand-write</a>"&gt;&lt;/span&gt;
+        &lt;!-- Begin 这两个SPAN 尽量写一行 --&gt;
+    &lt;/span&gt;&lt;span class="<a>s-btn-w</a>"&gt;
+        &lt;!-- #End 这两个SPAN 尽量写一行 --&gt;
+        &lt;input type="<a>submit</a>" class="<a>s-btn</a>" id="<a>qb</a>" value="<a>搜 索</a>"/&gt;
+        &lt;input type="<a>hidden</a>" name="<a>keyfrom</a>" value="<a>dict.index</a>"/&gt; &lt;/span&gt;
+&lt;/form &gt;
+</pre></p>
+
+<p>当提交后，看我的firebug的分析图：</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/shiyongbeautifulsoupzhuaquyoudaocidianchaxunzidianjieguo/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/linuxjiqiao/">Linux技巧</a></h1>
     
     
@@ -1573,177 +1634,6 @@ dongwm@linux-dongwm:~&gt; sed -n &#8216;s/dongwm/\Udongwm/p&#8217; test.txt  #\
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyusedyanjiuer/">关于sed研究（二）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-16T00:00:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1 正则表达式</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/^112/ p&#8217; test.txt  #&#8217;^&#8217;表示开头匹配，这里是开头是‘112’
-112,dongwm,dongwm.com
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/com$/ p&#8217; test.txt #&#8217;$&#8217;表示结尾匹配 这里是匹配结尾是‘com’
-112,dongwm,dongwm.com
-113,ailll,ailll.com
-114,test,test.com</p>
-
-<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/do..wm&#46;com/ p&#8217; test.txt  #使用‘.’匹配单个字符，&#46;表示还是匹配‘.’
-112,dongwm,dongwm.com
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.*/ p&#8217; test.txt  #使用‘*’匹配零个或者更多的字符
-112,dongwm,dongwm.com
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.\+/ p&#8217; test.txt  #使用‘\+’匹配一个或者多个字符
-112,dongwm,dongwm.com
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.\?gwm/ p&#8217; test.txt  #使用‘\?’匹配零个或者一个字符
-112,dongwm,dongwm.com
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/[2-3]/ p&#8217; test.txt  #数字匹配使用[0-9]
-112,dongwm,dongwm.com
-113,ailll,ailll.com
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/112\|113/ p&#8217; test.txt  #这里有个选择(or) 使用‘\|’
-112,dongwm,dongwm.com
-113,ailll,ailll.com</p>
-
-<p>dongwm@linux-dongwm:~&gt; cat test2.txt
-1
-12
-123
-1234
-12345
-123456
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/^[0-9]\{3,5\}$/ p&#8217; test2.txt  #匹配符合匹配的书两，这里匹配行包含3－5个数字
-123
-1234
-12345
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/112,\b/ p&#8217; test.txt  #\b表示单词（单词间距范围内）
-112,dongwm,dongwm.com
-<strong>2 直接修改文件</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; sed -i &#8216;s/dongwm/dongwm2/&#8217; test.txt  #使用‘-i’直接修改源文件
-dongwm@linux-dongwm:~&gt; cat test.txt
-112,dongwm2,dongwm.com
-113,ailll,ailll.com
-114,test,test.com</p>
-
-<p>dongwm@linux-dongwm:~&gt; sed -i.`date +%m%d%H%M` &#8216;s/dongwm/dongwm2/&#8217; test.txt  #姐姐修改源文件，但是会保存一个自定义命名的文件为源文件 ，这里使用‘.+时间（月日小时分）’的后缀
-dongwm@linux-dongwm:~&gt; cat test.txt
-112,dongwm2,dongwm.com
-113,ailll,ailll.com
-114,test,test.com
-dongwm@linux-dongwm:~&gt; cat test.txt.04161504
-112,dongwm,dongwm.com
-113,ailll,ailll.com
-114,test,test.com
-<strong>3 增加行</strong></p>
-
-<p>语法：</p>
-
-<p>sed &#8216;[address] a the-line-to-append&#8217; input-file
-dongwm@linux-dongwm:~&gt; sed &#8216;2 a 110,ccc,ccc.com&#8217; test.txt  #在指定行（这里是第二行后加一行）
-112,dongwm2,dongwm.com
-113,ailll,ailll.com
-110,ccc,ccc.com
-114,test,test.com
-dongwm@linux-dongwm:~&gt; sed &#8216;$ a 115,ddd,ddd.com&#8217; test.txt #在文件最后加一行
-112,dongwm2,dongwm.com
-113,ailll,ailll.com
-114,test,test.com
-115,ddd,ddd.com
-dongwm@linux-dongwm:~&gt; sed &#8216;/dongwm/ a 115,ddd,ddd.com&#8217; test.txt #在匹配行后面加一行
-112,dongwm2,dongwm.com
-115,ddd,ddd.com
-113,ailll,ailll.com
-114,test,test.com
-<strong>4 插入行</strong>
-语法：sed &#8216;[address] i the-line-to-insert&#8217; input-file
-这个和‘增加’语法一样，但是是在匹配行‘前’增加
-<strong>5 改变行</strong>
-语法：sed &#8216;[address] c the-line-to-insert&#8217; input-file
-dongwm@linux-dongwm:~&gt; sed &#8216;$ c 115,ccc,ccc.com&#8217; test.txt #把最后一行修改为，语法和增加一样，但是这个匹配行就没有了
-112,dongwm2,dongwm.com
-113,ailll,ailll.com
-115,ccc,ccc.com
-<strong>6 打印隐藏字符，比如\t  $等</strong>
-dongwm@linux-dongwm:~&gt; sed -n l test.txt
-112,dongwm2,dongwm.com$
-113,ailll,ailll.com$
-114,test,test.com$
-<strong>7 打印行号</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; sed = test.txt
-1
-112,dongwm2,dongwm.com
-2
-113,ailll,ailll.com
-3
-114,test,test.com
-dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/ =&#8217; test.txt  #打印匹配行的行号
-1</p>
-
-<p><strong>8 字符翻译 比如将匹配字符转换成大写字母</strong>
-dongwm@linux-dongwm:~&gt; sed  &#8216;y/dongwm/DONGWM/&#8217; test.txt  #这里只有d，o，n，g，w，m这6个字母其他字母不变
-112,DONGWM2,DONGWM.cOM
-113,ailll,ailll.cOM
-114,test,test.cOM
-<strong>9 quit</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; sed  &#8216;2 q&#8217; test.txt  #打印每行，直到特定行退出 这里是2行
-112,dongwm2,dongwm.com
-113,ailll,ailll.com
-<strong>10 sed里面的grep</strong></p>
-
-<p>dongwm@linux-dongwm:~&gt; sed  -n &#8216;s/dongwm/&amp;/p&#8217; test.txt
-112,dongwm2,dongwm.com
-dongwm@linux-dongwm:~&gt; grep dongwm !$
-grep dongwm test.txt
-112,dongwm2,dongwm.com</p>
-
-<p>dongwm@linux-dongwm:~&gt; sed  -n &#8216;/dongwm/ !p&#8217; test.txt  #取不匹配
-113,ailll,ailll.com
-114,test,test.com
-dongwm@linux-dongwm:~&gt; grep -v dongwm !$
-grep -v dongwm test.txt
-113,ailll,ailll.com
-114,test,test.com
-<strong>11 sed里面的head
-</strong>sed -n &#8216;1,10 p&#8217; /etc/passwd
-sed &#8216;10 q&#8217; /etc/passwd
-sed &#8216;11,$ d&#8217; /etc/passwd
-或者</p>
-
-<p>head -10<strong>
-12
-</strong></p>
-
-<p>11</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/19/">&larr; Older</a></li>
@@ -1766,6 +1656,10 @@ sed &#8216;11,$ d&#8217; /etc/passwd
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1801,10 +1695,6 @@ sed &#8216;11,$ d&#8217; /etc/passwd
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

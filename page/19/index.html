@@ -141,6 +141,177 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusedyanjiuer/">关于sed研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-16T00:00:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 正则表达式</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/^112/ p&#8217; test.txt  #&#8217;^&#8217;表示开头匹配，这里是开头是‘112’
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/com$/ p&#8217; test.txt #&#8217;$&#8217;表示结尾匹配 这里是匹配结尾是‘com’
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/do..wm&#46;com/ p&#8217; test.txt  #使用‘.’匹配单个字符，&#46;表示还是匹配‘.’
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.*/ p&#8217; test.txt  #使用‘*’匹配零个或者更多的字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.\+/ p&#8217; test.txt  #使用‘\+’匹配一个或者多个字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/do.\?gwm/ p&#8217; test.txt  #使用‘\?’匹配零个或者一个字符
+112,dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/[2-3]/ p&#8217; test.txt  #数字匹配使用[0-9]
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/112\|113/ p&#8217; test.txt  #这里有个选择(or) 使用‘\|’
+112,dongwm,dongwm.com
+113,ailll,ailll.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test2.txt
+1
+12
+123
+1234
+12345
+123456
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/^[0-9]\{3,5\}$/ p&#8217; test2.txt  #匹配符合匹配的书两，这里匹配行包含3－5个数字
+123
+1234
+12345
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/112,\b/ p&#8217; test.txt  #\b表示单词（单词间距范围内）
+112,dongwm,dongwm.com
+<strong>2 直接修改文件</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -i &#8216;s/dongwm/dongwm2/&#8217; test.txt  #使用‘-i’直接修改源文件
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -i.`date +%m%d%H%M` &#8216;s/dongwm/dongwm2/&#8217; test.txt  #姐姐修改源文件，但是会保存一个自定义命名的文件为源文件 ，这里使用‘.+时间（月日小时分）’的后缀
+dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; cat test.txt.04161504
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+<strong>3 增加行</strong></p>
+
+<p>语法：</p>
+
+<p>sed &#8216;[address] a the-line-to-append&#8217; input-file
+dongwm@linux-dongwm:~&gt; sed &#8216;2 a 110,ccc,ccc.com&#8217; test.txt  #在指定行（这里是第二行后加一行）
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+110,ccc,ccc.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;$ a 115,ddd,ddd.com&#8217; test.txt #在文件最后加一行
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+115,ddd,ddd.com
+dongwm@linux-dongwm:~&gt; sed &#8216;/dongwm/ a 115,ddd,ddd.com&#8217; test.txt #在匹配行后面加一行
+112,dongwm2,dongwm.com
+115,ddd,ddd.com
+113,ailll,ailll.com
+114,test,test.com
+<strong>4 插入行</strong>
+语法：sed &#8216;[address] i the-line-to-insert&#8217; input-file
+这个和‘增加’语法一样，但是是在匹配行‘前’增加
+<strong>5 改变行</strong>
+语法：sed &#8216;[address] c the-line-to-insert&#8217; input-file
+dongwm@linux-dongwm:~&gt; sed &#8216;$ c 115,ccc,ccc.com&#8217; test.txt #把最后一行修改为，语法和增加一样，但是这个匹配行就没有了
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+115,ccc,ccc.com
+<strong>6 打印隐藏字符，比如\t  $等</strong>
+dongwm@linux-dongwm:~&gt; sed -n l test.txt
+112,dongwm2,dongwm.com$
+113,ailll,ailll.com$
+114,test,test.com$
+<strong>7 打印行号</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed = test.txt
+1
+112,dongwm2,dongwm.com
+2
+113,ailll,ailll.com
+3
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/ =&#8217; test.txt  #打印匹配行的行号
+1</p>
+
+<p><strong>8 字符翻译 比如将匹配字符转换成大写字母</strong>
+dongwm@linux-dongwm:~&gt; sed  &#8216;y/dongwm/DONGWM/&#8217; test.txt  #这里只有d，o，n，g，w，m这6个字母其他字母不变
+112,DONGWM2,DONGWM.cOM
+113,ailll,ailll.cOM
+114,test,test.cOM
+<strong>9 quit</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  &#8216;2 q&#8217; test.txt  #打印每行，直到特定行退出 这里是2行
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+<strong>10 sed里面的grep</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  -n &#8216;s/dongwm/&amp;/p&#8217; test.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; grep dongwm !$
+grep dongwm test.txt
+112,dongwm2,dongwm.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  -n &#8216;/dongwm/ !p&#8217; test.txt  #取不匹配
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; grep -v dongwm !$
+grep -v dongwm test.txt
+113,ailll,ailll.com
+114,test,test.com
+<strong>11 sed里面的head
+</strong>sed -n &#8216;1,10 p&#8217; /etc/passwd
+sed &#8216;10 q&#8217; /etc/passwd
+sed &#8216;11,$ d&#8217; /etc/passwd
+或者</p>
+
+<p>head -10<strong>
+12
+</strong></p>
+
+<p>11</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shiyonggooglecaptchazuotornadowangzhandeyanzhengma/">使用Google Captcha作tornado网站的验证码</a></h1>
     
     
@@ -1434,187 +1605,6 @@ cd anjuta/
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoobijishigentooguanliruanjianzongjie/">Gentoo笔记（十）gentoo管理软件总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-24T00:00:00+08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1 gentoolkit</strong></p>
-
-<p>dongwm@localhost ~ $sudo sudo emerge gentoolkit
-<strong> 1 revdep-rebuild 比如如果发现 /bin/ls 需要的 /lib/libacl.so.1 缺失，就会重新编译相关文件所在的包，以及所用到该文件的所在文件的包。</strong></p>
-
-<p>dongwm@localhost ~ $sudo revdep-rebuild <span style="color: #000102;"><span style="font-family: 宋体;">修复一些被破坏的lib</span></span>
-* Configuring search environment for revdep-rebuild</p>
-
-<p>* Checking reverse dependencies
-* Packages containing binaries and libraries broken by a package update
-* will be emerged.</p>
-
-<p>* Collecting system binaries and libraries
-* Generated new 1_files.rr
-* Collecting complete LD_LIBRARY_PATH
-* Generated new 2_ldpath.rr
-* Checking dynamic linking consistency
-[ 100% ]
-<strong> 2 equery</strong></p>
-
-<p>equery b  xxx 查询文件是由那个软件包安装带来的
-dongwm@localhost ~ $sudo  equery b  anjuta
-* Searching for anjuta &#8230;</p>
-
-<p>dev-util/anjuta-2.32.1.1 (/usr/share/pixmaps/anjuta)
-dev-util/anjuta-2.32.1.1 (/usr/bin/anjuta)
-dev-util/anjuta-2.32.1.1 (/usr/share/anjuta)
-dev-util/anjuta-2.32.1.1 (/usr/lib/anjuta)
-equery d XXX，查询哪些软件包是依赖于pkg的
-[ Searching for packages depending on vmware-modules&#8230; ] app-emulation/vmware-workstation-5.5.5.56455 (~app-emulation/vmware-modules-1.0.0.15)</p>
-
-<p><strong> 3 eclean distfiles 只删除过期的包</strong>
-<strong>2 module-rebuild</strong>
-dongwm@localhost ~ $sudo emerge module-rebuild</p>
-
-<p>重新编译外部内核模块</p>
-
-<p>dongwm@localhost ~ $sudo module-rebuild rebuild</p>
-
-<p>就可以重新编译所有内核的 外部 模块。比如 nvidia/vbox 这类软件用到的模块。当然，你要先装过 nvidia包和 vbox模块包，这样 portage 才有记录。
-<strong>3 portage-utils</strong>
-dongwm@localhost ~ $sudo portage-utils</p>
-
-<p>dongwm@localhost ~ $sudo qfile anjuta 类似于 equery b
-dev-util/anjuta (/usr/lib/anjuta)
-dev-util/anjuta (/usr/share/anjuta)
-dev-util/anjuta (/usr/share/pixmaps/anjuta)
-dev-util/anjuta (/usr/bin/anjuta)</p>
-
-<p>root@localhost ~ #equery depends  autogen 查看哪些包依赖于antogen
-* These packages depend on autogen:
-dev-util/anjuta-2.32.1.1 (sys-devel/autogen)
-sys-devel/gcc-4.5.3-r1 (test ? &gt;=sys-devel/autogen-5.5.4)</p>
-
-<p>root@localhost ~ #equery u anjuta 查看已安装包abc用了哪些USE
-[ Legend : U - final flag setting for installation]
-[        : I - package is installed with flag     ]
-[ Colors : set, unset                             ]
-* Found these USE flags for dev-util/anjuta-2.32.1.1:
-U I
-- - debug         : Enable extra debug codepaths, like asserts and extra
-output. If you want to get meaningful backtraces see
-http://www.gentoo.org/proj/en/qa/backtraces.xml
-- - devhelp       : Enable devhelp integration
-- - doc           : Adds extra documentation (API, Javadoc, etc). It is
-recommended to enable per package instead of globally
-- - glade         : Build glade plugin for anjuta
-- - graphviz      : Adds support for the Graphviz library
-- - introspection : Use dev-libs/gobject-introspection for introspection
-+ + sourceview    : Build sourceview editing plugin for anjuta
-- - subversion    : Enable subversion (version control system) support
-- - test          : Workaround to pull in packages needed to run with
-FEATURES=test. Portage-2.1.2 handles this internally, so
-don&#8217;t set it in make.conf/package.use anymore
-- - vala          : Enable support for the Vala programming language</p>
-
-<p>dongwm@localhost ~ $sudo qlist anjuta 列出软件包安装后都带来的文件列表</p>
-
-<p><strong>4 genlop</strong>
-dongwm@localhost ~ $sudo emerge genlop</p>
-
-<p>genlop -t anjuta 列出安装anjuta的具体时间，时间长短等
-dongwm@localhost ~ $sudo genlop -t anjuta
-* dev-util/anjuta</p>
-
-<p>Tue Feb 21 17:57:35 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
-merge time: 2 minutes and 54 seconds.</p>
-
-<p>Wed Feb 22 10:55:30 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
-merge time: 4 minutes and 6 seconds.</p>
-
-<p>Wed Feb 22 11:25:57 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
-merge time: 4 minutes and 5 seconds.</p>
-
-<p>Fri Feb 24 13:22:43 2012 &gt;&gt;&gt; dev-util/anjuta-2.32.1.1
-merge time: 3 minutes and 57 seconds.</p>
-
-<p>root@localhost ~ #genlop -l|grep compiz 类似于rpm -qa 列出安装的软件包列表 这里grep过滤了一下
-Tue Dec 27 22:44:27 2011 &gt;&gt;&gt; x11-libs/compiz-bcop-0.8.4
-Tue Dec 27 22:49:00 2011 &gt;&gt;&gt; x11-wm/compiz-0.8.6-r3
-Tue Dec 27 22:56:27 2011 &gt;&gt;&gt; x11-libs/libcompizconfig-0.8.4-r2
-Tue Dec 27 22:57:00 2011 &gt;&gt;&gt; x11-plugins/compiz-plugins-main-0.8.6-r1
-Tue Dec 27 22:57:08 2011 &gt;&gt;&gt; dev-python/compizconfig-python-0.8.4-r3
-Tue Dec 27 22:57:13 2011 &gt;&gt;&gt; x11-libs/compizconfig-backend-gconf-0.8.4-r2
-Tue Dec 27 22:57:44 2011 &gt;&gt;&gt; x11-plugins/compiz-plugins-extra-0.8.6-r1
-Tue Dec 27 22:58:10 2011 &gt;&gt;&gt; x11-wm/compiz-fusion-0.8.6
-<strong>5 eix</strong>
-dongwm@localhost ~ $sudo emerge eix
-软件包搜索：
-dongwm@localhost ~ $sudo eix anjuta
-[I] dev-util/anjuta
-Available versions:  2.32.1.1 ~3.2.1 ~3.2.2 {debug devhelp doc glade graphviz +introspection packagekit +sourceview subversion test vala}
-Installed versions:  2.32.1.1(13时21分50秒 2012年02月24日)(sourceview -debug -devhelp -doc -glade -graphviz -introspection -subversion -test -vala)
-Homepage:            http://www.anjuta.org
-Description:         A versatile IDE for GNOME</p>
-
-<p>将本地软件列表与最新的portage树同步
-dongwm@localhost ~ $sudo eix-sync</p>
-
-<p>注：需要每次 emerge &#8211;sync 后运行 update-eix 才会更新索引。推荐使用 eix-sync 命令取代上面的2个命令
-<strong>6 euses</strong></p>
-
-<p>dongwm@localhost ~ $sudo emerge euses</p>
-
-<p>查询哪个包用了YYY这个USE</p>
-
-<p>euse -i YYY
-<strong>7 ufed</strong></p>
-
-<p>所有USE都可以在这里修改，不用手动修改 make.conf 了，很方便
-dongwm@localhost ~ $sudo ufed
-<strong>8 elogv</strong></p>
-
-<p>emerge 大量软件的时候，很多提示的消息都一闪而过，现在给查看他们的方法。</p>
-
-<p>dongwm@localhost ~ $sudo emerge elogv</p>
-
-<p>emerge elogviewer # GTK
-emerge kelogviewer # KDE</p>
-
-<p>修改 /etc/make.conf</p>
-
-<p>PORTAGE_ELOG_SYSTEM=&#8221;save&#8221;
-PORTAGE_ELOG_CLASSES=&#8221;warn error info log qa&#8221;</p>
-
-<p>你可以根据需求去掉一些信息，比如 qa(质量保证) 你不需要，就可以去掉。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/20/">&larr; Older</a></li>
@@ -1637,6 +1627,10 @@ PORTAGE_ELOG_CLASSES=&#8221;warn error info log qa&#8221;</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1672,10 +1666,6 @@ PORTAGE_ELOG_CLASSES=&#8221;warn error info log qa&#8221;</p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

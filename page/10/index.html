@@ -141,6 +141,394 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusocketyanjiuer-2/">关于socket研究(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T00:00:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>socket服务器端：</p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   #socket.AF_INET表示类型是ipv4，SOCK_STREAM提供面向连接的稳定数据传输，即TCP协议.相应的ＵＤＰ就是<span><em>SOCK_DGRAM</em></span>
+server_address = ('localhost', 10000) 
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+sock.bind(server_address)  #绑定到本地的10000端口
+sock.listen(1) #使用主动连接套接口变为被连接套接口，使得一个进程可以接受其它进程的请求，从而成为一个服务器进程。指定最多允许1个客户连接到服务器</p>
+
+<p>while True:
+    print &gt;&gt;sys.stderr, 'waiting for a connection'
+    connection, client_address = sock.accept() #在listen()后监听连接
+    try:
+        print &gt;&gt;sys.stderr, 'connection from', client_address</p>
+
+<p>        while True:  #等待收到数据后。。。
+            data = connection.recv(16) #从TCP连接的另一端接收数据，缓存区为16
+            print &gt;&gt;sys.stderr, 'received "%s"' % data
+            if data:
+                print &gt;&gt;sys.stderr, 'sending data back to the client'
+                connection.sendall(data)
+            else:
+                print &gt;&gt;sys.stderr, 'no more data from', client_address
+                break</p>
+
+<p>    finally:
+        connection.close()   #关闭socket连接
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #创建socket连接</p>
+
+<p>server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'connecting to %s port %s' % server_address
+sock.connect(server_address)  #连接到socket服务器的端口
+try:
+    message = 'This is the message.  It will be repeated.'
+    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sock.sendall(message)  #<code>send()</code>和 <code>.sendall()</code> 之间做出选择。前者一次发送尽可能多的字节数，后者发送整个报文（如果不能发送就会引发一个异常）
+    amount_received = 0
+    amount_expected = len(message)</p>
+
+<p>    while amount_received &lt; amount_expected:
+        data = sock.recv(16)
+        amount_received += len(data)
+        print &gt;&gt;sys.stderr, &#8216;received &#8220;%s&#8221;&#8217; % data</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, &#8216;closing socket&#8217;
+    sock.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #创建一个ｕｄｐ的socket连接
+server_address = ('localhost', 10000)
+print &gt;&gt;sys.stderr, 'starting up on %s port %s' % server_address
+sock.bind(server_address)
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting to receive message'
+    data, address = sock.recvfrom(4096)  #udp使用recvfrom接收</p>
+
+<p>    print &gt;&gt;sys.stderr, 'received %s bytes from %s' % (len(data), address)
+    print &gt;&gt;sys.stderr, data</p>
+
+<p>    if data:
+        sent = sock.sendto(data, address)  #udp使用sendto发送
+        print &gt;&gt;sys.stderr, 'sent %s bytes back to %s' % (sent, address)
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  #udp的socket客户端</p>
+
+<p>server_address = ('localhost', 10000)
+message = 'This is the message.  It will be repeated.'</p>
+
+<p>try:</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sent = sock.sendto(message, server_address)</p>
+
+<p>    print &gt;&gt;sys.stderr, 'waiting to receive'
+    data, server = sock.recvfrom(4096)
+    print &gt;&gt;sys.stderr, 'received "%s"' % data</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys
+import os</p>
+
+<p>server_address = './uds_socket'  #一个socket文件</p>
+
+<p>try:
+    os.unlink(server_address)  #确保这个文件本来不存在
+except OSError:
+    if os.path.exists(server_address):
+        raise
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)  #创建一个unix domain socket
+print &gt;&gt;sys.stderr, 'starting up on %s' % server_address
+sock.bind(server_address)
+sock.listen(1)
+while True:
+    print &gt;&gt;sys.stderr, 'waiting for a connection'
+    connection, client_address = sock.accept()
+    try:
+        print &gt;&gt;sys.stderr, 'connection from', client_address
+        while True:
+            data = connection.recv(16)
+            print &gt;&gt;sys.stderr, 'received "%s"' % data
+            if data:
+                print &gt;&gt;sys.stderr, 'sending data back to the client'
+                connection.sendall(data)
+            else:
+                print &gt;&gt;sys.stderr, 'no more data from', client_address
+                break</p>
+
+<p>    finally:
+        connection.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)  #unix domain socket客户端</p>
+
+<p>server_address = './uds_socket'
+print &gt;&gt;sys.stderr, 'connecting to %s' % server_address
+try:
+    sock.connect(server_address)
+except socket.error, msg:
+    print &gt;&gt;sys.stderr, msg
+    sys.exit(1)</p>
+
+<p>try:</p>
+
+<p>    message = 'This is the message.  It will be repeated.'
+    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sock.sendall(message)
+    amount_received = 0
+    amount_expected = len(message)
+    while amount_received &lt; amount_expected:
+        data = sock.recv(16)
+        amount_received += len(data)
+        print &gt;&gt;sys.stderr, 'received "%s"' % data
+finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre></p>
+
+<p>注：这个socket文件需要注意权限：</p>
+
+<p>dongwm@localhost ~ $ls -l !$
+ls -l uds_socket
+srwxr-xr-x 1 dongwm dongwm 0  7月  9 12:46 uds_socket
+假如你没有权限，那么会告诉你：connecting to ./uds_socket [Errno 13] Permission denied</p>
+
+<p><pre class="sh_python">
+import socket
+import os</p>
+
+<p>parent, child = socket.socketpair()  #socket父子进程之间通信</p>
+
+<p>pid = os.fork()</p>
+
+<p>if pid:
+    print 'in parent, sending message'
+    child.close()
+    parent.sendall('ping')
+    response = parent.recv(1024)
+    print 'response from child:', response
+    parent.close()</p>
+
+<p>else:
+    print 'in child, waiting for message'
+    parent.close()
+    message = child.recv(1024)
+    print 'message from parent:', message
+    child.sendall('pong')
+    child.close()
+</pre>
+执行结果：</p>
+
+<p>dongwm@localhost ~ $python test.py
+in parent, sending message
+in child, waiting for message
+message from parent: ping
+response from child: pong</p>
+
+<p><pre class="sh_python">
+import socket
+import struct
+import sys</p>
+
+<p>message = 'very important data'
+multicast_group = ('224.3.29.71', 10000)
+#在发送者和每一接收者之间实现点对多点网络连接。如果一台发送者同时给多个的接收者传输相同的数据，也只需复制一份的相同数据包。它提高了数据传送效率。减少了骨干网络出现拥塞的可能性
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #创建socket，用来接收，这个程序可以运行在多个ＩＰ上面，组播只能用ＵＤＰ
+sock.settimeout(0.2) #设置超时
+ttl = struct.pack('b', 1)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)  #设置组播
+try:</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending "%s"' % message
+    sent = sock.sendto(message, multicast_group)
+    while True:
+        print &gt;&gt;sys.stderr, 'waiting to receive'
+        try:
+            data, server = sock.recvfrom(16)
+        except socket.timeout:
+            print &gt;&gt;sys.stderr, 'timed out, no more responses'
+            break
+        else:
+            print &gt;&gt;sys.stderr, 'received "%s" from %s' % (data, server)
+finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import socket
+import struct
+import sys</p>
+
+<p>multicast_group = '224.3.29.71'
+server_address = ('', 10000)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #这个程序发送组播数据
+sock.bind(server_address)  #绑定组播地址
+group = socket.inet_aton(multicast_group) 
+mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq) #告诉系统在所有接口增加这个socket到组播组
+while True:
+    print &gt;&gt;sys.stderr, '\nwaiting to receive message'
+    data, address = sock.recvfrom(1024)</p>
+
+<p>    print &gt;&gt;sys.stderr, 'received %s bytes from %s' % (len(data), address)
+    print &gt;&gt;sys.stderr, data</p>
+
+<p>    print &gt;&gt;sys.stderr, 'sending acknowledgement to', address
+    sock.sendto('ack', address)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>ｉｐ1(192.168.8.49)：</p>
+
+<p>[htdocs@debian ~]$ python test.py</p>
+
+<p>waiting to receive message
+received 19 bytes from (&#8216;192.168.8.48&#8217;, 59274)
+very important data
+sending acknowledgement to (&#8216;192.168.8.48&#8217;, 59274)</p>
+
+<p>waiting to receive message
+ｉｐ2（192.168.8.48）:</p>
+
+<p>dongwm@localhost ~ $python test1.py</p>
+
+<p>waiting to receive message
+received 19 bytes from (&#8216;192.168.8.48&#8217;, 59274)
+very important data
+sending acknowledgement to (&#8216;192.168.8.48&#8217;, 59274)</p>
+
+<p>waiting to receive message
+发送端（192.168.8.48）：</p>
+
+<p>dongwm@localhost ~ $python test.py
+sending &#8220;very important data&#8221;
+waiting to receive
+received &#8220;ack&#8221; from (&#8216;192.168.8.48&#8217;, 10000)
+waiting to receive
+received &#8220;ack&#8221; from (&#8216;192.168.8.49&#8217;, 10000)
+waiting to receive
+timed out, no more responses
+closing socket
+<pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('localhost', 10000)
+sock.bind(server_address)
+sock.listen(1)</p>
+
+<p>unpacker = struct.Struct('I 2s f')</p>
+
+<p>while True:
+    print &gt;&gt;sys.stderr, '\nwaiting for a connection'
+    connection, client_address = sock.accept()
+    try:
+        data = connection.recv(unpacker.size) 
+        print &gt;&gt;sys.stderr, 'received "%s"' % binascii.hexlify(data) #收到的二进制数据</p>
+
+<p>        unpacked_data = unpacker.unpack(data)
+        print &gt;&gt;sys.stderr, 'unpacked:', unpacked_data  #数据解包</p>
+
+<p>    finally:
+        connection.close()
+</pre></p>
+
+<p><pre class="sh_python">
+import binascii
+import socket
+import struct
+import sys</p>
+
+<p>sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('localhost', 10000)
+sock.connect(server_address)</p>
+
+<p>values = (1, 'ab', 2.7)
+packer = struct.Struct('I 2s f')
+packed_data = packer.pack(*values) #压包</p>
+
+<p>try:
+    print &gt;&gt;sys.stderr, 'sending "%s"' % binascii.hexlify(packed_data), values
+    sock.sendall(packed_data)</p>
+
+<p>finally:
+    print &gt;&gt;sys.stderr, 'closing socket'
+    sock.close()
+</pre>
+执行结果：</p>
+
+<p>dongwm@localhost ~ $python !$
+python server.py  #接收端</p>
+
+<p>waiting for a connection
+received &#8220;0100000061620000cdcc2c40&#8221;
+unpacked: (1, &#8216;ab&#8217;, 2.700000047683716)</p>
+
+<p>waiting for a connection
+dongwm@localhost ~ $python test.py  #发送端
+sending &#8220;0100000061620000cdcc2c40&#8221; (1, &#8216;ab&#8217;, 2.7)
+closing socket</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoobijishisangengxinxitongdebaocuojiejue/">Gentoo笔记（十三）更新系统的总结和报错解决</a></h1>
     
     
@@ -2333,104 +2721,6 @@ import time</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuos-pathyanjiu/">关于os.path研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：os.path子库主要更容易地在跨平台上对文件名和路径进行解析, 创建, 测试和其他操作.</p>
-
-<p><pre class="sh_python">
-import os.path</p>
-
-<p>for path in [ '/one/two/three','/one/two/three/','/',',']:
-    print '"%s" : "%s"' % (path, os.path.split(path)) #<tt>split()</tt> 函数将路径切分成两个两部分并返回一个元组, 它的第二个元素是路径的最后一部份, 第一个元素是路径的前面部分.
-    print '"%s" : "%s"' % (path, os.path.basename(path)) #basename() 返回的值和 <tt>split()</tt> 返回的第二个值相同.
-    print '"%s" : "%s"' % (path, os.path.dirname(path)) #dirname() 返回的值是和 <tt>split()</tt> 返回的第一个值相同.
-    print '"%s" :' % path, os.path.splitext(path) #splitext() 和 <tt>split()</tt> 类似但是分隔路径的扩展名, 而不是目录名.
-paths = ['/one/two/three/four','/one/two/threefold','/one/two/three/',] # 取一个路径列表作为参数, 返回一个单一的字符串表示这些路径公共的前缀. 这个值可能是一个实际上不存在的路径. 路径分割符是被忽略的
-print os.path.commonprefix(paths)
-</pre></p>
-
-<p><pre class="sh_python">
-import os.path
-import os
-for parts in [ ('one', 'two', 'three'),('/', 'one', 'two', 'three'),('/one', '/two', '/three'),]:
-    print parts, ':', os.path.join(*parts)  #可以使用 <tt>join()</tt> 将多个路径部分组合成一个单个值
-for user in [ '', 'dongwm', 'postgres' ]:
-    lookup = '~' + user
-    print lookup, ':', os.path.expanduser(lookup)  # <tt>expanduser()</tt> 可以将波浪线(~)扩展成用户的主目录.
-os.environ['MYVAR'] = 'VALUE'
-print os.path.expandvars('/path/to/$MYVAR')  #获取出现在路径中的环境变量.
-for path in [ '.', '..', './one/two/three', '../one/two/three']:
-    print '"%s" : "%s"' % (path, os.path.abspath(path))  #使用 abspath() 将一个相对路径转换成绝对路径.
-</pre>
-<pre class="sh_python">
-import os.path
-import time</p>
-
-<p>print 'File :', __file__
-print 'Access time :', time.ctime(os.path.getatime(__file__)) #最后一次访问文件或目录的时间
-print 'Modified time:', time.ctime(os.path.getmtime(__file__)) #最后一次修改文件或目录的时间
-print 'Change time :', time.ctime(os.path.getctime(__file__)) #最后一次改变文件或目录(改变的是原数据即:属性)的时间
-print 'Size :', os.path.getsize(__file__)
-</pre>
-<pre class="sh_python">
-for file in [ __file__, os.path.dirname(__file__), '/', './broken_link']:
-    print 'File :', file
-    print 'Absolute :', os.path.isabs(file)  #判断是否是绝对路径，返回布尔值
-    print 'Is File? :', os.path.isfile(file)#判断是否是文件，返回布尔值
-    print 'Is Dir? :', os.path.isdir(file)  #判断是否是目录，返回布尔值
-    print 'Is Link? :', os.path.islink(file) #判断是否是链接文件，返回布尔值
-    print 'Mountpoint? :', os.path.ismount(file)#判断是否是挂载文件，返回布尔值
-    print 'Exists? :', os.path.exists(file) #判断是否存在，返回布尔值
-    print 'Link Exists?:', os.path.lexists(file) #判断是否符号链接存在，返回布尔值
-    print
-def visit(arg, dirname, names):
-    print dirname, arg
-    for name in names:
-        subname = os.path.join(dirname, name)
-        if os.path.isdir(subname):
-            print ' %s/' % name
-        else:
-            print ' %s' % name
-    if '.svn' in names:
-        names.remove('.svn')  #假如是.svn 去掉
-    print</p>
-
-<p>os.path.walk('..', visit, '(User data)') #遍历树中的所有目录, 并调用一个你提供的函数, 同时将目录名和目录中包含内容的名字传递给这个函数
-
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/11/">&larr; Older</a></li>
@@ -2453,6 +2743,10 @@ def visit(arg, dirname, names):
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -2488,10 +2782,6 @@ def visit(arg, dirname, names):
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

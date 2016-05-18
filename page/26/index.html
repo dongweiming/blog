@@ -141,6 +141,45 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/centos%E4%B8%8Bvsftpd%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%9E%B6%E8%AE%BEftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">STP特性总结（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-23T00:00:00+08:00" pubdate data-updated="true">Jun 23<span>rd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p><strong>1 Tuning Timers 以尽量减少延误而端口在听/学习状态的时间</strong></p>  <p>spanning-tree vlan 1 root primary   spanning-tree vlan 1 forward-time 4</p>  <p>SW1#show spanning-tree vlan 1   VLAN0001    Spanning tree enabled protocol ieee    Root ID Priority 24577    Address 0016.4639.d580    This bridge is the root    Hello Time 2 sec Max Age 20 sec Forward Delay 4 sec    Bridge ID Priority 24577 (priority 24576 sys-id-ext 1)    Address 0016.4639.d580    Hello Time 2 sec Max Age 20 sec Forward Delay 4 sec    Aging Time 15</p>  <p>SW2#debug spanning-tree events   Spanning Tree event debugging is on    SW2#conf t    Enter configuration commands, one per line. End with CNTL/Z.    SW2(config)#int fa 0/3    SW2(config-if)#shut    01:00:02: STP: VLAN0001 sent Topology Change Notice on Fa0/13    01:00:04: %LINK-5-CHANGED: Interface FastEthernet0/3, changed state to    administratively down    01:00:05: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3,    changed state to down    SW2(config-if)#no shut    01:00:10: %LINK-3-UPDOWN: Interface FastEthernet0/3, changed state to down    01:00:10: set portid: VLAN0001 Fa0/3: new port id 8005    01:00:10: STP: VLAN0001 Fa0/3 -&gt; listening    01:00:12: %LINK-3-UPDOWN: Interface FastEthernet0/3, changed state to up    01:00:13: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3,    changed state to up    01:00:14: STP: VLAN0001 Fa0/3 -&gt; learning    01:00:18: STP: VLAN0001 sent Topology Change Notice on Fa0/13    01:00:18: STP: VLAN0001 Fa0/3 –&gt; forwarding&#160; //注意从监听-学习-转发状态都是用了4秒</p></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/centos%E4%B8%8Bvsftpd%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%9E%B6%E8%AE%BEftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/zxtm%E5%AE%9E%E7%8E%B0mongodb%E7%9A%84route-server%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/">zxtm实现mongodb的Route Server负载均衡</a></h1>
     
     
@@ -796,42 +835,6 @@ initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%87%86%E7%A1%AE%E6%8E%8C%E6%8F%A1puppet-client%E5%90%91server%E8%AF%B7%E6%B1%82%E6%97%B6%E9%97%B4/">准确掌握puppet Client向server请求时间</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-28T00:00:00+08:00" pubdate data-updated="true">Apr 28<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><p>使用puppet，发现默认半小时客户端就和服务器端请求一次信息，如果发现有更新就会自动更新。但是在使用了tagmail后，这是一件很郁闷的事情，因为请求一次就产生一个邮件，设想有上千台client，没30分钟一个邮件。。。但是我不希望用cron，因为有些事情是很紧急的，不能等到下一个定时任务执行时才去执行。</p>  <p>解决方法：</p>  <p>修改puppet.conf修改向server请求的时间间隔：</p>  <p>在[agent]下面加一行：</p>  <p>runinterval = 86400&#160; //单位是秒 我设置的一天更新一次&#160; 然后puppetd进程是一直后台运行的</p>  <p>采用server端向客户端主动发送要求，触发客户端来向server请求</p>  <p>#puppetrun –host 主机名</p>  <p>可以吧主机做个for循环，虽然性能不够，也不能实现并行执行。幸好puppetrun只是发送一个信号</p></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/27/">&larr; Older</a></li>
@@ -854,6 +857,10 @@ initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -889,10 +896,6 @@ initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相�
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

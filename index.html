@@ -141,6 +141,141 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-05-19T00:08:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="section">前言</h3>
+
+<p>持续集成（Continuous Integration）已经是公认的保证产品质量和开发快速迭代的开发实践了。
+目前常见的CI服务器有2种：</p>
+
+<ol>
+  <li><a href="https://jenkins.io/">Jenkins</a>。 Jenkins是一个用Java编写的开源的持续集成工具， 它有丰富的插件和完善的API， 但实际工作中发现它不太稳定， Python和前端工程师很难对其进行二次开发， 页面和功能也有些陈旧。</li>
+  <li><a href="https://github.com/travis-ci/travis-ci">Travis CI</a>。 一个针对Github的云服务平台， 只对开源项目提供免费的CI服务。</li>
+</ol>
+
+<p>本篇博客将给大家介绍一个新的持续集成工具<a href="https://github.com/Strider-CD/strider">Strider</a>。 一个使用Node.js开发的、 开源的持续集成和发布服务器。 目前它已经支持Github、 Bitbucket、 Gitlab等平台， 支持Python、 Ruby、 Node.js和其他自定义的应用。
+虽然它使用常见了bootstrap， 但是页面效果还是很不错的。</p>
+
+<p>在使用之前， 我们先创建一个<a href="https://github.com/settings/applications/new">Github开发者应用</a>， 内容如下图：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366447/ffeb1170-1d56-11e6-9957-9361c089fc05.png" alt="" /></p>
+
+<p>然后在Github上创建一个用来测试的项目<a href="https://github.com/dongweiming/tola">dongweiming/tola</a>。</p>
+
+<h3 id="strider">使用Strider集成</h3>
+
+<p>使用最新版的Node.js：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">❯ wget https://nodejs.org/dist/v4.4.2/node-v4.4.2.tar.gz
+</span><span class="line">❯ tar zxf node-v4.4.2.tar.gz
+</span><span class="line">❯ cd node-v4.4.2
+</span><span class="line">❯ ./configure &amp;&amp; make &amp;&amp; sudo make install</span></pre></figure></notextile></div>
+
+<p>安装Strider：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">❯ git clone https://github.com/Strider-CD/strider
+</span><span class="line">❯ cd strider
+</span><span class="line">❯ npm install  # 安装依赖包</span></pre></figure></notextile></div>
+
+<p>Strider配置项很多， 可以在Strider目录下添加.striderrc文件：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">❯ cat .striderrc
+</span><span class="line">{
+</span><span class="line">"db_uri": "mongodb://dongwm:dongwm@ds015720.mlab.com:15720/strider-dongwm",  # 我的VPS不够1G内存， 不能安装MongoDB， 使用 MongoLab的免费服务来测试
+</span><span class="line">"smtp_host": "smtp.mailgun.org",  # Mailgun提供每天可发送300封邮件的免费服务， 我们用它来测试
+</span><span class="line">"smtp_user": "postmaster@sandboxabe8d2f42ac8424fa8dd4c5ab1f1d92b.mailgun.org",
+</span><span class="line">"smtp_pass": "4e0c2880f7aaf6c1b5f39bb88acabee1"
+</span><span class="line">}</span></pre></figure></notextile></div>
+
+<p>创建管理员用户：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">DB_URI=mongodb://dongwm:dongwm@ds015720.mlab.com:15720/strider-dongwm node bin/strider addUser</span></pre></figure></notextile></div>
+
+<p>启动服务， 需要上面创建的开发者应用的APP_ID和APP_SECRET（如果使用Github企业版， 需要设置PLUGIN_GITHUB_API_DOMAIN和PLUGIN_GITHUB_API_ENDPOINT）：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">export SERVER_NAME=http://VPS:3000
+</span><span class="line">export PLUGIN_GITHUB_APP_ID=1a7bcf97d84c938bdbe8
+</span><span class="line">export PLUGIN_GITHUB_APP_SECRET=316947cbe6a85e295dcd2346f272f7844aea87cd
+</span><span class="line">NODE_ENV=production npm start</span></pre></figure></notextile></div>
+
+<p>访问http://VPS:3000/login， 使用之前创建的管理员用户登录。 目前还没有配置项目：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366504/362d531a-1d57-11e6-94d6-fdeed98754a5.png" alt="" /></p>
+
+<p>Strider默认开启了Github、 Bitbucket、 Gitlab插件。 点击<code>Github</code>按钮来集成Github支持（也可以直接使用如下地址访问http://VPS:3000/auth/github）：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366507/36e05f78-1d57-11e6-85d8-58b9b43f6cb4.png" alt="" /></p>
+
+<p>点击<code>Authorize application</code>按钮， 输入有权限的Github账号密码。 验证后会跳回Strider的项目页面下。</p>
+
+<p>找到项目tola， 点击项目右侧的<code>Add</code></p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366545/65f6590c-1d57-11e6-82fd-821b19f14eea.png" alt="" /></p>
+
+<p>接下来选择项目类型， 这里选择Python， Strider会做一些初始设置。</p>
+
+<p>Strider会自动给项目添加一个Webhook。 打开https://github.com/dongweiming/tola/settings/hooks可以看到：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366565/7acdc266-1d57-11e6-9abb-f66d50baf858.png" alt="" /></p>
+
+<p>访问插件管理页面：http://VPS:3000/admin/plugins， 我们需要安装Github Status这个插件， 点击后面的Install。</p>
+
+<p>访问http://VPS:3000/dongweiming/tola/config/tab-plugins激活邮件通知和Github状态插件， 需要把<code>Email Notifiter</code>和<code>GitHub Status</code>拖拽到左面。</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366576/8f345cce-1d57-11e6-8f8e-6636ec50b6b3.png" alt="" /></p>
+
+<p>进入http://VPS:3000/dongweiming/tola/config/plugin-emailnotifier页面勾选<code>Always send notification emails.</code>。</p>
+
+<p>现在当tola项目发生Pull request、 Push等事件时就会自动触发这个集成测试了。 项目结果页面是http://VPS:3000/dongweiming/tola。 构建成功的效果如下：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366595/a5e27d0c-1d57-11e6-9417-6fcc859763b5.png" alt="" /></p>
+
+<p>构建失败的效果如下：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366594/a5db3cf4-1d57-11e6-8191-ddd10ae7e25e.png" alt="" /></p>
+
+<p>同时， 在Github的Pull request页面也会显示集成结果：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366599/a70fc1b2-1d57-11e6-937c-556114484be8.png" alt="" /></p>
+
+<p>打开QQ邮箱就可以看到集成结果的邮件了：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/841395/15366593/a5d9be4c-1d57-11e6-930d-0d322b2fa4be.png" alt="" /></p>
+
+<p>Strider自带发送Slack通知的插件， 而且Strider插件非常容易定制， 可以定义更多的插件支撑业务需要。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a></h1>
     
     
@@ -1564,71 +1699,6 @@ python掌握不好的确实做的会比较吃力, 也会直接暴露细节点掌
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/r-shang-chuan-wen-jian-fu-wu/">R - 上传文件服务</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-09-20T21:15:00+08:00" pubdate data-updated="true">Sep 20<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3 id="section">前言</h3>
-
-<p>豆瓣内部有一些基础设施我认为做得都很好, 比如bridge和p. 一是身为用户的体验, 一个是我以开发的角度会去想我能不能做的更好.</p>
-
-<p>这些基础设施凝聚了豆瓣早期的工程师文化的精髓, 至今还在影响着每个豆瓣的工程师.</p>
-
-<p>今天我们聊到的是<a href="https://github.com/qingfeng/p">p</a> - 一个文件上传托管服务, 一个被严重低估了的工具, 它已经被清风老师拆分出来不需要跑在dae上.
-而我今天推荐的就是我用react+es6plus+webpack重写的版本 <a href="https://github.com/dongweiming/r">r</a></p>
-
-<p>为什么说我认为被低估呢? 目前star也才五十几. 当时开始用p. 我对效果非常惊艳.</p>
-
-<p>如果你很好奇是不是也会这么认为. 可以先看个heroku的<a href="https://vast-brushlands-4477.herokuapp.com/">demo</a>. 因为连接了heroku的远程cleardb(mysql的封装), 上传反映略慢. 而本地会很流畅. 主要看效果吧.</p>
-
-<h3 id="r">r的用途</h3>
-
-<p>身在互联网工作, 会经常有这样的需求</p>
-
-<ol>
-  <li>希望上传后的文件(包含图片)可以被永久存放.</li>
-  <li>想在github(CODE)上, 能方便的引用一些bug截图(甚至在多个地方引用).</li>
-  <li>希望上传的文件(包含图片), 能有一个比较好的预览页(包含文件大小, 文件类型, 上传时间等), 下载地址, 也能生成短链接, 二维码</li>
-  <li>希望能对某上传的图片传一些参数做对应的缩放和剪切</li>
-  <li>身在互联网, 页面太low, 效果不炫, 作为工程师, 用起来是会有抵制心情的.</li>
-</ol>
-
-<p>对. r(p) 就可以做这些事.</p>
-
-<h3 id="section-1">用到的其他技术</h3>
-
-<p>Flask, SQLAlchemy, Mako, Pillow</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/2/">&larr; Older</a></li>
@@ -1649,6 +1719,10 @@ python掌握不好的确实做的会比较吃力, 也会直接暴露细节点掌
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1684,10 +1758,6 @@ python掌握不好的确实做的会比较吃力, 也会直接暴露细节点掌
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

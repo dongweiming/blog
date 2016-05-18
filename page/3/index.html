@@ -141,6 +141,72 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/ji-jiang-zai-bpugfen-xiang/">分享ipython Notebook</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-16T15:48:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>本来准备下一次的Bpug(北京python用户组)的活动上准备做这个分享. 搁置了. 有兴趣组织纯技术活动的公司或者组织可以联系我. 有兴趣的同学可以前往(我也会把录像地址放到网站的).
+提前给大家做一些预告. 其实ppt早就放到slideshare上了, 地址是http://www.slideshare.net/dongweiming/ipython-notebook-43211257. 也可以从<a href="https://github.com/dongweiming/divingintoipynb/blob/master/ipython-notebook.pdf">github下载</a></p>
+
+<p>对应的代码在<a href="https://github.com/dongweiming/divingintoipynb">divingintoipynb</a>. Youtube在线看: <a href="https://www.youtube.com/watch?v=qMcKp8gFAYA">https://www.youtube.com/watch?v=qMcKp8gFAYA</a></p>
+
+<h4 id="section-1">大纲</h4>
+
+<ol>
+  <li>豆瓣东西双11临时后台 - 想看效果么? 看下面</li>
+  <li>把ipython notebook转换成html或者其他格式以及它的原理</li>
+  <li>我写的一个缩小版的<a href="https://github.com/jupyter/nbviewer">nbviewer</a>: <a href="https://github.com/dongweiming/Ipynb-viewer">Ipynb-viewer</a>, 直接在ipython目录启动web服务</li>
+  <li>nbconvert原理</li>
+  <li>用ipynb写blog(pelican/nikola) 效果可见<a href="http://dongweiming.github.io/divingintoipynb_pelican">divingintoipynb_pelican</a>和<a href="http://dongweiming.github.io/divingintoipynb_nikola/">divingintoipynb_nikola</a>
+还会讲到pelican转换ipynb到html插件，使用fabric: new_post, edit，import_ipynb. 我也给nikola贡献了import ipynb功能.</li>
+  <li>ipython notebook用到得第三方库和组件</li>
+  <li>Rich display system</li>
+  <li>现有的扩展, 演示. 我自己写的一个扩展. 演示, 代码分析</li>
+  <li>定制ipython notebook的键位. 使用emacs键位. 设计一个新的功能 - 弹出一个dialog列出所有emacs快捷键说明(想起来了么? C-h b)</li>
+  <li>定制一个基于<a href="https://github.com/brianreavis/selectize.js">selectize.js</a>的widget. 前后端代码分析.</li>
+  <li>ipython notebook 其他方面的一些用法， 整个过程中有ipython2也有ipython3</li>
+</ol>
+
+<p>模拟后台效果:</p>
+
+<p><img src="https://github.com/dongweiming/divingintoipynb/raw/master/double11/double11.png" alt="" /></p>
+
+<h3 id="update-2015-02-02">UPDATE: 2015-02-02</h3>
+
+<p>上周五在组内分享了, 下面是视频下载地址: <a href="http://pan.baidu.com/s/1o6BjBXg">http://pan.baidu.com/s/1o6BjBXg</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/tui-jian-pre-commit-slash-pre-push-ben-di-zai-commithuo-zhe-pushde-shi-hou-zuo-ge-chong-jian-cha-pep8-slash-pylint-slash-pyflakes8/">推荐pre-commit/pre-push: 本地在commit或者push的时候做各种检查(pep8/pylint/pyflakes8)</a></h1>
     
     
@@ -2005,151 +2071,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/fen-xiang-%5B%3F%5D-ge-zhun-bei-gei-gong-si-jiang-pythongao-ji-bian-cheng-de-slide/">分享一个准备给公司讲python高级编程的slide</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-04T11:07:00+08:00" pubdate data-updated="true">Apr 4<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>我以前在学习python模块的时候,曾经翻译<a href="http://pymotw.com/2/py-modindex.html#">pymotw</a>的文章,其实还是有抄袭的嫌疑,从最近开始逐渐直接阅读python标准库源码, 收获颇多. 我现在不愿意教一些从网上或者书里提到的知识点,而更愿意根据我工作中常见的需求去挖掘对应的python的解法.也是在过程中对一些东西有了比较深的理解. 这个ppt是从<a href="https://linuxtoy.org/archives/using-cli-like-a-hacker.html">像黑客一样使用 Linux 命令行</a>获得的灵感. 然后角度为<python高级编程>, 还用到了webfonts娃娃体^.^</python高级编程></p>
-
-<p><img src="https://dl.dropboxusercontent.com/u/95512723/images/expert_python.png" alt="" /></p>
-
-<p>PS: 特别推荐github上看到的”雨痕”的<a href="https://github.com/qyuhen/book">学习笔记</a>. 建议大家都好好看看.</p>
-
-<h4 id="section-1">找到它</h4>
-
-<p><a href="http://dongweiming.github.io/Expert-Python">Expert-Python</a>
-或者直接下载代码: <a href="https://github.com/dongweiming/Expert-Python">github</a></p>
-
-<p>但是注意我的字体内嵌项目里面, 请注意流量,避免移动设备直接访问或者强制刷新</p>
-
-<h5 id="update-2015-02-02">UPDATE: 2015-02-02</h5>
-
-<p>我已经把视频放到youtube上了: https://www.youtube.com/watch?v=bf5qpFFxo9g 大家可以选择在线看</p>
-
-<h4 id="section-2">目录</h4>
-
-<ol>
-  <li>XX不理解python竟然没有end….</li>
-  <li>设置全局变量</li>
-  <li>字符串格式化</li>
-  <li>操作列表</li>
-  <li>操作字典</li>
-  <li>字典视图</li>
-  <li>vars</li>
-  <li>from <strong>future</strong> import unicode_literals</li>
-  <li>from <strong>future</strong> import absolute_import</li>
-  <li>不是支持了绝对引入,而是拒绝隐式引入</li>
-  <li>我靠,我的需求呢? – 在很多开源项目是拒绝你第一次的隐式用法的,</li>
-  <li>一个关于编码的问题</li>
-  <li>原因是: encoding_example里面没有对文字自动转化为unicode,默认是ascii编码</li>
-  <li>super 当子类调用父类属性时一般的做法是这样</li>
-  <li>super的一种用法</li>
-  <li>假如不用super会这么惨</li>
-  <li>手写一个迭代器</li>
-  <li>标准迭代器</li>
-  <li>生成器</li>
-  <li>斐波那契数列</li>
-  <li>其实yield和协程关系很密切</li>
-  <li>来个回调(阻塞的)</li>
-  <li>来个回调(异步的)</li>
-  <li>看到这里, 就得说说contextmanager</li>
-  <li>包导入</li>
-  <li>包构建__all__</li>
-  <li>包构建__path__</li>
-  <li>静态方法和类方法的区别</li>
-  <li>静态方法和类方法的区别其实是在这里</li>
-  <li>__slots__</li>
-  <li>Packaging Tools的未来</li>
-  <li>wheel(即将替代Eggs的二进制包格式)的优点</li>
-  <li>装饰器</li>
-  <li>给函数的类装饰器</li>
-  <li>给类的函数装饰器</li>
-  <li>带参数的装饰器</li>
-  <li>@property</li>
-  <li>@property的另外使用方法</li>
-  <li>元类是什么</li>
-  <li>模拟生成一个类</li>
-  <li>元类: __metaclass__(实现前面的Hello类)</li>
-  <li>一个难懂的元类</li>
-  <li>描述符</li>
-  <li>模块: itertools</li>
-  <li>模块: collections(一)</li>
-  <li>模块: collections(二)</li>
-  <li>模块: collections(三)</li>
-  <li>模块: collections(四)</li>
-  <li>operator模块(一)</li>
-  <li>operator模块(二)</li>
-  <li>operator模块(三)</li>
-  <li>functools模块之partial</li>
-  <li>functools模块之wraps</li>
-  <li>functools模块之cmp_to_key</li>
-  <li>functools模块之total_ordering</li>
-  <li>开发陷阱(一) 可变默认参数</li>
-  <li>开发陷阱(二) 闭包变量绑定</li>
-  <li>开发陷阱(二) 闭包应该的用法</li>
-  <li>在合适的地方用合适的技巧</li>
-  <li>不是它不好,而是你没有用好</li>
-  <li>ipython的技巧(一)</li>
-  <li>ipython的技巧(二)</li>
-  <li>联系方式</li>
-</ol>
-
-<h4 id="update-20140411">UPDATE 2014.04.11</h4>
-
-<p>今天下午分享了这个ppt. 并且用quicktime录像. 想听的可以从<a href="http://pan.baidu.com/s/1bnnaJaZ">百度网盘</a>下载或者在线看(793.6M). 时长2小时零一分.</p>
-
-<p>中间有个列表去重. 有同学说去重后无法保证第一次出现重复数据位置的顺序.</p>
-
-<p>刚才想起来试了一下:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
-</span><span class="line">    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
-</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="p">{}</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-</span><span class="line">    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>  <span class="c"># 注意这个和上面结果是一样的,也就是内部实现的去重原理相同</span>
-</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">]</span>
-</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
-</span><span class="line">    <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">]</span>
-</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="p">{}</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-</span><span class="line">    <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">]</span>
-</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-</span><span class="line">    <span class="o">&gt;&gt;&gt;</span> <span class="n">OrderedDict</span><span class="p">()</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c"># 只能使用这样的方法实现保证顺序的实现</span>
-</span><span class="line">    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>                                 <span class="c"># 感谢@杨博的提醒</span>
-</span></pre></figure></notextile></div>
-<p>新的PYPI的DEMO: <a href="http://pypi-preview.a.ssl.fastly.net">http://pypi-preview.a.ssl.fastly.net</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/4/">&larr; Older</a></li>
@@ -2172,6 +2093,10 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -2207,10 +2132,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

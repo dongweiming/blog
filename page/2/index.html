@@ -141,6 +141,71 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/r-shang-chuan-wen-jian-fu-wu/">R - 上传文件服务</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-20T21:15:00+08:00" pubdate data-updated="true">Sep 20<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="section">前言</h3>
+
+<p>豆瓣内部有一些基础设施我认为做得都很好, 比如bridge和p. 一是身为用户的体验, 一个是我以开发的角度会去想我能不能做的更好.</p>
+
+<p>这些基础设施凝聚了豆瓣早期的工程师文化的精髓, 至今还在影响着每个豆瓣的工程师.</p>
+
+<p>今天我们聊到的是<a href="https://github.com/qingfeng/p">p</a> - 一个文件上传托管服务, 一个被严重低估了的工具, 它已经被清风老师拆分出来不需要跑在dae上.
+而我今天推荐的就是我用react+es6plus+webpack重写的版本 <a href="https://github.com/dongweiming/r">r</a></p>
+
+<p>为什么说我认为被低估呢? 目前star也才五十几. 当时开始用p. 我对效果非常惊艳.</p>
+
+<p>如果你很好奇是不是也会这么认为. 可以先看个heroku的<a href="https://vast-brushlands-4477.herokuapp.com/">demo</a>. 因为连接了heroku的远程cleardb(mysql的封装), 上传反映略慢. 而本地会很流畅. 主要看效果吧.</p>
+
+<h3 id="r">r的用途</h3>
+
+<p>身在互联网工作, 会经常有这样的需求</p>
+
+<ol>
+  <li>希望上传后的文件(包含图片)可以被永久存放.</li>
+  <li>想在github(CODE)上, 能方便的引用一些bug截图(甚至在多个地方引用).</li>
+  <li>希望上传的文件(包含图片), 能有一个比较好的预览页(包含文件大小, 文件类型, 上传时间等), 下载地址, 也能生成短链接, 二维码</li>
+  <li>希望能对某上传的图片传一些参数做对应的缩放和剪切</li>
+  <li>身在互联网, 页面太low, 效果不炫, 作为工程师, 用起来是会有抵制心情的.</li>
+</ol>
+
+<p>对. r(p) 就可以做这些事.</p>
+
+<h3 id="section-1">用到的其他技术</h3>
+
+<p>Flask, SQLAlchemy, Mako, Pillow</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/dou-ban-tiao-mu-zu-zhao-pin/">[置顶]豆瓣条目组招聘-产品开发</a></h1>
     
     
@@ -1453,72 +1518,6 @@ ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/ji-jiang-zai-bpugfen-xiang/">分享ipython Notebook</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-01-16T15:48:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>本来准备下一次的Bpug(北京python用户组)的活动上准备做这个分享. 搁置了. 有兴趣组织纯技术活动的公司或者组织可以联系我. 有兴趣的同学可以前往(我也会把录像地址放到网站的).
-提前给大家做一些预告. 其实ppt早就放到slideshare上了, 地址是http://www.slideshare.net/dongweiming/ipython-notebook-43211257. 也可以从<a href="https://github.com/dongweiming/divingintoipynb/blob/master/ipython-notebook.pdf">github下载</a></p>
-
-<p>对应的代码在<a href="https://github.com/dongweiming/divingintoipynb">divingintoipynb</a>. Youtube在线看: <a href="https://www.youtube.com/watch?v=qMcKp8gFAYA">https://www.youtube.com/watch?v=qMcKp8gFAYA</a></p>
-
-<h4 id="section-1">大纲</h4>
-
-<ol>
-  <li>豆瓣东西双11临时后台 - 想看效果么? 看下面</li>
-  <li>把ipython notebook转换成html或者其他格式以及它的原理</li>
-  <li>我写的一个缩小版的<a href="https://github.com/jupyter/nbviewer">nbviewer</a>: <a href="https://github.com/dongweiming/Ipynb-viewer">Ipynb-viewer</a>, 直接在ipython目录启动web服务</li>
-  <li>nbconvert原理</li>
-  <li>用ipynb写blog(pelican/nikola) 效果可见<a href="http://dongweiming.github.io/divingintoipynb_pelican">divingintoipynb_pelican</a>和<a href="http://dongweiming.github.io/divingintoipynb_nikola/">divingintoipynb_nikola</a>
-还会讲到pelican转换ipynb到html插件，使用fabric: new_post, edit，import_ipynb. 我也给nikola贡献了import ipynb功能.</li>
-  <li>ipython notebook用到得第三方库和组件</li>
-  <li>Rich display system</li>
-  <li>现有的扩展, 演示. 我自己写的一个扩展. 演示, 代码分析</li>
-  <li>定制ipython notebook的键位. 使用emacs键位. 设计一个新的功能 - 弹出一个dialog列出所有emacs快捷键说明(想起来了么? C-h b)</li>
-  <li>定制一个基于<a href="https://github.com/brianreavis/selectize.js">selectize.js</a>的widget. 前后端代码分析.</li>
-  <li>ipython notebook 其他方面的一些用法， 整个过程中有ipython2也有ipython3</li>
-</ol>
-
-<p>模拟后台效果:</p>
-
-<p><img src="https://github.com/dongweiming/divingintoipynb/raw/master/double11/double11.png" alt="" /></p>
-
-<h3 id="update-2015-02-02">UPDATE: 2015-02-02</h3>
-
-<p>上周五在组内分享了, 下面是视频下载地址: <a href="http://pan.baidu.com/s/1o6BjBXg">http://pan.baidu.com/s/1o6BjBXg</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/3/">&larr; Older</a></li>
@@ -1541,6 +1540,10 @@ ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1576,10 +1579,6 @@ ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多�
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

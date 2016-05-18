@@ -141,6 +141,190 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pythoncheng-xu-yuan-macchu-shi-hua-huan-jing/">python程序员Mac初始化环境</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-22T18:28:00+08:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>早就想总结一篇python程序员的Mac配置笔记，趁这次就写一下我初始化的一些实践</p>
+
+<h4 id="xcode-command-line-tools">安装Xcode, Command line tools</h4>
+
+<p>作为开发者，肯定需要gcc,clang这些环境，Xcode界面也能下载Command line tools，但是下载好几次都有签名错误的问题，直接去官网下载</p>
+
+<p>使用浏览器下载一段时间锁屏会停止下载，又不能续传。所以我还是习惯命令行下载.可以在这里找到https://github.com/orzrd/mytools/blob/master/adc_download.sh
+比如下载xcode:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">./adc_download.sh http://adcdownload.apple.com/Developer_Tools/xcode_4.6.3/xcode4630916281a.dmg</span></pre></figure></notextile></div>
+
+<h4 id="git">安装git</h4>
+
+<p>在这里 http://git-scm.com/download/mac，但是你需要注意<a href="http://support.apple.com/kb/ht1633?viewlocale=zh_CN">版本和你的os的版本的对应关系</a></p>
+
+<h4 id="brew-">安装brew-包管理工具</h4>
+
+<h5 id="brew">以后我通过brew安装的软件都放在这个目录</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">sudo chown -R `whoami` /usr/local
+</span><span class="line">git init
+</span><span class="line">git remote add origin git://github.com/mxcl/homebrew.git
+</span><span class="line">git pull origin master</span></pre></figure></notextile></div>
+
+<h4 id="section-1">安装一些常用工具</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">brew install wget the_silver_searcher tree tmux htop mysql autojump mongodb zsh-completions
+</span><span class="line">sudo easy_install pip
+</span><span class="line">sudo pip install virtualenv
+</span><span class="line">sudo pip install virtualenvwrapper
+</span><span class="line"># 设置mysql和mongodb开机自启动
+</span><span class="line">ln -sfv /usr/local/opt/mysql/*.plist ~/Library/LaunchAgents 
+</span><span class="line">iln -sfv /usr/local/opt/mongodb/*.plist ~/Library/LaunchAgents</span></pre></figure></notextile></div>
+
+<h4 id="oh-my-zshdotfiles">安装配置oh-my-zsh和dotfiles</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
+</span><span class="line">chsh -s /bin/zsh
+</span><span class="line">git clone https://github.com/dongweiming/dotfiles.git ~/dotfiles
+</span><span class="line">cd dotfiles
+</span><span class="line">./install.sh vim</span></pre></figure></notextile></div>
+
+<h4 id="python">配置一个虚拟python环境</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">export WORKON_HOME=~/envs
+</span><span class="line">mkdir $WORKON_HOME -p
+</span><span class="line">source /usr/local/bin/virtualenvwrapper.sh
+</span><span class="line">mkvirtualenv --no-site-packages XXX # 这里新建了一个叫做XXX的环境,并且不会依赖site-package，需要你在环境中自定义下载
+</span><span class="line">pip install -r requirements.txt #根据文件安装依赖</span></pre></figure></notextile></div>
+
+<h5 id="zshrcdotfileshttpsgithubcomdongweimingdotfilesblobmasterzshrc">zshrc的配置可以看我的<a href="https://github.com/dongweiming/dotfiles/blob/master/_zshrc">dotfiles</a>，我粘贴出来</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">export ANTIGEN_DEFAULT_REPO_URL=https://github.com/dongweiming/oh-my-zsh       
+</span><span class="line">source ~/dotfiles/antigen/antigen.zsh                                          
+</span><span class="line">                                                                               
+</span><span class="line">antigen use oh-my-zsh                                                          
+</span><span class="line">                                                                               
+</span><span class="line">if [ "${OSTYPE:0:6}"="darwin" ]; then                                          
+</span><span class="line">  antigen-bundle osx                                                           
+</span><span class="line">  antigen-bundle brew                                                          
+</span><span class="line">  export PATH=$(brew --prefix ruby)/bin:$PATH:/usr/local/sbin:~/bin
+</span><span class="line">else                                                                           
+</span><span class="line">  export PATH=$PATH:~/bin                                                      
+</span><span class="line">fi                                                                             
+</span><span class="line">antigen bundles &lt;&lt;EOB                                                          
+</span><span class="line">  git-extras                                                                   
+</span><span class="line">  pip                                                                          
+</span><span class="line">  python                                                                       
+</span><span class="line">  autojump
+</span><span class="line">  django                                                                       
+</span><span class="line">  ruby                                                                         
+</span><span class="line">  git-flow                                                                     
+</span><span class="line">  virtualenvwrapper                                                            
+</span><span class="line">  git                                                                          
+</span><span class="line">  github                                                                       
+</span><span class="line">  supervisor                                                                   
+</span><span class="line">  tmux                                                                         
+</span><span class="line">  vagrant                                                                      
+</span><span class="line">  history                                                                      
+</span><span class="line">  zsh-users/zsh-syntax-highlighting                                            
+</span><span class="line">  zsh-users/zaw                                                                
+</span><span class="line">  zsh-users/zsh-history-substring-search                                       
+</span><span class="line">  ~/.oh-my-zsh --no-local-clone                                                
+</span><span class="line">EOB                                                                            
+</span><span class="line">                                                                               
+</span><span class="line">antigen theme sheerun/oh-my-zsh-powerline-theme powerline                     
+</span><span class="line">                                                                               
+</span><span class="line">antigen apply                                                                  
+</span><span class="line">                                                                               
+</span><span class="line">autoload -U zmv                                                                
+</span><span class="line">export SSH_ASKPASS=""                                                          
+</span><span class="line">alias rake='noglob rake'                                                       
+</span><span class="line">export WORKON_HOME=~/envs                                                      
+</span><span class="line">source `which virtualenvwrapper.sh`                                            
+</span><span class="line">alias social='workon social;cd ~/social_master' 
+</span><span class="line">alias ls='ls -hF --color=auto'
+</span><span class="line">source ~/.oh-my-zsh/custom/powerline.zsh
+</span><span class="line">zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+</span><span class="line">
+</span><span class="line">for keycode in '[' 'O'; do
+</span><span class="line">  bindkey "^[${keycode}A" history-substring-search-up
+</span><span class="line">  bindkey "^[${keycode}B" history-substring-search-down
+</span><span class="line">done
+</span><span class="line">unset keycode
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"># bind k and j for VI mode
+</span><span class="line">bindkey -M vicmd 'k' history-substring-search-up
+</span><span class="line">bindkey -M vicmd 'j' history-substring-search-down</span></pre></figure></notextile></div>
+
+<h4 id="coreutils">安装coreutils</h4>
+
+<h5 id="macfreebsdls-grepfreebsdrmrm--rf-xx--rm-xx--rf-s">Mac说白了就是freeBSD+一些插件的组合，所以常用工具例如ls 、grep也都是freeBSD版本,比如我使用rm删除文件,就必须rm -rf xx 而不能 rm xx -rf s实在脑残</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">brew install coreutils</span></pre></figure></notextile></div>
+
+<p>添加PATH到.zshrc</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"                           
+</span><span class="line">MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"</span></pre></figure></notextile></div>
+
+<h4 id="ls">修改ls配色</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">git clone git@github.com:seebi/dircolors-solarized.git
+</span><span class="line"># dircolors就在上面的coreutils中
+</span><span class="line">echo 'eval `dircolors ~/lib/dircolors-solarized/dircolors.256dark`' &gt;&gt; ~/.zshrc</span></pre></figure></notextile></div>
+
+<h4 id="octopress---">安装octopress-为我的博客  仅供参考</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line"># 默认的ruby是1.8.7的，我想要2.0的
+</span><span class="line">brew install ruby
+</span><span class="line">gem install bundler
+</span><span class="line">bundle install
+</span><span class="line">bundle update rake #安装的版本和octoress要求的9.2.2要高，所以需要升级
+</span><span class="line">git clone https://github.com/imathis/octopress.git oc
+</span><span class="line">cd oc
+</span><span class="line"># 为啥会有下面的一堆cp?其实是为了升级我的octopress
+</span><span class="line">cp ../octopress/Rakefile .
+</span><span class="line">cp ../octopress/_config.yml .
+</span><span class="line">cp -rp ../octopress/source .
+</span><span class="line"># 以下是我自己写的几个脚本
+</span><span class="line">cp ../octopress/plugins/pygments_code.rb plugins
+</span><span class="line">cp ../octopress/plugins/shjs.rb plugins
+</span><span class="line">cp ../octopress/plugins/tag_cloud.rb plugins
+</span><span class="line">cp ../octopress/sass . -rp
+</span><span class="line"># 然后你就可以生成了
+</span><span class="line">rake generate</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/zi-da-jian-gitfu-wu-qi-shi-xian-ti-jiao-dai-ma-zi-dong-tui-dao-ce-shi-huan-jing/">自搭建git服务器实现提交代码自动推到测试环境</a></h1>
     
     
@@ -1831,115 +2015,6 @@ password XXX</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/octopresszi-ding-yi-markdownde-codeyu-fa/">Octopress自定义markdown的code语法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-27T14:17:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>octopress自带的markdown语法高亮代码，最后展示在页面上的效果比较不友好-不能复制粘贴代码，不高亮，还有很丑的行数提示。
-我一直使<a href="shjs.sourceforge.net">SHJS</a>,还算比较喜欢，但是以前每次都是编辑markdown文章，在使用</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="sb">```XX```</span>
-</span></pre></figure></notextile></div>
-
-<p>的时候，使用</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;bogus-wrapper&quot;</span><span class="o">&gt;&lt;</span><span class="n">notextile</span><span class="o">&gt;&lt;</span><span class="n">figure</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;code&quot;</span><span class="o">&gt;&lt;</span><span class="n">pre</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;sh_python&quot;</span><span class="o">&gt;</span>
-</span><span class="line"><span class="n">XXX</span>
-</span><span class="line"><span class="o">&lt;/</span><span class="n">pre</span><span class="o">&gt;&lt;/</span><span class="n">figure</span><span class="o">&gt;&lt;/</span><span class="n">notextile</span><span class="o">&gt;&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
-</span></pre></figure></notextile></div>
-
-<p>这样的苦逼方式，最近实在是不了了，自定义octopress的解析过程</p>
-
-<p>其实就是修改plugins/pygments_code.rb</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">require</span> <span class="s">&#39;pygments&#39;</span>
-</span><span class="line"><span class="n">require</span> <span class="s">&#39;fileutils&#39;</span>
-</span><span class="line"><span class="n">require</span> <span class="s">&#39;digest/md5&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">PYGMENTS_CACHE_DIR</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s">&#39;../../.pygments-cache&#39;</span><span class="p">,</span> <span class="n">__FILE__</span><span class="p">)</span>
-</span><span class="line"><span class="n">FileUtils</span><span class="o">.</span><span class="n">mkdir_p</span><span class="p">(</span><span class="n">PYGMENTS_CACHE_DIR</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">module</span> <span class="n">HighlightCode</span>
-</span><span class="line">  <span class="k">def</span> <span class="nf">highlight</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
-</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;ruby&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;ru&#39;</span>
-</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;objc&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;m&#39;</span>
-</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;perl&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;pl&#39;</span>
-</span><span class="line">    <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;yaml&#39;</span> <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s">&#39;yml&#39;</span>
-</span><span class="line">    <span class="nb">str</span> <span class="o">=</span> <span class="n">pygments</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="o">/&lt;</span><span class="n">pre</span><span class="o">&gt;</span><span class="p">(</span><span class="o">.+</span><span class="p">)</span><span class="o">&lt;</span>\<span class="o">/</span><span class="n">pre</span><span class="o">&gt;/</span><span class="n">m</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="o">/</span> <span class="o">*</span><span class="err">$</span><span class="o">/</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span> <span class="c">#strip out divs &lt;div class=&quot;highlight&quot;&gt;</span>
-</span><span class="line">    <span class="n">tableize_code</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
-</span><span class="line">  <span class="n">end</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">def</span> <span class="nf">pygments</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">defined</span><span class="err">?</span><span class="p">(</span><span class="n">PYGMENTS_CACHE_DIR</span><span class="p">)</span>
-</span><span class="line">      <span class="n">path</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYGMENTS_CACHE_DIR</span><span class="p">,</span> <span class="s">&quot;#{lang}-#{Digest::MD5.hexdigest(code)}.html&quot;</span><span class="p">)</span>
-</span><span class="line">      <span class="k">if</span> <span class="n">File</span><span class="o">.</span><span class="n">exist</span><span class="err">?</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span class="line">        <span class="n">highlighted_code</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span class="line">      <span class="k">else</span>
-</span><span class="line">        <span class="n">highlighted_code</span> <span class="o">=</span> <span class="n">Pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">:</span><span class="n">lexer</span> <span class="o">=&gt;</span> <span class="n">lang</span><span class="p">,</span> <span class="p">:</span><span class="n">formatter</span> <span class="o">=&gt;</span> <span class="s">&#39;html&#39;</span><span class="p">,</span> <span class="p">:</span><span class="n">options</span> <span class="o">=&gt;</span> <span class="p">{:</span><span class="n">encoding</span> <span class="o">=&gt;</span> <span class="s">&#39;utf-8&#39;</span><span class="p">})</span>
-</span><span class="line">        <span class="n">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">highlighted_code</span><span class="p">)</span> <span class="p">}</span>
-</span><span class="line">      <span class="n">end</span>
-</span><span class="line">    <span class="k">else</span>
-</span><span class="line">      <span class="n">highlighted_code</span> <span class="o">=</span> <span class="n">Pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="p">:</span><span class="n">lexer</span> <span class="o">=&gt;</span> <span class="n">lang</span><span class="p">,</span> <span class="p">:</span><span class="n">formatter</span> <span class="o">=&gt;</span> <span class="s">&#39;html&#39;</span><span class="p">,</span> <span class="p">:</span><span class="n">options</span> <span class="o">=&gt;</span> <span class="p">{:</span><span class="n">encoding</span> <span class="o">=&gt;</span> <span class="s">&#39;utf-8&#39;</span><span class="p">})</span>
-</span><span class="line">    <span class="n">end</span>
-</span><span class="line">    <span class="n">highlighted_code</span>
-</span><span class="line">  <span class="n">end</span>
-</span><span class="line">  <span class="k">def</span> <span class="nf">tableize_code</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;python&#39;</span><span class="p">)</span> <span class="c">#主要是修改这个方法</span>
-</span><span class="line">    <span class="n">table</span> <span class="o">=</span> <span class="s">&quot;&lt;pre class=&#39;sh_#{lang}&#39;&gt;&quot;</span>
-</span><span class="line">    <span class="nb">str</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">each_with_index</span> <span class="n">do</span> <span class="o">|</span><span class="n">line</span><span class="p">,</span><span class="n">index</span><span class="o">|</span>
-</span><span class="line">      <span class="n">table</span> <span class="o">+=</span> <span class="s">&quot;&lt;span class=&#39;line&#39;&gt;#{line}&lt;/span&gt;&quot;</span>
-</span><span class="line">    <span class="n">end</span>
-</span><span class="line">    <span class="n">table</span> <span class="o">+=</span> <span class="s">&quot;&lt;/pre&gt;&quot;</span>
-</span><span class="line">  <span class="n">end</span>
-</span><span class="line"><span class="n">end</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="section-1">使用方法</h4>
-
-<p>和过去一样，在md的文章中使用:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="sb">```XX```</span>
-</span></pre></figure></notextile></div>
-
-<p>要是想指定某语言，需要先引用这个css，然后在md中
-比如这里用bash语法（也是我的默认）</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="sb">``</span><span class="err">`</span><span class="n">bash</span>
-</span><span class="line"><span class="n">XX</span>
-</span><span class="line">\<span class="sb">``</span><span class="err">`</span> <span class="c"># 这里不能正常显示，加个反斜杠</span>
-</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/7/">&larr; Older</a></li>
@@ -1962,6 +2037,10 @@ password XXX</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1997,10 +2076,6 @@ password XXX</p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

@@ -141,6 +141,111 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%AE%89%E8%A3%85%E5%8F%8A%E9%85%8D%E7%BD%AEicinga-web/">安装及配置icinga-web</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-29T00:00:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：我所认为的icinga-web其实就是将icinga监控数据写到数据库，用icinga-web对其进行一些处理返回检查的状态
+<img style="max-width: 800px;" src="http://farm7.static.flickr.com/6025/5986605311_38600dbb57_b.jpg" alt="" />
+1 安装一些必备的rpm包：
+yum install libdbi-devel libdbi libdbi-drivers libdbi-dbd-mysql
+2 首先需要安装支持IDOUtils的icinga
+wget http://sourceforge.net/projects/icinga/files/icinga/1.4.2/icinga-1.4.2.tar.gz/download
+tar zxvf icinga-1.4.2.tar.gz
+cd icinga-1.4.2
+./configure  &#8211;with-icinga-group=dongwm  &#8211;with-icinga-user=dongwm  &#8211;with-command-user=dongwm  &#8211;with-command-group=dongwm &#8211;enable-idoutils &amp;&amp; make all &amp;&amp; make  fullinstall
+3 安装nagios插件
+wget http://prdownloads.sourceforge.net/sourceforge/nagiosplug/nagios-plugins-1.4.15.tar.gz
+tar zxvf nagios-plugins-1.4.15.tar.gz
+cd nagios-plugins-1.4.15
+./configure &#8211;prefix=/usr/local/icinga &#8211;with-cgiurl=/icinga/cgi-bin &#8211;with-htmurl=/icinga &#8211;with-nagios-user=dongwm &#8211;with-nagios-group=dongwm &amp;&amp; make &amp;&amp; make install
+4 配置idoutils
+cd /usr/local/icinga/etc/
+mv ido2db.cfg-sample ido2db.cfg
+mv idomod.cfg-sample idomod.cfg
+vi /usr/local/icinga/etc/icinga.cfg
+讲这句前面的注释去掉：
+broker_module=/usr/local/icinga/bin/idomod.o config_file=/usr/local/icinga/etc/idomod.cfg
+确认库文件依赖关系是否正常：
+ldd /usr/local/icinga/bin/idomod.o
+输出类似：
+linux-vdso.so.1 =&gt;  (0x00007fff7f5fc000)
+libc.so.6 =&gt; /lib64/libc.so.6 (0x00002b2cbf799000)
+/lib64/ld-linux-x86-64.so.2 (0x0000003472c00000)
+表示相关库文件都找到
+创建mysql数据库：
+<pre class="code-java">mysql -u root -p
+ mysql&gt; CREATE DATABASE icinga;
+ GRANT USAGE ON *.* TO 'icinga'@'localhost' IDENTIFIED BY 'icinga' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;
+ GRANT SELECT , INSERT , UPDATE , DELETE ON icinga.* TO 'icinga'@'localhost';
+ FLUSH PRIVILEGES ;
+ quit
+mysql -u root -p icinga &lt; /icinga安装目录/module/idoutils/db/mysql/mysql.sql
+5 安装icinga-web
+wget http://sourceforge.net/projects/icinga/files/icinga-web/1.4.1/icinga-web-1.4.1.tar.gz/download
+tar zxvf icinga-web-1.4.1.tar.gz
+cd icinga-web-1.4.1
+./configure --prefix=/usr/local/icinga-web --with-web-user=dongwm --with-web-group=dongwm --with-db-type=mysql --with-db-host=localhost --with-db-port=3306 --with-db-name=icinga_web --with-db-user=icinga_web --with-db-pass=icinga_web --with-icinga-api=/usr/local/icinga/share/icinga-api --with-web-apache-path=/etc/httpd/conf.d
+make all
+make install
+创建mysql数据库：
+mysql -u root -p
+ mysql&gt; CREATE DATABASE icinga_web;
+        GRANT USAGE ON *.* TO 'icinga_web'@'localhost' IDENTIFIED BY 'icinga_web' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;
+        GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON icinga_web.* TO 'icinga_web'@'localhost';
+        quit</p>
+
+<p>mysql -u root -p icinga_web &lt; /icinga-web安装目录/etc/schema/mysql.sql
+确认以下文件相关数据库相关信息：
+/usr/local/icinga-web/app/modules/Web/config/icinga-io.site.xml
+&lt;setting name="api.interfaces.data"&gt;
+                &lt;ae:parameter name="api_type"&gt;IcingaApi::CONNECTION_IDO&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_type"&gt;mysql&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_host"&gt;127.0.0.1&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_port"&gt;3306&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_database"&gt;icinga&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_user"&gt;icinga&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_password"&gt;icinga&lt;/ae:parameter&gt;
+                &lt;ae:parameter name="config_table_prefix"&gt;icinga_&lt;/ae:parameter&gt;
+        &lt;/setting&gt;
+注意：这里是icinga-web的配置文件里面用的数据库是icinga的数据库信息，这样才能取到相关值
+清除缓存数据：
+/usr/local/icinga-web/bin/clearcache.sh
+然后使用一下地址登录icinga-web：
+http://localhost/icinga-web
+最重要的这里的默认帐号密码：root/password
+然后就可以看见icinga里面监控项的相关信息了！</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/kongzhipingmianheguanlipingmiananquan-2/">控制平面和管理平面安全</a></h1>
     
     
@@ -920,45 +1025,6 @@ s.quit()</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/centos%E4%B8%8Bvsftpd%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%9E%B6%E8%AE%BEftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">STP特性总结（一）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-23T00:00:00+08:00" pubdate data-updated="true">Jun 23<span>rd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><p><strong>1 Tuning Timers 以尽量减少延误而端口在听/学习状态的时间</strong></p>  <p>spanning-tree vlan 1 root primary   spanning-tree vlan 1 forward-time 4</p>  <p>SW1#show spanning-tree vlan 1   VLAN0001    Spanning tree enabled protocol ieee    Root ID Priority 24577    Address 0016.4639.d580    This bridge is the root    Hello Time 2 sec Max Age 20 sec Forward Delay 4 sec    Bridge ID Priority 24577 (priority 24576 sys-id-ext 1)    Address 0016.4639.d580    Hello Time 2 sec Max Age 20 sec Forward Delay 4 sec    Aging Time 15</p>  <p>SW2#debug spanning-tree events   Spanning Tree event debugging is on    SW2#conf t    Enter configuration commands, one per line. End with CNTL/Z.    SW2(config)#int fa 0/3    SW2(config-if)#shut    01:00:02: STP: VLAN0001 sent Topology Change Notice on Fa0/13    01:00:04: %LINK-5-CHANGED: Interface FastEthernet0/3, changed state to    administratively down    01:00:05: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3,    changed state to down    SW2(config-if)#no shut    01:00:10: %LINK-3-UPDOWN: Interface FastEthernet0/3, changed state to down    01:00:10: set portid: VLAN0001 Fa0/3: new port id 8005    01:00:10: STP: VLAN0001 Fa0/3 -&gt; listening    01:00:12: %LINK-3-UPDOWN: Interface FastEthernet0/3, changed state to up    01:00:13: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3,    changed state to up    01:00:14: STP: VLAN0001 Fa0/3 -&gt; learning    01:00:18: STP: VLAN0001 sent Topology Change Notice on Fa0/13    01:00:18: STP: VLAN0001 Fa0/3 –&gt; forwarding&#160; //注意从监听-学习-转发状态都是用了4秒</p></div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/centos%E4%B8%8Bvsftpd%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%9E%B6%E8%AE%BEftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/26/">&larr; Older</a></li>
@@ -981,6 +1047,10 @@ s.quit()</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1016,10 +1086,6 @@ s.quit()</p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

@@ -141,6 +141,63 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/">Bash Shell 位置参数和内部参数</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-17T00:00:00+08:00" pubdate data-updated="true">Mar 17<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_bash">$0表示当前执行的进程名,script 本身的名字,或者在正则表达式中表示整行输出</p>
+
+<p>$# ----传递给程序的总的参数数目</p>
+
+<p>$? ----上一个代码或者shell程序在shell中退出的情况，如果正常退出则返回0，反之为非0值。</p>
+
+<p>$* ----传递给程序的所有参数组成的字符串。</p>
+
+<p>$n ----表示第几个参数，$1 表示第一个参数，$2 表示第二个参数 ...</p>
+
+<p>$0 ----当前程序的名称</p>
+
+<p>$@----以"参数1" "参数2" ... 形式保存所有参数</p>
+
+<p>$$ ----本程序的(进程ID号)PID</p>
+
+<p>$! ----上一个命令的PID</p>
+
+<p>$_ ----保存之前执行的命令的最后一个参数</pre></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ersync/">关于rsync</a></h1>
     
     
@@ -648,136 +705,6 @@ $ processes.sh cpu</pre></div>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8func%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/">安装使用Func一些总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-02T00:00:00+08:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>1  关于Func<strong>
-func全称</strong><span style="font-family: Times New Roman,serif;"> </span><span style="font-size: x-small;">Fedora Unified Network Controller </span>,主要用在Radhat, Fedora,OpenSuse,Centos系列系统上由一个server管理任意台服务器的工具,<span style="font-size: x-small;">建立了</span><span style="font-size: x-small;">Master-Slaves </span><span style="font-size: x-small;">主从</span><span style="font-size: x-small;">SSL</span><span style="font-size: x-small;">证书管控体系，可以将证书自动分发到所有受控服务.</span>func直接发送远程命令或者远程获取数据,但是只适用于一些常用功能的模块的操作,实现其它功能需要自己写Python API,个人认为没有使用比较适当的&#8221;for do done&#8221;循环程序效果明确和方便.</p>
-
-<p><strong>2  安装配置:</strong>
-1  master端:
-<pre class="sh_bash">#yum install func
-#chkconfig --level 345 certmaster on &amp;&amp; service certmaster start</pre>
-查看默认监听端口:
-[root@server ~]# netstat -tunlp|grep 51235
-tcp        0      0 0.0.0.0:51235               0.0.0.0:*                   LISTEN      9381/python
-2  Minions端,也就是被控端:
-<pre class="sh_bash">#yum install func</pre>
-修改配置文件:
-#vi /etc/certmaster/minion.conf
-[main]
-certmaster = master.dongwm.com //master端的域名
-certmaster_port = 51235   //默认的监听端口
-log_level = DEBUG
-cert_dir = /etc/pki/certmaster
-#chkconfig &#8211;level 345 funcd on &amp;&amp; service funcd start
-</pre>
-验证证书:
-<pre class="sh_bash">在master端:
-#certmaster-ca --list   //等待验证的主机列表
-client.dongwm.com
-#certmaster-ca --sign   client.dongwm.com// 同意客户端验证</pre></p>
-
-<p><strong>3  进行一些操作:</strong>
-语法:
-<pre class="sh_bash">func "想要操作的服务器或者服务器组的名字,支持正则" call 想要操作的模块及选项</pre>
-以下操作
-<pre class="sh_bash"># func "*.dongwm.com" call disk usage boot  //表达查看所有dongwm.com组(域)服务器的/boot分区情况
-{'client.dongwm.com': {'/boot': {'available': '159177',
-'device': '/dev/sda1',
-'percentage': 14,
-'total': '194442',
-'used': '25226'}}}</pre></p>
-
-<p><!-- 		@page { margin: 2cm } 		P { margin-bottom: 0.21cm } --><strong>4 其它一些内容(转载)</strong><span style="font-family: 宋体;"><span style="font-size: large;"><strong></strong></span></span></p>
-
-<p>1  删除客户端主机
-<pre class="sh_bash">certmaster-ca -c hostname
-或
-rm /var/lib/certmaster/certmaster/certs/hostname.cert</pre></p>
-
-<p>2  一些常用模块使用命令:</p>
-
-<p><pre class="sh_bash">2.1 CommandModule 模块
-格式：
-func hostname call command run command
-2.2ServiceModule 模块
-格式：
-Func hostname call service start/stop/restart servername
-2.3. HardwareModule 模块
-格式：
-func hostname call hardware info
-如果不能执行一般是因为 smolt 没有安装
-2.4 IPtablesModule 模块
-格式：
-func hostname call iptables command
-例：
-func “ssh-1″ call iptables policy func “ssh-1″ call iptables dump func “ssh-1″ call iptables.port drop_to 53 192.168.0.0/24 udp src
-func ’ssh-1′ call iptables run “-L INPUT” func ’ssh-1′ call iptables policy OUTPUT DROP func ’ssh-1′ call iptables drop_from 192.168.0.10
-格式： Func hostname call command run command
-例： func ’ssh-1′ call command run ‘iptables -A INPUT -s 192.168.239.233 -j DROP’
-2.5. JBossModule 模块
-格式：
-func hostname call jboss command
-例：
-func “*” call jboss status
-func “*” call jboss check
-func “*” call jboss search_by_instance “default“
-func “*” call jboss search_by_address “127.0.0.1“
-func “*” call jboss search_by_port 8080
-2.6 ProcessModule 模块
-格式：
-Func hostname call process command
-例：
-func ssh-1 call process info “aux”
-func ssh-1 call process mem
-func ssh-1 call process kill httpd SIGHUP
-2.7 SysctlModule 模块
-格式：
-Func hostname call sysctl command
-例：
-func ssh-1 call sysctl list
-func “*” call sysctl get &lt;parameter&gt; func “*” call sysctl set &lt;parameter&gt; &lt;value&gt;
-func ssh-1 call sysctl set net.ipv4.tcp_syncookies 1
-2.8 RpmModule模块 ( =rpm –qa )
-func ssh-1 call rpms inventory
-2.9 SmartModule模块 ( 看硬盘信息 )
-func ssh-1 call smart info
-2.10YumModule模块
-func ssh-1 call yumcmd update
-func ssh-1 call command run ‘yum update’</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/30/">&larr; Older</a></li>
@@ -800,6 +727,10 @@ func ssh-1 call command run ‘yum update’</pre></p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -835,10 +766,6 @@ func ssh-1 call command run ‘yum update’</pre></p>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>

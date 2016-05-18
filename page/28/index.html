@@ -141,6 +141,94 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8vim%E7%9A%84bash-support%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95bash-shell%E8%84%9A%E6%9C%AC/">使用Vim的bash-Support插件调试bash Shell脚本</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-08T00:00:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1  下载安装并启用：</strong></p>
+
+<p><pre class="sh_bash">[root@server ~]# mkdir ~/.vim
+[root@server ~]# cd !$</p>
+
+<p>cd ~/.vim</p>
+
+<p>[root@server ~]# wget -O bash-support.zip <a href="http://www.vim.org/scripts/download_script.php?src_id=15125">http://www.vim.org/scripts/download_script.php?src_id=15125</a>
+[root@server .vim]# unzip bash-support.zip</p>
+
+<p>假如你没有自己设置的vimrc文件，建议使用他提供的一个自定义的vimrc</p>
+
+<p>[root@server ~]# cp .vim/bash-support/rc/customization.vimrc ~/.vimrc</pre></p>
+
+<p><strong>2  使用中的一些技巧：</strong></p>
+
+<p><strong>1 自动向sh文件中添加文件头部</strong></p>
+
+<p>当你打开一个以sh为后缀的文件时，文件中会包含以下文件头。然后进入插入状态，光标会移动到DESCRIPTION位置。</p>
+
+<p><pre class="sh_bash">#!/bin/bash -
+#===============================================================================
+#
+#          FILE:  ssss.sh
+#
+#         USAGE:  ./ssss.sh
+#
+#   DESCRIPTION:
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR: Dong Weiming (os), ciici1234@hotmail.com
+#       COMPANY: dongwm.com
+#       CREATED: 2011年02月14日 14时02分33秒 CST
+#      REVISION:  ---
+#===============================================================================</p>
+
+<p>set -o nounset                              # Treat unset variables as an error</pre></p>
+
+<p>这是因为我修改了模版文件.vim/bash-support/templates/Templates</p>
+
+<p><pre class="sh_bash">=============================================================
+========== USER MACROS ========================================
+=============================================================
+|AUTHOR|    = Dong Weiming
+|AUTHORREF| = os
+|EMAIL|     = ciici1234@hotmail.com
+|COMPANY|   = dongwm.com
+|COPYRIGHT| = Copyright (c) |YEAR|, |AUTHOR|</pre></p>
+
+<p><strong>2 </strong><a href="http://lug.fh-swf.de/vim/vim-bash/bash-hot-keys.pdf" target="_blank"><strong>程序的一些命令(注：(i) insert mode, (n) normal mode, (v) visual mode下同)</strong></a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/zxtm%E4%B8%93%E9%A2%98%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8zxtm%E7%94%A8%E8%87%AA%E5%BB%BAssl%E8%AF%81%E4%B9%A6%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E7%9A%84https%E5%8D%8F%E8%AE%AE%E8%AE%BF%E9%97%AE/">ZXTM专题二：使用ZXTM用自建ssl证书实现网站的https协议访问</a></h1>
     
     
@@ -937,63 +1025,6 @@ sensor(config-web)# port 443</div>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/">Bash Shell 位置参数和内部参数</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-17T00:00:00+08:00" pubdate data-updated="true">Mar 17<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><pre class="sh_bash">$0表示当前执行的进程名,script 本身的名字,或者在正则表达式中表示整行输出</p>
-
-<p>$# ----传递给程序的总的参数数目</p>
-
-<p>$? ----上一个代码或者shell程序在shell中退出的情况，如果正常退出则返回0，反之为非0值。</p>
-
-<p>$* ----传递给程序的所有参数组成的字符串。</p>
-
-<p>$n ----表示第几个参数，$1 表示第一个参数，$2 表示第二个参数 ...</p>
-
-<p>$0 ----当前程序的名称</p>
-
-<p>$@----以"参数1" "参数2" ... 形式保存所有参数</p>
-
-<p>$$ ----本程序的(进程ID号)PID</p>
-
-<p>$! ----上一个命令的PID</p>
-
-<p>$_ ----保存之前执行的命令的最后一个参数</pre></div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/29/">&larr; Older</a></li>
@@ -1016,6 +1047,10 @@ sensor(config-web)# port 443</div>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
+      </li>
     
       <li class="post">
         <a href="/archives/fang-djangobookde-markdownwen-zhang-ping-zhu-xi-tong/">仿Djangobook的Markdown文章评注系统</a>
@@ -1051,10 +1086,6 @@ sensor(config-web)# port 443</div>
     
       <li class="post">
         <a href="/archives/idiomatic-python/">idiomatic python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/r-shang-chuan-wen-jian-fu-wu/">r - 上传文件服务</a>
       </li>
     
   </ul>
