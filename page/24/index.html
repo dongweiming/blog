@@ -141,6 +141,73 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/fuzashijiancepchulidexiaoxiduiliezmqzaiserverduandepythonchulijiaoben/">复杂事件(cep)处理的消息队列zmq在server端的python日志记录处理脚本</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-26T00:00:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p>前言：主要用来接收客户端服务器传送来的socket内容，并写到指定数据目录下。</p>
+<p><pre class="sh_python"></p>
+import zmq
+import threading
+from datetime import date</p>
+
+<p>def main(addrs):</p>
+
+<p>    context = zmq.Context()
+    client = context.socket(zmq.SUB)
+    client.setsockopt(zmq.SUBSCRIBE, "")
+    print "Connecting to: ", addrs[0]
+    client.connect(addrs[0])</p>
+
+<p>    try:
+        while True:
+                topic, msg = client.recv_multipart()
+                #print "%s: %s" % (topic, msg)
+                FILE = open(addrs[1]+topic+".log."+ date.today().isoformat(), "a"  )
+                FILE.write(msg )
+                FILE.close()
+    except KeyboardInterrupt:
+        raise SystemExit</p>
+
+<p>if __name__ == '__main__':
+    import sys
+    if len(sys.argv) &lt; 2:
+        print "usage: logger.py &lt;address&gt; &lt;path&gt;"
+        raise SystemExit
+    main(sys.argv[1:])
+<p></pre></p>
+</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonyumingchaxunfuwuwhoischengxujiancha5weiyineiyumingdaoqishijianyoujianbaojingqiangzhuyuming/">（python）域名查询服务（whois）程序+检查5位以内域名到期时间邮件报警抢注域名！</a></h1>
     
     
@@ -1866,123 +1933,6 @@ Key Data:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/yuanchengjieruvpn/">远程接入VPN</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-30T00:00:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><span style="color: #c00000;"><span style="font-size: medium;"><strong>服务器端配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(R1)</strong></span></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router&gt;</span><span style="font-family: Arial,sans-serif;"><strong>enable</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router#</span><span style="font-family: Arial,sans-serif;"><strong>configure terminal</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>line console 0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>logging synchronous</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>interface fastEthernet 0/0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no shutdown</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip address 192.168.3.1 255.255.255.0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int ethernet 1/3</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no shutdown</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip address 192.168.15.1 255.255.255.0</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Router(config)#</span><span style="font-family: Arial,sans-serif;"><strong>hostname R1</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 192.168.2.0 255.255.255.0 192.168.15.5</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa new-model</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa authentication login default local</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa authentication login ezvpn local</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>aaa authorization network ezvpn local</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>username admin privilege 15 secret admin</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>username cisco secret cisco</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>encryption 3des</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>hash sha</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>authentication pre-shar</strong></span></span><span style="font-family: Arial,sans-serif;">e </span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>group 2</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp keepalive 20 3</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>ip local pool vpn 192.168.3.100 192.168.3.120</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>access-list 100 permit ip 192.168.3.0 0.0.0.255 any</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp client configuration group vpn</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>acl 100</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>include-local-lan</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>key vpn</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>max-users 20</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>max-logins 1</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>pfs</strong></span></span></span></p>
-
-<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp-group)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>pool vpn</strong></span></span></span></p>
-
-<p></div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/yuanchengjieruvpn/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/25/">&larr; Older</a></li>
@@ -2005,6 +1955,10 @@ Key Data:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -2040,10 +1994,6 @@ Key Data:
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

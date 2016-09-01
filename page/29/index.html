@@ -141,6 +141,57 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Exargs%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">关于xargs命令的研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-17T00:00:00+08:00" pubdate data-updated="true">Mar 17<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>前言：假如使用find将寻找到的匹配的文件传递给exec或者ok执行，可能几分钟后会报类似的错误：”/bin/rm Argument list too log -linux“，这时候可以使用xargs命令来避免，
+1 查找当前目录下所有用户具有读写执行权限的文件，并收回其他用户的写权限：</strong>
+<pre class="sh_bash">[root@client test]# ls -l
+总计 12
+-rwxrwxrwx 1 root root  8 03-16 09:11 1.txt
+-rwxrwxrwx 1 root root  8 03-16 09:11 2.txt
+-rw-r--r-- 1 root root 32 03-16 09:28 3.txt
+[root@client test]# find . -perm -7 -print |xargs chmod o-w
+[root@client test]# ls -l
+总计 12
+-rwxrwxr-x 1 root root  8 03-16 09:11 1.txt
+-rwxrwxr-x 1 root root  8 03-16 09:11 2.txt
+-rw-r--r-- 1 root root 32 03-16 09:28 3.txt</pre></div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Exargs%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/bash-shell-%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%92%8C%E5%86%85%E9%83%A8%E5%8F%82%E6%95%B0/">Bash Shell 位置参数和内部参数</a></h1>
     
     
@@ -628,83 +679,6 @@ printf</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/3%E4%B8%AA%E6%9C%89%E7%94%A8%E7%9A%84shell%E8%84%9A%E6%9C%AC/">3个有用的shell脚本</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-04T00:00:00+08:00" pubdate data-updated="true">Mar 4<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1  监视系统的CPU，内存使用等情况：（根据CPU和内存使用排序）</strong>
-<pre class="sh_bash">$ cat processes.sh
-#! /bin/bash
-#用于显示CPU使用和内存使用的检查</p>
-
-<p>echo "开始时间" `date`
-if [ $# -eq 0 ]
-then</p>
-
-<p>	echo "CPU使用率升序排列"
-	ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu  # sorted based on %cpu
-	echo "内存使用升序排列"
-	ps -e -orss=,args= | sort -b -k1,1n # sorted bases rss value</p>
-
-<p># 可以添加位置参数(mem/cpu)
-else
-	case "$1" in
-	mem)
-	 echo "内存使用升序排列"
- 	 ps -e -orss=,args= | sort -b -k1,1n
-	 ;;
- 	cpu)
-	 echo "CPU使用率升序排列"
-	 ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu
-	 ;;
- 	*)
-		echo "请输入正确的参数 \n"
-		echo "可以使用 : $0 mem/cpu"
-		exit 1
- 	esac	</p>
-
-<p>fi
-echo "结束时间" `date`
-exit 0</pre>
-使用方式：
-<pre class="sh_bash">
-$ processes.sh
-$ processes.sh mem
-$ processes.sh cpu</pre></div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/3%E4%B8%AA%E6%9C%89%E7%94%A8%E7%9A%84shell%E8%84%9A%E6%9C%AC/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/30/">&larr; Older</a></li>
@@ -727,6 +701,10 @@ $ processes.sh cpu</pre></div>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -762,10 +740,6 @@ $ processes.sh cpu</pre></div>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

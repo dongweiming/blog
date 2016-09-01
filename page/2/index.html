@@ -141,6 +141,228 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/idiomatic-python/">Idiomatic Python</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-24T18:28:00+08:00" pubdate data-updated="true">Oct 24<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="section">前言</h3>
+
+<p>算来学会python已经4年有余, 使用它作为我的工作语言也3年了. 这个过程中我读过一些书, 看了很多人的博客.
+也读了一些开源项目的代码, 但是尤其重要的是和同事在一起得到的进步. 一直到现在我都有习惯了解python, 提高自己的python能力</p>
+
+<p>说到idiomatic. python有自己独特的语法和习惯. 而实现同样功能的代码不用的人呢也会使用不同的方式.
+写出来的代码内容也有非常大的区别, 但是总是会有一个是更好的, idiomatic的写法. 今天突然翻到了一个我之前一直维护的keynote. 这里面记录了我总结和从其他的ppt或者代码里看到更优美的写法.
+其中有些已经放在python3中, 说明这样的功能确实是程序员蛮有用的. 我整理了一下. 来给大家分享下.</p>
+
+<p>PS: 这些是编程的思维, 举一反三, 再适合的时候利用上.</p>
+
+<h4 id="section-1">循环列表, 直到找到符合的结果, 没有结果返回一个默认值</h4>
+
+<p>通常这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class="line"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+</span><span class="line">    <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">4</span><span class="p">:</span>
+</span><span class="line">        <span class="n">a</span> <span class="o">=</span> <span class="n">i</span>
+</span><span class="line">        <span class="k">break</span>
+</span><span class="line"><span class="c"># a = 4</span>
+</span></pre></figure></notextile></div>
+
+<p>更好的写法:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">4</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line"><span class="c"># a = 4</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-2">执行调用直到某种情况</h4>
+
+<p>通常这样:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line"><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">    <span class="n">block</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">block</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+</span><span class="line">        <span class="k">break</span>
+</span><span class="line">    <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>更好的写法:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+</span><span class="line"><span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line"><span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+</span><span class="line">    <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-3">标记区分</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+</span><span class="line">    <span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+</span><span class="line">            <span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class="line">            <span class="k">break</span>
+</span><span class="line">    <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">i</span>
+</span></pre></figure></notextile></div>
+
+<p>更好的写法:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+</span><span class="line">            <span class="k">break</span>
+</span><span class="line">    <span class="k">else</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">i</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="threadinglock">threading.Lock</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span><span class="line"><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">try</span><span class="p">:</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;Critical section 1&#39;</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;Critical section 2&#39;</span>
+</span><span class="line"><span class="k">finally</span><span class="p">:</span>
+</span><span class="line">    <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+</span></pre></figure></notextile></div>
+
+<p>其实是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;Critical section 1&#39;</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&#39;Critical section 2&#39;</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-4">忽略抛出的异常</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">try</span><span class="p">:</span>
+</span><span class="line">    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;somefile.tmp&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+</span><span class="line">    <span class="k">pass</span>
+</span></pre></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">with</span> <span class="n">ignored</span><span class="p">(</span><span class="ne">OSError</span><span class="p">):</span>
+</span><span class="line">    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;somefile.tmp&#39;</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>就算用python2, 我也强烈建议把这样的函数放在项目里</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@contextmanager</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">ignored</span><span class="p">(</span><span class="o">*</span><span class="n">exceptions</span><span class="p">):</span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="k">yield</span>
+</span><span class="line">    <span class="k">except</span> <span class="n">exceptions</span><span class="p">:</span>
+</span><span class="line">        <span class="k">pass</span>
+</span></pre></figure></notextile></div>
+
+<p>如果你使用python3.4或以上可以使用标准库的 <code>contextlib.suppress</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">class</span> <span class="nc">suppress</span><span class="p">:</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exceptions</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">_exceptions</span> <span class="o">=</span> <span class="n">exceptions</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="k">pass</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exctype</span><span class="p">,</span> <span class="n">excinst</span><span class="p">,</span> <span class="n">exctb</span><span class="p">):</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">exctype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exctype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exceptions</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-5">直接把输出存进文件中</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;help.txt&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">oldstdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+</span><span class="line">    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="n">help</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
+</span><span class="line">    <span class="k">finally</span><span class="p">:</span>
+</span><span class="line">        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">oldstdout</span>
+</span></pre></figure></notextile></div>
+
+<p>同样使用python3.4以上可以使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;help.txt&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span><span class="line">        <span class="n">help</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
+</span></pre></figure></notextile></div>
+
+<p>redirect_stdout是这样的:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@contextmanager</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">redirect_stdout</span><span class="p">(</span><span class="n">fileobj</span><span class="p">):</span>
+</span><span class="line">    <span class="n">oldstdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+</span><span class="line">    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">fileobj</span>
+</span><span class="line">    <span class="k">try</span><span class="p">:</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">fieldobj</span>
+</span><span class="line">    <span class="k">finally</span><span class="p">:</span>
+</span><span class="line">        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">oldstdout</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="section-6">最简单的缓存</h4>
+
+<p>通常这样实现缓存:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="k">def</span> <span class="nf">web_lookup</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">saved</span><span class="o">=</span><span class="p">{}):</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">saved</span><span class="p">:</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">saved</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+</span><span class="line">    <span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class="line">    <span class="n">saved</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="n">page</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">page</span>
+</span></pre></figure></notextile></div>
+
+<p>可以这样写</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="nd">@cache</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">web_lookup</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class="line">    <span class="n">saved</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class="line">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">saved</span><span class="p">:</span>
+</span><span class="line">            <span class="k">return</span> <span class="n">saved</span><span class="p">[</span><span class="n">args</span><span class="p">]</span>
+</span><span class="line">        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class="line">        <span class="n">saved</span><span class="p">[</span><span class="n">args</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">result</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">newfunc</span>
+</span></pre></figure></notextile></div>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/r-shang-chuan-wen-jian-fu-wu/">R - 上传文件服务</a></h1>
     
     
@@ -1413,111 +1635,6 @@ outgoing其实就是当有人在某些符合的channel里面说了什么, 会跳
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/ptpython-a-better-python-repl/">Ptpython- a Better Python REPL</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-01-26T21:29:00+08:00" pubdate data-updated="true">Jan 26<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>今天发现一个项目: <a href="https://github.com/jonathanslenders/ptpython">ptpython</a>. 新一代的REPL神器. 玩了一下. 毅然的ipython换成了ptipython - ptpython自带的
-iython的接口. 和大家介绍下</p>
-
-<h4 id="ptpython">ptpython的优点</h4>
-
-<p>先说几个在用ipython过程中遇到的问题吧.</p>
-
-<ol>
-  <li>ipython在Mac下缩进问题. 每次在交互模式里面输入一个缩进的内容, 比如下面</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">t</span><span class="p">():</span>
-</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">return</span> <span class="mi">1</span>
-</span><span class="line">      <span class="o">...</span><span class="p">:</span>
-</span><span class="line">
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">t</span><span class="p">():</span>
-</span><span class="line">    <span class="k">return</span> <span class="mi">1</span>
-</span></pre></figure></notextile></div>
-
-<p>看到了吧, 缩进不正确了. ptpython没有这个问题, 它的底层库<a href="https://github.com/jonathanslenders/python-prompt-toolkit">prompt_toolkit</a>实现了一个替代物</p>
-
-<ol>
-  <li>
-    <p>jedi. 我在emacs里面, jedi是标配. 其一是因为有epc, 可以和python通信, 它的自动补全和跳到函数/类定义真的很方便. 但是python交互解释器
-还没有一个用它的. 这里真的感觉效果很好.</p>
-  </li>
-  <li>emacs/vim键位. 好吧我经常在用ipython的时候习惯<code>Ctrl+x Ctrl+c</code>退出. 能用emacs的键位做编辑真的很爽</li>
-  <li>提供一个终端的菜单, 有多个选项可以选择</li>
-  <li>模式粘贴. 大家知道python有个问题: 你粘贴过来的代码不一定能运行 - 粘贴后的缩进会很奇怪的. ipython虽然有<code>%paste</code>和<code>%cpaste</code>. 但是有时候还是会有<code>IndentationError</code>问题.
-ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多行编辑.</li>
-  <li>可以开启多个Tab,甚至多个Tab的内容一齐显示出来. 类似vim的:split</li>
-  <li>能对你写的每行程序判断是否出现语法错误.如果你的代码有问题, 下面左侧会有错误提示 - 这其实能延伸做很多检查嘛</li>
-  <li>ipython对查看对象的方法有一些问题, 比如这个:</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">ipython</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s">&#39;/tmp&#39;</span><span class="o">.&lt;</span><span class="n">tab</span><span class="o">&gt;</span> <span class="c"># 不会理你的</span>
-</span></pre></figure></notextile></div>
-
-<p>ptpython对这样的处理都很好</p>
-
-<ol>
-  <li>一个很贴心的特性:</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">ptpython</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s">&#39;tmp&lt;Tab&gt; # 他会告诉你这是个目录, 还会自动完成列出目录下的文件. autocompletion</span>
-</span></pre></figure></notextile></div>
-
-<ol>
-  <li>最后一点吧. 它非常容易的被嵌入你的程序，你的解释器</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">python</span>
-</span><span class="line"><span class="n">Python</span> <span class="mf">2.7</span><span class="o">.</span><span class="mi">3</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Apr</span> <span class="mi">10</span> <span class="mi">2013</span><span class="p">,</span> <span class="mo">06</span><span class="p">:</span><span class="mi">20</span><span class="p">:</span><span class="mi">15</span><span class="p">)</span>
-</span><span class="line"><span class="p">[</span><span class="n">GCC</span> <span class="mf">4.6</span><span class="o">.</span><span class="mi">3</span><span class="p">]</span> <span class="n">on</span> <span class="n">linux2</span>
-</span><span class="line"><span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
-</span><span class="line"><span class="n">Welcome</span> <span class="n">to</span> <span class="n">Lazy</span> <span class="n">Python</span><span class="o">.</span>  <span class="n">Type</span> <span class="s">&quot;help LazyPython&quot;</span> <span class="k">for</span> <span class="n">help</span><span class="o">.</span>
-</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">ptpython.repl</span> <span class="kn">import</span> <span class="n">embed</span>
-</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">embed</span><span class="p">(</span><span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">vi_mode</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">history_filename</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="c"># 看就这么2句</span>
-</span></pre></figure></notextile></div>
-
-<h4 id="ptipython">ptipython</h4>
-
-<p>ptipython = ptpython + ipython</p>
-
-<p>在安装了ptipython之后, 就可以使用了. 完全可以替代ipython. 类似<a href="https://github.com/ivanov/bipython">bipython</a> = bpython + ipython</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/3/">&larr; Older</a></li>
@@ -1540,6 +1657,10 @@ ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1575,10 +1696,6 @@ ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多�
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

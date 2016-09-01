@@ -141,6 +141,136 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89/">关于expect研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-09T00:00:00+08:00" pubdate data-updated="true">Apr 9<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文主要介绍expect,也就是tcl语言的控制结构
+1  if &#8230;else 结构
+首先展示一个脚本,这个叫本用来根据argv0的输入选择不同的expect语句SSH远程登录到相对应的服务器,并设置一些错误输出:
+<pre class="sh_bash">dongwm@linux-3qd1:~&gt; cat bin/test
+#!/usr/bin/expect
+set timeout 10
+set passwordops01 cpuqPFtkt{20
+set passwordops02 O^v44qftahbN
+set passwordops03 9uujz)UUf7yr
+set file1 [lindex $argv 0]
+if {$argc!=1} {
+puts stderr "参数错误,请使用以下格式: $argv0 {想去的服务器简称,比如ops01} "
+exit 1
+}
+if {$file1=="ops01"} {
+spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924
+expect 194.168.45.XX
+send "su -\n"   //设置了不容许root组直接登录
+expect "口令："
+send "$passwordops01\n"
+interact
+} elseif {$file1=="ops02"} {
+spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924
+expect 194.168.45.XX
+send "ssh ops@ops04\n"
+expect "192.168.9.24"
+send "su -\n"
+expect "口令："
+send "$passwordops02\n"
+interact
+} elseif {$file1=="ops03"} {
+spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9960
+expect 194.168.45.XX
+send "su -\n"
+expect "口令："
+send "$passwordops03\n"
+interact
+}  else {
+send "参数错误,请输入以下名称:ops01 ops02 ops03\n"
+}
+注:这个脚本里面有SSH信任 有根据iptables转发</p>
+
+<p>if ...else 没啥可说的^.^</pre>
+2 switch结构
+还是上面的判断,我这里留下2个表达语法:
+<!--
+@page { margin: 2cm }
+P { margin-bottom: 0.21cm }
+--><pre class="sh_bash">switch -glob -- $file1 {
+ops01 {
+spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924expect 194.168.45.XX
+send "su -\n"   //设置了不容许root组直接登录
+expect "口令："
+send "$passwordops01\n"
+interact
+}
+ops02 {
+spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924
+expect 194.168.45.XX
+send "ssh ops@ops04\n"
+expect "192.168.9.24"
+send "su -\n"
+expect "口令："
+send "$passwordops02\n"
+interact
+} </pre>
+<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;"></p>
+<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;">3  while结构 (顺便break和continue)</p>
+<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;"><pre class="sh_bash">dongwm@linux-3qd1:~&gt; cat !$
+cat bin/test
+#!/usr/bin/expect
+set test 0
+while {$test&lt;10} {
+set test [expr {$test + 1}]
+if {$test &gt; 7} break
+if "$test &lt; 3" continue
+puts "test is $test"
+}
+本来此例去掉break和continue会输出1..9 因为break存在只能输出到7 ,因为continue存在,当test=1,2的时候 不符合要求,直接略过了</pre></p>
+<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;">4  catch</p>
+<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;">catch用于捕捉让脚本停止执行的错误的输出:</p>
+<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;"><pre class="sh_bash">dongwm@linux-3qd1:~&gt; cat !$
+cat bin/test1
+#!/usr/bin/expect
+proc Error {} {
+error "This is a error for test"
+}
+catch Error test
+puts $test
+dongwm@linux-3qd1:~&gt; !$
+bin/test1
+This is a error for test</pre></p>
+&nbsp;
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=96a78524-c46f-816f-a821-e23986f21990" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8vim%E7%9A%84bash-support%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95bash-shell%E8%84%9A%E6%9C%AC/">使用Vim的bash-Support插件调试bash Shell脚本</a></h1>
     
     
@@ -974,57 +1104,6 @@ sensor(config-web)# port 443</div>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Exargs%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">关于xargs命令的研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-17T00:00:00+08:00" pubdate data-updated="true">Mar 17<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>前言：假如使用find将寻找到的匹配的文件传递给exec或者ok执行，可能几分钟后会报类似的错误：”/bin/rm Argument list too log -linux“，这时候可以使用xargs命令来避免，
-1 查找当前目录下所有用户具有读写执行权限的文件，并收回其他用户的写权限：</strong>
-<pre class="sh_bash">[root@client test]# ls -l
-总计 12
--rwxrwxrwx 1 root root  8 03-16 09:11 1.txt
--rwxrwxrwx 1 root root  8 03-16 09:11 2.txt
--rw-r--r-- 1 root root 32 03-16 09:28 3.txt
-[root@client test]# find . -perm -7 -print |xargs chmod o-w
-[root@client test]# ls -l
-总计 12
--rwxrwxr-x 1 root root  8 03-16 09:11 1.txt
--rwxrwxr-x 1 root root  8 03-16 09:11 2.txt
--rw-r--r-- 1 root root 32 03-16 09:28 3.txt</pre></div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Exargs%E5%91%BD%E4%BB%A4%E7%9A%84%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/29/">&larr; Older</a></li>
@@ -1047,6 +1126,10 @@ sensor(config-web)# port 443</div>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1082,10 +1165,6 @@ sensor(config-web)# port 443</div>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

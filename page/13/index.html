@@ -141,6 +141,175 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyutarfileyanjiu/">关于tarfile研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：使用tarfile模块来实现文件归档压缩与解压</p>
+
+<p><pre class="sh_python">
+import tarfile</p>
+
+<p>print 'creating archive'
+out = tarfile.open('tarfile_add.tar', mode='w')  #创建一个tar文件
+try:
+    print 'adding README.txt'
+    out.add('README.txt')  #望这个tar添加一个文件
+finally:
+    print 'closing'
+    out.close()</p>
+
+<p>print
+print 'Contents:'
+t = tarfile.open('tarfile_add.tar', 'r')
+print t.getnames() #存档内容的名称列表
+for member_info in t.getmembers():  #遍历tar包含的文件
+    print member_info
+    print member_info.name
+    print '\tModified:\t', time.ctime(member_info.mtime)  #文件修改时间
+    print '\tMode    :\t', oct(member_info.mode) #文件的权限
+    print '\tType    :\t', member_info.type 
+    print '\tSize    :\t', member_info.size, 'bytes'  #文件大小
+    print
+print
+for filename in [ 'README.txt', 'tarfile_add.tar', 
+                  'bad.tar', 'notthere.tar' ]:
+    try:
+        print '%20s  %s' % (filename, tarfile.is_tarfile(filename))  #测试tar文件是否有效
+    except IOError, err:
+        print '%20s  %s' % (filename, err)
+</pre></p>
+
+<p>直接过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+creating archive
+adding README.txt
+closing</p>
+
+<p>Contents:</p>
+
+<p>[&#8216;README.txt&#8217;]
+README.txt
+Modified:    Mon Jun 18 15:28:10 2012
+Mode    :    0644
+Type    :    0
+Size    :    0 bytes</p>
+
+<p>README.txt  False  #存在文件 但他不是tar文件
+tarfile_add.tar  True #上面创建的tar文件
+bad.tar  False  #值是touch了这个名字的文件
+notthere.tar  [Errno 2] No such file or directory: &#8216;notthere.tar&#8217;  #不存在这个文件</p>
+
+<p><pre class="sh_python">
+import tarfile
+import os
+t = tarfile.open('tarfile_add.tar', 'r')
+for filename in [ 'README.txt', 'notthere.txt' ]:
+    try:
+        f = t.extractfile(filename)  #从tar中解压出某文件
+    except KeyError:
+        print 'ERROR: Did not find %s in tar archive' % filename
+    else:
+        print filename, ':', f.read() #读取解压出来的文件内容
+os.mkdir('outdir')
+t.extract('README.txt', 'outdir')  #解压tar中的这个文件到outdir目录
+t.extractall('outdir')  #将tar全部文件解压到outdir目录
+t.extractall('outdir', members=[t.getmember('README.txt')]) #解压tar中的README.txt到outdir目录
+print os.listdir('outdir')
+</pre></p>
+
+<p><pre class="sh_python">
+import tarfile</p>
+
+<p>data = 'This is the data to write to the archive.'
+out = tarfile.open('tarfile_addfile.tar', mode='w')
+try:
+    print 'adding README.txt as RENAMED.txt'
+    info = out.gettarinfo('README.txt', arcname='RENAMED.txt')  #将tar中的README.txt修改成RENAMED.txt
+    out.addfile(info)
+    info = tarfile.TarInfo('made_up_file.txt') #准备修改的文件
+    info.size = len(data)  
+    out.addfile(info, StringIO(data)) #将数据流写道文件里面</p>
+
+<p>finally:
+    print 'closing'
+    out.close()</p>
+
+<p>t = tarfile.open('tarfile_addfile.tar', 'r')
+for member_info in t.getmembers():
+    print member_info.name
+    f = t.extractfile(member_info)
+    print f.read()
+out = tarfile.open('tarfile_addfile.tar', mode='a') 
+try: 
+    out.add('index.rst')  #往tar再加入一个文件  上面的模式是‘a’
+finally: 
+    out.close()~
+</pre></p>
+
+<p><pre class="sh_python">
+import tarfile
+import os</p>
+
+<p>fmt = '%-30s %-10s'
+print fmt % ('FILENAME', 'SIZE')
+print fmt % ('README.txt', os.stat('README.txt').st_size)  #文件的字节数</p>
+
+<p>for filename, write_mode in [
+    ('tarfile_compression.tar', 'w'),  #默认的.tar后缀
+    ('tarfile_compression.tar.gz', 'w:gz'), #修改成.tar.gz
+    ('tarfile_compression.tar.bz2', 'w:bz2'), #修改成.tar.bz2
+    ]:
+    out = tarfile.open(filename, mode=write_mode)
+    try:
+        out.add('README.txt')
+    finally:
+        out.close()</p>
+
+<p>    print fmt % (filename, os.stat(filename).st_size),
+    print [m.name for m in tarfile.open(filename, 'r:*').getmembers()]
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+FILENAME                       SIZE
+README.txt                     9
+tarfile_compression.tar        10240      [&#8216;README.txt&#8217;]
+tarfile_compression.tar.gz     165        [&#8216;README.txt&#8217;]
+tarfile_compression.tar.bz2    150        [&#8216;README.txt&#8217;]</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuqueueyanjiu/">关于Queue研究</a></h1>
     
     
@@ -1434,137 +1603,6 @@ asyncore.loop()
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyu-3/">关于shutil研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：shutil是一个高层次的文件操作，比如复制，移动和修改权限等</p>
-
-<p><pre class="sh_python">
-import os
-import time 
-from shutil import *
-from commands import *
-print 'BEFORE:', os.listdir(os.getcwd())
-copyfile('text', 'test_to_copy')   #将源文件内容完全复制给目标文件. 如果没有写入目标文件的权限, 会引起IOError. 
-                            #由于该函数是为了读取文件内容而打开此输入文件, 而不管它的类型是什么, 特殊类型的文件使用copyfile()是不能拷贝的, 比如管道文件
-print 'AFTER:', os.listdir(os.getcwd())
-print
-os.mkdir('example')
-print 'BEFORE:', os.listdir('example')
-copy('test.py', 'example') #类似于Unix命令cp. 如果目标参数是一个目录而不是一个文件, 那么在这个目录中复制一个源文件副本(它与源文件同名). 文件的权限也随之复制
-print 'AFTER:', os.listdir('example')
-print
-def show_file_info(filename):
-    stat_info = os.stat(filename)
-    print '\tMode    :', stat_info.st_mode
-    print '\tCreated :', time.ctime(stat_info.st_ctime)
-    print '\tAccessed:', time.ctime(stat_info.st_atime)
-    print '\tModified:', time.ctime(stat_info.st_mtime)
-rmtree('example') #可以删除整个目录树. 里面若产生错误会作为异常抛出. 但是如果它的第二个参数是目录树, 那么错误会被忽略, 第三个参数可以指定为一个特殊出错处理函数句柄.
-os.mkdir('example')
-print 'SOURCE:'
-show_file_info('test.py')
-copy2('test', 'example') #copy2()函数类似于copy(), 但是它将一些元信息, 如文件最后一次被读取时间和修改时间等, 也复制至新文件中.
-print 'DEST:'
-show_file_info('test.py')
-print
-print 'BEFORE:', getstatus('test1.py')
-copymode('test.py', 'test1.py')
-print 'AFTER :', getstatus('test1.py')
-print
-print 'BEFORE:'
-show_file_info('test1.py')
-copystat('test.py', 'test1.py') #复制文件的其他元信息(权限, 最后读取时间, 最后修改时间)
-print 'AFTER :'
-show_file_info('test1.py')
-print
-print 'BEFORE:'
-print getoutput('ls -rlast /tmp/example')
-copytree('example', '/tmp/example')
-print 'AFTER:'
-print getoutput('ls -rlast /tmp/example')
-print
-print 'BEFORE: example : ', os.listdir('example')
-move('example', 'example2')
-print 'AFTER : example2: ', os.listdir('example2')
-</pre></p>
-
-<p>执行结果</p>
-
-<p>dongwm@linux-dongwm:~/test&gt; python test.py</p>
-
-<p>BEFORE: [&#8216;text&#8217;, &#8216;test.py&#8217;]
-AFTER: [&#8216;text&#8217;, &#8216;test.py&#8217;, &#8216;test_to_copy&#8217;]
-BEFORE: []
-AFTER: [&#8216;test.py&#8217;]</p>
-
-<p>SOURCE:
-Mode    : 33188
-Created : Fri Jun 15 11:08:12 2012
-Accessed: Fri Jun 15 11:08:12 2012
-Modified: Fri Jun 15 11:08:11 2012
-DEST:
-Mode    : 33188
-Created : Fri Jun 15 11:08:12 2012
-Accessed: Fri Jun 15 11:08:12 2012
-Modified: Fri Jun 15 11:08:11 2012</p>
-
-<p>BEFORE: -rwxr-xr-x 1 dongwm users 965  6月 14 17:45 test1.py
-AFTER : -rw-r&#8211;r&#8211; 1 dongwm users 965  6月 14 17:45 test1.py</p>
-
-<p>BEFORE:
-Mode    : 33188
-Created : Fri Jun 15 11:11:39 2012
-Accessed: Thu Jun 14 17:45:57 2012
-Modified: Thu Jun 14 17:45:54 2012
-AFTER :
-Mode    : 33188
-Created : Fri Jun 15 11:14:23 2012
-Accessed: Fri Jun 15 11:14:23 2012
-Modified: Fri Jun 15 11:14:20 2012</p>
-
-<p>BEFORE:
-ls: 无法访问/tmp/example: 没有那个文件或目录
-AFTER:
-总用量 28
-4 -rw-r&#8211;r&#8211;   1 dongwm users   468  6月 15 11:08 test.py
-4 drwxr-xr-x   2 dongwm users  4096  6月 15 11:08 .
-20 drwxrwxrwt 355 root   root  20480  6月 15 11:16 ..</p>
-
-<p>BEFORE: example :  [&#8216;test.py&#8217;]
-AFTER : example2:  [&#8216;test.py&#8217;]</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/14/">&larr; Older</a></li>
@@ -1587,6 +1625,10 @@ AFTER : example2:  [&#8216;test.py&#8217;]</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1622,10 +1664,6 @@ AFTER : example2:  [&#8216;test.py&#8217;]</p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

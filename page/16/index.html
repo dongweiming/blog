@@ -141,6 +141,262 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyugcyanjiu/">关于gc研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：gc主要是管理Python对象使用的内存,也就是垃圾回收</p>
+
+<p><pre class="sh_python">
+import gc
+import pprint</p>
+
+<p>class Graph(object):
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+    def set_next(self, next):
+        print 'Linking nodes %s.next = %s' % (self, next)
+        self.next = next
+    def __repr__(self):  #python元类，简单的理解就是控制你的对象在被<code>repr</code>函数调用的时候返回的内容
+        return &#8216;%s(%s)&#8217; % (self.__class__.__name__, self.name)</p>
+
+<p>one = Graph(&#8216;one&#8217;)
+two = Graph(&#8216;two&#8217;)
+three = Graph(&#8216;three&#8217;)
+one.set_next(two)
+two.set_next(three)
+three.set_next(one)</p>
+
+<p>print
+print &#8216;three refers to:&#8217;
+for r in gc.get_referents(three): #跟踪参考，返回对象名单
+    pprint.pprint(r)
+one = two = three = None  #删除引用这个模块的命名空间
+for i in range(2):
+    print &#8216;Collecting %d &#8230;&#8217; % i
+    n = gc.collect() #
+    print &#8216;Unreachable objects:&#8217;, n
+    print &#8216;Remaining Garbage:&#8217;, 
+    pprint.pprint(gc.garbage) #剩余垃圾的列表
+    print
+
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Linking nodes Graph(one).next = Graph(two)  #根据__repr__显示效果：类名(实例.name)
+Linking nodes Graph(two).next = Graph(three)
+Linking nodes Graph(three).next = Graph(one)</p>
+
+<p>three refers to:
+{&#8216;name&#8217;: &#8216;three&#8217;, &#8216;next&#8217;: Graph(one)}
+&lt;class &#8216;__main__.Graph&#8217;&gt;</p>
+
+<p>Collecting 0 &#8230;
+Unreachable objects: 6  #因为有3个实例属性字典的对象
+Remaining Garbage:[]</p>
+
+<p>Collecting 1 &#8230;
+Unreachable objects: 0
+Remaining Garbage:[]</p>
+
+<p>注：如果有<tt>__del__</tt>这个方法：</p>
+
+<p><pre class="sh_python">
+import gc
+import pprint</p>
+
+<p>class Graph(object):
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+    def set_next(self, next):
+        print 'Linking nodes %s.next = %s' % (self, next)
+        self.next = next
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, self.name)
+    def __del__(self):  #类似于析构函数，把对象销毁
+        print '%s.__del__()' % self</p>
+
+<p>one = Graph('one')
+two = Graph('two')
+three = Graph('three')
+one.set_next(two)
+two.set_next(three)
+three.set_next(one)</p>
+
+<p>one = two = three = None</p>
+
+<p>print
+print 'Collecting...'
+n = gc.collect()
+print 'Unreachable objects:', n
+print 'Remaining Garbage:', 
+pprint.pprint(gc.garbage)</p>
+
+<p>print
+print 'Breaking the cycle'
+gc.garbage[0].set_next(None)   #打破循环
+print 'Removing references in gc.garbage'
+del gc.garbage[:]  #删除这些垃圾</p>
+
+<p>print
+print 'Collecting...'
+n = gc.collect()
+print 'Unreachable objects:', n
+print 'Remaining Garbage:', 
+pprint.pprint(gc.garbage)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Linking nodes Graph(one).next = Graph(two)
+Linking nodes Graph(two).next = Graph(three)
+Linking nodes Graph(three).next = Graph(one)</p>
+
+<p>Collecting&#8230;
+Unreachable objects: 6
+Remaining Garbage:[Graph(one), Graph(two), Graph(three)]  #没有回收成功</p>
+
+<p>Breaking the cycle
+Linking nodes Graph(one).next = None
+Removing references in gc.garbage
+Graph(two).__del__()  #删除会触发__repr__
+Graph(three).__del__()
+Graph(one).__del__()</p>
+
+<p>Collecting&#8230;
+Unreachable objects: 0
+Remaining Garbage:[]</p>
+
+<p><pre class="sh_python">
+import gc
+import pprint
+import sys</p>
+
+<p>try:
+    threshold = int(sys.argv[1])
+except (IndexError, ValueError, TypeError):
+    print 'Missing or invalid threshold, using default'
+    threshold = 5</p>
+
+<p>class MyObj(object):
+    def __init__(self, name):
+        self.name = name
+        print 'Created', self.name</p>
+
+<p>gc.set_debug(gc.DEBUG_STATS) #设定debug方式</p>
+
+<p>gc.set_threshold(threshold, 1, 1) #默认的是(700,10,10)
+print 'Thresholds:', gc.get_threshold()</p>
+
+<p>print 'Clear the collector by forcing a run'
+gc.collect()
+print</p>
+
+<p>print 'Creating objects'
+objs = []
+for i in range(10):
+    objs.append(MyObj(i))  #在这个创建过程中根据阀值，比如sys.argv[1]＝5和sys.argv[1]＝2 后者频繁的多
+</pre></p>
+
+<p><pre class="sh_python">
+import gc</p>
+
+<p>flags = (gc.DEBUG_COLLECTABLE |
+         gc.DEBUG_UNCOLLECTABLE |
+         gc.DEBUG_OBJECTS
+         )  #暴露的内部运作，以上暴露其中的可达的属性，不可达的属性和对象属性的相关信息
+gc.set_debug(flags)</p>
+
+<p>class Graph(object):
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+        print 'Creating %s 0x%x (%s)' % (self.__class__.__name__, id(self), name)
+    def set_next(self, next):
+        print 'Linking nodes %s.next = %s' % (self, next)
+        self.next = next
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, self.name)</p>
+
+<p>class CleanupGraph(Graph):
+    def __del__(self):
+        print '%s.__del__()' % self</p>
+
+<p># Construct a graph cycle
+one = Graph('one')
+two = Graph('two')
+one.set_next(two)
+two.set_next(one)</p>
+
+<p>three = CleanupGraph('three')
+four = CleanupGraph('four')
+five = CleanupGraph('five')
+four.set_next(five)
+five.set_next(four)
+one = two = three = four = five = None
+print
+print 'Collecting'
+gc.collect()
+print 'Done'
+</pre>
+dongwm@linux-dongwm:~&gt; python test.py
+Creating Graph 0xb733522c (one)
+Creating Graph 0xb733524c (two)
+Linking nodes Graph(one).next = Graph(two)
+Linking nodes Graph(two).next = Graph(one)
+Creating CleanupGraph 0xb733526c (three)
+Creating CleanupGraph 0xb733528c (four)
+Creating CleanupGraph 0xb73352ac (five)
+Linking nodes CleanupGraph(four).next = CleanupGraph(five)
+Linking nodes CleanupGraph(five).next = CleanupGraph(four)
+CleanupGraph(three).__del__()</p>
+
+<p>Collecting
+gc: collectable &lt;Graph 0xb733522c&gt;
+gc: collectable &lt;Graph 0xb733524c&gt;
+gc: collectable &lt;dict 0xb733324c&gt;
+gc: collectable &lt;dict 0xb733357c&gt;
+gc: uncollectable &lt;CleanupGraph 0xb733528c&gt;
+gc: uncollectable &lt;CleanupGraph 0xb73352ac&gt;
+gc: uncollectable &lt;dict 0xb7333604&gt;
+gc: uncollectable &lt;dict 0xb733379c&gt;
+Done</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyufunctoolsyanjiu/">关于functools研究</a></h1>
     
     
@@ -1528,75 +1784,6 @@ def test1():
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuurlparseyanjiu/">关于urlparse研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：urlparse是一个用来解析http的url的模块</p>
-
-<p>例子：</p>
-
-<p><pre class="sh_python">
-import urlparse
-url = 'http://user:pass@NetLoc:80/path;parameters?query=argument#fragment'  #这个是设计的一个url
-parsed = urlparse.urlparse(url)   #urlparse.urlparse和urlparse.<tt>urlsplit的区别主要在path，后者不会分裁url的path地址</tt>
-print 'scheme  :', parsed.scheme  #url的协议
-print 'netloc  :', parsed.netloc  #服务器地址
-print 'path    :', parsed.path #url的路径
-print 'params  :', parsed.params #url中的参数和值
-print 'query   :', parsed.query #url的查询部分
-print 'fragment:', parsed.fragment #url的分片部分
-print 'username:', parsed.username #url登录用户的用户名称
-print 'password:', parsed.password #url登录用户的密码
-print 'hostname:', parsed.hostname, '(netloc in lower case)'  #url的主机名，自动转化成小写
-print 'port    :', parsed.port
-</pre></p>
-
-<p>结果是：</p>
-
-<p>scheme  : http
-netloc  : user:pass@NetLoc:80
-path    : /path  #假如是urlparse.<tt>urlsplit</tt>，结果为：/path;parameters
-params  : parameters  # #假如是urlparse.<tt>urlsplit</tt>，没有params
-query   : query=argument
-fragment: fragment
-username: user
-password: pass
-hostname: netloc (netloc in lower case)
-port    : 80</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1619,6 +1806,10 @@ port    : 80</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1654,10 +1845,6 @@ port    : 80</p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

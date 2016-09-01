@@ -141,6 +141,76 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/opensuseanzhuanganjuta/">Opensuse安装anjuta</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-27T00:00:00+08:00" pubdate data-updated="true">Feb 27<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>问题：以前使用anjuta在gentoo下调试c/c++程序，最近在opensuse11.4想使用anjuta，发现yast/zypper安装的anjuta不能新建项目，直接卡住，然后杀掉进程后再启动anjuta会停止在&#8221;加载调试器&#8221;这一步。</p>
+
+<p>解决：1 使用源码安装：http://ftp.gnome.org/pub/GNOME/sources/anjuta</p>
+
+<p>发现各个版本（从2.1.0到3.3）都有一些依赖关系，重新编译安装会对现在的系统造成影响，比如我安装了一个新版本的glib，造成xwindows启动不了，最后在修复模式卸载了才恢复</p>
+
+<p>2  使用jhbuild</p>
+
+<p>提示 在autogen的过程中： gtkdocize: command not found  失败</p>
+
+<p>3 根据anjuta官网wiki https://live.gnome.org/DeveloperTools/Installation 文档安装 还是同样的问题，不能新建项目</p>
+
+<p>最终解决办法：</p>
+
+<p>从github上面找了一个anjuta源码版本：</p>
+
+<p>https://github.com/abderrahim/anjuta.git
+过程：</p>
+
+<p>dongwm@linux-dongwm:~&gt; git clone https://github.com/abderrahim/anjuta.git
+cd anjuta/
+./autogen.sh</p>
+
+<p>make</p>
+
+<p>sudo make install</p>
+
+<p>因为默认安装在/use/local下，需要</p>
+
+<p>sudo vi /etc/ld.so.conf
+添加一行： /usr/local/lib</p>
+
+<p>sudo /sbin/ldconfig</p>
+
+<p>这个anjuta正常了</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/gentoobijishigentooguanliruanjianzongjie/">Gentoo笔记（十）gentoo管理软件总结</a></h1>
     
     
@@ -1082,62 +1152,6 @@ dbh.users.remove(None, safe=True) #删除用户集合中的所有文档</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8python%E7%A8%8B%E5%BA%8F%E7%A7%BB%E9%99%A4mwindows%E6%8D%A2%E8%A1%8C%E7%AC%A6/">使用python程序移除文件中的“^M”(windows换行符)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-31T00:00:00+08:00" pubdate data-updated="true">Jan 31<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：<span><em>windows换行符</em>的文本在unix下编辑时显示^M，有时候编辑起来很不爽，使用这个程序可以去除windows换行符</span></p>
-
-<p><pre class="sh_python">
-import os
-import sys
-import tempfile</p>
-
-<p>def main():
-    filename = sys.argv[1]
-    with tempfile.NamedTemporaryFile(delete=False) as fh:
-        for line in open(filename):
-            line = line.rstrip()
-            fh.write(line + '\n')
-        os.rename(filename, filename + '.bak')
-        os.rename(fh.name, filename)</p>
-
-<p>if __name__ == '__main__':
-    main()
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/21/">&larr; Older</a></li>
@@ -1160,6 +1174,10 @@ import tempfile</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1195,10 +1213,6 @@ import tempfile</p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

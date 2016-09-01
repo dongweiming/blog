@@ -141,6 +141,63 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/pythonfasongyoujian/">Python 发送中文邮件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-08T00:00:00+08:00" pubdate data-updated="true">Jul 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>发送邮件直接参考本文</p>
+
+<p>mail_server = &#8216;mail@dongwm.com&#8217;
+mail_server_port = 25
+mail_user=&#8217;ops@dongwm.com&#8217;
+mail_list = [&#8216;dongwm@dongwm.com&#8217;,&#8217;XXX@dongwm.com&#8217;]
+sub=&#8217;邮件标题内容‘</p>
+
+<p>content=&#8217;邮件内容&#8217;</p>
+
+<p>def send_mail(mail_list,sub,content):
+msg=email.MIMEText.MIMEText(content,_subtype=&#8217;plain&#8217;,_charset=&#8217;gb2312&#8217;)
+msg[&#8216;Subject&#8217;] = sub
+msg[&#8216;From&#8217;] = &#8216;ops@dongwm.com&#8217;
+msg[&#8216;To&#8217;] = &#8220;;&#8221;.join(mail_list)
+msg[&#8216;date&#8217;]=time.ctime()
+me = mail_user+&#8217;&lt;&#8217;+mail_user+&#8217;@&#8217;+&#8217;dongwm.com+&#8217;&gt;&#8217;
+body=email.MIMEText.MIMEText(content,_charset=&#8217;gb2312&#8217;)
+bb =msg.as_string()+body.as_string()
+s = smtplib.SMTP(mail_server, mail_server_port)
+s.sendmail(me,mail_list,msg.as_string())
+s.quit()</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/centos%E4%B8%8Bvsftpd%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%9E%B6%E8%AE%BEftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">STP特性总结（一）</a></h1>
     
     
@@ -774,67 +831,6 @@ yum install kernel-devel-2.6.35.6-45.fc14.i686  dkms -y</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/fedora-ubuntu-%E6%B7%BB%E5%8A%A0%E5%AF%B9%E6%96%B9grub%E8%8F%9C%E5%8D%95/">Fedora Ubuntu 添加对方grub菜单</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-01T00:00:00+08:00" pubdate data-updated="true">May 1<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>这几天折腾ubuntu11.04，结果把我的opensuse弄坏了&#8230;索性直接换成了fedora。乘机研究了下grub2，以及各个操作系统之间的启动菜单的一些特性。
-1 先fedora，后ubuntu
-进入ubuntu系统：
-<pre class="sh_bash">sudo grub-install /dev/sda //安装grub到硬盘mbr，一般系统会自动搜索到
-sudo update-grub2  //更新grub.cfg</pre>
-进入ubuntuliveCD：
-<pre class="sh_bash">sudo su
-mount /dev/sdaX /mnt //挂载系统文件 我这里是根分区
-mount /dev/sdaY /tmp/boot  //挂载boot分区
-cp -rp /tmp/boot/* /mnt/boot //我直接挂载/mnt/boot有问题，所以用这种简介方式，把/boot文件考到/mnt/boot下
-grub-install --root-directory=/mnt /dev/sda --force   //强制安装grub到硬盘mbr root目录是指定的/mnt
-update-grub2  //更新grub.cfg
-注：mbr信息可以执行如下脚本取得：
-http://nchc.dl.sourceforge.net/project/bootinfoscript/bootinfoscript/0.55/boot_info_script055.sh</strong></p>
-
-<p><strong></pre>
-</strong></p>
-
-<p><strong>2 先</strong><strong>ubuntu</strong><strong>，后</strong><strong>fedora</strong></p>
-
-<p><pre class="sh_bash">sudo gedit /boot/grub/menu.lst
-title Ubuntu
-root (hd0,9)  //根目录所在分区，根据上面的脚本自己调整
-kernel /vmlinuz-2.6.38-8-generic root=UUID=7319d96d-4c6e-4e00-84b4-f5ed70052456 ro   quiet splash vt.handoff=7
-可以直接把ubuntu分区上的grub.cfg上的相同字段 linux 行的内容复制
-initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相同字段 /initrd 内容</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/27/">&larr; Older</a></li>
@@ -857,6 +853,10 @@ initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相�
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -892,10 +892,6 @@ initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相�
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

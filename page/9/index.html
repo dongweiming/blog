@@ -141,6 +141,434 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengba/">SQLAlchemy教程(八)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>本文主要是讲关于sqlalchemy的扩展</strong></p>
+
+<p>扩展其实就是一些外部的插件,比如sqlsoup,associationproxy,declarative,horizontal_shard等等</p>
+
+<p><strong>1 declarative</strong></p>
+
+<p>假如想要数据映射,以前的做法是:</p>
+
+<p><pre class="sh_python">
+from sqlalchemy import create_engine
+from sqlalchemy import Column, MetaData, Table
+from sqlalchemy import Integer, String, ForeignKey
+from sqlalchemy.orm import mapper, sessionmaker</p>
+
+<p>class User(object): #简单类
+    def __init__(self, name, fullname, password):
+        self.name = name
+        self.fullname = fullname
+        self.password = password
+    def __repr__(self):
+        return "&lt;User('%s','%s', '%s')&gt;" % (self.name, self.fullname, self.password)
+metadata = MetaData()
+users_table = Table('users', metadata,
+Column('user_id', Integer, primary_key=True),
+Column('name', String),
+Column('fullname', String),
+Column('password', String)
+)
+email_table = Table('email', metadata,
+Column('email_id', Integer, primary_key=True),
+Column('email_address', String),
+Column('user_id', Integer, ForeignKey('users.user_id'))
+)
+metadata.create_all(engine)</p>
+
+<p>mapper(User, users_table) #映射
+</pre></p>
+
+<p>但是我们可以该换风格,可以用这样的方法:</p>
+
+<p><pre class="sh_python">
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import backref, mapper, relation, sessionmaker</p>
+
+<p>Base = declarative_base()</p>
+
+<p>class User(Base):
+    __tablename__ = "users" #设定接收映射的表名
+    id = Column(Integer, primary_key=True) #将表结构写到类里面
+    name = Column(String)
+    fullname = Column(String)
+    password = Column(String)
+    def __init__(self, name, fullname, password):
+        self.name = name
+        self.fullname = fullname
+        self.password = password
+    def __repr__(self):
+        return "&lt;User('%s','%s', '%s')&gt;" % (self.name, self.fullname, self.password)</p>
+
+<p>class Address(Base):
+    __tablename__ = "addresses"
+    id = Column(Integer, primary_key=True)
+    email_address = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relation(User, backref=backref('addresses', order_by=id)) #创建双向关系,标识以user的id为连接,也就是说:Address到User是多对一,User到Address是一对多
+    def __init__(self, email_address):
+        self.email_address = email_address
+    def __repr__(self):
+        return "&lt;Address('%s')&gt;" % self.email_address
+engine = create_engine("sqlite:///tutorial.db", echo=True)</p>
+
+<p>users_table = User.__table__ #获取User表对象句柄
+metadata = Base.metadata #获取metadata句柄
+metadata.create_all(engine)
+</pre></p>
+
+<p>下面具体说:</p>
+
+<p>engine = create_engine(&#8216;sqlite://&#8217;) #创建引擎
+Base.metadata.create_all(engine) #常见表
+Base.metadata.bind = create_engine(&#8216;sqlite://&#8217;) #绑定
+Base = declarative_base(bind=create_engine(&#8216;sqlite://&#8217;)) #绑定引擎
+mymetadata = MetaData()
+Base = declarative_base(metadata=mymetadata) #设定元数据<strong>设定简单关系:</strong>
+class User(Base):
+__tablename__ = &#8216;users&#8217;id = Column(Integer, primary_key=True)
+name = Column(String(50))
+addresses = relationship(&#8220;Address&#8221;, backref=&#8221;user&#8221;) #relationship其实就是relation的全称</p>
+
+<p>class Address(Base):
+__tablename__ = &#8216;addresses&#8217;</p>
+
+<p>id = Column(Integer, primary_key=True)
+email = Column(String(50))
+user_id = Column(Integer, ForeignKey(&#8216;users.id&#8217;))
+<strong>设定多对多关系:</strong>
+keywords = Table(
+&#8216;keywords&#8217;, Base.metadata,
+Column(&#8216;author_id&#8217;, Integer, ForeignKey(&#8216;authors.id&#8217;)),
+Column(&#8216;keyword_id&#8217;, Integer, ForeignKey(&#8216;keywords.id&#8217;))
+)
+class Author(Base):
+__tablename__ = &#8216;authors&#8217;
+id = Column(Integer, primary_key=True)
+keywords = relationship(&#8220;Keyword&#8221;, secondary=keywords)
+<strong>定义SQL表达式:</strong>
+class MyClass(Base):
+__tablename__ = &#8216;sometable&#8217;
+__table_args__ = {&#8216;mysql_engine&#8217;:&#8217;InnoDB&#8217;} #名字,映射类,元数据之外的指定需要使用__table_args__</p>
+
+<p>或者:
+class MyClass(Base):
+__tablename__ = &#8216;sometable&#8217;
+__table_args__ = (
+ForeignKeyConstraint([&#8216;id&#8217;], [&#8216;remote_table.id&#8217;]), #元组方式
+UniqueConstraint(&#8216;foo&#8217;),
+)</p>
+
+<p>或者:
+class MyClass(Base):
+__tablename__ = &#8216;sometable&#8217;
+__table_args__ = (
+ForeignKeyConstraint([&#8216;id&#8217;], [&#8216;remote_table.id&#8217;]),
+UniqueConstraint(&#8216;foo&#8217;),
+{&#8216;autoload&#8217;:True} #最后的参数可以用字典 想想*argsand **kwargs
+)
+<strong>使用混合式:</strong>
+class MyClass(Base):
+__table__ = Table(&#8216;my_table&#8217;, Base.metadata, #在__table__里指定表结构
+Column(&#8216;id&#8217;, Integer, primary_key=True),
+Column(&#8216;name&#8217;, String(50))
+)
+<strong>2 sqlsoup(在sqlalchemy0.8版本后他变成了一个独立的项目,http://pypi.python.org/pypi/sqlsoup,</strong></p>
+
+<p><strong>而我使用gentoo提供的0.7.8版本,以下的程序import部分可能不适用更高版本,而需要import sqlsoup)</strong></p>
+
+<p>sqlsoup提供一个方便的访问数据库的接方式,而无需创建类,映射数据库</p>
+
+<p>还是看例子的对比:</p>
+
+<p>用以前的方式创建一个数据库并且插入一些数据:</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy import *
+&gt;&gt;&gt; engine = create_engine(&#8216;sqlite:///dongwm.db&#8217;)
+&gt;&gt;&gt; metadata = MetaData(engine)
+&gt;&gt;&gt; product_table = Table(
+&#8230;     &#8216;product&#8217;, metadata,
+&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
+&#8230;     Column(&#8216;msrp&#8217;, Numeric))
+&gt;&gt;&gt; store_table = Table(
+&#8230;     &#8216;store&#8217;, metadata,
+&#8230;     Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230;     Column(&#8216;name&#8217;, Unicode(255)))
+&gt;&gt;&gt; product_price_table = Table(
+&#8230;     &#8216;product_price&#8217;, metadata,
+&#8230; Column(&#8216;sku2&#8217;, None, ForeignKey(&#8216;product.sku&#8217;), primary_key=True),
+&#8230; Column(&#8216;store_id&#8217;, None, ForeignKey(&#8216;store.id&#8217;), primary_key=True),
+&#8230;     Column(&#8216;price&#8217;, Numeric, default=0))
+&gt;&gt;&gt; metadata.create_all()
+&gt;&gt;&gt; stmt = product_table.insert()
+&gt;&gt;&gt; stmt.execute([dict(sku=&#8221;123&#8221;, msrp=12.34),
+&#8230;               dict(sku=&#8221;456&#8221;, msrp=22.12),
+&#8230;               dict(sku=&#8221;789&#8221;, msrp=41.44)])
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x84fbdcc&gt;
+&gt;&gt;&gt; stmt = store_table.insert()
+&gt;&gt;&gt; stmt.execute([dict(name=&#8221;Main Store&#8221;),
+&#8230;               dict(name=&#8221;Secondary Store&#8221;)])
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x850068c&gt;
+&gt;&gt;&gt; stmt = product_price_table.insert()
+&gt;&gt;&gt; stmt.execute([dict(store_id=1, sku=&#8221;123&#8221;),
+&#8230;               dict(store_id=1, sku2=&#8221;456&#8221;),
+&#8230;               dict(store_id=1, sku2=&#8221;789&#8221;),
+&#8230;               dict(store_id=2, sku2=&#8221;123&#8221;),
+&#8230;               dict(store_id=2, sku2=&#8221;456&#8221;),
+&#8230;               dict(store_id=2, sku2=&#8221;789&#8221;)])
+&lt;sqlalchemy.engine.base.ResultProxy object at 0x85008cc&gt;
+创建插入完毕,然后我们用sqlsoup连接操作:</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy.ext.sqlsoup import SqlSoup
+&gt;&gt;&gt; db = SqlSoup(&#8216;sqlite:///dongwm.db&#8217;)  #连接一个存在的数据库
+&gt;&gt;&gt; print db.product.all() #打印结果
+[MappedProduct(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;)), MappedProduct(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;)), MappedProduct(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;))]
+&gt;&gt;&gt; print db.product.get(&#8216;123&#8217;) #是不是比session.query(Product)简单呢?
+MappedProduct(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;))</p>
+
+<p>注:假如想创建一个数据库: db = SqlSoup(&#8216;sqlite:///:memory:&#8217;)</p>
+
+<p>&gt;&gt;&gt; newprod = db.product.insert(sku=&#8217;111&#8217;, msrp=22.44) #没有使用数据映射的插入
+&gt;&gt;&gt; db.flush()
+&gt;&gt;&gt; db.clear() #调用底层,清除所有session实例,它是session.expunge_all的别名
+&gt;&gt;&gt; db.product.all()
+[MappedProduct(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;)), MappedProduct(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;)), MappedProduct(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;)), MappedProduct(sku=u&#8217;111&#8217;,msrp=Decimal(&#8216;22.4400000000&#8217;))] #新条目已经存在了
+#MappedProduct使用__getattr__将无法识别的属性和访问方法转发到它的query属性,它还提供了一些数据处理功能用于更新</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy import or_, and_, desc
+&gt;&gt;&gt; where = or_(db.product.sku==&#8217;123&#8217;, db.product.sku==&#8217;111&#8217;)
+&gt;&gt;&gt; db.product.filter(where).order_by(desc(db.product.msrp)).all() #这样使用多条件过滤,降序排练
+[MappedProduct(sku=&#8217;111&#8217;,msrp=22.44), MappedProduct(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;))]</p>
+
+<p>&gt;&gt;&gt; join1 = db.join(db.product, db.product_price, isouter=True) #关联2个表, isouter=True确保LEFT OUTER(还没理解)
+&gt;&gt;&gt; join1.all()
+[MappedJoin(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;),sku2=u&#8217;123&#8217;,store_id=1,price=Decimal(&#8216;0E-10&#8217;)),  #这个字段包含了2个表的相应字段
+MappedJoin(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;),sku2=u&#8217;123&#8217;,store_id=2,price=Decimal(&#8216;0E-10&#8217;)), MappedJoin(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;),sku2=u&#8217;456&#8217;,store_id=1,price=Decimal(&#8216;0E-10&#8217;)), MappedJoin(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;),sku2=u&#8217;456&#8217;,store_id=2,price=Decimal(&#8216;0E-10&#8217;)), MappedJoin(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;),sku2=u&#8217;789&#8217;,store_id=1,price=Decimal(&#8216;0E-10&#8217;)), MappedJoin(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;),sku2=u&#8217;789&#8217;,store_id=2,price=Decimal(&#8216;0E-10&#8217;)), MappedJoin(sku=u&#8217;111&#8217;,msrp=Decimal(&#8216;22.4400000000&#8217;),sku2=None,store_id=None,price=None)]
+&gt;&gt;&gt; join2 = db.join(join1, db.store, isouter=True) #将store表也关联进来(因为也有一个外键),就是关联三个表
+&gt;&gt;&gt; join2.all()
+[MappedJoin(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;),sku2=u&#8217;123&#8217;,store_id=1,price=Decimal(&#8216;0E-10&#8217;),id=1,name=u&#8217;Main Store&#8217;), MappedJoin(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;),sku2=u&#8217;123&#8217;,store_id=2,price=Decimal(&#8216;0E-10&#8217;),id=2,name=u&#8217;Secondary Store&#8217;), MappedJoin(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;),sku2=u&#8217;456&#8217;,store_id=1,price=Decimal(&#8216;0E-10&#8217;),id=1,name=u&#8217;Main Store&#8217;), MappedJoin(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;),sku2=u&#8217;456&#8217;,store_id=2,price=Decimal(&#8216;0E-10&#8217;),id=2,name=u&#8217;Secondary Store&#8217;), MappedJoin(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;),sku2=u&#8217;789&#8217;,store_id=1,price=Decimal(&#8216;0E-10&#8217;),id=1,name=u&#8217;Main Store&#8217;), MappedJoin(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;),sku2=u&#8217;789&#8217;,store_id=2,price=Decimal(&#8216;0E-10&#8217;),id=2,name=u&#8217;Secondary Store&#8217;), MappedJoin(sku=u&#8217;111&#8217;,msrp=Decimal(&#8216;22.4400000000&#8217;),sku2=None,store_id=None,price=None,id=None,name=None)]
+&gt;&gt;&gt; join3 = db.with_labels(join1) #根据原籍标记,比如sku会说出:product_sku,告诉你它来着product表,但是指定了jion1,就不会标识关于store的表
+&gt;&gt;&gt; join3.first()
+MappedJoin(product_sku=u&#8217;123&#8217;,product_msrp=Decimal(&#8216;12.3400000000&#8217;),product_price_sku2=u&#8217;123&#8217;,product_price_store_id=1,product_price_price=Decimal(&#8216;0E-10&#8217;))
+&gt;&gt;&gt; db.with_labels(join2).first()
+MappedJoin(product_sku=u&#8217;123&#8217;,product_msrp=Decimal(&#8216;12.3400000000&#8217;),product_price_sku2=u&#8217;123&#8217;,product_price_store_id=1,product_price_price=Decimal(&#8216;0E-10&#8217;),store_id=1,store_name=u&#8217;Main Store&#8217;)
+&gt;&gt;&gt; labelled_product = db.with_labels(db.product)
+&gt;&gt;&gt; join4 = db.join(labelled_product, db.product_price,  isouter=True)
+&gt;&gt;&gt; join4.first()
+MappedJoin(product_sku=u&#8217;123&#8217;,product_msrp=Decimal(&#8216;12.3400000000&#8217;),sku2=u&#8217;123&#8217;,store_id=1,price=Decimal(&#8216;0E-10&#8217;))</p>
+
+<p>&gt;&gt;&gt; db.clear()
+&gt;&gt;&gt; join5 = db.join(db.product, db.product_price)
+&gt;&gt;&gt; s = select([db.product._table,
+&#8230;     func.avg(join5.c.price).label(&#8216;avg_price&#8217;)], #添加一个字段计算产品(product)的price平均值,字段名为avg_price
+&#8230;     from_obj=[join5._table],
+&#8230;     group_by=[join5.c.sku])
+&gt;&gt;&gt; s = s.alias(&#8216;products_with_avg_price&#8217;) #它是from sqlalchemy import alias; a = alias(self, name=name)的简写
+&gt;&gt;&gt; products_with_avg_price = db.map(s, primary_key=[join5.c.sku]) #因为没有映射到表或者join，需要指定如何找到主键
+&gt;&gt;&gt; products_with_avg_price.all()
+[MappedJoin(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;),avg_price=0.0), MappedJoin(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;),avg_price=0.0), MappedJoin(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;),avg_price=0.0)]
+&gt;&gt;&gt; db.product_price.first().price = 50.00
+&gt;&gt;&gt; db.flush()
+&gt;&gt;&gt; products_with_avg_price.all()
+[MappedJoin(sku=u&#8217;123&#8217;,msrp=Decimal(&#8216;12.3400000000&#8217;),avg_price=0.0), MappedJoin(sku=u&#8217;456&#8217;,msrp=Decimal(&#8216;22.1200000000&#8217;),avg_price=0.0), MappedJoin(sku=u&#8217;789&#8217;,msrp=Decimal(&#8216;41.4400000000&#8217;),avg_price=0.0)]
+&gt;&gt;&gt; db.products_with_avg_price = products_with_avg_price #保存映射到db,方便重用
+&gt;&gt;&gt; msrp=select([db.product.c.msrp],
+&#8230;     db.product.sku==db.product_price.sku2) #获取sku和sku2相等时候msrp的值
+&gt;&gt;&gt; db.product_price.update(  #更新数据
+&#8230;     values=dict(price=msrp),synchronize_session=False) #设置price这个字段值为上面对应的msrp</p>
+
+<p>6
+&gt;&gt;&gt; db.product_price.all()
+[MappedProduct_price(sku2=u&#8217;123&#8217;,store_id=1,price=Decimal(&#8216;12.3400000000&#8217;)), MappedProduct_price(sku2=u&#8217;456&#8217;,store_id=1,price=Decimal(&#8216;22.1200000000&#8217;)), MappedProduct_price(sku2=u&#8217;789&#8217;,store_id=1,price=Decimal(&#8216;41.4400000000&#8217;)), MappedProduct_price(sku2=u&#8217;123&#8217;,store_id=2,price=Decimal(&#8216;12.3400000000&#8217;)), MappedProduct_price(sku2=u&#8217;456&#8217;,store_id=2,price=Decimal(&#8216;22.1200000000&#8217;)), MappedProduct_price(sku2=u&#8217;789&#8217;,store_id=2,price=Decimal(&#8216;41.4400000000&#8217;))]</p>
+
+<p><strong>3 associationproxy</strong></p>
+
+<p>associationproxy用于创建一个读/写整个关系的目标属性</p>
+
+<p>看一个例子就懂了:</p>
+
+<p>&gt;&gt;&gt; user_table = Table(
+&#8230;     &#8216;user&#8217;, metadata,
+&#8230;     Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230;     Column(&#8216;user_name&#8217;, String(255), unique=True),
+&#8230;     Column(&#8216;password&#8217;, String(255)))
+&gt;&gt;&gt; brand_table = Table(
+&#8230;     &#8216;brand&#8217;, metadata,
+&#8230;     Column(&#8216;id&#8217;, Integer, primary_key=True),
+&#8230;     Column(&#8216;name&#8217;, String(255)))
+&gt;&gt;&gt; sales_rep_table = Table(
+&#8230;     &#8216;sales_rep&#8217;, metadata,
+&#8230; Column(&#8216;brand_id&#8217;, None, ForeignKey(&#8216;brand.id&#8217;), primary_key=True),
+&#8230; Column(&#8216;user_id&#8217;, None, ForeignKey(&#8216;user.id&#8217;), primary_key=True),
+&#8230;     Column(&#8216;commission_pct&#8217;, Integer, default=0))
+&gt;&gt;&gt; class User(object): pass
+&#8230;
+&gt;&gt;&gt; class Brand(object): pass
+&#8230;
+&gt;&gt;&gt; class SalesRep(object): pass
+&#8230;
+&gt;&gt;&gt; mapper(User, user_table, properties=dict(
+&#8230;     sales_rep=relation(SalesRep, backref=&#8217;user&#8217;, uselist=False)))
+&lt;Mapper at 0x87472ec; User&gt;
+&gt;&gt;&gt; mapper(Brand, brand_table, properties=dict(
+&#8230;     sales_reps=relation(SalesRep, backref=&#8217;brand&#8217;)))
+&lt;Mapper at 0x874770c; Brand&gt;
+&gt;&gt;&gt; mapper(SalesRep, sales_rep_table)
+&lt;Mapper at 0x874768c; SalesRep&gt;</p>
+
+<p>ORM完成,但是假如我们想要brand(品牌)类对象的一个所有SalesReps for Brand(品牌的销售代表)的User列表属性,可以这样:</p>
+
+<p>class Brand(object):
+@property
+def users(self):
+return [ sr.user for sr in self.sales_reps ]</p>
+
+<p>但是不方便增加删除,而使用association_proxy:</p>
+
+<p>&gt;&gt;&gt; from sqlalchemy.ext.associationproxy import association_proxy
+&gt;&gt;&gt; class Brand(object):
+&#8230;         users=association_proxy(&#8216;sales_reps&#8217;, &#8216;user&#8217;)
+&#8230;</p>
+
+<p>或者:</p>
+
+<p>mapper(Brand, brand_table, properties=dict(
+sales_reps=relation(SalesRep, backref=&#8217;brand&#8217;)))
+Brand.users=association_proxy(&#8216;sales_reps&#8217;, &#8216;user&#8217;)#优点是维持了域对象</p>
+
+<p>我们需要修改类,增加属性:</p>
+
+<p>class User(object):
+def __init__(self, user_name=None, password=None):
+self.user_name=user_name
+self.password=password</p>
+
+<p>class Brand(object):
+def __init__(self, name=None):
+self.name = name</p>
+
+<p>class SalesRep(object):
+def __init__(self, user=None, brand=None, commission_pct=0):
+self.user = user
+self.brand = brand
+self.commission_pct=commission_pct</p>
+
+<p>看下面的效果:</p>
+
+<p>&gt;&gt;&gt; b = Brand(&#8216;Cool Clothing&#8217;)
+&gt;&gt;&gt; session.add(b)
+&gt;&gt;&gt; u = User(&#8216;rick&#8217;, &#8216;foo&#8217;)
+&gt;&gt;&gt; session.add(u)
+&gt;&gt;&gt; session.flush()
+2012-07-20 12:22:33,191 INFO sqlalchemy.engine.base.Engine INSERT INTO user (user_name, password) VALUES (?, ?)
+2012-07-20 12:22:33,191 INFO sqlalchemy.engine.base.Engine (&#8216;rick&#8217;, &#8216;foo&#8217;)
+2012-07-20 12:22:33,191 INFO sqlalchemy.engine.base.Engine INSERT INTO brand (name) VALUES (?)
+2012-07-20 12:22:33,191 INFO sqlalchemy.engine.base.Engine (&#8216;Cool Clothing&#8217;,)
+&gt;&gt;&gt; b.users
+2012-07-20 12:22:42,135 INFO sqlalchemy.engine.base.Engine SELECT sales_rep.brand_id AS sales_rep_brand_id, sales_rep.user_id AS sales_rep_user_id, sales_rep.commission_pct AS sales_rep_commission_pct
+FROM sales_rep
+WHERE ? = sales_rep.brand_id
+2012-07-20 12:22:42,135 INFO sqlalchemy.engine.base.Engine (2,)
+[]
+&gt;&gt;&gt; b.users.append(u) #自动创建一个单一的位置参数调用其中介(SalesRep)对象
+2012-07-20 12:22:46,782 INFO sqlalchemy.engine.base.Engine SELECT sales_rep.brand_id AS sales_rep_brand_id, sales_rep.user_id AS sales_rep_user_id, sales_rep.commission_pct AS sales_rep_commission_pct
+FROM sales_rep
+WHERE ? = sales_rep.user_id
+2012-07-20 12:22:46,782 INFO sqlalchemy.engine.base.Engine (2,)
+&gt;&gt;&gt; b.users
+[&lt;__main__.User object at 0x87d7b6c&gt;]
+&gt;&gt;&gt; b.sales_reps
+[&lt;__main__.SalesRep object at 0x87d7c4c&gt;]
+&gt;&gt;&gt; b.sales_reps[0].commission_pct
+0
+&gt;&gt;&gt; session.flush()
+2012-07-20 12:23:14,215 INFO sqlalchemy.engine.base.Engine INSERT INTO sales_rep (brand_id, user_id, commission_pct) VALUES (?, ?, ?)
+2012-07-20 12:23:14,215 INFO sqlalchemy.engine.base.Engine (2, 2, 0)</p>
+
+<p>更复杂的想法给销售人员一个10%的提成:</p>
+
+<p>Brand.users=association_proxy(
+&#8216;sales_reps&#8217;, &#8216;user&#8217;,
+creator=lambda u:SalesRep(user=u, commission_pct=10))</p>
+
+<p>假设我们想要的品牌属性是一个附带User和佣金commission_pct的字典:</p>
+
+<p>from sqlalchemy.orm.collections import attribute_mapped_collection
+&gt;&gt;&gt; from sqlalchemy.orm.collections import attribute_mapped_collection
+&gt;&gt;&gt; reps_by_user_class=attribute_mapped_collection(&#8216;user&#8217;)
+&gt;&gt;&gt; clear_mappers()
+&gt;&gt;&gt; mapper(Brand, brand_table, properties=dict(
+&#8230;     sales_reps_by_user=relation(
+&#8230;         SalesRep, backref=&#8217;brand&#8217;,
+&#8230;         collection_class=reps_by_user_class)))
+&lt;Mapper at 0x862c5ec; Brand&gt;</p>
+
+<p>&gt;&gt;&gt; Brand.commissions=association_proxy(
+&#8230;     &#8216;sales_reps_by_user&#8217;, &#8216;commission_pct&#8217;,
+&#8230;     creator=lambda key,value: SalesRep(user=key, commission_pct=value))
+&gt;&gt;&gt; mapper(User, user_table, properties=dict(
+&#8230;     sales_rep=relation(SalesRep, backref=&#8217;user&#8217;, uselist=False)))
+&lt;Mapper at 0x8764b2c; User&gt;
+&gt;&gt;&gt; mapper(SalesRep, sales_rep_table)
+&lt;Mapper at 0x87bb4cc; SalesRep&gt;
+&gt;&gt;&gt; b = session.query(Brand).get(1)
+&gt;&gt;&gt; u = session.query(User).get(1)
+&gt;&gt;&gt; b.commissions[u] = 20
+&gt;&gt;&gt; session.bind.echo = False
+&gt;&gt;&gt; session.flush()
+&gt;&gt;&gt; b = session.query(Brand).get(1)
+&gt;&gt;&gt; u = session.query(User).get(1)
+&gt;&gt;&gt; u.user_name
+u&#8217;dongwm&#8217;
+&gt;&gt;&gt; print b.commissions[u]
+20
+&gt;&gt;&gt; print b.sales_reps_by_user[u] #代理和原来的关系是自动同步的
+&lt;__main__.SalesRep object at 0x87e3dcc&gt;
+&gt;&gt;&gt; print b.sales_reps_by_user[u].commission_pct
+20</p>
+
+<p>&nbsp;
+<div></div>
+&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengyi/">SQLAlchemy教程(一)</a></h1>
     
     
@@ -3286,205 +3714,6 @@ Thread-2 stopped in block at line 14 of test.py</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyusysyanjiuer/">关于sys研究（二）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><pre class="sh_python">
-import sys
-print 'Arguments:', sys.argv #命令行参数
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~ python test.py -h
-Arguments: [&#8216;test.py&#8217;, &#8216;-h&#8217;]
-<pre class="sh_python">
-import sys</p>
-
-<p>print sys.stderr, 'STATUS: Reading from stdin' #<tt>stderr</tt>被用于警告或错误信息使用</p>
-
-<p>data = sys.stdin.read()  #输入流保存</p>
-
-<p>print sys.stderr, 'STATUS: Writing data to stdout'</p>
-
-<p>sys.stdout.write(data) #打印数据
-sys.stdout.flush() #将stdout实时自动刷出来</p>
-
-<p>print sys.stderr, 'STATUS: Done'
-</pre></p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>exit_code = int(sys.argv[1])
-sys.exit(exit_code) #设置退出时候的code，正常执行是0，不正常就是非0
-</pre></p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>one = []
-print 'At start         :', sys.getrefcount(one) #Python使用<em>引用计数</em>和<em>垃圾收集</em>的自动内存管理。一个对象被自动标记被收集时，它的引用计数下降到零,使用<tt>getrefcount（）</tt>审查现有对象的引用计数
-<tt></tt>two = one
-print 'Second reference :', sys.getrefcount(one)
-del two
-print 'After del        :', sys.getrefcount(one)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-At start         : 2
-Second reference : 3
-After del        : 2
-<pre class="sh_python">
-import sys</p>
-
-<p>class OldStyle:
-    pass</p>
-
-<p>class NewStyle(object):
-    pass</p>
-
-<p>for obj in [ [], (), {}, 'c', 'string', 1, 2.3, 
-             OldStyle, OldStyle(), NewStyle, NewStyle(),
-             ]:    
-    print '%10s : %s' % (type(obj).__name__, sys.getsizeof(obj)) #各种类型对象的大小
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-list : 32
-tuple : 24
-dict : 136
-str : 25
-str : 30
-int : 12
-float : 16
-classobj : 44
-instance : 32
-type : 448
-NewStyle : 28
-<pre class="sh_python">
-import sys</p>
-
-<p>class WithoutAttributes(object):
-    pass</p>
-
-<p>class WithAttributes(object):
-    def __init__(self):
-        self.a = 'a'
-        self.b = 'b'
-        return</p>
-
-<p>without_attrs = WithoutAttributes()
-print 'WithoutAttributes:', sys.getsizeof(without_attrs)</p>
-
-<p>with_attrs = WithAttributes()
-print 'WithAttributes:', sys.getsizeof(with_attrs)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-WithoutAttributes: 28
-WithAttributes: 28 #带属性的和不带属性的类竟然一样大看下面的例子，通过聚合对象的 属性的大小来计算：</p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>class WithAttributes(object):
-    def __init__(self):
-        self.a = 'a'
-        self.b = 'b'
-        return
-    def __sizeof__(self):
-        return object.__sizeof__(self) + \
-            sum(sys.getsizeof(v) for v in self.__dict__.values())</p>
-
-<p>my_inst = WithAttributes()
-print sys.getsizeof(my_inst)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-78  #这样就不是28，这样就合理了</p>
-
-<p><pre class="sh_python">
-import sys</p>
-
-<p>print 'Initial limit:', sys.getrecursionlimit()  #得到递归的次数，要不然不停的自己调用自己会引起崩溃
-sys.setrecursionlimit(10) #设置递归的次数</p>
-
-<p>print 'Modified limit:', sys.getrecursionlimit()</p>
-
-<p>def generate_recursion_error(i):
-    print 'generate_recursion_error(%s)' % i
-    generate_recursion_error(i+1) #不断的递归调用自己，但是计数加+1</p>
-
-<p>try:
-    generate_recursion_error(1)
-except RuntimeError, err:
-    print 'Caught exception:', err
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-vkmz:~&gt; python test.py
-Initial limit: 1000 #默认可递归的次数为1000
-Modified limit: 10
-generate_recursion_error(1)
-generate_recursion_error(2)
-generate_recursion_error(3)
-generate_recursion_error(4)
-generate_recursion_error(5)
-generate_recursion_error(6)
-generate_recursion_error(7)
-generate_recursion_error(8)
-Caught exception: maximum recursion depth exceeded while getting the str of an object #到达递归限制
-<pre class="sh_python">
-import sys</p>
-
-<p>print 'maxint    :', sys.maxint #python支持的最大数字
-print 'maxsize   :', sys.maxsize #python支持的最大的数据大小
-print 'maxunicode:', sys.maxunicode #支持 Unicode的最大整数
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/10/">&larr; Older</a></li>
@@ -3507,6 +3736,10 @@ print 'maxunicode:', sys.maxunicode #支持 Unicode的最大整数
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -3542,10 +3775,6 @@ print 'maxunicode:', sys.maxunicode #支持 Unicode的最大整数
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

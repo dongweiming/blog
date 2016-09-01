@@ -141,6 +141,111 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/ptpython-a-better-python-repl/">Ptpython- a Better Python REPL</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-26T21:29:00+08:00" pubdate data-updated="true">Jan 26<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>今天发现一个项目: <a href="https://github.com/jonathanslenders/ptpython">ptpython</a>. 新一代的REPL神器. 玩了一下. 毅然的ipython换成了ptipython - ptpython自带的
+iython的接口. 和大家介绍下</p>
+
+<h4 id="ptpython">ptpython的优点</h4>
+
+<p>先说几个在用ipython过程中遇到的问题吧.</p>
+
+<ol>
+  <li>ipython在Mac下缩进问题. 每次在交互模式里面输入一个缩进的内容, 比如下面</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">t</span><span class="p">():</span>
+</span><span class="line">   <span class="o">...</span><span class="p">:</span>     <span class="k">return</span> <span class="mi">1</span>
+</span><span class="line">      <span class="o">...</span><span class="p">:</span>
+</span><span class="line">
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">t</span><span class="p">():</span>
+</span><span class="line">    <span class="k">return</span> <span class="mi">1</span>
+</span></pre></figure></notextile></div>
+
+<p>看到了吧, 缩进不正确了. ptpython没有这个问题, 它的底层库<a href="https://github.com/jonathanslenders/python-prompt-toolkit">prompt_toolkit</a>实现了一个替代物</p>
+
+<ol>
+  <li>
+    <p>jedi. 我在emacs里面, jedi是标配. 其一是因为有epc, 可以和python通信, 它的自动补全和跳到函数/类定义真的很方便. 但是python交互解释器
+还没有一个用它的. 这里真的感觉效果很好.</p>
+  </li>
+  <li>emacs/vim键位. 好吧我经常在用ipython的时候习惯<code>Ctrl+x Ctrl+c</code>退出. 能用emacs的键位做编辑真的很爽</li>
+  <li>提供一个终端的菜单, 有多个选项可以选择</li>
+  <li>模式粘贴. 大家知道python有个问题: 你粘贴过来的代码不一定能运行 - 粘贴后的缩进会很奇怪的. ipython虽然有<code>%paste</code>和<code>%cpaste</code>. 但是有时候还是会有<code>IndentationError</code>问题.
+ptpython在这里独创了<code>Paste mode</code>. 使用F7切换. 还可以多行编辑.</li>
+  <li>可以开启多个Tab,甚至多个Tab的内容一齐显示出来. 类似vim的:split</li>
+  <li>能对你写的每行程序判断是否出现语法错误.如果你的代码有问题, 下面左侧会有错误提示 - 这其实能延伸做很多检查嘛</li>
+  <li>ipython对查看对象的方法有一些问题, 比如这个:</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">ipython</span>
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s">&#39;/tmp&#39;</span><span class="o">.&lt;</span><span class="n">tab</span><span class="o">&gt;</span> <span class="c"># 不会理你的</span>
+</span></pre></figure></notextile></div>
+
+<p>ptpython对这样的处理都很好</p>
+
+<ol>
+  <li>一个很贴心的特性:</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="err">$</span><span class="n">ptpython</span>
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s">&#39;tmp&lt;Tab&gt; # 他会告诉你这是个目录, 还会自动完成列出目录下的文件. autocompletion</span>
+</span></pre></figure></notextile></div>
+
+<ol>
+  <li>最后一点吧. 它非常容易的被嵌入你的程序，你的解释器</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">python</span>
+</span><span class="line"><span class="n">Python</span> <span class="mf">2.7</span><span class="o">.</span><span class="mi">3</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Apr</span> <span class="mi">10</span> <span class="mi">2013</span><span class="p">,</span> <span class="mo">06</span><span class="p">:</span><span class="mi">20</span><span class="p">:</span><span class="mi">15</span><span class="p">)</span>
+</span><span class="line"><span class="p">[</span><span class="n">GCC</span> <span class="mf">4.6</span><span class="o">.</span><span class="mi">3</span><span class="p">]</span> <span class="n">on</span> <span class="n">linux2</span>
+</span><span class="line"><span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
+</span><span class="line"><span class="n">Welcome</span> <span class="n">to</span> <span class="n">Lazy</span> <span class="n">Python</span><span class="o">.</span>  <span class="n">Type</span> <span class="s">&quot;help LazyPython&quot;</span> <span class="k">for</span> <span class="n">help</span><span class="o">.</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">ptpython.repl</span> <span class="kn">import</span> <span class="n">embed</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">embed</span><span class="p">(</span><span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">vi_mode</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">history_filename</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</span><span class="line"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="c"># 看就这么2句</span>
+</span></pre></figure></notextile></div>
+
+<h4 id="ptipython">ptipython</h4>
+
+<p>ptipython = ptpython + ipython</p>
+
+<p>在安装了ptipython之后, 就可以使用了. 完全可以替代ipython. 类似<a href="https://github.com/ivanov/bipython">bipython</a> = bpython + ipython</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/ji-jiang-zai-bpugfen-xiang/">分享ipython Notebook</a></h1>
     
     
@@ -2000,77 +2105,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/speakerdeck/">Speakerdeck</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-18T16:49:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>今天是在Ad的最后一天,本来准备了一个分享.关于业务中一些吐槽和我一些trick的用法, 有兴趣的可以下载<a href="https://github.com/dongweiming/speakerdeck">speakerdeck</a></p>
-
-<h4 id="section-1">主题</h4>
-
-<ol>
-  <li>celery celery2/celery3, py-amqp, kombu的用法, celery和djangocelery的集合</li>
-  <li>expect 使用expect自动登录复杂的服务器</li>
-  <li>mapreduce 一个并行处理文件的例子,说明使用python跑mapreduce多么厉害</li>
-  <li>portforward 端口转发</li>
-  <li>restapi 我眼中的restapi(pdf)</li>
-  <li>tornado 使用tornado一部非阻塞</li>
-</ol>
-
-<p>演示的tmux脚本:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">#!/bin/bash
-</span><span class="line">SESSION=$USER
-</span><span class="line">COMMAND='http Space http://localhost:8000/sleep'
-</span><span class="line">
-</span><span class="line">tmux new-session -d -s $SESSION
-</span><span class="line">
-</span><span class="line">tmux new-window -t $SESSION -n 'Logs'
-</span><span class="line">tmux split-window -h
-</span><span class="line">tmux select-pane -t 0
-</span><span class="line">tmux send-keys $COMMAND C-m
-</span><span class="line">tmux select-pane -t 1
-</span><span class="line">tmux send-keys $COMMAND C-m
-</span><span class="line">tmux split-window -v
-</span><span class="line">tmux send-keys $COMMAND C-m
-</span><span class="line">tmux select-pane -t 0
-</span><span class="line">tmux split-window -v
-</span><span class="line">tmux send-keys $COMMAND C-m
-</span><span class="line"># Attach to session
-</span><span class="line">tmux attach-session -t $SESSION</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/4/">&larr; Older</a></li>
@@ -2093,6 +2127,10 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -2128,10 +2166,6 @@ D:,l:,r,s:,T:,q 也就是-r和-q不需要参数其他的都是参数 类似 %pru
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

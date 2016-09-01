@@ -141,6 +141,62 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8python%E7%A8%8B%E5%BA%8F%E7%A7%BB%E9%99%A4mwindows%E6%8D%A2%E8%A1%8C%E7%AC%A6/">使用python程序移除文件中的“^M”(windows换行符)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-31T00:00:00+08:00" pubdate data-updated="true">Jan 31<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：<span><em>windows换行符</em>的文本在unix下编辑时显示^M，有时候编辑起来很不爽，使用这个程序可以去除windows换行符</span></p>
+
+<p><pre class="sh_python">
+import os
+import sys
+import tempfile</p>
+
+<p>def main():
+    filename = sys.argv[1]
+    with tempfile.NamedTemporaryFile(delete=False) as fh:
+        for line in open(filename):
+            line = line.rstrip()
+            fh.write(line + '\n')
+        os.rename(filename, filename + '.bak')
+        os.rename(fh.name, filename)</p>
+
+<p>if __name__ == '__main__':
+    main()
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ekvm%E4%BD%BF%E7%94%A8virt-manager%E6%8A%A5%E9%94%99/">关于kvm使用virt-manager报错</a></h1>
     
     
@@ -826,119 +882,6 @@ x11-wm/compiz-fusion emerald</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoobijieranzhuanggnomezhuomianjianzhuangchuxianwentijiejueanzhuangzongjie/">Gentoo笔记（二）安装gnome桌面及安装出现问题解决＋安装总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-24T00:00:00+08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：不作为服务器的话，肯定是需要安装图形桌面的，我一直是gnome的忠实支持者，所以这里还是安装gnome</p>
-
-<p><strong>1 安装前准备</strong></p>
-
-<p>首先去配置make.conf</p>
-
-<p>1 里面USE包含：USE=&#8221;gtk gnome&#8221;</p>
-
-<p>2 添加特性： FEATURES＝“parallel-fetch” #安装时候同时下载和安装编译 提高速度 但是我没有添加时候好像也是下载和安装同时进行，只要你下载好一个文件，就会去安装，这个过程中他会继续下载</p>
-
-<p>总结:这里面的选项代表安装软件对其的支持和不支持，前面加&#8221;-&#8220;表示不支持</p>
-
-<p><span style="font-family: 楷体_GB2312; font-size: small;">#emerge &#8211;oneshot libtool #<span style="font-family: 楷体_GB2312; font-size: small;">重编译libtool以避免一些潜在的问题</span>
-</span>
-<div><wbr><span style="font-family: 楷体_GB2312; font-size: small;"># dispatch-conf  更新配置文件<wbr>
-</wbr><wbr>
-# python-updater</wbr><wbr>  升级了python的主要软件包，执行python-updater脚本</wbr></span></wbr></div>
-<div><span style="font-family: 楷体_GB2312; font-size: small;">3 安装驱动（我的是ati，nvidia的类似）</span></div>
-<div><span style="font-family: 楷体_GB2312; font-size: small;"><span style="font-family: 楷体_GB2312; font-size: small;"># emerge ati-drivers
-安装完成后，运行modprobe nvidia把内核模块载入内存。如果是在升级的情况下，应该把先前的模块移出内存。
-代码 : 载入内核模块
-# lsmod | grep fglrx #如果有就卸载 rmmod fglrx<wbr></wbr><wbr></wbr></span></span></div>
-<div><span style="font-family: 楷体_GB2312; font-size: small;"><span style="font-family: 楷体_GB2312; font-size: small;"># modprobe fglrx<wbr>
-# update-modules #运行update-modules</wbr><wbr>
-# eselect opengl set nvidia #运行eselect，让X服务使用ati的GLX库</wbr></span></span></div>
-<div>4 安装alsa声卡驱动</div>
-<div><span style="font-family: 楷体_GB2312; font-size: small;">emerge alsa-utils<wbr></wbr></span></div>
-<div><span style="font-family: 楷体_GB2312; font-size: small;"># alsaconf  #ALSA 启动脚本
-代码 : 将ALSA加入到自启动
-# rc-update add alsasound boot</span></div>
-<div><span style="font-family: 楷体_GB2312; font-size: small;"># /etc/init.d/alsasound start<wbr></wbr></span> 启动服务</div>
-<div>#<span style="font-family: 楷体_GB2312; font-size: small;">alsamixer<wbr></wbr></span> #配置项</div>
-<div><span style="font-family: 楷体_GB2312; font-size: small;">* 使用左右箭头键（&lt;- &amp; -&gt;）来转换声道。
-* 要静音／禁止静音，移动到该声道，比如说Master，按键盘上的m键。
-* 用上下箭头键来增加／减小音量。
-<wbr></wbr></span></div>
-<strong>2 安装gnome</strong></p>
-
-<p>emerge gnome xscreensaver  （有一个轻量极的 叫做 gnome-light）</p>
-
-<p>这个是很费时间的一件事 只能说很久很久。。。依赖包几百个  而且会出现一些问题，比如：</p>
-
-<p>1 提示某下载的文件和他预设的文件的大小不同 验证没有通过 这个很centos的yum一样很头疼 ，他和问题2是一样的解决</p>
-
-<p>2 提示某下载的文件不存在或者无法下载，然后切换到这个软件包的portage目录下发现有几个软件包，如果某其他软件包可以下载安装 你可以修改这个不能下载的包的ebuild文件 ，把里面的变量：“SRC__URI”,后面的是包的地址，但是是用变量“${P}”(或者其他表示)，注释掉这一行，然后 ctrl+ k 然后ctrl+u 复制一行（nano）修改成那个具体能安装的数值。但是能不这样就不要遮阳修改 也许过一段时间就能正常下载了。改成其他的版本也尽量找相近最近的</p>
-
-<p>3 提示安装gnome依赖XXX 这样的话可能需要你专门去安装这个软件 他会提示你 是什么 比如XXX－XXX／YYY 表示默认路径的是（默认在）/usr/portage/XXX-XXX/YYY，切换进去安装看看提示什么，根据提示去一步一步解决，然后也就有了上一篇我在USE变量里面的其他选项，并且USE参数的列表在/usr/portage/profiles/use.desc或者官网的http://www.gentoo.org/dyn/use-index.xml 我还没有研究其他参数都有什么区别和作用</p>
-
-<p>4 为了下载请选择网速好的镜像</p>
-
-<p>5 当安装的包有几个相同名字的时候 就需要指定具体地址了，比如下面的fam  我按装app-admin/fam  那么就是 emerge app-admin/fam</p>
-
-<p><strong>3 配置gnome<span style="font-family: 楷体_GB2312; font-size: small;">
-</span></strong><span style="font-family: 楷体_GB2312; font-size: small;"># env-update &amp;&amp; source /etc/profile  #更新环境变量</span></p>
-
-<p>启动相应项（gnome是famd（下载app-admin/fam）+dbus 据说 gnome-light是hald+gnome）</p>
-
-<p><span style="font-family: 楷体_GB2312; font-size: small;"># /etc/init.d/famd start   <wbr></wbr><wbr></wbr></span></p>
-
-<p><span style="font-family: 楷体_GB2312; font-size: small;"># rc-update add famd default</span></p>
-
-<p><span style="font-family: 楷体_GB2312; font-size: small;"><wbr></wbr><wbr># /etc/init.d/dbus start</wbr></span></p>
-
-<p><span style="font-family: 楷体_GB2312; font-size: small;"><wbr></wbr><wbr># rc-update add dbus default</wbr></span></p>
-
-<p>让你的用户<span style="font-family: 楷体_GB2312; font-size: small;">设定GNOME为默认桌面环境</span></p>
-
-<p><span style="font-family: 楷体_GB2312; font-size: small;">$ echo &#8221;exec gnome-session&#8221; &gt; ~/.xinitrc<wbr></wbr></span></p>
-
-<p><span style="font-family: 楷体_GB2312; font-size: small;">$ startx<wbr></wbr></span>  启动gnome</p>
-
-<p>将gnome默认启动
-# rc-update add xdm default
-编辑/etc/rc.conf 添加
-DISPLAYMANAGER=&#8221;gdm&#8221;
-XSESSION=&#8221;Gnome&#8221;</p>
-
-<p></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/22/">&larr; Older</a></li>
@@ -961,6 +904,10 @@ XSESSION=&#8221;Gnome&#8221;</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -996,10 +943,6 @@ XSESSION=&#8221;Gnome&#8221;</p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

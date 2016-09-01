@@ -141,6 +141,239 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusedyanjiuyi/">关于sed研究（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-16T00:00:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 sed语法和命令结构</strong></p>
+
+<p>sed [options] {sed-commands} {input-file}</p>
+
+<p>或者：</p>
+
+<p>sed [options] -f {sed-commands-in-a-file} {input-file}
+注：这里的sed-commands-in-a-file 其实就是把要执行的语句写在一个文件(这里是test.sed)中：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.sed
+/^dongwm/ p
+/^icinga/ p</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -f test.sed /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p>或者：</p>
+
+<p>sed [options] -e {sed-command-1} -e {sed-command-2}  #这里使用 &#8216;-e&#8217; 也就是执行相对应的语句,每个‘-e’执行结果都要返回，而不是符合全部&#8217;-e&#8217;的结果
+{input-file}
+dongwm@linux-dongwm:~&gt; sed -n -e &#8216;/^dongwm/ p&#8217; -e &#8216;/^icinga/ p&#8217; /etc/passwd
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p>或者：</p>
+
+<p>sed [options] &#8216;{sed-command-1 sed-command-2}&#8217;  {input-file}  #使用多个执行语句用&#8221;{}&#8221;括起来,每个执行语句用&#8217;;&#8217;隔开</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n -e &#8216;{/^dongwm/ p;/^icinga/ p}&#8217; /etc/passwd  #&#8221;-n&#8221;表示打印时候去重复（我的理解）
+dongwm:x:1000:100:dongwm:/home/dongwm:/bin/bash
+icinga:x:1001:100:icinga:/home/icinga:/bin/bash</p>
+
+<p><strong>2 打印输出文件</strong></p>
+
+<p>这里有个文件：</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+例子:</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;2 p&#8217; !$  #打印第二行
+sed -n &#8216;2 p&#8217; test.txt
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;1,2 p&#8217; test.txt  #打印某几行这里是start（1）－end（2）行
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;2,$ p&#8217; test.txt  #打印某行到最后一行 这里是第二行
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;1~2 p&#8217; test.txt  #这里‘~’修改了打印间隔，比如：1~2 匹配第一行，第三行（间隔为2）&#8230;；比如1~3 匹配第一行，第四行&#8230;
+112,dongwm,dongwm.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/ p&#8217; test.txt  #模式匹配，匹配包含‘dongwm’的行
+112,dongwm,dongwm.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,3 p&#8217; test.txt #模式匹配，匹配包含‘dongwm’的行，直到某一行的数据（这里是第3行）
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,/ailll/ p&#8217; test.txt #模式匹配，匹配包含‘dongwm’的行，直到包含‘ailll’的行
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,+1 p&#8217; test.txt  #模式匹配，匹配包含‘dongwm’的行 然后再加某数值的行数（这里是1行）
+112,dongwm,dongwm.com
+113,ailll,ailll.com</p>
+
+<p><strong>3 删除行</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed &#8216;2 d&#8217; test.txt  #删除指定行，只是输出 源文件没有被操作
+112,dongwm,dongwm.com
+114,test,test.com</p>
+
+<p>删除的语句和上面打印的相同</p>
+
+<p>例子：</p>
+
+<p>sed &#8216;/^$/ d&#8217; test.txt  #删除所有行</p>
+
+<p>sed &#8216;/^#/ d&#8217; employee.txt  #删除所有注释行</p>
+
+<p><strong>4 将执行语句结果写入其他文件</strong></p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;w test2.txt&#8217; test.txt
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+写入的语句和上面打印的相同，比如：</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed -n &#8216;/dongwm/,2 w test2.txt&#8217; test.txt   #写入匹配行到第二行数据到text2.txt
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+<strong>5 替换</strong></p>
+
+<p>语法：sed &#8216;[address-range|pattern-range] s/original-
+string/replacement-string/[substitute-flags]&#8217; inputfile
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/dongwm/dongwm2/&#8217; test.txt  #s 表示是要替换，这里只是替换第一个dongwm,如果sed  &#8216;s/dongwm/dongwm2/g&#8217; test.txt 表示全文替换
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed  &#8216;/com/s/dongwm/dongwm2/&#8217; test.txt  #喜爱指定匹配的行执行替换，这里是匹配行包括‘com’
+112,dongwm2,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/dongwm/dongwm2/2&#8217; test.txt #替换全文中第几个符合匹配条件的匹配项，这里文件有2个，只替换第2个
+112,dongwm,dongwm2.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/com/com2/1&#8217; test.txt  #这里其实是匹配每行否和要求的匹配项
+112,dongwm,dongwm.com2
+113,ailll,ailll.com2
+114,test,test.com2
+dongwm@linux-dongwm:~&gt; sed  -n &#8216;s/dongwm/dongwm2/1p&#8217; test.txt  打印匹配行  －n 去重复
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; sed  -n &#8216;s/dongwm/dongwm2/1w test2.txt&#8217; test.txt  #匹配替换后写入文件
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; sed  &#8216;s/dongwm/dongwm2/i&#8217; test.txt #替换被匹配字符串忽略大小写，比如 Dongwm</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat test.txt   #这个文件记录了2个创建的文件的名字
+test1
+test2
+dongwm@linux-dongwm:~&gt; !sed
+sed &#8216;s/^/ls -l /e&#8217; test.txt   #e 主要是替换后直接执行
+-rw-r&#8211;r&#8211; 1 dongwm users 2763  4月 16 13:53 test1
+-rw-r&#8211;r&#8211; 1 dongwm users 0  4月 16 13:53 test2
+dongwm@linux-dongwm:~&gt; sed -n &#8216;s/dongwm/dongwm2/gipw text2.txt&#8217; test.txt  #多操作g i p w
+112,dongwm2,dongwm2.com
+dongwm@linux-dongwm:~&gt; cat test2.txt
+112,dongwm2,dongwm.com
+dongwm@linux-dongwm:~&gt; cat test.txt
+reading /usr/local/bin directory</p>
+
+<p>除了使用反斜杠外 行可以使用一下字串进行快捷操作：
+dongwm@linux-dongwm:~&gt; sed &#8216;s^/usr/local/bin^/usr/bin^&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;s@/usr/local/bin@/usr/bin@&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;s!/usr/local/bin!/usr/bin!&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;s|/usr/local/bin|/usr/bin|&#8217; test.txt
+reading /usr/bin directory
+dongwm@linux-dongwm:~&gt; sed &#8216;{s/dongwm/dongwm2/;s/ailll/ailll2/}&#8217; test.txt  多条件替换，之间用‘；’
+112,dongwm2,dongwm.com
+113,ailll2,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;s/^[0-9][0-9][0-9]/[&amp;]/g&#8217; test.txt #替换文件中数字，在数字外面加&#8217;[]&#8217;
+[112],dongwm,dongwm.com
+[113],ailll,ailll.com
+[114],test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;s/^.*/&lt;&amp;&gt;/&#8217; test.txt #替换每行，在每行内容外加&#8217;&lt;&gt;&#8217;
+&lt;112,dongwm,dongwm.com&gt;
+&lt;113,ailll,ailll.com&gt;
+&lt;114,test,test.com&gt;</p>
+
+<p>dongwm@linux-dongwm:~&gt; sed &#8216;s/\([^,]*\).*/\1/g&#8217; test.txt #匹配组，这里匹配的是 第一个‘，’前的内容 \1表示第一个匹配组
+112
+113
+114
+dongwm@linux-dongwm:~&gt; echo &#8216;Dong Wei Ming&#8217; |sed &#8216;s/\(\b[A-Z]\)/\(\1\)/g&#8217;  #匹配每个词的大写字母，给他加个括号
+(D)ong (W)ei (M)ing</p>
+
+<p>dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+1
+12
+123
+1234
+12345
+123456
+dongwm@linux-dongwm:~&gt; sed &#8216;s/\(^\|[^0-9.]\)\([0-9]\+\)\([0-9]\{3\}\)/\1\2,\3/g&#8217; test.txt  #这里有三个匹配组，所以有 \1,\2\3
+1
+12
+123
+1,234
+12,345
+123,456
+dongwm@linux-dongwm:~&gt; cat !$
+cat test.txt
+112,dongwm,dongwm.com
+113,ailll,ailll.com
+114,test,test.com
+dongwm@linux-dongwm:~&gt; sed &#8216;s/\([^,]*\),\([^,]*\),\([^,]*\).*/\1,\3/g&#8217; test.txt  #这里根据‘，’分割出三个匹配组，然后替换把1，2，3组替换为1，3组
+112,dongwm.com
+113,ailll.com
+114,test.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;s/dongwm/\udongwm/p&#8217; test.txt  #\u会让挨着他后面的那个字母（这里是d）变成大写
+112,Dongwm,dongwm.com
+dongwm@linux-dongwm:~&gt; sed -n &#8216;s/dongwm/\Udongwm/p&#8217; test.txt  #\U会让挨着他后面的所有字母都变成大写</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusedyanjiuer/">关于sed研究（二）</a></h1>
     
     
@@ -1535,76 +1768,6 @@ iU  capistrano     2.5.9-1        Executes commands in parallel on m
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/opensuseanzhuanganjuta/">Opensuse安装anjuta</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-27T00:00:00+08:00" pubdate data-updated="true">Feb 27<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>问题：以前使用anjuta在gentoo下调试c/c++程序，最近在opensuse11.4想使用anjuta，发现yast/zypper安装的anjuta不能新建项目，直接卡住，然后杀掉进程后再启动anjuta会停止在&#8221;加载调试器&#8221;这一步。</p>
-
-<p>解决：1 使用源码安装：http://ftp.gnome.org/pub/GNOME/sources/anjuta</p>
-
-<p>发现各个版本（从2.1.0到3.3）都有一些依赖关系，重新编译安装会对现在的系统造成影响，比如我安装了一个新版本的glib，造成xwindows启动不了，最后在修复模式卸载了才恢复</p>
-
-<p>2  使用jhbuild</p>
-
-<p>提示 在autogen的过程中： gtkdocize: command not found  失败</p>
-
-<p>3 根据anjuta官网wiki https://live.gnome.org/DeveloperTools/Installation 文档安装 还是同样的问题，不能新建项目</p>
-
-<p>最终解决办法：</p>
-
-<p>从github上面找了一个anjuta源码版本：</p>
-
-<p>https://github.com/abderrahim/anjuta.git
-过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; git clone https://github.com/abderrahim/anjuta.git
-cd anjuta/
-./autogen.sh</p>
-
-<p>make</p>
-
-<p>sudo make install</p>
-
-<p>因为默认安装在/use/local下，需要</p>
-
-<p>sudo vi /etc/ld.so.conf
-添加一行： /usr/local/lib</p>
-
-<p>sudo /sbin/ldconfig</p>
-
-<p>这个anjuta正常了</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/20/">&larr; Older</a></li>
@@ -1627,6 +1790,10 @@ cd anjuta/
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1662,10 +1829,6 @@ cd anjuta/
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

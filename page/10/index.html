@@ -141,6 +141,205 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusysyanjiuer/">关于sys研究（二）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><pre class="sh_python">
+import sys
+print 'Arguments:', sys.argv #命令行参数
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~ python test.py -h
+Arguments: [&#8216;test.py&#8217;, &#8216;-h&#8217;]
+<pre class="sh_python">
+import sys</p>
+
+<p>print sys.stderr, 'STATUS: Reading from stdin' #<tt>stderr</tt>被用于警告或错误信息使用</p>
+
+<p>data = sys.stdin.read()  #输入流保存</p>
+
+<p>print sys.stderr, 'STATUS: Writing data to stdout'</p>
+
+<p>sys.stdout.write(data) #打印数据
+sys.stdout.flush() #将stdout实时自动刷出来</p>
+
+<p>print sys.stderr, 'STATUS: Done'
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>exit_code = int(sys.argv[1])
+sys.exit(exit_code) #设置退出时候的code，正常执行是0，不正常就是非0
+</pre></p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>one = []
+print 'At start         :', sys.getrefcount(one) #Python使用<em>引用计数</em>和<em>垃圾收集</em>的自动内存管理。一个对象被自动标记被收集时，它的引用计数下降到零,使用<tt>getrefcount（）</tt>审查现有对象的引用计数
+<tt></tt>two = one
+print 'Second reference :', sys.getrefcount(one)
+del two
+print 'After del        :', sys.getrefcount(one)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+At start         : 2
+Second reference : 3
+After del        : 2
+<pre class="sh_python">
+import sys</p>
+
+<p>class OldStyle:
+    pass</p>
+
+<p>class NewStyle(object):
+    pass</p>
+
+<p>for obj in [ [], (), {}, 'c', 'string', 1, 2.3, 
+             OldStyle, OldStyle(), NewStyle, NewStyle(),
+             ]:    
+    print '%10s : %s' % (type(obj).__name__, sys.getsizeof(obj)) #各种类型对象的大小
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+list : 32
+tuple : 24
+dict : 136
+str : 25
+str : 30
+int : 12
+float : 16
+classobj : 44
+instance : 32
+type : 448
+NewStyle : 28
+<pre class="sh_python">
+import sys</p>
+
+<p>class WithoutAttributes(object):
+    pass</p>
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return</p>
+
+<p>without_attrs = WithoutAttributes()
+print 'WithoutAttributes:', sys.getsizeof(without_attrs)</p>
+
+<p>with_attrs = WithAttributes()
+print 'WithAttributes:', sys.getsizeof(with_attrs)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+WithoutAttributes: 28
+WithAttributes: 28 #带属性的和不带属性的类竟然一样大看下面的例子，通过聚合对象的 属性的大小来计算：</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return
+    def __sizeof__(self):
+        return object.__sizeof__(self) + \
+            sum(sys.getsizeof(v) for v in self.__dict__.values())</p>
+
+<p>my_inst = WithAttributes()
+print sys.getsizeof(my_inst)
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+78  #这样就不是28，这样就合理了</p>
+
+<p><pre class="sh_python">
+import sys</p>
+
+<p>print 'Initial limit:', sys.getrecursionlimit()  #得到递归的次数，要不然不停的自己调用自己会引起崩溃
+sys.setrecursionlimit(10) #设置递归的次数</p>
+
+<p>print 'Modified limit:', sys.getrecursionlimit()</p>
+
+<p>def generate_recursion_error(i):
+    print 'generate_recursion_error(%s)' % i
+    generate_recursion_error(i+1) #不断的递归调用自己，但是计数加+1</p>
+
+<p>try:
+    generate_recursion_error(1)
+except RuntimeError, err:
+    print 'Caught exception:', err
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-vkmz:~&gt; python test.py
+Initial limit: 1000 #默认可递归的次数为1000
+Modified limit: 10
+generate_recursion_error(1)
+generate_recursion_error(2)
+generate_recursion_error(3)
+generate_recursion_error(4)
+generate_recursion_error(5)
+generate_recursion_error(6)
+generate_recursion_error(7)
+generate_recursion_error(8)
+Caught exception: maximum recursion depth exceeded while getting the str of an object #到达递归限制
+<pre class="sh_python">
+import sys</p>
+
+<p>print 'maxint    :', sys.maxint #python支持的最大数字
+print 'maxsize   :', sys.maxsize #python支持的最大的数据大小
+print 'maxunicode:', sys.maxunicode #支持 Unicode的最大整数
+</pre></p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyusocketyanjiuer-2/">关于socket研究(二)</a></h1>
     
     
@@ -2358,369 +2557,6 @@ class ForkingEchoRequestHandler(SocketServer.BaseRequestHandler):</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuosyanjiu/">关于os研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：os可谓python模块最常用模块之一了，也称作：操作系统混合接口，包含的大部分函数用于创建和管理活动进程和文件系统(文件和目录)，但是有些函数在windows上无法使用</p>
-
-<p><pre class="sh_python">
-import os</p>
-
-<p>TEST_GID=501
-TEST_UID=527</p>
-
-<p>def show_user_info():
-     print 'Effective User  :', os.geteuid()
-     print 'Effective Group :', os.getegid()
-     print 'Actual User    :', os.getuid(), os.getlogin()
-     print 'Actual Group  :', os.getgid()
-     print 'Actual Groups   :', os.getgroups()
-     return</p>
-
-<p>print 'BEFORE CHANGE:'
-show_user_info()
-print
-try:
-     os.setegid(TEST_GID)  #改变这个进程的用户和组属性. 需要root权限，否则改不了
-except OSError:
-     print 'ERROR: Could not change effective group.  Re-run as root.'
-else:
-     print 'CHANGED GROUP:'
-     show_user_info()
-     print</p>
-
-<p>try:
-     os.seteuid(TEST_UID)
-except OSError:
-     print 'ERROR: Could not change effective user.  Re-run as root.'
-else:
-     print 'CHANGE USER:'
-     show_user_info()
-     print
-print 'Initial value:', os.environ.get('TESTVAR', None) #访问在环境中设置的环境变量
-print 'Child process:'
-os.system('echo $TESTVAR')  #os.system通过一个shell中的子进程执行系统命令，但是现在不推荐这个函数.它可以包含shell语法, 比如通配符或环境变量:</p>
-
-<p>os.environ['TESTVAR'] = 'THIS VALUE WAS CHANGED'</p>
-
-<p>print
-print 'Changed value:', os.environ['TESTVAR']
-print 'Child process:'
-os.system('echo $TESTVAR')</p>
-
-<p>del os.environ['TESTVAR']</p>
-
-<p>print
-print 'Removed value:', os.environ.get('TESTVAR', None)
-print 'Child process:'
-os.system('echo $TESTVAR')
-print 'Starting:', os.getcwd()  #类似于执行命令pwd，获取当前目录
-print os.listdir(os.curdir)  #列出当前目录下所有文件和文件夹</p>
-
-<p>print 'Moving up one:', os.pardir  
-os.chdir(os.pardir) #改变目录到当前目录的上一级目录，想过类似于： cd .. </p>
-
-<p>print 'After move:', os.getcwd()
-print os.listdir(os.curdir)
-</pre></p>
-
-<p><pre class="sh_python">
-import os</p>
-
-<p>print '\npopen, read:'
-pipe_stdout = os.popen('echo "to stdout"', 'r')  #os.popen是管道函数
-try:
-    stdout_value = pipe_stdout.read() #标准输出流
-finally:
-    pipe_stdout.close()
-print '\tstdout:', repr(stdout_value)</p>
-
-<p>print '\npopen, write:'
-pipe_stdin = os.popen('cat -', 'w')
-try:
-    pipe_stdin.write('\tstdin: to stdin\n') #标准输入流
-finally:
-    pipe_stdin.close()
-print '\npopen2:'
-pipe_stdin, pipe_stdout = os.popen2('cat -')  #popen2()函数返回一个与子进程标准输入绑定的只写流和一个与子进程标准输出绑定的只读流
-try:
-    pipe_stdin.write('through stdin to stdout')
-finally:
-    pipe_stdin.close()</p>
-
-<p>try:
-    stdout_value = pipe_stdout.read()
-finally:
-    pipe_stdout.close()
-print '\tpass through:', repr(stdout_value)
-print '\npopen3:'
-pipe_stdin, pipe_stdout, pipe_stderr = os.popen3('cat -; echo ";to stderr" 1&gt;&amp;2') #popen3函数返回一个新进程的3个流stdin、stdout、stderr
-try:
-    pipe_stdin.write('through stdin to stdout')
-finally:
-    pipe_stdin.close()
-try:
-    stdout_value = pipe_stdout.read()
-finally:
-    pipe_stdout.close()
-print '\tpass through:', repr(stdout_value)
-try:
-    stderr_value = pipe_stderr.read()
-finally:
-    pipe_stderr.close()
-print '\tstderr:', repr(stderr_value)
-print '\npopen4:'
-pipe_stdin, pipe_stdout_and_stderr = os.popen4('cat -; echo ";to stderr" 1&gt;&amp;2') # popen4()返回两个流, stdin和stdout/stderr的组合,
-                                                # 这对于命令的结果需要被记录, 但不需要解析是很有用的.
-try:
-    pipe_stdin.write('through stdin to stdout')
-finally:
-    pipe_stdin.close()
-try:
-    stdout_value = pipe_stdout_and_stderr.read()
-finally:
-    pipe_stdout.close()
-print '\tcombined output:', repr(stdout_value)
-print '\npopen2, cmd as sequence:'
-pipe_stdin, pipe_stdout = os.popen2(['cat', '-']) #popen2()、popen3()、popen4()函数同样接收字符串序列(命令, 加参数)
-try:
-    pipe_stdin.write('through stdin to stdout')
-finally:
-    pipe_stdin.close()
-try:
-    stdout_value = pipe_stdout.read()
-finally:
-    pipe_stdout.close()
-print '\tpass through:', repr(stdout_value)
-</pre></p>
-
-<p><pre class="sh_python">
-import os</p>
-
-<p>print 'Testing:', __file__
-print 'Exists:', os.access(__file__, os.F_OK) #os.access()可以测试一个进程对一个文件是否有可访问权限.os.F_OK测试存在,返回布尔值
-print 'Readable:', os.access(__file__, os.R_OK) #os.R_OK测试可读,返回布尔值
-print 'Writable:', os.access(__file__, os.W_OK) #os.W_OK测试可写,返回布尔值
-print 'Executable:', os.access(__file__, os.X_OK) #os.X_OK测试可读,返回布尔值
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python !$
-python test.py
-Testing: test.py
-Exists: True
-Readable: True
-Writable: True
-Executable: False
-<pre class="sh_python">
-import os
-import sys
-import time</p>
-
-<p>if len(sys.argv) == 1:
-    filename = __file__
-else:
-    filename = sys.argv[1]</p>
-
-<p>stat_info = os.stat(filename)</p>
-
-<p>print 'os.stat(%s):' % filename
-print '\tSize:', stat_info.st_size  #字节数
-print '\tPermissions:', oct(stat_info.st_mode) #文件权限
-print '\tOwner:', stat_info.st_uid  #文件uid（拥有者）
-print '\tDevice:', stat_info.st_dev #文件所在文件设备
-print '\tLast modified:', time.ctime(stat_info.st_mtime)  #文件修改时间（最近一次）
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-os.stat(test.py):
-Size: 388
-Permissions: 0100644
-Owner: 1000
-Device: 2055
-Last modified: Thu Jul  5 11:19:28 2012
-<pre class="sh_python">
-import os
-import stat</p>
-
-<p>existing_permissions = stat.S_IMODE(os.stat(__file__).st_mode)  #确定哪些权限已设置使用</p>
-
-<p>if not os.access(__file__, os.X_OK):
-    print 'Adding execute permission'
-    new_permissions = existing_permissions | stat.S_IXUSR #添加权限
-else:
-    print 'Removing execute permission'
-    new_permissions = existing_permissions ^ stat.S_IXUSR   #去掉权限</p>
-
-<p>os.chmod(__file__, new_permissions)
-</pre></p>
-
-<p><pre class="sh_python">
-import os
-import sys
-import tempfile dir_name = 'os_directories_example'</p>
-
-<p>print 'Creating', dir_name
-os.makedirs(dir_name)  #创建文件夹</p>
-
-<p>file_name = os.path.join(dir_name, 'example.txt')
-print 'Creating', file_name
-f = open(file_name, 'wt')  #添加文件
-try:
-    f.write('example file')
-finally:
-    f.close()</p>
-
-<p>print 'Listing', dir_name
-print os.listdir(dir_name)</p>
-
-<p>print 'Cleaning up'
-os.unlink(file_name)  #相当于删掉文件
-os.rmdir(dir_name)  #删除文件夹
-link_name = tempfile.mktemp()</p>
-
-<p>print 'Creating link %s-&gt;%s' % (link_name, __file__)
-os.symlink(__file__, link_name)  #创建符号链接 ，类似于ln -s</p>
-
-<p>stat_info = os.lstat(link_name) #链接文件的状态
-print 'Permissions:', oct(stat_info.st_mode)</p>
-
-<p>print 'Points to:', os.readlink(link_name)  #链接文件源文件
-os.unlink(link_name)
-if len(sys.argv) == 1:
-    root = '/tmp'
-else:
-    root = sys.argv[1]</p>
-
-<p>for dir_name, sub_dirs, files in os.walk(root):  #os.walk()可以递归遍历一个目录
-    print '\n', dir_name
-    sub_dirs = [ '%s/' % n for n in sub_dirs ]
-    contents = sub_dirs + files
-    contents.sort()
-    for c in contents:
-        print '\t%s' % c
-</pre></p>
-
-<p><pre class="sh_python">
-pid = os.fork() #创建一个新进程作为当前进程的一个复本,当fork之后, 你结束这两个运行着相同代码的进程. 可以检查返回值来直到你在哪个进程中. 
-                #如果它是0, 表示你在子进程中, 如果不是0, 则表示你在父进程中, 它返回的值是其子进程的进程id.</p>
-
-<p>if pid:
-    print 'Child process id:', pid
-else:
-    print 'I am the child'
-</pre></p>
-
-<p><pre class="sh_python"></p>
-
-<p>import os
-import signal
-import time</p>
-
-<p>def signal_usr1(signum, frame):
-    pid = os.getpid()
-    print 'Received USR1 in process %s' % pid
-print 'Forking...'
-child_pid = os.fork()
-if child_pid: ## 这个是父进程执行的代码
-    print 'PARENT: Pausing before sending signal...'
-    time.sleep(1)
-    print 'PARENT: Signaling %s' % child_pid
-    os.kill(child_pid, signal.SIGUSR1) #父进程中, 通过 <tt>os.kill()</tt> 发送一个USR1信号之前暂停一段时间. 这短的暂停让子进程有时间去设置信号处理句柄
-else: #在子进程中, 我们设置信号处理句柄后睡眠一段时间来让父进程有时间去发送信号给我们
-    print 'CHILD: Setting up signal handler'
-    signal.signal(signal.SIGUSR1, signal_usr1)
-    print 'CHILD: Pausing to wait for signal'
-    time.sleep(5)
-</pre></p>
-
-<p>执行分析：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Forking&#8230;
-PARENT: Pausing before sending signal&#8230;
-CHILD: Setting up signal handler
-CHILD: Pausing to wait for signal
-PARENT: Signaling 1946
-Received USR1 in process 1946
-<pre class="sh_python">
-child_pid = os.fork()
-if child_pid:
-    os.waitpid(child_pid, 0) #指示父进程等候一个指定的子进程终止
-else:
-    os.execlp('ls', 'ls', '-l', '/tmp/') ## 执行多个子进程.有很多 <tt>exec*()</tt> 的变种, 它们依赖于你可能使用的参数, 如, 你是否想要路径和父进程的环境变量都被复制到子进程中
-os.spawnlp(os.P_WAIT, 'ls', 'ls', '-l', '/tmp/') #方便起见, <tt>os.spawn*()</tt> 系列函数将 <tt>fork()</tt> 和 <tt>exec*()</tt> 调用写在一条语句中
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p><pre class="sh_python">
-import os
-import sys
-import time</p>
-
-<p>for i in range(3):
-    print 'PARENT: Forking %s' % i
-    worker_pid = os.fork()
-    if not worker_pid:
-        print 'WORKER %s: Starting' % i
-        time.sleep(2 + i)
-        print 'WORKER %s: Finishing' % i
-        sys.exit(i)</p>
-
-<p>for i in range(3):
-    print 'PARENT: Waiting for %s' % i
-    done = os.wait() #多个进程来运行各自的任务, 你希望在开始新的进程之前等待其中一个或多个的结束, 以此来避免服务器的超载.
-                     #返回值是包含进程号和退出状态(一个16位的数字, 它的低字节是一个杀死该进程的信号数字, 它的高字节是退出状态)的一个元组.
-    print 'PARENT:', done
-</pre></p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/11/">&larr; Older</a></li>
@@ -2743,6 +2579,10 @@ import time</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -2778,10 +2618,6 @@ import time</p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

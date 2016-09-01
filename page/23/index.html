@@ -141,6 +141,101 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/shiyongsuperviserangbuwendingchengxusidiaozidongmashangzhongqi/">使用supervise让不稳定程序死掉自动马上重启</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-03T00:00:00+08:00" pubdate data-updated="true">Nov 3<span>rd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：supervise是daemontools的一个工具，可以用来监控linux下程序的进程状态，当程序有一些问题（例如死掉）会根据设置 自动重启。我有一个socket服务器端需要一直监听数据，但是为了保证它不会莫名其妙的死掉而不可知，但是使用ICE(全称Internet Communications Engine)有点大材小用，所以使用了这个supervise自动重启死掉的程序并记录日志</p>
+
+<p><strong>1 下载安装配置：</strong></p>
+
+<p>wget http://cr.yp.to/daemontools/daemontools-0.76.tar.gz</p>
+
+<p>wget http://www.qmail.org/moni.csi.hu/pub/glibc-2.3.1/daemontools-0.76.errno.patch  ＃这个补丁是修复有些操作系统无法编译安装成功，过程中会报错停止的问题</p>
+
+<p>tar xvzf daemontools-0.76.tar.gz</p>
+
+<p>cd admin/daemontools-0.76</p>
+
+<p>patch -Np1 -i ../../daemontools-0.76.errno.patch</p>
+
+<p>package/compile</p>
+
+<p>cd package &amp;&amp;  sed &#8216;s|/command|/usr/sbin|&#8217; boot.inittab &gt; boot.inittab~</p>
+
+<p>mv -f boot.inittab~ boot.inittab &amp;&amp;  cd ../command</p>
+
+<p>sed -e &#8216;s/command:\/usr\/local\/bin:/usr\/local\/sbin:/&#8217;  -e &#8216;s/command\/svc/usr\/sbin\/svc/&#8217; svscanboot &gt; svscanboot~</p>
+
+<p>mv -f svscanboot~ svscanboot &amp;&amp; chmod +x svscanboot</p>
+
+<p>sudo /bin/cp * /usr/sbin</p>
+
+<p>添加： SV:123456:respawn:/usr/sbin/svscanboot  到  /etc/inittab</p>
+
+<p><strong>2 检查是否安装成功：</strong></p>
+
+<p># pstree -p|grep svs ＃然后有下面类似的进程结构（括号中数据会不一样）</p>
+
+<p>|-svscanboot(22011)-+-readproctitle(22014)         |</p>
+
+<p>`-svscan(22013)</p>
+
+<p><strong>3 编辑你要使用supervise的程序和配置文件</strong></p>
+
+<p>首先建立一个目录：</p>
+
+<p>mkdir /home/dongwm/SocketSrv</p>
+
+<p>然后编辑run配置文件：</p>
+
+<p>cat /home/dongwm/SocketSrv/run
+#!/bin/sh
+echo &#8216;kill Socketsrv&#8230;&#8217;
+kill -9 `ps -ef |grep Socketsrv.py |grep -v grep |awk &#8216;{print $2}&#8217;`</p>
+
+<p>echo &#8220;`date +%Y%m%d-%H%M%S`&#8221;
+echo &#8216;start Socketsrv&#8230;&#8217;
+python Socketsrv.py ＃这个就是你要让它关里的进程程序 就在Socketsrv目录下</p>
+
+<p><strong>4 启动进程：</strong>
+为了排错，我使用了日志记录＋日志轮转的方式（）</p>
+
+<p>nohup supervise /home/dongwm/SocketSrv |/usr/sbin/cronolog &#8220;/var/log/Socketsrv.log_%Y%m%d&#8221; &amp;</p>
+
+<p>表示后台运行，将输入定向到/var/log/Socketsrv.log 并且按天分日志
+<strong></strong></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shiyongcx_freezeduipengyoutahuanoni/">使用cx_Freeze对python程序打包生成多个exe文件</a></h1>
     
     
@@ -1341,73 +1436,6 @@ root@192.168.10.89:/ 1000G     0 1000G   0% /home/dongwm/10.89</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/fuzashijiancepchulidexiaoxiduiliezmqzaiserverduandepythonchulijiaoben/">复杂事件(cep)处理的消息队列zmq在server端的python日志记录处理脚本</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-26T00:00:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><p>前言：主要用来接收客户端服务器传送来的socket内容，并写到指定数据目录下。</p>
-<p><pre class="sh_python"></p>
-import zmq
-import threading
-from datetime import date</p>
-
-<p>def main(addrs):</p>
-
-<p>    context = zmq.Context()
-    client = context.socket(zmq.SUB)
-    client.setsockopt(zmq.SUBSCRIBE, "")
-    print "Connecting to: ", addrs[0]
-    client.connect(addrs[0])</p>
-
-<p>    try:
-        while True:
-                topic, msg = client.recv_multipart()
-                #print "%s: %s" % (topic, msg)
-                FILE = open(addrs[1]+topic+".log."+ date.today().isoformat(), "a"  )
-                FILE.write(msg )
-                FILE.close()
-    except KeyboardInterrupt:
-        raise SystemExit</p>
-
-<p>if __name__ == '__main__':
-    import sys
-    if len(sys.argv) &lt; 2:
-        print "usage: logger.py &lt;address&gt; &lt;path&gt;"
-        raise SystemExit
-    main(sys.argv[1:])
-<p></pre></p>
-</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/24/">&larr; Older</a></li>
@@ -1430,6 +1458,10 @@ from datetime import date</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1465,10 +1497,6 @@ from datetime import date</p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

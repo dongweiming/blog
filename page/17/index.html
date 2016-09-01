@@ -141,6 +141,75 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuurlparseyanjiu/">关于urlparse研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T00:00:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：urlparse是一个用来解析http的url的模块</p>
+
+<p>例子：</p>
+
+<p><pre class="sh_python">
+import urlparse
+url = 'http://user:pass@NetLoc:80/path;parameters?query=argument#fragment'  #这个是设计的一个url
+parsed = urlparse.urlparse(url)   #urlparse.urlparse和urlparse.<tt>urlsplit的区别主要在path，后者不会分裁url的path地址</tt>
+print 'scheme  :', parsed.scheme  #url的协议
+print 'netloc  :', parsed.netloc  #服务器地址
+print 'path    :', parsed.path #url的路径
+print 'params  :', parsed.params #url中的参数和值
+print 'query   :', parsed.query #url的查询部分
+print 'fragment:', parsed.fragment #url的分片部分
+print 'username:', parsed.username #url登录用户的用户名称
+print 'password:', parsed.password #url登录用户的密码
+print 'hostname:', parsed.hostname, '(netloc in lower case)'  #url的主机名，自动转化成小写
+print 'port    :', parsed.port
+</pre></p>
+
+<p>结果是：</p>
+
+<p>scheme  : http
+netloc  : user:pass@NetLoc:80
+path    : /path  #假如是urlparse.<tt>urlsplit</tt>，结果为：/path;parameters
+params  : parameters  # #假如是urlparse.<tt>urlsplit</tt>，没有params
+query   : query=argument
+fragment: fragment
+username: user
+password: pass
+hostname: netloc (netloc in lower case)
+port    : 80</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyucontextlibyanjiu/">关于contextlib研究</a></h1>
     
     
@@ -1088,354 +1157,6 @@ Thread-4</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/zuijindelinuxheshellshiyongzongjie/">最近的linux和shell使用总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-05T00:00:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：很久没有写关于linux和shell的东西了，但是最近研究一些东西，把还有印象的一起拿出来</p>
-
-<p><strong>1 定义函数解压缩不同文件</strong></p>
-
-<p>注：需求产生其实是因为工作中会下载解压缩各种文件，比如.tar.gz ,tar.bz2,.gz,.zip等等后缀，不如自定义一个命令解压：</p>
-
-<p>ec () {
-if [ -f $1 ] ; then
-case $1 in
-*.tar.bz2)   tar xjf $1        ;;
-*.tar.gz)    tar xzf $1     ;;
-*.bz2)       bunzip2 $1       ;;
-*.rar)       rar x $1     ;;
-*.gz)        gunzip $1     ;;
-*.tar)       tar xf $1        ;;
-*.tbz2)      tar xjf $1      ;;
-*.tgz)       tar xzf $1       ;;
-*.zip)       unzip $1     ;;
-*.Z)         uncompress $1  ;;
-*.7z)        7z x $1    ;;
-*)           echo &#8220;&#8217;$1&#8217; cannot be extracted via extract()&#8221; ;;
-esac
-else
-echo &#8220;&#8217;$1&#8217; is not a valid file&#8221;
-fi
-}
-export ec
-你可以将以上内容放在~/.bashrc 中，这样启动shell就可以使用这个ec命令</p>
-
-<p><strong>2 shell的图形程序</strong></p>
-
-<p>注：可能大家一说图形程序那么就是qt，gtk，wxpython这样的语言实现的，但是对于一般的系统管理员或者简单的工作，没有必要</p>
-
-<p>1 Zenity</p>
-
-<p>它依赖X Window环境 与 GNOME 相捆绑。如果使用kde，需要单独安装（gtk依赖是很折磨人的）</p>
-
-<p><pre class="sh_bash">
-#!/bin/bash
-(
-  echo "10" ;  sleep 1 #do something，我这里换成了sleep,以下同样，前面的10表示进度百分比，这个是自定义的数字而已，我根据大概时间占比设计的
-  echo "# Start thunderbird" ; sleep 1
-  echo "30" ; sleep 1
-  echo "# Receive mail" ; sleep 1
-  echo "75" ; sleep 1
-  echo "# handle mail" ; sleep 1
-  echo "100" ; sleep 1
-) |
-zenity --progress \
-  --title="Update System Logs" \
-  --text="Scanning mail ..." \  #这个文件显示就是上面的那个10%过程里
-  --percentage=0</p>
-
-<p>if [ "$?" = -1 ] ; then
-  zenity --error \
-    --text="Operate canceled."
-fi
-</pre></p>
-
-<p><pre class="sh_bash">
-ENTRY=`zenity --entry --text "Please enter your name" \
-   --entry-text "Your name" --title "Enter your name"`
-if [ $? == 0 ]; then
-  zenity --info --text "Hello $ENTRY\!"
-fi
-</pre></p>
-
-<p>2 dialog</p>
-
-<p>注：这个dialog在我以前的工作中还是比较经常使用的，一些脚本给用户一个选择的界面</p>
-
-<p><pre class="sh_bash">
-RESULT=`dialog --stdout  \
-   --checklist "Enable the account options you want:" 10 40 3 \   #这里是是一个可以多选的框
-  1 "Home directory" on \
-  2 "Signature file" off \
-  3 "Simple password" off`
-if [ $? == 0 ]; then
-  zenity --info --text "$RESULT\!"
-fi
-</pre></p>
-
-<p>例子很丰富，下载安装dialog的目录下有sample子文件夹，里面都是一些实现各种功能的shell脚本，大家可以去实践</p>
-
-<p><strong>3 抓取LINUX桌面的视频</strong></p>
-
-<p>注：以前很羡慕youtube的一些高清的关于linux桌面的视频，用录像工具发现很卡，后来发现了这个</p>
-
-<p>需要安装ffmpeg(opensuse11.4)</p>
-
-<p>sudo zypper addrepo -f http://ftp.gwdg.de/pub/linux/packman/suse/11.4/ packman</p>
-
-<p>sudo zypper addrepo -f http://opensuse-guide.org/repo/11.4/ dvd
-sudo zypper install ffmpeg
-ffmpeg -f x11grab -s wxga -r 25 -i :0.0 -sameq /tmp/out.mpg
-注：</p>
-
-<p>-f x11grab 指定输入类型。因为x11的缓冲区不是普通的视频文件可以侦测格式，必须指定后ffmpeg才知道如何获得输入。</p>
-
-<p>-s wxga 设置抓取区域的大小。wxga是1366*768的标准说法，也可以换成-s 800×600的写法。</p>
-
-<p>-r 25 设置帧率，即每秒抓取的画面数。</p>
-
-<p>-i :0.0 设置输入源，本地X默认在0.0</p>
-
-<p>-sameq 保持跟输入流一样的图像质量，以用来后期处理</p>
-
-<p><strong>4 最近的一个脚本，分析postfix的maillog的一些东西，其中使用了sqlite和redis的bash接口,并且格式化数据发送邮件</strong></p>
-
-<p>主要是：分析前一天的maillog，按小时，分析出那个小时里面给某邮件ISP发送的邮件的数量频率（单位封/min，第一封到最后一封，是按分钟，</p>
-
-<p>、不是按照每小时60min），计算全天给某邮件ISP的发送频率（同上，不是一天的24*60min）,计算每天给各邮件ISP发送总量，整天拒绝和弹回的邮件总量</p>
-
-<p><strong><pre class="sh_bash"></strong>
-#!/bin/bash</p>
-
-<p>START=`date +%s`
-function total(){
-for i in qq.comnum foxmail.comnum 163.comnum 126.comnum netease.comnum sina.comnum sina.com.cnnum sohu.comnum gmail.comnum yahoo.comnum yahoo.com.cnnum live.comnum hotmail.comnum mail.alipay.comnum other reject bounced
-do
-redis-bash-cli -h localhost set $i 0 2&gt;&amp;1 &gt;/dev/null
-done
-for i in qq.comint foxmail.comint 163.comint 126.comint netease.comint sina.comint sina.com.cnint sohu.comint gmail.comint yahoo.comint yahoo.com.cnint live.comint hotmail.comint mail.alipay.comint
-do
-redis-bash-cli -h localhost set $i 0 2&gt;&amp;1 &gt;/dev/null
-done
-}
-function initmail(){
-for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
-do
-redis-bash-cli -h localhost set $i 0 2&gt;&amp;1 &gt;/dev/null
-done
-}
-function init(){
-for i in 0{0..9} {10..24}; do sqlite3 test.db "CREATE TABLE IF NOT EXISTS t`date -d last-day +%m%d`$i(Name VARCHAR(40),Start INTEGER,End INTEGER,Num INTEGER)"; done
-sqlite3 test.db "CREATE TABLE IF NOT EXISTS t`date -d last-day +%m%d`(Name VARCHAR(40),DaySum VARCHAR(40),HourHigh VARCHAR(40),DayAv VARCHAR(40))";
-initmail
-}
-function status(){
-status=`echo $@|grep -Po "status=(\w+)"|cut -d '=' -f2`
-if [ "$status" = "sent" ];then
-parse $@
-elif [ "$status" = "bounced" ];then
-bou=`redis-bash-cli -h localhost get bounced`
-((bou++))
-redis-bash-cli -h localhost set bounced $bou 2&gt;&amp;1 &gt;/dev/null
-else
-if [ "`echo $@|grep reject`" != "" ];then
-rej=`redis-bash-cli -h localhost get reject`
-((rej++))
-redis-bash-cli -h localhost set reject $rej 2&gt;&amp;1 &gt;/dev/null
-fi
-fi
-}
-function add(){
-data=`redis-bash-cli -h localhost get $1 `
-mint=`redis-bash-cli -h localhost get $1int`
-mtotal=`redis-bash-cli -h localhost get $1num`
-if [ "$data" = 0 ];then
-m=`echo $@|awk '{print $4}'`
-mstart=`echo $m|cut -d ':' -f2`
-hour=`echo $m|cut -d ':' -f1`
-sqlite3 test.db "insert into t`date -d last-day +%m%d`$c (Name,Start) values ('$1','$mstart');"
-fi
-if [ "$mint" = 0 ];then
-cur=`echo "$hour * 60 + $mstart"|bc`
-redis-bash-cli -h localhost set $1int $cur 2&gt;&amp;1 &gt;/dev/null
-fi
-((data++))
-((mtotal++))
-redis-bash-cli -h localhost set $1 $data 2&gt;&amp;1 &gt;/dev/null
-redis-bash-cli -h localhost set $1num $mtotal 2&gt;&amp;1 &gt;/dev/null
-}
-function parse(){
-data=`echo $@|grep -Po 'to=&lt;(.*@.*?)&gt;'|cut -d',' -f 1|cut -d'@' -f2`
-len=`expr length $data`
-mail=${data:0:$len-1}
-if [ "$mail" = "foxmail.com" ];then
-add $mail $@
-elif [ "$mail" = "163.com" ];then
-add $mail $@
-elif [ "$mail" = "qq.com" ];then
-add $mail $@
-elif [ "$mail" = "mail.alipay.com" ];then
-add $mail $@
-elif [ "$mail" = "126.com" ];then
-add $mail $@
-elif [ "$mail" = "netease.com" ];then
-add $mail $@
-elif [ "$mail" = "sina.com" ];then
-add $mail $@
-elif [ "$mail" = "sina.com.cn" ];then
-add $mail $@
-elif [ "$mail" = "sohu.com" ];then
-add $mail $@
-elif [ "$mail" = "gmail.com" ];then
-add $mail $@
-elif [ "$mail" = "yahoo.com" ];then
-add $mail $@
-elif [ "$mail" = "yahoo.com.cn" ];then
-add $mail $@
-elif [ "$mail" = "live.com" ];then
-add $mail $@
-elif [ "$mail" = "hotmail.com" ];then
-add $mail $@
-else
-mother=`redis-bash-cli -h localhost get other`
-((mother++))
-redis-bash-cli -h localhost set other $mother 2&gt;&amp;1 &gt;/dev/null
-fi
-}
-function day(){
-day=`date -d last-day +%d`
-grep 'to=' /var/log/maillog|awk '$2=='"$day"' {print}'&gt;txt
-}
-function cal(){
-for c in 0{0..9} {10..24}
-do
-for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
-do
-tt=`redis-bash-cli -h localhost get $i`
-table=t`date -d last-day +%m%d`$c
-data=`sqlite3 test.db "select * from '"$table"' where Name='$i';"`
-if [ "$data" != "" ];then
-st=`echo $data|cut -d'|' -f2`
-ed=`echo $data|cut -d'|' -f3`
-nu=`echo $data|cut -d'|' -f4`
-cur=`expr $ed - $st`
-if [ "$cur" != 0 ];then
-d=`echo "scale=2;$nu/$cur"|bc`
-if [ `echo "$d &gt; $tt"|bc` -eq 1 ];then
-redis-bash-cli -h localhost set $i $d 2&gt;&amp;1 &gt;/dev/null
-fi
-fi
-fi
-done
-done
-}
-sqlop(){
-for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
-do
-num=`redis-bash-cli -h localhost get $i'num'`
-hi=`redis-bash-cli -h localhost get $i`
-di=`redis-bash-cli -h localhost get $i'int'`
-sqlite3 test.db "insert into t`date -d last-day +%m%d` (Name,DaySum,HourHigh,DayAv) values ('$i','$num','$hi','$di');"
-done
-}
-function caltotal(){
-for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
-do
-end=`grep 'to=&lt;.*@'"$i"'&gt;' txt|tail -n 1|awk '{print $3}'`
-mstart=`echo $end|cut -d ':' -f2`
-hour=`echo $end|cut -d ':' -f1`
-cur=`echo "$hour * 60 + $mstart"|bc`
-std=`redis-bash-cli -h localhost get $i'int'`
-sum=`redis-bash-cli -h localhost get $i'num'`
-if [ "$sum" != 0 ];then
-d=`expr $cur - $std`
-da=`echo "scale=2;$sum/$d"|bc`
-else
-da=0
-fi
-redis-bash-cli -h localhost set $i'int' $da  2&gt;&amp;1 &gt; /dev/null
-done
-}
-function sendmail()
-{
-END=`date +%s`
-otime=`date -d last-day +%d`
-s=`expr \( $END - $START \)`
-echo -n "&lt;strong&gt;您好：&lt;/br&gt;&lt;/strong&gt;" &gt; Mail
-echo -n "&lt;strong&gt;&lt;br&gt;$otime日邮件服务器数据统计&lt;/br&gt;&lt;/strong&gt;" &gt;&gt; Mail
-echo -n "&lt;table&gt;&lt;TR&gt;&lt;TD&gt;邮件ISP&lt;/TD&gt;&lt;TD&gt;本日发送总量(单位:封)&lt;/TD&gt;&lt;TD&gt;本日发送最高一小时频率（单位:封/min)&lt;/TD&gt;&lt;TD&gt;本日平均(单位:封/min)&lt;/TD&gt;&lt;/TR&gt;" &gt;&gt; Mail
-sqlite3 -html test.db  "select Name,DaySum,HourHigh,DayAv from t`date -d last-day +%m%d`;" &gt;&gt; Mail
-bou=`redis-bash-cli -h localhost get bounced`
-echo -n "&lt;TR&gt;&lt;TD&gt;被弹出邮件数量&lt;/TD&gt;&lt;TD&gt;$bou&lt;/TD&gt;&lt;/TR&gt;" &gt;&gt; Mail
-rej=`redis-bash-cli -h localhost get reject`
-echo -n "&lt;TR&gt;&lt;TD&gt;被拒绝邮件数量&lt;/TD&gt;&lt;TD&gt;$rej&lt;/TD&gt;&lt;/TR&gt;" &gt;&gt; Mail
-oth=`redis-bash-cli -h localhost get other`
-echo -n "&lt;TR&gt;&lt;TD&gt;其它类型邮件数量&lt;/TD&gt;&lt;TD&gt;$oth&lt;/TD&gt;&lt;/TR&gt;&lt;/table&gt;" &gt;&gt; Mail
-echo -n "&lt;font color="red"&gt;&lt;TR&gt;本次操作花费: $s秒&lt;/TR&gt;&lt;/font&gt;" &gt;&gt; Mail
-#cat Mail | /usr/bin/formail -I "From: dongwm@dongwm.com" -I "MIME-Version:1.0" -I "Content-type:text/html;charset=utf-8" -I "Subject:Postfix昨日邮件系统统计结果" -I "To: dongwm2@dongwm.com"|/usr/sbin/sendmail -oi dongwm2@dongwm.com
-}
-function tm(){
-for c in 0{0..9} {10..24}
-do
-awk '/'"$c"':[0-5][0-9]:[0-5][0-9]/ {print}' txt|while read line; do status $line; done
-for i in qq.com foxmail.com 163.com 126.com netease.com sina.com sina.com.cn sohu.com gmail.com yahoo.com yahoo.com.cn live.com hotmail.com mail.alipay.com
-do
-data=`redis-bash-cli -h localhost get $i`
-end=`awk '/'"$c"':[0-5][0-9]:[0-5][0-9]/ {print}' txt|grep 'to=&lt;.*@'"$i"'&gt;'|tail -n 1|awk '{print $3}'|cut -d ':' -f2`
-sqlite3 test.db "update t`date -d last-day +%m%d`$c set Num='$data',End='$end' where Name='$i';"
-done
-sleep 5
-initmail
-done
-}
-function end(){
-for i in 0{0..9} {10..24}; do sqlite3 test.db "drop table if exists t`date -d last-day +%m%d`$i"; done
-sqlite3 test.db "drop table if exists t`date -d last-day +%m%d`";
-}
-#主函数
-end
-total
-#day
-init
-tm
-cal
-caltotal
-sqlop
-sendmail
-<strong></pre>
-</strong></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/18/">&larr; Older</a></li>
@@ -1458,6 +1179,10 @@ sendmail
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1493,10 +1218,6 @@ sendmail
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

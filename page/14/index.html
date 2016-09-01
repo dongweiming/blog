@@ -141,6 +141,137 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyu-3/">关于shutil研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-15T00:00:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：shutil是一个高层次的文件操作，比如复制，移动和修改权限等</p>
+
+<p><pre class="sh_python">
+import os
+import time 
+from shutil import *
+from commands import *
+print 'BEFORE:', os.listdir(os.getcwd())
+copyfile('text', 'test_to_copy')   #将源文件内容完全复制给目标文件. 如果没有写入目标文件的权限, 会引起IOError. 
+                            #由于该函数是为了读取文件内容而打开此输入文件, 而不管它的类型是什么, 特殊类型的文件使用copyfile()是不能拷贝的, 比如管道文件
+print 'AFTER:', os.listdir(os.getcwd())
+print
+os.mkdir('example')
+print 'BEFORE:', os.listdir('example')
+copy('test.py', 'example') #类似于Unix命令cp. 如果目标参数是一个目录而不是一个文件, 那么在这个目录中复制一个源文件副本(它与源文件同名). 文件的权限也随之复制
+print 'AFTER:', os.listdir('example')
+print
+def show_file_info(filename):
+    stat_info = os.stat(filename)
+    print '\tMode    :', stat_info.st_mode
+    print '\tCreated :', time.ctime(stat_info.st_ctime)
+    print '\tAccessed:', time.ctime(stat_info.st_atime)
+    print '\tModified:', time.ctime(stat_info.st_mtime)
+rmtree('example') #可以删除整个目录树. 里面若产生错误会作为异常抛出. 但是如果它的第二个参数是目录树, 那么错误会被忽略, 第三个参数可以指定为一个特殊出错处理函数句柄.
+os.mkdir('example')
+print 'SOURCE:'
+show_file_info('test.py')
+copy2('test', 'example') #copy2()函数类似于copy(), 但是它将一些元信息, 如文件最后一次被读取时间和修改时间等, 也复制至新文件中.
+print 'DEST:'
+show_file_info('test.py')
+print
+print 'BEFORE:', getstatus('test1.py')
+copymode('test.py', 'test1.py')
+print 'AFTER :', getstatus('test1.py')
+print
+print 'BEFORE:'
+show_file_info('test1.py')
+copystat('test.py', 'test1.py') #复制文件的其他元信息(权限, 最后读取时间, 最后修改时间)
+print 'AFTER :'
+show_file_info('test1.py')
+print
+print 'BEFORE:'
+print getoutput('ls -rlast /tmp/example')
+copytree('example', '/tmp/example')
+print 'AFTER:'
+print getoutput('ls -rlast /tmp/example')
+print
+print 'BEFORE: example : ', os.listdir('example')
+move('example', 'example2')
+print 'AFTER : example2: ', os.listdir('example2')
+</pre></p>
+
+<p>执行结果</p>
+
+<p>dongwm@linux-dongwm:~/test&gt; python test.py</p>
+
+<p>BEFORE: [&#8216;text&#8217;, &#8216;test.py&#8217;]
+AFTER: [&#8216;text&#8217;, &#8216;test.py&#8217;, &#8216;test_to_copy&#8217;]
+BEFORE: []
+AFTER: [&#8216;test.py&#8217;]</p>
+
+<p>SOURCE:
+Mode    : 33188
+Created : Fri Jun 15 11:08:12 2012
+Accessed: Fri Jun 15 11:08:12 2012
+Modified: Fri Jun 15 11:08:11 2012
+DEST:
+Mode    : 33188
+Created : Fri Jun 15 11:08:12 2012
+Accessed: Fri Jun 15 11:08:12 2012
+Modified: Fri Jun 15 11:08:11 2012</p>
+
+<p>BEFORE: -rwxr-xr-x 1 dongwm users 965  6月 14 17:45 test1.py
+AFTER : -rw-r&#8211;r&#8211; 1 dongwm users 965  6月 14 17:45 test1.py</p>
+
+<p>BEFORE:
+Mode    : 33188
+Created : Fri Jun 15 11:11:39 2012
+Accessed: Thu Jun 14 17:45:57 2012
+Modified: Thu Jun 14 17:45:54 2012
+AFTER :
+Mode    : 33188
+Created : Fri Jun 15 11:14:23 2012
+Accessed: Fri Jun 15 11:14:23 2012
+Modified: Fri Jun 15 11:14:20 2012</p>
+
+<p>BEFORE:
+ls: 无法访问/tmp/example: 没有那个文件或目录
+AFTER:
+总用量 28
+4 -rw-r&#8211;r&#8211;   1 dongwm users   468  6月 15 11:08 test.py
+4 drwxr-xr-x   2 dongwm users  4096  6月 15 11:08 .
+20 drwxrwxrwt 355 root   root  20480  6月 15 11:16 ..</p>
+
+<p>BEFORE: example :  [&#8216;test.py&#8217;]
+AFTER : example2:  [&#8216;test.py&#8217;]</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuschedyanjiu/">关于sched研究</a></h1>
     
     
@@ -1581,227 +1712,6 @@ for k, g in groupby(di, key=itemgetter(1)):
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuinspectyanjiu/">关于inspect研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：inspect是一个检查活动对象的模块</p>
-
-<p>这里有个例子文件example.py：</p>
-
-<p><pre class="sh_python">
-"""Sample file to serve as the basis for inspect examples.
-"""</p>
-
-<p>def module_level_function(arg1, arg2='default', *args, **kwargs):
-    """This function is declared in the module."""
-    local_variable = arg1
-    return</p>
-
-<p>class A(object):
-    """The A class."""
-    def __init__(self, name):
-        self.name = name</p>
-
-<p>    def get_name(self):
-        "Returns the name of the instance."
-        return self.name</p>
-
-<p>instance_of_a = A('sample_instance')</p>
-
-<p>class B(A):
-    """This is the B class.
-    It is derived from A.
-    """</p>
-
-<p>    # This method is not part of A.
-    def do_something(self):
-        """Does some work"""
-        pass</p>
-
-<p>    def get_name(self):
-        "Overrides version from A"
-        return 'B(' + self.name + ')'
-</pre></p>
-
-<p><pre class="sh_python">
-import inspect
-import pprint
-import example</p>
-
-<p>for name, data in inspect.getmembers(example):#过滤返回的对象,元组每个列表2个数据:成员名称，成员类型
-    if name == '__builtins__':  #内置模块不属于实际模块，忽略
-        continue
-    print '%s :' % name, repr(data)
-print
-for name, data in inspect.getmembers(example, inspect.isclass): #这个谓语限定只要返回 类
-    print '%s :' % name, repr(data)
-pprint.pprint(inspect.getmembers(example.A)) #由于没有过滤，输出显示的属性，方法，slots，和其他类的成员
-print 
-pprint.pprint(inspect.getmembers(example.A, inspect.ismethod)) #过滤只返回类的方法</p>
-
-<p>print inspect.getdoc(example.B) #返回文档字符串，也就是__doc__的内容</p>
-
-<p>print inspect.getcomments(example.B.do_something) #返回评论，打印方法前面的注释
-print inspect.getsource(example.A.get_name)  #如果<tt>py</tt>文件是用于一个模块，类或方法的原始源代码可以使用inspect.getsource或者下面的getsourcelines检索
-pprint.pprint(inspect.getsourcelines(example.A.get_name))  
-arg_spec = inspect.getargspec(example.module_level_function) #getargspec函数返回一个包含位置参数名称的列表
-print 'NAMES   :', arg_spec[0]
-print '*       :', arg_spec[1]
-print '**      :', arg_spec[2]
-print 'defaults:', arg_spec[3]</p>
-
-<p>class C(example.B):
-    pass</p>
-
-<p>class D(C, example.A):
-    pass</p>
-
-<p>def print_class_tree(tree, indent=-1):
-    if isinstance(tree, list):
-        for node in tree:
-            print_class_tree(node, indent+1)
-    else:
-        print '  ' * indent, tree[0].__name__
-    return</p>
-
-<p>print 'A, B, C, D:'
-print_class_tree(inspect.getclasstree([example.A, example.B, C, D])) #显示类层次结构，创建一个类似树状的数据结构，使用基于它被赋予的类和基类的嵌套列表和元组。
-                                                      # 在返回列表中的每个元素可以是一个类和它的基类，或另一个子类的列表，其中包含元组的元组
-class C(object):
-    pass</p>
-
-<p>class C_First(C, example.B):
-    pass</p>
-
-<p>class B_First(example.B, C):
-    pass</p>
-
-<p>print 'B_First:'
-for c in inspect.getmro(B_First):  #返回一个元组的顺序,显示类继承的顺序，从底层到最上层
-    print '\t', c.__name__
-print
-print 'C_First:'
-for c in inspect.getmro(C_First):
-    print '\t', c.__name__
-def recurse(limit):  
-    local_variable = '.' * limit
-    print limit, inspect.getargvalues(inspect.currentframe()) #堆栈的顶部（当前函数）的框架,返回一个参数名，可变参数的名称和本地变量字典的tuple
-    if limit &lt;= 0:
-        return
-    recurse(limit - 1)
-    return
-recurse(3)
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-A : &lt;class &#8216;example.A&#8217;&gt;
-B : &lt;class &#8216;example.B&#8217;&gt;
-__doc__ : &#8216;Sample file to serve as the basis for inspect examples.\n&#8217;
-__file__ : &#8216;/home/dongwm/example.pyc&#8217;
-__name__ : &#8216;example&#8217;
-__package__ : None
-instance_of_a : &lt;example.A object at 0xb7403cec&gt;
-module_level_function : &lt;function module_level_function at 0xb740709c&gt;</p>
-
-<p>A : &lt;class &#8216;example.A&#8217;&gt;
-B : &lt;class &#8216;example.B&#8217;&gt;
-[(&#8216;__class__&#8217;, &lt;type &#8216;type&#8217;&gt;),
-(&#8216;__delattr__&#8217;, &lt;slot wrapper &#8216;__delattr__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__dict__&#8217;, &lt;dictproxy object at 0xb740a044&gt;),
-(&#8216;__doc__&#8217;, &#8216;The A class.&#8217;),
-(&#8216;__format__&#8217;, &lt;method &#8216;__format__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__getattribute__&#8217;, &lt;slot wrapper &#8216;__getattribute__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__hash__&#8217;, &lt;slot wrapper &#8216;__hash__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__init__&#8217;, &lt;unbound method A.__init__&gt;),
-(&#8216;__module__&#8217;, &#8216;example&#8217;),
-(&#8216;__new__&#8217;, &lt;built-in method __new__ of type object at 0xb784cb80&gt;),
-(&#8216;__reduce__&#8217;, &lt;method &#8216;__reduce__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__reduce_ex__&#8217;, &lt;method &#8216;__reduce_ex__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__repr__&#8217;, &lt;slot wrapper &#8216;__repr__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__setattr__&#8217;, &lt;slot wrapper &#8216;__setattr__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__sizeof__&#8217;, &lt;method &#8216;__sizeof__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__str__&#8217;, &lt;slot wrapper &#8216;__str__&#8217; of &#8216;object&#8217; objects&gt;),
-(&#8216;__subclasshook__&#8217;,
-&lt;built-in method __subclasshook__ of type object at 0x81078ac&gt;),
-(&#8216;__weakref__&#8217;, &lt;attribute &#8216;__weakref__&#8217; of &#8216;A&#8217; objects&gt;),
-(&#8216;get_name&#8217;, &lt;unbound method A.get_name&gt;)]</p>
-
-<p>[(&#8216;__init__&#8217;, &lt;unbound method A.__init__&gt;),
-(&#8216;get_name&#8217;, &lt;unbound method A.get_name&gt;)]
-This is the B class.
-It is derived from A.
-# This method is not part of A.</p>
-
-<p>def get_name(self):
-&#8220;Returns the name of the instance.&#8221;
-return self.name</p>
-
-<p>([&#8216;    def get_name(self):\n&#8217;,
-&#8216;        &#8220;Returns the name of the instance.&#8221;\n&#8217;,
-&#8216;        return self.name\n&#8217;],
-14)
-NAMES   : [&#8216;arg1&#8217;, &#8216;arg2&#8217;]
-*       : args
-**      : kwargs
-defaults: (&#8216;default&#8217;,)
-A, B, C, D:
-object
-A
-D
-B
-C
-D
-B_First:
-B_First
-B
-A
-C
-object</p>
-
-<p>C_First:
-C_First
-C
-B
-A
-object
-3 ArgInfo(args=[&#8216;limit&#8217;], varargs=None, keywords=None, locals={&#8216;local_variable&#8217;: &#8216;&#8230;&#8217;, &#8216;limit&#8217;: 3})
-2 ArgInfo(args=[&#8216;limit&#8217;], varargs=None, keywords=None, locals={&#8216;local_variable&#8217;: &#8216;..&#8217;, &#8216;limit&#8217;: 2})
-1 ArgInfo(args=[&#8216;limit&#8217;], varargs=None, keywords=None, locals={&#8216;local_variable&#8217;: &#8216;.&#8217;, &#8216;limit&#8217;: 1})
-0 ArgInfo(args=[&#8216;limit&#8217;], varargs=None, keywords=None, locals={&#8216;local_variable&#8217;: &#8221;, &#8216;limit&#8217;: 0})</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/15/">&larr; Older</a></li>
@@ -1824,6 +1734,10 @@ object
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -1859,10 +1773,6 @@ object
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

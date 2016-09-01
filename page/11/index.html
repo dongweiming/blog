@@ -141,6 +141,369 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuosyanjiu/">关于os研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：os可谓python模块最常用模块之一了，也称作：操作系统混合接口，包含的大部分函数用于创建和管理活动进程和文件系统(文件和目录)，但是有些函数在windows上无法使用</p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>TEST_GID=501
+TEST_UID=527</p>
+
+<p>def show_user_info():
+     print 'Effective User  :', os.geteuid()
+     print 'Effective Group :', os.getegid()
+     print 'Actual User    :', os.getuid(), os.getlogin()
+     print 'Actual Group  :', os.getgid()
+     print 'Actual Groups   :', os.getgroups()
+     return</p>
+
+<p>print 'BEFORE CHANGE:'
+show_user_info()
+print
+try:
+     os.setegid(TEST_GID)  #改变这个进程的用户和组属性. 需要root权限，否则改不了
+except OSError:
+     print 'ERROR: Could not change effective group.  Re-run as root.'
+else:
+     print 'CHANGED GROUP:'
+     show_user_info()
+     print</p>
+
+<p>try:
+     os.seteuid(TEST_UID)
+except OSError:
+     print 'ERROR: Could not change effective user.  Re-run as root.'
+else:
+     print 'CHANGE USER:'
+     show_user_info()
+     print
+print 'Initial value:', os.environ.get('TESTVAR', None) #访问在环境中设置的环境变量
+print 'Child process:'
+os.system('echo $TESTVAR')  #os.system通过一个shell中的子进程执行系统命令，但是现在不推荐这个函数.它可以包含shell语法, 比如通配符或环境变量:</p>
+
+<p>os.environ['TESTVAR'] = 'THIS VALUE WAS CHANGED'</p>
+
+<p>print
+print 'Changed value:', os.environ['TESTVAR']
+print 'Child process:'
+os.system('echo $TESTVAR')</p>
+
+<p>del os.environ['TESTVAR']</p>
+
+<p>print
+print 'Removed value:', os.environ.get('TESTVAR', None)
+print 'Child process:'
+os.system('echo $TESTVAR')
+print 'Starting:', os.getcwd()  #类似于执行命令pwd，获取当前目录
+print os.listdir(os.curdir)  #列出当前目录下所有文件和文件夹</p>
+
+<p>print 'Moving up one:', os.pardir  
+os.chdir(os.pardir) #改变目录到当前目录的上一级目录，想过类似于： cd .. </p>
+
+<p>print 'After move:', os.getcwd()
+print os.listdir(os.curdir)
+</pre></p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>print '\npopen, read:'
+pipe_stdout = os.popen('echo "to stdout"', 'r')  #os.popen是管道函数
+try:
+    stdout_value = pipe_stdout.read() #标准输出流
+finally:
+    pipe_stdout.close()
+print '\tstdout:', repr(stdout_value)</p>
+
+<p>print '\npopen, write:'
+pipe_stdin = os.popen('cat -', 'w')
+try:
+    pipe_stdin.write('\tstdin: to stdin\n') #标准输入流
+finally:
+    pipe_stdin.close()
+print '\npopen2:'
+pipe_stdin, pipe_stdout = os.popen2('cat -')  #popen2()函数返回一个与子进程标准输入绑定的只写流和一个与子进程标准输出绑定的只读流
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()</p>
+
+<p>try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+print '\npopen3:'
+pipe_stdin, pipe_stdout, pipe_stderr = os.popen3('cat -; echo ";to stderr" 1&gt;&amp;2') #popen3函数返回一个新进程的3个流stdin、stdout、stderr
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+try:
+    stderr_value = pipe_stderr.read()
+finally:
+    pipe_stderr.close()
+print '\tstderr:', repr(stderr_value)
+print '\npopen4:'
+pipe_stdin, pipe_stdout_and_stderr = os.popen4('cat -; echo ";to stderr" 1&gt;&amp;2') # popen4()返回两个流, stdin和stdout/stderr的组合,
+                                                # 这对于命令的结果需要被记录, 但不需要解析是很有用的.
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout_and_stderr.read()
+finally:
+    pipe_stdout.close()
+print '\tcombined output:', repr(stdout_value)
+print '\npopen2, cmd as sequence:'
+pipe_stdin, pipe_stdout = os.popen2(['cat', '-']) #popen2()、popen3()、popen4()函数同样接收字符串序列(命令, 加参数)
+try:
+    pipe_stdin.write('through stdin to stdout')
+finally:
+    pipe_stdin.close()
+try:
+    stdout_value = pipe_stdout.read()
+finally:
+    pipe_stdout.close()
+print '\tpass through:', repr(stdout_value)
+</pre></p>
+
+<p><pre class="sh_python">
+import os</p>
+
+<p>print 'Testing:', __file__
+print 'Exists:', os.access(__file__, os.F_OK) #os.access()可以测试一个进程对一个文件是否有可访问权限.os.F_OK测试存在,返回布尔值
+print 'Readable:', os.access(__file__, os.R_OK) #os.R_OK测试可读,返回布尔值
+print 'Writable:', os.access(__file__, os.W_OK) #os.W_OK测试可写,返回布尔值
+print 'Executable:', os.access(__file__, os.X_OK) #os.X_OK测试可读,返回布尔值
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python !$
+python test.py
+Testing: test.py
+Exists: True
+Readable: True
+Writable: True
+Executable: False
+<pre class="sh_python">
+import os
+import sys
+import time</p>
+
+<p>if len(sys.argv) == 1:
+    filename = __file__
+else:
+    filename = sys.argv[1]</p>
+
+<p>stat_info = os.stat(filename)</p>
+
+<p>print 'os.stat(%s):' % filename
+print '\tSize:', stat_info.st_size  #字节数
+print '\tPermissions:', oct(stat_info.st_mode) #文件权限
+print '\tOwner:', stat_info.st_uid  #文件uid（拥有者）
+print '\tDevice:', stat_info.st_dev #文件所在文件设备
+print '\tLast modified:', time.ctime(stat_info.st_mtime)  #文件修改时间（最近一次）
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+os.stat(test.py):
+Size: 388
+Permissions: 0100644
+Owner: 1000
+Device: 2055
+Last modified: Thu Jul  5 11:19:28 2012
+<pre class="sh_python">
+import os
+import stat</p>
+
+<p>existing_permissions = stat.S_IMODE(os.stat(__file__).st_mode)  #确定哪些权限已设置使用</p>
+
+<p>if not os.access(__file__, os.X_OK):
+    print 'Adding execute permission'
+    new_permissions = existing_permissions | stat.S_IXUSR #添加权限
+else:
+    print 'Removing execute permission'
+    new_permissions = existing_permissions ^ stat.S_IXUSR   #去掉权限</p>
+
+<p>os.chmod(__file__, new_permissions)
+</pre></p>
+
+<p><pre class="sh_python">
+import os
+import sys
+import tempfile dir_name = 'os_directories_example'</p>
+
+<p>print 'Creating', dir_name
+os.makedirs(dir_name)  #创建文件夹</p>
+
+<p>file_name = os.path.join(dir_name, 'example.txt')
+print 'Creating', file_name
+f = open(file_name, 'wt')  #添加文件
+try:
+    f.write('example file')
+finally:
+    f.close()</p>
+
+<p>print 'Listing', dir_name
+print os.listdir(dir_name)</p>
+
+<p>print 'Cleaning up'
+os.unlink(file_name)  #相当于删掉文件
+os.rmdir(dir_name)  #删除文件夹
+link_name = tempfile.mktemp()</p>
+
+<p>print 'Creating link %s-&gt;%s' % (link_name, __file__)
+os.symlink(__file__, link_name)  #创建符号链接 ，类似于ln -s</p>
+
+<p>stat_info = os.lstat(link_name) #链接文件的状态
+print 'Permissions:', oct(stat_info.st_mode)</p>
+
+<p>print 'Points to:', os.readlink(link_name)  #链接文件源文件
+os.unlink(link_name)
+if len(sys.argv) == 1:
+    root = '/tmp'
+else:
+    root = sys.argv[1]</p>
+
+<p>for dir_name, sub_dirs, files in os.walk(root):  #os.walk()可以递归遍历一个目录
+    print '\n', dir_name
+    sub_dirs = [ '%s/' % n for n in sub_dirs ]
+    contents = sub_dirs + files
+    contents.sort()
+    for c in contents:
+        print '\t%s' % c
+</pre></p>
+
+<p><pre class="sh_python">
+pid = os.fork() #创建一个新进程作为当前进程的一个复本,当fork之后, 你结束这两个运行着相同代码的进程. 可以检查返回值来直到你在哪个进程中. 
+                #如果它是0, 表示你在子进程中, 如果不是0, 则表示你在父进程中, 它返回的值是其子进程的进程id.</p>
+
+<p>if pid:
+    print 'Child process id:', pid
+else:
+    print 'I am the child'
+</pre></p>
+
+<p><pre class="sh_python"></p>
+
+<p>import os
+import signal
+import time</p>
+
+<p>def signal_usr1(signum, frame):
+    pid = os.getpid()
+    print 'Received USR1 in process %s' % pid
+print 'Forking...'
+child_pid = os.fork()
+if child_pid: ## 这个是父进程执行的代码
+    print 'PARENT: Pausing before sending signal...'
+    time.sleep(1)
+    print 'PARENT: Signaling %s' % child_pid
+    os.kill(child_pid, signal.SIGUSR1) #父进程中, 通过 <tt>os.kill()</tt> 发送一个USR1信号之前暂停一段时间. 这短的暂停让子进程有时间去设置信号处理句柄
+else: #在子进程中, 我们设置信号处理句柄后睡眠一段时间来让父进程有时间去发送信号给我们
+    print 'CHILD: Setting up signal handler'
+    signal.signal(signal.SIGUSR1, signal_usr1)
+    print 'CHILD: Pausing to wait for signal'
+    time.sleep(5)
+</pre></p>
+
+<p>执行分析：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Forking&#8230;
+PARENT: Pausing before sending signal&#8230;
+CHILD: Setting up signal handler
+CHILD: Pausing to wait for signal
+PARENT: Signaling 1946
+Received USR1 in process 1946
+<pre class="sh_python">
+child_pid = os.fork()
+if child_pid:
+    os.waitpid(child_pid, 0) #指示父进程等候一个指定的子进程终止
+else:
+    os.execlp('ls', 'ls', '-l', '/tmp/') ## 执行多个子进程.有很多 <tt>exec*()</tt> 的变种, 它们依赖于你可能使用的参数, 如, 你是否想要路径和父进程的环境变量都被复制到子进程中
+os.spawnlp(os.P_WAIT, 'ls', 'ls', '-l', '/tmp/') #方便起见, <tt>os.spawn*()</tt> 系列函数将 <tt>fork()</tt> 和 <tt>exec*()</tt> 调用写在一条语句中
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p><pre class="sh_python">
+import os
+import sys
+import time</p>
+
+<p>for i in range(3):
+    print 'PARENT: Forking %s' % i
+    worker_pid = os.fork()
+    if not worker_pid:
+        print 'WORKER %s: Starting' % i
+        time.sleep(2 + i)
+        print 'WORKER %s: Finishing' % i
+        sys.exit(i)</p>
+
+<p>for i in range(3):
+    print 'PARENT: Waiting for %s' % i
+    done = os.wait() #多个进程来运行各自的任务, 你希望在开始新的进程之前等待其中一个或多个的结束, 以此来避免服务器的超载.
+                     #返回值是包含进程号和退出状态(一个16位的数字, 它的低字节是一个杀死该进程的信号数字, 它的高字节是退出状态)的一个元组.
+    print 'PARENT:', done
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuos-pathyanjiu/">关于os.path研究</a></h1>
     
     
@@ -2099,138 +2462,6 @@ b.open('http://www.dongwm.com') #也提供了open()、open_new()和open_new_tab(
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuweakrefyanjiu/">关于weakref研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：对一个对象的弱引用。相对于通常的引用来说，如果一个对象有一个常规的引用，它是不会被垃圾收集器销毁的，但是如果一个对象只剩下一个弱引用，那么它可能被垃圾收集器收回。weakref就是这样的垃圾收集对象的引用模块</p>
-
-<p><pre class="sh_python">
-import weakref</p>
-
-<p>class ExpensiveObject(object):
-    def __del__(self):
-        print '(Deleting %s)' % self</p>
-
-<p>obj = ExpensiveObject()
-r = weakref.ref(obj)</p>
-
-<p>print 'obj:', obj
-print 'ref:', r
-print 'r():', r()</p>
-
-<p>print 'deleting obj'
-del obj
-print 'r():', r()
-</pre></p>
-
-<p>执行：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-obj: &lt;__main__.ExpensiveObject object at 0xb73cfe2c&gt;
-ref: &lt;weakref at 0xb73d06e4; to &#8216;ExpensiveObject&#8217; at 0xb73cfe2c&gt;
-r(): &lt;__main__.ExpensiveObject object at 0xb73cfe2c&gt;  #一个弱引用
-deleting obj
-(Deleting &lt;__main__.ExpensiveObject object at 0xb73cfe2c&gt;)
-r(): None   #这个引用删除就没有了
-<pre class="sh_python">
-import weakref</p>
-
-<p>class ExpensiveObject(object):
-    def __del__(self):
-        print '(Deleting %s)' % self</p>
-
-<p>def callback(reference):  #回调函数
-    print 'callback(', reference, ')'</p>
-
-<p>obj = ExpensiveObject()
-r = weakref.ref(obj, callback) #当弱引用被删除会调用回调函数</p>
-
-<p>print 'obj:', obj
-print 'ref:', r
-print 'r():', r()</p>
-
-<p>print 'deleting obj'
-del obj
-print 'r():', r()
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-obj: &lt;__main__.ExpensiveObject object at 0xb74c2eec&gt;
-ref: &lt;weakref at 0xb74c370c; to &#8216;ExpensiveObject&#8217; at 0xb74c2eec&gt;
-r(): &lt;__main__.ExpensiveObject object at 0xb74c2eec&gt;
-deleting obj
-callback( &lt;weakref at 0xb74c370c; dead&gt; )
-(Deleting &lt;__main__.ExpensiveObject object at 0xb74c2eec&gt;)
-r(): None</p>
-
-<p><pre class="sh_python">
-import weakref</p>
-
-<p>class ExpensiveObject(object):
-    def __init__(self, name):
-        self.name = name
-    def __del__(self):
-        print '(Deleting %s)' % self</p>
-
-<p>obj = ExpensiveObject('My Object')
-r = weakref.ref(obj)
-p = weakref.proxy(obj) #弱引用代理</p>
-
-<p>print 'via obj:', obj.name
-print 'via ref:', r().name
-print 'via proxy:', p.name
-del obj
-print 'via proxy:', p.name
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-via obj: My Object
-via ref: My Object
-via proxy: My Object
-(Deleting &lt;__main__.ExpensiveObject object at 0xb72f9eec&gt;)
-via proxy:
-Traceback (most recent call last):  #<tt>因为引用不存在了，触发ReferenceError</tt>
-File &#8220;test.py&#8221;, line 17, in &lt;module&gt;
-print &#8216;via proxy:&#8217;, p.name
-ReferenceError: weakly-referenced object no longer exists</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/12/">&larr; Older</a></li>
@@ -2253,6 +2484,10 @@ ReferenceError: weakly-referenced object no longer exists</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -2288,10 +2523,6 @@ ReferenceError: weakly-referenced object no longer exists</p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>

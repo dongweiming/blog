@@ -141,6 +141,67 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/fedora-ubuntu-%E6%B7%BB%E5%8A%A0%E5%AF%B9%E6%96%B9grub%E8%8F%9C%E5%8D%95/">Fedora Ubuntu 添加对方grub菜单</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-01T00:00:00+08:00" pubdate data-updated="true">May 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>这几天折腾ubuntu11.04，结果把我的opensuse弄坏了&#8230;索性直接换成了fedora。乘机研究了下grub2，以及各个操作系统之间的启动菜单的一些特性。
+1 先fedora，后ubuntu
+进入ubuntu系统：
+<pre class="sh_bash">sudo grub-install /dev/sda //安装grub到硬盘mbr，一般系统会自动搜索到
+sudo update-grub2  //更新grub.cfg</pre>
+进入ubuntuliveCD：
+<pre class="sh_bash">sudo su
+mount /dev/sdaX /mnt //挂载系统文件 我这里是根分区
+mount /dev/sdaY /tmp/boot  //挂载boot分区
+cp -rp /tmp/boot/* /mnt/boot //我直接挂载/mnt/boot有问题，所以用这种简介方式，把/boot文件考到/mnt/boot下
+grub-install --root-directory=/mnt /dev/sda --force   //强制安装grub到硬盘mbr root目录是指定的/mnt
+update-grub2  //更新grub.cfg
+注：mbr信息可以执行如下脚本取得：
+http://nchc.dl.sourceforge.net/project/bootinfoscript/bootinfoscript/0.55/boot_info_script055.sh</strong></p>
+
+<p><strong></pre>
+</strong></p>
+
+<p><strong>2 先</strong><strong>ubuntu</strong><strong>，后</strong><strong>fedora</strong></p>
+
+<p><pre class="sh_bash">sudo gedit /boot/grub/menu.lst
+title Ubuntu
+root (hd0,9)  //根目录所在分区，根据上面的脚本自己调整
+kernel /vmlinuz-2.6.38-8-generic root=UUID=7319d96d-4c6e-4e00-84b4-f5ed70052456 ro   quiet splash vt.handoff=7
+可以直接把ubuntu分区上的grub.cfg上的相同字段 linux 行的内容复制
+initrd /initrd.img-2.6.38-8-generic //复制ubuntu分区上的grub.cfg上的相同字段 /initrd 内容</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%87%86%E7%A1%AE%E6%8E%8C%E6%8F%A1puppet-client%E5%90%91server%E8%AF%B7%E6%B1%82%E6%97%B6%E9%97%B4/">准确掌握puppet Client向server请求时间</a></h1>
     
     
@@ -768,136 +829,6 @@ sh test.sh
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89/">关于expect研究（二）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-09T00:00:00+08:00" pubdate data-updated="true">Apr 9<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文主要介绍expect,也就是tcl语言的控制结构
-1  if &#8230;else 结构
-首先展示一个脚本,这个叫本用来根据argv0的输入选择不同的expect语句SSH远程登录到相对应的服务器,并设置一些错误输出:
-<pre class="sh_bash">dongwm@linux-3qd1:~&gt; cat bin/test
-#!/usr/bin/expect
-set timeout 10
-set passwordops01 cpuqPFtkt{20
-set passwordops02 O^v44qftahbN
-set passwordops03 9uujz)UUf7yr
-set file1 [lindex $argv 0]
-if {$argc!=1} {
-puts stderr "参数错误,请使用以下格式: $argv0 {想去的服务器简称,比如ops01} "
-exit 1
-}
-if {$file1=="ops01"} {
-spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924
-expect 194.168.45.XX
-send "su -\n"   //设置了不容许root组直接登录
-expect "口令："
-send "$passwordops01\n"
-interact
-} elseif {$file1=="ops02"} {
-spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924
-expect 194.168.45.XX
-send "ssh ops@ops04\n"
-expect "192.168.9.24"
-send "su -\n"
-expect "口令："
-send "$passwordops02\n"
-interact
-} elseif {$file1=="ops03"} {
-spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9960
-expect 194.168.45.XX
-send "su -\n"
-expect "口令："
-send "$passwordops03\n"
-interact
-}  else {
-send "参数错误,请输入以下名称:ops01 ops02 ops03\n"
-}
-注:这个脚本里面有SSH信任 有根据iptables转发</p>
-
-<p>if ...else 没啥可说的^.^</pre>
-2 switch结构
-还是上面的判断,我这里留下2个表达语法:
-<!--
-@page { margin: 2cm }
-P { margin-bottom: 0.21cm }
---><pre class="sh_bash">switch -glob -- $file1 {
-ops01 {
-spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924expect 194.168.45.XX
-send "su -\n"   //设置了不容许root组直接登录
-expect "口令："
-send "$passwordops01\n"
-interact
-}
-ops02 {
-spawn luit -encoding gbk ssh dongwm@59.194.82.XX -p 9924
-expect 194.168.45.XX
-send "ssh ops@ops04\n"
-expect "192.168.9.24"
-send "su -\n"
-expect "口令："
-send "$passwordops02\n"
-interact
-} </pre>
-<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;"></p>
-<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;">3  while结构 (顺便break和continue)</p>
-<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;"><pre class="sh_bash">dongwm@linux-3qd1:~&gt; cat !$
-cat bin/test
-#!/usr/bin/expect
-set test 0
-while {$test&lt;10} {
-set test [expr {$test + 1}]
-if {$test &gt; 7} break
-if "$test &lt; 3" continue
-puts "test is $test"
-}
-本来此例去掉break和continue会输出1..9 因为break存在只能输出到7 ,因为continue存在,当test=1,2的时候 不符合要求,直接略过了</pre></p>
-<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;">4  catch</p>
-<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;">catch用于捕捉让脚本停止执行的错误的输出:</p>
-<p style="margin-left: 0.64cm; text-indent: -0.64cm; margin-bottom: 0cm;"><pre class="sh_bash">dongwm@linux-3qd1:~&gt; cat !$
-cat bin/test1
-#!/usr/bin/expect
-proc Error {} {
-error "This is a error for test"
-}
-catch Error test
-puts $test
-dongwm@linux-3qd1:~&gt; !$
-bin/test1
-This is a error for test</pre></p>
-&nbsp;
-<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
-<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=96a78524-c46f-816f-a821-e23986f21990" alt="" /></div></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/28/">&larr; Older</a></li>
@@ -920,6 +851,10 @@ This is a error for test</pre></p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
+      </li>
     
       <li class="post">
         <a href="/archives/shi-yong-stridershi-xian-chi-xu-ji-cheng/">使用Strider实现持续集成</a>
@@ -955,10 +890,6 @@ This is a error for test</pre></p>
     
       <li class="post">
         <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/idiomatic-python/">idiomatic python</a>
       </li>
     
   </ul>
