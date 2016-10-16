@@ -142,6 +142,239 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyusocketserveryanjiu/">关于SocketServer研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-05T00:00:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言;SocketServer模块是一个用于创建网络服务器的框架. 他提供了处理TCP, UDP, Unix流和Unix数据包的基本类和支持线程和进程服务器</p>
+
+<p><pre class="sh_python">
+import logging
+import sys
+import SocketServer</p>
+
+<p>logging.basicConfig(level=logging.DEBUG,
+  format='%(name)s: %(message)s',
+)</p>
+
+<p>class EchoRequestHandler(SocketServer.BaseRequestHandler):   #通过启动不同的线程（进程）来实现每个链接一个线程</p>
+
+<p>    def __init__(self, request, client_address, server):
+        self.logger = logging.getLogger('EchoRequestHandler')
+        self.logger.debug('__init__')
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        return</p>
+
+<p>    def setup(self):  #准备一个请求处理者
+        self.logger.debug('setup')
+        return SocketServer.BaseRequestHandler.setup(self)</p>
+
+<p>    def handle(self):  #做实际处理请求的工作. 解析到来的请求, 处理数据并发送一个response.
+        self.logger.debug('handle')
+        data = self.request.recv(1024)
+        self.logger.debug('recv()-&gt;"%s"', data)
+        self.request.send(data)
+        return</p>
+
+<p>    def finish(self):  #清除在setup()中创建的所有东西.
+        self.logger.debug('finish')
+        return SocketServer.BaseRequestHandler.finish(self)</p>
+
+<p>class EchoServer(SocketServer.TCPServer):  #使用TCP/IP sockets来通信</p>
+
+<p>    def __init__(self, server_address, handler_class=EchoRequestHandler):  #设置使用的处理类是上面创建的
+        self.logger = logging.getLogger('EchoServer')
+        self.logger.debug('__init__')
+        SocketServer.TCPServer.__init__(self, server_address, handler_class)
+        return</p>
+
+<p>    def server_activate(self): #激活server
+        self.logger.debug('server_activate')
+        SocketServer.TCPServer.server_activate(self)
+        return</p>
+
+<p>    def serve_forever(self): 
+        self.logger.debug('waiting for request')
+        self.logger.info('Handling requests, press &lt;Ctrl-C&gt; to quit')
+        while True:   #在一个无穷循环中调用 <tt>handle_request()</tt>，激活后进入这个循环
+            self.handle_request()
+        return</p>
+
+<p>    def handle_request(self):  
+        self.logger.debug('handle_request')
+        return SocketServer.TCPServer.handle_request(self)</p>
+
+<p>    def verify_request(self, request, client_address):  #返回True来处理请求, 或者False表示忽略这个请求. 比如, 你也可以拒绝从一个IP范围来的请求, 假如你想要阻断某些客户端访问服务器.
+        self.logger.debug('verify_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.verify_request(self, request, client_address)</p>
+
+<p>    def process_request(self, request, client_address): #它通常是调用finish_request()来完成实际工作. 但它也看创建一个独立的线程或进程, 作为混合类来使用(如下).
+        self.logger.debug('process_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.process_request(self, request, client_address)</p>
+
+<p>    def server_close(self):  
+        self.logger.debug('server_close')
+        return SocketServer.TCPServer.server_close(self)</p>
+
+<p>    def finish_request(self, request, client_address): #使用在服务器构造时指定的类来创建一个请求处理实例. 她调用请求处理类的 <tt>handle()</tt> 来处理请求.
+        self.logger.debug('finish_request(%s, %s)', request, client_address)
+        return SocketServer.TCPServer.finish_request(self, request, client_address)</p>
+
+<p>    def close_request(self, request_address):
+        self.logger.debug('close_request(%s)', request_address)
+        return SocketServer.TCPServer.close_request(self, request_address)
+if __name__ == '__main__':
+    import socket
+    import threading</p>
+
+<p>    address = ('localhost', 0) # 让内核自动分配一个端口
+    server = EchoServer(address, EchoRequestHandler)
+    ip, port = server.server_address </p>
+
+<p>    t = threading.Thread(target=server.serve_forever) #将EchoServer放在线程运行，不影响继续操作
+    t.setDaemon(True) # 设置deamon
+    t.start()</p>
+
+<p>    logger = logging.getLogger('client')
+    logger.info('Server on %s:%s', ip, port)</p>
+
+<p>    logger.debug('creating socket')
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    logger.debug('connecting to server')
+    s.connect((ip, port))</p>
+
+<p>    message = 'Hello, world'
+    logger.debug('sending data: "%s"', message)
+    len_sent = s.send(message)</p>
+
+<p>    logger.debug('waiting for response')
+    response = s.recv(len_sent)
+    logger.debug('response from server: "%s"', response)</p>
+
+<p>    logger.debug('closing socket')
+    s.close()
+    logger.debug('done')
+    server.socket.close()
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+EchoServer: __init__
+EchoServer: server_activate
+EchoServer: waiting for request
+client: Server on 127.0.0.1:42902
+EchoServer: Handling requests, press &lt;Ctrl-C&gt; to quit
+client: creating socket
+EchoServer: handle_request
+client: connecting to server
+client: sending data: &#8220;Hello, world&#8221;
+EchoServer: verify_request(&lt;socket._socketobject object at 0x8114ae4&gt;, (&#8216;127.0.0.1&#8217;, 33084))
+client: waiting for response
+EchoServer: process_request(&lt;socket._socketobject object at 0x8114ae4&gt;, (&#8216;127.0.0.1&#8217;, 33084))
+EchoServer: finish_request(&lt;socket._socketobject object at 0x8114ae4&gt;, (&#8216;127.0.0.1&#8217;, 33084))
+EchoRequestHandler: __init__
+EchoRequestHandler: setup
+EchoRequestHandler: handle
+EchoRequestHandler: recv()-&gt;&#8221;Hello, world&#8221;
+EchoRequestHandler: finish
+client: response from server: &#8220;Hello, world&#8221;
+EchoServer: close_request(&lt;socket._socketobject object at 0x8114ae4&gt;)
+client: closing socket
+EchoServer: handle_request
+client: done
+<pre class="sh_python">
+import threading
+import SocketServer</p>
+
+<p>class ThreadedEchoRequestHandler(SocketServer.BaseRequestHandler):</p>
+
+<p>    def handle(self):  #重写handle函数
+        data = self.request.recv(1024)
+        cur_thread = threading.currentThread() # 当要处理一个请求时开始一个新的线程, 并且会在一个新的孩子线程中完成工作
+        response = '%s: %s' % (cur_thread.getName(), data)
+        self.request.send(response)
+        return</p>
+
+<p>class ThreadedEchoServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer): 对于线程, 使用ThreadingMixIn:
+    pass</p>
+
+<p>if __name__ == '__main__':
+    import socket
+    import threading</p>
+
+<p>    address = ('localhost', 0) 
+    server = ThreadedEchoServer(address, ThreadedEchoRequestHandler)
+    ip, port = server.server_address </p>
+
+<p>    t = threading.Thread(target=server.serve_forever)
+    t.setDaemon(True)
+    t.start()
+    print 'Server loop running in thread:', t.getName()</p>
+
+<p>    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((ip, port))</p>
+
+<p>    message = 'Hello, world'
+    print 'Sending : "%s"' % message
+    len_sent = s.send(message)</p>
+
+<p>    response = s.recv(1024)
+    print 'Received: "%s"' % response</p>
+
+<p>    s.close()
+    server.socket.close()
+</pre></p>
+
+<p>&nbsp;</p>
+
+<p>注：使用独立的进程, 可以使用ForkingMixIn:</p>
+
+<p><pre class="sh_python">
+class ForkingEchoRequestHandler(SocketServer.BaseRequestHandler):</p>
+
+<p>    def handle(self):
+        # Echo the back to the client
+        data = self.request.recv(1024)
+        cur_pid = os.getpid()
+        response = '%s: %s' % (cur_pid, data)
+        self.request.send(response)
+        return</p>
+
+<p>class ForkingEchoServer(SocketServer.ForkingMixIn, SocketServer.TCPServer):
+    pass
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuosyanjiu/">关于os研究</a></h1>
     
     
@@ -2412,57 +2645,6 @@ for method in [ 'xml', 'html', 'text' ]:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyuwebbrowseryanjiu/">关于webbrowser研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：利用webbrowser模块可以向用户显示web页面，在一个交互式的浏览程序中, webbrowser模块提供了一些用于打开URL链接的函数. 在系统中安装的浏览器, 通过模块的许多选项可以来获取利用他们. 也可通过环境变量BROWSER来控制.</p>
-
-<p><pre class="sh_python">
-import webbrowser</p>
-
-<p>webbrowser.open('http://www.dongwm.com') #浏览器中打开一个页面,如果当前已经有一个浏览器窗口, 那么会做为一个新标签打开.
-webbrowser.open_new('http://www.dongwm.com') #在新窗口中打开页面,
-webbrowser.open_new_tab('http://www.dongwm.com') #新的标签中打开页面</p>
-
-<p>b = webbrowser.get('lynx') #通过get(),使用特定的浏览器  也可以用BROWSER=lynx python test.py 的方式指定lynx
-b.open('http://www.dongwm.com') #也提供了open()、open_new()和open_new_tab()函数
-</pre></p>
-
-<p>注：可以直接命令行：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python -m webbrowser -n http://www.dongwm.com</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/12/">&larr; Older</a></li>
@@ -2485,6 +2667,10 @@ b.open('http://www.dongwm.com') #也提供了open()、open_new()和open_new_tab(
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
@@ -2520,10 +2706,6 @@ b.open('http://www.dongwm.com') #也提供了open()、open_new()和open_new_tab(
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
       </li>
     
   </ul>

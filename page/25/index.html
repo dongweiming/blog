@@ -142,6 +142,89 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/zhandaozhanvpnyugongxiangmiyue/">站到站VPN(预共享密钥)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-30T00:00:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R1</strong></span></span><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>line con 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>logg sy</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-line)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>no ip domain-lookup</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int loopback 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 1.1.1.1 255.255.255.255</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int f0/0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.3.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/3</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.15.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 0.0.0.0 0.0.0.0 192.168.15.5</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>access-list 100 permit ip 1.1.1.1 0.0.0.0 5.5.5.5 0.0.0.0</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>authentication pre-share</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>encryption aes 128</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>group 2</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>hash sha</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto ipsec transform-set cisco esp-aes 128 esp-sha-hmac</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/zhandaozhanvpnyugongxiangmiyue/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/yuanchengjieruvpn/">远程接入VPN</a></h1>
     
     
@@ -1021,71 +1104,6 @@ SW2(config)#monitor session 1 source remote vlan 100</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/pythonjiaobenshixianchakanmouqqhaomashifouzaixianjiuchuyinshen/">python脚本实现查看某QQ号码是否在线（揪出隐身）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-08T00:00:00+08:00" pubdate data-updated="true">Jul 8<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><pre class="sh_python">
-#!/bin/env python
-# coding=utf-8</p>
-
-<p>import string
-import time
-import datetime
-import urllib2</p>
-
-<p>try:
-    verify = raw_input('请输入QQ号码')
-except KeyboardInterrupt:
-    pass
-def check_qq(verify):
-    if verify.isdigit():
-       checkurl = 'http://wpa.qq.com/pa?p=1:"+verify+":1'
-       c = urllib2.urlopen(checkurl)
-       length=c.headers.get("content-length")
-       c.close()
-    print datetime.datetime.now()
-    if length=='2329':
-        return 'Online'
-    elif length=='2262':
-        return 'Offline'
-    else:
-        return 'Unknown Status!'
-if __name__ == '__main__':
-    check_qq(verify)
-    print 'qq ' + 'is '+ check_qq(verify)
-</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/26/">&larr; Older</a></li>
@@ -1108,6 +1126,10 @@ if __name__ == '__main__':
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
@@ -1143,10 +1165,6 @@ if __name__ == '__main__':
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
       </li>
     
   </ul>

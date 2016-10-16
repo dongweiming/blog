@@ -142,6 +142,57 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyuwebbrowseryanjiu/">关于webbrowser研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:00:00+08:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：利用webbrowser模块可以向用户显示web页面，在一个交互式的浏览程序中, webbrowser模块提供了一些用于打开URL链接的函数. 在系统中安装的浏览器, 通过模块的许多选项可以来获取利用他们. 也可通过环境变量BROWSER来控制.</p>
+
+<p><pre class="sh_python">
+import webbrowser</p>
+
+<p>webbrowser.open('http://www.dongwm.com') #浏览器中打开一个页面,如果当前已经有一个浏览器窗口, 那么会做为一个新标签打开.
+webbrowser.open_new('http://www.dongwm.com') #在新窗口中打开页面,
+webbrowser.open_new_tab('http://www.dongwm.com') #新的标签中打开页面</p>
+
+<p>b = webbrowser.get('lynx') #通过get(),使用特定的浏览器  也可以用BROWSER=lynx python test.py 的方式指定lynx
+b.open('http://www.dongwm.com') #也提供了open()、open_new()和open_new_tab()函数
+</pre></p>
+
+<p>注：可以直接命令行：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python -m webbrowser -n http://www.dongwm.com</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyuweakrefyanjiu/">关于weakref研究</a></h1>
     
     
@@ -1762,111 +1813,6 @@ filling features found in many text editors.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyutempfileyanjiu/">关于tempfile研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-18T00:00:00+08:00" pubdate data-updated="true">Jun 18<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：tempfile可以安全的生成临时文件和目录.许多程序需要将产生的中间数据保存在文件中. 安全地创建一些具有唯一名字的文件, 使得想要中断应用的人无法猜测到这些文件的名字，tempfile就是为了这样产生的模块</p>
-
-<p><pre class="sh_python">
-import os
-import tempfile</p>
-
-<p>print 'Building a file name yourself:'
-filename = '/tmp/guess_my_name.%s.txt' % os.getpid()  #创建一个文件 文件名包含此次进程pid
-temp = open(filename, 'w+b') #创建文件
-try:
-    print 'temp:', temp
-    print 'temp.name:', temp.name
-finally:
-    temp.close()
-    os.remove(filename)     #删除文件，需要手动</p>
-
-<p>print
-print 'TemporaryFile:'
-temp = tempfile.TemporaryFile() #创建一个临时文件
-try:
-    print 'temp:', temp
-    print 'temp.name:', temp.name
-finally:
-    temp.close() #关闭的时候自动删除文件
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python !$
-python test.py
-Building a file name yourself:
-temp: &lt;open file &#8216;/tmp/guess_my_name.20571.txt&#8217;, mode &#8216;w+b&#8217; at 0xb72f62e0&gt;
-temp.name: /tmp/guess_my_name.20571.txt</p>
-
-<p>TemporaryFile:
-temp: &lt;open file &#8216;&lt;fdopen&gt;&#8217;, mode &#8216;w+b&#8217; at 0xb72f6338&gt;  #TemporaryFile()返回的文件不含有名字,因为在文件系统表中没有它的引用
-temp.name: &lt;fdopen&gt;
-<pre class="sh_python">
-import tempfile</p>
-
-<p>f = tempfile.TemporaryFile(mode='w+t') #文件以模式’w+b’方式被创建,这里是文本模式的临时文件
-try:
-    f.writelines(['first\n', 'second\n']) #接受一个列表，按行写入
-    f.seek(0) #将当前文件指针文件最开始以便能够读取所有的数据</p>
-
-<p>    for line in f:
-        print line.rstrip()
-finally:
-    f.close()
-</pre></p>
-
-<p><pre class="sh_python">
-import os
-import tempfile</p>
-
-<p>temp = tempfile.NamedTemporaryFile() #创建了一个有名字的, 即可以按名访问的文件，可以设置一下参数：suffix='_suffix'（设置文件结尾内容）,
-                                    # prefix='prefix_'(设置文件开头内容), dir='/tmp' （设置文件所在目录）
-try:
-    print 'temp:', temp
-    print 'temp.name:', temp.name
-finally:
-    temp.close()
-    print 'Exists after close:', os.path.exists(temp.name) #这里肯定是false  因为关闭句柄文件就会删掉
-directory_name = tempfile.mkdtemp()  #需要多个临时文件, 可以创建一个临时目录然后把所有文件放在这个目录中. 使用mkdtemp()函数来创建一个临时目录.
-print directory_name
-os.removedirs(directory_name) #删掉临时目录需要手动
-print
-</pre></p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/13/">&larr; Older</a></li>
@@ -1889,6 +1835,10 @@ print
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
@@ -1924,10 +1874,6 @@ print
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
       </li>
     
   </ul>

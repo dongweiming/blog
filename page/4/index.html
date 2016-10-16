@@ -142,6 +142,87 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/xian-cheng-suo-de-%5B%3F%5D-ge-da-keng/">线程锁的一个大坑</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-18T16:56:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section">前言</h4>
+
+<p>原来的一位同事@炮哥, 昨天在QQ问我: “想请教下一个线程获得lock之后，也可能被其他的线程释放掉？这个是因为线程之间的资源是共享的吗？这样的话普通的thread lock 都是不安全的了？”. 我第一反应就是怎么可能:’谁加锁谁解锁呗,别的线程怎么能解锁？’</p>
+
+<p>炮哥发来一段python官网的文档说明:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">A factory function that returns a new primitive lock object. Once a thread has acquired it, subsequent attempts to acquire it block, until it is released; any thread may release it.</span></pre></figure></notextile></div>
+
+<p>最有最后一句前是分号. 简单地说,一个线程获取锁, 以后的尝试获取都会被阻塞,除非它会释放. 但是<strong>同时</strong>其他其他线程可以释放</p>
+
+<p>好,写个例子验证下:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_"><span class="line">import threading
+</span><span class="line">import time
+</span><span class="line">
+</span><span class="line">lock = threading.Lock()
+</span><span class="line">
+</span><span class="line">def lock_holder(lock):
+</span><span class="line">    print('Starting')
+</span><span class="line">    while True:
+</span><span class="line">        lock.acquire()
+</span><span class="line">        print('Holding')
+</span><span class="line">        time.sleep(100)
+</span><span class="line">        print('Sleep done')
+</span><span class="line">
+</span><span class="line">def lock_release(lock):
+</span><span class="line">    time.sleep(1) # 保证顺序
+</span><span class="line">    lock.release()
+</span><span class="line">    print('Release it')
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">holder = threading.Thread(target=lock_holder, args=(lock,), name='LockHolder')
+</span><span class="line">holder.setDaemon(True)
+</span><span class="line">holder.start()
+</span><span class="line">
+</span><span class="line">#lock_release(lock)
+</span><span class="line">release = threading.Thread(target=lock_release, args=(lock,), name='release')
+</span><span class="line">release.start()
+</span><span class="line">
+</span><span class="line">holder = threading.Thread(target=lock_holder, args=(lock,), name='LockHolder')
+</span><span class="line">holder.setDaemon(True)
+</span><span class="line">holder.start()</span></pre></figure></notextile></div>
+
+<p>奇迹发生了…. 线程b果然可以释放线程a的锁,颠覆人生观啊.</p>
+
+<p>PS: 但是Rlock不会被其他线程释放,因为它记录该线程的所有者</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/speakerdeck/">Speakerdeck</a></h1>
     
     
@@ -1591,63 +1672,6 @@ include表示执行的任务的代码都放在哪个程序里面,比如这里的
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/a-data-analysis-site-by-flask-and-mongoengine/">一个flask+mongoengine的site</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-11-20T17:39:00+08:00" pubdate data-updated="true">Nov 20<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4 id="section">前言</h4>
-
-<p>最近一直学习emacs和elisp, 也在做关于mongodb相关的研究,闲来无事就做了个网站,后端使用了flask, mongoengine, 前端css框架用的是
-雅虎的<a href="https://github.com/yui/pure">pure</a>, 还是用了神奇的<a href="https://github.com/gruntjs/grunt">grunt</a>做页面修改的livereload, 然后有d3,
-jquery, amchart和一个最近发现的页面消息弹出<a href="https://github.com/CodeSeven/toastr">toastr</a>.想学习flask和mongoengine的童鞋可直接拿去,开源地址是
-<a href="https://github.com/dongweiming/data-analysis">data-analysis</a></p>
-
-<h4 id="section-1">下载依赖和启动</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><pre class="sh_python"><span class="line"><span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">data</span><span class="o">-</span><span class="n">analysis</span>
-</span><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
-</span><span class="line"><span class="c"># 安装grunt</span>
-</span><span class="line"><span class="n">npm</span> <span class="n">install</span>
-</span><span class="line"><span class="c"># 我的后端样例数据</span>
-</span><span class="line"><span class="n">mongorestore</span> <span class="o">-</span><span class="n">d</span> <span class="n">fetch_data</span> <span class="o">--</span><span class="n">directoryperdb</span> <span class="n">dump</span><span class="o">/</span><span class="n">fetch_data</span>
-</span><span class="line"><span class="n">cd</span> <span class="n">data_analysis</span>
-</span><span class="line"><span class="c"># 启动Grunt</span>
-</span><span class="line"><span class="n">grunt</span>
-</span><span class="line"><span class="c"># 启动</span>
-</span><span class="line"><span class="n">python</span> <span class="n">run</span><span class="o">.</span><span class="n">py</span>
-</span><span class="line"><span class="c"># 然后打开 http://Youip:5000</span>
-</span></pre></figure></notextile></div>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/5/">&larr; Older</a></li>
@@ -1670,6 +1694,10 @@ jquery, amchart和一个最近发现的页面消息弹出<a href="https://github
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
@@ -1705,10 +1733,6 @@ jquery, amchart和一个最近发现的页面消息弹出<a href="https://github
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
       </li>
     
   </ul>

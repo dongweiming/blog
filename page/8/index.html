@@ -142,6 +142,192 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/octopress-de-3D-biao-qian-yun/">octopress的3D标签云插件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-17T14:22:00+08:00" pubdate data-updated="true">Nov 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>最近看了《社交网站的数据挖掘与分析》，了解到关于谷歌可视化工具，正好有2次都说到了标签的3D展现，以前用wordpress的时候有个插件叫做wp-cumulus，而octopress里面有一个相应的标签插件，但是却是静态展示，一直不爽，然后就萌发了改一个3D的octoress标签云插件的想法，其中word cumulus借用了<a href="https://www.google.com/jsapi">谷歌api</a>，ruby程序还是借以前的<a href="https://github.com/tokkonopapa/octopress-tagcloud">topress-tagcloud</a>，思路参考了<a href="http://code.google.com/p/word-cumulus-goog-vis">word-cumulus-goog-vis</a>,我的设计是这样的如下：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+
+1. jekyll生成静态页面的时候，根据相关插件计算标签的地址，数量和标签内容
+2. 将这些数据用json.dump的方式写入到一个json文件（因为octopress是静态页面，不能从数据库抓取数据）
+3. 新增一个javascript脚本（需要添加到source/_includes/head.html，具体看我的后面的例子程序中的注释），实现调取谷歌可视化工具的接口，把数据写到swf文件中
+4. 当打开网页的时候会调用jquery的getjson（我用的是.ajax）读取数据，将数据格式化，通过js脚本写入div（div所在的html已经放在边栏）
+
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="section-1">插件代码如下</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+# encoding: utf-8
+
+require 'json' #导入json依赖
+require 'pathname'
+  
+
+module Jekyll 
+
+  class TagCloud &lt; Liquid::Tag  #标签云的类继承至Liquid::Tag，liquid是一个ruby的模版引擎，
+
+    def initialize(tag_name, markup, tokens)
+      @opts = {}
+      if markup.strip =~ /\s*counter:(\w+)/i  #检查是否定义参数，没有的话不计算标签数量
+        @opts['counter'] = ($1 == 'true') #哈希项的结果就是这个参数是否为true的布尔值
+        markup = markup.strip.sub(/counter:\w+/i,'')
+      end
+      super
+    end
+
+    def render(context)
+      lists = {}
+      max, min = 1, 1
+      config = context.registers[:site].config #内置检查站点配置
+      category_dir = config['root'] + config['category_dir'] + '/' #标签基目录
+      categories = context.registers[:site].categories
+      categories.keys.sort_by{ |str| str.downcase }.each do |category| #标签根据小写字符串排序 挨个计算其存在数量
+        count = categories[category].count
+        lists[category] = count
+        max = count if count &gt; max
+      end
+
+      li = []
+      lists.each do | category, counter |
+        nli = []
+        url = category_dir + category.gsub(/_|\P{Word}/, '-').gsub(/-{2,}/, '-').downcase
+        nli[0] = category + '[' + categories[category].count.to_s + ']' #第一个参数是标签和数量的字符串
+        nli[1] = url #第二个标签是标签集合的地址
+        if @config['category_counter']
+          nli[2] = categories[category].count
+        else nli[2] = 8
+        end
+        li.push(nli)
+      end
+      f = File.open('%s/../source/javascripts/tag.json' % \
+          Pathname.new(File.dirname(__FILE__)).realpath,'w') #操作文件
+      f.puts(JSON.dump(li)) #写入数据
+      f.close()
+    end
+  end
+
+end
+
+Liquid::Template.register_tag('tag_cloud', Jekyll::TagCloud)  #让标签生效
+
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="javascript">javascript代码如下</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+
+var json_data = (function () {
+    var json = null;
+    $.ajax({   //通过jquery方法获取json文件的数据
+        'async': false,
+        'global': false,
+        'url': '/javascript/tag.json',  //这里地址是错误的，因为静态页面会把握的标签当成真实环境，其实是javascripts，具体代码请看github项目
+        'dataType': "json",
+        'success': function (data) {
+            json = data;
+        }
+    });
+    return json;
+})(); 
+      google.setOnLoadCallback(drawVisualization);  //设定可视化load后调用函数
+
+    function drawVisualization() {
+
+        var data = new google.visualization.DataTable(); //创建数据表
+        data.addColumn('string', 'Tag'); //加三个字段
+        data.addColumn('string', 'URL'); 
+        data.addColumn('number', 'Font size');
+
+        data.addRows(json_data.length);  //确定标签的数量
+        for (var i = 0; i &lt; json_data.length; i++) {
+            var url = window.location.href + json_data[i][1];
+            data.setCell(i, 0, json_data[i][0]); // 标签
+            data.setCell(i, 1, url); // 标签的真实集合url
+            data.setCell(i, 2, 2+1.5*json_data[i][2]); // 标签字体大小
+        }
+
+        var vis = new gviz_word_cumulus.WordCumulus(document.getElementById('tag-clouds'));  //找到id为‘tag-clou’的div，这里数据也有问题，原因如上
+
+        vis.draw(data, {text_color: '#00ff00', speed: 50, width:220, height:220});  //画图  注意，修改效果云的大小在这里制定 我这里宽高都是220px
+       }
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="htmlsourceincludescustomasidescategorycloudhtml">被包含的html代码如下(我放在了source/_includes/custom/asides/category_cloud.html)</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+<xmp>
+<section class="well">  //这个主要根据你的主题而定吧，我的主题右边栏的风格都是这样
+   <ul id="gh_repos" class="nav">
+    <li class="nav-header">标签Cloud</li>
+  </ul>
+  <div id="tag-clou"></div>   // 制定counter为true就会根据你的标签符合的文章数对画图效果显示的该标签字体大小比例而定，不指定或者制定其他值都按照一个字体大小显示所有标签
+</section>
+</xmp>        
+        
+并且将这个html放在默认的右边栏的配置中，修改_config.yaml，其中：
+
+default_asides: [asides/recent_posts.html, custom/asides/links.html, asides/github.html, asides/delicious.html, asides/pinboard.html, asides/googleplus.html,custom/asides/category_cloud.html, custom/asides/douban.html, asides/article_total_sidebar.html]            
+
+
+</pre></figure></notextile></div></notextile></div>
+
+<h5 id="htmlheadhtmlsourceincludesheadhtmlfoothtmljquery">剩下就是修改你的主页的html（我直接修改了head.html[source/_includes/head.html],愿意的话你可以修改源码的foot.html甚至其它，只要保证它在jquery加载之后加载就好，我只粘贴新增的一部分和它附近的内容）</h5>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+
+<xmp>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>  //原来就有
+  <script type="text/javascript" src="/javascripts/api.js"></script>  //这里是谷歌的jsapi，我直接保存在我脚本里面，因为谷歌可能访问不稳定，你懂得
+  <script type="text/javascript" src="/javascripts/wordcumulus.js"></script> //这是操作word-cumulus的
+  <script type="text/javascript" src="/javascripts/swfobject.js"></script> //这里是操作wp-cumulus的flash文件的
+  <script type="text/javascript" src="/javascripts/tagcumulus.js"></script> //这是我新建的上述js脚本地址
+  <link href="/atom.xml" rel="alternate" title="小明明s à domicile" type="application/atom+xml" /> //原来就有
+</xmp>
+
+</pre></figure></notextile></div></notextile></div>
+
+<p>打包相关文件以及详情请参看我的github项目：<a href="https://github.com/dongweiming/octopress-wp_cumulus_for_tagcloud">octopress-wp_cumulus_for_tagcloud</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pa-chong-lian-xi/">爬虫练习</a></h1>
     
     
@@ -2616,152 +2802,6 @@ FROM clothing
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengliu/">SQLAlchemy教程(六)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>本文主要是ORM的sission查询和更新</strong></p>
-
-<p>session负责执行内存中的对象和数据库表之间的同步工作,创建session可以这样:</p>
-
-<p>Session = sessionmaker(bind=engine) #sqlalchemy.orm.session.Session类有很多参数,使用sessionmaker是为了简化这个过程</p>
-
-<p>或者:
-Session = sessionmaker()
-Session.configure(bind=engine)</p>
-
-<p>注:sessionmaker的参数:
-autoflush=True  #为True时，session将在执行session的任何查询前自动调用flush()。这将确保返回的结果</p>
-
-<p>transactional=False #为True时，session将自动使用事务commit
-twophase=False #当处理多个数据库实例,当使用flush()但是没有提交事务commit时,给每个数据库一个标识,使整个事务回滚</p>
-
-<p>创建session,添加数据的例子(以前也出现过很多次了)
-dongwm@localhost ~ $ python
-Python 2.7.3 (default, Jul 11 2012, 10:10:17)
-[GCC 4.5.3] on linux2
-Type &#8220;help&#8221;, &#8220;copyright&#8221;, &#8220;credits&#8221; or &#8220;license&#8221; for more information.
-&gt;&gt;&gt; from sqlalchemy import *
-&gt;&gt;&gt; from sqlalchemy.orm import *
-&gt;&gt;&gt; engine = create_engine(&#8216;sqlite://&#8217;)
-&gt;&gt;&gt; metadata = MetaData(engine)
-&gt;&gt;&gt; account_table = Table(
-&#8230; &#8216;account&#8217;, metadata,
-&#8230; Column(&#8216;id&#8217;, Integer, primary_key=True),
-&#8230; Column(&#8216;balance&#8217;, Numeric))
-&gt;&gt;&gt; class Account(object): pass
-&#8230;
-&gt;&gt;&gt; mapper(Account, account_table)
-&lt;Mapper at 0x84e6f2c; Account&gt;
-&gt;&gt;&gt; account_table.create()
-&gt;&gt;&gt; a = Account()
-&gt;&gt;&gt; a.balance = 100.00
-&gt;&gt;&gt; Session = sessionmaker(bind=engine)
-&gt;&gt;&gt; session = Session()
-&gt;&gt;&gt; session.add(a)
-&gt;&gt;&gt; session.flush()
-&gt;&gt;&gt; session.delete(a) #自动删除 account_table相应条目,但是在1:N和M:N关系中不会自动删除它的级联关系
-&gt;&gt;&gt; session.flush()</p>
-
-<p><strong>注:session的对象状态:</strong></p>
-
-<p>Transient:短暂的,主要指内存中的对象</p>
-
-<p>Pending:挂起的,这样的对象准备插入数据库,等执行了flush就会插入</p>
-
-<p>Persistent:持久的</p>
-
-<p>Detached:对象在数据库里面有记录,但是不属于session</p>
-
-<p>&gt;&gt;&gt; make_transient(a)  #因为标识了已删除,恢复a的状态
-&gt;&gt;&gt; session.add(a) #重新添加
-&gt;&gt;&gt; session.flush()
-&gt;&gt;&gt; query = session.query(Account)
-&gt;&gt;&gt; print query
-SELECT account.id AS account_id, account.balance AS account_balance
-FROM account
-&gt;&gt;&gt; for obj in query:
-&#8230;     print obj
-&#8230;
-&lt;__main__.Account object at 0x84eef0c&gt;</p>
-
-<p>&gt;&gt;&gt; query.all()  #查询所有
-[&lt;__main__.Account object at 0x84eef0c&gt;]
-&gt;&gt;&gt; query = query.filter(Account.balance &gt; 10.00)  #filter过滤
-&gt;&gt;&gt; for obj in query:
-&#8230;     print obj.balance
-&#8230;</p>
-
-<p>100.00</p>
-
-<p>&gt;&gt;&gt; for i in session.query(Account).filter_by(balance=100.00 ):  #通过条件过滤
-&#8230;     print i
-&gt;&gt;&gt; query = session.query(Account)
-&gt;&gt;&gt; query = query.from_statement(&#8216;select *from account where balance=:bac&#8217;) #通过带通配符的SQL语句其中:bac标识这个参数是bac
-&gt;&gt;&gt; query = query.params(bac=&#8217;100.00&#8217;) #根据bac指定值寻找
-&gt;&gt;&gt; print query.all()
-[&lt;__main__.Account object at 0x84eef0c&gt;]</p>
-
-<p><strong>本地session</strong></p>
-
-<p>&gt;&gt;&gt; Session = scoped_session(sessionmaker(  #设置一个本地的共享session
-&#8230;     bind=engine, autoflush=True))
-&gt;&gt;&gt; session = Session()
-&gt;&gt;&gt; session2 = Session()
-&gt;&gt;&gt; session is session2  #他们是同一个
-True</p>
-
-<p>&gt;&gt;&gt; a = Account()
-&gt;&gt;&gt; a.balance = 100.00
-&gt;&gt;&gt; Session.add(a) #注意 这是的&#8217;S&#8217;是大写
-&gt;&gt;&gt; Session.flush()
-&gt;&gt;&gt; b = Account()
-&gt;&gt;&gt; a.balance = 200.00
-&gt;&gt;&gt; session.add(a)  #其实他们是一个共享的session 名字都可以
-&gt;&gt;&gt; session.flush()
-&gt;&gt;&gt; print session.query(Account).all() #查询到了2个
-[&lt;__main__.Account object at 0x851be0c&gt;, &lt;__main__.Account object at 0x84f7d6c&gt;]</p>
-
-<p>注:这样的映射mapper也可以这样是用:</p>
-
-<p>mapper(Product, product_table, properties=dict(
-categories=relation(Category, secondary=product_category_table,
-backref=&#8217;products&#8217;)))</p>
-
-<p>Session.mapper(Product, product_table, properties=dict(
-categories=relation(Category, secondary=product_category_table,
-backref=&#8217;products&#8217;))) #它的优点是可以初始化参数</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/9/">&larr; Older</a></li>
@@ -2784,6 +2824,10 @@ backref=&#8217;products&#8217;))) #它的优点是可以初始化参数</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
@@ -2819,10 +2863,6 @@ backref=&#8217;products&#8217;))) #它的优点是可以初始化参数</p>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
       </li>
     
   </ul>

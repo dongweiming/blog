@@ -142,6 +142,54 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/gentoo%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89%E5%AE%89%E8%A3%85google-chrome/">Gentoo笔记（七）安装google-chrome</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-01T00:00:00+08:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1 /etc/portage/package.keywords</p>
+
+<p>添加一行：www-client/google-chrome</p>
+
+<p>2 /etc/make.conf</p>
+
+<p>添加一行：ACCEPT_LICENSE=&#8221;google-chrome&#8221;</p>
+
+<p>3 安装</p>
+
+<p>dongwm@localhost ~ $sudo emerge www-client/google-chrome</p>
+
+<p>&nbsp;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8python%E7%A8%8B%E5%BA%8F%E7%A7%BB%E9%99%A4mwindows%E6%8D%A2%E8%A1%8C%E7%AC%A6/">使用python程序移除文件中的“^M”(windows换行符)</a></h1>
     
     
@@ -798,91 +846,6 @@ ${alignr}表示以该参数定义的元素向右对齐，${alignl}表示左对�
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/gentoobijisananzhuang3dtexiaocompiz/">gentoo笔记（三）安装3D特效compiz</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-24T00:00:00+08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：玩linux桌面的都会项研究下compiz 我作为一个使用compiz很多年有很深感情的人那是必然要试一试的</p>
-
-<p><strong>1 安装前准备</strong></p>
-
-<p>目前Compiz和大多数的依赖被认为是不稳定的，因此在Portage默认是被掩盖的。 需要添加以下几行到/etc/portage目录下的文件里面，这个解决办法在gentoo安装手册写来着</p>
-
-<p>/etc/portage/package.keywords  没有这个文件创建</p>
-
-<p>dev-libs/protobuf
-dev-util/intltool
-dev-python/compizconfig-python
-x11-apps/ccsm
-x11-libs/libcompizconfig
-x11-libs/compizconfig-backend-gconf
-x11-libs/compizconfig-backend-kconfig4
-x11-libs/compiz-bcop
-x11-plugins/compiz-plugins-main
-x11-plugins/compiz-plugins-extra
-x11-plugins/compiz-plugins-unsupported
-x11-themes/emerald-themes
-x11-wm/compiz
-x11-wm/compiz-fusion
-x11-wm/emerald
-app-i18n/fcitx
-x11-apps/fusion-icon
-/etc/portage/package.use</p>
-
-<p>media-libs/mesa xcb
-x11-libs/libX11 xcb
-x11-libs/cairo xcb svg
-x11-wm/compiz-fusion emerald</p>
-
-<p>我也初始化了一下ati：</p>
-
-<p>aticonfig &#8211;initial &#8211;input=/etc/X11/xorg.conf</p>
-
-<p><strong>2 安装compiz</strong></p>
-
-<p>emerge compiz compiz-fusion fusion-icon</p>
-
-<p><strong>3 启动compiz</strong></p>
-
-<p>执行 compiz-manager 默认ccsm什么特效都没有选择不要害怕。 先在emerald里面选择一个主题，然后打开compizconfig设置管理器（都在 系统-首选项里面）一定选择：特效里面的窗口装饰 和 窗口管理的移动窗口 呵呵</p>
-
-<p><strong>4 设置开机自启动</strong></p>
-
-<p>其实就是在 系统-首选项的 启动应用程序里面加2项  其他的都怎么描述无所谓  但是命令那一栏  一个是 /usr/bin/compiz-manager 一个是 emerald &#8211;replace</p>
-
-<p>5玩其他compiz特向 请参看
-<h2><a href="http://www.dongwm.com/archives/compiz-%e5%a4%96%e6%8c%82%e6%8f%92%e4%bb%b6%e6%ac%a3%e8%b5%8f%e5%92%8c%e5%ae%89%e8%a3%85/">compiz 外挂插件欣赏和安装</a></h2></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/22/">&larr; Older</a></li>
@@ -905,6 +868,10 @@ x11-wm/compiz-fusion emerald</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
@@ -940,10 +907,6 @@ x11-wm/compiz-fusion emerald</p>
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
       </li>
     
   </ul>

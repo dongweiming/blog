@@ -142,6 +142,84 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Ewget%E7%A0%94%E7%A9%B6/">关于wget研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-22T00:00:00+08:00" pubdate data-updated="true">Jan 22<span>nd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>什么是wget？</strong></p>
+
+<p>wget是一个很好的linux下的下载工具，支持递归下载，非交互下载等各种场景。</p>
+
+<p><strong>1 通常下载单个文件方式：</strong>
+<table border="0" cellspacing="0" cellpadding="2" width="517">
+<tbody>
+<tr>
+<td width="515" valign="top"><pre class="sh_bash">#wget http://denism.homeip.net/software/rsnapgraph/rsnapgraph-0.6.tar.gz</pre></td>
+</tr>
+</tbody>
+</table>
+<strong>2  下载一个和下载地址文件名不同的文件：</strong></p>
+
+<p>默认wget会自动分隔最后一个斜线的后面作为文件名，正常模式下载：
+<table border="0" cellspacing="0" cellpadding="2" width="519">
+<tbody>
+<tr>
+<td width="517" valign="top"><pre class="sh_bash">#wget <a href="http://www.dongwm.com/test/download.php?src_id=02">http://www.<span style="color: #555555;">dongwm.com</span>/test/download.php?src_id=02</a></pre></td>
+</tr>
+</tbody>
+</table>
+下载后：
+<table border="0" cellspacing="0" cellpadding="2" width="400">
+<tbody>
+<tr>
+<td width="400" valign="top"><pre class="sh_bash">#ls
+download_.php?src_id=02</pre></td>
+</tr>
+</tbody>
+</table>
+可以使用-O选项解决：
+<table border="0" cellspacing="0" cellpadding="2" width="500">
+<tbody>
+<tr>
+<td width="498" valign="top"><pre class="sh_bash">#wget –O test.zip <a href="http://www.dongwm.com/test/download.php?src_id=02">http://www.<span style="color: #555555;">dongwm.com</span>/test/download.php?src_id=02</a></pre></td>
+</tr>
+</tbody>
+</table>
+下载后：</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Ewget%E7%A0%94%E7%A9%B6/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Etop%E7%81%B5%E5%91%BD%E7%9A%84%E7%A0%94%E7%A9%B6/">关于top命令的研究</a></h1>
     
     
@@ -657,49 +735,6 @@ rdesktop -u admin -p admiN@\(23324 -f -r clipboard:PRIMARYCLIPBOARD -r disk:sunr
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/zuixinfangshianzhuangpeizhismokeping/">最新方式安装配置smokeping</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-12-28T00:00:00+08:00" pubdate data-updated="true">Dec 28<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>smokeping是对IDC网络质量，稳定性等最好的检测工具，包括常规的 ping，dig，echoping，curl等，可以 监视 www 服务器性能，监视 dns 查询性能，监视 ssh 性能等。选择smokeping我觉得有以下原因：
-<strong>1，最佳的画图功能，延迟和丢包用颜色和阴影表示很直观。
-2，免费和开源，作者是MRTG和RRDtool作者。
-3，支持主从的分布式模式。
-4，可以自定义报警功能。</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/zuixinfangshianzhuangpeizhismokeping/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/32/">&larr; Older</a></li>
@@ -722,6 +757,10 @@ rdesktop -u admin -p admiN@\(23324 -f -r clipboard:PRIMARYCLIPBOARD -r disk:sunr
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/python-webkai-fa-shi-zhan-yu-shou-lou/">《Python Web开发实战》预售喽</a>
@@ -757,10 +796,6 @@ rdesktop -u admin -p admiN@\(23324 -f -r clipboard:PRIMARYCLIPBOARD -r disk:sunr
     
       <li class="post">
         <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/liao-liao-pythonmian-shi-zhe-jian-shi-er/">聊聊python面试这件事儿</a>
       </li>
     
   </ul>
