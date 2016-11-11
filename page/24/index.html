@@ -141,6 +141,208 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/jiyuconsolezhongduandejiaohusocketliaotianchengxufuwuqiduan/">基于console终端的交互socket聊天程序（服务器端）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-16T00:00:00+08:00" pubdate data-updated="true">Sep 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：这个socket程序和客户端一起，其中mysqldb模块操作是import client</p>
+
+<p><pre class="sh_python">
+#!/usr/bin/env python
+#-*- coding: utf8 -*-
+'''just a Just a server-side script'''
+import socket, traceback, os, sys, time
+from time import ctime
+from threading import *
+from client import mysqldb
+from optparse import OptionParser</p>
+
+<p>host = ''
+port = 8888
+MAXTHREADS = 3
+lockpool = Lock()
+busylist = {}
+waitinglist = {}
+queue = []
+sem = Semaphore(0) #当计数器为0时，acquire()将阻塞线程至同步锁定状态，直到其他线程调用release()</p>
+
+<p>class MYthread(mysqldb):
+    def handleconnt(self,clientsock,choice):
+        lockpool.acquire() #使线程进入同步阻塞状态，尝试获得锁定
+        print "Received new client connection."
+        #判断等待线程是否到达最大线程数，是，就会关闭socket
+        try:
+            if len(waitinglist) == 0 and (activeCount() - 1) &gt;= MAXTHREADS:
+                clientsock.close()
+                return
+            if len(waitinglist) == 0:
+                self.mythread(choice)
+            queue.append(clientsock) #socket加入队列，semaphore被释放
+            sem.release()
+        finally:
+            lockpool.release()
+#多线程模板，启动线程
+    def mythread(self,myth):
+        print "Starting new client processor thread"
+        t = Thread(target = self.threadworker,args= [myth])
+        t.setDaemon(1)
+        t.start()
+#多线程运行的函数，处理终止的线程，初始化waitinglist
+    def threadworker(self,choice):
+        global waitinglist, lockpool, busylist
+        time.sleep(1) 
+        name = currentThread().getName()
+        try:
+            lockpool.acquire()
+            try:
+                waitinglist[name] = 1
+            finally:
+                lockpool.release()
+            self.processclients(choice)
+        finally:
+            print "** WARNING** Thread %s died" % name
+            if name in waitinglist:
+                del waitinglist[name]
+            if name in busylist:
+                del busylist[name]
+            self.mythread(choice)
+#让接收和发送socket作为2个线程
+    def mthread(self,clientsock):
+        mlist = []
+        for th in ['rev','sed']:
+             t = Thread(target = self.handleconnt,args = [clientsock,th])
+             mlist.append(t)
+             t.setDaemon(1)
+             t.start()
+        for t in mlist:
+             t.join()
+#响应客户端连接的处理请求
+    def processclients(self,choice):
+        global sem, queue, waitinglist, busylist, lockpool
+        name = currentThread().getName()
+        self.mysqlconnt=mysqldb()</p>
+
+<p>        while 1:
+            sem.acquire()
+            lockpool.acquire()
+            try:
+                clientsock = queue.pop(0)
+                del waitinglist[name]
+                busylist[name] = 1
+            finally:
+                lockpool.release()</p>
+
+<p>            try:
+                print "[%s] Got connection from %s" % \
+                        (name, clientsock.getpeername())
+                if choice == "sed":
+                    while 1:
+                        try:
+                            sys.stdout.write('&gt;')
+                            data = sys.stdin.readline()
+                            sys.stdout.flush()
+                            if not data:
+                                break
+                            clientsock.sendall('[%s] %s' % (ctime(),data))
+                            self.mysqlconnt.insert('Server',socket.gethostbyname(socket.gethostname()),ctime(),data)
+                        except socket.error, e:
+                            print "Error sending data : %s" % e
+                            sys.exit(1)
+                elif choice == "rev":
+                     while 1:
+                         try:
+                             buf = clientsock.recv(2048)
+                         except socket.error, e:
+                             print "Error receiving data: %s" % e
+                             sys.exit(1)
+                         if not len(buf):
+                             break
+                         print "%s says: %s "  % (clientsock.getpeername(),buf)
+                         self.mysqlconnt.insert('Server',socket.gethostbyname(socket.gethostname()),ctime(),buf)</p>
+
+<p>            except (KeyboardInterrupt, SystemExit):
+                raise
+            except:
+                traceback.print_exc()</p>
+
+<p>            try:
+                clientsock.close()
+            except KeyboardInterrupt:
+                raise
+            except:
+                traceback.print_exc()</p>
+
+<p>            lockpool.acquire()
+            try:
+                del busylist[name]
+                waitinglist[name] = 1
+            finally:
+                lockpool.release()
+#接收socket，并且指定MYthread类处理
+def listener():
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind((host, port))
+        s.listen(1)</p>
+
+<p>        while 1:
+            try:
+                clientsock, clientaddr = s.accept()
+            except KeyboardInterrupt:
+                raise
+            except:
+                traceback.print_exc()
+                continue
+            mythread = MYthread()
+            mythread.mthread(clientsock)
+#主函数
+if __name__ == '__main__':
+    argc = len(sys.argv)
+    parser = OptionParser(description="Socket Talk Shell",add_help_option=False,prog="Client.py",version="1.0",usage="%prog")
+    parser.add_option("-h", "--help",action = "help",help="print help")
+    parser.add_option("-p", "--print",action="store_true",help="print data in mysql")
+    options, arguments=parser.parse_args()
+    if argc == 1:
+        listener()
+    if '-h' in sys.argv  or '--help' in sys.argv:
+        print __doc__
+    elif '-p'  in sys.argv  or '--print' in sys.argv:
+        mysqldbconnt=mysqldb()
+        mysqldbconnt.select('Server')
+    else:
+       print 'Please run this script without parameters'
+</pre></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/debianxiashiyongsshfsfuseguazaiyuanduanwenjianxitong/">Debian下使用sshfs＋fuse挂载远端文件系统</a></h1>
     
     
@@ -1862,63 +2064,6 @@ Key Data:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyujiaohuanjianquan/">思科网络安全专题（一）:关于交换机安全</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-31T00:00:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>生产环境交换机比较多，以前的同事没有对其进行什么安全策略，就是简单配置一个登录密码而已。我接手后进行了一些改造！</p>
-
-<p>1 禁用DTP，中继</p>
-
-<p>因为一些交换机默认的中继为auto模式。可能在收到dtp协议帧后自动成为中继。</p>
-
-<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
-
-<p>SW1(config-if-range)#switchport mode access</p>
-
-<p>2 stp安全</p>
-
-<p>如果攻击者获得2个不同交换的2个端口，可将一个交换机引入网络，配置更高的桥优先级，使之比根桥的桥接优先级更低，这样stp重新收敛后就会被这个冒充交换机截取流量</p>
-
-<p>1 根保护： 收到bpdu后进入根保护不一致的状态，端口不再转发流量，bpdu停止后恢复</p>
-
-<p>SW1(config-if)# int range fastEthernet 0/1  - 48</p>
-
-<p>SW1(config-if-range)#spanning-tree  guard root</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/guanyujiaohuanjianquan/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/25/">&larr; Older</a></li>
@@ -1941,6 +2086,10 @@ Key Data:
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-yao-shu-chu-dao-tai-wan-liao/">《Python Web开发实战》要输出到台湾了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
@@ -1976,10 +2125,6 @@ Key Data:
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
       </li>
     
   </ul>

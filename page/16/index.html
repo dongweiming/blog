@@ -141,6 +141,82 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/guanyugetpassyanjiu/">关于getpass研究</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T00:00:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前言：通过终端与用户交互时，getpass提示用户输入密码，并且不明文显示输入的数据</p>
+
+<p><pre class="sh_python">
+import getpass</p>
+
+<p>p = getpass.getpass(prompt='Do you love me?')
+if p.lower() == 'yes':
+    print 'Right.'
+else:
+    print 'oh! no'
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; python test.py
+Do you love me?
+Right.
+dongwm@linux-dongwm:~&gt; python test.py
+Do you love me?
+oh! no
+<pre class="sh_python">
+import getpass
+import sys</p>
+
+<p>if sys.stdin.isatty(): #当发现这是一个终端的时候 
+    p = getpass.getpass('Using getpass: ')
+else:  #当非终端，比如伪终端
+    print 'Using readline'
+    p = sys.stdin.readline().rstrip()</p>
+
+<p>print 'Read: ', p
+</pre></p>
+
+<p>执行结果：</p>
+
+<p>dongwm@linux-dongwm:~&gt; echo &#8216;sdds&#8217; |python test.py
+Using readline
+Read:  sdds
+dongwm@linux-dongwm:~&gt; python test.py
+Using getpass:
+Read:  sdds</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/guanyugetoptyanjiu/">关于getopt研究</a></h1>
     
     
@@ -1451,322 +1527,6 @@ username = dongwm</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/guanyucollectionsyanjiu/">关于collections研究</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前言：collections包含了超出内置的列表，字典，元组的数据类型的集合</p>
-
-<p><strong>1 Counter是一种容器，计算等效值累加，类似于对字典的key的value叠加</strong></p>
-
-<p><pre class="sh_python">
-import collections
-c = collections.Counter()  #设置容器
-print 'Initial :', c
-c.update('abcdaab')  #更新容器
-print 'Sequence:', c
-c.update({'a':1, 'd':5})
-print 'Dict    :', c
-</pre></p>
-
-<p>结果：</p>
-
-<p>python test.py
-Initial : Counter()
-Sequence: Counter({&#8216;a&#8217;: 3, &#8216;b&#8217;: 2, &#8216;c&#8217;: 1, &#8216;d&#8217;: 1})   #计算更新的字母的数量
-Dict    : Counter({&#8216;d&#8217;: 6, &#8216;a&#8217;: 4, &#8216;b&#8217;: 2, &#8216;c&#8217;: 1}) #因为继续更新字典，把key的value叠加</p>
-
-<p><pre class="sh_python">
-import collections</p>
-
-<p>c = collections.Counter()
-with open('/var/lib/dict/words', 'rt') as f:   #读取系统的字典文件，我的是opensuse
-    for line in f:
-        c.update(line.rstrip().lower())  每次更新一行，也就是一个词</p>
-
-<p>print 'Most common:'
-for letter, count in c.most_common(3):  #选取叠加数量最大的前三位的字母
-    print '%s: %7d' % (letter, count)  #打印 这个字母 和数量
-</pre>
-计算结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Most common:
-s:  366873
-e:  366053
-i:  288936</p>
-
-<p><pre class="sh_python">
-import collections</p>
-
-<p>c1 = collections.Counter(['o', 'd', 'd', 'a', 'c', 'd'])
-c2 = collections.Counter('aiodn')</p>
-
-<p>print 'C1:', c1
-print 'C2:', c2</p>
-
-<p>print '\nCombined counts:'   #2个容器累加
-print c1 + c2</p>
-
-<p>print '\nSubtraction:'  #2个容器相减
-print c1 - c2</p>
-
-<p>print '\nIntersection (taking positive minimums):'  #2个容器取同
-print c1 &amp; c2</p>
-
-<p>print '\nUnion (taking maximums):'  #2个容器取异
-print c1 | c2
-</pre></p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-C1: Counter({&#8216;d&#8217;: 3, &#8216;a&#8217;: 1, &#8216;c&#8217;: 1, &#8216;o&#8217;: 1})
-C2: Counter({&#8216;a&#8217;: 1, &#8216;i&#8217;: 1, &#8216;d&#8217;: 1, &#8216;o&#8217;: 1, &#8216;n&#8217;: 1})</p>
-
-<p>Combined counts:
-Counter({&#8216;d&#8217;: 4, &#8216;a&#8217;: 2, &#8216;o&#8217;: 2, &#8216;c&#8217;: 1, &#8216;i&#8217;: 1, &#8216;n&#8217;: 1})</p>
-
-<p>Subtraction:
-Counter({&#8216;d&#8217;: 2, &#8216;c&#8217;: 1})</p>
-
-<p>Intersection (taking positive minimums):
-Counter({&#8216;a&#8217;: 1, &#8216;d&#8217;: 1, &#8216;o&#8217;: 1})</p>
-
-<p>Union (taking maximums):
-Counter({&#8216;d&#8217;: 3, &#8216;a&#8217;: 1, &#8216;c&#8217;: 1, &#8216;i&#8217;: 1, &#8216;o&#8217;: 1, &#8216;n&#8217;: 1})
-<strong>2defaultdict 设置一个包含默认值的字典（不存在key就用这个默认值）</strong></p>
-
-<p><pre class="sh_python">
-import collections</p>
-
-<p>def default_factory():
-    return 'default value'</p>
-
-<p>d = collections.defaultdict(default_factory, foo='bar')
-print 'd:', d
-print 'foo =&gt;', d['foo']
-print 'bar =&gt;', d['bar']
-</pre></p>
-
-<p>结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-d: defaultdict(&lt;function default_factory at 0xb74d2c34&gt;, {&#8216;foo&#8217;: &#8216;bar&#8217;})
-foo =&gt; bar
-bar =&gt; default value
-<strong>3 Deque 一个 double-ended 的 queue，可以从任何一端等价和删除元素</strong></p>
-
-<p><pre class="sh_python">
-import collections</p>
-
-<p>d = collections.deque('abcdefg')
-print 'Deque:', d
-print 'Length:', len(d)
-print 'Left end:', d[0]
-print 'Right end:', d[-1]</p>
-
-<p>d.remove('c')
-print 'remove(c):', d
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Deque: deque([&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;, &#8216;d&#8217;, &#8216;e&#8217;, &#8216;f&#8217;, &#8216;g&#8217;])
-Length: 7
-Left end: a
-Right end: g
-remove(c): deque([&#8216;a&#8217;, &#8216;b&#8217;, &#8216;d&#8217;, &#8216;e&#8217;, &#8216;f&#8217;, &#8216;g&#8217;])
-<pre class="sh_python">
-import collections</p>
-
-<p>d = collections.deque()
-d.extend('abcdefg')
-print 'extend    :', d
-d.append('h')
-print 'append    :', d</p>
-
-<p>d = collections.deque()
-d.extendleft('abcdefg')
-print 'extendleft:', d
-d.appendleft('h')
-print 'appendleft:', d
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-extend    : deque([&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;, &#8216;d&#8217;, &#8216;e&#8217;, &#8216;f&#8217;, &#8216;g&#8217;])  #延长队列
-append    : deque([&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;, &#8216;d&#8217;, &#8216;e&#8217;, &#8216;f&#8217;, &#8216;g&#8217;, &#8216;h&#8217;])  #增加一个 自动在队列尾部
-extendleft: deque([&#8216;g&#8217;, &#8216;f&#8217;, &#8216;e&#8217;, &#8216;d&#8217;, &#8216;c&#8217;, &#8216;b&#8217;, &#8216;a&#8217;]) #从右向左放队列
-appendleft: deque([&#8216;h&#8217;, &#8216;g&#8217;, &#8216;f&#8217;, &#8216;e&#8217;, &#8216;d&#8217;, &#8216;c&#8217;, &#8216;b&#8217;, &#8216;a&#8217;]) #增加一个 从左端开始添加
-<pre class="sh_python">
-import collections</p>
-
-<p>print 'From the right:'
-d = collections.deque('abcdefg')
-while True:
-    try:
-        print d.pop()  #删除默认从队尾开始
-    except IndexError: #队列为空 停止
-        break</p>
-
-<p>print '\nFrom the left:'
-d = collections.deque('abcdefg')
-while True:
-    try:
-        print d.popleft()  #删除从左开始
-    except IndexError:
-        break
-</pre></p>
-
-<p>执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-From the right:
-g
-f
-e
-d
-c
-b
-a</p>
-
-<p>From the left:
-a
-b
-c
-d
-e
-f
-g</p>
-
-<p><pre class="sh_python">
-import collections</p>
-
-<p>d = collections.deque(xrange(10))
-print 'Normal        :', d
-d = collections.deque(xrange(10))
-d.rotate(2)   #旋转2个数据，把最右边的2个 转到最左面
-print 'Right rotation:', d
-d = collections.deque(xrange(10))
-d.rotate(-2) #把最左边2个转到最右边
-print 'Left rotation :', d
-</pre>
-执行过程：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Normal        : deque([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-Right rotation: deque([8, 9, 0, 1, 2, 3, 4, 5, 6, 7])
-Left rotation : deque([2, 3, 4, 5, 6, 7, 8, 9, 0, 1])
-<strong>4 namedtuple</strong></p>
-
-<p>元组使用位置确定数据，看一个题外例子：</p>
-
-<p><pre class="sh_python">
-dongwm = ('Dongwm', 27, 'male')
-liuliu = ('Liuliu', 29, 'female')
-for p in [ dongwm, liuliu ]:
-    print '%s is a %d year old %s' % p   #这里有三个格式化%s，只有一个p 但是p有三个值
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Dongwm is a 27 year old male
-Liuliu is a 29 year old female</p>
-
-<p><pre class="sh_python">
-import collections</p>
-
-<p>Person = collections.namedtuple('Person', 'name age gender')</p>
-
-<p>print 'Type of Person:', type(Person)
-dongwm = Person(name='Dongwm', age=27, gender='male')
-liuliu = Person(name='Liuliu', age=29, gender='female')
-for p in [ dongwm, liuliu ]:
-    print '%s is a %d year old %s' % p
-</pre>
-执行结果：</p>
-
-<p>dongwm@linux-dongwm:~&gt; python test.py
-Type of Person: &lt;type &#8216;type&#8217;&gt;
-Dongwm is a 27 year old male
-Liuliu is a 29 year old female
-5 OrderedDict 是一本字典的子类，记得被添加的顺序</p>
-
-<p><pre class="sh_python">
-import collections</p>
-
-<p>print 'Regular dictionary:'
-d = {}
-d['a'] = 'A'
-d['b'] = 'B'
-d['c'] = 'C'
-d['d'] = 'D'
-d['e'] = 'E'</p>
-
-<p>for k, v in d.items():
-    print k, v</p>
-
-<p>print '\nOrderedDict:'
-d = collections.OrderedDict()
-d['a'] = 'A'
-d['b'] = 'B'
-d['c'] = 'C'
-d['d'] = 'D'
-d['e'] = 'E'</p>
-
-<p>for k, v in d.items():
-    print k, v
-</pre></p>
-
-<p>执行结果：</p>
-
-<p>python test.py
-Regular dictionary:
-a A
-c C
-b B
-e E
-d D</p>
-
-<p>OrderedDict:
-a A
-b B
-c C
-d D
-e E</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/17/">&larr; Older</a></li>
@@ -1789,6 +1549,10 @@ e E</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-yao-shu-chu-dao-tai-wan-liao/">《Python Web开发实战》要输出到台湾了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
@@ -1824,10 +1588,6 @@ e E</p>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
       </li>
     
   </ul>

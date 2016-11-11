@@ -141,6 +141,57 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E4%BF%AE%E6%94%B9opensuse%E5%BC%80%E6%9C%BAgrub%E7%94%BB%E9%9D%A2/">修改opensuse开机grub画面</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-13T00:00:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>追溯到菜鸟时间,见到以百度大大吧百度服务器的开机画面都弄成了百度的那个小脚丫图片,崇拜的哇哇的!!最近闲来无事,也修改了下自己的opensuse11.4系统,以下是过程及一些心得:
+</strong><pre class="sh_bash">linux-3qd1:/home/dongwm # mkdir new   //创建一个目录 用来放message解压出来的文件
+\linux-3qd1:/home/dongwm # cp /boot/message new/
+linux-3qd1:/home/dongwm # cd new/
+linux-3qd1:/home/dongwm/new # cpio -i &lt; message   //解开message文件,其中包含了一些文件和图片
+827 块
+linux-3qd1:/home/dongwm/new # cp /home/dongwm/桌面/Background.jpg back.jpg  //替换解压出来的一个back.jpg文件  这个就是开始启动的那个背景图片，Background.jpg是我自己的图片，使用GIMP编辑，尺寸最大为800x600，色深24bit真彩色，gimp采样格式 <em>2x2,1x1,1x1（最小文件）</em> ;文件大小不能超过150-300KB .
+linux-3qd1:/home/dongwm/new # rm message -f   //删除这个message  因为要不然生成的新message还包含了以前的message  不起效果
+linux-3qd1:/home/dongwm/new # ls |cpio -o &gt;../message   //生成新的message  放在了上一级目录下
+867 块
+linux-3qd1:/home/dongwm/new # cp /boot/message /boot/message.bak  //安全起见  备份
+linux-3qd1:/home/dongwm/new # cp ../message /boot/   //拷贝新的message</p>
+
+<p>ok  重启吧  </pre>
+<div id="livemargins_control" style="position: absolute; display: none; z-index: 9999;"><img style="position: absolute; left: -77px; top: -5px;" src="chrome://livemargins/skin/monitor-background-horizontal.png" alt="" width="77" height="5" /> <img style="position: absolute; left: 0; top: -5px;" src="chrome://livemargins/skin/monitor-background-vertical.png" alt="" /> <img id="monitor-play-button" style="position: absolute; left: 1px; top: 0; opacity: 0.5; cursor: pointer;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" src="chrome://livemargins/skin/monitor-play-button.png" alt="" /></div>
+<div class="zemanta-pixie"><img class="zemanta-pixie-img" src="http://img.zemanta.com/pixy.gif?x-id=e2ffd0ef-61c7-8737-8233-02af011192cb" alt="" /></div></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/shell%E8%84%9A%E6%9C%AC%E8%B0%83%E8%AF%95%E9%AB%98%E7%BA%A7%E5%AD%A6%E4%B9%A0/">Shell脚本调试高级学习</a></h1>
     
     
@@ -1081,55 +1132,6 @@ OSPF: Key 1 already exists
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">关于expect研究（一）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-26T00:00:00+08:00" pubdate data-updated="true">Mar 26<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><p><strong>expect是一个编程工具语言，他的作者描述其为：Expect [is a] software suite for automating interactive tools。类似于自动应答，它能实现自动和交互式的执行。
-1 因为Expect需要Tcl编程语言的支持，首先安装tcl</strong>
-<pre class="sh_bash">[root@server ~]# yum install -y tcl tclx tcl-devel –y</pre>
-<strong>2 安装最新版expect：</strong>
-http://sourceforge.net/projects/expect/
-目前最新版expect5.45
-<pre class="sh_bash">[root@server expect5.45]# ./configure --with-tcl=/usr/lib --with-tclinclude=/usr/include/tcl-private/generic &#038;&#038; make &#038;&#038; make install</pre>
-<strong>3 基础知识：</strong>
-1 基础命令：send，expect，spwan
-send表示接受一个字符串作为参数发送给指定进程，expect 命令则等待一个响应
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">继续阅读 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/29/">&larr; Older</a></li>
@@ -1152,6 +1154,10 @@ send表示接受一个字符串作为参数发送给指定进程，expect 命令
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-yao-shu-chu-dao-tai-wan-liao/">《Python Web开发实战》要输出到台湾了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
@@ -1187,10 +1193,6 @@ send表示接受一个字符串作为参数发送给指定进程，expect 命令
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
       </li>
     
   </ul>

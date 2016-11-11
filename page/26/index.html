@@ -141,6 +141,206 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/kongzhipingmianheguanlipingmiananquan/">站到站VPN (数字证书)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-10T00:00:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><span style="font-family: Times New Roman,serif;"><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R3 </strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>上的</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>VLAN</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>配置</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;">VLAN0035 Fa0/3, Fa0/5</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R3</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(CA)</strong></span></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3#</span><span style="font-family: Arial,sans-serif;"><strong>clock set 18:00:00 8 Aug 2008</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3#</span><span style="font-family: Arial,sans-serif;"><strong>conf t</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int vlan35</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.12.35 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip domain-name dongwm.com</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto pki server vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(cs-server)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>grant auto</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(cs-server)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>no shutdown</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">%Some server settings cannot be changed after CA certificate generation.</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Please enter a passphrase to protect the private key</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% or type Return to exit</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Password:</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>cisco123</strong></span></span></span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Re-enter password:</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>cisco123</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Generating 1024 bit RSA keys, keys will be non-exportable&#8230;[OK]</span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Aug 8 18:08:00.395: %SSH-5-ENABLED: SSH 1.99 has been enabled% Exporting</span><span style="font-family: Arial,sans-serif;">Certificate Server signing certificate and keys&#8230;</span></span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">% Certificate Server enabled.</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3(cs-server)#</span><span style="font-family: Arial,sans-serif;"><strong>end</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R3#sh crypto key mypubkey rsa </span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Key pair was generated at: 18:08:00 UTC Aug 8 2008</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key name: vpnca</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Usage: General Purpose Key</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key is not exportable.</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key Data:</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">30819F30 0D06092A 864886F7 0D010101 05000381 8D003081 89028181 00D91167 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">FCA77211 274A2CFC B6CE878E A5015E1C 0AC2F338 453D38B6 691A2B66 8B026E06 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">F08707E8 A87383B7 A4A81638 3A31F66A AFE95C19 E3FD70EE 6BD712EF 0BDD4B67 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">0424F121 81EB3C38 B0C16178 FAC05C47 5FA33A7F 93462187 3FE30098 920A0784 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">268F290F 3E7C0771 CBCC4B53 0CC09D4F 63A7F0E1 E849800C 619EA02F BD020301 0001</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Key pair was generated at: 18:08:01 UTC Aug 8 2008</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key name: vpnca.server</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Usage: Encryption Key</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key is not exportable.</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Key Data:</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">307C300D 06092A86 4886F70D 01010105 00036B00 30680261 00D0C4D2 102FDD65 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">53599D63 8689E105 17F85939 6D0E415A 0BE183AE 32435875 6650B178 4D213B10 </span></p>
+
+<p><span style="font-family: Arial,sans-serif;">B5ECD8F3 7210CDB5 A6714F8A 3E010F6B 02B3A10D F1779DBA 551CFF2A E67F1062 </span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">E30A163C 0AE61978 A4157C71 A0DF544C 31E807F7 5F549181 F3020301 0001</span></span></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>R1</strong></span></span></span></span><span style="color: #c00000;"><span style="font-size: medium;"><strong>配置</strong></span><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;"><span style="font-size: medium;"><strong>(VPN)</strong></span></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>int loopback 0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 1.1.1.1 255.255.255.255</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>int e1/0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>no sh</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>ip add 192.168.12.1 255.255.255.0</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-if)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="font-family: Arial,sans-serif;"><strong>ip route 0.0.0.0 0.0.0.0 192.168.12.2</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>ip host vpnca 192.168.12.35</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1#</span><span style="color: #7030a0;"><span style="font-family: Arial,sans-serif;"><strong>clock set 18:00:00 8 Aug 2008</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>crypto pki trustpoint vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(ca-trustpoint)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>password cisco123</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(ca-trustpoint)#</span><span style="color: #c00000;"><span style="font-family: Arial,sans-serif;"><strong>enrollment url http://vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(ca-trustpoint)#</span><span style="font-family: Arial,sans-serif;"><strong>exit</strong></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>crypto pki authenticate vpnca</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Certificate has the following attributes:</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Fingerprint MD5: 1891DCB9 B7896D96 F135D835 B4DB2A3B </span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Fingerprint SHA1: 96249CAB FE0F8666 5420BEBE E6351C77 C036A563</span></span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">% Do you accept this certificate? [yes/no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">Trustpoint CA certificate accepted.</span></p>
+
+<p><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>R1(config)#crypto pki enroll vpnca</strong></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">%</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Start certificate enrollment .. </span></p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-family: Arial,sans-serif;">% The subject name in the certificate will include: R1.cisco.com</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">% Include the router serial number in the subject name? [yes/no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% The serial number in the certificate will be: 4294967295</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">% Include an IP address in the subject name? [no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Enter Interface name or IP Address[]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>192.168.12.1</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">Request certificate from CA? [yes/no]:</span><span style="color: #00b050;"><span style="font-family: Arial,sans-serif;"><strong>yes</strong></span></span></span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% Certificate request sent to Certificate Authority</span></p>
+
+<p><span style="font-family: Arial,sans-serif;">% The &#8216;show crypto pki certificate verbose vpnca&#8217; commandwill show the fingerprint.</span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>crypto isakmp policy 10</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="color: #0070c0;"><span style="font-family: Arial,sans-serif;"><strong>authentication rsa-sig</strong></span></span></span></p>
+
+<p><span style="font-family: Times New Roman,serif;"><span style="font-family: Arial,sans-serif;">R1(config-isakmp)#</span><span style="font-family: Arial,sans-serif;"><strong>end</strong></span></span></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/pythonjiaobenshixianchakanmouqqhaomashifouzaixianjiuchuyinshen/">python脚本实现查看某QQ号码是否在线（揪出隐身）</a></h1>
     
     
@@ -687,137 +887,6 @@ Po1 Desg FWD 9 128.65 P2p</p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/%E4%BD%BF%E7%94%A8vsftpd%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7%E6%90%AD%E5%BB%BAftp%E6%9C%8D%E5%8A%A1%E5%99%A8/">使用vsftpd虚拟用户搭建FTP服务器</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-10T00:00:00+08:00" pubdate data-updated="true">May 10<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>需求：</strong>
-<strong> 用户：dongwm，ftpuser1,ftpuser2</strong>
-<strong> 用户dongwm可以有本用户和其他2个用户的文件相关权限，ftpuser1和ftpuser2只有对本用户的相关权限，不能查看其他用户信息</strong></p>
-
-<p><strong>思路：用户dongwm使用本地用户，但是不能登录服务器，ftpuser使用虚拟用户，并chroot。</strong></p>
-
-<p><strong>前期准备：</strong></p>
-
-<p><strong>1 安装vsftp</strong>
-yum install vsftpd -y
-<strong>2  安装db4 //虚拟用户数据库相关</strong>
-yum install db4-utils db4 db4-devel db4 -y
-<strong>3  创建相关用户信息文本文件：</strong>
-root@client ~&gt;  cat /etc/vsftpd/virtualuser.txt
-ftpuser1  //用户1
-e5bm0Nw}Bj  //用户1密码
-ftpuser2
-e5bm0sf4ss
-<strong>4 生成数据库文件：</strong>
-db_load -T -t hash -f /etc/vsftpd/virtualuser.txt /etc/vsftpd/virtualuser.db
-chmod 600 /etc/vsftpd/vsftpd_virtualuser.db
-<strong>5 删除用户信息文本文件</strong>
-rm -rf  /etc/vsftpd/virtualuser.txt  //很重要的一步 要不然多恐怖阿？
-<strong>6 修改pam.d验证：</strong>
-root@client ~&gt;  vi /etc/pam.d/vsftpd
-将里面的所有行都注释掉，添加以下2行：
-auth required /lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_virtualuser
-account required /lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_virtualuser
-注：里面使用lib64是因为我的是64位系统  指定的db文件后面没有后缀.db
-<strong>7 创建用户：</strong>
-useradd -s /sbin/nologin -d /var/ftp/dongwm -G ftp dongwm //设置shell不能登录，家目录为/var/ftp/dongwm
-chown 755 /var/ftp/dongwm -R</p>
-
-<p><strong>配置vsftpd：</strong>
-<strong>cd /etc/vsftpd</strong>
-<strong>1 vsftpd.conf  //本地用户使用了这个配置文件的配置</strong>
-anonymous_enable=NO  //因为我们使用了虚拟用户登录 这个选项不需要
-local_enable=YES  //容许本地登录
-write_enable=YES
-local_umask=022
-anon_upload_enable=YES
-anon_mkdir_write_enable=YES
-dirmessage_enable=YES
-xferlog_enable=YES
-connect_from_port_20=YES
-xferlog_std_format=YES
-chroot_list_enable=YES  //使用chroot
-chroot_list_file=/etc/vsftpd/chroot_list //这个文件里面列出来的用户是chroot环境
-listen=YES
-pam_service_name=vsftpd  //虚拟用户需要有这个配置
-userlist_enable=YES
-tcp_wrappers=YES
-userlist_deny=NO  //只容许userlist这个文件里面的用户访问ftp
-user_config_dir=/etc/vsftpd/vuserconfig  //虚拟用户的配置文件的主目录
-guest_enable=YES //虚拟用户使用本地用户
-guest_username=dongwm  //指定本地用户dongwm
-virtual_use_local_privs=YES
-chmod_enable=YES
-anon_other_write_enable=YES
-download_enable=YES
-anon_world_readable_only=NO</p>
-
-<p><strong>2 cat chroot_list</strong>
-ftpuser1
-ftpuser2  //这2个用户只能在它的家目录下相关权限
-<strong>3 root@client /etc/vsftpd&gt; cat user_list </strong>
-ftpuser1
-ftpuser2
-dongwm  //只有这三个用户能登录ftp</p>
-
-<p><strong>4 ftpuser1的配置文件，注意文件地址：</strong>
-root@client /etc/vsftpd&gt; cat vuserconfig/ftpuser1
-local_root=/var/ftp/dongwm/ftpuser1 //指定这个用户的家目录地址，在dongwm的家目录的子目录下
-write_enable=YES
-download_enable=YES
-anon_world_readable_only=NO
-anon_upload_enable=YES
-anon_mkdir_write_enable=YES
-anon_other_write_enable=YES
-local_umask=022
-ftpuser2的配置文件类似于ftpuser1,只是家目录不同：
-root@client /etc/vsftpd&gt; cat vuserconfig/ftpuser2
-local_root=/var/ftp/dongwm/ftpuser2
-write_enable=YES
-download_enable=YES
-anon_world_readable_only=NO
-anon_upload_enable=YES
-anon_mkdir_write_enable=YES
-anon_other_write_enable=YES
-local_umask=022</p>
-
-<p><strong>5 启动服务</strong>
-root@client /etc/vsftpd&gt; /etc/init.d/vsftpd start
-root@client /etc/vsftpd&gt; chkconfig vsftpd on</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/27/">&larr; Older</a></li>
@@ -840,6 +909,10 @@ root@client /etc/vsftpd&gt; chkconfig vsftpd on</p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-yao-shu-chu-dao-tai-wan-liao/">《Python Web开发实战》要输出到台湾了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
@@ -875,10 +948,6 @@ root@client /etc/vsftpd&gt; chkconfig vsftpd on</p>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
       </li>
     
   </ul>

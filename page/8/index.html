@@ -141,6 +141,189 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/djangohe-flaskfen-ye/">Django和flask分页</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-29T15:37:00+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4 id="section"><em>前言</em></h4>
+
+<p>最近搞了一些关于flask和django的东西，尤其是django的模板和admin功能以及这些框架使用bootstrap的东西，没时间更新博客，先说一下flask和django分页吧</p>
+
+<h5 id="flaskbootstrapflask-paginatehttppackagespythonorgflask-paginate">flask的bootstrap分页插件<a href="http://packages.python.org/Flask-paginate">flask-paginate</a></h5>
+
+<p>其实安装很常规，他的思路就是根据你的数据量给每个页面加一个li前缀到最后返回的div里面。因为官网提供的说明很简单，我在这里仔细说说：</p>
+
+<ol>
+  <li>官网说给你的网站页面添加css：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_bash">
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    background: #6aa6ed;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
+</pre></figure></notextile></div></notextile></div>
+<p>其实这个是给你页面显示统计数据的方法pagination.info提供的样式，默认的class=’pagination’是bootstrap自带的，不需要你添加</p>
+
+<ol>
+  <li>官网的例子使用的是：Blueprint：</li>
+</ol>
+
+<p>我们一般都是： ‘from flask import Flask’，其实Blueprint就是一个可定制的容器，一个应用可以有多个容器，他们都继承于flask.helpers._PackageBoundObject
+可以看我的一个例子：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+@app.route('/')
+def index():
+
+	pagesize = 100 #设定每页显示条目数
+	page = int(request.args.get('page',0)) #获取当前页面页数
+	data = get_MongoData(page, pagesize) #get_MongoData是我自己的函数，根据页数过滤要显示的数据（因为实在太大了）
+	pagination = Pagination(total=data[1], per_page=pagesize, page=page) #total的值是总数据条目，per_page表示每页显示数目，page就是当前页数。还可以设置向前/后页面标签（默认是&lt;&lt;/&gt;&gt;）等
+	return render_template("index.html", pagination=pagination)
+</pre></figure></notextile></div></notextile></div>
+
+<ol>
+  <li>我对他的一点修改：
+    <ol>
+      <li>我发现在我的程序里面，这个分页栏在后部会放不下而换行显示，我就直接把link_css制定的div改成了行内元素span</li>
+      <li>当我默认使用link_size,代码是这样：</li>
+    </ol>
+    <xmp>
+     link_css = &#8217;<span class="pagination{0} green"><ul>&#8217;
+     其实最后页面出来的效果是&#8217;<span class="paginationNone green"><ul>&#8217; 
+ 
+		
+     这样就没有符合的bootstrap类，所以我修改了links方法:
+
+     <div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+     @property
+     def links(self):
+         '''get all the pagination links'''
+         if self.total_pages &lt;= 1:
+             return ''
+         if not self.link_size:
+             self.link_size = ''
+         s = [link_css.format(self.link_size)]
+         s.append(self.prev_page)
+         for page in self.pages:
+             s.append(self.single_page(page) if page else gap_marker)
+
+         s.append(self.next_page)
+         s.append('')
+         return ''.join(s)
+     </pre></figure></notextile></div></notextile></div>
+
+</ul></span></ul></span></xmp>
+  </li>
+</ol>
+<p>#####flask的bootstrap分页插件<a href="http://tgdn.github.com/django-bootstrap-pagination/">django-bootstrap-pagination</a></p>
+
+<p>django的插件比较复杂，它自己定义了中间件和标签，这样你需要在模板中load它提供的函数，并且很nb的使用了RequestContext去处理变量,可以看张沈鹏以前写的一个小文章：<a href="http://zsp.iteye.com/blog/115254">django 简化 view 函数的编写</a></p>
+
+<ol>
+  <li>先看我的后台方法：</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+
+def showlist(req):
+
+	t = req.GET.get('type', None)
+	l = req.GET.get('app', None)
+	if t and l:
+		db = getMongo('XXX.XXX.XXX.XXX:XX', 'dc2')
+		if t == 'v':
+			q = re.compile(r'.*%s$' % l)
+			data = db.site.find({'modules.site.level':'v4', 'site':{ '$regex' : q }}, 
+				{'site':1, '_id':0, 'modules.site.links':1, 'modules.site.keywords':1}).sort(
+				'modules.site.site.check_time')
+
+	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
+</pre></figure></notextile></div></notextile></div>
+
+<p>但是运行时候会报错：</p>
+
+<div class="bogus-wrapper"><notextile><div class="bogus-wrapper"><notextile><figure class="code"><pre class="sh_python">
+Traceback:
+File "/usr/local/lib/python2.6/dist-packages/django/core/handlers/base.py" in get_response
+  111.                         response = callback(request, *callback_args, **callback_kwargs)
+File "/home/dongwm/centerCon/views.py" in showlist
+  68. 	return render_to_response("list.html", {'data':data}, context_instance=RequestContext(req))
+File "/usr/local/lib/python2.6/dist-packages/django/shortcuts/__init__.py" in render_to_response
+  20.     return HttpResponse(loader.render_to_string(*args, **kwargs), **httpresponse_kwargs)
+File "/usr/local/lib/python2.6/dist-packages/django/template/loader.py" in render_to_string
+  176.         return t.render(context_instance)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
+  140.             return self._render(context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in _render
+  134.         return self.nodelist.render(context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/base.py" in render
+  823.                 bit = self.render_node(node, context)
+File "/usr/local/lib/python2.6/dist-packages/django/template/debug.py" in render_node
+  74.             return node.render(context)
+File "/home/dongwm/centerCon/templatetags/pagination_tags.py" in render 
+  91.             page_obj = paginator.page(context['request'].page)
+File "/usr/local/lib/python2.6/dist-packages/django/template/context.py" in __getitem__
+  54.         raise KeyError(key)
+
+Exception Type: KeyError at /showlist/
+Exception Value: 'request'
+</pre></figure></notextile></div></notextile></div>
+
+<p>不管你用那个插件都会有这个报错。。。</p>
+
+<p><em>后来发现原因是：</em></p>
+
+<p><em>settings文件没有设置TEMPLATE_CONTEXT_PROCESSORS</em>
+理由：模板上下文处理器会指定了哪些contextprocessors总是默认被使用。这样就省去了每次使用RequestContext都指定processors的麻烦
+在settings加入：
+TEMPLATE_CONTEXT_PROCESSORS = (
+    “django.core.context_processors.media”,
+    “django.core.context_processors.request”
+    )</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/octopress-de-3D-biao-qian-yun/">octopress的3D标签云插件</a></h1>
     
     
@@ -2621,186 +2804,6 @@ mapper(Photo, photo, properties=dict(
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/sqlalchemyjiaochengqi/">SQLAlchemy教程(七)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-19T00:00:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>本文主要是面向对象的继承映射到关系数据库表的方法</strong></p>
-
-<p>&gt;&gt;&gt; class Product(object):
-&#8230;     def __init__(self, sku, msrp):
-&#8230;         self.sku = sku
-&#8230;         self.msrp = msrp
-&#8230;     def __repr__(self):
-&#8230;         return &#8216;&lt;%s %s&gt;&#8217; % (
-&#8230;             self.__class__.__name__, self.sku)
-&#8230;
-&gt;&gt;&gt; class Clothing(Product):
-&#8230;     def __init__(self, sku, msrp, clothing_info):
-&#8230;         Product.__init__(self, sku, msrp) #继承了Product
-&#8230;         self.clothing_info = clothing_info
-&#8230;
-&gt;&gt;&gt; class Accessory(Product):
-&#8230;     def __init__(self, sku, msrp, accessory_info):
-&#8230;         Product.__init__(self, sku, msrp) #继承了Product
-&#8230;         self.accessory_info = accessory_info
-也就是这样的意思:</p>
-
-<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png"><img class="alignnone  wp-image-1267" title="Screenshot-1" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-1.png" alt="" width="700" height="251" /></a></p>
-
-<p>这个单表继承中(如下图,黑色的表示没有被映射):</p>
-
-<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png"><img class="alignnone  wp-image-1270" title="Screenshot-2" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-2.png" alt="" width="683" height="316" /></a></p>
-
-<p>从创建表结构是这样:</p>
-
-<p>&gt;&gt;&gt; product_table = Table(
-&#8230;     &#8216;product&#8217;, metadata,
-&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
-&#8230;     Column(&#8216;msrp&#8217;, Numeric),
-&#8230;     Column(&#8216;clothing_info&#8217;, String),
-&#8230;     Column(&#8216;accessory_info&#8217;, String),
-&#8230;     Column(&#8216;product_type&#8217;, String(1), nullable=False)) #一个新的字段
-&gt;&gt;&gt; mapper(
-&#8230;     Product, product_table,
-&#8230;     polymorphic_on=product_table.c.product_type, #映射继承层次结构使用polymorphic_on表示继承在product_type字段,值是polymorphic_identity指定的标识
-&#8230;     polymorphic_identity=&#8217;P&#8217;) #标识继承 Product ,父类
-&lt;Mapper at 0x85833ec; Product&gt;
-&gt;&gt;&gt; mapper(Clothing, inherits=Product,
-&#8230;        polymorphic_identity=&#8217;C&#8217;)   #标识继承Clothing product
-&lt;Mapper at 0x858362c; Clothing&gt;
-&gt;&gt;&gt;
-&gt;&gt;&gt; mapper(Accessory, inherits=Product, #继承至Product
-&#8230;        polymorphic_identity=&#8217;A&#8217;) #标识继承Accessory
-&lt;Mapper at 0x8587d8c; Accessory&gt;
-&gt;&gt;&gt; products = [  #创建一些产品
-&#8230;     Product(&#8216;123&#8217;, 11.22),
-&#8230;     Product(&#8216;456&#8217;, 33.44),
-&#8230;     Clothing(&#8216;789&#8217;, 123.45, &#8220;Nice Pants&#8221;),
-&#8230;     Clothing(&#8216;111&#8217;, 125.45, &#8220;Nicer Pants&#8221;),
-&#8230;     Accessory(&#8216;222&#8217;, 24.99, &#8220;Wallet&#8221;),
-&#8230;     Accessory(&#8216;333&#8217;, 14.99, &#8220;Belt&#8221;) ]
-&gt;&gt;&gt; Session = sessionmaker()
-&gt;&gt;&gt; session = Session()
-&gt;&gt;&gt; for p in products:
-&#8230;     session.add(p)
-&#8230;
-&gt;&gt;&gt; session.flush()
-&gt;&gt;&gt; print session.query(Product).all() #全部都有
-[&lt;Product 123&gt;, &lt;Product 456&gt;, &lt;Clothing 789&gt;, &lt;Clothing 111&gt;, &lt;Accessory 222&gt;, &lt;Accessory 333&gt;]
-&gt;&gt;&gt; print session.query(Clothing).all()  #只显示2个
-[&lt;Clothing 789&gt;, &lt;Clothing 111&gt;]
-&gt;&gt;&gt; print session.query(Accessory).all() #只显示2个,是不是上面的映射效果和创建3个类而分别orm好的多呢?
-[&lt;Accessory 222&gt;, &lt;Accessory 333&gt;]</p>
-
-<p>&gt;&gt;&gt; for row in product_table.select().execute(): #从父类库查询,所有数据都有,只是product_type不同
-&#8230;     print row
-&#8230;
-(u&#8217;123&#8217;, Decimal(&#8216;11.2200000000&#8217;), None, None, u&#8217;P&#8217;)
-(u&#8217;456&#8217;, Decimal(&#8216;33.4400000000&#8217;), None, None, u&#8217;P&#8217;)
-(u&#8217;789&#8217;, Decimal(&#8216;123.4500000000&#8217;), u&#8217;Nice Pants&#8217;, None, u&#8217;C&#8217;)
-(u&#8217;111&#8217;, Decimal(&#8216;125.4500000000&#8217;), u&#8217;Nicer Pants&#8217;, None, u&#8217;C&#8217;)
-(u&#8217;222&#8217;, Decimal(&#8216;24.9900000000&#8217;), None, u&#8217;Wallet&#8217;, u&#8217;A&#8217;)
-(u&#8217;333&#8217;, Decimal(&#8216;14.9900000000&#8217;), None, u&#8217;Belt&#8217;, u&#8217;A&#8217;)</p>
-
-<p>具体的映射见下图:</p>
-
-<p><a href="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png"><img class="alignnone  wp-image-1271" title="Screenshot-3" src="http://www.dongwm.com/wp-content/uploads/2012/07/Screenshot-3.png" alt="" width="629" height="232" /></a></p>
-
-<p>查询一个没有的不存在的映射:</p>
-
-<p>&gt;&gt;&gt; print session.query(Accessory)[0].clothing_info
-None</p>
-
-<p><strong>具体表的继承</strong></p>
-
-<p><strong></strong>每个表包含的数据量,需要实现它的类;没有浪费的空间</p>
-
-<p>&gt;&gt;&gt; metadata.remove(product_table)
-&gt;&gt;&gt; product_table = Table(
-&#8230;     &#8216;product&#8217;, metadata,
-&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
-&#8230;     Column(&#8216;msrp&#8217;, Numeric))
-&gt;&gt;&gt; clothing_table = Table(
-&#8230;     &#8216;clothing&#8217;, metadata,
-&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
-&#8230;     Column(&#8216;msrp&#8217;, Numeric),
-&#8230;     Column(&#8216;clothing_info&#8217;, String))
-&gt;&gt;&gt;
-&gt;&gt;&gt; accessory_table = Table(
-&#8230;     &#8216;accessory&#8217;, metadata,
-&#8230;     Column(&#8216;sku&#8217;, String(20), primary_key=True),
-&#8230;     Column(&#8216;msrp&#8217;, Numeric),
-&#8230;     Column(&#8216;accessory_info&#8217;, String))
-&gt;&gt;&gt;
-摄像我们想要获取Product&#8217;sku&#8217;是222的数据(没有其他额外的工作),我们不得不层次型的查询每个类,请看这个例子:</p>
-
-<p>&gt;&gt;&gt; punion = polymorphic_union(
-&#8230;     dict(P=product_table,
-&#8230;     C=clothing_table,
-&#8230;     A=accessory_table),
-&#8230;     &#8216;type_&#8217;)
-&gt;&gt;&gt;
-&gt;&gt;&gt; print punion
-SELECT accessory.sku, accessory.msrp, accessory.accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;A&#8217; AS type_
-FROM accessory UNION ALL SELECT product.sku, product.msrp, CAST(NULL AS VARCHAR) AS accessory_info, CAST(NULL AS VARCHAR) AS clothing_info, &#8216;P&#8217; AS type_
-FROM product UNION ALL SELECT clothing.sku, clothing.msrp, CAST(NULL AS VARCHAR) AS accessory_info, clothing.clothing_info, &#8216;C&#8217; AS type_
-FROM clothing
-现在我们就有了一个很好的标记了(C,A,P)</p>
-
-<p>&gt;&gt;&gt; mapper(
-&#8230;     Product, product_table, with_polymorphic=(&#8216;*&#8217;, punion),  #使用with_polymorphic=(&#8216;*&#8217;, punion)的方式映射父类,指定不同表选择,实现多态,并且提高了性能(只select了一次)
-&#8230;     polymorphic_on=punion.c.type_,
-&#8230;     polymorphic_identity=&#8217;P&#8217;)
-&lt;Mapper at 0x8605b6c; Product&gt;
-&gt;&gt;&gt; mapper(Clothing, clothing_table, inherits=Product,
-&#8230; polymorphic_identity=&#8217;C&#8217;,
-&#8230; concrete=True)
-&lt;Mapper at 0x84f1bac; Clothing&gt;
-&gt;&gt;&gt; mapper(Accessory, accessory_table, inherits=Product,
-&#8230; polymorphic_identity=&#8217;A&#8217;,
-&#8230; concrete=True)
-&lt;Mapper at 0x858770c; Accessory&gt;</p>
-
-<p>&gt;&gt;&gt; session.query(Product).get(&#8216;222&#8217;)
-&lt;Accessory 222&gt;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/9/">&larr; Older</a></li>
@@ -2823,6 +2826,10 @@ FROM clothing
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-yao-shu-chu-dao-tai-wan-liao/">《Python Web开发实战》要输出到台湾了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
@@ -2858,10 +2865,6 @@ FROM clothing
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
       </li>
     
   </ul>

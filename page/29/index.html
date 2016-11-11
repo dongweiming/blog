@@ -141,6 +141,55 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">关于expect研究（一）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-26T00:00:00+08:00" pubdate data-updated="true">Mar 26<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><p><strong>expect是一个编程工具语言，他的作者描述其为：Expect [is a] software suite for automating interactive tools。类似于自动应答，它能实现自动和交互式的执行。
+1 因为Expect需要Tcl编程语言的支持，首先安装tcl</strong>
+<pre class="sh_bash">[root@server ~]# yum install -y tcl tclx tcl-devel –y</pre>
+<strong>2 安装最新版expect：</strong>
+http://sourceforge.net/projects/expect/
+目前最新版expect5.45
+<pre class="sh_bash">[root@server expect5.45]# ./configure --with-tcl=/usr/lib --with-tclinclude=/usr/include/tcl-private/generic &#038;&#038; make &#038;&#038; make install</pre>
+<strong>3 基础知识：</strong>
+1 基础命令：send，expect，spwan
+send表示接受一个字符串作为参数发送给指定进程，expect 命令则等待一个响应
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">继续阅读 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/archives/vmware%E4%B8%8Bips%E5%AE%9E%E7%8E%B0web%E8%BF%9E%E6%8E%A5idm/">VMWARE下IPS实现web连接(IDM)</a></h1>
     
     
@@ -602,63 +651,6 @@ ln -s /usr/lib64/libxxx.so.X（X代表数字） /usr/lib64/lxxx.so</pre></p>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/archives/linux%E7%B3%BB%E7%BB%9F%E4%B8%8B%E6%9B%B4%E6%94%B9%E6%97%B6%E5%8C%BA%EF%BC%88timezone%EF%BC%89/">linux系统下更改时区（TimeZone）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-07T00:00:00+08:00" pubdate data-updated="true">Mar 7<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>假如安装过程没有设置正确的时区，可以修改/etc/localtime文件，改成软链接方式：
-<pre class="sh_bash">[root@9-100 ~]# date
-Mon Mar  7 13:45:57 CST 2011
-[root@9-100 ~]# rm /etc/localtime
-[root@9-100 ~]# ll /usr/share/zoneinfo/US/
-total 48
--rw-r--r-- 2 root root 2358 Sep  7 15:39 Alaska
--rw-r--r-- 3 root root 2353 Sep  7 15:39 Aleutian
--rw-r--r-- 2 root root  327 Sep  7 15:39 Arizona
--rw-r--r-- 2 root root 3543 Sep  7 15:39 Central
--rw-r--r-- 3 root root 3519 Sep  7 15:39 Eastern
--rw-r--r-- 4 root root 1649 Sep  7 15:39 East-Indiana
--rw-r--r-- 2 root root  312 Sep  7 15:39 Hawaii
--rw-r--r-- 3 root root 2395 Sep  7 15:39 Indiana-Starke
--rw-r--r-- 2 root root 2202 Sep  7 15:39 Michigan
--rw-r--r-- 4 root root 2427 Sep  7 15:39 Mountain
--rw-r--r-- 2 root root 2819 Sep  7 15:39 Pacific
--rw-r--r-- 3 root root  290 Sep  7 15:39 Samoa
-[root@9-100 ~]# cd /etc
-[root@9-100 etc]# ln -s /usr/share/zoneinfo/US/Pacific localtime
-[root@9-100 etc]# date
-Sun Mar  6 21:47:38 PST 2011</pre></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page/30/">&larr; Older</a></li>
@@ -681,6 +673,10 @@ Sun Mar  6 21:47:38 PST 2011</pre></p>
 <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">最近发布</li>
+    
+      <li class="post">
+        <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-yao-shu-chu-dao-tai-wan-liao/">《Python Web开发实战》要输出到台湾了</a>
+      </li>
     
       <li class="post">
         <a href="/archives/%3C%3Cpython-webkai-fa-shi-zhan-%3E%3E-shang-shi-%5B%3F%5D-ge-yue-liao/">《Python-Web开发实战》上市一个月了</a>
@@ -716,10 +712,6 @@ Sun Mar  6 21:47:38 PST 2011</pre></p>
     
       <li class="post">
         <a href="/archives/wo-li-jie-de-pythonzui-jia-shi-jian/">我理解的python最佳实践</a>
-      </li>
-    
-      <li class="post">
-        <a href="/archives/pythonjin-jie-bi-du-hui-zong/">python进阶必读汇总</a>
       </li>
     
   </ul>
